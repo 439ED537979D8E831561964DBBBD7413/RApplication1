@@ -48,6 +48,7 @@ import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookCallLogs;
 import com.rawalinfocom.rcontact.database.PhoneBookSMSLogs;
+import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.MaterialListDialog;
@@ -58,6 +59,7 @@ import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.CallLogType;
 import com.rawalinfocom.rcontact.model.GlobalSearchType;
 import com.rawalinfocom.rcontact.model.SmsDataType;
+import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 
@@ -132,7 +134,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
     @BindView(R.id.text_no_records_local)
     TextView textNoRecordsLocal;
     private String[] requiredPermissions = {Manifest
-            .permission.READ_CALL_LOG, Manifest.permission.READ_SMS};
+            .permission.READ_CALL_LOG/*, Manifest.permission.READ_SMS*/};
     MaterialDialog permissionConfirmationDialog;
     boolean isHomePressed = false;
     int globalSearchCount = 0;
@@ -140,12 +142,13 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
     LinearLayoutManager mLinearLayoutManager;
     ArrayList<GlobalSearchType> globalSearchTypeArrayListMain;
     private SyncCallLogAsyncTask syncCallLogAsyncTask;
-    private SyncSmsLogAsyncTask syncSmsLogAsyncTask;
+//    private SyncSmsLogAsyncTask syncSmsLogAsyncTask;
     int count = 0;
     int maxRecords = 5;
     int startAt = 0;
     GlobalSearchType globalSearchType;
     public String numberToSend = "";
+    ArrayList<UserProfile> arrayListDisplayProfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,8 +165,8 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
         AppConstants.isFromSearchActivity = false;
         if (syncCallLogAsyncTask != null)
             syncCallLogAsyncTask.cancel(true);
-        if (syncSmsLogAsyncTask != null)
-            syncSmsLogAsyncTask.cancel(true);
+        /*if (syncSmsLogAsyncTask != null)
+            syncSmsLogAsyncTask.cancel(true);*/
         super.onDestroy();
     }
 
@@ -192,7 +195,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
             }
 
 
-            if (smsDataTypeArrayList != null && smsDataTypeArrayList.size() == 0) {
+            /*if (smsDataTypeArrayList != null && smsDataTypeArrayList.size() == 0) {
                 if (rContactApplication.getArrayListSmsLogType() != null && rContactApplication
                         .getArrayListSmsLogType().size() > 0) {
                     smsDataTypeArrayList.addAll(rContactApplication.getArrayListSmsLogType());
@@ -204,7 +207,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                         syncSmsLogAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     }
                 }
-            }
+            }*/
         }
         super.onResume();
     }
@@ -220,7 +223,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
             if (grantResults[0] == PermissionChecker.PERMISSION_GRANTED && grantResults[1] ==
                     PermissionChecker.PERMISSION_GRANTED) {
                 getCallLogData();
-                getSMSData();
+//                getSMSData();
             } else {
                 showPermissionConfirmationDialog();
             }
@@ -241,8 +244,8 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
             syncCallLogAsyncTask = new SyncCallLogAsyncTask();
             syncCallLogAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
-            syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
-            syncSmsLogAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+           /* syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
+            syncSmsLogAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);*/
         }
     }
 
@@ -421,7 +424,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
 
         @Override
         protected Void doInBackground(Void... params) {
-            getSMSData();
+//            getSMSData();
             return null;
         }
     }
@@ -454,6 +457,11 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
         if (rContactApplication.getArrayListAllPhoneBookContacts() != null)
             objectArrayListContact.addAll(rContactApplication.getArrayListAllPhoneBookContacts());
 
+        TableProfileMobileMapping tableProfileMobileMapping = new TableProfileMobileMapping
+                (getDatabaseHandler());
+
+        arrayListDisplayProfile = tableProfileMobileMapping.getRContactList(getUserPmId());
+
         if (rContactApplication.getArrayListCallLogType() != null && rContactApplication
                 .getArrayListCallLogType().size() > 0) {
             callLogTypeArrayListMain.addAll(rContactApplication.getArrayListCallLogType());
@@ -466,17 +474,17 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
             }
         }
 
-        if (rContactApplication.getArrayListSmsLogType() != null && rContactApplication
+       /* if (rContactApplication.getArrayListSmsLogType() != null && rContactApplication
                 .getArrayListSmsLogType().size() > 0) {
             smsDataTypeArrayList.addAll(rContactApplication.getArrayListSmsLogType());
         } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 checkPermissionToExecute(requiredPermissions, AppConstants.READ_SMS);
             } else {
-                syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
-                syncSmsLogAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                *//*syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
+                syncSmsLogAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);*//*
             }
-        }
+        }*/
 
 
         recycleViewGlobalContact.addOnItemTouchListener(new RecyclerItemClickListener(
@@ -654,10 +662,10 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                     callLogTypeArrayListMain);
         }
 
-        if (smsDataTypeArrayList != null && smsDataTypeArrayList.size() > 0) {
+        /*if (smsDataTypeArrayList != null && smsDataTypeArrayList.size() > 0) {
             smsListAdapter = new SmsListAdapter(SearchActivity.this, smsDataTypeArrayList,
                     recycleViewPbContact);
-        }
+        }*/
 
         search.addTextChangedListener(new TextWatcher() {
 
@@ -704,12 +712,16 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                                         recycleViewPbContact.setAdapter(simpleCallLogListAdapter);
                                     } else {
                                         if (simpleCallLogListAdapter.getSearchCount() == 0) {
-                                            smsListAdapter = new SmsListAdapter(SearchActivity
+                                            textSearchCount.setVisibility(View.VISIBLE);
+                                            textSearchCount.setText("");
+                                            textNoRecordsLocal.setVisibility(View.VISIBLE);
+                                            recycleViewPbContact.setAdapter(null);
+                                            /*smsListAdapter = new SmsListAdapter(SearchActivity
                                                     .this, smsDataTypeArrayList,
                                                     recycleViewPbContact);
                                             smsListAdapter.filter(text);
                                             rlTitle.setVisibility(View.VISIBLE);
-                                            recycleViewPbContact.setAdapter(smsListAdapter);
+                                            recycleViewPbContact.setAdapter(smsListAdapter);*/
                                         }
                                     }
                                 }
@@ -778,7 +790,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                                         }
 
                                     } else {
-                                        if (simpleCallLogListAdapter.getSearchCount() == 0) {
+                                        /*if (simpleCallLogListAdapter.getSearchCount() == 0) {
                                             textSearchCount.setText("");
                                             if (smsListAdapter != null && smsListAdapter
                                                     .getSearchCount() > 0) {
@@ -811,7 +823,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
 
                                                 }
                                             }
-                                        }
+                                        }*/
                                     }
                                 }
                             } else {
@@ -822,7 +834,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
 //                                    return;
                                     AppConstants.isFromSearchActivity = true;
 
-                                    if (smsDataTypeArrayList != null) {
+                                    /*if (smsDataTypeArrayList != null) {
                                         smsListAdapter = new SmsListAdapter(SearchActivity.this,
                                                 smsDataTypeArrayList, recycleViewPbContact);
                                         smsListAdapter.filter(arg0.toString());
@@ -847,7 +859,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                                             textSearchCount.setText("");
                                             textNoRecordsLocal.setVisibility(View.VISIBLE);
                                         }
-                                    }
+                                    }*/
 
 
                                     /*if (smsListAdapter.getSearchCount() == 0) {
@@ -1645,9 +1657,9 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                             int type = cursor.getColumnIndexOrThrow(Telephony.Sms.TYPE);
                             int thread_id = cursor.getColumnIndexOrThrow(Telephony.Sms.THREAD_ID);
                             while (cursor.moveToNext()) {
-                                if (syncSmsLogAsyncTask != null && syncSmsLogAsyncTask
+                                /*if (syncSmsLogAsyncTask != null && syncSmsLogAsyncTask
                                         .isCancelled())
-                                    return;
+                                    return;*/
                                 SmsDataType smsDataType = new SmsDataType();
                                 String address = cursor.getString(number);
                                 String contactNumber = "";

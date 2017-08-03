@@ -287,6 +287,250 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     }
 
     @Override
+    public void onDeliveryResponse(String serviceType, Object data, Exception error) {
+        if (error == null) {
+
+            // <editor-fold desc="REQ_ADD_PROFILE_VISIT">
+
+            if (serviceType.contains(WsConstants.REQ_ADD_PROFILE_VISIT)) {
+                WsResponseObject bgProfileVisitResponse = (WsResponseObject) data;
+                if (bgProfileVisitResponse != null && StringUtils.equalsIgnoreCase
+                        (bgProfileVisitResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+                    Utils.removePreference(this, AppConstants.PREF_PROFILE_VIEWS);
+                } else {
+                    if (bgProfileVisitResponse != null) {
+                        Log.e("error response", bgProfileVisitResponse.getMessage());
+                    } else {
+                        Log.e("onDeliveryResponse: ", "bgProfileVisitResponse null");
+                    }
+                }
+            }
+            //</editor-fold>
+
+            // <editor-fold desc="REQ_UPLOAD_CONTACTS">
+
+            else if (serviceType.contains(WsConstants.REQ_UPLOAD_CONTACTS)) {
+                WsResponseObject uploadContactResponse = (WsResponseObject) data;
+                if (uploadContactResponse != null && StringUtils.equalsIgnoreCase
+                        (uploadContactResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+                    if (!Utils.isArraylistNullOrEmpty(uploadContactResponse
+                            .getArrayListUserRcProfile())) {
+
+                                /* Store Unique Contacts to ProfileMobileMapping */
+                        storeToMobileMapping(uploadContactResponse
+                                .getArrayListUserRcProfile());
+
+                                /* Store Unique Emails to ProfileEmailMapping */
+                        storeToEmailMapping(uploadContactResponse
+                                .getArrayListUserRcProfile());
+
+                                /* Store Profile Details to respective Table */
+                        storeProfileDataToDb(uploadContactResponse
+                                .getArrayListUserRcProfile(), uploadContactResponse
+                                .getArrayListMapping());
+                    }
+                    if (!Utils.isArraylistNullOrEmpty(uploadContactResponse
+                            .getArrayListMapping())) {
+                        removeRemovedDataFromDb(uploadContactResponse
+                                .getArrayListMapping());
+                    }
+                    Log.i(TAG, "Sync Successful");
+
+                    if (uploadContactResponse.getArrayListMapping().size() > 0) {
+                        uploadContacts(uploadContactResponse.getResponseKey(), new ArrayList
+                                <ProfileData>());
+                    }
+                    String currentTimeStamp = (StringUtils.split(serviceType, "_"))[1];
+                    PhoneBookContacts phoneBookContacts = new PhoneBookContacts(this);
+                    phoneBookContacts.saveRawIdsToPref();
+                    Utils.setStringPreference(this, AppConstants.PREF_CONTACT_LAST_SYNC_TIME,
+                            currentTimeStamp);
+                } else {
+                    if (uploadContactResponse != null) {
+                        Log.e(TAG, uploadContactResponse.getMessage());
+                    } else {
+                        Log.e(TAG, "uploadContactResponse null");
+                    }
+                }
+            }
+            //</editor-fold>
+
+            // <editor-fold desc="REQ_UPLOAD_CALL_LOGS">
+            else if (serviceType.equalsIgnoreCase(WsConstants.REQ_UPLOAD_CALL_LOGS)) {
+                WsResponseObject callLogInsertionResponse = (WsResponseObject) data;
+                if (callLogInsertionResponse != null && StringUtils.equalsIgnoreCase
+                        (callLogInsertionResponse
+                                .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+
+                    if (!StringUtils.isEmpty(callLogInsertionResponse.getCallDateAndTime()))
+                        Utils.setStringPreference(this, AppConstants.PREF_CALL_LOG_SYNC_TIME,
+                                callLogInsertionResponse.getCallDateAndTime());
+
+                    if (!StringUtils.isEmpty(callLogInsertionResponse.getCallLogRowId()))
+                        Utils.setStringPreference(this, AppConstants.PREF_CALL_LOG_ROW_ID,
+                                callLogInsertionResponse.getCallLogRowId());
+
+                    Utils.setStringPreference(MainActivity.this, AppConstants
+                                    .PREF_CALL_LOG_RESPONSE_KEY,
+                            callLogInsertionResponse.getResponseKey());
+
+                    ArrayList<CallLogType> callLogTypeArrayList = divideCallLogByChunck();
+
+                    System.out.println("RContact callLogTypeArrayList response --> " +
+                            callLogTypeArrayList.size());
+
+                    if (callLogTypeArrayList.size() > 0) {
+                        logsSyncedCount = logsSyncedCount + callLogTypeArrayList.size();
+
+                        Utils.setIntegerPreference(this, AppConstants.PREF_CALL_LOG_SYNCED_COUNT,
+                                logsSyncedCount);
+
+                        if (callLogTypeArrayList.size() < CALL_LOG_CHUNK) {
+
+                            if (Utils.getBooleanPreference(this, AppConstants
+                                    .PREF_CALL_LOG_SYNCED, false)) {
+                                System.out.println("RContact callLogType sync --> ");
+                                callLogSynced();
+                            } else {
+                                System.out.println("RContact last callLog chunk -->");
+                                insertServiceCall(new ArrayList<CallLogType>());
+                            }
+                        } else {
+                            if ((Utils.getIntegerPreference(this, AppConstants
+                                    .PREF_CALL_LOG_SYNCED_COUNT, 0) >=
+                                    Utils.getArrayListPreference(this, AppConstants
+                                            .PREF_CALL_LOGS_ID_SET)
+                                            .size())) {
+                                System.out.println("RContact last callLog chunk same as " +
+                                        "CALL_LOG_CHUNK -->");
+                                insertServiceCall(new ArrayList<CallLogType>());
+                            }
+                        }
+
+                    } else {
+                        System.out.println("RContact callLogType sync else -->");
+                        callLogSynced();
+                    }
+                } else {
+                    if (callLogInsertionResponse != null) {
+                        Log.e("error response", callLogInsertionResponse.getMessage());
+                    } else {
+                        Log.e("onDeliveryResponse: ", "callLogInsertionResponse null");
+                    }
+                }
+            }
+            //</editor-fold>
+
+            // <editor-fold desc="REQ_GET_PROFILE_DATA">
+            else if (serviceType.equalsIgnoreCase(WsConstants.REQ_GET_PROFILE_DATA)) {
+                WsResponseObject getProfileDataResponse = (WsResponseObject) data;
+                if (getProfileDataResponse != null && StringUtils.equalsIgnoreCase
+                        (getProfileDataResponse
+                                .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+
+                    ArrayList<SpamDataType> spamDataTypeList = getProfileDataResponse
+                            .getSpamDataTypeArrayList();
+                    if (spamDataTypeList.size() > 0) {
+                        try {
+                            TableSpamDetailMaster tableSpamDetailMaster = new
+                                    TableSpamDetailMaster(getDatabaseHandler());
+                            tableSpamDetailMaster.insertSpamDetails(spamDataTypeList);
+
+                            callLogTypeListForGlobalProfile.clear();
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    Utils.setBooleanPreference(this, AppConstants
+                            .PREF_GOT_ALL_PROFILE_DATA, true);
+
+                    /*Intent localBroadcastIntent = new Intent(AppConstants
+                            .ACTION_LOCAL_BROADCAST_SYNC_SMS);
+                    LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
+                            .getInstance(MainActivity.this);
+                    myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);*/
+
+                } else {
+                    if (getProfileDataResponse != null) {
+                        Log.e("error response", getProfileDataResponse.getMessage());
+                    } else {
+                        Log.e("onDeliveryResponse: ", "getProfileDataResponse null");
+                    }
+                }
+            }
+            //</editor-fold>
+            /*// <editor-fold desc="REQ_UPLOAD_SMS_LOGS">
+            else if (serviceType.equalsIgnoreCase(WsConstants.REQ_UPLOAD_SMS_LOGS)) {
+
+                WsResponseObject smsLogInsertionResponse = (WsResponseObject) data;
+                if (smsLogInsertionResponse != null && StringUtils.equalsIgnoreCase
+                        (smsLogInsertionResponse
+                                .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+
+                    Utils.setStringPreference(this, AppConstants.PREF_SMS_SYNC_TIME,
+                    smsLogInsertionResponse.getSmsLogTimestamp());
+
+                    if (Utils.getBooleanPreference(this, AppConstants
+                            .PREF_SMS_SYNCED, false)) {
+                        ArrayList<SmsDataType> temp = divideSmsLogByChunck(newSmsList);
+                        if (temp.size() >= SMS_CHUNK) {
+                        } else {
+                            Log.e("onDeliveryResponse: ", "All SMS Logs Synced");
+                        }
+                    } else {
+                        ArrayList<SmsDataType> callLogTypeArrayList = divideSmsLogByChunck();
+                        if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0) {
+//                            insertSMSLogServiceCall(callLogTypeArrayList);
+                            logsSyncedCount = logsSyncedCount + callLogTypeArrayList.size();
+                        } else {
+//                            Toast.makeText(this,"All Call Logs Synced",Toast.LENGTH_SHORT).show();
+                            Utils.setBooleanPreference(this, AppConstants
+                                    .PREF_SMS_SYNCED, true);
+                        }
+                        Utils.setIntegerPreference(this, AppConstants.PREF_SMS_LOG_SYNCED_COUNT,
+                                logsSyncedCount);
+                    }
+                } else {
+                    if (smsLogInsertionResponse != null) {
+                        Log.e("error response", smsLogInsertionResponse.getMessage());
+                    } else {
+                        Log.e("onDeliveryResponse: ", "smsLogInsertionResponse null");
+                    }
+                }
+            }
+            //</editor-fold>*/
+        } else {
+            Log.e("error", error.toString());
+        }
+    }
+
+    private void callLogSynced() {
+
+        Utils.setIntegerPreference(this, AppConstants
+                        .PREF_CALL_LOG_SYNCED_COUNT,
+                Utils.getArrayListPreference(this, AppConstants
+                        .PREF_CALL_LOGS_ID_SET).size());
+
+        Utils.setBooleanPreference(this, AppConstants
+                .PREF_CALL_LOG_SYNCED, true);
+
+        if (callLogTypeListForGlobalProfile.size() > 0) {
+            if (Utils.getBooleanPreference(this, AppConstants
+                    .PREF_GOT_ALL_PROFILE_DATA, false))
+                Utils.setBooleanPreference(this, AppConstants
+                        .PREF_GOT_ALL_PROFILE_DATA, false);
+        }
+
+        Intent localBroadcastIntent = new Intent(AppConstants
+                .ACTION_LOCAL_BROADCAST_GET_GLOBAL_PROFILE_DATA);
+        LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
+                .getInstance(MainActivity.this);
+        myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+    }
+
+    @Override
     @TargetApi(Build.VERSION_CODES.M)
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
@@ -2424,7 +2668,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
         }
 //        return getString(R.string.type_other);
-        return getString(R.string.call_log_missed);
+        return getString(R.string.type_other);
     }
 
     private String getRawContactIdFromNumber(String phoneNumber) {

@@ -629,7 +629,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                 } else if (StringUtils.equals(imageRightCenter.getTag().toString(),
                         TAG_IMAGE_SHARE)) {
-                    Toast.makeText(this, "Currently Unavailable!", Toast.LENGTH_SHORT).show();
+
+//                    Toast.makeText(this, "Currently Unavailable!", Toast.LENGTH_SHORT).show();
+
                     /*if (!StringUtils.equalsAnyIgnoreCase(pmId, "-1")) {
                         TableProfileMaster tableProfileMaster = new TableProfileMaster
                                 (databaseHandler);
@@ -640,6 +642,31 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     } else {
                         showChooseShareOption(null, null);
                     }*/
+
+                    if (!StringUtils.equalsAnyIgnoreCase(pmId, "-1")) {
+                        TableProfileMaster tableProfileMaster = new TableProfileMaster
+                                (databaseHandler);
+                        UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer
+                                .parseInt(pmId));
+//                        if (!StringUtils.equalsAnyIgnoreCase(pmId, "-1")) {
+                            // RCP profile or Own Profile
+                            Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+                            sharingIntent.setType("text/plain");
+                            String shareBody = WsConstants.WS_PROFILE_VIEW_ROOT + StringUtils
+                                    .trimToEmpty(userProfile.getPmFirstName()) + "." +
+                                    StringUtils.trimToEmpty(userProfile.getPmLastName()) + "." +
+                                    pmId;
+                            sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
+                            startActivity(Intent.createChooser(sharingIntent, getString(R.string
+                                    .str_share_contact_via)));
+//                        } else {
+//                            // Non-Rcp profile
+//                            shareContact();
+//
+//                        }
+                    } else {
+                        shareContact();
+                    }
                 }
                 break;
             //</editor-fold>

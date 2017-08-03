@@ -1182,7 +1182,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 return getActivity().getString(R.string.call_log_voice_mail);
 
         }
-        return getActivity().getString(R.string.type_other_caps);
+        return getActivity().getString(R.string.type_other);
     }
 
     public String getPhoneNumberType(int type) {
