@@ -27,43 +27,61 @@
         android:layout_height="wrap_content"
         android:visibility="gone"/>
 
-    <ImageView
-        android:id="@+id/image_calender"
+    <LinearLayout
+        android:id="@+id/linear_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/margin_5dp"
-        android:layout_toLeftOf="@+id/spinner_type"
-        android:src="@drawable/ic_date_picker"
-        android:visibility="visible"/>
-
-    <Spinner
-        android:id="@+id/spinner_type"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/margin_small"
-        android:layout_marginLeft="@dimen/margin_small"
-        android:layout_marginRight="@dimen/margin_small"
-        android:layout_marginStart="@dimen/margin_small"
-        android:layout_toLeftOf="@id/image_delete"
         android:layout_toStartOf="@id/image_delete"
-        android:padding="0dp"/>
+        android:orientation="horizontal"
+        android:weightSum="2">
 
-    <EditText
-        android:id="@+id/input_value"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_toLeftOf="@id/image_calender"
-        android:layout_toStartOf="@id/image_calender"
-        android:textColor="@color/colorAccent"
-        android:textSize="16sp"
-        tools:ignore="TextFields"
-        tools:text="1234567890"/>
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.25"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/image_calender"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="@dimen/margin_5dp"
+                android:contentDescription="@string/str_content_description"
+                android:src="@drawable/ic_date_picker"
+                android:visibility="visible"/>
+
+            <EditText
+                android:id="@+id/input_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@id/image_calender"
+                android:textColor="@color/colorAccent"
+                android:textSize="16sp"
+                tools:ignore="TextFields"
+                tools:text="1234567890"/>
+
+
+        </RelativeLayout>
+
+        <Spinner
+            android:id="@+id/spinner_type"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/margin_small"
+            android:layout_marginLeft="@dimen/margin_small"
+            android:layout_marginRight="@dimen/margin_small"
+            android:layout_marginStart="@dimen/margin_small"
+            android:layout_weight="0.75"
+            android:padding="0dp"/>
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/liner_checkbox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/input_value"
+        android:layout_below="@id/linear_content"
         android:visibility="gone">
 
         <CheckBox

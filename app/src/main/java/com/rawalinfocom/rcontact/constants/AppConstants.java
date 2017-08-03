@@ -253,6 +253,7 @@ public class AppConstants {
     public static String PREF_SMS_LOG_SYNCED_COUNT = "pref_sms_log_synced_count";
     public static String PREF_SMS_LOG_SYNCED = "pref_sms_log_synced";
     public static String PREF_GOT_ALL_PROFILE_DATA = "pref_got_all_profile_data";
+    public static String PREF_IS_CALL_UPLOAD_CONTACT = "pref_is_call_upload_contact";
 
 
     public static String[] arrayPrefKeys = {PREF_SELECTED_COUNTRY_OBJECT, PREF_DEVICE_TOKEN_ID,

@@ -336,8 +336,10 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     }
                     Log.i(TAG, "Sync Successful");
 
-                    uploadContacts(uploadContactResponse.getResponseKey(), new ArrayList
-                            <ProfileData>());
+                    if (uploadContactResponse.getArrayListMapping().size() > 0) {
+                        uploadContacts(uploadContactResponse.getResponseKey(), new ArrayList
+                                <ProfileData>());
+                    }
                     String currentTimeStamp = (StringUtils.split(serviceType, "_"))[1];
                     PhoneBookContacts phoneBookContacts = new PhoneBookContacts(this);
                     phoneBookContacts.saveRawIdsToPref();
@@ -368,12 +370,14 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                         Utils.setStringPreference(this, AppConstants.PREF_CALL_LOG_ROW_ID,
                                 callLogInsertionResponse.getCallLogRowId());
 
-                    Utils.setStringPreference(MainActivity.this, AppConstants.PREF_CALL_LOG_RESPONSE_KEY,
+                    Utils.setStringPreference(MainActivity.this, AppConstants
+                                    .PREF_CALL_LOG_RESPONSE_KEY,
                             callLogInsertionResponse.getResponseKey());
 
                     ArrayList<CallLogType> callLogTypeArrayList = divideCallLogByChunck();
 
-                    System.out.println("RContact callLogTypeArrayList response --> " + callLogTypeArrayList.size());
+                    System.out.println("RContact callLogTypeArrayList response --> " +
+                            callLogTypeArrayList.size());
 
                     if (callLogTypeArrayList.size() > 0) {
                         logsSyncedCount = logsSyncedCount + callLogTypeArrayList.size();
@@ -392,10 +396,13 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                                 insertServiceCall(new ArrayList<CallLogType>());
                             }
                         } else {
-                            if ((Utils.getIntegerPreference(this, AppConstants.PREF_CALL_LOG_SYNCED_COUNT, 0) >=
-                                    Utils.getArrayListPreference(this, AppConstants.PREF_CALL_LOGS_ID_SET)
+                            if ((Utils.getIntegerPreference(this, AppConstants
+                                    .PREF_CALL_LOG_SYNCED_COUNT, 0) >=
+                                    Utils.getArrayListPreference(this, AppConstants
+                                            .PREF_CALL_LOGS_ID_SET)
                                             .size())) {
-                                System.out.println("RContact last callLog chunk same as CALL_LOG_CHUNK -->");
+                                System.out.println("RContact last callLog chunk same as " +
+                                        "CALL_LOG_CHUNK -->");
                                 insertServiceCall(new ArrayList<CallLogType>());
                             }
                         }

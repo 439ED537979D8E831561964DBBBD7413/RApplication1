@@ -80,7 +80,8 @@ public class CallLogDeleteActivity extends BaseActivity implements RippleView
     private void receiveBundleData() {
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            arrayListCallLogType = (ArrayList<CallLogType>) bundle.getSerializable(AppConstants.EXTRA_CALL_ARRAY_LIST);
+            arrayListCallLogType = (ArrayList<CallLogType>) bundle.getSerializable(AppConstants
+                    .EXTRA_CALL_ARRAY_LIST);
         }
     }
 
@@ -137,7 +138,8 @@ public class CallLogDeleteActivity extends BaseActivity implements RippleView
                 // delete operation
                 String where = CallLog.Calls.NUMBER + " =?" + " AND " + CallLog.Calls.DATE + " =?";
                 String[] selectionArguments = new String[]{number, String.valueOf(dateAndTime)};
-                int value = this.getContentResolver().delete(CallLog.Calls.CONTENT_URI, where, selectionArguments);
+                int value = this.getContentResolver().delete(CallLog.Calls.CONTENT_URI, where,
+                        selectionArguments);
                 if (value > 0) {
                     arrayListCallLogType.remove(callLogType);
                     deleteCallLogListAdapter.notifyDataSetChanged();
@@ -150,16 +152,19 @@ public class CallLogDeleteActivity extends BaseActivity implements RippleView
                 checkboxSelectAll.setChecked(false);
             }
 
-            Intent localBroadcastIntent1 = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_DELETE_LOGS);
+            Intent localBroadcastIntent1 = new Intent(AppConstants
+                    .ACTION_LOCAL_BROADCAST_DELETE_LOGS);
             localBroadcastIntent1.putExtra(AppConstants.EXTRA_DELETE_ALL_CALL_LOGS, selectAll);
-            LocalBroadcastManager myLocalBroadcastManager1 = LocalBroadcastManager.getInstance(this);
+            LocalBroadcastManager myLocalBroadcastManager1 = LocalBroadcastManager.getInstance
+                    (this);
             myLocalBroadcastManager1.sendBroadcast(localBroadcastIntent1);
 
             finish();
             overridePendingTransition(R.anim.pop_enter, R.anim.pop_exit);
 
         } else {
-            Toast.makeText(this, getString(R.string.please_select_history_to_delete), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.please_select_history_to_delete), Toast
+                    .LENGTH_SHORT).show();
         }
     }
 
