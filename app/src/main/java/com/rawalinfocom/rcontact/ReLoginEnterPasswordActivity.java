@@ -205,6 +205,8 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
                         Utils.setBooleanPreference(this, AppConstants.PREF_SMS_SYNCED, false);
                     }
 
+                    Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME, String.valueOf(System.currentTimeMillis()));
+
                     // Redirect to MainActivity
                     if (isFrom.equals(AppConstants.PREF_RE_LOGIN)) {
                         Utils.hideProgressDialog();

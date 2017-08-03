@@ -237,6 +237,8 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
                         (enterPassWordResponse
                                 .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
+                    Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME, String.valueOf(System.currentTimeMillis()));
+
                     // Redirect to MainActivity
                     Intent intent = new Intent(this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
