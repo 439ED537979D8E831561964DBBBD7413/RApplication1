@@ -1684,8 +1684,6 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
     private void getLatestCallLogsByRawId() {
 
-//        getAllCallLogId();
-
         ArrayList<CallLogType> tempCallLogTypeArrayList = new ArrayList<>();
 
         try {
