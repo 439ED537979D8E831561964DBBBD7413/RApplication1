@@ -428,7 +428,7 @@ public class PhoneCallReceiver extends BroadcastReceiver {
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             incomingDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_TOAST);
-        }else{
+        } else {
             incomingDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
         }
         incomingDialog.setCancelable(false);
@@ -465,7 +465,7 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                     (new Date(System.currentTimeMillis()));
             String compareHistDate = callLastHistoryTime(savedNumber);
 
-            if(!StringUtils.isEmpty(compareHistDate)){
+            if (!StringUtils.isEmpty(compareHistDate)) {
 
                 Date currDate = simpleDateFormat.parse(currentDate);
                 Date compareDate = simpleDateFormat.parse(compareHistDate);
@@ -506,15 +506,13 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                     textViewLastCallTime.setVisibility(View.GONE);
                 }
 
-            }else{
+            } else {
                 textViewLastCallTime.setVisibility(View.GONE);
             }
         } catch (ParseException e) {
             e.printStackTrace();
             textViewLastCallTime.setVisibility(View.GONE);
-
         }
-
 
         String profileImage = spamDataType.getSpamPhotoUrl();
         if (!TextUtils.isEmpty(profileImage)) {
@@ -652,7 +650,7 @@ public class PhoneCallReceiver extends BroadcastReceiver {
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             endCallDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_TOAST);
-        }else{
+        } else {
             endCallDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
         }
         endCallDialog.setCancelable(false);
@@ -915,13 +913,13 @@ public class PhoneCallReceiver extends BroadcastReceiver {
             buttonViewProfile.setVisibility(View.GONE);
             llSpam.setVisibility(View.VISIBLE);
             textSpamReport.setTypeface(Utils.typefaceBold(context));
-            if (!StringUtils.isEmpty(spamDataType.getSpamCount())){
+            if (!StringUtils.isEmpty(spamDataType.getSpamCount())) {
                 if (!StringUtils.equalsIgnoreCase(spamDataType.getSpamCount(), "0")) {
                     textSpamReport.setText(context.getString(R.string.report_spam) + " (" + spamDataType.getSpamCount() + ")");
                 } else {
                     textSpamReport.setText(context.getString(R.string.report_spam));
                 }
-            }else{
+            } else {
                 textSpamReport.setText(context.getString(R.string.report_spam));
             }
         }

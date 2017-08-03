@@ -46,6 +46,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.account.SlideMenuAccounts;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.calldialer.DialerActivity;
@@ -61,6 +62,7 @@ import com.rawalinfocom.rcontact.database.PhoneBookCallLogs;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.database.QueryManager;
 import com.rawalinfocom.rcontact.database.TableAddressMaster;
+import com.rawalinfocom.rcontact.database.TableCommentMaster;
 import com.rawalinfocom.rcontact.database.TableEmailMaster;
 import com.rawalinfocom.rcontact.database.TableEventMaster;
 import com.rawalinfocom.rcontact.database.TableImMaster;
@@ -70,6 +72,7 @@ import com.rawalinfocom.rcontact.database.TableOrganizationMaster;
 import com.rawalinfocom.rcontact.database.TableProfileEmailMapping;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
+import com.rawalinfocom.rcontact.database.TableRCContactRequest;
 import com.rawalinfocom.rcontact.database.TableSpamDetailMaster;
 import com.rawalinfocom.rcontact.database.TableWebsiteMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
@@ -80,6 +83,8 @@ import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransforma
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.Address;
 import com.rawalinfocom.rcontact.model.CallLogType;
+import com.rawalinfocom.rcontact.model.Comment;
+import com.rawalinfocom.rcontact.model.ContactRequestResponseDataItem;
 import com.rawalinfocom.rcontact.model.Email;
 import com.rawalinfocom.rcontact.model.Event;
 import com.rawalinfocom.rcontact.model.ImAccount;
@@ -96,6 +101,7 @@ import com.rawalinfocom.rcontact.model.ProfileDataOperationPhoneNumber;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationWebAddress;
 import com.rawalinfocom.rcontact.model.ProfileEmailMapping;
 import com.rawalinfocom.rcontact.model.ProfileMobileMapping;
+import com.rawalinfocom.rcontact.model.RatingRequestResponseDataItem;
 import com.rawalinfocom.rcontact.model.SpamDataType;
 import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.Website;
@@ -187,12 +193,80 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         init();
         registerBroadcastReceiver();
         registerLocalBroadCastReceiver();
+        new callPullMechanismService().execute();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         setNavigationHeaderData();
+    }
+
+    private class callPullMechanismService extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            try {
+
+                if (Utils.isNetworkAvailable(MainActivity.this)
+                        && Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CONTACT_SYNCED, false)
+                        && (Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CALL_LOG_SYNCED,
+                        false))) {
+
+                    System.out.println("RContact callPullMechanismService ");
+
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault());
+
+                    String toDate = simpleDateFormat.format(new Date(System.currentTimeMillis()));
+
+                    long compare = Long.parseLong(Utils.getStringPreference(MainActivity.this, AppConstants.KEY_API_CALL_TIME, String.valueOf(System.currentTimeMillis())));
+                    String fromDate = simpleDateFormat.format(new Date(compare));
+
+                    Date currDate = simpleDateFormat.parse(toDate);
+                    Date compareDate = simpleDateFormat.parse(fromDate);
+
+                    long difference = currDate.getTime() - compareDate.getTime();
+
+                    long secondsInMilli = 1000;
+                    long minutesInMilli = secondsInMilli * 60;
+                    long hoursInMilli = minutesInMilli * 60;
+                    long daysInMilli = hoursInMilli * 24;
+
+                    long elapsedDays = difference / daysInMilli;
+                    difference = difference % daysInMilli;
+
+                    long elapsedHours = difference / hoursInMilli;
+                    difference = difference % hoursInMilli;
+
+                    long elapsedMinutes = difference / minutesInMilli;
+
+                    System.out.println("RContact elapsedDays --> " + (elapsedDays > 0));
+                    System.out.println("RContact elapsedHours --> " + (elapsedHours > 0));
+                    System.out.println("RContact elapsedMinutes --> " + (elapsedMinutes > 0));
+
+                    if (elapsedDays > 0 || elapsedHours > 0 || elapsedMinutes > 1) {
+
+                        if (Utils.getBooleanPreference(MainActivity.this, AppConstants.KEY_IS_FIRST_TIME, false)) {
+                            System.out.println("RContact callPullMechanismService first time");
+                            fromDate = "";
+                        } else {
+                            fromDate = Utils.getStringPreference(MainActivity.this, AppConstants.KEY_API_CALL_TIME_STAMP, "");
+                        }
+                        toDate = "";
+
+                        pullMechanismServiceCall(fromDate, toDate, WsConstants.REQ_GET_CONTACT_REQUEST);
+                        pullMechanismServiceCall(fromDate, toDate, WsConstants.REQ_GET_RATING_DETAILS);
+                        pullMechanismServiceCall(fromDate, toDate, WsConstants.REQ_GET_COMMENT_DETAILS);
+                    }
+                }
+
+            } catch (Exception e) {
+                System.out.println("RContact PullMechanismService call error --> " + e.getMessage());
+            }
+
+            return null;
+        }
     }
 
     @Override
@@ -289,6 +363,57 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     @Override
     public void onDeliveryResponse(String serviceType, Object data, Exception error) {
         if (error == null) {
+
+            // <editor-fold desc="REQ_GET_CONTACT_REQUEST">
+            if (serviceType.contains(WsConstants.REQ_GET_CONTACT_REQUEST)) {
+                WsResponseObject getContactUpdateResponse = (WsResponseObject) data;
+                if (getContactUpdateResponse != null && StringUtils.equalsIgnoreCase
+                        (getContactUpdateResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+
+                    storeContactRequestResponseToDB(getContactUpdateResponse, getContactUpdateResponse.getRequestData(), getContactUpdateResponse.getResponseData());
+
+                } else {
+                    if (getContactUpdateResponse != null) {
+                        System.out.println("RContact error --> " + getContactUpdateResponse.getMessage());
+                    } else {
+                        System.out.println("RContact error --> getContactUpdateResponse null");
+                    }
+                }
+            }
+
+            // <editor-fold desc="REQ_GET_RATING_DETAILS">
+            if (serviceType.contains(WsConstants.REQ_GET_RATING_DETAILS)) {
+                WsResponseObject getRatingUpdateResponse = (WsResponseObject) data;
+                if (getRatingUpdateResponse != null && StringUtils.equalsIgnoreCase
+                        (getRatingUpdateResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+
+                    storeRatingRequestResponseToDB(getRatingUpdateResponse, getRatingUpdateResponse.getRatingReceive(), getRatingUpdateResponse.getRatingDone());
+
+                } else {
+                    if (getRatingUpdateResponse != null) {
+                        System.out.println("RContact error --> " + getRatingUpdateResponse.getMessage());
+                    } else {
+                        System.out.println("RContact error --> getRatingUpdateResponse null");
+                    }
+                }
+            }
+
+            // <editor-fold desc="REQ_GET_COMMENT_DETAILS">
+            if (serviceType.contains(WsConstants.REQ_GET_COMMENT_DETAILS)) {
+                WsResponseObject getCommentUpdateResponse = (WsResponseObject) data;
+                if (getCommentUpdateResponse != null && StringUtils.equalsIgnoreCase
+                        (getCommentUpdateResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+
+                    storeCommentRequestResponseToDB(getCommentUpdateResponse, getCommentUpdateResponse.getCommentReceive(), getCommentUpdateResponse.getCommentDone());
+
+                } else {
+                    if (getCommentUpdateResponse != null) {
+                        System.out.println("RContact error --> " + getCommentUpdateResponse.getMessage());
+                    } else {
+                        System.out.println("RContact error --> getCommentUpdateResponse null");
+                    }
+                }
+            }
 
             // <editor-fold desc="REQ_ADD_PROFILE_VISIT">
             if (serviceType.contains(WsConstants.REQ_ADD_PROFILE_VISIT)) {
@@ -527,6 +652,167 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         } else {
             Log.e("error", error.toString());
         }
+    }
+
+    private void storeCommentRequestResponseToDB(WsResponseObject getCommentUpdateResponse, ArrayList<RatingRequestResponseDataItem> commentReceive,
+                                                 ArrayList<RatingRequestResponseDataItem> commentDone) {
+
+        try {
+            TableCommentMaster tableCommentMaster = new TableCommentMaster(databaseHandler);
+
+            // eventCommentDone
+            for (int i = 0; i < commentDone.size(); i++) {
+
+                RatingRequestResponseDataItem dataItem = commentDone.get(i);
+
+                tableCommentMaster.addReply(dataItem.getCommentId(), dataItem.getReply(),
+                        Utils.getLocalTimeFromUTCTime(dataItem.getReplyAt()), Utils
+                                .getLocalTimeFromUTCTime(dataItem.getReplyAt()));
+            }
+
+            // eventCommentReceive
+            for (int i = 0; i < commentReceive.size(); i++) {
+
+                RatingRequestResponseDataItem dataItem = commentReceive.get(i);
+
+                Comment comment = new Comment();
+                comment.setCrmStatus(AppConstants.COMMENT_STATUS_RECEIVED);
+                comment.setCrmType(getResources().getString(R.string.str_tab_rating));
+                comment.setCrmCloudPrId(dataItem.getCommentId());
+                comment.setCrmRating(dataItem.getPrRatingStars());
+                comment.setRcProfileMasterPmId(dataItem.getFromPmId());
+                comment.setCrmComment(dataItem.getComment());
+                comment.setCrmProfileDetails(dataItem.getName());
+                comment.setCrmImage(dataItem.getPmProfilePhoto());
+                comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getCreatedAt()));
+                comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getUpdatedAt()));
+                String avgRating = dataItem.getProfileRating();
+                String totalUniqueRater = dataItem.getTotalProfileRateUser();
+                String toPmId = String.valueOf(dataItem.getToPmId());
+
+                TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
+                tableProfileMaster.updateUserProfileRating(toPmId, avgRating, totalUniqueRater);
+                Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING, totalUniqueRater);
+                Utils.setStringPreference(this, AppConstants.PREF_USER_RATING, avgRating);
+
+                tableCommentMaster.addComment(comment);
+
+            }
+
+        } catch (Exception e) {
+            System.out.println("RContact storeCommentRequestResponseToDB error ");
+        }
+
+//        Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME, String.valueOf(System.currentTimeMillis()));
+//        Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME_STAMP, getCommentUpdateResponse.getTimestamp());
+//        Utils.setBooleanPreference(this, AppConstants.KEY_IS_FIRST_TIME, false);
+    }
+
+    private void storeRatingRequestResponseToDB(WsResponseObject getRatingUpdateResponse, ArrayList<RatingRequestResponseDataItem> ratingReceive,
+                                                ArrayList<RatingRequestResponseDataItem> ratingDone) {
+
+        try {
+            TableCommentMaster tableCommentMaster = new TableCommentMaster(databaseHandler);
+
+            // profileRatingComment
+            for (int i = 0; i < ratingDone.size(); i++) {
+
+                RatingRequestResponseDataItem dataItem = ratingDone.get(i);
+
+                tableCommentMaster.addReply(dataItem.getPrId(), dataItem.getReply(),
+                        Utils.getLocalTimeFromUTCTime(dataItem.getReplyAt()), Utils.getLocalTimeFromUTCTime(dataItem.getReplyAt()));
+            }
+
+            // profileRatingReply
+            for (int i = 0; i < ratingReceive.size(); i++) {
+
+                RatingRequestResponseDataItem dataItem = ratingReceive.get(i);
+
+                Comment comment = new Comment();
+                comment.setCrmStatus(AppConstants.COMMENT_STATUS_RECEIVED);
+                comment.setCrmType(getResources().getString(R.string.str_tab_rating));
+                comment.setCrmCloudPrId(dataItem.getPrId());
+                comment.setCrmRating(dataItem.getPrRatingStars());
+                comment.setRcProfileMasterPmId(dataItem.getFromPmId());
+                comment.setCrmComment(dataItem.getComment());
+                comment.setCrmProfileDetails(dataItem.getName());
+                comment.setCrmImage(dataItem.getPmProfilePhoto());
+                comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getCreatedAt()));
+                comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getUpdatedAt()));
+                String avgRating = dataItem.getProfileRating();
+                String totalUniqueRater = dataItem.getTotalProfileRateUser();
+                String toPmId = String.valueOf(dataItem.getToPmId());
+
+                TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
+                tableProfileMaster.updateUserProfileRating(toPmId, avgRating, totalUniqueRater);
+                Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING, totalUniqueRater);
+                Utils.setStringPreference(this, AppConstants.PREF_USER_RATING, avgRating);
+
+                tableCommentMaster.addComment(comment);
+            }
+
+        } catch (Exception e) {
+            System.out.println("RContact storeRatingRequestResponseToDB error ");
+        }
+
+//        Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME, String.valueOf(System.currentTimeMillis()));
+//        Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME_STAMP, getRatingUpdateResponse.getTimestamp());
+//        Utils.setBooleanPreference(this, AppConstants.KEY_IS_FIRST_TIME, false);
+    }
+
+    private void storeContactRequestResponseToDB(WsResponseObject getContactUpdateResponse, ArrayList<ContactRequestResponseDataItem> requestData,
+                                                 ArrayList<ContactRequestResponseDataItem> responseData) {
+
+        try {
+
+            TableRCContactRequest tableRCContactRequest = new TableRCContactRequest
+                    (databaseHandler);
+
+            for (int i = 0; i < requestData.size(); i++) {
+
+                ContactRequestResponseDataItem dataItem = requestData.get(i);
+                if (String.valueOf(dataItem.getCarPmIdTo()).equals(Utils.getStringPreference(this, AppConstants
+                        .PREF_USER_PM_ID, "0"))
+                        && String.valueOf(dataItem.getCarAccessPermissionStatus()).equals("0")) {
+                    tableRCContactRequest.addRequest(AppConstants
+                                    .COMMENT_STATUS_RECEIVED,
+                            String.valueOf(dataItem.getCarId()),
+                            dataItem.getCarMongodbRecordIndex(),
+                            dataItem.getCarPmIdFrom(),
+                            dataItem.getCarPpmParticular(),
+                            Utils.getLocalTimeFromUTCTime(dataItem.getCreatedAt()),
+                            Utils.getLocalTimeFromUTCTime(dataItem.getUpdatedAt()));
+                }
+            }
+
+            TableRCContactRequest tableRCContactRequest1 = new TableRCContactRequest
+                    (databaseHandler);
+
+            for (int i = 0; i < responseData.size(); i++) {
+
+                ContactRequestResponseDataItem dataItem = responseData.get(i);
+
+                if (String.valueOf(dataItem.getCarPmIdFrom()).equals(Utils.getStringPreference(this, AppConstants
+                        .PREF_USER_PM_ID, "0"))
+                        && MoreObjects.firstNonNull(dataItem.getCarAccessPermissionStatus(), "0").equals("0")) {
+                    tableRCContactRequest1.addRequest(AppConstants
+                                    .COMMENT_STATUS_SENT,
+                            String.valueOf(dataItem.getCarId()),
+                            dataItem.getCarMongodbRecordIndex(),
+                            dataItem.getCarPmIdTo(),
+                            dataItem.getCarPpmParticular(),
+                            Utils.getLocalTimeFromUTCTime(dataItem.getCreatedAt()),
+                            Utils.getLocalTimeFromUTCTime(dataItem.getUpdatedAt()));
+                }
+            }
+
+        } catch (Exception e) {
+            System.out.println("RContact storeContactRequestResponseToDB error ");
+        }
+
+//        Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME, String.valueOf(System.currentTimeMillis()));
+//        Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME_STAMP, getContactUpdateResponse.getTimestamp());
+//        Utils.setBooleanPreference(this, AppConstants.KEY_IS_FIRST_TIME, false);
     }
 
     @Override
@@ -1709,7 +1995,6 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             Cursor cursor = this.getContentResolver().query(CallLog.Calls.CONTENT_URI, null,
                     CallLog.Calls.DATE + " BETWEEN ? AND ?"
                     , new String[]{dateToCompare, currentDate}, order);
-
             if (cursor != null) {
 
                 while (cursor.moveToNext()) {
@@ -3089,6 +3374,24 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
         return photoThumbUrl;
     }
+
+    private void pullMechanismServiceCall(String fromDate, String toDate, String url) {
+
+        if (Utils.isNetworkAvailable(MainActivity.this)) {
+            WsRequestObject deviceDetailObject = new WsRequestObject();
+
+            deviceDetailObject.setFromDate(fromDate);
+            deviceDetailObject.setToDate(toDate);
+
+            if (Utils.isNetworkAvailable(this)) {
+                new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                        deviceDetailObject, null, WsResponseObject.class, url, null, true).executeOnExecutor(AsyncTask
+                        .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + url);
+            }
+        }
+
+    }
+    //</editor-fold>
 
      /*private BroadcastReceiver localBroadCastReceiverRecentSMS = new BroadcastReceiver() {
         @Override

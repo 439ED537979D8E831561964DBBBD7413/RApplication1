@@ -20,6 +20,7 @@ public class WsResponseObject {
 
     @JsonProperty("contact_request")
     private PrivacyRequestDataItem contactRequestData;
+    private String spamCount;
 
     public PrivacyRequestDataItem getContactRequestData() {
         return contactRequestData;
@@ -47,6 +48,7 @@ public class WsResponseObject {
     private Integer reSync;
     private String callDateAndTime;
     private String smsLogTimestamp;
+    private String timestamp;
     private String callLogRowId;
     private String responseKey;
 
@@ -72,6 +74,76 @@ public class WsResponseObject {
     public ArrayList<RcontactUpdatesData> getRcontactUpdate() {
         return rcontactUpdatesData;
     }
+
+    // <editor-fold desc="Pull Mechanism service">
+    // contact
+    @JsonProperty("request_data")
+    private ArrayList<ContactRequestResponseDataItem> requestData;
+
+    public ArrayList<ContactRequestResponseDataItem> getRequestData() {
+        return requestData;
+    }
+
+    public void setRequestData(ArrayList<ContactRequestResponseDataItem> requestData) {
+        this.requestData = requestData;
+    }
+
+    @JsonProperty("response_data")
+    private ArrayList<ContactRequestResponseDataItem> responseData;
+
+    public ArrayList<ContactRequestResponseDataItem> getResponseData() {
+        return responseData;
+    }
+
+    public void setResponseData(ArrayList<ContactRequestResponseDataItem> responseData) {
+        this.responseData = responseData;
+    }
+
+    @JsonProperty("rating_receive")
+    private ArrayList<RatingRequestResponseDataItem> ratingReceive;
+
+    public ArrayList<RatingRequestResponseDataItem> getRatingReceive() {
+        return ratingReceive;
+    }
+
+    public void setRatingReceive(ArrayList<RatingRequestResponseDataItem> ratingReceive) {
+        this.ratingReceive = ratingReceive;
+    }
+
+    @JsonProperty("rating_done")
+    private ArrayList<RatingRequestResponseDataItem> ratingDone;
+
+    public ArrayList<RatingRequestResponseDataItem> getRatingDone() {
+        return ratingDone;
+    }
+
+    public void setRatingDone(ArrayList<RatingRequestResponseDataItem> ratingDone) {
+        this.ratingDone = ratingDone;
+    }
+
+    @JsonProperty("comment_receive")
+    private ArrayList<RatingRequestResponseDataItem> commentReceive;
+
+    public ArrayList<RatingRequestResponseDataItem> getCommentReceive() {
+        return commentReceive;
+    }
+
+    public void setCommentReceive(ArrayList<RatingRequestResponseDataItem> commentReceive) {
+        this.commentReceive = commentReceive;
+    }
+
+    @JsonProperty("comment_done")
+    private ArrayList<RatingRequestResponseDataItem> commentDone;
+
+    public ArrayList<RatingRequestResponseDataItem> getCommentDone() {
+        return commentDone;
+    }
+
+    public void setCommentDone(ArrayList<RatingRequestResponseDataItem> commentDone) {
+        this.commentDone = commentDone;
+    }
+
+    // end call
 
     public ArrayList<EventCommentData> getEventReceiveCommentData() {
         return eventReceiveCommentData;
@@ -128,6 +200,15 @@ public class WsResponseObject {
 
     public void setCallDateAndTime(String callDateAndTime) {
         this.callDateAndTime = callDateAndTime;
+    }
+
+    @JsonProperty("timestamp")
+    public String getTimestamp() {
+        return StringUtils.defaultString(timestamp);
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
     }
 
     @JsonProperty("call_log_row_id")

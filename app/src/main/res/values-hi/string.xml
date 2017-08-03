@@ -32,6 +32,8 @@
     <string name="error_no_placeholders">No placeholders</string>
     <string name="str_title">शीर्षक</string>
     <string name="str_message">संदेश</string>
+    <string name="str_welcom">आपका स्वागत है</string>
+    <string name="str_welcom_message">आपके सम्पर्को के स्मार्ट होने का समय आ गया है </string>
 
     <!--  Other
   -->

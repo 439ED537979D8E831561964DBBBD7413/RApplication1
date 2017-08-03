@@ -86,6 +86,9 @@ public class WsRequestObject {
     private String gcmToken;
     private Integer reAuthenticate;
 
+    private String fromDate;
+    private String toDate;
+
     private String password;
     private String password_confirmation;
 
@@ -311,6 +314,24 @@ public class WsRequestObject {
 
     public void setDeviceId(String deviceId) {
         this.deviceId = deviceId;
+    }
+
+    @JsonProperty("from_date")
+    public String getFromDate() {
+        return fromDate;
+    }
+
+    public void setFromDate(String fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    @JsonProperty("to_date")
+    public String getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(String toDate) {
+        this.toDate = toDate;
     }
 
     // Set Password
