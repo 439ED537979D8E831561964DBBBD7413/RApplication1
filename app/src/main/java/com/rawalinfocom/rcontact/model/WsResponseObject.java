@@ -49,6 +49,7 @@ public class WsResponseObject {
     private String smsLogTimestamp;
     private String callLogRowId;
     private String responseKey;
+    private String spamCount;
 
     private OtpLog otpLog;
     private UserProfile userProfile;

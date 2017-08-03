@@ -174,4 +174,11 @@ public class TableSpamDetailMaster {
 
     }
 
+    public void deleteSpamRecords(){
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        db.delete(TABLE_SPAM_DETAIL_MASTER,null,null);
+        db.close();
+
+    }
+
 }
