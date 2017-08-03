@@ -2420,7 +2420,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
         }
 //        return getString(R.string.type_other);
-        return getString(R.string.call_log_missed);
+        return getString(R.string.type_other);
     }
 
     private String getRawContactIdFromNumber(String phoneNumber) {

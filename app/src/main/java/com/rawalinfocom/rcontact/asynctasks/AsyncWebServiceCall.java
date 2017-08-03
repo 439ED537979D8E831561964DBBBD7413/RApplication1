@@ -95,7 +95,7 @@ public class AsyncWebServiceCall extends AsyncTask<String, Void, Object> {
         this.context = context;
         this.requestObject = requestObject;
         if (requestObject != null && StringUtils.isEmpty(requestObject.getDeviceId())) {
-            this.requestObject.setDeviceId(Settings.Secure.getString(activity.getContentResolver(), Settings
+            this.requestObject.setDeviceId(Settings.Secure.getString(context.getContentResolver(), Settings
                     .Secure.ANDROID_ID));
         }
         this.serviceType = serviceType;
