@@ -574,8 +574,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                                 fetchCallLogs();
                             } else {
                                 if (callLogTypeArrayList.size() > 0) {
-//                                getLatestData();
-                                    makeSimpleData();
+                                    getLatestData();
+//                                    makeSimpleData();
                                 } else {
                                     fetchCallLogs();
                                 }
@@ -730,7 +730,14 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 cursor.close();
             }
 
-            rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    makeSimpleData();
+                    nameAndProfileImage = new GetRCPNameAndProfileImage();
+                    nameAndProfileImage.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                }
+            }, 150);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -797,6 +804,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 public void run() {
                     simpleCallLogListAdapter.notifyDataSetChanged();
                     rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
+                    //TO do save 0th record dateTime and rawId in preference;
                 }
             });
         }
