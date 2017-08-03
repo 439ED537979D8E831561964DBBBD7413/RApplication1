@@ -314,6 +314,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     boolean isContactEdited = false;
 
     public String callNumber = "";
+    String callLogRcpVerfiedId = "";
 
     //<editor-fold desc="Override Methods">
 
@@ -1290,6 +1291,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     private void getIntentDetails(Intent intent) {
         if (intent != null) {
 
+            if (intent.hasExtra(AppConstants.EXTRA_RCP_VERIFIED_ID)) {
+                callLogRcpVerfiedId = intent.getStringExtra(AppConstants.EXTRA_RCP_VERIFIED_ID);
+            }
+
             if (intent.hasExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER)) {
                 historyNumber = intent.getStringExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER);
             }
@@ -1747,6 +1752,26 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 // 11/07/2017 : toolBarTitle text is changed again for Call-logs as per Avijit
                 // Sir's suggestion
                 textToolbarTitle.setText(getString(R.string.call_history_toolbar_title));
+                if(StringUtils.equalsIgnoreCase(callLogRcpVerfiedId,"0")){
+                    textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.textColorBlue));
+                    if(!StringUtils.isEmpty(callLogCloudName)){
+                        textName.setTextColor(ContextCompat.getColor(this, R.color.textColorBlue));
+                        textName.setText(callLogCloudName);
+                    }
+                }else if(StringUtils.equalsIgnoreCase(callLogRcpVerfiedId,"1")){
+                    textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
+                    if(!StringUtils.isEmpty(callLogCloudName)){
+                        textName.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
+                        textName.setText(callLogCloudName);
+                    }
+                }else{
+                    textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
+                    textName.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
+                    if(!StringUtils.isEmpty(callLogCloudName)){
+                        textName.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
+//                        textName.setText(callLogCloudName);
+                    }
+                }
             }
 
         }
@@ -2968,6 +2993,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     logObject.setHistoryCallSimNumber(accountId);
                     logObject.setHistoryId(histroyId);
                     logObject.setHistoryNumberType(numberTypeLog);
+                    if(isCallLogRcpUser){
+                        logObject.setIsHistoryRcpVerifiedId("1");
+                    }else if(!StringUtils.isEmpty(callLogRcpVerfiedId)){
+                        logObject.setIsHistoryRcpVerifiedId(callLogRcpVerfiedId);
+                    }else{
+                        logObject.setIsHistoryRcpVerifiedId("");
+                    }
                     callDetails.add(logObject);
                 }
                 cursor.close();

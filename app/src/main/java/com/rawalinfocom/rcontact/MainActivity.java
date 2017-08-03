@@ -157,7 +157,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
     private ArrayList<ProfileData> arrayListReSyncUserContact;
     private ArrayList<CallLogType> callLogTypeArrayListMain;
-    private ArrayList<CallLogType> callLogTypeListForGlobalProfile;
+//    private ArrayList<CallLogType> callLogTypeListForGlobalProfile;
+    private ArrayList<String> callListForSpamCount;
     ArrayList<CallLogType> callLogsListbyChunck;
 
     private String[] requiredPermissions = {Manifest.permission.READ_CONTACTS, Manifest
@@ -179,7 +180,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         phoneBookContacts = new PhoneBookContacts(this);
         callLogTypeArrayListMain = new ArrayList<>();
 //        smsLogTypeArrayListMain = new ArrayList<>();
-        callLogTypeListForGlobalProfile = new ArrayList<>();
+        callListForSpamCount = new ArrayList<>();
 //        CallLogFragment.callLogTypeReceiver = new CallLogType();
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -457,9 +458,9 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                         try {
                             TableSpamDetailMaster tableSpamDetailMaster = new
                                     TableSpamDetailMaster(getDatabaseHandler());
+                            tableSpamDetailMaster.deleteSpamRecords();
                             tableSpamDetailMaster.insertSpamDetails(spamDataTypeList);
-
-                            callLogTypeListForGlobalProfile.clear();
+//                            callLogTypeListForGlobalProfile.clear();
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -538,20 +539,28 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
     private void callLogSynced() {
 
-        Utils.setIntegerPreference(this, AppConstants
-                        .PREF_CALL_LOG_SYNCED_COUNT,
-                Utils.getArrayListPreference(this, AppConstants
-                        .PREF_CALL_LOGS_ID_SET).size());
+
+        if(Utils.getArrayListPreference(this, AppConstants
+                .PREF_CALL_LOGS_ID_SET).size()>0){
+            Utils.setIntegerPreference(this, AppConstants
+                            .PREF_CALL_LOG_SYNCED_COUNT,
+                    Utils.getArrayListPreference(this, AppConstants
+                            .PREF_CALL_LOGS_ID_SET).size());
+
+        }
 
         Utils.setBooleanPreference(this, AppConstants
                 .PREF_CALL_LOG_SYNCED, true);
 
-        if (callLogTypeListForGlobalProfile.size() > 0) {
-            if (Utils.getBooleanPreference(this, AppConstants
-                    .PREF_GOT_ALL_PROFILE_DATA, false))
-                Utils.setBooleanPreference(this, AppConstants
-                        .PREF_GOT_ALL_PROFILE_DATA, false);
+        if(callListForSpamCount!=null){
+            if (callListForSpamCount.size() > 0) {
+                if (Utils.getBooleanPreference(this, AppConstants
+                        .PREF_GOT_ALL_PROFILE_DATA, false))
+                    Utils.setBooleanPreference(this, AppConstants
+                            .PREF_GOT_ALL_PROFILE_DATA, false);
+            }
         }
+
 
         Intent localBroadcastIntent = new Intent(AppConstants
                 .ACTION_LOCAL_BROADCAST_GET_GLOBAL_PROFILE_DATA);
@@ -1665,7 +1674,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                         log.setHistoryLogCount(logCount);
                         tempCallLogTypeArrayList.add(log);
                         callLogTypeArrayListMain.add(log);
-                        callLogTypeListForGlobalProfile.add(log);
+//                        callLogTypeListForGlobalProfile.add(log);
 //                            rContactApplication.setArrayListCallLogType(callLogTypeArrayListMain);
                         cursor.close();
                     }
@@ -1685,6 +1694,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     private void getLatestCallLogsByRawId() {
 
         ArrayList<CallLogType> tempCallLogTypeArrayList = new ArrayList<>();
+        Utils.setArrayListPreference(this, AppConstants.PREF_CALL_LOGS_ID_SET, new ArrayList());
 
         try {
             String order = CallLog.Calls.DATE + " ASC";
@@ -1810,7 +1820,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                         log.setHistoryLogCount(logCount);
                         tempCallLogTypeArrayList.add(log);
                         callLogTypeArrayListMain.add(log);
-                        callLogTypeListForGlobalProfile.add(log);
+//                        callLogTypeListForGlobalProfile.add(log);
                     }
                 }
                 cursor.close();
@@ -1821,6 +1831,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 syncRecentCallLogDataToServer(tempCallLogTypeArrayList);
             } else {
                 Utils.setBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, true);
+                getSpamAndRCPDetailAsyncTask = new GetSpamAndRCPDetailAsyncTask();
+                getSpamAndRCPDetailAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
 
         } catch (Exception e) {
@@ -2670,26 +2682,36 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
         @Override
         protected Void doInBackground(Void... params) {
+            getNumbersFromCallLog();
             makeListOfNumbersForSpamCount();
             return null;
         }
     }
 
     private void makeListOfNumbersForSpamCount() {
-        ArrayList<String> listOfNumbers = new ArrayList<>();
-        if (callLogTypeListForGlobalProfile != null && callLogTypeListForGlobalProfile.size() > 0) {
-            for (int i = 0; i < callLogTypeListForGlobalProfile.size(); i++) {
-                String number = callLogTypeListForGlobalProfile.get(i).getNumber();
-                if (!number.startsWith("+91"))
-                    number = "+91" + number;
-
-                listOfNumbers.add(number);
-            }
-            getProfileDataServiceCall(listOfNumbers);
-
+        if (callListForSpamCount != null && callListForSpamCount.size() > 0) {
+            getProfileDataServiceCall(callListForSpamCount);
         }
     }
 
+    private void getNumbersFromCallLog(){
+        try{
+            Uri uri = CallLog.Calls.CONTENT_URI;
+            String order = CallLog.Calls.DATE + " DESC";
+            Cursor cursor =  this.getContentResolver().query(uri, null, null, null, order);
+            if(cursor!=null && cursor.getCount()>0){
+                while(cursor.moveToNext()){
+                    String userNumber = cursor.getString(cursor.getColumnIndex(CallLog.Calls.NUMBER));
+                    callListForSpamCount.add(userNumber);
+                }
+                cursor.close();
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
     //</editor-fold>
 
     //<editor-fold desc="Web Service Call">

@@ -177,6 +177,10 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                     onIncomingCallEnded(context, savedNumber, callStartTime, new Date());
                 } else {
                     onOutgoingCallEnded(context, savedNumber, callStartTime, new Date());
+                    String nameOutgoing = getNameFromNumber(Utils.getFormattedNumber(context, savedNumber));
+                    if (StringUtils.isEmpty(nameOutgoing)) {
+                        callSpamServiceApi();
+                    }
                 }
 
                 isCallEnded = true;
@@ -189,11 +193,13 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                         callSpamServiceApi();
                     }
                 }
-
+                AppConstants.isFromReceiver = true;
+//                if(isEndDialogDismissed){
+//                    isEndDialogDismissed = false;
                 Intent localBroadcastIntent = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_RECEIVE_RECENT_CALLS);
                 LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance(context);
                 myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
-
+//                }
                 break;
         }
         lastState = state;
@@ -398,7 +404,7 @@ public class PhoneCallReceiver extends BroadcastReceiver {
 
                         if (isCallEnded) {
                             isCallEnded = false;
-                            initializeEndCallDialog();
+//                            initializeEndCallDialog();
                         } else {
                             initializeIncomingCallDialog();
                         }
@@ -428,10 +434,10 @@ public class PhoneCallReceiver extends BroadcastReceiver {
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             incomingDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_TOAST);
-        }else{
+        } else {
             incomingDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
         }
-        incomingDialog.setCancelable(false);
+        incomingDialog.setCancelable(true);
         incomingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         layoutParams.copyFrom(incomingDialog.getWindow().getAttributes());
 //        layoutParams.width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.90);
@@ -454,6 +460,17 @@ public class PhoneCallReceiver extends BroadcastReceiver {
             }
         });
 
+
+        llSpam.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                insertSpamServiceApi();
+                Toast.makeText(context, R.string.reported_spam, Toast.LENGTH_SHORT).show();
+                if (incomingDialog != null)
+                    incomingDialog.dismiss();
+            }
+        });
+
         textInternetStrenght.setVisibility(View.GONE);
 
         textViewLastCallTime.setVisibility(View.VISIBLE);
@@ -465,7 +482,7 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                     (new Date(System.currentTimeMillis()));
             String compareHistDate = callLastHistoryTime(savedNumber);
 
-            if(!StringUtils.isEmpty(compareHistDate)){
+            if (!StringUtils.isEmpty(compareHistDate)) {
 
                 Date currDate = simpleDateFormat.parse(currentDate);
                 Date compareDate = simpleDateFormat.parse(compareHistDate);
@@ -506,7 +523,7 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                     textViewLastCallTime.setVisibility(View.GONE);
                 }
 
-            }else{
+            } else {
                 textViewLastCallTime.setVisibility(View.GONE);
             }
         } catch (ParseException e) {
@@ -559,16 +576,6 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                 textNumber.setText(savedNumber);
             }
 
-            llSpam.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    insertSpamServiceApi();
-                    Toast.makeText(context, R.string.reported_spam, Toast.LENGTH_SHORT).show();
-                    if (incomingDialog != null)
-                        incomingDialog.dismiss();
-                }
-            });
-
             if (!StringUtils.isEmpty(spamDataType.getSpamCount())) {
                 llSpam.setVisibility(View.VISIBLE);
                 textSpamReport.setTypeface(Utils.typefaceBold(context));
@@ -582,6 +589,7 @@ public class PhoneCallReceiver extends BroadcastReceiver {
             } else {
                 llSpam.setVisibility(View.GONE);
             }
+
         } else if (StringUtils.equalsIgnoreCase(spamDataType.getRcpVerfiy(), "1")) {
 
             textNumber.setTypeface(Utils.typefaceBold(context));
@@ -652,10 +660,10 @@ public class PhoneCallReceiver extends BroadcastReceiver {
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             endCallDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_TOAST);
-        }else{
+        } else {
             endCallDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
         }
-        endCallDialog.setCancelable(false);
+        endCallDialog.setCancelable(true);
         endCallDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         layoutParams.copyFrom(endCallDialog.getWindow().getAttributes());
 //        layoutParams.width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.90);
@@ -676,7 +684,6 @@ public class PhoneCallReceiver extends BroadcastReceiver {
         LinearLayout llSave = (LinearLayout) endCallDialog.findViewById(R.id.ll_save);
         Button buttonViewProfile = (Button) endCallDialog.findViewById(R.id.button_view_profile);
         Button buttonViewCallHistory = (Button) endCallDialog.findViewById(R.id.button_view_call_history);
-
 
         final SpamDataType spamDataType = setRCPDetailsAndSpamCountforUnsavedNumbers(savedNumber);
 
@@ -915,17 +922,16 @@ public class PhoneCallReceiver extends BroadcastReceiver {
             buttonViewProfile.setVisibility(View.GONE);
             llSpam.setVisibility(View.VISIBLE);
             textSpamReport.setTypeface(Utils.typefaceBold(context));
-            if (!StringUtils.isEmpty(spamDataType.getSpamCount())){
+            if (!StringUtils.isEmpty(spamDataType.getSpamCount())) {
                 if (!StringUtils.equalsIgnoreCase(spamDataType.getSpamCount(), "0")) {
                     textSpamReport.setText(context.getString(R.string.report_spam) + " (" + spamDataType.getSpamCount() + ")");
                 } else {
                     textSpamReport.setText(context.getString(R.string.report_spam));
                 }
-            }else{
+            } else {
                 textSpamReport.setText(context.getString(R.string.report_spam));
             }
         }
-
         endCallDialog.show();
 
     }

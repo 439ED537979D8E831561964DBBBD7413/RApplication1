@@ -56,6 +56,7 @@ public class ProfileDataOperation implements Serializable {
 
     private String lookupKey;
     private long id;
+    private String callLogId;
 
     public ProfileDataOperation() {
     }
@@ -387,6 +388,15 @@ public class ProfileDataOperation implements Serializable {
 
     public void setPbProfilePhoto(String pbProfilePhoto) {
         this.pbProfilePhoto = pbProfilePhoto;
+    }
+
+    @JsonProperty("call_log_row_id")
+    public String getCallLogId() {
+        return callLogId;
+    }
+
+    public void setCallLogId(String callLogId) {
+        this.callLogId = callLogId;
     }
 
     @JsonIgnore

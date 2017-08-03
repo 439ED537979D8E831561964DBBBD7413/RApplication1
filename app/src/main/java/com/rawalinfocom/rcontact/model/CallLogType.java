@@ -90,6 +90,11 @@ public class CallLogType implements Serializable {
     private Date callReceiverDate;
     @JsonIgnore
     Integer blockedType = 0;
+    @JsonIgnore
+    private Boolean isHistoryRcpUser;
+    @JsonIgnore
+    private String isHistoryRcpVerifiedId;
+
 
     //    @JsonProperty("flag")
 //    @JsonIgnore
@@ -126,6 +131,13 @@ public class CallLogType implements Serializable {
         this.arrayListCallHistory = new ArrayList<>();
     }
 
+    public String getIsHistoryRcpVerifiedId() {
+        return isHistoryRcpVerifiedId;
+    }
+
+    public void setIsHistoryRcpVerifiedId(String isHistoryRcpVerifiedId) {
+        this.isHistoryRcpVerifiedId = isHistoryRcpVerifiedId;
+    }
 
     public String getDurationToPass() {
         return durationToPass;
