@@ -1,6 +1,7 @@
 package com.rawalinfocom.rcontact.adapters;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -16,6 +17,8 @@ import android.widget.TextView;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.model.CallLogType;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -37,6 +40,7 @@ public class DeleteCallLogListAdapter extends RecyclerView.Adapter<DeleteCallLog
     private ArrayList<CallLogType> arrayListCallType;
     private ArrayList<CallLogType> arrayListTempCallType;
     private ArrayList<CallLogType> arrayListToDelete;
+    private String rcpVerifiedId;
 
     public ArrayList<CallLogType> getArrayListToDelete() {
         return arrayListToDelete;
@@ -50,9 +54,10 @@ public class DeleteCallLogListAdapter extends RecyclerView.Adapter<DeleteCallLog
     private ArrayList<Integer> arrayListCheckedPositions;
 
     public DeleteCallLogListAdapter(Context context, ArrayList<CallLogType>
-            arrayList) {
+            arrayList, String rcpVerifiedId) {
         this.context = context;
         this.arrayListCallType = arrayList;
+        this.rcpVerifiedId =  rcpVerifiedId;
         this.arrayListTempCallType = new ArrayList<>();
         arrayListCheckedPositions = new ArrayList<>();
         arrayListTempCallType.addAll(arrayList);
@@ -73,6 +78,13 @@ public class DeleteCallLogListAdapter extends RecyclerView.Adapter<DeleteCallLog
         final CallLogType callLogType = arrayListCallType.get(position);
         String number = callLogType.getHistoryNumber();
         if (!TextUtils.isEmpty(number)) {
+            if(StringUtils.equalsIgnoreCase(rcpVerifiedId,"0")){
+                holder.textHistroyNumber.setTextColor(ContextCompat.getColor(context,R.color.textColorBlue));
+            }else if(StringUtils.equalsIgnoreCase(rcpVerifiedId,"1")){
+                holder.textHistroyNumber.setTextColor(ContextCompat.getColor(context,R.color.colorAccent));
+            }else{
+                holder.textHistroyNumber.setTextColor(ContextCompat.getColor(context,R.color.darkGray));
+            }
             holder.textHistroyNumber.setText(number);
         }
 

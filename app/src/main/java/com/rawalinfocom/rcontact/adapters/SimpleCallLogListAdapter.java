@@ -135,17 +135,17 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
             holder.textContactName.setTypeface(Utils.typefaceBold(mActivity));
             holder.textContactName.setTextColor(ContextCompat.getColor(mActivity, R.color
                     .colorBlack));
-            if(!StringUtils.isEmpty(callLogType.getSpamCount())){
-                holder.imageViewSpam.setVisibility(View.VISIBLE);
-                holder.textSpamCount.setVisibility(View.VISIBLE);
-                if(!StringUtils.equalsIgnoreCase(callLogType.getSpamCount(),"0"))
+            if (!StringUtils.isEmpty(callLogType.getSpamCount())) {
+                holder.imageViewSpam.setVisibility(View.GONE);
+                holder.textSpamCount.setVisibility(View.GONE);
+                if (!StringUtils.equalsIgnoreCase(callLogType.getSpamCount(), "0"))
                     holder.textSpamCount.setText(callLogType.getSpamCount());
-                else{
+                else {
                     holder.imageViewSpam.setVisibility(View.GONE);
                     holder.textSpamCount.setVisibility(View.GONE);
                 }
 
-            }else{
+            } else {
                 holder.imageViewSpam.setVisibility(View.GONE);
                 holder.textSpamCount.setVisibility(View.GONE);
             }
@@ -196,56 +196,56 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
             holder.textCloudContactName.setVisibility(View.GONE);
             if (!TextUtils.isEmpty(number)) {
                 if (!MoreObjects.firstNonNull(callLogType.isRcpUser(), false)) {
-                    if (StringUtils.equalsIgnoreCase(callLogType.getIsRcpVerfied(),"0")) {
+                    if (StringUtils.equalsIgnoreCase(callLogType.getIsRcpVerfied(), "0")) {
                         holder.textContactName.setTypeface(Utils.typefaceBold(mActivity));
                         holder.textContactName.setTextColor(ContextCompat.getColor(mActivity, R.color
                                 .textColorBlue));
                         holder.textContactName.setText(formattedNumber);
                         holder.textContactNumber.setText(mActivity.getString(R.string.str_unsaved));
                         String contactNameToDisplay = "";
-                        String prefix =  callLogType.getPrefix();
-                        String suffix =  callLogType.getSuffix();
-                        String firstName =  callLogType.getRcpFirstName();
-                        String middleName =  callLogType.getMiddleName();
-                        String lastName =  callLogType.getRcpLastName();
+                        String prefix = callLogType.getPrefix();
+                        String suffix = callLogType.getSuffix();
+                        String firstName = callLogType.getRcpFirstName();
+                        String middleName = callLogType.getMiddleName();
+                        String lastName = callLogType.getRcpLastName();
 
-                        if(StringUtils.length(prefix) > 0)
-                            contactNameToDisplay =  contactNameToDisplay + prefix + " ";
-                        if(StringUtils.length(suffix) > 0)
-                            contactNameToDisplay =  contactNameToDisplay + suffix + " ";
-                        if(StringUtils.length(firstName) > 0)
-                            contactNameToDisplay =  contactNameToDisplay +  firstName + " ";
-                        if(StringUtils.length(middleName) > 0)
-                            contactNameToDisplay =  contactNameToDisplay + middleName + " ";
-                        if(StringUtils.length(lastName) > 0)
-                            contactNameToDisplay = contactNameToDisplay +  lastName + "";
+                        if (StringUtils.length(prefix) > 0)
+                            contactNameToDisplay = contactNameToDisplay + prefix + " ";
+                        if (StringUtils.length(suffix) > 0)
+                            contactNameToDisplay = contactNameToDisplay + suffix + " ";
+                        if (StringUtils.length(firstName) > 0)
+                            contactNameToDisplay = contactNameToDisplay + firstName + " ";
+                        if (StringUtils.length(middleName) > 0)
+                            contactNameToDisplay = contactNameToDisplay + middleName + " ";
+                        if (StringUtils.length(lastName) > 0)
+                            contactNameToDisplay = contactNameToDisplay + lastName + "";
 
-                        if(!StringUtils.isEmpty(contactNameToDisplay)){
+                        if (!StringUtils.isEmpty(contactNameToDisplay)) {
                             holder.textCloudContactName.setVisibility(View.VISIBLE);
                             holder.textCloudContactName.setTextColor(ContextCompat.getColor(mActivity, R.color
                                     .textColorBlue));
                             holder.textCloudContactName.setText(" (" + contactNameToDisplay + ")");
-                        }else{
+                        } else {
                             holder.textCloudContactName.setVisibility(View.GONE);
                         }
 
 
-                        if(!StringUtils.isEmpty(callLogType.getSpamCount())){
+                        if (!StringUtils.isEmpty(callLogType.getSpamCount())) {
                             holder.imageViewSpam.setVisibility(View.VISIBLE);
                             holder.textSpamCount.setVisibility(View.VISIBLE);
-                            if(!StringUtils.equalsIgnoreCase(callLogType.getSpamCount(),"0")){
+                            if (!StringUtils.equalsIgnoreCase(callLogType.getSpamCount(), "0")) {
                                 holder.textSpamCount.setText(callLogType.getSpamCount());
-                            }else{
+                            } else {
                                 holder.imageViewSpam.setVisibility(View.GONE);
                                 holder.textSpamCount.setVisibility(View.GONE);
                             }
 
-                        }else{
+                        } else {
                             holder.imageViewSpam.setVisibility(View.GONE);
                             holder.textSpamCount.setVisibility(View.GONE);
                         }
 
-                    } else if (StringUtils.equalsIgnoreCase(callLogType.getIsRcpVerfied(),"1")) {
+                    } else if (StringUtils.equalsIgnoreCase(callLogType.getIsRcpVerfied(), "1")) {
                         holder.textContactName.setTypeface(Utils.typefaceBold(mActivity));
                         holder.textContactName.setTextColor(ContextCompat.getColor(mActivity, R.color
                                 .colorAccent));
@@ -253,41 +253,42 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
                         holder.textContactNumber.setText(mActivity.getString(R.string.str_unsaved));
 
                         String contactNameToDisplay = "";
-                        String prefix =  callLogType.getPrefix();
-                        String suffix =  callLogType.getSuffix();
-                        String firstName =  callLogType.getRcpFirstName();
-                        String middleName =  callLogType.getMiddleName();
-                        String lastName =  callLogType.getRcpLastName();
+                        String prefix = callLogType.getPrefix();
+                        String suffix = callLogType.getSuffix();
+                        String firstName = callLogType.getRcpFirstName();
+                        String middleName = callLogType.getMiddleName();
+                        String lastName = callLogType.getRcpLastName();
 
-                        if(StringUtils.length(prefix) > 0)
-                            contactNameToDisplay =  contactNameToDisplay + prefix + " ";
-                        if(StringUtils.length(suffix) > 0)
-                            contactNameToDisplay =  contactNameToDisplay + suffix + " ";
-                        if(StringUtils.length(firstName) > 0)
-                            contactNameToDisplay =  contactNameToDisplay +  firstName + " ";
-                        if(StringUtils.length(middleName) > 0)
-                            contactNameToDisplay =  contactNameToDisplay + middleName + " ";
-                        if(StringUtils.length(lastName) > 0)
-                            contactNameToDisplay = contactNameToDisplay +  lastName + "";
+                        if (StringUtils.length(prefix) > 0)
+                            contactNameToDisplay = contactNameToDisplay + prefix + " ";
+                        if (StringUtils.length(suffix) > 0)
+                            contactNameToDisplay = contactNameToDisplay + suffix + " ";
+                        if (StringUtils.length(firstName) > 0)
+                            contactNameToDisplay = contactNameToDisplay + firstName + " ";
+                        if (StringUtils.length(middleName) > 0)
+                            contactNameToDisplay = contactNameToDisplay + middleName + " ";
+                        if (StringUtils.length(lastName) > 0)
+                            contactNameToDisplay = contactNameToDisplay + lastName + "";
 
-                        if(!StringUtils.isEmpty(contactNameToDisplay)){
+                        if (!StringUtils.isEmpty(contactNameToDisplay)) {
                             holder.textCloudContactName.setVisibility(View.VISIBLE);
                             holder.textCloudContactName.setTextColor(ContextCompat.getColor(mActivity, R.color
                                     .colorAccent));
                             holder.textCloudContactName.setText(" (" + contactNameToDisplay + ")");
-                        }else{
+                        } else {
                             holder.textCloudContactName.setVisibility(View.GONE);
                         }
 
-                        if(!StringUtils.isEmpty(callLogType.getSpamCount())){
+                        if (!StringUtils.isEmpty(callLogType.getSpamCount())) {
                             holder.imageViewSpam.setVisibility(View.VISIBLE);
                             holder.textSpamCount.setVisibility(View.VISIBLE);
-                            if(!StringUtils.equalsIgnoreCase(callLogType.getSpamCount(),"0")){
+                            if (!StringUtils.equalsIgnoreCase(callLogType.getSpamCount(), "0")) {
                                 holder.textSpamCount.setText(callLogType.getSpamCount());
-                            }else{
+                            } else {
                                 holder.imageViewSpam.setVisibility(View.GONE);
-                                holder.textSpamCount.setVisibility(View.GONE);                            }
-                        }else {
+                                holder.textSpamCount.setVisibility(View.GONE);
+                            }
+                        } else {
                             holder.imageViewSpam.setVisibility(View.GONE);
                             holder.textSpamCount.setVisibility(View.GONE);
                         }
@@ -297,11 +298,11 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
                                 .colorBlack));
                         holder.textContactName.setText(formattedNumber);
                         holder.textContactNumber.setText(mActivity.getString(R.string.str_unsaved));
-                        if(!StringUtils.isEmpty(callLogType.getSpamCount())){
+                        if (!StringUtils.isEmpty(callLogType.getSpamCount())) {
                             holder.imageViewSpam.setVisibility(View.VISIBLE);
                             holder.textSpamCount.setVisibility(View.VISIBLE);
                             holder.textSpamCount.setText(callLogType.getSpamCount());
-                        }else{
+                        } else {
                             holder.imageViewSpam.setVisibility(View.GONE);
                             holder.textSpamCount.setVisibility(View.GONE);
                         }
@@ -609,6 +610,22 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
                 String name = selectedCallLogData.getName();
                 String cloudName = "";
                 String contactDisplayName = "";
+                String contactNameToDisplay = "";
+                String prefix = selectedCallLogData.getPrefix();
+                String suffix = selectedCallLogData.getSuffix();
+                String middleName = selectedCallLogData.getMiddleName();
+
+                if (StringUtils.length(prefix) > 0)
+                    contactNameToDisplay = contactNameToDisplay + prefix + " ";
+                if (StringUtils.length(suffix) > 0)
+                    contactNameToDisplay = contactNameToDisplay + suffix + " ";
+                if (StringUtils.length(firstName) > 0)
+                    contactNameToDisplay = contactNameToDisplay + firstName + " ";
+                if (StringUtils.length(middleName) > 0)
+                    contactNameToDisplay = contactNameToDisplay + middleName + " ";
+                if (StringUtils.length(lastName) > 0)
+                    contactNameToDisplay = contactNameToDisplay + lastName + "";
+
 
                 if (MoreObjects.firstNonNull(isRcpUser, false)) {
                     if (StringUtils.length(firstName) > 0) {
@@ -644,11 +661,15 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
                 } else {
                     intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_DATE, date);
                 }
+                intent.putExtra(AppConstants.EXTRA_RCP_VERIFIED_ID, selectedCallLogData.getIsRcpVerfied());
                 intent.putExtra(AppConstants.EXTRA_CALL_UNIQUE_ID, key);
                 intent.putExtra(AppConstants.EXTRA_UNIQUE_CONTACT_ID, uniqueRowID);
                 intent.putExtra(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE, thumbnailUrl);
                 intent.putExtra(AppConstants.EXTRA_IS_RCP_USER, isRcpUser);
-                intent.putExtra(AppConstants.EXTRA_CALL_LOG_CLOUD_NAME, cloudName);
+                if (!StringUtils.isEmpty(cloudName))
+                    intent.putExtra(AppConstants.EXTRA_CALL_LOG_CLOUD_NAME, cloudName);
+                else
+                    intent.putExtra(AppConstants.EXTRA_CALL_LOG_CLOUD_NAME, contactNameToDisplay);
                 mActivity.startActivity(intent);
                 ((Activity) mActivity).overridePendingTransition(R.anim.enter, R.anim.exit);
             }

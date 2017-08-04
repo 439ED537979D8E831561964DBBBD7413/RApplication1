@@ -2,6 +2,7 @@ package com.rawalinfocom.rcontact.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -14,6 +15,8 @@ import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.CallLogType;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -53,6 +56,16 @@ public class CallHistoryListAdapter extends RecyclerView.Adapter<CallHistoryList
         CallLogType callLogType = listCallHistory.get(position);
         String number = callLogType.getHistoryNumber();
         if (!TextUtils.isEmpty(number)) {
+            if(StringUtils.equalsIgnoreCase(callLogType.getIsHistoryRcpVerifiedId(),"0")){
+                holder.textHistoryNumber.setTextColor(ContextCompat.getColor(context, R.color
+                        .textColorBlue));
+            }else if(StringUtils.equalsIgnoreCase(callLogType.getIsHistoryRcpVerifiedId(),"1")){
+                holder.textHistoryNumber.setTextColor(ContextCompat.getColor(context, R.color
+                        .colorAccent));
+            }else{
+                holder.textHistoryNumber.setTextColor(ContextCompat.getColor(context, R.color
+                        .darkGray));
+            }
             holder.textHistoryNumber.setText(Utils.getFormattedNumber(context,number));
         }
 

@@ -219,9 +219,9 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if (requestCode == AppConstants.READ_LOGS && permissions[0].equals(Manifest.permission
-                .READ_CALL_LOG) && permissions[1].equals(Manifest.permission.READ_SMS)) {
-            if (grantResults[0] == PermissionChecker.PERMISSION_GRANTED && grantResults[1] ==
-                    PermissionChecker.PERMISSION_GRANTED) {
+                .READ_CALL_LOG) /*&& permissions[1].equals(Manifest.permission.READ_SMS)*/) {
+            if (grantResults[0] == PermissionChecker.PERMISSION_GRANTED /*&& grantResults[1] ==
+                    PermissionChecker.PERMISSION_GRANTED*/) {
                 getCallLogData();
 //                getSMSData();
             } else {
@@ -236,9 +236,9 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
 
         boolean logs = ContextCompat.checkSelfPermission(SearchActivity.this, permissions[0]) !=
                 PackageManager.PERMISSION_GRANTED;
-//        boolean sms = ContextCompat.checkSelfPermission(SearchActivity.this, permissions[1]) !=
-//                PackageManager.PERMISSION_GRANTED;
-        if (logs) {
+        /*boolean sms = ContextCompat.checkSelfPermission(SearchActivity.this, permissions[1]) !=
+                PackageManager.PERMISSION_GRANTED;*/
+        if (logs /*|| sms*/) {
             requestPermissions(permissions, requestCode);
         } else {
             syncCallLogAsyncTask = new SyncCallLogAsyncTask();

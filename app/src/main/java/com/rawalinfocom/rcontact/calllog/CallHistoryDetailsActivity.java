@@ -828,7 +828,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                         profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                 arrayListName, contactName, 0, isFromCallLogTab,
                                 arrayListHistory, contactName, "", hashMapKey, profileThumbnail,
-                                pmId, isCallLogRcpUser);
+                                pmId, isCallLogRcpUser,"");
                         profileMenuOptionDialog.showDialog();
 
                     } else {
@@ -845,7 +845,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                     arrayListNumber, profileContactNumber, 0, isFromCallLogTab,
                                     arrayListHistory, "", uniqueContactId, hashMapKey,
-                                    profileThumbnail, pmId, isCallLogRcpUser);
+                                    profileThumbnail, pmId, isCallLogRcpUser,"");
                             profileMenuOptionDialog.showDialog();
                         }
                     }
@@ -869,7 +869,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                         profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                 arrayListName, number, 0, isFromCallLogTab,
                                 arrayListHistory, contactName, "", phoneBookId, profileThumbnail,
-                                pmId, isCallLogRcpUser);
+                                pmId, isCallLogRcpUser,"");
                         profileMenuOptionDialog.showDialog();
 
                     } else {
@@ -886,7 +886,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                     arrayListNumber, profileContactNumber, 0, isFromCallLogTab,
                                     arrayListHistory, "", uniqueContactId, "", profileThumbnail,
-                                    pmId, isCallLogRcpUser);
+                                    pmId, isCallLogRcpUser,"");
                             profileMenuOptionDialog.showDialog();
                         }
                     }
@@ -2117,6 +2117,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 int duration = cursor.getColumnIndex(CallLog.Calls.DURATION);
                 int callLogId = cursor.getColumnIndex(CallLog.Calls._ID);
                 int numberType = cursor.getColumnIndex(CallLog.Calls.CACHED_NUMBER_TYPE);
+                int name =  cursor.getColumnIndex(CallLog.Calls.CACHED_NAME);
+
                 int account = -1;
                 int account_id = -1;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -2150,6 +2152,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                         uniqueContactId = cursor.getString(callLogId);
                     }
 
+                    String userName =  cursor.getString(name);
                     CallLogType logObject = new CallLogType();
                     logObject.setHistoryNumber(phNum);
                     logObject.setHistoryType(callType);
@@ -2158,6 +2161,16 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                     logObject.setHistoryCallSimNumber(accountId);
                     logObject.setHistoryId(histroyId);
                     logObject.setHistoryNumberType(numberTypeLog);
+                    if(isCallLogRcpUser)
+                        logObject.setIsHistoryRcpVerifiedId("1");
+                    else if(!StringUtils.isEmpty(isRcpVerifiedUser)){
+                        if((StringUtils.isEmpty(userName)))
+                            logObject.setIsHistoryRcpVerifiedId(isRcpVerifiedUser);
+                    }else{
+                        logObject.setIsHistoryRcpVerifiedId("");
+
+                    }
+
                     callDetails.add(logObject);
 
 

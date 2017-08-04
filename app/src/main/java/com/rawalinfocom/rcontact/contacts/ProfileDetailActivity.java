@@ -315,6 +315,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     boolean isContactEdited = false;
 
     public String callNumber = "";
+    String callLogRcpVerfiedId = "";
 
     //<editor-fold desc="Override Methods">
 
@@ -776,7 +777,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                     arrayListName, historyNumber, historyDate, true,
                                     arrayListHistory, historyName, "", hashMapKey,
-                                    profileThumbnail, pmId, isCallLogRcpUser);
+                                    profileThumbnail, pmId, isCallLogRcpUser,"");
                             profileMenuOptionDialog.showDialog();
 
                         } else {
@@ -795,7 +796,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                         arrayListNumber, historyNumber, historyDate,
                                         true, arrayListHistory, "", uniqueContactId,
-                                        hashMapKey, profileThumbnail, pmId, isCallLogRcpUser);
+                                        hashMapKey, profileThumbnail, pmId, isCallLogRcpUser,callLogRcpVerfiedId);
                                 profileMenuOptionDialog.showDialog();
                             }
                         }
@@ -813,7 +814,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                     arrayListName, historyNumber, historyDate, true,
                                     arrayListHistory, historyName, "", phoneBookId,
-                                    profileThumbnail, pmId, isCallLogRcpUser);
+                                    profileThumbnail, pmId, isCallLogRcpUser,"");
                             //11/07/2017 : hashMapKey replaced with phoneBookId to solve edit
                             // option problem
                             profileMenuOptionDialog.showDialog();
@@ -833,7 +834,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                         arrayListNumber, historyNumber, historyDate,
                                         true, arrayListHistory, "", uniqueContactId,
-                                        "", profileThumbnail, pmId, isCallLogRcpUser);
+                                        "", profileThumbnail, pmId, isCallLogRcpUser,callLogRcpVerfiedId);
                                 profileMenuOptionDialog.showDialog();
                             }
                         }
@@ -1299,6 +1300,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     private void getIntentDetails(Intent intent) {
         if (intent != null) {
 
+            if (intent.hasExtra(AppConstants.EXTRA_RCP_VERIFIED_ID)) {
+                callLogRcpVerfiedId = intent.getStringExtra(AppConstants.EXTRA_RCP_VERIFIED_ID);
+            }
+
             if (intent.hasExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER)) {
                 historyNumber = intent.getStringExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER);
             }
@@ -1756,6 +1761,25 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 // 11/07/2017 : toolBarTitle text is changed again for Call-logs as per Avijit
                 // Sir's suggestion
                 textToolbarTitle.setText(getString(R.string.call_history_toolbar_title));
+                if(StringUtils.equalsIgnoreCase(callLogRcpVerfiedId,"0")){
+                    textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.textColorBlue));
+                    if(!StringUtils.isEmpty(callLogCloudName)){
+                        textName.setTextColor(ContextCompat.getColor(this, R.color.textColorBlue));
+                        textName.setText(callLogCloudName);
+                    }
+                }else if(StringUtils.equalsIgnoreCase(callLogRcpVerfiedId,"1")){
+                    textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
+                    if(!StringUtils.isEmpty(callLogCloudName)){
+                        textName.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
+                        textName.setText(callLogCloudName);
+                    }
+                }else{
+                    textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
+                    textName.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
+                    if(!StringUtils.isEmpty(callLogCloudName)){
+                        textName.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
+                    }
+                }
             }
 
         }
@@ -2926,7 +2950,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             cursor = getCallHistoryDataByNumber(number);
         } else {
             cursor = getCallHistoryDataByName(number);
-//            cursor = getCallHistoryDataByNumber(number);
+            if(cursor.getCount() == 0){
+                cursor = getCallHistoryDataByNumber(number);
+            }
         }
         try {
 
@@ -2937,6 +2963,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 int duration = cursor.getColumnIndex(CallLog.Calls.DURATION);
                 int callLogId = cursor.getColumnIndex(CallLog.Calls._ID);
                 int numberType = cursor.getColumnIndex(CallLog.Calls.CACHED_NUMBER_TYPE);
+                int name =  cursor.getColumnIndex(CallLog.Calls.CACHED_NAME);
                 int account = -1;
                 int account_id = -1;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -2967,6 +2994,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 //                        if (userImage != null)
 //                            Log.e("User Image", userImage);
                     }
+                    String userName =  cursor.getString(name);
                     int histroyId = Integer.parseInt(cursor.getString(callLogId));
                     CallLogType logObject = new CallLogType();
                     logObject.setHistoryNumber(phNum);
@@ -2976,6 +3004,14 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     logObject.setHistoryCallSimNumber(accountId);
                     logObject.setHistoryId(histroyId);
                     logObject.setHistoryNumberType(numberTypeLog);
+                    if(isCallLogRcpUser){
+                        logObject.setIsHistoryRcpVerifiedId("1");
+                    }else if(!StringUtils.isEmpty(callLogRcpVerfiedId)){
+                        if((StringUtils.isEmpty(userName)))
+                            logObject.setIsHistoryRcpVerifiedId(callLogRcpVerfiedId);
+                    }else{
+                        logObject.setIsHistoryRcpVerifiedId("");
+                    }
                     callDetails.add(logObject);
                 }
                 cursor.close();

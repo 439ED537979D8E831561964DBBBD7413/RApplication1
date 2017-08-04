@@ -51,6 +51,7 @@ public class WsResponseObject {
     private String timestamp;
     private String callLogRowId;
     private String responseKey;
+    private String spamCount;
 
     private OtpLog otpLog;
     private UserProfile userProfile;
