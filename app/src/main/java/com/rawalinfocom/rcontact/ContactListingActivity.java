@@ -155,13 +155,8 @@ public class ContactListingActivity extends BaseActivity implements RippleView
 
                     if (inputSearch.getText().toString().length() > 0) {
                         phoneBookContactListAdapter.filter("");
-
-//                        if (filterType.equals("all")) {
                         recyclerViewContacts.setAdapter(phoneBookContactListAdapter);
                         phoneBookContactListAdapter.notifyDataSetChanged();
-//                        } else {
-//                            setFilterList();
-//                        }
                     }
 
                 } else {
@@ -361,11 +356,13 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                         new GetContactData().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     }
                 } else if (position == 1) {
-                    filterType = "sms";
-                    setFilterList();
+                    setFilterList("sms");
+                    arrayListFilteredUserProfile.addAll(arrayListNumberUserProfile);
+                    phoneBookContactListAdapter.notifyDataSetChanged();
                 } else if (position == 2) {
-                    filterType = "email";
-                    setFilterList();
+                    setFilterList("email");
+                    arrayListFilteredUserProfile.addAll(arrayListEmailUserProfile);
+                    phoneBookContactListAdapter.notifyDataSetChanged();
                 }
             }
 
@@ -404,7 +401,8 @@ public class ContactListingActivity extends BaseActivity implements RippleView
         });
     }
 
-    private void setFilterList() {
+
+    private void setFilterList(String type) {
 
         arrayListNumberUserProfile.clear();
         arrayListEmailUserProfile.clear();
@@ -413,7 +411,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
 
             UserProfile userProfile = new UserProfile();
 
-            if (filterType.equals("sms")) {
+            if (type.equals("sms")) {
                 if (!arrayListUserProfile.get(i).getMobileNumber().equals("")) {
                     userProfile.setMobileNumber(arrayListUserProfile.get(i).getMobileNumber());
                     userProfile.setPmFirstName(arrayListUserProfile.get(i).getPmFirstName());
@@ -426,14 +424,6 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                     arrayListEmailUserProfile.add(userProfile);
                 }
             }
-        }
-
-        if (filterType.equals("sms")) {
-            arrayListFilteredUserProfile.addAll(arrayListNumberUserProfile);
-            phoneBookContactListAdapter.notifyDataSetChanged();
-        } else {
-            arrayListFilteredUserProfile.addAll(arrayListEmailUserProfile);
-            phoneBookContactListAdapter.notifyDataSetChanged();
         }
     }
 
