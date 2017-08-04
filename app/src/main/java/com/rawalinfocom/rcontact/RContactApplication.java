@@ -72,37 +72,6 @@ public class RContactApplication extends Application {
         arrayListSpamDataType = new ArrayList<>();
 //        arrayListSmsLogsHeaders = new ArrayList<>();
 
-        setLanguage();
-
-    }
-
-    public void setLanguage() {
-
-        String languageToLoad = "en"; // your language
-
-        switch (Utils.getStringPreference(mInstance, AppConstants.PREF_APP_LANGUAGE, "0")) {
-
-            case "0":
-                languageToLoad = "en";
-                break;
-
-            case "1":
-                languageToLoad = "hi";
-                break;
-
-            case "2":
-                languageToLoad = "gu";
-                break;
-
-
-        }
-
-        Locale locale = new Locale(languageToLoad);
-        Locale.setDefault(locale);
-        Configuration config = new Configuration();
-        config.locale = locale;
-        getBaseContext().getResources().updateConfiguration(config,
-                getBaseContext().getResources().getDisplayMetrics());
     }
 
     public static synchronized RContactApplication getInstance() {

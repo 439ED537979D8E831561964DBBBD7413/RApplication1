@@ -204,6 +204,8 @@ public class AppConstants {
     public static String PREF_EXPORT_CONTACT = "pref_export_contact";
 
     public static String KEY_API_CALL_TIME = "key_api_call_time";
+    public static String KEY_API_CALL_TIME_STAMP = "key_api_call_time_stamp";
+    public static String KEY_IS_FIRST_TIME = "key_is_first_time";
 
     public static String PREF_DISABLE_PUSH = "pref_disable_push";
     public static String PREF_DISABLE_POPUP = "pref_disable_popup";

@@ -121,5 +121,9 @@ public class WsConstants {
     public static final String REQ_GET_PROFILE_DATA = "get-global-profile";
     public static final String REQ_CONTACT_US = "contact-us";
     public static final String REQ_MAKE_SPAM = "make-spam";
+    public static final String REQ_GET_CONTACT_REQUEST = "get-contact-request";
+    public static final String REQ_GET_RATING_DETAILS = "get-rating-details";
+    public static final String REQ_GET_COMMENT_DETAILS = "get-comment-details";
+    public static final String REQ_GET_RCP_CONTACT = "get-rcp-contact";
 
 }

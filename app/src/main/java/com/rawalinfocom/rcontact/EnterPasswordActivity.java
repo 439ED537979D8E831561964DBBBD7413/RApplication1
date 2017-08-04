@@ -240,6 +240,7 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
                                 .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
                     Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME, String.valueOf(System.currentTimeMillis()));
+                    Utils.setBooleanPreference(this, AppConstants.KEY_IS_FIRST_TIME, true);
 
                     // Redirect to MainActivity
                     Intent intent = new Intent(this, MainActivity.class);

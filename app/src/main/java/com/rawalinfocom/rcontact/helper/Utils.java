@@ -234,7 +234,7 @@ public class Utils {
                 .KEY_PREFERENCES, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedpreferences.edit();
         editor.putString(key, value);
-        editor.apply();
+        editor.commit();
     }
 
     public static String getStringPreference(Context context, String key, String defaultValue) {

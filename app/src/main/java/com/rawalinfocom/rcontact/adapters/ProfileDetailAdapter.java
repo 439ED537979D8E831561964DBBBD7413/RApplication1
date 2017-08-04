@@ -53,6 +53,11 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         .ProfileDetailViewHolder> implements PrivacySettingPopupDialog.DialogCallback {
 
 
+    private final String EVENT_GENERAL_DATE_FORMAT = "dd'th' MMMM, yyyy";
+    private final String EVENT_ST_DATE_FORMAT = "dd'st' MMMM, yyyy";
+    private final String EVENT_ND_DATE_FORMAT = "dd'nd' MMMM, yyyy";
+    private final String EVENT_RD_DATE_FORMAT = "dd'rd' MMMM, yyyy";
+
     private Activity activity;
     private ArrayList<Object> arrayList;
     private int profileDetailType;
@@ -635,23 +640,29 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                     "MMM");
         } */
         else {
+
             if (MoreObjects.firstNonNull(event.getIsYearHidden(), 0) == IntegerConstants
                     .IS_YEAR_HIDDEN) {
-                convertedDate = Utils.convertDateFormat(event.getEventDateTime(), "dd-MM",
-                        "dd'th' " +
-                                "MMM");
+
+//                convertedDate = Utils.convertDateFormat(event.getEventDateTime(), "dd-MM",
+//                        "dd'th' " +
+//                                "MMM");
+                convertedDate = Utils.convertDateFormat(event.getEventDateTime(), "dd-MM", getEventDateFormat(event.getEventDateTime()));
+
             } else {
-                convertedDate = Utils.convertDateFormat(event.getEventDateTime(), "yyyy-MM-dd",
-                        "d'th' " +
-                                "MMM, yyyy");
+                convertedDate = Utils.convertDateFormat(event.getEventDateTime(), "yyyy-MM-dd", getEventDateFormat(event.getEventDateTime()));
+//                convertedDate = Utils.convertDateFormat(event.getEventDateTime(), "yyyy-MM-dd",
+//                        "d'th' " +
+//                                "MMM, yyyy");
             }
         }
         if (!isOwnProfile) {
             if (MoreObjects.firstNonNull(event.getIsYearHidden(), 0) == IntegerConstants
                     .IS_YEAR_HIDDEN) {
-                convertedDate = Utils.convertDateFormat(event.getEventDateTime(), "dd-MM",
-                        "dd'th' " +
-                                "MMM");
+                convertedDate = Utils.convertDateFormat(event.getEventDateTime(), "dd-MM", getEventDateFormat(event.getEventDateTime()));
+//                convertedDate = Utils.convertDateFormat(event.getEventDateTime(), "dd-MM",
+//                        "dd'th' " +
+//                                "MMM");
             }
         }
 
@@ -739,6 +750,26 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             holder.imgActionType.setImageResource(R.drawable.ico_male_svg);
         else
             holder.imgActionType.setImageResource(R.drawable.ico_female_svg);
+    }
+
+    private String getEventDateFormat(String date) {
+
+        date = StringUtils.substring(date, 8, 10);
+        if (!StringUtils.isNumeric(date)) {
+            date = StringUtils.substring(date, 0, 1);
+        }
+
+        String format;
+        if (date.endsWith("1") && !date.endsWith("11"))
+//            format = "d'st' MMMM, yyyy";
+            format = EVENT_ST_DATE_FORMAT;
+        else if (date.endsWith("2") && !date.endsWith("12"))
+            format = EVENT_ND_DATE_FORMAT;
+        else if (date.endsWith("3") && !date.endsWith("13"))
+            format = EVENT_RD_DATE_FORMAT;
+        else
+            format = EVENT_GENERAL_DATE_FORMAT;
+        return format;
     }
 
     public ArrayList<Object> getDetailList() {

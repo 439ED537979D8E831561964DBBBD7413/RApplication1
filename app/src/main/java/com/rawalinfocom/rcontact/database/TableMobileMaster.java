@@ -171,7 +171,7 @@ public class TableMobileMaster {
                     " where " + COLUMN_RC_PROFILE_MASTER_PM_ID + " = \"" + pm_id + "\" and " + COLUMN_MNM_IS_PRIMARY
                     + " = 1 ";
 
-            System.out.println("RContact query --> " + query);
+            // System.out.println("RContact query --> " + query);
 
             Cursor cursor = db.rawQuery(query, null);
 
