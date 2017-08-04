@@ -81,9 +81,11 @@
                     android:id="@+id/text_number"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:ellipsize="end"
+                    android:ellipsize="marquee"
                     android:singleLine="true"
                     android:textSize="@dimen/text_size_18sp"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:scrollHorizontally="true"
                     tools:text="+91 9977542310 (Max)" />
 
                 <TextView
