@@ -2945,7 +2945,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             if(cursor.getCount() == 0){
                 cursor = getCallHistoryDataByNumber(number);
             }
-//            cursor = getCallHistoryDataByNumber(number);
         }
         try {
 
