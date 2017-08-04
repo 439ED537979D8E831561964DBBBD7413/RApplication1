@@ -16,6 +16,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
@@ -493,6 +494,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                     Utils.setStringPreference(this, AppConstants.PREF_USER_NAME, profileDetail
                             .getPbNameFirst() + " " + profileDetail.getPbNameLast());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_FIRST_NAME,
+                            profileDetail.getPbNameFirst());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_LAST_NAME,
+                            profileDetail.getPbNameLast());
                     Utils.setStringPreference(this, AppConstants.PREF_USER_NUMBER, profileDetail
                             .getVerifiedMobileNumber());
                     Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING,
@@ -1058,11 +1063,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         event.setEventPublic(IntegerConstants.PRIVACY_MY_CONTACT);
                     }
                     if (!StringUtils.isBlank(eventDate.getText().toString())) {
+
                         event.setEventDateTime(Utils.convertDateFormat(eventDate.getText()
-                                .toString(), getEventDateFormat(eventDate.getText()
+                                .toString(), getEventDateFormatForUpdate(eventDate.getText()
                                 .toString()), "yyyy-MM-dd HH:mm:ss"));
                         event.setEventDate(Utils.convertDateFormat(eventDate.getText().toString(),
-                                getEventDateFormat(eventDate.getText()
+                                getEventDateFormatForUpdate(eventDate.getText()
                                         .toString()), "yyyy-MM-dd HH:mm:ss"));
                         arrayListNewEvent.add(event);
                     } else {
@@ -2466,6 +2472,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 if (detailObject != null) {
                     ProfileDataOperationEmail email = (ProfileDataOperationEmail) detailObject;
                     inputValue.setText(email.getEmEmailId());
+
+                    if (email.getEmRcpType() == IntegerConstants.RCP_TYPE_PRIMARY) {
+                        inputValue.setEnabled(false);
+                    } else {
+                        inputValue.setEnabled(true);
+                    }
+
                     textIsPublic.setText(String.valueOf(email.getEmPublic()));
                     textIsVerified.setText(String.valueOf(email.getEmRcpType()));
                     int spinnerPosition;
@@ -2671,7 +2684,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 }
                 spinnerType.setTag(R.id.spinner_position, position);
                 String items = spinnerType.getSelectedItem().toString();
-                if (items.equalsIgnoreCase("Custom")) {
+                if (items.equalsIgnoreCase(getString(R.string.text_custom))) {
                     showCustomTypeDialog(spinnerType);
                 }
             }
@@ -2961,7 +2974,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 }
                 spinnerType.setTag(R.id.spinner_position, position);
                 String items = spinnerType.getSelectedItem().toString();
-                if (items.equalsIgnoreCase("Custom")) {
+                if (items.equalsIgnoreCase(getString(R.string.text_custom))) {
                     showCustomTypeDialog(spinnerType);
                 }
             }
@@ -3030,7 +3043,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         != PackageManager.PERMISSION_GRANTED) {
 
                     ActivityCompat.requestPermissions(EditProfileActivity.this, new
-                            String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, AppConstants
+                            String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, AppConstants
                             .MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
 
                 } else {
@@ -3075,6 +3088,32 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         });
 
         dialog.show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode) {
+            case AppConstants.MY_PERMISSIONS_REQUEST_CAMERA:
+
+                if (permissions[0].equals(Manifest.permission
+                        .CAMERA)) {
+                    selectImageFromCamera();
+                }
+
+                break;
+            case AppConstants.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE:
+
+                if (permissions[0].equals(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        && permissions[1].equals(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                    selectImageFromGallery();
+                }
+
+                break;
+
+        }
     }
 
     private void showBackConfirmationDialog() {
@@ -3518,9 +3557,29 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
     }
 
-    private String getEventDateFormat(String date) {
+    private String getEventDateFormatForUpdate(String date) {
 
         date = StringUtils.substring(date, 0, 2);
+        if (!StringUtils.isNumeric(date)) {
+            date = StringUtils.substring(date, 0, 1);
+        }
+
+        String format;
+        if (date.endsWith("1") && !date.endsWith("11"))
+//            format = "d'st' MMMM, yyyy";
+            format = EVENT_ST_DATE_FORMAT;
+        else if (date.endsWith("2") && !date.endsWith("12"))
+            format = EVENT_ND_DATE_FORMAT;
+        else if (date.endsWith("3") && !date.endsWith("13"))
+            format = EVENT_RD_DATE_FORMAT;
+        else
+            format = EVENT_GENERAL_DATE_FORMAT;
+        return format;
+    }
+
+    private String getEventDateFormat(String date) {
+
+        date = StringUtils.substring(date, 8, 10);
         if (!StringUtils.isNumeric(date)) {
             date = StringUtils.substring(date, 0, 1);
         }

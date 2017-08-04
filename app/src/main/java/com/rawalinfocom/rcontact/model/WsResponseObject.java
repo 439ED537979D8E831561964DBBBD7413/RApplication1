@@ -121,6 +121,17 @@ public class WsResponseObject {
         this.ratingDone = ratingDone;
     }
 
+    @JsonProperty("rating_details")
+    private RatingRequestResponseDataItem ratingDetails;
+
+    public RatingRequestResponseDataItem getRatingDetails() {
+        return ratingDetails;
+    }
+
+    public void setRatingDetails(RatingRequestResponseDataItem ratingDetails) {
+        this.ratingDetails = ratingDetails;
+    }
+
     @JsonProperty("comment_receive")
     private ArrayList<RatingRequestResponseDataItem> commentReceive;
 

@@ -88,6 +88,7 @@ public class WsRequestObject {
 
     private String fromDate;
     private String toDate;
+    private String timeStamp;
 
     private String password;
     private String password_confirmation;
@@ -332,6 +333,15 @@ public class WsRequestObject {
 
     public void setToDate(String toDate) {
         this.toDate = toDate;
+    }
+
+    @JsonProperty("timestamp")
+    public String getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(String timeStamp) {
+        this.timeStamp = timeStamp;
     }
 
     // Set Password

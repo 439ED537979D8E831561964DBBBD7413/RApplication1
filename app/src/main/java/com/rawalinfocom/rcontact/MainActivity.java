@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -155,6 +156,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     private SyncCallLogAsyncTask syncCallLogAsyncTask;
     private ReSyncContactAsyncTask reSyncContactAsyncTask;
     private GetSpamAndRCPDetailAsyncTask getSpamAndRCPDetailAsyncTask;
+    private callPullMechanismService callPullMechanismService;
     NetworkConnectionReceiver networkConnectionReceiver;
     MaterialDialog permissionConfirmationDialog;
     MaterialDialog callConfirmationDialog;
@@ -178,6 +180,9 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setLanguage();
+
         setContentView(R.layout.activity_contacts_main);
 
         ButterKnife.bind(this);
@@ -193,7 +198,37 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         init();
         registerBroadcastReceiver();
         registerLocalBroadCastReceiver();
-        new callPullMechanismService().execute();
+        callPullMechanismService = new callPullMechanismService();
+        callPullMechanismService.execute();
+    }
+
+    public void setLanguage() {
+
+        String defaultLANG = Locale.getDefault().getLanguage();
+
+        String languageToLoad = "en"; // your language
+
+        switch (Utils.getStringPreference(MainActivity.this, AppConstants.PREF_APP_LANGUAGE, "0")) {
+
+            case "0":
+                languageToLoad = "en";
+                break;
+
+            case "1":
+                languageToLoad = "hi";
+                break;
+
+            case "2":
+                languageToLoad = "gu";
+                break;
+        }
+
+        Locale locale = new Locale(languageToLoad);
+        Locale.setDefault(locale);
+        Configuration config = new Configuration();
+        config.locale = locale;
+        getBaseContext().getResources().updateConfiguration(config,
+                getBaseContext().getResources().getDisplayMetrics());
     }
 
     @Override
@@ -241,11 +276,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
                     long elapsedMinutes = difference / minutesInMilli;
 
-                    System.out.println("RContact elapsedDays --> " + (elapsedDays > 0));
-                    System.out.println("RContact elapsedHours --> " + (elapsedHours > 0));
-                    System.out.println("RContact elapsedMinutes --> " + (elapsedMinutes > 0));
-
-                    if (elapsedDays > 0 || elapsedHours > 0 || elapsedMinutes > 1) {
+//                    if (elapsedDays > 0 || elapsedHours > 8) {
+                    if (elapsedDays > 0 || elapsedHours > 0 || elapsedMinutes > 30) {
 
                         if (Utils.getBooleanPreference(MainActivity.this, AppConstants.KEY_IS_FIRST_TIME, false)) {
                             System.out.println("RContact callPullMechanismService first time");
@@ -255,6 +287,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                         }
                         toDate = "";
 
+                        RCPContactServiceCall(fromDate, WsConstants.REQ_GET_RCP_CONTACT);
                         pullMechanismServiceCall(fromDate, toDate, WsConstants.REQ_GET_CONTACT_REQUEST);
                         pullMechanismServiceCall(fromDate, toDate, WsConstants.REQ_GET_RATING_DETAILS);
                         pullMechanismServiceCall(fromDate, toDate, WsConstants.REQ_GET_COMMENT_DETAILS);
@@ -364,6 +397,49 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     public void onDeliveryResponse(String serviceType, Object data, Exception error) {
         if (error == null) {
 
+            // <editor-fold desc="REQ_GET_RCP_CONTACT">
+            if (serviceType.contains(WsConstants.REQ_GET_RCP_CONTACT)) {
+                WsResponseObject getRCPContactUpdateResponse = (WsResponseObject) data;
+                if (getRCPContactUpdateResponse != null && StringUtils.equalsIgnoreCase
+                        (getRCPContactUpdateResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+
+                    if (!Utils.isArraylistNullOrEmpty(getRCPContactUpdateResponse
+                            .getArrayListUserRcProfile())) {
+
+                                /* Store Unique Contacts to ProfileMobileMapping */
+                        storeToMobileMapping(getRCPContactUpdateResponse
+                                .getArrayListUserRcProfile());
+
+                                /* Store Unique Emails to ProfileEmailMapping */
+                        storeToEmailMapping(getRCPContactUpdateResponse
+                                .getArrayListUserRcProfile());
+
+                                /* Store Profile Details to respective Table */
+                        storeProfileDataToDb(getRCPContactUpdateResponse
+                                .getArrayListUserRcProfile(), getRCPContactUpdateResponse
+                                .getArrayListMapping());
+                    }
+                    if (!Utils.isArraylistNullOrEmpty(getRCPContactUpdateResponse
+                            .getArrayListMapping())) {
+                        removeRemovedDataFromDb(getRCPContactUpdateResponse
+                                .getArrayListMapping());
+                    }
+
+                    if (!StringUtils.isEmpty(getRCPContactUpdateResponse.getTimestamp())) {
+                        Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME, String.valueOf(System.currentTimeMillis()));
+                        Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME_STAMP, getRCPContactUpdateResponse.getTimestamp());
+                        Utils.setBooleanPreference(this, AppConstants.KEY_IS_FIRST_TIME, false);
+                    }
+
+                } else {
+                    if (getRCPContactUpdateResponse != null) {
+                        System.out.println("RContact error --> " + getRCPContactUpdateResponse.getMessage());
+                    } else {
+                        System.out.println("RContact error --> getContactUpdateResponse null");
+                    }
+                }
+            }
+
             // <editor-fold desc="REQ_GET_CONTACT_REQUEST">
             if (serviceType.contains(WsConstants.REQ_GET_CONTACT_REQUEST)) {
                 WsResponseObject getContactUpdateResponse = (WsResponseObject) data;
@@ -387,7 +463,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 if (getRatingUpdateResponse != null && StringUtils.equalsIgnoreCase
                         (getRatingUpdateResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                    storeRatingRequestResponseToDB(getRatingUpdateResponse, getRatingUpdateResponse.getRatingReceive(), getRatingUpdateResponse.getRatingDone());
+                    storeRatingRequestResponseToDB(getRatingUpdateResponse, getRatingUpdateResponse.getRatingReceive(), getRatingUpdateResponse.getRatingDone()
+                            , getRatingUpdateResponse.getRatingDetails());
 
                 } else {
                     if (getRatingUpdateResponse != null) {
@@ -703,13 +780,15 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             System.out.println("RContact storeCommentRequestResponseToDB error ");
         }
 
-//        Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME, String.valueOf(System.currentTimeMillis()));
-//        Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME_STAMP, getCommentUpdateResponse.getTimestamp());
-//        Utils.setBooleanPreference(this, AppConstants.KEY_IS_FIRST_TIME, false);
+        if (!StringUtils.isEmpty(getCommentUpdateResponse.getTimestamp())) {
+            Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME, String.valueOf(System.currentTimeMillis()));
+            Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME_STAMP, getCommentUpdateResponse.getTimestamp());
+            Utils.setBooleanPreference(this, AppConstants.KEY_IS_FIRST_TIME, false);
+        }
     }
 
     private void storeRatingRequestResponseToDB(WsResponseObject getRatingUpdateResponse, ArrayList<RatingRequestResponseDataItem> ratingReceive,
-                                                ArrayList<RatingRequestResponseDataItem> ratingDone) {
+                                                ArrayList<RatingRequestResponseDataItem> ratingDone, RatingRequestResponseDataItem ratingDetails) {
 
         try {
             TableCommentMaster tableCommentMaster = new TableCommentMaster(databaseHandler);
@@ -739,25 +818,31 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 comment.setCrmImage(dataItem.getPmProfilePhoto());
                 comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getCreatedAt()));
                 comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getUpdatedAt()));
-                String avgRating = dataItem.getProfileRating();
-                String totalUniqueRater = dataItem.getTotalProfileRateUser();
-                String toPmId = String.valueOf(dataItem.getToPmId());
+
+                tableCommentMaster.addComment(comment);
+            }
+
+            if (ratingDetails != null) {
+
+                String avgRating = ratingDetails.getProfileRating();
+                String totalUniqueRater = ratingDetails.getTotalProfileRateUser();
+                String toPmId = getUserPmId();
 
                 TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
                 tableProfileMaster.updateUserProfileRating(toPmId, avgRating, totalUniqueRater);
                 Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING, totalUniqueRater);
                 Utils.setStringPreference(this, AppConstants.PREF_USER_RATING, avgRating);
-
-                tableCommentMaster.addComment(comment);
             }
 
         } catch (Exception e) {
             System.out.println("RContact storeRatingRequestResponseToDB error ");
         }
 
-//        Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME, String.valueOf(System.currentTimeMillis()));
-//        Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME_STAMP, getRatingUpdateResponse.getTimestamp());
-//        Utils.setBooleanPreference(this, AppConstants.KEY_IS_FIRST_TIME, false);
+        if (!StringUtils.isEmpty(getRatingUpdateResponse.getTimestamp())) {
+            Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME, String.valueOf(System.currentTimeMillis()));
+            Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME_STAMP, getRatingUpdateResponse.getTimestamp());
+            Utils.setBooleanPreference(this, AppConstants.KEY_IS_FIRST_TIME, false);
+        }
     }
 
     private void storeContactRequestResponseToDB(WsResponseObject getContactUpdateResponse, ArrayList<ContactRequestResponseDataItem> requestData,
@@ -810,9 +895,11 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             System.out.println("RContact storeContactRequestResponseToDB error ");
         }
 
-//        Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME, String.valueOf(System.currentTimeMillis()));
-//        Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME_STAMP, getContactUpdateResponse.getTimestamp());
-//        Utils.setBooleanPreference(this, AppConstants.KEY_IS_FIRST_TIME, false);
+        if (!StringUtils.isEmpty(getContactUpdateResponse.getTimestamp())) {
+            Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME, String.valueOf(System.currentTimeMillis()));
+            Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME_STAMP, getContactUpdateResponse.getTimestamp());
+            Utils.setBooleanPreference(this, AppConstants.KEY_IS_FIRST_TIME, false);
+        }
     }
 
     @Override
@@ -852,6 +939,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             syncCallLogAsyncTask.cancel(true);
         /*if (syncSmsLogAsyncTask != null)
             syncSmsLogAsyncTask.cancel(true);*/
+        if (callPullMechanismService != null)
+            callPullMechanismService.cancel(true);
         if (reSyncContactAsyncTask != null)
             reSyncContactAsyncTask.cancel(true);
         if (getSpamAndRCPDetailAsyncTask != null)
@@ -952,9 +1041,14 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         textUserName.setText(Utils.getStringPreference(this, AppConstants.PREF_USER_NAME, ""));
         textNumber.setText(number);
         textRatingCount.setText(Utils.getStringPreference(this, AppConstants
-                .PREF_USER_TOTAL_RATING, ""));
-        ratingUser.setRating(Float.parseFloat(Utils.getStringPreference(this, AppConstants
-                .PREF_USER_RATING, "")));
+                .PREF_USER_TOTAL_RATING, "0"));
+
+        if (!StringUtils.isEmpty(Utils.getStringPreference(this, AppConstants
+                .PREF_USER_RATING, "")))
+            ratingUser.setRating(Float.parseFloat(Utils.getStringPreference(this, AppConstants
+                    .PREF_USER_RATING, "0")));
+        else
+            ratingUser.setRating(0f);
 
         final String thumbnailUrl = Utils.getStringPreference(this, AppConstants.PREF_USER_PHOTO,
                 "");
@@ -3391,6 +3485,23 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         }
 
     }
+
+    private void RCPContactServiceCall(String timestamp, String url) {
+
+        if (Utils.isNetworkAvailable(MainActivity.this)) {
+            WsRequestObject deviceDetailObject = new WsRequestObject();
+
+            deviceDetailObject.setTimeStamp(timestamp);
+
+            if (Utils.isNetworkAvailable(this)) {
+                new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                        deviceDetailObject, null, WsResponseObject.class, url, null, true).executeOnExecutor(AsyncTask
+                        .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + url);
+            }
+        }
+
+    }
+
     //</editor-fold>
 
      /*private BroadcastReceiver localBroadCastReceiverRecentSMS = new BroadcastReceiver() {

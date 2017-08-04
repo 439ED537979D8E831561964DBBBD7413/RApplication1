@@ -610,7 +610,10 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                                                 (ProfileDataOperationPhoneNumber) tempPhoneNumber
                                                         .get(i);
                                         String number = phoneNumber.getPhoneNumber();
-                                        listPhoneNumber.add(number);
+
+                                        if (!number.startsWith("+XX")) {
+                                            listPhoneNumber.add(number);
+                                        }
                                     }
 
                                     CallConfirmationListDialog callConfirmationListDialog = new
@@ -657,7 +660,10 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                                             (ProfileDataOperationPhoneNumber) tempPhoneNumber.get
                                                     (i);
                                     String number = phoneNumber.getPhoneNumber();
-                                    listPhoneNumber.add(number);
+
+                                    if (!number.startsWith("+XX")) {
+                                        listPhoneNumber.add(number);
+                                    }
                                 }
 
                                 CallConfirmationListDialog callConfirmationListDialog = new

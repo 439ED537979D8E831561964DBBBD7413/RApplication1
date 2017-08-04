@@ -88,6 +88,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
     RelativeLayout activityContactListing;
     @BindView(R.id.text_toolbar_title)
     TextView textToolbarTitle;
+    private String filterType = "";
 //    public ArrayList<Object> arrayListPhoneBookContacts;
 
     private ProfileMobileMapping profileMobileMapping;
@@ -154,8 +155,13 @@ public class ContactListingActivity extends BaseActivity implements RippleView
 
                     if (inputSearch.getText().toString().length() > 0) {
                         phoneBookContactListAdapter.filter("");
+
+//                        if (filterType.equals("all")) {
                         recyclerViewContacts.setAdapter(phoneBookContactListAdapter);
                         phoneBookContactListAdapter.notifyDataSetChanged();
+//                        } else {
+//                            setFilterList();
+//                        }
                     }
 
                 } else {
@@ -347,6 +353,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                 inputSearch.getText().clear();
                 Utils.hideSoftKeyboard(ContactListingActivity.this, inputSearch);
                 if (position == 0) {
+                    filterType = "all";
                     if (arrayListUserProfile.size() > 0) {
                         arrayListFilteredUserProfile.addAll(arrayListUserProfile);
                         phoneBookContactListAdapter.notifyDataSetChanged();
@@ -354,13 +361,11 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                         new GetContactData().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     }
                 } else if (position == 1) {
-                    setFilterList("sms");
-                    arrayListFilteredUserProfile.addAll(arrayListNumberUserProfile);
-                    phoneBookContactListAdapter.notifyDataSetChanged();
+                    filterType = "sms";
+                    setFilterList();
                 } else if (position == 2) {
-                    setFilterList("email");
-                    arrayListFilteredUserProfile.addAll(arrayListEmailUserProfile);
-                    phoneBookContactListAdapter.notifyDataSetChanged();
+                    filterType = "email";
+                    setFilterList();
                 }
             }
 
@@ -399,7 +404,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
         });
     }
 
-    private void setFilterList(String type) {
+    private void setFilterList() {
 
         arrayListNumberUserProfile.clear();
         arrayListEmailUserProfile.clear();
@@ -408,7 +413,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
 
             UserProfile userProfile = new UserProfile();
 
-            if (type.equals("sms")) {
+            if (filterType.equals("sms")) {
                 if (!arrayListUserProfile.get(i).getMobileNumber().equals("")) {
                     userProfile.setMobileNumber(arrayListUserProfile.get(i).getMobileNumber());
                     userProfile.setPmFirstName(arrayListUserProfile.get(i).getPmFirstName());
@@ -421,6 +426,14 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                     arrayListEmailUserProfile.add(userProfile);
                 }
             }
+        }
+
+        if (filterType.equals("sms")) {
+            arrayListFilteredUserProfile.addAll(arrayListNumberUserProfile);
+            phoneBookContactListAdapter.notifyDataSetChanged();
+        } else {
+            arrayListFilteredUserProfile.addAll(arrayListEmailUserProfile);
+            phoneBookContactListAdapter.notifyDataSetChanged();
         }
     }
 

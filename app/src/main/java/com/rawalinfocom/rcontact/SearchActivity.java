@@ -236,9 +236,9 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
 
         boolean logs = ContextCompat.checkSelfPermission(SearchActivity.this, permissions[0]) !=
                 PackageManager.PERMISSION_GRANTED;
-        boolean sms = ContextCompat.checkSelfPermission(SearchActivity.this, permissions[1]) !=
-                PackageManager.PERMISSION_GRANTED;
-        if (logs || sms) {
+//        boolean sms = ContextCompat.checkSelfPermission(SearchActivity.this, permissions[1]) !=
+//                PackageManager.PERMISSION_GRANTED;
+        if (logs) {
             requestPermissions(permissions, requestCode);
         } else {
             syncCallLogAsyncTask = new SyncCallLogAsyncTask();

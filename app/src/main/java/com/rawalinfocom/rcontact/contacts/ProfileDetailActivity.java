@@ -50,6 +50,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.ContactListingActivity;
 import com.rawalinfocom.rcontact.R;
@@ -521,8 +522,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                         ProfileDataOperationPhoneNumber phoneNumber =
                                                 (ProfileDataOperationPhoneNumber) tempPhoneNumber
                                                         .get(i);
+
                                         String number = phoneNumber.getPhoneNumber();
-                                        listPhoneNumber.add(number);
+
+                                        if (!number.startsWith("+XX")) {
+                                            listPhoneNumber.add(number);
+                                        }
                                     }
 
                                     CallConfirmationListDialog callConfirmationListDialog = new
@@ -573,8 +578,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                     ProfileDataOperationPhoneNumber phoneNumber =
                                             (ProfileDataOperationPhoneNumber) tempPhoneNumber.get
                                                     (i);
+
                                     String number = phoneNumber.getPhoneNumber();
-                                    listPhoneNumber.add(number);
+
+                                    if (!number.startsWith("+XX")) {
+                                        listPhoneNumber.add(number);
+                                    }
                                 }
 
                                 CallConfirmationListDialog callConfirmationListDialog = new
@@ -649,16 +658,16 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer
                                 .parseInt(pmId));
 //                        if (!StringUtils.equalsAnyIgnoreCase(pmId, "-1")) {
-                            // RCP profile or Own Profile
-                            Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-                            sharingIntent.setType("text/plain");
-                            String shareBody = WsConstants.WS_PROFILE_VIEW_ROOT + StringUtils
-                                    .trimToEmpty(userProfile.getPmFirstName()) + "." +
-                                    StringUtils.trimToEmpty(userProfile.getPmLastName()) + "." +
-                                    pmId;
-                            sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
-                            startActivity(Intent.createChooser(sharingIntent, getString(R.string
-                                    .str_share_contact_via)));
+                        // RCP profile or Own Profile
+                        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+                        sharingIntent.setType("text/plain");
+                        String shareBody = WsConstants.WS_PROFILE_VIEW_ROOT + StringUtils
+                                .trimToEmpty(userProfile.getPmFirstName()) + "." +
+                                StringUtils.trimToEmpty(userProfile.getPmLastName()) + "." +
+                                pmId;
+                        sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
+                        startActivity(Intent.createChooser(sharingIntent, getString(R.string
+                                .str_share_contact_via)));
 //                        } else {
 //                            // Non-Rcp profile
 //                            shareContact();
@@ -1915,10 +1924,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                         (contactOrganizationCursor.getColumnIndex(ContactsContract
                                                 .CommonDataKinds.Organization.OFFICE_LOCATION)));
 
-
                         if (!arrayListOrganization.contains(organization)) {
                             arrayListPhoneBookOrganization.add(organization);
                         }
+
                         arrayListPhoneBookOrganizationOperation.add(organizationOperation);
                     }
                     contactOrganizationCursor.close();
@@ -2166,7 +2175,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 (contactWebsiteCursor
                                         .getColumnIndex(ContactsContract.CommonDataKinds.Website
                                                 .URL)));
-
 
                         if (!arrayListCloudWebsite.contains(webAddress.getWebAddress())) {
                             arrayListPhoneBookWebsite.add(webAddress);

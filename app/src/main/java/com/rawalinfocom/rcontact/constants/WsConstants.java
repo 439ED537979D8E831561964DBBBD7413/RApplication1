@@ -124,5 +124,6 @@ public class WsConstants {
     public static final String REQ_GET_CONTACT_REQUEST = "get-contact-request";
     public static final String REQ_GET_RATING_DETAILS = "get-rating-details";
     public static final String REQ_GET_COMMENT_DETAILS = "get-comment-details";
+    public static final String REQ_GET_RCP_CONTACT = "get-rcp-contact";
 
 }
