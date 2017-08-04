@@ -3078,7 +3078,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 Glide.with(EditProfileActivity.this)
                         .load(R.drawable.home_screen_profile)
                         .bitmapTransform(new CropCircleTransformation(EditProfileActivity.this))
-//                        .override(400, 400)
                         .into(imageProfile);
 
                 ProfileDataOperation profileDataOperation = new ProfileDataOperation();
