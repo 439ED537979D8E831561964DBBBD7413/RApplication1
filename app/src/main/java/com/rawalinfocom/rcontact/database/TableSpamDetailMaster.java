@@ -59,29 +59,35 @@ public class TableSpamDetailMaster {
 
     public void insertSpamDetails(ArrayList<SpamDataType> spamDataTypeList) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        try{
+            for (int i = 0; i < spamDataTypeList.size(); i++) {
+                ContentValues values = new ContentValues();
 
-        for (int i = 0; i < spamDataTypeList.size(); i++) {
-            ContentValues values = new ContentValues();
-
-            values.put(COLUMN_PB_LAST_NAME, spamDataTypeList.get(i).getLastName());
-            values.put(COLUMN_PB_NAME_SUFFIX, spamDataTypeList.get(i).getSuffix());
-            values.put(COLUMN_PB_NAME_FIRST, spamDataTypeList.get(i).getFirstName());
-            values.put(COLUMN_PB_RCP_VERIFY, spamDataTypeList.get(i).getRcpVerfiy());
-            values.put(COLUMN_PB_NAME_MIDDLE, spamDataTypeList.get(i).getMiddleName());
-            values.put(COLUMN_RCP_PM_ID, spamDataTypeList.get(i).getRcpPmId());
-            values.put(COLUMN_MOBILE_NUMBER, spamDataTypeList.get(i).getMobileNumber());
-            values.put(COLUMN_PB_NAME_PREFIX, spamDataTypeList.get(i).getPrefix());
-            values.put(COLUMN_SPAM_COUNT, spamDataTypeList.get(i).getSpamCount());
-            values.put(COLUMN_PROFILE_RATING, spamDataTypeList.get(i).getProfileRating());
-            values.put(COLUMN_TOTAL_PROFILE_RATE_USER, spamDataTypeList.get(i).getTotalProfileRateUser());
-            values.put(COLUMN_PUBLIC_URL, spamDataTypeList.get(i).getSpamPublicUrl());
-            values.put(COLUMN_PHOTO_URL, spamDataTypeList.get(i).getSpamPhotoUrl());
+                values.put(COLUMN_PB_LAST_NAME, spamDataTypeList.get(i).getLastName());
+                values.put(COLUMN_PB_NAME_SUFFIX, spamDataTypeList.get(i).getSuffix());
+                values.put(COLUMN_PB_NAME_FIRST, spamDataTypeList.get(i).getFirstName());
+                values.put(COLUMN_PB_RCP_VERIFY, spamDataTypeList.get(i).getRcpVerfiy());
+                values.put(COLUMN_PB_NAME_MIDDLE, spamDataTypeList.get(i).getMiddleName());
+                values.put(COLUMN_RCP_PM_ID, spamDataTypeList.get(i).getRcpPmId());
+                values.put(COLUMN_MOBILE_NUMBER, spamDataTypeList.get(i).getMobileNumber());
+                values.put(COLUMN_PB_NAME_PREFIX, spamDataTypeList.get(i).getPrefix());
+                values.put(COLUMN_SPAM_COUNT, spamDataTypeList.get(i).getSpamCount());
+                values.put(COLUMN_PROFILE_RATING, spamDataTypeList.get(i).getProfileRating());
+                values.put(COLUMN_TOTAL_PROFILE_RATE_USER, spamDataTypeList.get(i).getTotalProfileRateUser());
+                values.put(COLUMN_PUBLIC_URL, spamDataTypeList.get(i).getSpamPublicUrl());
+                values.put(COLUMN_PHOTO_URL, spamDataTypeList.get(i).getSpamPhotoUrl());
 
 
-            // Inserting Row
-            db.insert(TABLE_SPAM_DETAIL_MASTER, null, values);
+                // Inserting Row
+                db.insert(TABLE_SPAM_DETAIL_MASTER, null, values);
+            }
+            db.close(); // Closing database connection
+        }catch (Exception e){
+            e.printStackTrace();
+            if(db!=null && db.isOpen())
+                db.close();
         }
-        db.close(); // Closing database connection
+
     }
 
     public ArrayList<SpamDataType> getSpamDetails() {
@@ -128,35 +134,43 @@ public class TableSpamDetailMaster {
 
 
     public SpamDataType getSpamDetailsFromNumber(String number) {
-        // Select All Query
         SpamDataType spamDataType = new SpamDataType();
-        String selectQuery = "SELECT  * FROM " + TABLE_SPAM_DETAIL_MASTER +
-                " WHERE " + COLUMN_MOBILE_NUMBER + " = \'" + number + "\'";
-
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        try{
+            // Select All Query
+            String selectQuery = "SELECT  * FROM " + TABLE_SPAM_DETAIL_MASTER +
+                    " WHERE " + COLUMN_MOBILE_NUMBER + " = \'" + number + "\'";
 
-        if (cursor != null && cursor.getCount() > 0) {
-            cursor.moveToFirst();
-            spamDataType.setLastName(cursor.getString(cursor.getColumnIndex(COLUMN_PB_LAST_NAME)));
-            spamDataType.setSuffix(cursor.getString(cursor.getColumnIndex
-                    (COLUMN_PB_NAME_SUFFIX)));
-            spamDataType.setFirstName(cursor.getString(cursor.getColumnIndex(COLUMN_PB_NAME_FIRST)));
-            spamDataType.setRcpVerfiy(cursor.getString(cursor.getColumnIndex(COLUMN_PB_RCP_VERIFY)));
-            spamDataType.setMiddleName(cursor.getString(cursor.getColumnIndex
-                    (COLUMN_PB_NAME_MIDDLE)));
-            spamDataType.setRcpPmId(cursor.getString(cursor.getColumnIndex
-                    (COLUMN_RCP_PM_ID)));
-            spamDataType.setMobileNumber(cursor.getString(cursor.getColumnIndex(COLUMN_MOBILE_NUMBER)));
-            spamDataType.setPrefix(cursor.getString(cursor.getColumnIndex(COLUMN_PB_NAME_PREFIX)));
-            spamDataType.setSpamCount(cursor.getString(cursor.getColumnIndex(COLUMN_SPAM_COUNT)));
-            spamDataType.setProfileRating(cursor.getString(cursor.getColumnIndex(COLUMN_PROFILE_RATING)));
-            spamDataType.setTotalProfileRateUser(cursor.getString(cursor.getColumnIndex(COLUMN_TOTAL_PROFILE_RATE_USER)));
-            spamDataType.setSpamPublicUrl(cursor.getString(cursor.getColumnIndex(COLUMN_PUBLIC_URL)));
-            spamDataType.setSpamPhotoUrl(cursor.getString(cursor.getColumnIndex(COLUMN_PHOTO_URL)));
-            cursor.close();
+            Cursor cursor = db.rawQuery(selectQuery, null);
+
+            if (cursor != null && cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                spamDataType.setLastName(cursor.getString(cursor.getColumnIndex(COLUMN_PB_LAST_NAME)));
+                spamDataType.setSuffix(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_PB_NAME_SUFFIX)));
+                spamDataType.setFirstName(cursor.getString(cursor.getColumnIndex(COLUMN_PB_NAME_FIRST)));
+                spamDataType.setRcpVerfiy(cursor.getString(cursor.getColumnIndex(COLUMN_PB_RCP_VERIFY)));
+                spamDataType.setMiddleName(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_PB_NAME_MIDDLE)));
+                spamDataType.setRcpPmId(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_RCP_PM_ID)));
+                spamDataType.setMobileNumber(cursor.getString(cursor.getColumnIndex(COLUMN_MOBILE_NUMBER)));
+                spamDataType.setPrefix(cursor.getString(cursor.getColumnIndex(COLUMN_PB_NAME_PREFIX)));
+                spamDataType.setSpamCount(cursor.getString(cursor.getColumnIndex(COLUMN_SPAM_COUNT)));
+                spamDataType.setProfileRating(cursor.getString(cursor.getColumnIndex(COLUMN_PROFILE_RATING)));
+                spamDataType.setTotalProfileRateUser(cursor.getString(cursor.getColumnIndex(COLUMN_TOTAL_PROFILE_RATE_USER)));
+                spamDataType.setSpamPublicUrl(cursor.getString(cursor.getColumnIndex(COLUMN_PUBLIC_URL)));
+                spamDataType.setSpamPhotoUrl(cursor.getString(cursor.getColumnIndex(COLUMN_PHOTO_URL)));
+                cursor.close();
+            }
+            db.close();
+
+        }catch (Exception e){
+            e.printStackTrace();
+            if(db!=null && db.isOpen())
+                db.close();
         }
-        db.close();
+
 
         // return address list
         return spamDataType;
@@ -164,21 +178,66 @@ public class TableSpamDetailMaster {
 
     public void updateSpamCount(String number, String spamCount){
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
-        ContentValues values = new ContentValues();
+        try{
+            ContentValues values = new ContentValues();
 
-        values.put(COLUMN_SPAM_COUNT, spamCount);
+            values.put(COLUMN_SPAM_COUNT, spamCount);
 
-        // Update Row
-        db.update(TABLE_SPAM_DETAIL_MASTER, values,  COLUMN_MOBILE_NUMBER + " = \'" + number + "\'", null);
-        db.close(); // Closing database connection
+            // Update Row
+            db.update(TABLE_SPAM_DETAIL_MASTER, values,  COLUMN_MOBILE_NUMBER + " = \'" + number + "\'", null);
+            db.close(); // Closing database connection
+        }catch (Exception e){
+            e.printStackTrace();
+            if(db!=null && db.isOpen())
+                db.close();
+        }
+
 
     }
 
+
+    public void updateGlobalRecord(String number,SpamDataType spamDataType){
+
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        try{
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_PB_LAST_NAME,spamDataType.getLastName());
+            values.put(COLUMN_PB_NAME_SUFFIX,spamDataType.getSuffix());
+            values.put(COLUMN_PB_NAME_FIRST,spamDataType.getFirstName());
+            values.put(COLUMN_PB_RCP_VERIFY,spamDataType.getRcpVerfiy());
+            values.put(COLUMN_PB_NAME_MIDDLE,spamDataType.getMiddleName());
+            values.put(COLUMN_RCP_PM_ID,spamDataType.getRcpPmId());
+            values.put(COLUMN_MOBILE_NUMBER,spamDataType.getMobileNumber());
+            values.put(COLUMN_PB_NAME_PREFIX,spamDataType.getPrefix());
+            values.put(COLUMN_SPAM_COUNT,spamDataType.getSpamCount());
+            values.put(COLUMN_PROFILE_RATING,spamDataType.getProfileRating());
+            values.put(COLUMN_TOTAL_PROFILE_RATE_USER,spamDataType.getTotalProfileRateUser());
+            values.put(COLUMN_PUBLIC_URL,spamDataType.getSpamPublicUrl());
+            values.put(COLUMN_PHOTO_URL,spamDataType.getSpamPhotoUrl());
+
+            // Update Row
+            db.update(TABLE_SPAM_DETAIL_MASTER, values,  COLUMN_MOBILE_NUMBER + " = \'" + number + "\'", null);
+            db.close(); // Closing database connection
+        }catch (Exception e){
+            e.printStackTrace();
+            if(db!=null && db.isOpen())
+                db.close();
+        }
+
+
+    }
+
+
     public void deleteSpamRecords(){
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
-        db.delete(TABLE_SPAM_DETAIL_MASTER,null,null);
-        db.close();
-
+        try{
+            db.delete(TABLE_SPAM_DETAIL_MASTER,null,null);
+            db.close();
+        }catch (Exception e){
+            e.printStackTrace();
+            if(db!=null && db.isOpen())
+                db.close();
+        }
     }
 
 }

@@ -157,7 +157,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
     private ArrayList<ProfileData> arrayListReSyncUserContact;
     private ArrayList<CallLogType> callLogTypeArrayListMain;
-//    private ArrayList<CallLogType> callLogTypeListForGlobalProfile;
+    //    private ArrayList<CallLogType> callLogTypeListForGlobalProfile;
     private ArrayList<String> callListForSpamCount;
     ArrayList<CallLogType> callLogsListbyChunck;
 
@@ -540,8 +540,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     private void callLogSynced() {
 
 
-        if(Utils.getArrayListPreference(this, AppConstants
-                .PREF_CALL_LOGS_ID_SET).size()>0){
+        if (Utils.getArrayListPreference(this, AppConstants
+                .PREF_CALL_LOGS_ID_SET).size() > 0) {
             Utils.setIntegerPreference(this, AppConstants
                             .PREF_CALL_LOG_SYNCED_COUNT,
                     Utils.getArrayListPreference(this, AppConstants
@@ -552,7 +552,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         Utils.setBooleanPreference(this, AppConstants
                 .PREF_CALL_LOG_SYNCED, true);
 
-        if(callListForSpamCount!=null){
+        if (callListForSpamCount != null) {
             if (callListForSpamCount.size() > 0) {
                 if (Utils.getBooleanPreference(this, AppConstants
                         .PREF_GOT_ALL_PROFILE_DATA, false))
@@ -804,8 +804,13 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     && Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)
                     && !Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED,
                     false)) {
-                syncCallLogAsyncTask = new SyncCallLogAsyncTask();
-                syncCallLogAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                if (syncCallLogAsyncTask != null && syncCallLogAsyncTask.getStatus() == AsyncTask.Status.RUNNING) {
+                    System.out.println("RContact syncCallLogAsyncTask ---> running");
+                } else {
+                    syncCallLogAsyncTask = new SyncCallLogAsyncTask();
+                    syncCallLogAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                }
+
             }
 
         }
@@ -2694,20 +2699,21 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         }
     }
 
-    private void getNumbersFromCallLog(){
-        try{
+    private void getNumbersFromCallLog() {
+        try {
             Uri uri = CallLog.Calls.CONTENT_URI;
             String order = CallLog.Calls.DATE + " DESC";
-            Cursor cursor =  this.getContentResolver().query(uri, null, null, null, order);
-            if(cursor!=null && cursor.getCount()>0){
-                while(cursor.moveToNext()){
+            Cursor cursor = this.getContentResolver().query(uri, null, null, null, order);
+            if (cursor != null && cursor.getCount() > 0) {
+                while (cursor.moveToNext()) {
                     String userNumber = cursor.getString(cursor.getColumnIndex(CallLog.Calls.NUMBER));
-                    callListForSpamCount.add(userNumber);
+                    String numberToSend = Utils.getFormattedNumber(MainActivity.this, userNumber);
+                    callListForSpamCount.add(numberToSend);
                 }
                 cursor.close();
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -2785,9 +2791,12 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                                     .PREF_CONTACT_SYNCED, false)
                                     && !Utils.getBooleanPreference(MainActivity.this,
                                     AppConstants.PREF_CALL_LOG_SYNCED, false)) {
-                                syncCallLogAsyncTask = new SyncCallLogAsyncTask();
-                                syncCallLogAsyncTask.executeOnExecutor(AsyncTask
-                                        .THREAD_POOL_EXECUTOR);
+                                if (syncCallLogAsyncTask != null && syncCallLogAsyncTask.getStatus() == AsyncTask.Status.RUNNING) {
+                                    System.out.println("RContact syncCallLogAsyncTask ---> running");
+                                } else {
+                                    syncCallLogAsyncTask = new SyncCallLogAsyncTask();
+                                    syncCallLogAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                                }
                             }
 
                             if (Utils.isNetworkAvailable(MainActivity.this)
@@ -2900,8 +2909,13 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                             .PREF_CONTACT_SYNCED, false)
                             && !Utils.getBooleanPreference(MainActivity.this, AppConstants
                             .PREF_CALL_LOG_SYNCED, false)) {
-                        syncCallLogAsyncTask = new SyncCallLogAsyncTask();
-                        syncCallLogAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        if (syncCallLogAsyncTask != null && syncCallLogAsyncTask.getStatus() == AsyncTask.Status.RUNNING) {
+                            System.out.println("RContact syncCallLogAsyncTask ---> running");
+                        } else {
+                            syncCallLogAsyncTask = new SyncCallLogAsyncTask();
+                            syncCallLogAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        }
+
                     }
                 }
             }

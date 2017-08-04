@@ -136,8 +136,8 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
             holder.textContactName.setTextColor(ContextCompat.getColor(mActivity, R.color
                     .colorBlack));
             if (!StringUtils.isEmpty(callLogType.getSpamCount())) {
-                holder.imageViewSpam.setVisibility(View.VISIBLE);
-                holder.textSpamCount.setVisibility(View.VISIBLE);
+                holder.imageViewSpam.setVisibility(View.GONE);
+                holder.textSpamCount.setVisibility(View.GONE);
                 if (!StringUtils.equalsIgnoreCase(callLogType.getSpamCount(), "0"))
                     holder.textSpamCount.setText(callLogType.getSpamCount());
                 else {

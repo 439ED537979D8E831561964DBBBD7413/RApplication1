@@ -32,6 +32,8 @@ import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.CallLogType;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -62,13 +64,15 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
     private String profileUrl;
     private String pmId;
     private boolean isCallLogRcpUser;
+    String rcpVerifiedId;
 
     MaterialDialog clearConfirmationDialog;
 
     public Profile3DotDialogAdapter(Context context, ArrayList<String> arrayList, String number,
                                     long date, boolean isFromCallLogs, ArrayList<CallLogType>
                                             list, String name, String uniqueRowId, String key,
-                                    String profileUrl, String pmId, boolean isCallLogRcpUser) {
+                                    String profileUrl, String pmId, boolean isCallLogRcpUser,
+                                    String rcpVerifiedId) {
         this.context = context;
         this.arrayListString = arrayList;
         this.numberToCall = number;
@@ -81,6 +85,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
         this.key = key;
         this.pmId = pmId;
         this.isCallLogRcpUser = isCallLogRcpUser;
+        this.rcpVerifiedId = rcpVerifiedId;
     }
 
     @Override
@@ -282,6 +287,16 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                     Intent intent = new Intent(context, CallLogDeleteActivity.class);
                     Bundle b = new Bundle();
                     b.putSerializable(AppConstants.EXTRA_CALL_ARRAY_LIST, arrayListCallLogType);
+
+                    if(StringUtils.isEmpty(dialogName))
+                        b.putString(AppConstants.EXTRA_RCP_VERIFIED_ID,rcpVerifiedId);
+                    else{
+                        b.putString(AppConstants.EXTRA_RCP_VERIFIED_ID,"");
+                        if(isCallLogRcpUser){
+                            rcpVerifiedId = "1";
+                            b.putString(AppConstants.EXTRA_RCP_VERIFIED_ID,rcpVerifiedId);
+                        }
+                    }
                     intent.putExtras(b);
                     context.startActivity(intent);
                     ((Activity) context).overridePendingTransition(R.anim.enter, R.anim.exit);

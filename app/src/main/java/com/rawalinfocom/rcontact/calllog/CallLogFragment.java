@@ -273,7 +273,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         if (isFirstTime) {
             isFirstTime = false;
         }
-        AppConstants.isFromReceiver = false;
+//        AppConstants.isFromReceiver = false;
 
         if (nameAndProfileImage != null) {
             nameAndProfileImage.cancel(true);
@@ -591,7 +591,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             SpamDataType spamDataType =  tableSpamDetailMaster.getSpamDetailsFromNumber(savedNumberFormat);
             String spamCount =  spamDataType.getSpamCount();
             if (callLogTypeArrayList.size() > 0) {
-                for (int i = 1; i < callLogTypeArrayList.size(); i++) {
+                for (int i = 0; i < callLogTypeArrayList.size(); i++) {
                     /*if (nameAndProfileImage != null && nameAndProfileImage.isCancelled())
                         return;
                     if (updateOldLogWithUpdatedDetails != null && updateOldLogWithUpdatedDetails.isCancelled())

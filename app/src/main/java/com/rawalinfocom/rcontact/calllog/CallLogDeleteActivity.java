@@ -46,6 +46,8 @@ public class CallLogDeleteActivity extends BaseActivity implements RippleView
     @BindView(R.id.no_record_to_display)
     TextView textNoRecordToDisplay;
 
+    String rcpVerifiedId = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,6 +84,8 @@ public class CallLogDeleteActivity extends BaseActivity implements RippleView
         if (bundle != null) {
             arrayListCallLogType = (ArrayList<CallLogType>) bundle.getSerializable(AppConstants
                     .EXTRA_CALL_ARRAY_LIST);
+            if(bundle.containsKey(AppConstants.EXTRA_RCP_VERIFIED_ID))
+                rcpVerifiedId = bundle.getString(AppConstants.EXTRA_RCP_VERIFIED_ID);
         }
     }
 
@@ -90,7 +94,7 @@ public class CallLogDeleteActivity extends BaseActivity implements RippleView
         textToolbarTitle = ButterKnife.findById(includeToolbar, R.id.text_toolbar_title);
         imageDelete = ButterKnife.findById(includeToolbar, R.id.image_delete);
         rippleActionToolbarDelete = ButterKnife.findById(includeToolbar, R.id.ripple_action_delete);
-        deleteCallLogListAdapter = new DeleteCallLogListAdapter(this, arrayListCallLogType);
+        deleteCallLogListAdapter = new DeleteCallLogListAdapter(this, arrayListCallLogType,rcpVerifiedId);
         textToolbarTitle.setTypeface(Utils.typefaceSemiBold(this));
         textToolbarTitle.setText(getString(R.string.action_delete));
         rippleActionBack.setOnRippleCompleteListener(this);
@@ -116,7 +120,7 @@ public class CallLogDeleteActivity extends BaseActivity implements RippleView
             checkboxSelectAll.setEnabled(true);
             rippleActionToolbarDelete.setEnabled(true);
             deleteCallLogListAdapter = new
-                    DeleteCallLogListAdapter(this, arrayListCallLogType);
+                    DeleteCallLogListAdapter(this, arrayListCallLogType,rcpVerifiedId);
             recycleViewDeleteCallLog.setAdapter(deleteCallLogListAdapter);
             setRecyclerViewLayoutManager(recycleViewDeleteCallLog);
         } else {
