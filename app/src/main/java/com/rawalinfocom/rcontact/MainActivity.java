@@ -250,7 +250,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                         && (Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CALL_LOG_SYNCED,
                         false))) {
 
-                    System.out.println("RContact callPullMechanismService ");
+//                    System.out.println("RContact callPullMechanismService ");
 
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault());
 
@@ -277,11 +277,11 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
                     long elapsedMinutes = difference / minutesInMilli;
 
-//                    if (elapsedDays > 0 || elapsedHours > 8) {
-                    if (elapsedDays > 0 || elapsedHours > 0 || elapsedMinutes > 30) {
+                    if (elapsedDays > 0 || elapsedHours > 8) {
+//                    if (elapsedDays > 0 || elapsedHours > 0 || elapsedMinutes > 30) {
 
                         if (Utils.getBooleanPreference(MainActivity.this, AppConstants.KEY_IS_FIRST_TIME, false)) {
-                            System.out.println("RContact callPullMechanismService first time");
+//                            System.out.println("RContact callPullMechanismService first time");
                             fromDate = "";
                         } else {
                             fromDate = Utils.getStringPreference(MainActivity.this, AppConstants.KEY_API_CALL_TIME_STAMP, "");
@@ -296,7 +296,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 }
 
             } catch (Exception e) {
-                System.out.println("RContact PullMechanismService call error --> " + e.getMessage());
+//                System.out.println("RContact PullMechanismService call error --> " + e.getMessage());
             }
 
             return null;

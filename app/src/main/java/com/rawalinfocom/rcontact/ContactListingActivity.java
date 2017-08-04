@@ -433,7 +433,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
         protected void onPreExecute() {
             super.onPreExecute();
             Utils.showProgressDialog(ContactListingActivity.this, "Please wait...", false);
-            System.out.println("RContact start --> " + System.currentTimeMillis());
+//            System.out.println("RContact start --> " + System.currentTimeMillis());
         }
 
         protected Void doInBackground(Void... urls) {
@@ -504,7 +504,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                     cursor.close();
                 }
 
-                System.out.println("RContact half --> " + System.currentTimeMillis());
+//                System.out.println("RContact half --> " + System.currentTimeMillis());
 
                 setRCPUser();
 
@@ -524,7 +524,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                     arrayListFilteredUserProfile.addAll(arrayListUserProfile);
                     Utils.hideProgressDialog();
                     phoneBookContactListAdapter.notifyDataSetChanged();
-                    System.out.println("RContact end --> " + System.currentTimeMillis());
+//                    System.out.println("RContact end --> " + System.currentTimeMillis());
                 }
             });
         }
