@@ -96,7 +96,7 @@ public class PhoneCallReceiver extends BroadcastReceiver {
         //We listen to two intents.  The new outgoing call only tells us of an outgoing call.  We
         // use it to get the number.
         try {
-            Toast.makeText(context, "Receiver called", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(context, "Receiver called", Toast.LENGTH_SHORT).show();
             if (intent.getAction().equals("android.intent.action.NEW_OUTGOING_CALL")) {
                 savedNumber = intent.getExtras().getString("android.intent.extra.PHONE_NUMBER");
             } else {
@@ -149,7 +149,7 @@ public class PhoneCallReceiver extends BroadcastReceiver {
         }
         switch (state) {
             case TelephonyManager.CALL_STATE_RINGING:
-                Toast.makeText(context, "Incoming call", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context, "Incoming call", Toast.LENGTH_SHORT).show();
                 isIncoming = true;
                 callStartTime = new Date();
                 savedNumber = number;
@@ -179,7 +179,7 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                 } else if (isIncoming) {
                     onIncomingCallEnded(context, savedNumber, callStartTime, new Date());
                 } else {
-                    Toast.makeText(context, "Outgoing call", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(context, "Outgoing call", Toast.LENGTH_SHORT).show();
                     onOutgoingCallEnded(context, savedNumber, callStartTime, new Date());
                     String nameOutgoing = getNameFromNumber(Utils.getFormattedNumber(context, savedNumber));
                     if (StringUtils.isEmpty(nameOutgoing)) {
@@ -190,7 +190,7 @@ public class PhoneCallReceiver extends BroadcastReceiver {
 
                 isCallEnded = true;
                 String contactName = getNameFromNumber(Utils.getFormattedNumber(context, savedNumber));
-                Toast.makeText(context, "End call", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context, "End call", Toast.LENGTH_SHORT).show();
                 if (StringUtils.isEmpty(contactName)) {
                     final SpamDataType spamDataType = setRCPDetailsAndSpamCountforUnsavedNumbers(savedNumber);
                     if (StringUtils.length(spamDataType.getRcpVerfiy()) > 0) {

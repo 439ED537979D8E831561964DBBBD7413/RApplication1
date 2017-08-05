@@ -429,13 +429,13 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
             if (!TextUtils.isEmpty(number))
                 callLogType.setNumber(number);
-            else
-                callLogType.setNumber("");
+//            else
+//                callLogType.setNumber("");
 
             if (!TextUtils.isEmpty(name))
                 callLogType.setName(name);
-            else
-                callLogType.setName("");
+//            else
+//                callLogType.setName("");
 
             callLogType.setDurationToPass(callLogType.getCoolDuration(Float.parseFloat
                     (cursor.getString(cursor.getColumnIndex(CallLog.Calls.DURATION)))));
@@ -719,15 +719,15 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
                     if (!TextUtils.isEmpty(userName))
                         callLogType.setName(userName);
-                    else
-                        callLogType.setName("");
+//                    else
+//                        callLogType.setName("");
 
                     callLogType.setType(cursor.getInt(cursor.getColumnIndex(CallLog.Calls.TYPE)));
                     callLogType.setDuration(cursor.getInt(cursor.getColumnIndex(CallLog.Calls.DURATION)));
                     callLogType.setDate(cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE)));
                     callLogType.setUniqueContactId(cursor.getString(cursor.getColumnIndex(CallLog.Calls._ID)));
                     callLogType.setLocalPbRowId(" ");
-                    callLogType.setProfileImage("");
+//                    callLogType.setProfileImage("");
 
                     callLogTypeArrayList.add(callLogType);
                 }
@@ -798,21 +798,23 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
                         callLogType.setNumber(number);
 
+
                         String userName = cursor.getString(cursor.getColumnIndex(CallLog.Calls.CACHED_NAME));
 
                         if (!TextUtils.isEmpty(userName))
                             callLogType.setName(userName);
-                        else
-                            callLogType.setName("");
+//                        else
+//                            callLogType.setName("");
 
                         callLogType.setType(cursor.getInt(cursor.getColumnIndex(CallLog.Calls.TYPE)));
                         callLogType.setDuration(cursor.getInt(cursor.getColumnIndex(CallLog.Calls.DURATION)));
                         callLogType.setDate(cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE)));
                         callLogType.setUniqueContactId(cursor.getString(cursor.getColumnIndex(CallLog.Calls._ID)));
                         callLogType.setLocalPbRowId(" ");
-                        callLogType.setProfileImage("");
+//                        callLogType.setProfileImage("");
 
                         callLogTypeArrayList.add(0, callLogType);
+
                     }
                 }
                 cursor.close();
@@ -1059,7 +1061,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                         if (!TextUtils.isEmpty(photoThumbNail)) {
                             callLogType.setProfileImage(photoThumbNail);
                         } else {
-                            callLogType.setProfileImage("");
+//                            callLogType.setProfileImage("");
                         }
                         callLogTypeArrayList.set(i, callLogType);
                     }
@@ -1087,7 +1089,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                         if (!StringUtils.isEmpty(name)) {
                             callLogType.setName(name);
                         } else {
-                            callLogType.setName("");
+//                            callLogType.setName("");
                         }
                     }
                     callLogTypeArrayList.set(i, callLogType);
@@ -1180,6 +1182,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                             (ContactsContract.PhoneLookup.DISPLAY_NAME));
                 }
                 cursor.close();
+            }else{
+                if(!cursor.isClosed())
+                    cursor.close();
             }
 
         } catch (Exception e) {

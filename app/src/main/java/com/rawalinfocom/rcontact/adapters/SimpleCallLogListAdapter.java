@@ -123,15 +123,15 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
         final CallLogType callLogType = arrayListCallLogs.get(position);
         final String name = callLogType.getName();
         final String number = callLogType.getNumber();
-        if (!TextUtils.isEmpty(number)) {
+        if (!StringUtils.isEmpty(number)) {
             formattedNumber = Utils.getFormattedNumber(mActivity, number);
         }
         final String uniqueRowID = callLogType.getUniqueContactId();
 
-        if (!TextUtils.isEmpty(number)) {
+        if (!StringUtils.isEmpty(number)) {
             holder.textTempNumber.setText(formattedNumber);
         }
-        if (!TextUtils.isEmpty(name)) {
+        if (!StringUtils.isEmpty(name)) {
             holder.textContactName.setTypeface(Utils.typefaceBold(mActivity));
             holder.textContactName.setTextColor(ContextCompat.getColor(mActivity, R.color
                     .colorBlack));
