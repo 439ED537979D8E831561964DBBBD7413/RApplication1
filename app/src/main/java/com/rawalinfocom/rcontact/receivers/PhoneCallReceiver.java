@@ -394,10 +394,10 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                                     if (!StringUtils.equalsIgnoreCase(numberToUpdate, savedNumberFormat)) {
                                         tableSpamDetailMaster.insertSpamDetails(spamDataTypeList);
                                         spamDataType = setRCPDetailsAndSpamCountforUnsavedNumbers(savedNumber);
-                                    }else{
-                                        SpamDataType spamType =  spamDataTypeList.get(0);
-                                        if(!StringUtils.isEmpty(spamType.getMobileNumber())){
-                                            tableSpamDetailMaster.updateGlobalRecord(numberToUpdate,spamType);
+                                    } else {
+                                        SpamDataType spamType = spamDataTypeList.get(0);
+                                        if (!StringUtils.isEmpty(spamType.getMobileNumber())) {
+                                            tableSpamDetailMaster.updateGlobalRecord(numberToUpdate, spamType);
                                             spamDataType = setRCPDetailsAndSpamCountforUnsavedNumbers(savedNumber);
                                         }
                                     }
@@ -419,9 +419,9 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                             isCallEnded = false;
 //                            initializeEndCallDialog();
                         } else {
-                            if(outGoingCall){
-                                outGoingCall =  false;
-                            }else{
+                            if (outGoingCall) {
+                                outGoingCall = false;
+                            } else {
                                 initializeIncomingCallDialog();
                             }
                         }
@@ -699,6 +699,10 @@ public class PhoneCallReceiver extends BroadcastReceiver {
         LinearLayout llSave = (LinearLayout) endCallDialog.findViewById(R.id.ll_save);
         Button buttonViewProfile = (Button) endCallDialog.findViewById(R.id.button_view_profile);
         Button buttonViewCallHistory = (Button) endCallDialog.findViewById(R.id.button_view_call_history);
+
+        textNumber.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+        textNumber.setSelected(true);
+        textNumber.setSingleLine(true);
 
         final SpamDataType spamDataType = setRCPDetailsAndSpamCountforUnsavedNumbers(savedNumber);
 

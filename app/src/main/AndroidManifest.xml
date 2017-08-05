@@ -81,11 +81,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".BaseActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".MobileNumberRegistrationActivity"
             android:screenOrientation="portrait" />
@@ -99,7 +97,6 @@
         <activity
             android:name=".ProfileRegistrationActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait" />
@@ -109,7 +106,6 @@
         <activity
             android:name=".ContactListingActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".notifications.TimelineActivity"
             android:screenOrientation="portrait" />
@@ -168,6 +164,9 @@
             android:name=".ContactsSettingsActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ContactsSettingsActivity1"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".NotificationSettingsActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -179,7 +178,6 @@
         <activity
             android:name=".ContactUsActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".helper.finestwebview.FinestWebViewActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -193,7 +191,6 @@
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
-
         <receiver android:name=".receivers.PhoneCallReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE" />
@@ -203,11 +200,14 @@
             </intent-filter>
         </receiver>
 
-        <!--<receiver android:name=".receivers.SmsReceiver">
+        <!--
+        <receiver android:name=".receivers.SmsReceiver">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
-        </receiver>-->
+        </receiver>
+        -->
+
 
         <!-- Services -->
 
@@ -216,7 +216,6 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
         <service android:name=".services.FCMNotificationInstanceIdService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
@@ -232,23 +231,21 @@
         <activity
             android:name=".account.SlideMenuAccounts"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".account.ViewAccountActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".account.SecurityActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".TutorialActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".TermsConditionsActivity"
             android:screenOrientation="portrait" />
-
+        <activity
+            android:name=".MapsActivity"
+            android:label="@string/title_activity_maps"></activity>
     </application>
 
 </manifest>

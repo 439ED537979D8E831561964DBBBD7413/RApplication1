@@ -154,9 +154,14 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                     imageRightCenter.setImageResource(R.drawable.ic_action_search);
 
                     if (inputSearch.getText().toString().length() > 0) {
+
+//                        if (filterType.equals("all")) {
                         phoneBookContactListAdapter.filter("");
                         recyclerViewContacts.setAdapter(phoneBookContactListAdapter);
-                        phoneBookContactListAdapter.notifyDataSetChanged();
+                        phoneBookContactListAdapter.adapterNotify();
+//                        } else {
+//                            setFilterList();
+//                        }
                     }
 
                 } else {
@@ -222,13 +227,13 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                         (shareResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
                     Utils.showSuccessSnackBar(this, activityContactListing, getString(R.string
                             .invitation_shared));
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            onBackPressed();
-                        }
-                    }, 500);
+//                    Handler handler = new Handler();
+//                    handler.postDelayed(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            onBackPressed();
+//                        }
+//                    }, 500);
                 } else {
                     if (shareResponse != null) {
                         Log.e("error response", shareResponse.getMessage());
@@ -251,13 +256,13 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                         (inviteResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
                     Utils.showSuccessSnackBar(this, activityContactListing, getString(R.string
                             .invitation_sent));
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            onBackPressed();
-                        }
-                    }, 500);
+//                    Handler handler = new Handler();
+//                    handler.postDelayed(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            onBackPressed();
+//                        }
+//                    }, 500);
                 } else {
                     if (inviteResponse != null) {
                         Log.e("error response", inviteResponse.getMessage());
@@ -351,18 +356,20 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                     filterType = "all";
                     if (arrayListUserProfile.size() > 0) {
                         arrayListFilteredUserProfile.addAll(arrayListUserProfile);
-                        phoneBookContactListAdapter.notifyDataSetChanged();
+                        phoneBookContactListAdapter.adapterNotify();
                     } else {
                         new GetContactData().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     }
                 } else if (position == 1) {
-                    setFilterList("sms");
+                    filterType = "sms";
+                    setFilterList();
                     arrayListFilteredUserProfile.addAll(arrayListNumberUserProfile);
-                    phoneBookContactListAdapter.notifyDataSetChanged();
+                    phoneBookContactListAdapter.adapterNotify();
                 } else if (position == 2) {
-                    setFilterList("email");
+                    filterType = "email";
+                    setFilterList();
                     arrayListFilteredUserProfile.addAll(arrayListEmailUserProfile);
-                    phoneBookContactListAdapter.notifyDataSetChanged();
+                    phoneBookContactListAdapter.adapterNotify();
                 }
             }
 
@@ -402,7 +409,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
     }
 
 
-    private void setFilterList(String type) {
+    private void setFilterList() {
 
         arrayListNumberUserProfile.clear();
         arrayListEmailUserProfile.clear();
@@ -411,7 +418,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
 
             UserProfile userProfile = new UserProfile();
 
-            if (type.equals("sms")) {
+            if (filterType.equals("sms")) {
                 if (!arrayListUserProfile.get(i).getMobileNumber().equals("")) {
                     userProfile.setMobileNumber(arrayListUserProfile.get(i).getMobileNumber());
                     userProfile.setPmFirstName(arrayListUserProfile.get(i).getPmFirstName());
@@ -425,6 +432,14 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                 }
             }
         }
+
+//        if (filterType.equals("sms")) {
+//            arrayListFilteredUserProfile.addAll(arrayListNumberUserProfile);
+//            phoneBookContactListAdapter.adapterNotify();
+//        } else {
+//            arrayListFilteredUserProfile.addAll(arrayListEmailUserProfile);
+//            phoneBookContactListAdapter.adapterNotify();
+//        }
     }
 
     private class GetContactData extends AsyncTask<Void, Void, Void> {
@@ -448,6 +463,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                 set.add(ContactsContract.CommonDataKinds.Phone.NUMBER);
                 set.add(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
                 set.add(ContactsContract.CommonDataKinds.Email.ADDRESS);
+                set.add(ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI);
 
                 Uri uri = ContactsContract.Data.CONTENT_URI;
                 String[] projection = set.toArray(new String[0]);
@@ -485,6 +501,8 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                                 case ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE:
                                     userProfile.setEmailId(cursor.getString(cursor.getColumnIndex
                                             (ContactsContract.CommonDataKinds.Email.ADDRESS)));
+                                    userProfile.setPmProfileImage(cursor.getString(cursor.getColumnIndex
+                                            (ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI)));
                                     break;
                                 case ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE:
                                     userProfile.setMobileNumber(mobileNumber);

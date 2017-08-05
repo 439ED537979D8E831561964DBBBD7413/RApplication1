@@ -14,9 +14,11 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.model.UserProfile;
 
 import org.apache.commons.lang3.StringUtils;
@@ -55,6 +57,10 @@ public class PhoneBookContactListAdapter extends RecyclerView.Adapter<PhoneBookC
 //        arrayListCheckedPositions = new ArrayList<>();
     }
 
+    public void adapterNotify() {
+        notifyDataSetChanged();
+    }
+
     @Override
     public contactViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout
@@ -80,6 +86,19 @@ public class PhoneBookContactListAdapter extends RecyclerView.Adapter<PhoneBookC
         }
 
         holder.textContactNumber.setText(contactInformation);
+
+        if (StringUtils.length(userProfile.getPmProfileImage()) > 0) {
+            Glide.with(context)
+                    .load(userProfile.getPmProfileImage())
+                    .placeholder(R.drawable.home_screen_profile)
+                    .error(R.drawable.home_screen_profile)
+                    .bitmapTransform(new CropCircleTransformation(context))
+                    .override(300, 300)
+                    .into(holder.imageProfile);
+
+        } else {
+            holder.imageProfile.setImageResource(R.drawable.home_screen_profile);
+        }
 
 //        if (!isSelectedAll) {
 //            holder.checkboxSelectContact.setChecked(false);
