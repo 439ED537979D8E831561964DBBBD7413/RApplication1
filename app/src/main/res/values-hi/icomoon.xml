@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Profile Details -->
+    <string name="im_icon_nav_call">&#xe951;</string>
+    <string name="im_icon_map_marker">&#xe94d;</string>
+    <string name="im_icon_envelop">&#xe924;</string>
+    <string name="im_icon_website">&#xe998;</string>
+    <string name="im_icon_marker">&#xe94d;</string>
+    <string name="im_icon_facebook">&#xe92c;</string>
+    <string name="im_icon_skype">&#xe978;</string>
+    <string name="im_icon_whatsapp">&#xee99a;</string>
+    <string name="im_icon_twitter">&#xe986;</string>
+    <string name="im_icon_google">&#xe936;</string>
+    <string name="im_icon_linkedin">&#xe947;</string>
+    <string name="im_icon_birthday">&#xe90a;</string>
+    <string name="im_icon_anniversary">&#xe90e;</string>
+    <string name="im_icon_male">&#xe94c;</string>
+    <string name="im_icon_female">&#xe92e;</string>
+    <string name="im_icon_verify">&#xe994;</string>
+
+    <!-- Navigation Drawer -->
+    <string name="im_icon_user">&#xe98b;</string>
+    <string name="im_icon_timeline">&#xe93f;</string>
+    <string name="im_icon_events">&#xe90c;</string>
+    <string name="im_icon_rating_history">&#xe969;</string>
+    <string name="im_icon_invite_contact">&#xe925;</string>
+    <string name="im_icon_share">&#xe974;</string>
+    <string name="im_icon_setting">&#xe973;</string>
+    <string name="im_icon_rate_us">&#xe97c;</string>
+    <string name="im_icon_about_help">&#xe93e;</string>
+    <string name="im_icon_rating_user">&#xe987;</string>
+
+    <string name="im_cross">&#xe942;</string>
+    <string name="im_sim_2">&#xe91c;</string> <!--updated -->
+    <string name="im_sim_1">&#xe91d;</string> <!--updated -->
+
+    
+    <!--view account-->
+    <string name="im_icon_view_account">&#xe958;</string>
+    <string name="im_icon_security">&#xe95b;</string>
+
+
+    <!--<string name="im_check_square_o">&#xe900;</string>-->
+    <!--<string name="im_caret_down">&#xe901;</string>-->
+    <!--<string name="im_caret_left">&#xe902;</string>-->
+    <!--<string name="im_clock">&#xe903;</string>-->
+    <!--<string name="im_phone">&#xe904;</string>-->
+    <!--<string name="im_bottle">&#xe905;</string>-->
+    <!--<string name="im_search">&#xe906;</string>-->
+    <!--<string name="im_bell">&#xe907;</string>-->
+    <!--<string name="im_keyboard">&#xe908;</string>-->
+    <!--<string name="im_user_round">&#xe909;</string>-->
+    <!--<string name="im_chevron_down">&#xe90a;</string>-->
+    <!--<string name="im_trash_o">&#xe90b;</string>-->
+    <!--<string name="im_dial_pad">&#xe90c;</string>-->
+    <!--<string name="im_user">&#xe90d;</string>-->
+    <!--<string name="im_envelope">&#xe90e;</string>-->
+    <!--<string name="im_chevron_up">&#xe90f;</string>-->
+    <!--&lt;!&ndash;<string name="im_caret_left">&#xe910;</string>&ndash;&gt;-->
+    <!--<string name="im_share_alt">&#xe911;</string>-->
+    <!--<string name="im_trash">&#xe912;</string>-->
+    <!--<string name="im_pen">&#xe913;</string>-->
+    <!--<string name="im_square_o">&#xe914;</string>-->
+    <!--<string name="im_ellipsis_v">&#xe915;</string>-->
+    <!--<string name="im_backspace">&#xe916;</string>-->
+    <!--<string name="im_call_card">&#xe917;</string>-->
+    <!--&lt;!&ndash;<string name="im_chevron_down">&#xe918;</string>&ndash;&gt;-->
+    <!--<string name="im_sim_card">&#xe919;</string>-->
+    <!--<string name="im_filter">&#xe91a;</string>-->
+    <!--<string name="im_incoming_call">&#xe91b;</string>-->
+
+    <!--<string name="im_circle_slash">&#xe91e;</string>-->
+    <!--<string name="im_link">&#xe91f;</string>-->
+    <!--<string name="im_memory_card">&#xe920;</string>-->
+    <!--<string name="im_check_circle">&#xe921;</string>-->
+    <!--<string name="im_call_2">&#xe922;</string>-->
+    <!--<string name="im_message">&#xe923;</string>-->
+    <!--&lt;!&ndash;<string name="im_caret_down">&#xe924;</string>&ndash;&gt;-->
+    <!--<string name="im_double_check">&#xe925;</string>-->
+    <!--<string name="im_pencil">&#xe926;</string>-->
+    <!--&lt;!&ndash;<string name="im_caret_down">&#xe927;</string>&ndash;&gt;-->
+    <!--<string name="im_alarm">&#xe928;</string>-->
+    <!--<string name="im_shield_warning">&#xe929;</string>-->
+    <!--<string name="im_volume_up">&#xe92a;</string>-->
+    <!--<string name="im_microphone_slash">&#xe92b;</string>-->
+    <!--<string name="im_redirect">&#xe92c;</string>-->
+    <!--<string name="im_call_hang">&#xe92d;</string>-->
+    <!--<string name="im_call_plus">&#xe92e;</string>-->
+    <!--<string name="im_pause">&#xe92f;</string>-->
+    <!--<string name="im_app_logo">&#xe930;</string>-->
+    <!--<string name="im_star_o">&#xe931;</string>-->
+    <!--<string name="im_add_users">&#xe932;</string>-->
+    <!--<string name="im_call_3">&#xe933;</string>-->
+    <!--&lt;!&ndash;<string name="im_caret_down">&#xe934;</string>&ndash;&gt;-->
+    <!--<string name="im_map_marker">&#xe935;</string>-->
+    <!--&lt;!&ndash;<string name="im_map_marker">&#xe936;</string>&ndash;&gt;-->
+    <!--<string name="im_linkedin">&#xe937;</string>-->
+    <!--<string name="im_twitter">&#xe938;</string>-->
+    <!--<string name="im_skype">&#xe939;</string>-->
+    <!--<string name="im_facebook">&#xe93a;</string>-->
+    <!--<string name="im_circle_user">&#xe93b;</string>-->
+    <!--<string name="im_cake">&#xe93c;</string>-->
+    <!--<string name="im_calender">&#xe93d;</string>-->
+    <!--<string name="im_gender">&#xe93f;</string>-->
+    <!--<string name="im_square_angle_up">&#xe940;</string>-->
+    <!--<string name="im_double_tick">&#xe941;</string>-->
+    <!--<string name="im_plus">&#xe943;</string>-->
+    <!--&lt;!&ndash;<string name="im_caret_down">&#xe944;</string>-->
+    <!--<string name="im_caret_down">&#xe945;</string>&ndash;&gt;-->
+    <!--<string name="im_square_check">&#xe946;</string>-->
+    <!--&lt;!&ndash;<string name="im_caret_down">&#xe947;</string>&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="im_plus">&#xe948;</string>&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="im_pen">&#xe949;</string>&ndash;&gt;-->
+    <!--<string name="im_trash_2">&#xe94a;</string>-->
+    <!--<string name="im_family">&#xe94b;</string>-->
+    <!--<string name="im_users">&#xe94c;</string>-->
+    <!--<string name="im_users_2">&#xe94d;</string>-->
+    <!--<string name="im_send">&#xe94e;</string>-->
+    <!--&lt;!&ndash;<string name="im_caret_down">&#xe94f;</string>&ndash;&gt;-->
+    <!--<string name="im_star">&#xe950;</string>-->
+    <!--<string name="im_heart_o">&#xe951;</string>-->
+    <!--<string name="im_circle_user_2">&#xe952;</string>-->
+    <!--<string name="im_mail_envelope">&#xe953;</string>-->
+    <!--<string name="im_gear">&#xe954;</string>-->
+    <!--&lt;!&ndash;<string name="im_caret_down">&#xe955;</string>&ndash;&gt;-->
+    <!--<string name="im_question_circle">&#xe956;</string>-->
+    <!--<string name="im_call_shuffle">&#xe957;</string>-->
+    <!--<string name="im_user_trash">&#xe958;</string>-->
+    <!--&lt;!&ndash;<string name="im_caret_down">&#xe959;</string>&ndash;&gt;-->
+    <!--<string name="im_user_key">&#xe95a;</string>-->
+    <!--<string name="im_lock">&#xe95b;</string>-->
+    <!--<string name="im_minus_circle">&#xe95c;</string>-->
+    <!--&lt;!&ndash;<string name="im_caret_down">&#xe95d;</string>&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="im_caret_down">&#xe95e;</string>&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="im_caret_down">&#xe95f;</string>&ndash;&gt;-->
+    <!--<string name="im_user_round_2">&#xe960;</string>-->
+    <!--<string name="im_bell_2">&#xe961;</string>-->
+    <!--<string name="im_cloud_upload">&#xe962;</string>-->
+    <!--<string name="im_user_3">&#xe963;</string>-->
+    <!--<string name="im_user_3_o">&#xe964;</string>-->
+    <!--<string name="im_call_4">&#xe965;</string>-->
+    <!--<string name="im_call_4_o">&#xe966;</string>-->
+    <!--<string name="im_chat">&#xe967;</string>-->
+    <!--<string name="im_chat_o">&#xe968;</string>-->
+    <!--&lt;!&ndash;<string name="im_caret_down">&#xe969;</string>&ndash;&gt;-->
+    <!--<string name="im_bell_o">&#xe96a;</string>-->
+    <!--&lt;!&ndash;<string name="im_caret_down">&#xe96b;</string>&ndash;&gt;-->
+    <!--<string name="im_envelope_o">&#xe96c;</string>-->
+    <!--<string name="im_share_2">&#xe96d;</string>-->
+    <!--&lt;!&ndash;<string name="im_caret_down">&#xe96e;</string>&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="im_caret_down">&#xe96f;</string>&ndash;&gt;-->
+    <!--<string name="im_ellipsis_h">&#xe970;</string>-->
+    <!--<string name="im_filter_2">&#xe971;</string>-->
+    <!--<string name="im_circle_user_2_o">&#xe972;</string>-->
+    <!--<string name="im_name_card">&#xe973;</string>-->
+    <!--<string name="im_users_connected">&#xe974;</string>-->
+    <!--<string name="im_3_dots">&#xe99a;</string>-->
+    <!--<string name="im_call_histroy">&#xe926;</string>-->
+    <!--<string name="im_noti_plus">&#xe948;</string>-->
+
+
+</resources>
