@@ -2950,8 +2950,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             cursor = getCallHistoryDataByNumber(number);
         } else {
             cursor = getCallHistoryDataByName(number);
-            if (cursor != null && cursor.getCount() == 0) {
-                cursor = getCallHistoryDataByNumber(number);
+            if(cursor!=null && cursor.getCount() == 0){
+                if(!StringUtils.isEmpty(historyNumber))
+                    cursor = getCallHistoryDataByNumber(historyNumber);
             }
         }
         try {
@@ -2963,7 +2964,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 int duration = cursor.getColumnIndex(CallLog.Calls.DURATION);
                 int callLogId = cursor.getColumnIndex(CallLog.Calls._ID);
                 int numberType = cursor.getColumnIndex(CallLog.Calls.CACHED_NUMBER_TYPE);
-                int name = cursor.getColumnIndex(CallLog.Calls.CACHED_NAME);
+                int name =  cursor.getColumnIndex(CallLog.Calls.CACHED_NAME);
                 int account = -1;
                 int account_id = -1;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -2994,7 +2995,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 //                        if (userImage != null)
 //                            Log.e("User Image", userImage);
                     }
-                    String userName = cursor.getString(name);
+                    String userName =  getNameFromNumber(Utils.getFormattedNumber(this,phNum));
                     int histroyId = Integer.parseInt(cursor.getString(callLogId));
                     CallLogType logObject = new CallLogType();
                     logObject.setHistoryNumber(phNum);
@@ -3026,6 +3027,31 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         return callDetails;
     }
+
+
+    private String getNameFromNumber(String phoneNumber) {
+        String contactName = "";
+        try {
+
+            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
+
+            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME, ContactsContract.PhoneLookup.LOOKUP_KEY};
+            Cursor cursor = this.getContentResolver().query(uri, projection, null, null, null);
+
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    contactName = cursor.getString(cursor.getColumnIndexOrThrow
+                            (ContactsContract.PhoneLookup.DISPLAY_NAME));
+                }
+                cursor.close();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return contactName;
+    }
+
 
     private String getPhoneNumberType(int type) {
         switch (type) {
