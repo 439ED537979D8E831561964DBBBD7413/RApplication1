@@ -387,13 +387,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
 
         } else {
-            if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase("[Unknown]")) {
+            /*if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase("[Unknown]")) {
                 fetchAllCallLogHistory(contactName);
             } else {
                 if (!TextUtils.isEmpty(profileContactNumber)) {
                     fetchAllCallLogHistory(profileContactNumber);
                 }
-            }
+            }*/
         }
         if (displayOwnProfile) {
             ProfileDataOperation profileDataOperation = queryManager.getRcProfileDetail
@@ -2942,7 +2942,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             cursor = getCallHistoryDataByNumber(number);
         } else {
             cursor = getCallHistoryDataByName(number);
-            if(cursor.getCount() == 0){
+            if(cursor!=null && cursor.getCount() == 0){
                 cursor = getCallHistoryDataByNumber(number);
             }
         }
