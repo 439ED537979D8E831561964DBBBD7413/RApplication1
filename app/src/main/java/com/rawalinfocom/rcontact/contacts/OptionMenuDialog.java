@@ -43,6 +43,7 @@ class OptionMenuDialog {
     static final int ALL_CONTACT_RCP = 2;
     static final int R_CONTACT_RCP = 3;
     static boolean IS_CONTACT_DELETED = false;
+    private final boolean isCallLogRcpUser;
 
     private boolean isFavourite;
     private boolean isFromFavourite;
@@ -52,6 +53,7 @@ class OptionMenuDialog {
 
     private String dialogTag;
     private String rawId;
+
     private PhoneBookContacts phoneBookContacts;
     private RContactApplication rContactApplication;
 
@@ -59,11 +61,12 @@ class OptionMenuDialog {
 
     //<editor-fold desc="Constructor">
     OptionMenuDialog(final Context context, String rawId, final int menuType, boolean
-            isFavourite, boolean isFromFavourite) {
+            isFavourite, boolean isFromFavourite, boolean isCallLogRcpUser) {
         this.context = context;
         this.rawId = rawId;
         this.isFavourite = isFavourite;
         this.isFromFavourite = isFromFavourite;
+        this.isCallLogRcpUser = isCallLogRcpUser;
 
         rContactApplication = (RContactApplication) context.getApplicationContext();
         phoneBookContacts = new PhoneBookContacts(context);
@@ -338,6 +341,7 @@ class OptionMenuDialog {
                     bundle.putString(AppConstants.EXTRA_CLOUD_CONTACT_NAME, " (" + (
                             (ProfileDetailActivity) context).contactName + ")");
                 }
+                bundle.putBoolean(AppConstants.EXTRA_IS_RCP_USER, isCallLogRcpUser);
                 bundle.putString(AppConstants.EXTRA_PM_ID, ((ProfileDetailActivity) context).pmId);
                 bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, rawId);
                 bundle.putString(AppConstants.EXTRA_PROFILE_IMAGE_URL, ((ProfileDetailActivity)

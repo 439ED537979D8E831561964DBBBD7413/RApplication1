@@ -117,7 +117,7 @@ public class SettingsActivity extends BaseActivity implements RippleView
         llContacts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivityIntent(activity, ContactsSettingsActivity.class, null);
+                startActivityIntent(activity, ContactsSettingsActivity1.class, null);
             }
         });
 

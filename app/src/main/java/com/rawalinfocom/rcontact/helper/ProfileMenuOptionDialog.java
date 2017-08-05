@@ -105,7 +105,6 @@ public class ProfileMenuOptionDialog {
         localBroadcastManager.registerReceiver(localBroadcastReceiverDialog, intentFilter);
     }
 
-
     private void setAdapter() {
         if (!TextUtils.isEmpty(numberToCall)) {
             Profile3DotDialogAdapter profile3DotDialogAdapter = new Profile3DotDialogAdapter

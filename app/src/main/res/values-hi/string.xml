@@ -608,8 +608,8 @@
     <string name="error_invalid_email">अमान्य ईमेल आईडी</string>
     <string name="error_required_event_date">ईवेंट की तिथि आवश्यक है</string>
     <string name="hint_email">ईमेल</string>
-    <string name="error_requird_first_name">कृपया प्रथम नाम जोड़ें</string>
-    <string name="error_requird_last_name">कृपया अंतिम नाम जोड़ें</string>
+    <string name="error_required_first_name">कृपया प्रथम नाम जोड़ें</string>
+    <string name="error_required_last_name">कृपया अंतिम नाम जोड़ें</string>
     <string name="error_required_number">नंबर आवश्यक है</string>
     <string name="hint_number">नंबर</string>
     <string name="error_required_org_designation">पदनाम आवश्यक है</string>
