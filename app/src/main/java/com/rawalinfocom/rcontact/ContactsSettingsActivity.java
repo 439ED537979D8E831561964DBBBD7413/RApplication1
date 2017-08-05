@@ -115,7 +115,6 @@ public class ContactsSettingsActivity extends BaseActivity implements RippleView
 
         activity = ContactsSettingsActivity.this;
         init();
-        buildGoogleApiClient();
     }
 
     private boolean checkExternalStorageState() {
@@ -268,7 +267,7 @@ public class ContactsSettingsActivity extends BaseActivity implements RippleView
         dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
 
         TextView tvDialogTitle = (TextView) dialog.findViewById(R.id.tvDialogTitle);
-        tvDialogTitle.setText(getString(R.string.short_by));
+        tvDialogTitle.setText(getString(R.string.export_format));
         tvDialogTitle.setTypeface(Utils.typefaceBold(activity));
 
         Button btnRight = (Button) dialog.findViewById(R.id.btnRight);
@@ -303,7 +302,7 @@ public class ContactsSettingsActivity extends BaseActivity implements RippleView
                                         "External storage not available!!");
                             break;
                         case "2":
-                            new ExportContact(shortByContactListAdapter.getSelectedType()).execute();
+                            buildGoogleApiClient();
                             break;
                         default:
                             break;
@@ -390,22 +389,22 @@ public class ContactsSettingsActivity extends BaseActivity implements RippleView
     @Override
     protected void onResume() {
         super.onResume();
-        if (mGoogleApiClient == null) {
-
-            /**
-             * Create the API client and bind it to an instance variable.
-             * We use this instance as the callback for connection and connection failures.
-             * Since no account name is passed, the user is prompted to choose.
-             */
-            mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .addApi(Drive.API)
-                    .addScope(Drive.SCOPE_FILE)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .build();
-        }
-
-        mGoogleApiClient.connect();
+//        if (mGoogleApiClient == null) {
+//
+//            /**
+//             * Create the API client and bind it to an instance variable.
+//             * We use this instance as the callback for connection and connection failures.
+//             * Since no account name is passed, the user is prompted to choose.
+//             */
+//            mGoogleApiClient = new GoogleApiClient.Builder(this)
+//                    .addApi(Drive.API)
+//                    .addScope(Drive.SCOPE_FILE)
+//                    .addConnectionCallbacks(this)
+//                    .addOnConnectionFailedListener(this)
+//                    .build();
+//        }
+//
+//        mGoogleApiClient.connect();
     }
 
     @Override
@@ -448,6 +447,7 @@ public class ContactsSettingsActivity extends BaseActivity implements RippleView
     @Override
     public void onConnected(Bundle bundle) {
         Drive.DriveApi.newDriveContents(mGoogleApiClient);
+        new ExportContact("2").execute();
     }
 
     /*callback when there there's an error connecting the client to the service.*/
@@ -469,6 +469,7 @@ public class ContactsSettingsActivity extends BaseActivity implements RippleView
     /*build the google api client*/
     private void buildGoogleApiClient() {
         if (mGoogleApiClient == null) {
+
             mGoogleApiClient = new GoogleApiClient.Builder(this)
                     .addApi(Drive.API)
                     .addScope(Drive.SCOPE_FILE)

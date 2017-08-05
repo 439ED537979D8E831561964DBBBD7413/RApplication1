@@ -688,7 +688,7 @@
     your connection and try again.</string>
     <string name="call_received_from">Call received from</string>
     <string name="btn_view_profile">VIEW PROFILE</string>
-    <string name="btn_view_call_history">VIEW CALL HISTORY</string>
+    <string name="btn_view_call_history">CALL HISTORY</string>
     <string name="txt_call">CALL</string>
     <string name="txt_message">MESSAGE</string>
     <string name="txt_save">SAVE</string>
