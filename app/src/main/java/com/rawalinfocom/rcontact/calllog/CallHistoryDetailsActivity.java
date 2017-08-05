@@ -2152,7 +2152,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                         uniqueContactId = cursor.getString(callLogId);
                     }
 
-                    String userName =  cursor.getString(name);
+                    String userName = getNameFromNumber(Utils.getFormattedNumber(this,phNum));
+
                     CallLogType logObject = new CallLogType();
                     logObject.setHistoryNumber(phNum);
                     logObject.setHistoryType(callType);
@@ -2204,6 +2205,29 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         }
 
         return callDetails;
+    }
+
+    private String getNameFromNumber(String phoneNumber) {
+        String contactName = "";
+        try {
+
+            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
+
+            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME, ContactsContract.PhoneLookup.LOOKUP_KEY};
+            Cursor cursor = this.getContentResolver().query(uri, projection, null, null, null);
+
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    contactName = cursor.getString(cursor.getColumnIndexOrThrow
+                            (ContactsContract.PhoneLookup.DISPLAY_NAME));
+                }
+                cursor.close();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return contactName;
     }
 
 
