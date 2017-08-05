@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/relative_root_terms_conditions"
@@ -16,9 +15,9 @@
         android:layout_marginEnd="@dimen/activity_double_horizontal_margin"
         android:layout_marginStart="@dimen/activity_double_horizontal_margin"
         android:layout_marginTop="@dimen/activity_double_horizontal_margin"
+        android:text="@string/str_welcom"
         android:textAppearance="?android:textAppearanceLarge"
-        android:textColor="@color/colorAccent"
-        tools:text="WELCOME"/>
+        android:textColor="@color/colorAccent" />
 
     <TextView
         android:id="@+id/text_terms_conditions_content"
@@ -29,8 +28,8 @@
         android:layout_marginStart="@dimen/activity_double_horizontal_margin"
         android:layout_marginTop="@dimen/activity_half_vertical_margin"
         android:gravity="center"
-        android:textAppearance="?android:textAppearanceMedium"
-        tools:text="Get all your Contacts, SMS and Call at one Place"/>
+        android:text="@string/str_welcom_message"
+        android:textAppearance="?android:textAppearanceMedium" />
 
     <LinearLayout
         android:id="@+id/linear_bottom"
@@ -50,14 +49,14 @@
             <CheckBox
                 android:id="@+id/checkbox_terms_conditions"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
 
             <TextView
                 android:id="@+id/text_terms_conditions"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:textAppearanceSmall"
-                tools:text="By continuing you accept terms and conditions"/>
+                tools:text="By continuing you accept terms and conditions" />
 
         </LinearLayout>
 
@@ -78,7 +77,7 @@
                 android:layout_height="wrap_content"
                 android:background="@color/colorAccent"
                 android:text="@string/get_started"
-                android:textColor="@color/colorWhite"/>
+                android:textColor="@color/colorWhite" />
 
         </com.rawalinfocom.rcontact.helper.RippleView>
 
@@ -95,6 +94,6 @@
         android:contentDescription="@string/str_content_description"
         android:overScrollMode="never"
         android:scaleType="fitCenter"
-        android:src="@drawable/image_terms_conditions"/>
+        android:src="@drawable/image_terms_conditions" />
 
 </RelativeLayout>

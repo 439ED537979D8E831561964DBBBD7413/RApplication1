@@ -546,9 +546,7 @@ public class PhoneCallReceiver extends BroadcastReceiver {
         } catch (ParseException e) {
             e.printStackTrace();
             textViewLastCallTime.setVisibility(View.GONE);
-
         }
-
 
         String profileImage = spamDataType.getSpamPhotoUrl();
         if (!TextUtils.isEmpty(profileImage)) {

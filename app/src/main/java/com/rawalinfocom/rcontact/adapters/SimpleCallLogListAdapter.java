@@ -437,7 +437,7 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
 
                 selectedPosition = (int) v.getTag();
 
-                System.out.println("RContact selectedPosition --> " + selectedPosition);
+//                System.out.println("RContact selectedPosition --> " + selectedPosition);
 
 //                selectedCallLogData = callLogType;
                 String blockedNumber = "";

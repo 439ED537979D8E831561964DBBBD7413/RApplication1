@@ -88,6 +88,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
     RelativeLayout activityContactListing;
     @BindView(R.id.text_toolbar_title)
     TextView textToolbarTitle;
+    private String filterType = "";
 //    public ArrayList<Object> arrayListPhoneBookContacts;
 
     private ProfileMobileMapping profileMobileMapping;
@@ -347,6 +348,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                 inputSearch.getText().clear();
                 Utils.hideSoftKeyboard(ContactListingActivity.this, inputSearch);
                 if (position == 0) {
+                    filterType = "all";
                     if (arrayListUserProfile.size() > 0) {
                         arrayListFilteredUserProfile.addAll(arrayListUserProfile);
                         phoneBookContactListAdapter.notifyDataSetChanged();
@@ -399,6 +401,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
         });
     }
 
+
     private void setFilterList(String type) {
 
         arrayListNumberUserProfile.clear();
@@ -430,7 +433,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
         protected void onPreExecute() {
             super.onPreExecute();
             Utils.showProgressDialog(ContactListingActivity.this, "Please wait...", false);
-            System.out.println("RContact start --> " + System.currentTimeMillis());
+//            System.out.println("RContact start --> " + System.currentTimeMillis());
         }
 
         protected Void doInBackground(Void... urls) {
@@ -501,7 +504,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                     cursor.close();
                 }
 
-                System.out.println("RContact half --> " + System.currentTimeMillis());
+//                System.out.println("RContact half --> " + System.currentTimeMillis());
 
                 setRCPUser();
 
@@ -521,7 +524,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                     arrayListFilteredUserProfile.addAll(arrayListUserProfile);
                     Utils.hideProgressDialog();
                     phoneBookContactListAdapter.notifyDataSetChanged();
-                    System.out.println("RContact end --> " + System.currentTimeMillis());
+//                    System.out.println("RContact end --> " + System.currentTimeMillis());
                 }
             });
         }

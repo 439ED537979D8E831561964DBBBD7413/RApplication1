@@ -68,6 +68,7 @@ public class PhoneBookContactListAdapter extends RecyclerView.Adapter<PhoneBookC
         if (arrayListTempUserProfile.size() <= 0) {
             arrayListTempUserProfile.addAll(arrayListUserProfile);
         }
+
         UserProfile userProfile = arrayListUserProfile.get(position);
 
         holder.textContactName.setText(userProfile.getPmFirstName());

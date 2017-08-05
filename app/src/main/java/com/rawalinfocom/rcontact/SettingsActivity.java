@@ -200,7 +200,7 @@ public class SettingsActivity extends BaseActivity implements RippleView
                     Utils.setStringPreference(activity, AppConstants.PREF_APP_LANGUAGE, appLanguageListAdapter.getSelectedLanguageType());
                     dialog.dismiss();
 
-                    RContactApplication.getInstance().setLanguage();
+//                    RContactApplication.getInstance().setLanguage();
 
                     // Redirect to MainActivity
                     Intent intent = new Intent(activity, MainActivity.class);

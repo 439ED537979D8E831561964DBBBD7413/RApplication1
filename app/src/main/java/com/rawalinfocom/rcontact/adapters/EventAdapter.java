@@ -100,8 +100,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
         holder.buttonUserCommentSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String userComment = holder.edittextUserComment.getText().toString();
-                if (userComment != null && userComment.length() > 0) {
+                String userComment = holder.edittextUserComment.getText().toString().trim();
+                if (!(userComment.matches(""))) {
                     EventsActivity.evmRecordId = item.getEventRecordIndexId();
                     EventsActivity.selectedRecycler = recyclerPosition;
                     EventsActivity.selectedRecyclerItem = position;

@@ -69,6 +69,7 @@ public class TableRCContactRequest {
             db.close();
             return id;
         } catch (Exception e) {
+            db.close();
             return -1;
         }
     }
