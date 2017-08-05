@@ -620,6 +620,7 @@
     <string name="str_export">एक्सपोर्ट</string>
     <string name="str_short">सॉर्ट</string>
     <string name="str_push_notification">पुश नोटीफिकेशन</string>
+    <string name="str_call_notification">Call Pop Up Notification</string>
     <string name="str_event_notification">इवेंट नोटीफिकेशन</string>
     <string name="str_validation_short_type">सॉर्ट प्रकार चुनें</string>
     <string name="str_validation_export_type">एक्सपोर्ट प्रकार चुनें</string>

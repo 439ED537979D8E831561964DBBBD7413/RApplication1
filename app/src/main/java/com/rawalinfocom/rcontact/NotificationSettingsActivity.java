@@ -61,7 +61,6 @@ public class NotificationSettingsActivity extends BaseActivity implements Ripple
     LinearLayout llCallPopUp;
 
     private Activity activity;
-    private String from;
 
     //<editor-fold desc="Override Methods">
     @Override
@@ -71,8 +70,6 @@ public class NotificationSettingsActivity extends BaseActivity implements Ripple
         ButterKnife.bind(this);
 
         activity = NotificationSettingsActivity.this;
-
-        from = getIntent().getStringExtra("from");
 
         init();
     }
@@ -106,75 +103,71 @@ public class NotificationSettingsActivity extends BaseActivity implements Ripple
         txtCallPopUp.setTypeface(Utils.typefaceRegular(this));
         textCallPopUp.setTypeface(Utils.typefaceRegular(this));
 
-        if (from.equals("notification")) {
-            textToolbarTitle.setText(getResources().getString(R.string.text_notifications));
-            llPushNotification.setVisibility(View.VISIBLE);
-            llEventNotification.setVisibility(View.VISIBLE);
-            llCallPopUp.setVisibility(View.GONE);
+        textToolbarTitle.setText(getResources().getString(R.string.text_notifications));
+        llPushNotification.setVisibility(View.VISIBLE);
+        llEventNotification.setVisibility(View.VISIBLE);
+        llCallPopUp.setVisibility(View.GONE);
 
-            if (Utils.getBooleanPreference(activity, AppConstants.PREF_DISABLE_PUSH, false)) {
-                sbPushNotification.setChecked(false);
-            } else {
-                sbPushNotification.setChecked(true);
-            }
-
-            if (Utils.getBooleanPreference(activity, AppConstants.PREF_DISABLE_EVENT_PUSH, false)) {
-                sbEventNotification.setChecked(false);
-            } else {
-                sbEventNotification.setChecked(true);
-            }
-
-            sbPushNotification.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (isChecked) {
-                        // If the switch button is on
-                        Utils.setBooleanPreference(activity, AppConstants.PREF_DISABLE_PUSH, false);
-                    } else {
-                        // If the switch button is off
-                        Utils.setBooleanPreference(activity, AppConstants.PREF_DISABLE_PUSH, true);
-                    }
-                }
-            });
-
-            sbEventNotification.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (isChecked) {
-                        // If the switch button is on
-                        Utils.setBooleanPreference(activity, AppConstants.PREF_DISABLE_EVENT_PUSH, false);
-                    } else {
-                        // If the switch button is off
-                        Utils.setBooleanPreference(activity, AppConstants.PREF_DISABLE_EVENT_PUSH, true);
-                    }
-                }
-            });
-
+        if (Utils.getBooleanPreference(activity, AppConstants.PREF_DISABLE_PUSH, false)) {
+            sbPushNotification.setChecked(false);
         } else {
-
-            textToolbarTitle.setText(getResources().getString(R.string.str_pop_up));
-            llPushNotification.setVisibility(View.GONE);
-            llEventNotification.setVisibility(View.GONE);
-            llCallPopUp.setVisibility(View.VISIBLE);
-
-            if (Utils.getBooleanPreference(activity, AppConstants.PREF_DISABLE_POPUP, false)) {
-                sbCallPopUp.setChecked(false);
-            } else {
-                sbCallPopUp.setChecked(true);
-            }
-
-            sbCallPopUp.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (isChecked) {
-                        // If the switch button is on
-                        Utils.setBooleanPreference(activity, AppConstants.PREF_DISABLE_POPUP, false);
-                    } else {
-                        // If the switch button is off
-                        Utils.setBooleanPreference(activity, AppConstants.PREF_DISABLE_POPUP, true);
-                    }
-                }
-            });
+            sbPushNotification.setChecked(true);
         }
+
+        if (Utils.getBooleanPreference(activity, AppConstants.PREF_DISABLE_EVENT_PUSH, false)) {
+            sbEventNotification.setChecked(false);
+        } else {
+            sbEventNotification.setChecked(true);
+        }
+
+        sbPushNotification.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    // If the switch button is on
+                    Utils.setBooleanPreference(activity, AppConstants.PREF_DISABLE_PUSH, false);
+                } else {
+                    // If the switch button is off
+                    Utils.setBooleanPreference(activity, AppConstants.PREF_DISABLE_PUSH, true);
+                }
+            }
+        });
+
+        sbEventNotification.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    // If the switch button is on
+                    Utils.setBooleanPreference(activity, AppConstants.PREF_DISABLE_EVENT_PUSH, false);
+                } else {
+                    // If the switch button is off
+                    Utils.setBooleanPreference(activity, AppConstants.PREF_DISABLE_EVENT_PUSH, true);
+                }
+            }
+        });
+
+        textToolbarTitle.setText(getResources().getString(R.string.str_pop_up));
+        llPushNotification.setVisibility(View.GONE);
+        llEventNotification.setVisibility(View.GONE);
+        llCallPopUp.setVisibility(View.VISIBLE);
+
+        if (Utils.getBooleanPreference(activity, AppConstants.PREF_DISABLE_POPUP, false)) {
+            sbCallPopUp.setChecked(false);
+        } else {
+            sbCallPopUp.setChecked(true);
+        }
+
+        sbCallPopUp.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    // If the switch button is on
+                    Utils.setBooleanPreference(activity, AppConstants.PREF_DISABLE_POPUP, false);
+                } else {
+                    // If the switch button is off
+                    Utils.setBooleanPreference(activity, AppConstants.PREF_DISABLE_POPUP, true);
+                }
+            }
+        });
     }
 }
