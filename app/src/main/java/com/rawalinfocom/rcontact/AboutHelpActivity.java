@@ -9,6 +9,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.helper.finestwebview.FinestWebView;
@@ -25,6 +27,7 @@ import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.Contact;
 
+import java.io.File;
 import java.util.Calendar;
 
 import butterknife.BindView;
@@ -177,6 +180,7 @@ public class AboutHelpActivity extends BaseActivity implements RippleView
         Unbinder unbinder;
         @BindView(R.id.txt_app_name)
         TextView txtAppName;
+        int count;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -218,6 +222,33 @@ public class AboutHelpActivity extends BaseActivity implements RippleView
                     i.setData(Uri.parse(WsConstants.URL_TERMS_CONDITIONS));
                     startActivity(i);
 //                    showWebView(getString(R.string.str_terms), WsConstants.URL_TERMS_CONDITIONS);
+                }
+            });
+
+            imageSplash.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    count++;
+                    if(count == 5){
+                        count = 0;
+                        String exportedFileName = Utils.exportDB(getActivity());
+                        if (exportedFileName != null) {
+                            File fileLocation = new File(Environment.getExternalStorageDirectory()
+                                    .getAbsolutePath(), exportedFileName);
+                            Uri path = Uri.fromFile(fileLocation);
+                            Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                            emailIntent.setType("vnd.android.cursor.dir/email");
+                            emailIntent.putExtra(Intent.EXTRA_STREAM, path);
+                            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Database");
+                            startActivity(Intent.createChooser(emailIntent, getString(R.string
+                                    .str_send_email)));
+                        } else {
+                            Toast.makeText(getActivity(), getString(R.string.db_dump_failed),
+                                    Toast.LENGTH_SHORT)
+                                    .show();
+                        }
+                    }
+
                 }
             });
 
