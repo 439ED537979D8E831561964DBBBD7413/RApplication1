@@ -230,8 +230,6 @@ public class NotificationFCMService extends FirebaseMessagingService {
                             sendNotification(msg, AppConstants.NOTIFICATION_TYPE_TIMELINE);
                         else
                             sendBroadcastForCountupdate();
-//                        int badgeCount = 1;
-//                        ShortcutBadger.applyCount(this.getApplicationContext(), badgeCount);
                     }
                     break;
                 case "profileRatingReply":

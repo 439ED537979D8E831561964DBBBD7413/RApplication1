@@ -1,20 +1,15 @@
 <resources>
     <string name="app_name">RContacts</string>
 
-    <!--  facebook
-  -->
+    <!--  facebook  -->
     <string name="facebook_app_id">1410546345629965</string>
     <string name="google_maps_key">AIzaSyBJSXzIhhMakvEuZ8JCLfbs5m1nKXf0zHA</string>
 
-    <!--  Google
-  -->
-
-    <!-- <string name="server_client_id">842331483294-os1beu18aonoukiskj67li7l0e4orn61.apps.googleusercontent.com</string>
-  -->
+    <!--  Google  -->
+    <!-- <string name="server_client_id">842331483294-os1beu18aonoukiskj67li7l0e4orn61.apps.googleusercontent.com</string>  -->
     <string name="server_client_id">842331483294-ehe2r3r6mdbn6e1g9b33ecuakb5j0n28.apps.googleusercontent.com</string>
 
-    <!--  Common
-  -->
+    <!--  Common  -->
     <string name="msg_try_later">કંઈક ભૂલ થઇ! મહેરબાની કરી ફરી પ્રયત્ન કરો.</string>
     <string name="msg_no_internet">કૃપા કરીને તમારું ઇન્ટરનેટ કનેક્શન તપાસો.</string>
     <string name="msg_unsaved_details">કેટલીક વિગતો સંગ્રહિત કરવાની બાકી છે. શું તમે ખરેખર આગળ વધવા માંગો છો?</string>
@@ -35,8 +30,7 @@
     <string name="str_welcom">આપનું સ્વાગત છેै</string>
     <string name="str_welcom_message">તમારા સંપર્કોનો સ્માર્ટ થવાનો સમય આવી ગયો છે </string>
 
-    <!--  Other
-  -->
+    <!--  Other  -->
     <string name="error_facebook_login_cancelled">ફેસબુક લૉગિન નિષ્ફળ!</string>
     <string name="error_retrieving_details">વિગતો પુનઃપ્રાપ્ત કરવામાં અસમર્થ!</string>
     <string name="description_registration_logo">રજીસ્ટ્રેશન પ્રતીક ચિહ્ન</string>
@@ -49,12 +43,7 @@
     <string name="error_invalid_number">કૃપા કરીને એક માન્ય નંબર દાખલ કરો</string>
     <string name="msg_empty_country">દેશનું નામ ઉપલબ્ધ નથી</string>
     <string name="title_verification">ચકાસણી</string>
-
-	<string name="title_verifying_mobile_number">
-
-		<![CDATA[ હવે બેસો અને આરામ કરો! અમે તમારો મોબાઇલ નંબર ચકાસીએ છીએ.
-  ]]>
-	</string>
+	   <string name="title_verifying_mobile_number"><![CDATA[ હવે બેસો અને આરામ કરો! અમે તમારો મોબાઇલ નંબર ચકાસીએ છીએ.]]></string>
     <string name="msg_enter_otp">જો અમે SMS શોધવામાં નિષ્ફળ જઈએ તો 6 અંક OTP નીચે દાખલ કરો</string>
     <string name="action_resend">ફરી મોકલો</string>
     <string name="msg_otp_verification_success">OTP સફળતાપૂર્વક ચકાસવામાં આવ્યું</string>
@@ -87,15 +76,19 @@
     <string name="str_organization">સંસ્થા</string>
     <string name="str_company_name">કંપની નું નામ</string>
 
-    <!-- <string name="str_designation">Designation</string>
-  -->
+    <!-- <string name="str_designation">Designation</string>  -->
 
-    <!--  27/06/2017 Modified as Suggested by Mainank
-  -->
+    <!--  27/06/2017 Modified as Suggested by Mainank  -->
     <string name="str_tab_r_contact">RContacts</string>
     <string name="text_tab_rcontact">RContacts</string>
     <string name="tab_r_contact">RContacts</string>
     <string name="str_designation">વર્તમાન પદનામ</string>
+
+    <string-array name="types_language">
+        <item>English</item>
+        <item>हिंदी</item>
+        <item>ગુજરાતી</item>
+    </string-array>
 
     <string-array name="phonebook_contact_array_share">
         <item>શેર</item>
@@ -141,6 +134,7 @@
         <item>અન્ય</item>
         <item>કસ્ટમ</item>
     </string-array>
+
     <string name="show_call_history">કૉલ ઇતિહાસ જુઓ</string>
     <string name="send_sms">SMS મોકલો</string>
     <string name="remove_from_call_log">કૉલ લોગમાંથી કાઢી નાખો</string>
@@ -183,8 +177,7 @@
     <string name="text_tab_response">પ્રતિસાદ</string>
     <string name="text_tab_comments">ટિપ્પણીઓ</string>
 
-    <!-- <string name="text_tab_rcontact">RContact</string>
-  -->
+    <!-- <string name="text_tab_rcontact">RContact</string>  -->
     <string name="text_notifications">સૂચનાઓ</string>
     <string name="text_you_rated">તમે રેટ ને કર્યું</string>
     <string name="text_rated_you">એ તમને રેટ કર્યું</string>
@@ -204,8 +197,7 @@
     <string name="no_sms_found">કોઈ SMS મળ્યો નથી</string>
     <string name="no_logs_found">કોઈ કૉલ્સ મળ્યાં નથી</string>
 
-    <!-- Search
-  -->
+    <!-- Search  -->
     <string name="title_phonebook">ફોન બુક</string>
     <string name="search_hint">નામ અથવા નંબર દ્વારા શોધો</string>
     <string name="title_global_directory">ગ્લોબલ ડિરેક્ટરી</string>
@@ -218,8 +210,7 @@
     <string name="search_query_validation">શોધવા માટે શબ્દ દાખલ કરો</string>
     <string name="no_records_found_local">કોઈ રેકોર્ડ મળ્યા નથી</string>
 
-    <!-- edit-profile-text
-  -->
+    <!-- edit-profile-text  -->
     <string name="add_field">ક્ષેત્ર ઉમેરો</string>
     <string name="update">અપડેટ કરો</string>
     <string name="cancel">રદ કરો</string>
@@ -261,15 +252,13 @@
     <string name="err_msg_please_confirm_password">કન્ફર્મ પાસવર્ડ ખાલી ન હોઈ શકે</string>
     <string name="err_msg_password_not_match">પાસવર્ડ મેળ ખાતા નથી</string>
 
-    <!--  BLock List Contact
-  -->
+    <!--  BLock List Contact  -->
     <string name="add_contacts_to_block_list">સંપર્કોને બ્લોક કરો</string>
     <string name="unblock_All">બધા ને અનબ્લોક કરો</string>
     <string name="block_action_title">બ્લોક કરેલા સંપર્કો સૂચિ</string>
     <string name="contacts">સંપર્કો</string>
 
-    <!--  Call History Details
-  -->
+    <!--  Call History Details  -->
     <string name="sms">SMS</string>
     <string name="call_history">કૉલ ઇતિહાસ</string>
     <string name="text_no_history">જોવા માટે કોઈ ઇતિહાસ નથી </string>
@@ -295,8 +284,7 @@
     <string name="please_fill_stars">રેટ કરવા માટે સ્ટાર્સ પસંદ કરો!</string>
     <string name="call_history_toolbar_title">કૉલ ઇતિહાસ</string>
 
-    <!--  Phone Number Type
-  -->
+    <!--  Phone Number Type  -->
     <string name="type_home">ઘર</string>
     <string name="type_mobile">મોબાઇલ</string>
     <string name="type_work">કાર્ય</string>
@@ -319,8 +307,7 @@
     <string name="type_assistant">સહાયક</string>
     <string name="type_mms">MMS</string>
 
-    <!--  Call Log
-  -->
+    <!--  Call Log  -->
     <string name="no_history_delete">કાઢવા માટે કોઈ ઇતિહાસ નથી</string>
     <string name="call_logs_deleted">કૉલ લોગ કાઢી નાખ્યાં</string>
     <string name="please_select_history_to_delete">કૃપા કરી કાઢવા માટે કૉલ્સ પસંદ કરો</string>
@@ -328,8 +315,7 @@
     <string name="str_loading">લોડ કરી રહ્યું છે...</string>
     <string name="str_no_call_logs">પ્રદર્શિત કરવા માટે કોઈ લોગ્સ નથી</string>
 
-    <!--  Contact Listing
-  -->
+    <!--  Contact Listing  -->
     <string name="please_select_one_contact">કૃપા કરીને ઓછામાં ઓછો એક સંપર્ક પસંદ કરો</string>
     <string name="please_select_one">કૃપા કરીને ઓછામાં ઓછો એક પસંદ કરો</string>
     <string name="invitation_shared">આમંત્રણ શેર કર્યું</string>
@@ -344,8 +330,7 @@
     <string name="tab_sms">SMS</string>
     <string name="tab_all_contact">મારા સંપર્કો</string>
 
-    <!-- <string name="tab_r_contact">R Contacts</string>
-  -->
+    <!-- <string name="tab_r_contact">R Contacts</string>  -->
     <string name="tab_favorites">મનપસંદ</string>
     <string name="data_lost_hint_1">જો તમે સ્વિચ કરો છો, તો તમારો વર્તમાન ડેટા ખોવાઈ જશે.</string>
     <string name="data_lost_hint_2">શું તમે ચાલુ રાખવા માંગો છો?</string>
@@ -391,8 +376,7 @@
     <string name="contact_read_permission">સંપર્કો વાંચવાની પરવાનગી જરૂર છે. શું તમે ફરીથી પ્રયાસ કરવા માંગો છો?</string>
     <string name="calling_permission">કોલ કરવાની પરવાનગી જરૂર છે. શું તમે ફરીથી પ્રયાસ કરવા માંગો છો?</string>
 
-    <!--  Social Media
-  -->
+    <!--  Social Media  -->
     <string name="social_media">સોશિઅલ મીડિયા</string>
     <string name="str_whats_app">Whatsapp</string>
     <string name="str_facebook">Facebook</string>
@@ -401,8 +385,7 @@
     <string name="str_linked_in">Linkedin</string>
     <string name="str_skype">Skype</string>
 
-    <!--  Comment & Notification
-  -->
+    <!--  Comment & Notification  -->
     <string name="str_view_reply">જવાબ જુઓ</string>
     <string name="str_reply_you">એ તમને જવાબ આપ્યો</string>
     <string name="str_unread_notification_hint_1">તમારી પાસે</string>
@@ -419,13 +402,11 @@
     <string name="str_tab_rating">રેટિંગ</string>
     <string name="str_tab_comment">ટિપ્પણી</string>
 
-    <!-- <string name="str_tab_r_contact">RContact</string>
-  -->
+    <!-- <string name="str_tab_r_contact">RContact</string>  -->
     <string name="str_requested_for_your">એ તમારો જોવા માટે પરવાનગી માંગી છે</string>
     <string name="str_confirmed_your_request_for">એ તમારી ની વિનંતી સ્વીકારી લીધી છે</string>
 
-    <!--  Profile
-  -->
+    <!--  Profile  -->
     <string name="str_copy_number">નંબર કૉપિ કરવામાં આવ્યો</string>
     <string name="str_copy_email">ઇમેઇલ કૉપિ કરવામાં આવ્યો</string>
     <string name="str_copy_website">વેબસાઈટ કૉપિ કરવામાં આવ્યો</string>
@@ -510,20 +491,16 @@
     <string name="str_share_contact_via">સંપર્ક શેર કરવાનો માધ્યમ</string>
     <string name="str_change_profile_picture">પ્રોફાઇલ ઇમેજ બદલો</string>
 
-    <!--  SMS
-  -->
+    <!--  SMS  -->
     <string name="str_message_deleted">સંદેશ કાઢી નાખ્યો</string>
 
-    <!--  Dialer
-  -->
+    <!--  Dialer  -->
     <string name="str_no_sim">કોઈ સિમ નહિ મળી</string>
 
-    <!--  Favorite
-  -->
+    <!--  Favorite  -->
     <string name="str_no_favorite">કોઈ મનપસંદ સંપર્ક નહિ મળ્યો</string>
 
-    <!--  Maps
-  -->
+    <!--  Maps  -->
     <string name="str_no_location_found">સ્થાન નહિ મળ્યું</string>
     <string name="str_unable_location_found">સ્થાન શોધવામાં અસમર્થ</string>
     <string name="str_daily_limit_warning">You have exceeded your daily request quota for this API</string>
@@ -534,28 +511,23 @@
     <string name="str_use_postal_address">ટપાલ સરનામાં નો ઉપયોગ કરો</string>
     <string name="str_use_google_address">Google Maps પર સિંક થયેલ સરનામાંનો ઉપયોગ કરો</string>
 
-    <!--  Privacy
-  -->
+    <!--  Privacy  -->
     <string name="str_privacy_setting_update">ગોપનીયતા સેટિંગ્સ સફળતાપૂર્વક અપડેટ થઈ</string>
     <string name="str_request_sending_fail">વિનંતી મોકલવામાં નિષ્ફળ</string>
 
-    <!--  GPS
-  -->
+    <!--  GPS  -->
     <string name="str_gps_disable">GPS સક્ષમ કરો</string>
     <string name="str_gps_not_enable">GPS અક્ષમ છે. કૃપા કરી તેને સેટિંગ્સ મેનૂથી સક્ષમ કરો.</string>
     <string name="str_cancel">રદ કરો</string>
     <string name="str_settings">સેટિંગ્સ</string>
 
-    <!--  Country
-  -->
+    <!--  Country  -->
     <string name="str_no_country_found">દેશનું નામ નહિ મળ્યું</string>
 
-    <!--  OTP
-  -->
+    <!--  OTP  -->
     <string name="str_rawal_otp">rawal_otp</string>
 
-    <!--  Registration
-  -->
+    <!--  Registration  -->
     <string name="str_mobile_number">મોબાઇલ નંબર</string>
     <string name="error_custom_type">કૃપા કરીને માન્ય કસ્ટમ પ્રકાર ઉમેરો</string>
     <string name="tutorial_header_1">સંપર્કો ફરીથી વ્યાખ્યાયિત</string>
@@ -563,10 +535,7 @@
     <string name="tutorial_header_3">વૈશ્વિક પહોંચ</string>
     <string name="tutorial_header_4">સ્પામર્સ પ્રતિબંધિત</string>
     <string name="tutorial_header_5">રેટિંગ પ્રાપ્ત કરો</string>
-
-	<string name="tutorial_content_1">
-	<![CDATA[સંપર્ક માત્ર એક નંબર નથી પરંતુ ઓટો સિંક કરેલો ડેટા અને સોશિઅલ માહિતીવાળી એક પ્રોફાઇલ છે!]]>
-	</string>
+	   <string name="tutorial_content_1"><![CDATA[સંપર્ક માત્ર એક નંબર નથી પરંતુ ઓટો સિંક કરેલો ડેટા અને સોશિઅલ માહિતીવાળી એક પ્રોફાઇલ છે!]]>	</string>
     <string name="tutorial_content_2">RContacts દ્વારા સંપર્કો અને કૉલ લોગ્સ ને માત્ર એક આયકન થી પ્રબંધિત કરો! </string>
     <string name="tutorial_content_3">ફક્ત તમારા હોમસ્ક્રીન પર આ પૃથ્વી મૂકો અને તેના થી સંબંધિત કોઈપણ નંબર ના વિગતો ની શોધ કરો</string>
     <string name="tutorial_content_4">RContacts સ્પેશિયલ એજન્ટ ની જેમ તમને સ્પામ તરીકે ચિહ્નિત કરેલા નંબરો થી તમારું બચાવ કરશે</string>
@@ -579,8 +548,7 @@
     <string name="str_terms_conditions">By continuing you accept terms and conditions</string>
     <string name="accept_terms_conditions">Accept terms and conditions before proceeding!</string>
 
-    <!--  English Only
-  -->
+    <!--  English Only  -->
     <string name="error_required_account">ખાતું આવશ્યક છે</string>
     <string name="error_once_birthday_anniversary">જન્મદિવસ અને વર્ષગાંઠ માત્ર એકવાર જ ઉમેરી શકાય છે!</string>
     <string name="error_no_update">અપડેટ કરવા માટે કંઈ નથી</string>
@@ -634,9 +602,11 @@
     <string name="lbl_joining_date">જોડાવવાની તારીખ</string>
 
     <!--Security-->
-    <string name="security_info">જ્યારે શક્ય હોય ત્યારે, તમારા અને તમારા સંપર્કો વચ્ચેના સંદેશોને એન્ડ-ટુ-એન્ડ એન્ક્રિપ્શન સાથે સુરક્ષિત કરવામાં આવે છે, જેના થી RContacts એપ્લિકેશન અને ત્રીજા પક્ષો સંદેશોને વાંચી શકતા નથી.</string>
+    <string name="security_info">જ્યારે શક્ય હોય ત્યારે, તમારા અને તમારા સંપર્કો વચ્ચેના સંદેશોને એન્ડ-ટુ-એન્ડ એન્ક્રિપ્શન સાથે સુરક્ષિત કરવામાં આવે છે,
+        જેના થી RContacts એપ્લિકેશન અને ત્રીજા પક્ષો સંદેશોને વાંચી શકતા નથી.</string>
 
     <string name="security_link_text">RContacts ની સુરક્ષા વિશે વધુ જાણો</string>
+    <string name="security_link">http://webstaging.rcontacts.in/global/privacy-policy</string>
 
     <!-- Settings -->
     <string name="app_language">ભાષા</string>
@@ -677,7 +647,8 @@
 
     <!--Call-popup-->
     <string name="str_pop_up">Call Pop-Up</string>
-    <string name="network_warning_msg">કૉલર આઈડી ને સક્ષમ કરવા માટે 3G/4G અથવા WiFi કનેક્શનની જરૂર છે. મહેરબાની કરીને તમારા કનેક્શન ની તપાસ કરો અને ફરીથી પ્રયાસ કરો.</string>
+    <string name="network_warning_msg">કૉલર આઈડી ને સક્ષમ કરવા માટે 3G/4G અથવા WiFi કનેક્શનની જરૂર છે.
+        મહેરબાની કરીને તમારા કનેક્શન ની તપાસ કરો અને ફરીથી પ્રયાસ કરો.</string>
     <string name="call_received_from">પાસે થી કૉલ પ્રાપ્ત</string>
     <string name="btn_view_profile">પ્રોફાઇલ જુઓ</string>
     <string name="btn_view_call_history">કૉલ ઇતિહાસ જુઓ</string>
@@ -685,4 +656,6 @@
     <string name="txt_message">સંદેશ</string>
     <string name="txt_save">સંગ્રહિત કરો</string>
     <string name="report_spam">સ્પામ તરીકે રિપોર્ટ કરો</string>
+    <string name="reported_spam">સ્પામ તરીકે રિપોર્ટ કર્યો</string>
+
 </resources>
