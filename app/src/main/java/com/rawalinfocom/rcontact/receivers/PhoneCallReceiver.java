@@ -424,7 +424,7 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                                 outGoingCall = false;
                             } else {
                                 if (!Utils.getBooleanPreference(context, AppConstants.PREF_DISABLE_POPUP, false))
-                                    initializeIncomingCallDialog();
+                                initializeIncomingCallDialog();
                             }
                         }
 

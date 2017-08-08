@@ -103,10 +103,7 @@ public class NotificationSettingsActivity extends BaseActivity implements Ripple
         txtCallPopUp.setTypeface(Utils.typefaceRegular(this));
         textCallPopUp.setTypeface(Utils.typefaceRegular(this));
 
-        textToolbarTitle.setText(getResources().getString(R.string.text_notifications));
-        llPushNotification.setVisibility(View.VISIBLE);
-        llEventNotification.setVisibility(View.VISIBLE);
-        llCallPopUp.setVisibility(View.GONE);
+            textToolbarTitle.setText(getResources().getString(R.string.text_notifications));
 
         if (Utils.getBooleanPreference(activity, AppConstants.PREF_DISABLE_PUSH, false)) {
             sbPushNotification.setChecked(false);
@@ -146,10 +143,7 @@ public class NotificationSettingsActivity extends BaseActivity implements Ripple
             }
         });
 
-        textToolbarTitle.setText(getResources().getString(R.string.str_pop_up));
-        llPushNotification.setVisibility(View.GONE);
-        llEventNotification.setVisibility(View.GONE);
-        llCallPopUp.setVisibility(View.VISIBLE);
+            textToolbarTitle.setText(getResources().getString(R.string.str_pop_up));
 
         if (Utils.getBooleanPreference(activity, AppConstants.PREF_DISABLE_POPUP, false)) {
             sbCallPopUp.setChecked(false);
