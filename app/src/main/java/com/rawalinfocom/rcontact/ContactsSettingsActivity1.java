@@ -204,8 +204,7 @@ public class ContactsSettingsActivity1 extends BaseActivity implements RippleVie
             shortByContactArrayList = new ArrayList<>();
 
             shortByContactArrayList.add(new AppLanguage(getString(R.string.phone_storage), "0", true));
-            shortByContactArrayList.add(new AppLanguage(getString(R.string.sd_card), "1", false));
-            shortByContactArrayList.add(new AppLanguage(getString(R.string.google_drive), "2", false));
+            shortByContactArrayList.add(new AppLanguage(getString(R.string.google_drive), "1", false));
         }
     }
 
@@ -301,13 +300,6 @@ public class ContactsSettingsActivity1 extends BaseActivity implements RippleVie
                             new ExportContact(shortByContactListAdapter.getSelectedType()).execute();
                             break;
                         case "1":
-                            if (checkExternalStorageState())
-                                new ExportContact(shortByContactListAdapter.getSelectedType()).execute();
-                            else
-                                Utils.showErrorSnackBar(activity, activityContactSettings,
-                                        "External storage not available!!");
-                            break;
-                        case "2":
 
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                                 checkPermissionToExecute(requiredPermissions, GOOGLE_LOGIN_PERMISSION);
@@ -315,6 +307,16 @@ public class ContactsSettingsActivity1 extends BaseActivity implements RippleVie
                                 IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_GOOGLE;
                                 googleSignIn();
                             }
+
+//                            if (checkExternalStorageState())
+//                                new ExportContact(shortByContactListAdapter.getSelectedType()).execute();
+//                            else
+//                                Utils.showErrorSnackBar(activity, activityContactSettings,
+//                                        "External storage not available!!");
+                            break;
+                        case "2":
+
+
                             break;
                         default:
                             break;
@@ -373,7 +375,7 @@ public class ContactsSettingsActivity1 extends BaseActivity implements RippleVie
         protected void onPostExecute(Void result) {
             Utils.hideProgressDialog();
 
-            if (selectedType.equals("2"))
+            if (selectedType.equals("1"))
                 Drive.DriveApi.newDriveContents(mGoogleApiClient).setResultCallback(driveContentsCallback);
 //                check_folder_exists();
         }
@@ -497,7 +499,7 @@ public class ContactsSettingsActivity1 extends BaseActivity implements RippleVie
 
             if (acct != null) {
                 Drive.DriveApi.newDriveContents(mGoogleApiClient);
-                new ExportContact("2").execute();
+                new ExportContact("1").execute();
             }
         } else {
             Utils.showErrorSnackBar(activity, activityContactSettings, getString(R.string.error_retrieving_details));

@@ -59,7 +59,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
     ArrayList<UserProfile> arrayListUserProfile;
     ArrayList<UserProfile> arrayListNumberUserProfile;
     ArrayList<UserProfile> arrayListEmailUserProfile;
-    ArrayList<UserProfile> arrayListFilteredUserProfile;
+    //    ArrayList<UserProfile> arrayListFilteredUserProfile;
     @BindView(R.id.image_action_back)
     ImageView imageActionBack;
     @BindView(R.id.ripple_action_back)
@@ -155,13 +155,13 @@ public class ContactListingActivity extends BaseActivity implements RippleView
 
                     if (inputSearch.getText().toString().length() > 0) {
 
-//                        if (filterType.equals("all")) {
-                        phoneBookContactListAdapter.filter("");
-                        recyclerViewContacts.setAdapter(phoneBookContactListAdapter);
-                        phoneBookContactListAdapter.adapterNotify();
-//                        } else {
-//                            setFilterList();
-//                        }
+                        if (filterType.equals("all")) {
+                            phoneBookContactListAdapter.filter("");
+                            phoneBookContactListAdapter.updateList(arrayListUserProfile);
+//                        recyclerViewContacts.setAdapter(phoneBookContactListAdapter);
+                        } else {
+                            setFilterList();
+                        }
                     }
 
                 } else {
@@ -293,27 +293,17 @@ public class ContactListingActivity extends BaseActivity implements RippleView
 
         rippleActionBack.setOnRippleCompleteListener(this);
         rippleActionRightCenter.setOnRippleCompleteListener(this);
-
-//        checkboxSelectAll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                phoneBookContactListAdapter.isSelectAll(isChecked);
-//                if (!isChecked) {
-//                    phoneBookContactListAdapter.getArrayListCheckedPositions().clear();
-//                }
-//            }
-//        });
     }
 
     //<editor-fold desc="Private Methods">
     private void setupView() {
 
-        arrayListFilteredUserProfile = new ArrayList<>();
+//        arrayListFilteredUserProfile = new ArrayList<>();
 //        arrayListUserProfile.addAll(arrayListFilteredUserProfile);
 
         recyclerViewContacts.setLayoutManager(new LinearLayoutManager(this));
         phoneBookContactListAdapter = new PhoneBookContactListAdapter(this,
-                arrayListFilteredUserProfile, new PhoneBookContactListAdapter.OnClickListener() {
+                arrayListUserProfile, new PhoneBookContactListAdapter.OnClickListener() {
             @Override
             public void onClick(String number, String email) {
 
@@ -346,30 +336,25 @@ public class ContactListingActivity extends BaseActivity implements RippleView
         spinnerShareVia.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                arrayListFilteredUserProfile.clear();
-//                phoneBookContactListAdapter.getArrayListCheckedPositions().clear();
-//                phoneBookContactListAdapter.isSelectAll(false);
-//                checkboxSelectAll.setChecked(false);
+//                arrayListFilteredUserProfile.clear();
                 inputSearch.getText().clear();
                 Utils.hideSoftKeyboard(ContactListingActivity.this, inputSearch);
                 if (position == 0) {
                     filterType = "all";
                     if (arrayListUserProfile.size() > 0) {
-                        arrayListFilteredUserProfile.addAll(arrayListUserProfile);
-                        phoneBookContactListAdapter.adapterNotify();
+//                        arrayListFilteredUserProfile.addAll(arrayListUserProfile);
+                        phoneBookContactListAdapter.updateList(arrayListUserProfile);
                     } else {
                         new GetContactData().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     }
                 } else if (position == 1) {
                     filterType = "sms";
                     setFilterList();
-                    arrayListFilteredUserProfile.addAll(arrayListNumberUserProfile);
-                    phoneBookContactListAdapter.adapterNotify();
+//                    arrayListFilteredUserProfile.addAll(arrayListNumberUserProfile);
                 } else if (position == 2) {
                     filterType = "email";
                     setFilterList();
-                    arrayListFilteredUserProfile.addAll(arrayListEmailUserProfile);
-                    phoneBookContactListAdapter.adapterNotify();
+//                    arrayListFilteredUserProfile.addAll(arrayListEmailUserProfile);
                 }
             }
 
@@ -433,13 +418,10 @@ public class ContactListingActivity extends BaseActivity implements RippleView
             }
         }
 
-//        if (filterType.equals("sms")) {
-//            arrayListFilteredUserProfile.addAll(arrayListNumberUserProfile);
-//            phoneBookContactListAdapter.adapterNotify();
-//        } else {
-//            arrayListFilteredUserProfile.addAll(arrayListEmailUserProfile);
-//            phoneBookContactListAdapter.adapterNotify();
-//        }
+        if (filterType.equals("sms"))
+            phoneBookContactListAdapter.updateList(arrayListNumberUserProfile);
+        else
+            phoneBookContactListAdapter.updateList(arrayListEmailUserProfile);
     }
 
     private class GetContactData extends AsyncTask<Void, Void, Void> {
@@ -539,7 +521,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    arrayListFilteredUserProfile.addAll(arrayListUserProfile);
+//                    arrayListFilteredUserProfile.addAll(arrayListUserProfile);
                     Utils.hideProgressDialog();
                     phoneBookContactListAdapter.notifyDataSetChanged();
 //                    System.out.println("RContact end --> " + System.currentTimeMillis());

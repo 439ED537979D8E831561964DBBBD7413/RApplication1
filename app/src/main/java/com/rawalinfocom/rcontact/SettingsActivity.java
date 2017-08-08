@@ -188,6 +188,9 @@ public class SettingsActivity extends BaseActivity implements RippleView
 //                    RContactApplication.getInstance().setLanguage();
 
                     // Redirect to MainActivity
+
+                    AppConstants.isFromSettingActivity = false;
+
                     Intent intent = new Intent(activity, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);

@@ -10,6 +10,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
@@ -401,7 +403,10 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
         buttonRestore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                imgLoading.setImageResource(R.drawable.loading);
+
+                GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(imgLoading);
+                Glide.with(RestorationActivity.this).load(R.drawable.loading).into(imageViewTarget);
+
                 buttonRestore.setText(getString(R.string.str_restoring));
                 buttonRestore.setEnabled(false);
                 RCPContactServiceCall("", WsConstants.REQ_GET_RCP_CONTACT);
