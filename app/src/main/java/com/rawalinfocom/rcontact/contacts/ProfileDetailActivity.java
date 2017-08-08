@@ -2956,7 +2956,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
         }
         try {
-
             if (cursor != null && cursor.getCount() > 0) {
                 int number1 = cursor.getColumnIndex(CallLog.Calls.NUMBER);
                 int type = cursor.getColumnIndex(CallLog.Calls.TYPE);

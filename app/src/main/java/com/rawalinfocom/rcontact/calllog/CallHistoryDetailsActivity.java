@@ -2116,6 +2116,10 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
             cursor = getCallHistoryDataByNumber(number);
         } else {
             cursor = getCallHistoryDataByName(number);
+            if(cursor!=null && cursor.getCount() == 0){
+                if(!StringUtils.isEmpty(historyNumber))
+                    cursor = getCallHistoryDataByNumber(historyNumber);
+            }
         }
 
         try {

@@ -175,7 +175,11 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
                     holder.textCloudContactName.setTextColor(ContextCompat.getColor(mActivity, R.color
                             .colorAccent));
                     holder.textContactName.setText(String.format("%s ", name));
-                    holder.textCloudContactName.setText("(" + contactDisplayName + ")");
+                    if(!StringUtils.isEmpty(contactDisplayName))
+                        holder.textCloudContactName.setText("(" + contactDisplayName + ")");
+                    else
+                        holder.textCloudContactName.setText("");
+
                 }
 
             } else {
@@ -307,6 +311,12 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
                             holder.textSpamCount.setVisibility(View.GONE);
                         }
                     }
+                }
+                if (!StringUtils.equalsIgnoreCase(callLogType.getSpamCount(), "0")) {
+                    holder.textSpamCount.setText(callLogType.getSpamCount());
+                } else {
+                    holder.imageViewSpam.setVisibility(View.GONE);
+                    holder.textSpamCount.setVisibility(View.GONE);
                 }
                 /*holder.textContactName.setTypeface(Utils.typefaceBold(mActivity));
                 holder.textContactName.setTextColor(ContextCompat.getColor(mActivity, R.color

@@ -188,8 +188,8 @@ public class TableSpamDetailMaster {
             db.close(); // Closing database connection
         }catch (Exception e){
             e.printStackTrace();
-            if(db!=null && db.isOpen())
-                db.close();
+            /*if(db!=null && db.isOpen())
+                db.close();*/
         }
 
 
