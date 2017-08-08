@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "842331483294-22h70dvgdfgj6t2r1890v11h1a5lv1rh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rawalinfocom.rcontact",
+            "certificate_hash": "8810a0f5375a4a3e715c0938ad1df74a5069b3f6"
+          }
+        },
+        {
           "client_id": "842331483294-g6tvnplur8ejqo7lb0mr3enfsip6nu2a.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

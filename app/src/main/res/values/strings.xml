@@ -150,7 +150,7 @@
     <string name="nav_text_events">Events</string>
     <string name="nav_text_rating_history">Rating History</string>
     <string name="nav_text_invite_contact">Invite contacts</string>
-    <string name="nav_text_share_rcontact">Share RContact App</string>
+    <string name="nav_text_share_rcontact">Share RContacts App</string>
     <string name="nav_text_settings">Settings</string>
     <string name="nav_text_block_contact">Block Contact List</string>
     <string name="nav_text_rate_us">Rate us</string>
@@ -620,6 +620,7 @@
     <string name="str_export">export</string>
     <string name="str_short">short</string>
     <string name="str_push_notification">Push Notification</string>
+    <string name="str_call_notification">Call Pop Up Notification</string>
     <string name="str_event_notification">Event Notification</string>
     <string name="str_validation_short_type">Please select any short type</string>
     <string name="str_validation_export_type">Please select any export type</string>

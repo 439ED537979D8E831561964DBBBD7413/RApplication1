@@ -61,7 +61,6 @@ public class NotificationSettingsActivity extends BaseActivity implements Ripple
     LinearLayout llCallPopUp;
 
     private Activity activity;
-    private String from;
 
     //<editor-fold desc="Override Methods">
     @Override
@@ -71,8 +70,6 @@ public class NotificationSettingsActivity extends BaseActivity implements Ripple
         ButterKnife.bind(this);
 
         activity = NotificationSettingsActivity.this;
-
-        from = getIntent().getStringExtra("from");
 
         init();
     }
@@ -106,11 +103,7 @@ public class NotificationSettingsActivity extends BaseActivity implements Ripple
         txtCallPopUp.setTypeface(Utils.typefaceRegular(this));
         textCallPopUp.setTypeface(Utils.typefaceRegular(this));
 
-        if (from.equals("notification")) {
             textToolbarTitle.setText(getResources().getString(R.string.text_notifications));
-            llPushNotification.setVisibility(View.VISIBLE);
-            llEventNotification.setVisibility(View.VISIBLE);
-            llCallPopUp.setVisibility(View.GONE);
 
             if (Utils.getBooleanPreference(activity, AppConstants.PREF_DISABLE_PUSH, false)) {
                 sbPushNotification.setChecked(false);
@@ -150,12 +143,7 @@ public class NotificationSettingsActivity extends BaseActivity implements Ripple
                 }
             });
 
-        } else {
-
             textToolbarTitle.setText(getResources().getString(R.string.str_pop_up));
-            llPushNotification.setVisibility(View.GONE);
-            llEventNotification.setVisibility(View.GONE);
-            llCallPopUp.setVisibility(View.VISIBLE);
 
             if (Utils.getBooleanPreference(activity, AppConstants.PREF_DISABLE_POPUP, false)) {
                 sbCallPopUp.setChecked(false);
@@ -175,6 +163,5 @@ public class NotificationSettingsActivity extends BaseActivity implements Ripple
                     }
                 }
             });
-        }
     }
 }

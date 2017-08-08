@@ -194,7 +194,8 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                 if (StringUtils.isEmpty(contactName)) {
                     final SpamDataType spamDataType = setRCPDetailsAndSpamCountforUnsavedNumbers(savedNumber);
                     if (StringUtils.length(spamDataType.getRcpVerfiy()) > 0) {
-                        initializeEndCallDialog();
+                        if (!Utils.getBooleanPreference(context, AppConstants.PREF_DISABLE_POPUP, false))
+                            initializeEndCallDialog();
                     } else {
                         callSpamServiceApi();
                     }
@@ -422,6 +423,7 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                             if (outGoingCall) {
                                 outGoingCall = false;
                             } else {
+                                if (!Utils.getBooleanPreference(context, AppConstants.PREF_DISABLE_POPUP, false))
                                 initializeIncomingCallDialog();
                             }
                         }
