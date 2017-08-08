@@ -427,12 +427,12 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
             callLogType.setType(cursor.getInt(cursor.getColumnIndex(CallLog.Calls.TYPE)));
 
-            if (!TextUtils.isEmpty(number))
+            if (!StringUtils.isEmpty(number))
                 callLogType.setNumber(number);
 //            else
 //                callLogType.setNumber("");
 
-            if (!TextUtils.isEmpty(name))
+            if (!StringUtils.isEmpty(name))
                 callLogType.setName(name);
 //            else
 //                callLogType.setName("");
@@ -563,16 +563,21 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     simpleCallLogListAdapter.notifyDataSetChanged();
                     rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
                     //Aniruddh -- TO do save 0th record dateTime and rawId in preference;
-                    Long dateTime =  callLogTypeArrayList.get(0).getDate();
-                    DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale
-                            .getDefault());
+                    if(callLogTypeArrayList.size()>0){
+                        Long dateTime =  callLogTypeArrayList.get(0).getDate();
+                        DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale
+                                .getDefault());
 
-                    Date cursorDate = new Date(dateTime);
-                    String latestCallDate = sdf.format(cursorDate);
-                    String rawId =  callLogTypeArrayList.get(0).getUniqueContactId();
+                        Date cursorDate = new Date(dateTime);
+                        String latestCallDate = sdf.format(cursorDate);
+                        String rawId =  callLogTypeArrayList.get(0).getUniqueContactId();
 
-                    Utils.setStringPreference(getActivity(),AppConstants.PREF_LATEST_CALL_DATE_TIME,latestCallDate);
-                    Utils.setStringPreference(getActivity(),AppConstants.PREF_LATEST_CALL_RAW_ID,rawId);
+                        Utils.setStringPreference(getActivity(),AppConstants.PREF_LATEST_CALL_DATE_TIME,latestCallDate);
+                        Utils.setStringPreference(getActivity(),AppConstants.PREF_LATEST_CALL_RAW_ID,rawId);
+                    }else{
+                        textNoCallsFound.setVisibility(View.VISIBLE);
+                    }
+
                 }
             });
         }
@@ -717,7 +722,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
                     String userName = cursor.getString(cursor.getColumnIndex(CallLog.Calls.CACHED_NAME));
 
-                    if (!TextUtils.isEmpty(userName))
+                    if (!StringUtils.isEmpty(userName))
                         callLogType.setName(userName);
 //                    else
 //                        callLogType.setName("");
@@ -727,7 +732,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     callLogType.setDate(cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE)));
                     callLogType.setUniqueContactId(cursor.getString(cursor.getColumnIndex(CallLog.Calls._ID)));
                     callLogType.setLocalPbRowId(" ");
-//                    callLogType.setProfileImage("");
+                    callLogType.setProfileImage("");
 
                     callLogTypeArrayList.add(callLogType);
                 }
@@ -801,7 +806,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
                         String userName = cursor.getString(cursor.getColumnIndex(CallLog.Calls.CACHED_NAME));
 
-                        if (!TextUtils.isEmpty(userName))
+                        if (!StringUtils.isEmpty(userName))
                             callLogType.setName(userName);
 //                        else
 //                            callLogType.setName("");
@@ -811,7 +816,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                         callLogType.setDate(cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE)));
                         callLogType.setUniqueContactId(cursor.getString(cursor.getColumnIndex(CallLog.Calls._ID)));
                         callLogType.setLocalPbRowId(" ");
-//                        callLogType.setProfileImage("");
+                        callLogType.setProfileImage("");
 
                         callLogTypeArrayList.add(0, callLogType);
 
@@ -895,16 +900,23 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     simpleCallLogListAdapter.notifyDataSetChanged();
                     rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
                     //Aniruddh -- TO do save 0th record dateTime and rawId in preference;
-                    Long dateTime =  callLogTypeArrayList.get(0).getDate();
-                    DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale
-                            .getDefault());
+                    if(callLogTypeArrayList.size()>0){
+                        Long dateTime =  callLogTypeArrayList.get(0).getDate();
+                        DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale
+                                .getDefault());
 
-                    Date cursorDate = new Date(dateTime);
-                    String latestCallDate = sdf.format(cursorDate);
-                    String rawId =  callLogTypeArrayList.get(0).getUniqueContactId();
+                        Date cursorDate = new Date(dateTime);
+                        String latestCallDate = sdf.format(cursorDate);
+                        String rawId =  callLogTypeArrayList.get(0).getUniqueContactId();
 
-                    Utils.setStringPreference(getActivity(),AppConstants.PREF_LATEST_CALL_DATE_TIME,latestCallDate);
-                    Utils.setStringPreference(getActivity(),AppConstants.PREF_LATEST_CALL_RAW_ID,rawId);
+                        Utils.setStringPreference(getActivity(),AppConstants.PREF_LATEST_CALL_DATE_TIME,latestCallDate);
+                        Utils.setStringPreference(getActivity(),AppConstants.PREF_LATEST_CALL_RAW_ID,rawId);
+                    }else{
+                        textNoCallsFound.setVisibility(View.VISIBLE);
+                    }
+
+
+
                 }
             });
         }
@@ -1061,7 +1073,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                         if (!TextUtils.isEmpty(photoThumbNail)) {
                             callLogType.setProfileImage(photoThumbNail);
                         } else {
-//                            callLogType.setProfileImage("");
+                            callLogType.setProfileImage("");
                         }
                         callLogTypeArrayList.set(i, callLogType);
                     }
