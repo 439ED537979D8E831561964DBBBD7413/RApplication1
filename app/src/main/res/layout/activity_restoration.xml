@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/text_restore_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/activity_double_horizontal_margin"
+        android:layout_marginStart="@dimen/activity_double_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_double_horizontal_margin"
+        android:gravity="center"
+        android:text="@string/str_restore"
+        android:textAppearance="?android:textAppearanceLarge"
+        android:textColor="@color/colorAccent" />
+
+    <LinearLayout
+        android:id="@+id/linear_indicator"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_margin="@dimen/margin_15dp"
+            android:contentDescription="@string/app_name"
+            android:padding="@dimen/margin_10dp"
+            android:src="@drawable/ico_server_svg" />
+
+        <ImageView
+            android:id="@+id/imgLoading"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_margin="@dimen/margin_15dp"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/ico_right_arrow_svg" />
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_margin="@dimen/margin_15dp"
+            android:contentDescription="@string/app_name"
+            android:padding="@dimen/margin_10dp"
+            android:src="@drawable/ico_device_svg" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/button_restore"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_20dp"
+        android:background="@color/colorAccent"
+        android:text="@string/action_restore"
+        android:textColor="@color/colorWhite" />
+
+</LinearLayout>

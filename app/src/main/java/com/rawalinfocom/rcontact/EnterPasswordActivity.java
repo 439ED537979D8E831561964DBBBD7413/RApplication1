@@ -242,14 +242,25 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
                     Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME, String.valueOf(System.currentTimeMillis()));
                     Utils.setBooleanPreference(this, AppConstants.KEY_IS_FIRST_TIME, true);
 
-                    // Redirect to MainActivity
-                    Intent intent = new Intent(this, MainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.enter, R.anim.exit);
-                    finish();
+                    if (Utils.getBooleanPreference(this, AppConstants.KEY_IS_RESTORE_DONE, false)) {
+                        // Redirect to MainActivity
+                        Intent intent = new Intent(this, MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.enter, R.anim.exit);
+                        finish();
+                    } else {
+                        // Redirect to RestorationActivity
+                        Intent intent = new Intent(this, RestorationActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.enter, R.anim.exit);
+                        finish();
+                    }
 
                 } else {
                     if (enterPassWordResponse != null) {

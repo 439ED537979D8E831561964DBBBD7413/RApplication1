@@ -38,6 +38,9 @@
     <string name="title_verify_number">अपना फोन नम्बर सत्यापित करें</string>
     <string name="msg_enter_number">कृपया अपने देश कोड की पुष्टि करें और अपना फ़ोन नंबर दर्ज करें</string>
     <string name="action_submit">सबमिट करें</string>
+    <string name="action_restore">Restore</string>
+    <string name="str_restore">Restore your history</string>
+    <string name="str_restoring">Restoring</string>
     <string name="hint_search">खोज</string>
     <string name="description_action_back">Description Action Back</string>
     <string name="error_invalid_number">कृपया एक मान्य नम्बर दर्ज करें</string>

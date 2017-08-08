@@ -91,14 +91,14 @@ class WebServicePost {
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("POST");
 
-            if (url.getProtocol().toLowerCase().equals("https")) {
-                trustAllHosts();
-                HttpsURLConnection https = (HttpsURLConnection) url.openConnection();
-                https.setHostnameVerifier(hostnameVerifier);
-                urlConnection = https;
-            } else {
-                urlConnection = (HttpURLConnection) url.openConnection();
-            }
+//            if (url.getProtocol().toLowerCase().equals("https")) {
+//                trustAllHosts();
+//                HttpsURLConnection https = (HttpsURLConnection) url.openConnection();
+//                https.setHostnameVerifier(hostnameVerifier);
+//                urlConnection = https;
+//            } else {
+//                urlConnection = (HttpURLConnection) url.openConnection();
+//            }
 
             if (requestType == WSRequestType.REQUEST_TYPE_JSON.getValue()) {
 
@@ -110,6 +110,7 @@ class WebServicePost {
                                     (activity, AppConstants.PREF_ACCESS_TOKEN, ""));
                 }
 
+                urlConnection.connect();
                 ObjectWriter writer = getMapper().writer();
 
                 if (request != null) {

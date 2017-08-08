@@ -38,6 +38,9 @@
     <string name="title_verify_number">Verify Your Phone Number</string>
     <string name="msg_enter_number">Please Confirm your Country Code and Enter Your Phone Number</string>
     <string name="action_submit">Submit</string>
+    <string name="action_restore">Restore</string>
+    <string name="str_restore">Restore your history</string>
+    <string name="str_restoring">Restoring</string>
     <string name="hint_search">Search</string>
     <string name="description_action_back">Description Action Back</string>
     <string name="error_invalid_number">Please add valid Number</string>

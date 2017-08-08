@@ -38,6 +38,9 @@
     <string name="title_verify_number">તમારો ફોન નંબર ચકાસો</string>
     <string name="msg_enter_number">કૃપા કરીને તમારો ફોન નંબર દાખલ કરો</string>
     <string name="action_submit">સબમિટ કરો</string>
+    <string name="action_restore">Restore</string>
+    <string name="str_restore">Restore your history</string>
+    <string name="str_restoring">Restoring</string>
     <string name="hint_search">શોધો</string>
     <string name="description_action_back">Description Action Back</string>
     <string name="error_invalid_number">કૃપા કરીને એક માન્ય નંબર દાખલ કરો</string>
