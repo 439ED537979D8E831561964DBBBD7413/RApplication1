@@ -2696,7 +2696,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         else {
             Utils.callIntent(ProfileDetailActivity.this, finalNumber);
         }
-
     }
 
 //    private void showCallConfirmationDialog(final String number) {
@@ -2950,8 +2949,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             cursor = getCallHistoryDataByNumber(number);
         } else {
             cursor = getCallHistoryDataByName(number);
-            if(cursor!=null && cursor.getCount() == 0){
-                if(!StringUtils.isEmpty(historyNumber))
+            if (cursor != null && cursor.getCount() == 0) {
+                if (!StringUtils.isEmpty(historyNumber))
                     cursor = getCallHistoryDataByNumber(historyNumber);
             }
         }
@@ -2964,7 +2963,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 int duration = cursor.getColumnIndex(CallLog.Calls.DURATION);
                 int callLogId = cursor.getColumnIndex(CallLog.Calls._ID);
                 int numberType = cursor.getColumnIndex(CallLog.Calls.CACHED_NUMBER_TYPE);
-                int name =  cursor.getColumnIndex(CallLog.Calls.CACHED_NAME);
+                int name = cursor.getColumnIndex(CallLog.Calls.CACHED_NAME);
                 int account = -1;
                 int account_id = -1;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -2995,7 +2994,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 //                        if (userImage != null)
 //                            Log.e("User Image", userImage);
                     }
-                    String userName =  getNameFromNumber(Utils.getFormattedNumber(this,phNum));
+                    String userName = getNameFromNumber(Utils.getFormattedNumber(this, phNum));
                     int histroyId = Integer.parseInt(cursor.getString(callLogId));
                     CallLogType logObject = new CallLogType();
                     logObject.setHistoryNumber(phNum);
@@ -3643,10 +3642,14 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
             tableMobileMaster.addUpdateArrayMobileNumber(arrayListMobileNumber, profileDetail
                     .getRcpPmId());
+        } else {
+            tableMobileMaster.deleteData(profileDetail.getRcpPmId());
         }
         //</editor-fold>
 
         //<editor-fold desc="Email Master">
+        TableEmailMaster tableEmailMaster = new TableEmailMaster(databaseHandler);
+
         if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEmailId())) {
             ArrayList<ProfileDataOperationEmail> arrayListEmailId = profileDetail.getPbEmailId();
             ArrayList<Email> arrayListEmail = new ArrayList<>();
@@ -3661,16 +3664,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 email.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 arrayListEmail.add(email);
             }
-
-            TableEmailMaster tableEmailMaster = new TableEmailMaster(databaseHandler);
             tableEmailMaster.addUpdateArrayEmail(arrayListEmail, profileDetail.getRcpPmId());
         } else {
-            TableEmailMaster tableEmailMaster = new TableEmailMaster(databaseHandler);
             tableEmailMaster.deleteData(profileDetail.getRcpPmId());
         }
         //</editor-fold>
 
         //<editor-fold desc="Organization Master">
+        TableOrganizationMaster tableOrganizationMaster = new TableOrganizationMaster(databaseHandler);
+
         if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbOrganization())) {
             ArrayList<ProfileDataOperationOrganization> arrayListOrganization = profileDetail
                     .getPbOrganization();
@@ -3686,18 +3688,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 organizationList.add(organization);
             }
 
-            TableOrganizationMaster tableOrganizationMaster = new TableOrganizationMaster
-                    (databaseHandler);
-            tableOrganizationMaster.addUpdateArrayOrganization(organizationList, profileDetail
-                    .getRcpPmId());
+            tableOrganizationMaster.addUpdateArrayOrganization(organizationList, profileDetail.getRcpPmId());
         } else {
-            TableOrganizationMaster tableOrganizationMaster = new TableOrganizationMaster
-                    (databaseHandler);
             tableOrganizationMaster.deleteData(profileDetail.getRcpPmId());
         }
         //</editor-fold>
 
         // <editor-fold desc="Website Master">
+        TableWebsiteMaster tableWebsiteMaster = new TableWebsiteMaster(databaseHandler);
+
         if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbWebAddress())) {
 //            ArrayList<String> arrayListWebsite = profileDetail.getPbWebAddress();
             ArrayList<ProfileDataOperationWebAddress> arrayListWebsite = profileDetail
@@ -3713,15 +3712,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 websiteList.add(website);
             }
 
-            TableWebsiteMaster tableWebsiteMaster = new TableWebsiteMaster(databaseHandler);
             tableWebsiteMaster.addUpdateArrayWebsite(websiteList, profileDetail.getRcpPmId());
         } else {
-            TableWebsiteMaster tableWebsiteMaster = new TableWebsiteMaster(databaseHandler);
             tableWebsiteMaster.deleteData(profileDetail.getRcpPmId());
         }
         //</editor-fold>
 
         //<editor-fold desc="Address Master">
+        TableAddressMaster tableAddressMaster = new TableAddressMaster(databaseHandler);
+
         if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbAddress())) {
             ArrayList<ProfileDataOperationAddress> arrayListAddress = profileDetail.getPbAddress();
             ArrayList<Address> addressList = new ArrayList<>();
@@ -3752,15 +3751,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 addressList.add(address);
             }
 
-            TableAddressMaster tableAddressMaster = new TableAddressMaster(databaseHandler);
             tableAddressMaster.addUpdateArrayAddress(addressList, profileDetail.getRcpPmId());
         } else {
-            TableAddressMaster tableAddressMaster = new TableAddressMaster(databaseHandler);
             tableAddressMaster.deleteData(profileDetail.getRcpPmId());
         }
         //</editor-fold>
 
         // <editor-fold desc="Im Account Master">
+        TableImMaster tableImMaster = new TableImMaster(databaseHandler);
+
         if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbIMAccounts())) {
             ArrayList<ProfileDataOperationImAccount> arrayListImAccount = profileDetail
                     .getPbIMAccounts();
@@ -3779,15 +3778,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 imAccountsList.add(imAccount);
             }
 
-            TableImMaster tableImMaster = new TableImMaster(databaseHandler);
             tableImMaster.addUpdateArrayImAccount(imAccountsList, profileDetail.getRcpPmId());
         } else {
-            TableImMaster tableImMaster = new TableImMaster(databaseHandler);
             tableImMaster.deleteData(profileDetail.getRcpPmId());
         }
         //</editor-fold>
 
         // <editor-fold desc="Event Master">
+        TableEventMaster tableEventMaster = new TableEventMaster(databaseHandler);
+
         if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEvent())) {
             ArrayList<ProfileDataOperationEvent> arrayListEvent = profileDetail.getPbEvent();
             ArrayList<Event> eventList = new ArrayList<>();
@@ -3802,10 +3801,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 eventList.add(event);
             }
 
-            TableEventMaster tableEventMaster = new TableEventMaster(databaseHandler);
             tableEventMaster.addUpdateArrayEvent(eventList, profileDetail.getRcpPmId());
         } else {
-            TableEventMaster tableEventMaster = new TableEventMaster(databaseHandler);
             tableEventMaster.deleteData(profileDetail.getRcpPmId());
         }
         //</editor-fold>

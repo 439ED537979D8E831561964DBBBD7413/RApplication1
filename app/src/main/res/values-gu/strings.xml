@@ -14,6 +14,7 @@
     <string name="msg_no_internet">કૃપા કરીને તમારું ઇન્ટરનેટ કનેક્શન તપાસો.</string>
     <string name="msg_unsaved_details">કેટલીક વિગતો સંગ્રહિત કરવાની બાકી છે. શું તમે ખરેખર આગળ વધવા માંગો છો?</string>
     <string name="msg_please_wait">મહેરબાની કરી રાહ જુવો…</string>
+    <string name="msg_in_progress">પ્રગિતમાં…</string>
     <string name="msg_no_network">નેટવર્ક ઉપલબ્ધ નથી</string>
     <string name="action_cancel">રદ કરો</string>
     <string name="action_call">કૉલ કરો</string>
@@ -29,6 +30,7 @@
     <string name="str_message">સંદેશ</string>
     <string name="str_welcom">આપનું સ્વાગત છેै</string>
     <string name="str_welcom_message">તમારા સંપર્કોનો સ્માર્ટ થવાનો સમય આવી ગયો છે </string>
+    <string name="str_done">થઈ ગયું</string>
 
     <!--  Other  -->
     <string name="error_facebook_login_cancelled">ફેસબુક લૉગિન નિષ્ફળ!</string>
@@ -38,15 +40,15 @@
     <string name="title_verify_number">તમારો ફોન નંબર ચકાસો</string>
     <string name="msg_enter_number">કૃપા કરીને તમારો ફોન નંબર દાખલ કરો</string>
     <string name="action_submit">સબમિટ કરો</string>
-    <string name="action_restore">Restore</string>
-    <string name="str_restore">Restore your history</string>
-    <string name="str_restoring">Restoring</string>
+    <string name="action_restore">ચાલો જઇએ</string>
+    <string name="str_restore">પ્રોફાઇલ પુનઃસ્થાપિત કરો</string>
+    <string name="str_restoring">તમારી પ્રોફાઇલ વિગતોને પુનઃસ્થાપિત કરો અને તમારા રૅક્ટિકેટ્સ પ્રોફાઇલમાં સ્ટોર માહિતીને પકડી રાખો.</string>
     <string name="hint_search">શોધો</string>
     <string name="description_action_back">Description Action Back</string>
     <string name="error_invalid_number">કૃપા કરીને એક માન્ય નંબર દાખલ કરો</string>
     <string name="msg_empty_country">દેશનું નામ ઉપલબ્ધ નથી</string>
     <string name="title_verification">ચકાસણી</string>
-	   <string name="title_verifying_mobile_number"><![CDATA[ હવે બેસો અને આરામ કરો! અમે તમારો મોબાઇલ નંબર ચકાસીએ છીએ.]]></string>
+    <string name="title_verifying_mobile_number"><![CDATA[ હવે બેસો અને આરામ કરો! અમે તમારો મોબાઇલ નંબર ચકાસીએ છીએ.]]></string>
     <string name="msg_enter_otp">જો અમે SMS શોધવામાં નિષ્ફળ જઈએ તો 6 અંક OTP નીચે દાખલ કરો</string>
     <string name="action_resend">ફરી મોકલો</string>
     <string name="msg_otp_verification_success">OTP સફળતાપૂર્વક ચકાસવામાં આવ્યું</string>
@@ -502,6 +504,7 @@
 
     <!--  Favorite  -->
     <string name="str_no_favorite">કોઈ મનપસંદ સંપર્ક નહિ મળ્યો</string>
+    <string name="str_no_number">Enter the number to dial a call</string>
 
     <!--  Maps  -->
     <string name="str_no_location_found">સ્થાન નહિ મળ્યું</string>
@@ -538,7 +541,7 @@
     <string name="tutorial_header_3">વૈશ્વિક પહોંચ</string>
     <string name="tutorial_header_4">સ્પામર્સ પ્રતિબંધિત</string>
     <string name="tutorial_header_5">રેટિંગ પ્રાપ્ત કરો</string>
-	   <string name="tutorial_content_1"><![CDATA[સંપર્ક માત્ર એક નંબર નથી પરંતુ ઓટો સિંક કરેલો ડેટા અને સોશિઅલ માહિતીવાળી એક પ્રોફાઇલ છે!]]>	</string>
+    <string name="tutorial_content_1"><![CDATA[સંપર્ક માત્ર એક નંબર નથી પરંતુ ઓટો સિંક કરેલો ડેટા અને સોશિઅલ માહિતીવાળી એક પ્રોફાઇલ છે!]]>	</string>
     <string name="tutorial_content_2">RContacts દ્વારા સંપર્કો અને કૉલ લોગ્સ ને માત્ર એક આયકન થી પ્રબંધિત કરો! </string>
     <string name="tutorial_content_3">ફક્ત તમારા હોમસ્ક્રીન પર આ પૃથ્વી મૂકો અને તેના થી સંબંધિત કોઈપણ નંબર ના વિગતો ની શોધ કરો</string>
     <string name="tutorial_content_4">RContacts સ્પેશિયલ એજન્ટ ની જેમ તમને સ્પામ તરીકે ચિહ્નિત કરેલા નંબરો થી તમારું બચાવ કરશે</string>
@@ -547,9 +550,9 @@
     <string name="tutorial_lets_go">ચાલો જઇએ!</string>
     <string name="get_started">શરૂ કરો</string>
     <string name="str_welcome">સ્વાગત છે</string>
-    <string name="terms_conditions_content">Get all your Contacts, SMS and Call at one Place</string>
-    <string name="str_terms_conditions">By continuing you accept terms and conditions</string>
-    <string name="accept_terms_conditions">Accept terms and conditions before proceeding!</string>
+    <string name="terms_conditions_content">તમારા સંપર્કોનો સ્માર્ટ થવાનો સમય આવી ગયો છે</string>
+    <string name="str_terms_conditions">આગળ વધવા થી તમે અમારી સેવાની શરતો સ્વીકારો છો</string>
+    <string name="accept_terms_conditions">કૃપા કરીને આગળ વધવા પહેલાં શરતો સ્વીકારો !</string>
 
     <!--  English Only  -->
     <string name="error_required_account">ખાતું આવશ્યક છે</string>
@@ -650,7 +653,7 @@
     <string name="copied_to_clipboard">ક્લિપબોર્ડ પર કૉપિ કર્યો</string>
 
     <!--Call-popup-->
-    <string name="str_pop_up">Call Pop-Up</string>
+    <string name="str_pop_up">કૉલ પૉપ-અપ </string>
     <string name="network_warning_msg">કૉલર આઈડી ને સક્ષમ કરવા માટે 3G/4G અથવા WiFi કનેક્શનની જરૂર છે.
         મહેરબાની કરીને તમારા કનેક્શન ની તપાસ કરો અને ફરીથી પ્રયાસ કરો.</string>
     <string name="call_received_from">પાસે થી કૉલ પ્રાપ્ત</string>

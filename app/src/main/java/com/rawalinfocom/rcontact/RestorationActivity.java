@@ -8,10 +8,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
@@ -75,8 +74,10 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
     LinearLayout linearIndicator;
     @BindView(R.id.button_restore)
     Button buttonRestore;
-    @BindView(R.id.imgLoading)
-    ImageView imgLoading;
+    @BindView(R.id.text_progress)
+    TextView textProgress;
+    @BindView(R.id.progress_bar)
+    ProgressBar progressBar;
 
     //<editor-fold desc="Override Methods">
 
@@ -191,7 +192,6 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
                         (getCommentUpdateResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
                     storeCommentRequestResponseToDB(getCommentUpdateResponse, getCommentUpdateResponse.getCommentReceive(), getCommentUpdateResponse.getCommentDone());
-                    redirectToMainActivity();
 
                 } else {
                     if (getCommentUpdateResponse != null) {
@@ -199,9 +199,12 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
                     } else {
                         System.out.println("RContact error --> getCommentUpdateResponse null");
                     }
-
-                    redirectToMainActivity();
                 }
+
+                buttonRestore.setBackgroundResource(R.drawable.bg_circle_green);
+                progressBar.setVisibility(View.GONE);
+                textProgress.setText(getString(R.string.str_done));
+                buttonRestore.setEnabled(true);
             }
             //</editor-fold>
 
@@ -359,7 +362,8 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
                             dataItem.getCarPmIdFrom(),
                             dataItem.getCarPpmParticular(),
                             Utils.getLocalTimeFromUTCTime(dataItem.getCreatedAt()),
-                            Utils.getLocalTimeFromUTCTime(dataItem.getUpdatedAt()));
+                            Utils.getLocalTimeFromUTCTime(dataItem.getUpdatedAt()),
+                            dataItem.getName(),dataItem.getPmProfilePhoto());
                 }
             }
 
@@ -380,7 +384,8 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
                             dataItem.getCarPmIdTo(),
                             dataItem.getCarPpmParticular(),
                             Utils.getLocalTimeFromUTCTime(dataItem.getCreatedAt()),
-                            Utils.getLocalTimeFromUTCTime(dataItem.getUpdatedAt()));
+                            Utils.getLocalTimeFromUTCTime(dataItem.getUpdatedAt()),
+                            dataItem.getName(),dataItem.getPmProfilePhoto());
                 }
             }
 
@@ -399,17 +404,14 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
     private void init() {
 
         buttonRestore.setTypeface(Utils.typefaceRegular(RestorationActivity.this));
+        buttonRestore.setEnabled(false);
+        buttonRestore.setBackgroundResource(R.drawable.bg_circle_light_green);
+        RCPContactServiceCall("", WsConstants.REQ_GET_RCP_CONTACT);
 
         buttonRestore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(imgLoading);
-                Glide.with(RestorationActivity.this).load(R.drawable.loading).into(imageViewTarget);
-
-                buttonRestore.setText(getString(R.string.str_restoring));
-                buttonRestore.setEnabled(false);
-                RCPContactServiceCall("", WsConstants.REQ_GET_RCP_CONTACT);
+                redirectToMainActivity();
             }
         });
     }

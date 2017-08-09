@@ -585,21 +585,26 @@ public class DialerActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 try {
-                    TelephonyInfo telephonyInfo = TelephonyInfo.getInstance(DialerActivity.this);
-                    if (telephonyInfo != null) {
-                        String simSerialNumber = telephonyInfo.simSerialNumber;
-                        if (!StringUtils.isEmpty(simSerialNumber)) {
-                            String numberToCall = editTextNumber.getText().toString();
-                            if (!TextUtils.isEmpty(numberToCall)) {
+
+                    String numberToCall = editTextNumber.getText().toString();
+                    if (!TextUtils.isEmpty(numberToCall)) {
+                        TelephonyInfo telephonyInfo = TelephonyInfo.getInstance(DialerActivity.this);
+                        if (telephonyInfo != null) {
+                            String simSerialNumber = telephonyInfo.simSerialNumber;
+                            if (!StringUtils.isEmpty(simSerialNumber)) {
                                 numberToCall = Utils.getFormattedNumber(DialerActivity.this, numberToCall);
                                 Utils.callIntent(DialerActivity.this, numberToCall);
 //                                showCallConfirmationDialog(numberToCall);
+                            } else {
+                                Toast.makeText(DialerActivity.this, getString(R.string.str_no_sim),
+                                        Toast.LENGTH_SHORT).show();
                             }
-                        } else {
-                            Toast.makeText(DialerActivity.this, getString(R.string.str_no_sim),
-                                    Toast.LENGTH_SHORT).show();
                         }
+                    } else {
+                        Toast.makeText(DialerActivity.this, getString(R.string.str_no_number),
+                                Toast.LENGTH_SHORT).show();
                     }
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

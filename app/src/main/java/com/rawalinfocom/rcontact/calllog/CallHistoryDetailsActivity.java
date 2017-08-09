@@ -721,7 +721,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                             }
                         }
                     } else {
-                        if (tempPhoneNumber != null && tempPhoneNumber.size() > 0) {
+                        if (tempPhoneNumber.size() > 0) {
                             int count = tempPhoneNumber.size();
                             ArrayList<String> listPhoneNumber = new ArrayList<>();
                             if (count > 1) {
@@ -729,7 +729,10 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                                     ProfileDataOperationPhoneNumber phoneNumber =
                                             (ProfileDataOperationPhoneNumber) tempPhoneNumber.get(i);
                                     String number = phoneNumber.getPhoneNumber();
-                                    listPhoneNumber.add(number);
+
+                                    if (!number.startsWith("+XX")) {
+                                        listPhoneNumber.add(number);
+                                    }
                                 }
 
                                 CallConfirmationListDialog callConfirmationListDialog = new
@@ -2161,7 +2164,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                         uniqueContactId = cursor.getString(callLogId);
                     }
 
-                    String userName = getNameFromNumber(Utils.getFormattedNumber(this,phNum));
+                    String userName = getNameFromNumber(Utils.getFormattedNumber(this, phNum));
 
                     CallLogType logObject = new CallLogType();
                     logObject.setHistoryNumber(phNum);

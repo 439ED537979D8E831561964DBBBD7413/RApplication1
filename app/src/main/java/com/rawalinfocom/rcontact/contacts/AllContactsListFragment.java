@@ -426,7 +426,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Set<String> set = new HashSet<>();
         set.add(ContactsContract.Data.MIMETYPE);
-//        set.add(ContactsContract.Data.CONTACT_ID);
         set.add(ContactsContract.Data.RAW_CONTACT_ID);
         set.add(ContactsContract.CommonDataKinds.Phone.NUMBER);
         set.add(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
@@ -439,8 +438,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
         Uri uri = ContactsContract.Data.CONTENT_URI;
         String[] projection = set.toArray(new String[0]);
-       /* String selection = ContactsContract.Data.MIMETYPE + " in (?, ?) and " +
-                ContactsContract.Contacts.HAS_PHONE_NUMBER + " > 0";*/
         String selection = ContactsContract.Data.MIMETYPE + " in (?, ?) and " + ContactsContract
                 .Contacts.HAS_PHONE_NUMBER + " > 0 and " + ContactsContract.RawContacts
                 .ACCOUNT_TYPE + " in (" + ContactStorageConstants.CONTACT_STORAGE + ")";
@@ -448,8 +445,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
                 ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,
         };
-//        String sortOrder = "upper(" + ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + ")
-// ASC";
+
         String sortOrder = "upper(" + ContactsContract.Contacts.DISPLAY_NAME + ") ASC";
 
         // Starts the query

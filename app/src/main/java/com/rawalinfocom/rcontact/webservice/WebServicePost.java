@@ -108,7 +108,6 @@ class WebServicePost {
                 if (request != null) {
 
                     // Json string passed as request
-
                     jsonObject = writer.writeValueAsString(request);
                     System.out.println("RContact param -->  " + jsonObject);
 //					 FileUtilities utilities = new FileUtilities();
@@ -287,7 +286,7 @@ class WebServicePost {
         }
         return mapper;
     }
-
+}
 //    HostnameVerifier hostnameVerifier = new HostnameVerifier() {
 //        @Override
 //        public boolean verify(String hostname, SSLSession session) {
@@ -326,4 +325,4 @@ class WebServicePost {
 //            e.printStackTrace();
 //        }
 //    }
-}
+

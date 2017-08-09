@@ -874,7 +874,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                             dataItem.getCarPmIdFrom(),
                             dataItem.getCarPpmParticular(),
                             Utils.getLocalTimeFromUTCTime(dataItem.getCreatedAt()),
-                            Utils.getLocalTimeFromUTCTime(dataItem.getUpdatedAt()));
+                            Utils.getLocalTimeFromUTCTime(dataItem.getUpdatedAt()),
+                            dataItem.getName(),dataItem.getPmProfilePhoto());
                 }
             }
 
@@ -895,7 +896,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                             dataItem.getCarPmIdTo(),
                             dataItem.getCarPpmParticular(),
                             Utils.getLocalTimeFromUTCTime(dataItem.getCreatedAt()),
-                            Utils.getLocalTimeFromUTCTime(dataItem.getUpdatedAt()));
+                            Utils.getLocalTimeFromUTCTime(dataItem.getUpdatedAt()),
+                            dataItem.getName(),dataItem.getPmProfilePhoto());
                 }
             }
 

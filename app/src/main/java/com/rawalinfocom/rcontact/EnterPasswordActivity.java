@@ -222,11 +222,11 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
 
                     storeProfileDataToDb(profileDetail);
 
-                    if (MoreObjects.firstNonNull(enterPassWordResponse.getReSync(), 0).equals(1)) {
-                        Utils.setBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false);
-                        Utils.setBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false);
-                        Utils.setBooleanPreference(this, AppConstants.PREF_SMS_SYNCED, false);
-                    }
+//                    if (MoreObjects.firstNonNull(enterPassWordResponse.getReSync(), 0).equals(1)) {
+//                        Utils.setBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false);
+//                        Utils.setBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false);
+//                        Utils.setBooleanPreference(this, AppConstants.PREF_SMS_SYNCED, false);
+//                    }
 
                     deviceDetail();
 

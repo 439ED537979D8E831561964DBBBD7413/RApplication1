@@ -52,14 +52,20 @@ public class PhoneBookContactListAdapter extends RecyclerView.Adapter<PhoneBookC
             arrayListUserProfile, OnClickListener onClickListener) {
         this.context = context;
         this.arrayListUserProfile = arrayListUserProfile;
-        arrayListTempUserProfile = arrayListUserProfile;
+
+        this.arrayListTempUserProfile = new ArrayList<UserProfile>();
+        // we copy the original list to the filter list and use it for setting row values
+        this.arrayListTempUserProfile.addAll(this.arrayListUserProfile);
         this.onClickListener = onClickListener;
-//        arrayListCheckedPositions = new ArrayList<>();
+
     }
 
     public void updateList(ArrayList<UserProfile> list) {
-        arrayListUserProfile = list;
-        arrayListTempUserProfile = list;
+        this.arrayListUserProfile = list;
+
+        this.arrayListTempUserProfile = new ArrayList<UserProfile>();
+        // we copy the original list to the filter list and use it for setting row values
+        this.arrayListTempUserProfile.addAll(this.arrayListUserProfile);
         notifyDataSetChanged();
     }
 
@@ -77,9 +83,9 @@ public class PhoneBookContactListAdapter extends RecyclerView.Adapter<PhoneBookC
 //            arrayListTempUserProfile.addAll(arrayListUserProfile);
 //        }
 
-        UserProfile userProfile = arrayListUserProfile.get(position);
+        UserProfile userProfile = arrayListTempUserProfile.get(position);
 
-        holder.textContactName.setText(userProfile.getPmFirstName());
+        holder.textContactName.setText(userProfile.getPmFirstName().length() > 0 ? userProfile.getPmFirstName() : context.getString(R.string.unknown));
         holder.buttonInvite.setTag(position);
 
         String contactInformation = userProfile.getMobileNumber();
@@ -123,25 +129,24 @@ public class PhoneBookContactListAdapter extends RecyclerView.Adapter<PhoneBookC
 
     @Override
     public int getItemCount() {
-        return arrayListUserProfile.size();
+        return arrayListTempUserProfile.size();
     }
 
     public void filter(String charText) {
 
         charText = charText.toLowerCase(Locale.getDefault());
-//        arrayListTempUserProfile.clear();
-        arrayListUserProfile.clear();
+        arrayListTempUserProfile.clear();
         if (charText.length() > 0) {
-//            arrayListUserProfile.addAll(arrayListTempUserProfile);
-            for (UserProfile userProfile : arrayListTempUserProfile) {
+            for (UserProfile userProfile : arrayListUserProfile) {
                 if (userProfile.getPmFirstName().toLowerCase(Locale.getDefault()).contains
                         (charText)) {
-                    arrayListUserProfile.add(userProfile);
+                    arrayListTempUserProfile.add(userProfile);
                 }
             }
         } else {
-            arrayListUserProfile.addAll(arrayListTempUserProfile);
+            arrayListTempUserProfile.addAll(arrayListUserProfile);
         }
+
         notifyDataSetChanged();
     }
 
@@ -149,8 +154,6 @@ public class PhoneBookContactListAdapter extends RecyclerView.Adapter<PhoneBookC
 
         @BindView(R.id.image_profile)
         ImageView imageProfile;
-        //        @BindView(R.id.checkbox_select_contact)
-//        CheckBox checkboxSelectContact;
         @BindView(R.id.text_contact_name)
         TextView textContactName;
         @BindView(R.id.text_contact_number)
@@ -178,21 +181,4 @@ public class PhoneBookContactListAdapter extends RecyclerView.Adapter<PhoneBookC
                     (context, R.color.colorAccent));
         }
     }
-
-//    public void isSelectAll(boolean checked) {
-//        isSelectedAll = checked;
-//        arrayListCheckedPositions.clear();
-//        if (checked) {
-//            for (int i = 0; i < getItemCount(); i++) {
-//                if (!arrayListCheckedPositions.contains(i)) {
-//                    arrayListCheckedPositions.add(i);
-//                }
-//            }
-//        }
-//        notifyDataSetChanged();
-//    }
-
-//    public ArrayList<Integer> getArrayListCheckedPositions() {
-//        return arrayListCheckedPositions;
-//    }
 }

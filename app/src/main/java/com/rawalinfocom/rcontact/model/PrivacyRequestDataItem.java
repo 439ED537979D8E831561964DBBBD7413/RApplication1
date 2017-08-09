@@ -48,6 +48,12 @@ public class PrivacyRequestDataItem {
     @JsonProperty("car_sent_on_cloud")
     private Integer carSentOnCloud;
 
+    @JsonProperty("name")
+    private String Name;
+
+    @JsonProperty("pm_profile_photo")
+    private String pmProfilePhoto;
+
 
     public String getPpmParticular() {
         return ppmParticular;
@@ -169,4 +175,21 @@ public class PrivacyRequestDataItem {
     public void setCarSentOnCloud(Integer carSentOnCloud) {
         this.carSentOnCloud = carSentOnCloud;
     }
+
+    public String getName() {
+        return Name;
+    }
+
+    public void setName(String Name) {
+        this.Name = Name;
+    }
+
+    public String getPmProfilePhoto() {
+        return pmProfilePhoto;
+    }
+
+    public void setPmProfilePhoto(String pmProfilePhoto) {
+        this.pmProfilePhoto = pmProfilePhoto;
+    }
+
 }

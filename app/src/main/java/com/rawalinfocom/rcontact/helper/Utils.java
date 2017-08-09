@@ -108,6 +108,22 @@ public class Utils {
     }
     //</editor-fold>
 
+    public static void showKeyBoard(Activity activity) {
+
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.toggleSoftInput(0, InputMethodManager.SHOW_IMPLICIT);
+        }
+    }
+
+    public static void hideKeyBoard(Activity activity) {
+
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.toggleSoftInput(0, InputMethodManager.HIDE_IMPLICIT_ONLY);
+        }
+    }
+
     //<editor-fold desc="SnackBar">
 
     public static void showErrorSnackBar(@NonNull Context context, View view, String message) {
