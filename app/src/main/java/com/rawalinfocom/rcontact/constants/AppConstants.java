@@ -127,6 +127,8 @@ public class AppConstants {
     public static String EXTRA_CALL_LOG_CLOUD_NAME = "extra_call_log_cloud_name";
     public static String EXTRA_IS_RCP_VERIFIED_SPAM = "extra_is_rcp_verified_spam";
     public static String EXTRA_RCP_VERIFIED_ID = "extra_rcp_verified_id";
+    public static String EXTRA_RCP_FROM_NOTI = "extra_rcp_from_noti";
+
 
 
 
@@ -319,6 +321,7 @@ public class AppConstants {
     public static final int INCOMING = 1;
     public static final int OUTGOING = 2;
     public static final int MISSED = 3;
+    public static final int NEW_CONTACT_MI = 10;
     public static final int BLOCKED = 4;
     public static final int UNBLOCK = 0;
 

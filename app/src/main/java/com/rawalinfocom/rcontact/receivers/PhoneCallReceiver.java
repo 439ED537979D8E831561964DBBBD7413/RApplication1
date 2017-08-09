@@ -305,7 +305,7 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                         if (getSpamResponse != null && StringUtils.equalsIgnoreCase
                                 (getSpamResponse
                                         .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
-
+                            Toast.makeText(context, R.string.reported_spam, Toast.LENGTH_SHORT).show();
                             String spamCount = getSpamResponse.getSpamCount();
                             TableSpamDetailMaster tableSpamDetailMaster = new TableSpamDetailMaster(databaseHandler);
                             if (spamDataType != null) {
@@ -484,7 +484,6 @@ public class PhoneCallReceiver extends BroadcastReceiver {
             @Override
             public void onClick(View v) {
                 insertSpamServiceApi();
-                Toast.makeText(context, R.string.reported_spam, Toast.LENGTH_SHORT).show();
                 if (incomingDialog != null)
                     incomingDialog.dismiss();
             }
@@ -735,7 +734,6 @@ public class PhoneCallReceiver extends BroadcastReceiver {
             @Override
             public void onClick(View v) {
                 insertSpamServiceApi();
-                Toast.makeText(context, R.string.reported_spam, Toast.LENGTH_SHORT).show();
                 if (endCallDialog != null) {
                     endCallDialog.dismiss();
                 }

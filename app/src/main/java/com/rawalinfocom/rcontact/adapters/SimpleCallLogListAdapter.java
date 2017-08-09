@@ -198,7 +198,7 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
 
         } else {
             holder.textCloudContactName.setVisibility(View.GONE);
-            if (!TextUtils.isEmpty(number)) {
+            if (!StringUtils.isEmpty(number)) {
                 if (!MoreObjects.firstNonNull(callLogType.isRcpUser(), false)) {
                     if (StringUtils.equalsIgnoreCase(callLogType.getIsRcpVerfied(), "0")) {
                         holder.textContactName.setTypeface(Utils.typefaceBold(mActivity));
