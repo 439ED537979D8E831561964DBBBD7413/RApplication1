@@ -46,6 +46,7 @@ public class WsConstants {
     // Production Env
 //    public static final String URL_TERMS_CONDITIONS = "https://web.rcontacts.in/global/terms";
 
+
     // Staging Env
     public static final String URL_TERMS_CONDITIONS = "http://webstaging.rcontacts.in/global/terms";
 

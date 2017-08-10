@@ -86,6 +86,7 @@
             android:layout_centerVertical="true"
             android:layout_toEndOf="@+id/image_profile"
             android:layout_toRightOf="@+id/image_profile"
+            android:layout_toStartOf="@+id/image_3dots_call_log"
             android:orientation="vertical">
 
             <LinearLayout
@@ -99,6 +100,7 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:singleLine="true"
+                    android:maxLength="20"
                     tools:text="Aniruddh"/>
 
                 <TextView
@@ -107,6 +109,7 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:singleLine="true"
+                    android:maxLength="20"
                     tools:text=" (Aniruddh Pal)"/>
 
             </LinearLayout>

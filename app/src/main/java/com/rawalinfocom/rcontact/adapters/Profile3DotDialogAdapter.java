@@ -65,6 +65,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
     private String pmId;
     private boolean isCallLogRcpUser;
     String rcpVerifiedId;
+    String cloudName;
 
     MaterialDialog clearConfirmationDialog;
 
@@ -72,7 +73,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                                     long date, boolean isFromCallLogs, ArrayList<CallLogType>
                                             list, String name, String uniqueRowId, String key,
                                     String profileUrl, String pmId, boolean isCallLogRcpUser,
-                                    String rcpVerifiedId) {
+                                    String rcpVerifiedId,String cloudName) {
         this.context = context;
         this.arrayListString = arrayList;
         this.numberToCall = number;
@@ -86,6 +87,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
         this.pmId = pmId;
         this.isCallLogRcpUser = isCallLogRcpUser;
         this.rcpVerifiedId = rcpVerifiedId;
+        this.cloudName =  cloudName;
     }
 
     @Override
@@ -144,6 +146,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                     intent.putExtra(AppConstants.EXTRA_PM_ID, pmId);
                     intent.putExtra(AppConstants.EXTRA_IS_RCP_USER, isCallLogRcpUser);
                     intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, numberToCall);
+                    intent.putExtra(AppConstants.EXTRA_CALL_LOG_CLOUD_NAME , cloudName);
                     context.startActivity(intent);
 
                 } else if (value.equalsIgnoreCase(context.getString(R.string.block))) {

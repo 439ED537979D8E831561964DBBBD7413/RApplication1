@@ -219,11 +219,10 @@ public class TableProfileMobileMapping {
     public ProfileMobileMapping getCloudPmIdFromProfileMappingFromNumber(String mobileNumber) {
 
         ProfileMobileMapping profileMobileMapping = new ProfileMobileMapping();
-
+        SQLiteDatabase db = databaseHandler.getReadableDatabase();
         try {
 
             String cloudPmId = "";
-            SQLiteDatabase db = databaseHandler.getReadableDatabase();
 
             String query = "SELECT " + COLUMN_MPM_CLOUD_PM_ID +
                     " FROM " + TABLE_PB_PROFILE_MOBILE_MAPPING + " where " +
@@ -241,8 +240,12 @@ public class TableProfileMobileMapping {
             cursor.close();
             db.close();
 
+
         } catch (Exception e) {
             e.printStackTrace();
+            if(db!=null && db.isOpen()){
+                db.close();
+            }
         }
         return profileMobileMapping;
     }
@@ -281,6 +284,7 @@ public class TableProfileMobileMapping {
     }
 
     // Getting single Profile Mobile Mapping from MobileNumber
+
     public boolean getIsMobileNumberExists(String mobileNumber) {
 
         SQLiteDatabase db = databaseHandler.getReadableDatabase();
