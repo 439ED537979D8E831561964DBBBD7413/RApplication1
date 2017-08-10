@@ -2427,7 +2427,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         inputValue.setEnabled(false);
                         spinnerType.setVisibility(View.GONE);
 //                        textImageCross.setVisibility(View.INVISIBLE);
-                        imageViewDelete.setVisibility(View.INVISIBLE);
+                        imageViewDelete.setVisibility(View.GONE);
                     }
                     ProfileDataOperationPhoneNumber phoneNumber = (ProfileDataOperationPhoneNumber)
                             detailObject;
@@ -2474,9 +2474,14 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     inputValue.setText(email.getEmEmailId());
 
                     if (email.getEmRcpType() == IntegerConstants.RCP_TYPE_PRIMARY) {
+                        inputValue.setTypeface(Utils.typefaceIcons(EditProfileActivity.this));
                         inputValue.setEnabled(false);
+                        spinnerType.setEnabled(false);
+                        imageViewDelete.setVisibility(View.INVISIBLE);
+                        inputValue.setText(String.format("%s %s", email.getEmEmailId(),
+                                getString(R.string.im_icon_verify)));
                     } else {
-                        inputValue.setEnabled(true);
+                        inputValue.setText(email.getEmEmailId());
                     }
 
                     textIsPublic.setText(String.valueOf(email.getEmPublic()));
