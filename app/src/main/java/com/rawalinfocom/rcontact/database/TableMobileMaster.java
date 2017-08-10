@@ -28,7 +28,7 @@ public class TableMobileMaster {
     }
 
     // Table Names
-    static final String TABLE_RC_MOBILE_NUMBER_MASTER = "rc_mobile_number_master";
+    public static final String TABLE_RC_MOBILE_NUMBER_MASTER = "rc_mobile_number_master";
 
     // Column Names
     private static final String COLUMN_MNM_ID = "mnm_id";
@@ -64,7 +64,7 @@ public class TableMobileMaster {
             " " + COLUMN_RC_PROFILE_MASTER_PM_ID + " integer" +
             ");";*/
 
-    static final String CREATE_TABLE_RC_MOBILE_NUMBER_MASTER = "CREATE TABLE " +
+    static final String CREATE_TABLE_RC_MOBILE_NUMBER_MASTER = "CREATE TABLE IF NOT EXISTS " +
             TABLE_RC_MOBILE_NUMBER_MASTER + " (" +
             " " + COLUMN_MNM_ID + " integer NOT NULL CONSTRAINT rc_mobile_number_master_pk " +
             "PRIMARY KEY AUTOINCREMENT," +

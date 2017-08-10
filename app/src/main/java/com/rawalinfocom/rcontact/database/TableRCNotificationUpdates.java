@@ -24,7 +24,7 @@ public class TableRCNotificationUpdates {
     }
 
     // Table Names
-    private static final String TABLE_RC_NOTIFICATION_UPDATES = "rc_notification_updates";
+    public static final String TABLE_RC_NOTIFICATION_UPDATES = "rc_notification_updates";
 
     // Column Names
     private static final String COLUMN_NU_ID = "nu_id";
@@ -34,7 +34,7 @@ public class TableRCNotificationUpdates {
     private static final String COLUMN_CREATED_AT = "created_at";
 
     // Table Create Statements
-    static final String CREATE_TABLE_RC_NOTIFICATION_UPDATES = "CREATE TABLE " + TABLE_RC_NOTIFICATION_UPDATES +
+    static final String CREATE_TABLE_RC_NOTIFICATION_UPDATES = "CREATE TABLE IF NOT EXISTS " + TABLE_RC_NOTIFICATION_UPDATES +
             " (" +
             " " + COLUMN_NU_ID + " integer NOT NULL CONSTRAINT rc_notification_updates_pk PRIMARY KEY AUTOINCREMENT," +
             " " + COLUMN_NU_TITLE + " text," +

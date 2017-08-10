@@ -40,7 +40,7 @@ public class TableProfileMobileMapping {
     }
 
     // Table Names
-    static final String TABLE_PB_PROFILE_MOBILE_MAPPING = "pb_profile_mobile_mapping";
+    public static final String TABLE_PB_PROFILE_MOBILE_MAPPING = "pb_profile_mobile_mapping";
 
     // Column Names
     private static final String COLUMN_MPM_ID = "mpm_id";
@@ -51,7 +51,7 @@ public class TableProfileMobileMapping {
 
 
     // Table Create Statements
-    static final String CREATE_TABLE_PB_PROFILE_MOBILE_MAPPING = "CREATE TABLE " +
+    static final String CREATE_TABLE_PB_PROFILE_MOBILE_MAPPING = "CREATE TABLE IF NOT EXISTS " +
             TABLE_PB_PROFILE_MOBILE_MAPPING + " (" +
             " " + COLUMN_MPM_ID + " integer NOT NULL CONSTRAINT pb_profile_mobile_mapping_pk " +
             "PRIMARY KEY AUTOINCREMENT," +
