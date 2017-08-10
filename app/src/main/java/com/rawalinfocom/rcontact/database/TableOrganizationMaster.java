@@ -24,7 +24,7 @@ public class TableOrganizationMaster {
     }
 
     // Table Names
-    static final String TABLE_RC_ORGANIZATION_MASTER = "rc_organization_master";
+    public static final String TABLE_RC_ORGANIZATION_MASTER = "rc_organization_master";
 
     // Column Names
     private static final String COLUMN_OM_ID = "om_id";
@@ -38,7 +38,7 @@ public class TableOrganizationMaster {
 
 
     // Table Create Statements
-    static final String CREATE_TABLE_RC_ORGANIZATION_MASTER = "CREATE TABLE " +
+    static final String CREATE_TABLE_RC_ORGANIZATION_MASTER = "CREATE TABLE IF NOT EXISTS " +
             TABLE_RC_ORGANIZATION_MASTER + " (" +
             " " + COLUMN_OM_ID + " integer NOT NULL CONSTRAINT rc_organization_master_pk PRIMARY " + "KEY," +
             " " + COLUMN_OM_RECORD_INDEX_ID + " text," +
