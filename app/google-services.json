@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "842331483294-llih17mt0tm2t3s6au4pdn0m65up6jd3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rawalinfocom.rcontact",
+            "certificate_hash": "bd5cea9c352bc15bc931f7da5269d9f15566cd6a"
+          }
+        },
+        {
           "client_id": "842331483294-22h70dvgdfgj6t2r1890v11h1a5lv1rh.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -52,15 +60,15 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
+              "client_id": "842331483294-im8opitimn08thlpkvdbk8olc1ll39ji.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
               "client_id": "842331483294-8raup6tsp11nmroqbu8ohl02324m4j32.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
                 "bundle_id": "com.rawalinfocom.rcontacts"
               }
-            },
-            {
-              "client_id": "842331483294-im8opitimn08thlpkvdbk8olc1ll39ji.apps.googleusercontent.com",
-              "client_type": 3
             }
           ]
         },

@@ -93,8 +93,18 @@ public class SplashActivity extends BaseActivity {
                     finish();
 
                 } else {
-                    startActivityIntent(SplashActivity.this, MainActivity.class, null);
-                    finish();
+
+                    if (Utils.getBooleanPreference(SplashActivity.this, AppConstants.KEY_IS_RESTORE_DONE, false)) {
+                        // Redirect to MainActivity
+                        startActivityIntent(SplashActivity.this, MainActivity.class, null);
+                        overridePendingTransition(R.anim.enter, R.anim.exit);
+                        finish();
+                    } else {
+                        // Redirect to RestorationActivity
+                        startActivityIntent(SplashActivity.this, RestorationActivity.class, null);
+                        overridePendingTransition(R.anim.enter, R.anim.exit);
+                        finish();
+                    }
                 }
             }
         }, SPLASH_TIME_OUT);

@@ -52,12 +52,20 @@ public class PhoneBookContactListAdapter extends RecyclerView.Adapter<PhoneBookC
             arrayListUserProfile, OnClickListener onClickListener) {
         this.context = context;
         this.arrayListUserProfile = arrayListUserProfile;
-        arrayListTempUserProfile = new ArrayList<>();
+
+        this.arrayListTempUserProfile = new ArrayList<UserProfile>();
+        // we copy the original list to the filter list and use it for setting row values
+        this.arrayListTempUserProfile.addAll(this.arrayListUserProfile);
         this.onClickListener = onClickListener;
-//        arrayListCheckedPositions = new ArrayList<>();
+
     }
 
-    public void adapterNotify() {
+    public void updateList(ArrayList<UserProfile> list) {
+        this.arrayListUserProfile = list;
+
+        this.arrayListTempUserProfile = new ArrayList<UserProfile>();
+        // we copy the original list to the filter list and use it for setting row values
+        this.arrayListTempUserProfile.addAll(this.arrayListUserProfile);
         notifyDataSetChanged();
     }
 
@@ -71,13 +79,13 @@ public class PhoneBookContactListAdapter extends RecyclerView.Adapter<PhoneBookC
     @Override
     public void onBindViewHolder(contactViewHolder holder, int position) {
 
-        if (arrayListTempUserProfile.size() <= 0) {
-            arrayListTempUserProfile.addAll(arrayListUserProfile);
-        }
+//        if (arrayListTempUserProfile.size() <= 0) {
+//            arrayListTempUserProfile.addAll(arrayListUserProfile);
+//        }
 
-        UserProfile userProfile = arrayListUserProfile.get(position);
+        UserProfile userProfile = arrayListTempUserProfile.get(position);
 
-        holder.textContactName.setText(userProfile.getPmFirstName());
+        holder.textContactName.setText(userProfile.getPmFirstName().length() > 0 ? userProfile.getPmFirstName() : context.getString(R.string.unknown));
         holder.buttonInvite.setTag(position);
 
         String contactInformation = userProfile.getMobileNumber();
@@ -100,34 +108,6 @@ public class PhoneBookContactListAdapter extends RecyclerView.Adapter<PhoneBookC
             holder.imageProfile.setImageResource(R.drawable.home_screen_profile);
         }
 
-//        if (!isSelectedAll) {
-//            holder.checkboxSelectContact.setChecked(false);
-//            if (arrayListCheckedPositions.contains(position)) {
-//                holder.checkboxSelectContact.setChecked(true);
-//            } else {
-//                holder.checkboxSelectContact.setChecked(false);
-//            }
-//        } else {
-//            holder.checkboxSelectContact.setChecked(true);
-//        }
-
-//        holder.checkboxSelectContact.setOnCheckedChangeListener(new CompoundButton
-//                .OnCheckedChangeListener() {
-//
-//            @Override
-//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                if (isChecked) {
-//                    if (!arrayListCheckedPositions.contains((Integer) buttonView.getTag())) {
-//                        arrayListCheckedPositions.add((Integer) buttonView.getTag());
-//                    }
-//                } else {
-//                    if (arrayListCheckedPositions.contains((Integer) buttonView.getTag())) {
-//                        arrayListCheckedPositions.remove(buttonView.getTag());
-//                    }
-//                }
-//            }
-//        });
-
         holder.buttonInvite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -149,23 +129,24 @@ public class PhoneBookContactListAdapter extends RecyclerView.Adapter<PhoneBookC
 
     @Override
     public int getItemCount() {
-        return arrayListUserProfile.size();
+        return arrayListTempUserProfile.size();
     }
 
     public void filter(String charText) {
 
         charText = charText.toLowerCase(Locale.getDefault());
-        arrayListUserProfile.clear();
-        if (charText.length() == 0) {
-            arrayListUserProfile.addAll(arrayListTempUserProfile);
-        } else {
-            for (UserProfile userProfile : arrayListTempUserProfile) {
+        arrayListTempUserProfile.clear();
+        if (charText.length() > 0) {
+            for (UserProfile userProfile : arrayListUserProfile) {
                 if (userProfile.getPmFirstName().toLowerCase(Locale.getDefault()).contains
                         (charText)) {
-                    arrayListUserProfile.add(userProfile);
+                    arrayListTempUserProfile.add(userProfile);
                 }
             }
+        } else {
+            arrayListTempUserProfile.addAll(arrayListUserProfile);
         }
+
         notifyDataSetChanged();
     }
 
@@ -173,8 +154,6 @@ public class PhoneBookContactListAdapter extends RecyclerView.Adapter<PhoneBookC
 
         @BindView(R.id.image_profile)
         ImageView imageProfile;
-        //        @BindView(R.id.checkbox_select_contact)
-//        CheckBox checkboxSelectContact;
         @BindView(R.id.text_contact_name)
         TextView textContactName;
         @BindView(R.id.text_contact_number)
@@ -202,21 +181,4 @@ public class PhoneBookContactListAdapter extends RecyclerView.Adapter<PhoneBookC
                     (context, R.color.colorAccent));
         }
     }
-
-//    public void isSelectAll(boolean checked) {
-//        isSelectedAll = checked;
-//        arrayListCheckedPositions.clear();
-//        if (checked) {
-//            for (int i = 0; i < getItemCount(); i++) {
-//                if (!arrayListCheckedPositions.contains(i)) {
-//                    arrayListCheckedPositions.add(i);
-//                }
-//            }
-//        }
-//        notifyDataSetChanged();
-//    }
-
-//    public ArrayList<Integer> getArrayListCheckedPositions() {
-//        return arrayListCheckedPositions;
-//    }
 }

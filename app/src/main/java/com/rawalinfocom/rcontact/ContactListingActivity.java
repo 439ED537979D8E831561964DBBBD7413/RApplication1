@@ -23,6 +23,7 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.bumptech.glide.util.Util;
 import com.rawalinfocom.rcontact.adapters.PhoneBookContactListAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
@@ -59,7 +60,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
     ArrayList<UserProfile> arrayListUserProfile;
     ArrayList<UserProfile> arrayListNumberUserProfile;
     ArrayList<UserProfile> arrayListEmailUserProfile;
-    ArrayList<UserProfile> arrayListFilteredUserProfile;
+    //    ArrayList<UserProfile> arrayListFilteredUserProfile;
     @BindView(R.id.image_action_back)
     ImageView imageActionBack;
     @BindView(R.id.ripple_action_back)
@@ -148,25 +149,27 @@ public class ContactListingActivity extends BaseActivity implements RippleView
             case R.id.ripple_action_right_center:
 
                 if (inputSearch.getVisibility() == View.VISIBLE) {
+
+                    Utils.hideKeyBoard(ContactListingActivity.this);
+
                     inputSearch.setVisibility(View.GONE);
                     textToolbarTitle.setVisibility(View.VISIBLE);
-
+                    recyclerViewContacts.setVisibility(View.VISIBLE);
                     imageRightCenter.setImageResource(R.drawable.ic_action_search);
 
-                    if (inputSearch.getText().toString().length() > 0) {
-
-//                        if (filterType.equals("all")) {
+                    if (filterType.equals("all")) {
                         phoneBookContactListAdapter.filter("");
-                        recyclerViewContacts.setAdapter(phoneBookContactListAdapter);
-                        phoneBookContactListAdapter.adapterNotify();
-//                        } else {
-//                            setFilterList();
-//                        }
+                        phoneBookContactListAdapter.updateList(arrayListUserProfile);
+                    } else {
+                        setFilterList();
                     }
 
                 } else {
-                    inputSearch.setVisibility(View.VISIBLE);
+
                     textToolbarTitle.setVisibility(View.GONE);
+                    inputSearch.setVisibility(View.VISIBLE);
+                    inputSearch.requestFocus();
+                    Utils.showKeyBoard(ContactListingActivity.this);
 
                     imageRightCenter.setImageResource(R.drawable.ic_close);
                 }
@@ -293,41 +296,15 @@ public class ContactListingActivity extends BaseActivity implements RippleView
 
         rippleActionBack.setOnRippleCompleteListener(this);
         rippleActionRightCenter.setOnRippleCompleteListener(this);
-
-//        checkboxSelectAll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                phoneBookContactListAdapter.isSelectAll(isChecked);
-//                if (!isChecked) {
-//                    phoneBookContactListAdapter.getArrayListCheckedPositions().clear();
-//                }
-//            }
-//        });
     }
 
     //<editor-fold desc="Private Methods">
     private void setupView() {
 
-        arrayListFilteredUserProfile = new ArrayList<>();
+//        arrayListFilteredUserProfile = new ArrayList<>();
 //        arrayListUserProfile.addAll(arrayListFilteredUserProfile);
 
         recyclerViewContacts.setLayoutManager(new LinearLayoutManager(this));
-        phoneBookContactListAdapter = new PhoneBookContactListAdapter(this,
-                arrayListFilteredUserProfile, new PhoneBookContactListAdapter.OnClickListener() {
-            @Override
-            public void onClick(String number, String email) {
-
-                ArrayList<String> mobileNumbers = new ArrayList<>();
-                ArrayList<String> emailIds = new ArrayList<>();
-
-                mobileNumbers.add(number);
-                emailIds.add(email);
-
-                inviteContact(mobileNumbers, emailIds);
-
-            }
-        });
-        recyclerViewContacts.setAdapter(phoneBookContactListAdapter);
 
         ArrayAdapter<String> spinnerAdapter;
         if (!pmId.equalsIgnoreCase("-1")) {
@@ -346,30 +323,25 @@ public class ContactListingActivity extends BaseActivity implements RippleView
         spinnerShareVia.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                arrayListFilteredUserProfile.clear();
-//                phoneBookContactListAdapter.getArrayListCheckedPositions().clear();
-//                phoneBookContactListAdapter.isSelectAll(false);
-//                checkboxSelectAll.setChecked(false);
+//                arrayListFilteredUserProfile.clear();
                 inputSearch.getText().clear();
                 Utils.hideSoftKeyboard(ContactListingActivity.this, inputSearch);
                 if (position == 0) {
                     filterType = "all";
                     if (arrayListUserProfile.size() > 0) {
-                        arrayListFilteredUserProfile.addAll(arrayListUserProfile);
-                        phoneBookContactListAdapter.adapterNotify();
+//                        arrayListFilteredUserProfile.addAll(arrayListUserProfile);
+                        phoneBookContactListAdapter.updateList(arrayListUserProfile);
                     } else {
                         new GetContactData().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     }
                 } else if (position == 1) {
                     filterType = "sms";
                     setFilterList();
-                    arrayListFilteredUserProfile.addAll(arrayListNumberUserProfile);
-                    phoneBookContactListAdapter.adapterNotify();
+//                    arrayListFilteredUserProfile.addAll(arrayListNumberUserProfile);
                 } else if (position == 2) {
                     filterType = "email";
                     setFilterList();
-                    arrayListFilteredUserProfile.addAll(arrayListEmailUserProfile);
-                    phoneBookContactListAdapter.adapterNotify();
+//                    arrayListFilteredUserProfile.addAll(arrayListEmailUserProfile);
                 }
             }
 
@@ -385,7 +357,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 try {
                     phoneBookContactListAdapter.filter(s.toString());
-                    recyclerViewContacts.setAdapter(phoneBookContactListAdapter);
+//                    recyclerViewContacts.setAdapter(phoneBookContactListAdapter);
                     if (phoneBookContactListAdapter.getItemCount() < 1) {
                         recyclerViewContacts.setVisibility(View.GONE);
                     } else {
@@ -433,13 +405,10 @@ public class ContactListingActivity extends BaseActivity implements RippleView
             }
         }
 
-//        if (filterType.equals("sms")) {
-//            arrayListFilteredUserProfile.addAll(arrayListNumberUserProfile);
-//            phoneBookContactListAdapter.adapterNotify();
-//        } else {
-//            arrayListFilteredUserProfile.addAll(arrayListEmailUserProfile);
-//            phoneBookContactListAdapter.adapterNotify();
-//        }
+        if (filterType.equals("sms"))
+            phoneBookContactListAdapter.updateList(arrayListNumberUserProfile);
+        else
+            phoneBookContactListAdapter.updateList(arrayListEmailUserProfile);
     }
 
     private class GetContactData extends AsyncTask<Void, Void, Void> {
@@ -498,19 +467,22 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                             String mimeType = cursor.getString(cursor.getColumnIndex
                                     (ContactsContract.Data.MIMETYPE));
                             switch (mimeType) {
+                                case ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE:
+                                    userProfile.setMobileNumber(mobileNumber);
+                                    break;
                                 case ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE:
                                     userProfile.setEmailId(cursor.getString(cursor.getColumnIndex
                                             (ContactsContract.CommonDataKinds.Email.ADDRESS)));
                                     userProfile.setPmProfileImage(cursor.getString(cursor.getColumnIndex
                                             (ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI)));
                                     break;
-                                case ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE:
-                                    userProfile.setMobileNumber(mobileNumber);
-                                    break;
                             }
 
-                            userProfile.setPmFirstName(cursor.getString(cursor.getColumnIndex
-                                    (ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)));
+                            if (!cursor.getString(cursor.getColumnIndex
+                                    (ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)).equals(cursor.getString(mobile))) {
+                                userProfile.setPmFirstName(cursor.getString(cursor.getColumnIndex
+                                        (ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)));
+                            }
 
                             arrayListUserProfile.add(userProfile);
 
@@ -521,8 +493,6 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                     }
                     cursor.close();
                 }
-
-//                System.out.println("RContact half --> " + System.currentTimeMillis());
 
                 setRCPUser();
 
@@ -539,10 +509,23 @@ public class ContactListingActivity extends BaseActivity implements RippleView
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    arrayListFilteredUserProfile.addAll(arrayListUserProfile);
                     Utils.hideProgressDialog();
-                    phoneBookContactListAdapter.notifyDataSetChanged();
-//                    System.out.println("RContact end --> " + System.currentTimeMillis());
+                    phoneBookContactListAdapter = new PhoneBookContactListAdapter(ContactListingActivity.this,
+                            arrayListUserProfile, new PhoneBookContactListAdapter.OnClickListener() {
+                        @Override
+                        public void onClick(String number, String email) {
+
+                            ArrayList<String> mobileNumbers = new ArrayList<>();
+                            ArrayList<String> emailIds = new ArrayList<>();
+
+                            mobileNumbers.add(number);
+                            emailIds.add(email);
+
+                            inviteContact(mobileNumbers, emailIds);
+
+                        }
+                    });
+                    recyclerViewContacts.setAdapter(phoneBookContactListAdapter);
                 }
             });
         }
@@ -557,24 +540,6 @@ public class ContactListingActivity extends BaseActivity implements RippleView
 
                 if (what)
                     arrayListUserProfile.remove(i);
-            }
-        }
-    }
-
-    private void isRCPUser() {
-
-        for (int i = 0; i < arrayListUserProfile.size(); i++) {
-            if (!arrayListUserProfile.get(i).getMobileNumber().equals("")) {
-                profileMobileMapping = tableProfileMobileMapping
-                        .getCloudPmIdFromProfileMappingFromNumber(arrayListUserProfile.get(i)
-                                .getMobileNumber());
-
-                if (profileMobileMapping != null) {
-                    String cloudPmId = profileMobileMapping.getMpmCloudPmId();
-                    if (!StringUtils.isEmpty(cloudPmId)) {
-
-                    }
-                }
             }
         }
     }

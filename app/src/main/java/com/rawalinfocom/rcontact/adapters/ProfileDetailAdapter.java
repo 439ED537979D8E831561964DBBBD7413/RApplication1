@@ -153,6 +153,24 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             }
         });
 
+        holder.llProfileData.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (ContextCompat.checkSelfPermission(activity, android.Manifest
+                        .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    activity.requestPermissions(new String[]{Manifest.permission
+                            .CALL_PHONE}, AppConstants
+                            .MY_PERMISSIONS_REQUEST_PHONE_CALL);
+                    if (activity instanceof ProfileDetailActivity) {
+                        ((ProfileDetailActivity) activity).callNumber = number;
+                    }
+                } else {
+                    Utils.callIntent(activity, number);
+                }
+            }
+        });
+
+
         holder.textMain1.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
@@ -244,6 +262,16 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         holder.imgActionType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" +
+                        holder.textMain1.getText()));
+                activity.startActivity(Intent.createChooser(emailIntent, activity.getString(R
+                        .string.str_send_email)));
+            }
+        });
+
+        holder.llProfileData.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" +
                         holder.textMain1.getText()));
                 activity.startActivity(Intent.createChooser(emailIntent, activity.getString(R
@@ -356,6 +384,20 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             }
         });
 
+        holder.llProfileData.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                String url = holder.textMain1.getText().toString();
+                if (!StringUtils.startsWithIgnoreCase(url, "http://") && !StringUtils
+                        .startsWithIgnoreCase(url, "https://")) {
+                    url = "http://" + url;
+                }
+                intent.setData(Uri.parse(url));
+                activity.startActivity(intent);
+            }
+        });
+
         holder.textMain1.setText(webAddress.getWebAddress());
 
         holder.textMain1.setOnLongClickListener(new View.OnLongClickListener() {
@@ -391,6 +433,26 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         holder.imgActionType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (address.getGoogleLatLong() != null) {
+                    ArrayList<String> arrayListLatLong = new ArrayList<>();
+                    arrayListLatLong.addAll(address.getGoogleLatLong());
+                    String latitude = arrayListLatLong.get(1);
+                    String longitude = arrayListLatLong.get(0);
+                    Intent intent = new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("google.navigation:q=" + latitude + "," + longitude));
+                    activity.startActivity(intent);
+                } else {
+                    Intent intent = new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("google.navigation:q=" + holder.textMain1
+                                    .getText()));
+                    activity.startActivity(intent);
+                }
+            }
+        });
+
+        holder.llProfileData.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 if (address.getGoogleLatLong() != null) {
                     ArrayList<String> arrayListLatLong = new ArrayList<>();
                     arrayListLatLong.addAll(address.getGoogleLatLong());
@@ -863,42 +925,14 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         public TextView textMain1;
         @BindView(R.id.text_sub)
         TextView textSub1;
-        //        @BindView(R.id.image_view)
-//        ImageView imageView1;
         @BindView(R.id.button_privacy)
         ImageView buttonPrivacy;
-        //        @BindView(R.id.view_own_profile)
-//        LinearLayout viewOwnProfile;
-//        @BindView(R.id.text_main1)
-//        public TextView textMain2;
-//        @BindView(R.id.text_sub2)
-//        TextView textSub2;
         @BindView(R.id.button_request)
         AppCompatButton buttonRequest;
-        //        @BindView(R.id.image_view1)
-//        ImageView imageView2;
-//        @BindView(R.id.view_other_profile)
-//        LinearLayout viewOtherProfile;
         @BindView(R.id.ll_profile_data)
         LinearLayout llProfileData;
         @BindView(R.id.ll_privacy)
         LinearLayout llPrivacy;
-
-//        TextView getTextMain(boolean isOwnProfile) {
-//            if (isOwnProfile) {
-//                return textMain1;
-//            } else {
-//                return textMain2;
-//            }
-//        }
-
-//        TextView getTextSub(boolean isOwnProfile) {
-//            if (isOwnProfile) {
-//                return textSub1;
-//            } else {
-//                return textSub2;
-//            }
-//        }
 
         ProfileDetailViewHolder(View itemView) {
             super(itemView);
@@ -906,8 +940,6 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
             textMain1.setTypeface(Utils.typefaceRegular(activity));
             textSub1.setTypeface(Utils.typefaceRegular(activity));
-//            textMain2.setTypeface(Utils.typefaceRegular(activity));
-//            textSub2.setTypeface(Utils.typefaceRegular(activity));
         }
     }
 }

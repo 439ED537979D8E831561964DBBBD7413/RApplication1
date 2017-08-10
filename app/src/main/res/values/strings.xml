@@ -14,6 +14,7 @@
     <string name="msg_no_internet">Please check your internet connection.</string>
     <string name="msg_unsaved_details">Some details are left unsaved. Are you sure you want to proceed?</string>
     <string name="msg_please_wait">Please Wait&#8230;</string>
+    <string name="msg_in_progress">In Progress&#8230;</string>
     <string name="msg_no_network">Network Not Available.</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_call">Call</string>
@@ -29,6 +30,7 @@
     <string name="str_message">Message</string>
     <string name="str_welcom">WELCOME</string>
     <string name="str_welcom_message">It\'s Time For Your Contacts To Get SMARTER</string>
+    <string name="str_done">Done</string>
 
     <!-- Other -->
     <string name="error_facebook_login_cancelled">Facebook Login Cancelled!!</string>
@@ -38,6 +40,9 @@
     <string name="title_verify_number">Verify Your Phone Number</string>
     <string name="msg_enter_number">Please Confirm your Country Code and Enter Your Phone Number</string>
     <string name="action_submit">Submit</string>
+    <string name="action_restore">Let\'s go</string>
+    <string name="str_restore">Restore profile</string>
+    <string name="str_restoring">Restore your profile details and get hold of the store information in your rcontacts profile</string>
     <string name="hint_search">Search</string>
     <string name="description_action_back">Description Action Back</string>
     <string name="error_invalid_number">Please add valid Number</string>
@@ -496,6 +501,7 @@
 
     <!-- Dialer -->
     <string name="str_no_sim">No sim detected</string>
+    <string name="str_no_number">Enter the number to dial a call</string>
 
     <!-- Favorite -->
     <string name="str_no_favorite">No favorites contacts</string>

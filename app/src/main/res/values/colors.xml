@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#003933</color>
     <color name="colorPrimaryDark">#002B27</color>
-    <color name="colorAccent">#00796b</color>
+    <color name="colorAccent">#00796B</color>
 
     <color name="colorSnackBarNegative">#C14143</color>
     <color name="colorSnackBarPositive">#3FC08E</color>

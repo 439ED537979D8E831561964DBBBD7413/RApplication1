@@ -68,8 +68,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ContactsSettingsActivity1 extends BaseActivity implements RippleView
-        .OnRippleCompleteListener, WsResponseListener, /*GoogleApiClient.ConnectionCallbacks,*/
-        GoogleApiClient.OnConnectionFailedListener {
+        .OnRippleCompleteListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     @BindView(R.id.image_action_back)
     ImageView imageActionBack;
@@ -97,8 +96,8 @@ public class ContactsSettingsActivity1 extends BaseActivity implements RippleVie
     private Activity activity;
     private String vfile;
     private GoogleApiClient mGoogleApiClient;
-    private final int RC_SIGN_IN = 7;
-    private static final int GOOGLE_LOGIN_PERMISSION = 22;
+    //    private final int RC_SIGN_IN = 7;
+//    private static final int GOOGLE_LOGIN_PERMISSION = 22;
     protected static final int REQUEST_CODE_RESOLUTION = 1337;
     protected static final int REQUEST_CODE_CREATOR = 101;
     private String FOLDER_NAME = "ContactBackup";
@@ -120,14 +119,6 @@ public class ContactsSettingsActivity1 extends BaseActivity implements RippleVie
 
         activity = ContactsSettingsActivity1.this;
         init();
-        buildGoogleApiClient();
-    }
-
-    private boolean checkExternalStorageState() {
-        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            return !Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED_READ_ONLY);
-        } else
-            return false;
     }
 
     @Override
@@ -140,12 +131,7 @@ public class ContactsSettingsActivity1 extends BaseActivity implements RippleVie
         }
     }
 
-    @Override
-    public void onDeliveryResponse(String serviceType, Object data, Exception error) {
-    }
-
     //</editor-fold>
-
     private void init() {
 
         rippleActionBack.setOnRippleCompleteListener(this);
@@ -204,8 +190,7 @@ public class ContactsSettingsActivity1 extends BaseActivity implements RippleVie
             shortByContactArrayList = new ArrayList<>();
 
             shortByContactArrayList.add(new AppLanguage(getString(R.string.phone_storage), "0", true));
-            shortByContactArrayList.add(new AppLanguage(getString(R.string.sd_card), "1", false));
-            shortByContactArrayList.add(new AppLanguage(getString(R.string.google_drive), "2", false));
+            shortByContactArrayList.add(new AppLanguage(getString(R.string.google_drive), "1", false));
         }
     }
 
@@ -301,20 +286,25 @@ public class ContactsSettingsActivity1 extends BaseActivity implements RippleVie
                             new ExportContact(shortByContactListAdapter.getSelectedType()).execute();
                             break;
                         case "1":
-                            if (checkExternalStorageState())
-                                new ExportContact(shortByContactListAdapter.getSelectedType()).execute();
-                            else
-                                Utils.showErrorSnackBar(activity, activityContactSettings,
-                                        "External storage not available!!");
+
+                            new ExportContact("1").execute();
+
+//                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                                checkPermissionToExecute(requiredPermissions, GOOGLE_LOGIN_PERMISSION);
+//                            } else {
+//                                IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_GOOGLE;
+//                                googleSignIn();
+//                            }
+
+//                            if (checkExternalStorageState())
+//                                new ExportContact(shortByContactListAdapter.getSelectedType()).execute();
+//                            else
+//                                Utils.showErrorSnackBar(activity, activityContactSettings,
+//                                        "External storage not available!!");
                             break;
                         case "2":
 
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                checkPermissionToExecute(requiredPermissions, GOOGLE_LOGIN_PERMISSION);
-                            } else {
-                                IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_GOOGLE;
-                                googleSignIn();
-                            }
+
                             break;
                         default:
                             break;
@@ -326,28 +316,28 @@ public class ContactsSettingsActivity1 extends BaseActivity implements RippleVie
         dialog.show();
     }
 
-    @TargetApi(Build.VERSION_CODES.M)
-    private void checkPermissionToExecute(String[] permissions, int requestCode) {
-        boolean READ_EXTERNAL_STORAGE = ContextCompat.checkSelfPermission
-                (activity, permissions[0]) !=
-                PackageManager.PERMISSION_GRANTED;
-        boolean WRITE_EXTERNAL_STORAGE = ContextCompat.checkSelfPermission
-                (activity, permissions[1]) !=
-                PackageManager.PERMISSION_GRANTED;
-        if (READ_EXTERNAL_STORAGE || WRITE_EXTERNAL_STORAGE) {
-            requestPermissions(permissions, requestCode);
-        } else {
-            prepareToLoginUsingSocialMedia(requestCode);
-        }
-    }
-
-    private void prepareToLoginUsingSocialMedia(int requestCode) {
-        switch (requestCode) {
-            case GOOGLE_LOGIN_PERMISSION:
-                googleSignIn();
-                break;
-        }
-    }
+//    @TargetApi(Build.VERSION_CODES.M)
+//    private void checkPermissionToExecute(String[] permissions, int requestCode) {
+//        boolean READ_EXTERNAL_STORAGE = ContextCompat.checkSelfPermission
+//                (activity, permissions[0]) !=
+//                PackageManager.PERMISSION_GRANTED;
+//        boolean WRITE_EXTERNAL_STORAGE = ContextCompat.checkSelfPermission
+//                (activity, permissions[1]) !=
+//                PackageManager.PERMISSION_GRANTED;
+//        if (READ_EXTERNAL_STORAGE || WRITE_EXTERNAL_STORAGE) {
+//            requestPermissions(permissions, requestCode);
+//        } else {
+//            prepareToLoginUsingSocialMedia(requestCode);
+//        }
+//    }
+//
+//    private void prepareToLoginUsingSocialMedia(int requestCode) {
+//        switch (requestCode) {
+//            case GOOGLE_LOGIN_PERMISSION:
+//                googleSignIn();
+//                break;
+//        }
+//    }
 
     private class ExportContact extends AsyncTask<Void, Void, Void> {
 
@@ -373,7 +363,7 @@ public class ContactsSettingsActivity1 extends BaseActivity implements RippleVie
         protected void onPostExecute(Void result) {
             Utils.hideProgressDialog();
 
-            if (selectedType.equals("2"))
+            if (selectedType.equals("1"))
                 Drive.DriveApi.newDriveContents(mGoogleApiClient).setResultCallback(driveContentsCallback);
 //                check_folder_exists();
         }
@@ -421,25 +411,76 @@ public class ContactsSettingsActivity1 extends BaseActivity implements RippleVie
         }
     }
 
+//    private void googleSignIn() {
+//        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+//        startActivityForResult(signInIntent, RC_SIGN_IN);
+//    }
+//
+//    /*Handles onConnectionFailed callbacks*/
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode,
+//                                    Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        switch (requestCode) {
+//
+//            // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+//            case RC_SIGN_IN:
+//                GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+//                handleSignInResult(result);
+//                break;
+//
+//            case REQUEST_CODE_RESOLUTION:
+//                if (resultCode == Activity.RESULT_OK)
+//                    mGoogleApiClient.connect();
+//                break;
+//
+//            case REQUEST_CODE_CREATOR:
+//                if (resultCode == Activity.RESULT_OK) {
+//                    System.out.println("File added to Drive");
+//                    Toast.makeText(activity, "File successfully added to Drive", Toast.LENGTH_SHORT).show();
+//                } else {
+//
+//                    System.out.println("Error creating the file");
+//                    Toast.makeText(activity, "Error adding file to Drive", Toast.LENGTH_SHORT).show();
+//                }
+//                break;
+//        }
+//    }
+
+//    private void handleSignInResult(GoogleSignInResult result) {
+//        Log.i("Sign In Result", "handleSignInResult:" + result.isSuccess());
+//        if (result.isSuccess()) {
+//            // Signed in successfully.
+//            GoogleSignInAccount acct = result.getSignInAccount();
+//
+//            if (acct != null) {
+//                Drive.DriveApi.newDriveContents(mGoogleApiClient);
+//                new ExportContact("1").execute();
+//            }
+//        } else {
+//            Utils.showErrorSnackBar(activity, activityContactSettings, getString(R.string.error_retrieving_details));
+//        }
+//    }
+
     @Override
     protected void onResume() {
         super.onResume();
-//        if (mGoogleApiClient == null) {
-//
-//            /**
-//             * Create the API client and bind it to an instance variable.
-//             * We use this instance as the callback for connection and connection failures.
-//             * Since no account name is passed, the user is prompted to choose.
-//             */
-//            mGoogleApiClient = new GoogleApiClient.Builder(this)
-//                    .addApi(Drive.API)
-//                    .addScope(Drive.SCOPE_FILE)
-//                    .addConnectionCallbacks(this)
-//                    .addOnConnectionFailedListener(this)
-//                    .build();
-//        }
-//
-//        mGoogleApiClient.connect();
+        if (mGoogleApiClient == null) {
+
+            /**
+             * Create the API client and bind it to an instance variable.
+             * We use this instance as the callback for connection and connection failures.
+             * Since no account name is passed, the user is prompted to choose.
+             */
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addApi(Drive.API)
+                    .addScope(Drive.SCOPE_FILE)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .build();
+        }
+
+        mGoogleApiClient.connect();
     }
 
     @Override
@@ -447,68 +488,11 @@ public class ContactsSettingsActivity1 extends BaseActivity implements RippleVie
         super.onStop();
         if (mGoogleApiClient != null) {
 
-            // disconnect Google Android Drive API connection.
+            // disconnect Google API client connection
             mGoogleApiClient.disconnect();
         }
         super.onPause();
     }
-
-    private void googleSignIn() {
-        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(signInIntent, RC_SIGN_IN);
-    }
-
-    /*Handles onConnectionFailed callbacks*/
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode,
-                                    Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-
-            // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-            case RC_SIGN_IN:
-                GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-                handleSignInResult(result);
-                break;
-
-            case REQUEST_CODE_RESOLUTION:
-                if (resultCode == Activity.RESULT_OK)
-                    mGoogleApiClient.connect();
-                break;
-
-            case REQUEST_CODE_CREATOR:
-                if (resultCode == Activity.RESULT_OK) {
-                    System.out.println("File added to Drive");
-                    Toast.makeText(activity, "File successfully added to Drive", Toast.LENGTH_SHORT).show();
-                } else {
-
-                    System.out.println("Error creating the file");
-                    Toast.makeText(activity, "Error adding file to Drive", Toast.LENGTH_SHORT).show();
-                }
-                break;
-        }
-    }
-
-    private void handleSignInResult(GoogleSignInResult result) {
-        Log.i("Sign In Result", "handleSignInResult:" + result.isSuccess());
-        if (result.isSuccess()) {
-            // Signed in successfully.
-            GoogleSignInAccount acct = result.getSignInAccount();
-
-            if (acct != null) {
-                Drive.DriveApi.newDriveContents(mGoogleApiClient);
-                new ExportContact("2").execute();
-            }
-        } else {
-            Utils.showErrorSnackBar(activity, activityContactSettings, getString(R.string.error_retrieving_details));
-        }
-    }
-
-    /* *//*handles connection callbacks*/
-//    @Override
-//    public void onConnected(Bundle bundle) {
-//        Drive.DriveApi.newDriveContents(mGoogleApiClient);
-//    }
 
     /*callback when there there's an error connecting the client to the service.*/
     @Override
@@ -518,50 +502,40 @@ public class ContactsSettingsActivity1 extends BaseActivity implements RippleVie
             GooglePlayServicesUtil.getErrorDialog(result.getErrorCode(), this, 0).show();
             return;
         }
-        try {
-            System.out.println("trying to resolve the Connection failed error...");
-            result.startResolutionForResult(this, REQUEST_CODE_RESOLUTION);
-        } catch (IntentSender.SendIntentException e) {
-            System.out.println("Exception while starting resolution activity " + e);
-        }
+//        try {
+        System.out.println("trying to resolve the Connection failed error...");
+//            result.startResolutionForResult(this, REQUEST_CODE_RESOLUTION);
+//        } catch (IntentSender.SendIntentException e) {
+//            System.out.println("Exception while starting resolution activity " + e);
+//        }
     }
 
-    /*build the google api client*/
-    private void buildGoogleApiClient() {
-
-        if (mGoogleApiClient == null) {
-            // Google+ Registration
-            GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions
-                    .DEFAULT_SIGN_IN).requestEmail().build();
-            mGoogleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this, this).addApi
-                    (Auth.GOOGLE_SIGN_IN_API, gso).build();
-        }
-
-//        if (mGoogleApiClient == null) {
-//            mGoogleApiClient = new GoogleApiClient.Builder(this)
-//                    .addApi(Drive.API)
-//                    .addScope(Drive.SCOPE_FILE)
-//                    .addConnectionCallbacks(this)
-//                    .addOnConnectionFailedListener(this)
-//                    .build();
-//        }
+    /**
+     * It invoked when Google API client connected
+     *
+     * @param connectionHint
+     */
+    @Override
+    public void onConnected(Bundle connectionHint) {
+        Drive.DriveApi.newDriveContents(mGoogleApiClient);
+        Toast.makeText(getApplicationContext(), "Connected", Toast.LENGTH_LONG).show();
     }
 
     /*handles suspended connection callbacks*/
-//    @Override
-//    public void onConnectionSuspended(int cause) {
-//        switch (cause) {
-//            case 1:
-//                System.out.println("Connection suspended - Cause: " + "Service disconnected");
-//                break;
-//            case 2:
-//                System.out.println("Connection suspended - Cause: " + "Connection lost");
-//                break;
-//            default:
-//                System.out.println("Connection suspended - Cause: " + "Unknown");
-//                break;
-//        }
-//    }
+    @Override
+    public void onConnectionSuspended(int cause) {
+        switch (cause) {
+            case 1:
+                System.out.println("Connection suspended - Cause: " + "Service disconnected");
+                break;
+            case 2:
+                System.out.println("Connection suspended - Cause: " + "Connection lost");
+                break;
+            default:
+                System.out.println("Connection suspended - Cause: " + "Unknown");
+                break;
+        }
+    }
 
     /*callback on getting the drive contents, contained in result*/
     final private ResultCallback<DriveApi.DriveContentsResult> driveContentsCallback = new
