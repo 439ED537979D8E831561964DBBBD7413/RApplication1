@@ -26,7 +26,7 @@ public class TableRCContactRequest {
     // PRIVACY 1=PUBLIC,2=MYCONTACT,3=PRIVATE
 
     // Table Names
-    static final String TABLE_RC_CONTACT_ACCESS_REQUEST = "rc_contact_access_request";
+    public static final String TABLE_RC_CONTACT_ACCESS_REQUEST = "rc_contact_access_request";
 
     // Column Names
     private static final String COLUMN_CAR_ID = "car_id";
@@ -37,11 +37,12 @@ public class TableRCContactRequest {
     private static final String COLUMN_CAR_CREATED_AT = "car_created_at";
     private static final String COLUMN_CAR_UPDATED_AT = "car_updated_at";
     static final String COLUMN_CRM_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
-    private static final String COLUMN_CAR_IMG = "crm_img";
-    private static final String COLUMN_CAR_PROFILE_DETAILS = "crm_profiledetails";
+    public static final String COLUMN_CAR_IMG = "crm_img";
+    public static final String COLUMN_CAR_PROFILE_DETAILS = "crm_profiledetails";
+
 
     // Table Create Statements
-    static final String CREATE_TABLE_RC_CONTACT_REQUEST = "CREATE TABLE " + TABLE_RC_CONTACT_ACCESS_REQUEST +
+    static final String CREATE_TABLE_RC_CONTACT_REQUEST = "CREATE TABLE IF NOT EXISTS " + TABLE_RC_CONTACT_ACCESS_REQUEST +
             " (" +
             " " + COLUMN_CAR_ID + " integer NOT NULL CONSTRAINT rc_contact_access_request_pk PRIMARY KEY " +
             "AUTOINCREMENT," +

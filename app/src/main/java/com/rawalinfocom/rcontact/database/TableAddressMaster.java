@@ -25,7 +25,7 @@ public class TableAddressMaster {
     }
 
     // Table Names
-    static final String TABLE_RC_ADDRESS_MASTER = "rc_address_master";
+    public static final String TABLE_RC_ADDRESS_MASTER = "rc_address_master";
 
     // Column Names
     private static final String COLUMN_AM_ID = "am_id";
@@ -51,7 +51,7 @@ public class TableAddressMaster {
 
 
     // Table Create Statements
-    static final String CREATE_TABLE_RC_ADDRESS_MASTER = "CREATE TABLE rc_address_master (" +
+    static final String CREATE_TABLE_RC_ADDRESS_MASTER = "CREATE TABLE IF NOT EXISTS rc_address_master (" +
             " " + COLUMN_AM_ID + " integer NOT NULL CONSTRAINT rc_address_master_pk PRIMARY KEY," +
             " " + COLUMN_AM_RECORD_INDEX_ID + " text," +
             " " + COLUMN_AM_CITY + " text," +

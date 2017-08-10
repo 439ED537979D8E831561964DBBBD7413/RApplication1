@@ -23,7 +23,7 @@ public class TableCountryMaster {
     }
 
     // Table Names
-    private static final String TABLE_RC_COUNTRY_MASTER = "rc_country_master";
+    public static final String TABLE_RC_COUNTRY_MASTER = "rc_country_master";
 
 
     // Column Names
@@ -34,7 +34,7 @@ public class TableCountryMaster {
     private static final String COLUMN_CM_MAX_DIGITS = "cm_max_digits";
 
     // Table Create Statements
-    static final String CREATE_TABLE_RC_COUNTRY_MASTER = "CREATE TABLE " +
+    static final String CREATE_TABLE_RC_COUNTRY_MASTER = "CREATE TABLE IF NOT EXISTS " +
             TABLE_RC_COUNTRY_MASTER +
             "(" + COLUMN_CM_ID + " integer NOT NULL CONSTRAINT rc_country_master_pk PRIMARY KEY," +
             " " + COLUMN_CM_COUNTRY_CODE + " text NOT NULL," +
