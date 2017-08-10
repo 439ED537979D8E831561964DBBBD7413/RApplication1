@@ -891,10 +891,10 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     private class GetRCPNameAndProfileImage extends AsyncTask<Void, Void, Void> {
 
         protected Void doInBackground(Void... urls) {
+            getContactName();
             setRCPUserName();
             setRCPDetailsAndSpamCountforUnsavedNumbers();
             getPhoto();
-            getContactName();
             return null;
         }
 

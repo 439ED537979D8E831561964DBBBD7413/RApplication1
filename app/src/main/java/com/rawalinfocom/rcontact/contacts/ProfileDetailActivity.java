@@ -1508,7 +1508,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             } else {
                 textFullScreenText.setText(contactName);
-
                 if (StringUtils.length(thumbnailUrl) > 0) {
                     Glide.with(this)
                             .load(thumbnailUrl)
@@ -1528,7 +1527,16 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 textName.setText(cloudContactName);
                 linearBasicDetailRating.setVisibility(View.VISIBLE);
                 rippleInvite.setVisibility(View.GONE);
-            } else {
+            } else if (StringUtils.length(callLogCloudName) > 0){
+                textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
+                if (!StringUtils.isEmpty(callLogCloudName)) {
+                    textName.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
+                    textName.setText(callLogCloudName);
+                }
+                linearBasicDetailRating.setVisibility(View.VISIBLE);
+                rippleInvite.setVisibility(View.GONE);
+            }
+            else{
                 if (StringUtils.equalsIgnoreCase(pmId, "-1")) {
                     textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color
                             .colorBlack));
