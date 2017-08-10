@@ -129,8 +129,7 @@
             android:paddingBottom="@dimen/activity_half_horizontal_margin"
             android:paddingEnd="@dimen/activity_horizontal_margin"
             android:paddingStart="@dimen/activity_horizontal_margin"
-            android:paddingTop="@dimen/activity_half_horizontal_margin"
-            android:visibility="visible">
+            android:paddingTop="@dimen/activity_half_horizontal_margin">
 
             <TableRow
                 android:layout_width="match_parent"

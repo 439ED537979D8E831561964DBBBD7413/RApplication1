@@ -409,18 +409,24 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
 
             int pmId = request.getCarPmIdFrom();
             UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(pmId);
-            item.setPersonName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
-            item.setPersonImage(userProfile.getPmProfileImage());
+            if (userProfile.getPmFirstName().equalsIgnoreCase("") || userProfile.getPmLastName().equalsIgnoreCase("")) {
+                item.setPersonName(request.getName());
+                item.setPersonImage(request.getPmProfilePhoto());
+            } else {
+                item.setPersonName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
+                item.setPersonImage(userProfile.getPmProfileImage());
+            }
+
             if (listType == 0) {
 
                 item.setProfileNotiType(0);
                 item.setNotiInfo(item.getPersonName() + " " + getActivity().getString(R.string
-                        .str_requested_for_your)
+                        .str_requested_for_your) + " "
                         + request.getPpmTag());
             } else {
                 item.setProfileNotiType(1);
                 item.setNotiInfo(item.getPersonName() + " " + getActivity().getString(R.string
-                        .str_confirmed_your_request_for)
+                        .str_confirmed_your_request_for) + " "
                         + request.getPpmTag());
             }
             item.setRcpUserPmId(pmId + "");
@@ -552,7 +558,8 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
                         data.getCarPmIdFrom(),
                         data.getPpmParticular(),
                         Utils.getLocalTimeFromUTCTime(data.getCreatedAt()),
-                        Utils.getLocalTimeFromUTCTime(data.getUpdatedAt()));
+                        Utils.getLocalTimeFromUTCTime(data.getUpdatedAt()),
+                        data.getName(), data.getPmProfilePhoto());
             } else if (data.getCarPmIdFrom() == Integer.parseInt(getUserPmId()) && data
                     .getCarAccessPermissionStatus() == 1) {
                 //Response
@@ -562,7 +569,8 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
                         data.getCarPmIdTo(),
                         data.getPpmParticular(),
                         Utils.getLocalTimeFromUTCTime(data.getCreatedAt()),
-                        Utils.getLocalTimeFromUTCTime(data.getUpdatedAt()));
+                        Utils.getLocalTimeFromUTCTime(data.getUpdatedAt()),
+                        data.getName(), data.getPmProfilePhoto());
                 // updatePrivacySetting(data.getPpmTag(),data.getCarMongodbRecordIndex());
             }
 

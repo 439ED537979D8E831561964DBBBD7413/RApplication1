@@ -36,34 +36,29 @@ public class SettingsActivity extends BaseActivity implements RippleView
     ImageView imageRight;
     @BindView(R.id.ripple_action_right)
     RippleView rippleActionRight;
-    @BindView(R.id.text_pop_up)
-    TextView textPopUp;
-    @BindView(R.id.ll_pop_up)
-    LinearLayout llPopUp;
-    private Activity activity;
-
     @BindView(R.id.image_action_back)
     ImageView imageActionBack;
     @BindView(R.id.ripple_action_back)
     RippleView rippleActionBack;
+    @BindView(R.id.text_toolbar_title)
+    TextView textToolbarTitle;
     @BindView(R.id.relative_action_back)
     RelativeLayout relativeActionBack;
     @BindView(R.id.text_app_language)
     TextView textAppLanguage;
-    @BindView(R.id.text_contacts)
-    TextView textContacts;
-    @BindView(R.id.text_notification)
-    TextView textNotification;
-    @BindView(R.id.activity_settings)
-    RelativeLayout activitySettings;
-    @BindView(R.id.text_toolbar_title)
-    TextView textToolbarTitle;
-    @BindView(R.id.ll_contacts)
-    LinearLayout llContacts;
-    @BindView(R.id.ll_notification)
-    LinearLayout llNotification;
     @BindView(R.id.ll_app_language)
     LinearLayout llAppLanguage;
+    @BindView(R.id.text_contacts)
+    TextView textContacts;
+    @BindView(R.id.ll_contacts)
+    LinearLayout llContacts;
+    @BindView(R.id.text_notification)
+    TextView textNotification;
+    @BindView(R.id.ll_notification)
+    LinearLayout llNotification;
+    @BindView(R.id.activity_settings)
+    RelativeLayout activitySettings;
+    private Activity activity;
 
     private ArrayList<AppLanguage> languageArrayList;
 
@@ -105,7 +100,6 @@ public class SettingsActivity extends BaseActivity implements RippleView
         textAppLanguage.setTypeface(Utils.typefaceRegular(this));
         textContacts.setTypeface(Utils.typefaceRegular(this));
         textNotification.setTypeface(Utils.typefaceRegular(this));
-        textPopUp.setTypeface(Utils.typefaceRegular(this));
 
         llAppLanguage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -126,15 +120,6 @@ public class SettingsActivity extends BaseActivity implements RippleView
             public void onClick(View v) {
                 Intent intent = new Intent(activity, NotificationSettingsActivity.class);
                 intent.putExtra("from", "notification");
-                startActivity(intent);
-            }
-        });
-
-        llPopUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(activity, NotificationSettingsActivity.class);
-                intent.putExtra("from", "popup");
                 startActivity(intent);
             }
         });
@@ -203,6 +188,9 @@ public class SettingsActivity extends BaseActivity implements RippleView
 //                    RContactApplication.getInstance().setLanguage();
 
                     // Redirect to MainActivity
+
+                    AppConstants.isFromSettingActivity = false;
+
                     Intent intent = new Intent(activity, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);

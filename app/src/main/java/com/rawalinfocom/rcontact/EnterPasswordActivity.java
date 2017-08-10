@@ -2,9 +2,11 @@ package com.rawalinfocom.rcontact;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -87,6 +89,8 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
     RippleView rippleForgetPassword;
     @BindView(R.id.relativeRootEnterPassword)
     RelativeLayout relativeRootEnterPassword;
+    @BindView(R.id.text_sign_in_up_diff_account)
+    TextView textSignInUpDiffAccount;
     private String mobileNumber;
     private Country selectedCountry;
 
@@ -102,6 +106,19 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
         rippleActionBack.setOnRippleCompleteListener(this);
         rippleForgetPassword.setOnRippleCompleteListener(this);
         rippleLogin.setOnRippleCompleteListener(this);
+
+        textSignInUpDiffAccount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(EnterPasswordActivity.this, MobileNumberRegistrationActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(intent);
+                overridePendingTransition(R.anim.enter, R.anim.exit);
+                finish();
+            }
+        });
 
         textToolbarTitle.setText(getResources().getString(R.string.str_enter_password));
         textToolbarTitle.setTypeface(Utils.typefaceRegular(this));
@@ -205,11 +222,11 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
 
                     storeProfileDataToDb(profileDetail);
 
-                    if (MoreObjects.firstNonNull(enterPassWordResponse.getReSync(), 0).equals(1)) {
-                        Utils.setBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false);
-                        Utils.setBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false);
-                        Utils.setBooleanPreference(this, AppConstants.PREF_SMS_SYNCED, false);
-                    }
+//                    if (MoreObjects.firstNonNull(enterPassWordResponse.getReSync(), 0).equals(1)) {
+//                        Utils.setBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false);
+//                        Utils.setBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false);
+//                        Utils.setBooleanPreference(this, AppConstants.PREF_SMS_SYNCED, false);
+//                    }
 
                     deviceDetail();
 
@@ -242,14 +259,25 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
                     Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME, String.valueOf(System.currentTimeMillis()));
                     Utils.setBooleanPreference(this, AppConstants.KEY_IS_FIRST_TIME, true);
 
-                    // Redirect to MainActivity
-                    Intent intent = new Intent(this, MainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.enter, R.anim.exit);
-                    finish();
+                    if (Utils.getBooleanPreference(this, AppConstants.KEY_IS_RESTORE_DONE, false)) {
+                        // Redirect to MainActivity
+                        Intent intent = new Intent(this, MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.enter, R.anim.exit);
+                        finish();
+                    } else {
+                        // Redirect to RestorationActivity
+                        Intent intent = new Intent(this, RestorationActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.enter, R.anim.exit);
+                        finish();
+                    }
 
                 } else {
                     if (enterPassWordResponse != null) {
@@ -530,10 +558,10 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
 
     private void deviceDetail() {
 
-        String model = android.os.Build.MODEL;
-        String androidVersion = android.os.Build.VERSION.RELEASE;
-        String brand = android.os.Build.BRAND;
-        String device = android.os.Build.DEVICE;
+        String model = Build.MODEL;
+        String androidVersion = Build.VERSION.RELEASE;
+        String brand = Build.BRAND;
+        String device = Build.DEVICE;
         String secureAndroidId = Settings.Secure.getString(getContentResolver(), Settings.Secure
                 .ANDROID_ID);
 

@@ -311,7 +311,8 @@ public class NotificationFCMService extends FirebaseMessagingService {
                                 Integer.parseInt(m.get("car_pm_id_from")),
                                 m.get("car_ppm_particular_text"),
                                 Utils.getLocalTimeFromUTCTime(m.get("created_at")),
-                                Utils.getLocalTimeFromUTCTime(m.get("updated_at")));
+                                Utils.getLocalTimeFromUTCTime(m.get("updated_at")),
+                                m.get("name"), m.get("pm_profile_photo"));
                         if (requestId != -1) {
                             notificationStateData.setCreatedAt(m.get("created_at"));
                             notificationStateData.setUpdatedAt(m.get("updated_at"));
@@ -339,7 +340,8 @@ public class NotificationFCMService extends FirebaseMessagingService {
                                 Integer.parseInt(m.get("car_pm_id_to")),
                                 m.get("car_ppm_particular_text"),
                                 Utils.getLocalTimeFromUTCTime(m.get("created_at")),
-                                Utils.getLocalTimeFromUTCTime(m.get("updated_at")));
+                                Utils.getLocalTimeFromUTCTime(m.get("updated_at")),
+                                m.get("name"), m.get("pm_profile_photo"));
                         if (requestId != -1) {
                             notificationStateData.setCreatedAt(m.get("created_at"));
                             notificationStateData.setUpdatedAt(m.get("updated_at"));

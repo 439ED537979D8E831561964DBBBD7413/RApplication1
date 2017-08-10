@@ -14,6 +14,7 @@
     <string name="msg_no_internet">कृपया अपने इंटरनेट कनेक्शन की जाँच करें</string>
     <string name="msg_unsaved_details">कुछ विवरण सहेजे नहीं गए हैं। क्या आप सुनिश्चित रूप से आगे बढ़ना चाहते हैं?</string>
     <string name="msg_please_wait">कृपया प्रतीक्षा करें…</string>
+    <string name="msg_in_progress">प्रगति में…</string>
     <string name="msg_no_network">नेटवर्क उपलब्ध नहीं है</string>
     <string name="action_cancel">रद्द करें</string>
     <string name="action_call">कॉल करें</string>
@@ -29,6 +30,7 @@
     <string name="str_message">संदेश</string>
     <string name="str_welcom">आपका स्वागत है</string>
     <string name="str_welcom_message">आपके सम्पर्को के स्मार्ट होने का समय आ गया है </string>
+    <string name="str_done">समाप्त</string>
 
     <!--  Other  -->
     <string name="error_facebook_login_cancelled">फेसबुक लॉग इन असफल!</string>
@@ -38,6 +40,9 @@
     <string name="title_verify_number">अपना फोन नम्बर सत्यापित करें</string>
     <string name="msg_enter_number">कृपया अपने देश कोड की पुष्टि करें और अपना फ़ोन नंबर दर्ज करें</string>
     <string name="action_submit">सबमिट करें</string>
+    <string name="action_restore">चलिए चलते हैं</string>
+    <string name="str_restore">प्रोफ़ाइल पुनर्स्थापित करें</string>
+    <string name="str_restoring">अपने प्रोफाइल विवरण को पुनर्स्थापित करें और अपने संपर्क संपर्क प्रोफ़ाइल में स्टोर जानकारी को पकड़ें</string>
     <string name="hint_search">खोज</string>
     <string name="description_action_back">Description Action Back</string>
     <string name="error_invalid_number">कृपया एक मान्य नम्बर दर्ज करें</string>
@@ -135,26 +140,26 @@
         <item>कस्टम</item>
     </string-array>
 
-    <string name="show_call_history">Show Call history</string>
-    <string name="send_sms">Send SMS</string>
-    <string name="remove_from_call_log">Remove from Call Log</string>
-    <string name="copy_phone_number">Copy Phone Number</string>
-    <string name="block">Block</string>
-    <string name="unblock">Unblock</string>
-    <string name="call_reminder">Call Reminder</string>
-    <string name="str_hide_year">Hide Year</string>
-    <string name="str_i_currently_work_here">I Currently Work Here</string>
-    <string name="nav_text_home">Home</string>
-    <string name="nav_text_account">Account</string>
-    <string name="nav_text_timeline">Timeline</string>
-    <string name="nav_text_events">Events</string>
-    <string name="nav_text_rating_history">Rating History</string>
-    <string name="nav_text_invite_contact">Invite contacts</string>
-    <string name="nav_text_share_rcontact">Share RContact App</string>
-    <string name="nav_text_settings">Settings</string>
-    <string name="nav_text_block_contact">Block Contact List</string>
-    <string name="nav_text_rate_us">Rate us</string>
-    <string name="nav_text_about_help">About and Help</string>
+    <string name="show_call_history">कॉल इतिहास देखें</string>
+    <string name="send_sms">SMS भेजें</string>
+    <string name="remove_from_call_log">कॉल लॉग से निकालें</string>
+    <string name="copy_phone_number">फोन नंबर कॉपी करें</string>
+    <string name="block">ब्लॉक</string>
+    <string name="unblock">अनब्लॉक</string>
+    <string name="call_reminder">कॉल रिमाइंडर</string>
+    <string name="str_hide_year">वर्ष को अनदेखा करें</string>
+    <string name="str_i_currently_work_here">वर्तमान कार्यस्थल</string>
+    <string name="nav_text_home">घर</string>
+    <string name="nav_text_account">खाता</string>
+    <string name="nav_text_timeline">टाइमलाइन</string>
+    <string name="nav_text_events">इवेंट्स</string>
+    <string name="nav_text_rating_history">रेटिंग इतिहास</string>
+    <string name="nav_text_invite_contact">अपने संपर्कों को आमंत्रित करें</string>
+    <string name="nav_text_share_rcontact">RContacts ऐप शेयर करें</string>
+    <string name="nav_text_settings">सेटिंग्स</string>
+    <string name="nav_text_block_contact">ब्लॉक किये गए सम्पर्को की सूचि</string>
+    <string name="nav_text_rate_us">हमें रेटिंग दें</string>
+    <string name="nav_text_about_help">जानकारी और सहायता</string>
     <string name="nav_text_export_db">Export DB</string>
     <string name="nav_text_feedback">प्रतिक्रिया</string>
     <string name="past_5_days">पिछले 5 दिन</string>
@@ -389,7 +394,7 @@
     <string name="str_view_reply">उत्तर देखें</string>
     <string name="str_reply_you">आपको जवाब दिया</string>
     <string name="str_unread_notification_hint_1">आपके पास</string>
-    <string name="str_unread_notification_hint_2">अपठित सूचना(एं)</string>
+    <string name="str_unread_notification_hint_2">अपठित सूचना(एं) है</string>
     <string name="str_unread_notification_hint_3">आपके पास कोई अपठित सूचना(एं) नहीं है</string>
     <string name="str_rating_comment_hint_1">आपकी रेटिंग और टिप्पणी पर आपको उत्तर दिया</string>
     <string name="str_rating_comment_hint_2">को आपने रेटिंग दी और उनके लिए टिपण्णी लिखी</string>
@@ -499,6 +504,7 @@
 
     <!--  Favorite  -->
     <string name="str_no_favorite">कोई पसंदीदा संपर्क नहीं मिला</string>
+    <string name="str_no_number">Enter the number to dial a call</string>
 
     <!--  Maps  -->
     <string name="str_no_location_found">स्थान नहीं मिला</string>
@@ -544,9 +550,9 @@
     <string name="tutorial_lets_go">चलते हैं!</string>
     <string name="get_started">शुरू करें</string>
     <string name="str_welcome">स्वागत है</string>
-    <string name="terms_conditions_content">Get all your Contacts, SMS and Call at one Place</string>
-    <string name="str_terms_conditions">By continuing you accept terms and conditions</string>
-    <string name="accept_terms_conditions">Accept terms and conditions before proceeding!</string>
+    <string name="terms_conditions_content">आपके सम्पर्को के स्मार्ट होने का समय आ गया है</string>
+    <string name="str_terms_conditions">आगे बढ़ने से आप हमारी सेवा की शर्तों को स्वीकार करते हैं</string>
+    <string name="accept_terms_conditions">कृपया आगे बढ़ने से पहले शर्तें स्वीकार करें!</string>
 
     <!--  English Only  -->
     <string name="error_required_account">खाता आवश्यक है</string>
@@ -647,7 +653,7 @@
     <string name="copied_to_clipboard">क्लिपबोर्ड पर कॉपी कर दिया गया</string>
 
     <!--Call-popup-->
-    <string name="str_pop_up">Call Pop-Up</string>
+    <string name="str_pop_up">कॉल पॉप-अप </string>
     <string name="network_warning_msg">कॉलर आईडी सक्षम करने के लिए आपको 3G/4G वाईफ़ाई कनेक्शन की आवश्यकता है।
         कृपया आपका कनेक्शन जांचें और फिर से प्रयास करें।</string>
     <string name="call_received_from">से कॉल प्राप्त</string>

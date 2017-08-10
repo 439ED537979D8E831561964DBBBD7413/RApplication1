@@ -37,6 +37,8 @@ public class TableRCContactRequest {
     private static final String COLUMN_CAR_CREATED_AT = "car_created_at";
     private static final String COLUMN_CAR_UPDATED_AT = "car_updated_at";
     static final String COLUMN_CRM_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
+    private static final String COLUMN_CAR_IMG = "crm_img";
+    private static final String COLUMN_CAR_PROFILE_DETAILS = "crm_profiledetails";
 
     // Table Create Statements
     static final String CREATE_TABLE_RC_CONTACT_REQUEST = "CREATE TABLE " + TABLE_RC_CONTACT_ACCESS_REQUEST +
@@ -49,11 +51,14 @@ public class TableRCContactRequest {
             " " + COLUMN_CRM_RC_PROFILE_MASTER_PM_ID + " integer NOT NULL," +
             " " + COLUMN_CAR_CLOUD_REQUEST_ID + " text NOT NULL," +
             " " + COLUMN_CAR_CREATED_AT + " datetime NOT NULL," +
+            " " + COLUMN_CAR_IMG + " text," +
+            " " + COLUMN_CAR_PROFILE_DETAILS + " text," +
             " " + COLUMN_CAR_UPDATED_AT + " datetime NOT NULL," +
             " UNIQUE(" + COLUMN_CAR_CLOUD_REQUEST_ID + ")" +
             ");";
 
-    public int addRequest(int status, String carId, String carMongodbRecordIndex, int carPmIdFrom, String requestType, String createdAt, String updatedAt) {
+    public int addRequest(int status, String carId, String carMongodbRecordIndex, int carPmIdFrom, String requestType, String createdAt, String updatedAt
+            , String name, String profilePhoto) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -64,6 +69,8 @@ public class TableRCContactRequest {
         values.put(COLUMN_CARTYPE, requestType);
         values.put(COLUMN_CAR_CREATED_AT, createdAt);
         values.put(COLUMN_CAR_UPDATED_AT, updatedAt);
+        values.put(COLUMN_CAR_PROFILE_DETAILS, name);
+        values.put(COLUMN_CAR_IMG, profilePhoto);
         try {
             int id = (int) db.insert(TABLE_RC_CONTACT_ACCESS_REQUEST, null, values);
             db.close();
@@ -90,6 +97,8 @@ public class TableRCContactRequest {
                 request.setCarMongodbRecordIndex(cursor.getString(cursor.getColumnIndex(COLUMN_CAR_RECORD_INDEX_ID)));
                 request.setUpdatedAt(cursor.getString(cursor.getColumnIndex(COLUMN_CAR_UPDATED_AT)));
                 request.setCarId(cursor.getInt(cursor.getColumnIndex(COLUMN_CAR_CLOUD_REQUEST_ID)));
+                request.setName(cursor.getString(cursor.getColumnIndex(COLUMN_CAR_PROFILE_DETAILS)));
+                request.setPmProfilePhoto(cursor.getString(cursor.getColumnIndex(COLUMN_CAR_IMG)));
                 arrayList.add(request);
             } while (cursor.moveToNext());
             cursor.close();
