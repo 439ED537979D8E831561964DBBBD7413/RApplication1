@@ -42,7 +42,7 @@
     <string name="action_submit">Submit</string>
     <string name="action_restore">Let\'s go</string>
     <string name="str_restore">Restore profile</string>
-    <string name="str_restoring">Restore your profile details and get hold of the store information in your rcontacts profile</string>
+    <string name="str_restoring">Restore Your Profile Details And Get Hold Of The Stored Information In Your RContacts Profile.If You Don\'t Restore Now, You Won\'t Be Able To Restore It Later!</string>
     <string name="hint_search">Search</string>
     <string name="description_action_back">Description Action Back</string>
     <string name="error_invalid_number">Please add valid Number</string>

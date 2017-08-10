@@ -41,7 +41,7 @@ public class TableSpamDetailMaster {
     private static final String COLUMN_PHOTO_URL = "pb_profile_photo";
 
     // Table Create Statements
-    static final String CREATE_TABLE_SPAM_DETAIL_MASTER = "CREATE TABLE table_spam_detail_master (" +
+    static final String CREATE_TABLE_SPAM_DETAIL_MASTER = "CREATE TABLE IF NOT EXISTS table_spam_detail_master (" +
             " " + COLUMN_PB_LAST_NAME + " text," +
             " " + COLUMN_PB_NAME_SUFFIX + " text," +
             " " + COLUMN_PB_NAME_FIRST + " text," +

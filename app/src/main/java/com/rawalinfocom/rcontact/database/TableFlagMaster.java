@@ -31,7 +31,7 @@ public class TableFlagMaster {
     private static final String COLUMN_FM_VALUE = "fm_value";
 
     // Table Create Statements
-    static final String CREATE_TABLE_RC_FLAG_MASTER = "CREATE TABLE " + TABLE_RC_FLAG_MASTER +
+    static final String CREATE_TABLE_RC_FLAG_MASTER = "CREATE TABLE IF NOT EXISTS " + TABLE_RC_FLAG_MASTER +
             " (" +
             " " + COLUMN_FM_ID + " integer NOT NULL CONSTRAINT rc_flag_master_pk PRIMARY KEY," +
             " " + COLUMN_FM_VALUE + " text NOT NULL" +

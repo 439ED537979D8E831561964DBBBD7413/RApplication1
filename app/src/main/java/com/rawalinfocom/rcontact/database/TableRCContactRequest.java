@@ -41,7 +41,7 @@ public class TableRCContactRequest {
     private static final String COLUMN_CAR_PROFILE_DETAILS = "crm_profiledetails";
 
     // Table Create Statements
-    static final String CREATE_TABLE_RC_CONTACT_REQUEST = "CREATE TABLE " + TABLE_RC_CONTACT_ACCESS_REQUEST +
+    static final String CREATE_TABLE_RC_CONTACT_REQUEST = "CREATE TABLE IF NOT EXISTS " + TABLE_RC_CONTACT_ACCESS_REQUEST +
             " (" +
             " " + COLUMN_CAR_ID + " integer NOT NULL CONSTRAINT rc_contact_access_request_pk PRIMARY KEY " +
             "AUTOINCREMENT," +

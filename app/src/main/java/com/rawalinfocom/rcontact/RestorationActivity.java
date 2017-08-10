@@ -227,6 +227,7 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
         finish();
     }
 
+    // PROFILE COMMENT HISTORY RESTORE
     private void storeCommentRequestResponseToDB(WsResponseObject getCommentUpdateResponse, ArrayList<RatingRequestResponseDataItem> commentReceive,
                                                  ArrayList<RatingRequestResponseDataItem> commentDone) {
 
@@ -238,9 +239,26 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
 
                 RatingRequestResponseDataItem dataItem = commentDone.get(i);
 
-                tableCommentMaster.addReply(dataItem.getCommentId(), dataItem.getReply(),
-                        Utils.getLocalTimeFromUTCTime(dataItem.getReplyAt()), Utils
-                                .getLocalTimeFromUTCTime(dataItem.getReplyAt()));
+                Comment comment = new Comment();
+                comment.setCrmStatus(AppConstants.COMMENT_STATUS_SENT);
+                comment.setCrmType(getResources().getString(R.string.str_tab_comment));
+                comment.setCrmCloudPrId(dataItem.getCommentId());
+                comment.setCrmRating(dataItem.getPrRatingStars());
+                comment.setRcProfileMasterPmId(dataItem.getToPmId());
+                comment.setCrmComment(dataItem.getComment());
+                comment.setCrmReply(dataItem.getReply());
+                comment.setCrmProfileDetails(dataItem.getName());
+                comment.setCrmImage(dataItem.getPmProfilePhoto());
+                comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getCreatedAt()));
+                comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getUpdatedAt()));
+                comment.setCrmRepliedAt(Utils.getLocalTimeFromUTCTime(dataItem.getReplyAt()));
+
+//                TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
+//                tableProfileMaster.updateUserProfileRating(toPmId, avgRating, totalUniqueRater);
+//                Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING, totalUniqueRater);
+//                Utils.setStringPreference(this, AppConstants.PREF_USER_RATING, avgRating);
+
+                tableCommentMaster.addComment(comment);
             }
 
             // eventCommentReceive
@@ -250,26 +268,24 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
 
                 Comment comment = new Comment();
                 comment.setCrmStatus(AppConstants.COMMENT_STATUS_RECEIVED);
-                comment.setCrmType(getResources().getString(R.string.str_tab_rating));
+                comment.setCrmType(getResources().getString(R.string.str_tab_comment));
                 comment.setCrmCloudPrId(dataItem.getCommentId());
                 comment.setCrmRating(dataItem.getPrRatingStars());
                 comment.setRcProfileMasterPmId(dataItem.getFromPmId());
                 comment.setCrmComment(dataItem.getComment());
+                comment.setCrmReply(dataItem.getReply());
                 comment.setCrmProfileDetails(dataItem.getName());
                 comment.setCrmImage(dataItem.getPmProfilePhoto());
                 comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getCreatedAt()));
                 comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getUpdatedAt()));
-                String avgRating = dataItem.getProfileRating();
-                String totalUniqueRater = dataItem.getTotalProfileRateUser();
-                String toPmId = String.valueOf(dataItem.getToPmId());
+                comment.setCrmRepliedAt(Utils.getLocalTimeFromUTCTime(dataItem.getReplyAt()));
 
-                TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
-                tableProfileMaster.updateUserProfileRating(toPmId, avgRating, totalUniqueRater);
-                Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING, totalUniqueRater);
-                Utils.setStringPreference(this, AppConstants.PREF_USER_RATING, avgRating);
+//                TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
+//                tableProfileMaster.updateUserProfileRating(toPmId, avgRating, totalUniqueRater);
+//                Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING, totalUniqueRater);
+//                Utils.setStringPreference(this, AppConstants.PREF_USER_RATING, avgRating);
 
                 tableCommentMaster.addComment(comment);
-
             }
 
         } catch (Exception e) {
@@ -283,6 +299,7 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
         }
     }
 
+    // PROFILE RATING HISTORY RESTORE
     private void storeRatingRequestResponseToDB(WsResponseObject getRatingUpdateResponse, ArrayList<RatingRequestResponseDataItem> ratingReceive,
                                                 ArrayList<RatingRequestResponseDataItem> ratingDone, RatingRequestResponseDataItem ratingDetails) {
 
@@ -294,8 +311,21 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
 
                 RatingRequestResponseDataItem dataItem = ratingDone.get(i);
 
-                tableCommentMaster.addReply(dataItem.getPrId(), dataItem.getReply(),
-                        Utils.getLocalTimeFromUTCTime(dataItem.getReplyAt()), Utils.getLocalTimeFromUTCTime(dataItem.getReplyAt()));
+                Comment comment = new Comment();
+                comment.setCrmStatus(AppConstants.COMMENT_STATUS_SENT);
+                comment.setCrmType(getResources().getString(R.string.str_tab_rating));
+                comment.setCrmCloudPrId(dataItem.getPrId());
+                comment.setCrmRating(dataItem.getPrRatingStars());
+                comment.setRcProfileMasterPmId(dataItem.getToPmId());
+                comment.setCrmComment(dataItem.getComment());
+                comment.setCrmReply(dataItem.getReply());
+                comment.setCrmProfileDetails(dataItem.getName());
+                comment.setCrmImage(dataItem.getPmProfilePhoto());
+                comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getCreatedAt()));
+                comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getUpdatedAt()));
+                comment.setCrmRepliedAt(Utils.getLocalTimeFromUTCTime(dataItem.getReplyAt()));
+
+                tableCommentMaster.addComment(comment);
             }
 
             // profileRatingReply
@@ -310,12 +340,15 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
                 comment.setCrmRating(dataItem.getPrRatingStars());
                 comment.setRcProfileMasterPmId(dataItem.getFromPmId());
                 comment.setCrmComment(dataItem.getComment());
+                comment.setCrmReply(dataItem.getReply());
                 comment.setCrmProfileDetails(dataItem.getName());
                 comment.setCrmImage(dataItem.getPmProfilePhoto());
                 comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getCreatedAt()));
                 comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getUpdatedAt()));
+                comment.setCrmRepliedAt(Utils.getLocalTimeFromUTCTime(dataItem.getReplyAt()));
 
                 tableCommentMaster.addComment(comment);
+
             }
 
             if (ratingDetails != null) {
@@ -341,6 +374,7 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
         }
     }
 
+    // PROFILE PRIVATE DATA SHOWN REQUEST HISTORY RESTORE
     private void storeContactRequestResponseToDB(WsResponseObject getContactUpdateResponse, ArrayList<ContactRequestResponseDataItem> requestData,
                                                  ArrayList<ContactRequestResponseDataItem> responseData) {
 
@@ -363,12 +397,9 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
                             dataItem.getCarPpmParticular(),
                             Utils.getLocalTimeFromUTCTime(dataItem.getCreatedAt()),
                             Utils.getLocalTimeFromUTCTime(dataItem.getUpdatedAt()),
-                            dataItem.getName(),dataItem.getPmProfilePhoto());
+                            dataItem.getName(), dataItem.getPmProfilePhoto());
                 }
             }
-
-            TableRCContactRequest tableRCContactRequest1 = new TableRCContactRequest
-                    (databaseHandler);
 
             for (int i = 0; i < responseData.size(); i++) {
 
@@ -377,7 +408,7 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
                 if (String.valueOf(dataItem.getCarPmIdFrom()).equals(Utils.getStringPreference(this, AppConstants
                         .PREF_USER_PM_ID, "0"))
                         && MoreObjects.firstNonNull(dataItem.getCarAccessPermissionStatus(), "0").equals("0")) {
-                    tableRCContactRequest1.addRequest(AppConstants
+                    tableRCContactRequest.addRequest(AppConstants
                                     .COMMENT_STATUS_SENT,
                             String.valueOf(dataItem.getCarId()),
                             dataItem.getCarMongodbRecordIndex(),
@@ -385,7 +416,7 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
                             dataItem.getCarPpmParticular(),
                             Utils.getLocalTimeFromUTCTime(dataItem.getCreatedAt()),
                             Utils.getLocalTimeFromUTCTime(dataItem.getUpdatedAt()),
-                            dataItem.getName(),dataItem.getPmProfilePhoto());
+                            dataItem.getName(), dataItem.getPmProfilePhoto());
                 }
             }
 

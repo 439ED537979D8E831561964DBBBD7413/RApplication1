@@ -36,7 +36,7 @@ public class TableWebsiteMaster {
 //    private static final String COLUMN_WM_WEBSITE_PRIVACY = "wm_website_privacy";
 
     // Table Create Statements
-    static final String CREATE_TABLE_RC_WEBSITE_MASTER = "CREATE TABLE " + TABLE_RC_WEBSITE_MASTER
+    static final String CREATE_TABLE_RC_WEBSITE_MASTER = "CREATE TABLE IF NOT EXISTS " + TABLE_RC_WEBSITE_MASTER
             + " (" +
             " " + COLUMN_WM_ID + " integer NOT NULL CONSTRAINT rc_website_master_pk PRIMARY KEY," +
             " " + COLUMN_WM_RECORD_INDEX_ID + " text," +

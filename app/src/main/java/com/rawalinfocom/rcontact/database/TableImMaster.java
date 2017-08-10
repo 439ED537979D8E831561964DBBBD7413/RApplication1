@@ -40,7 +40,7 @@ public class TableImMaster {
 
 
     // Table Create Statements
-    static final String CREATE_TABLE_RC_IM_MASTER = "CREATE TABLE " + TABLE_RC_IM_MASTER + " (" +
+    static final String CREATE_TABLE_RC_IM_MASTER = "CREATE TABLE IF NOT EXISTS " + TABLE_RC_IM_MASTER + " (" +
             " " + COLUMN_IM_ID + " integer NOT NULL CONSTRAINT rc_im_master_pk PRIMARY KEY," +
             " " + COLUMN_IM_RECORD_INDEX_ID + " text, " +
             " " + COLUMN_IM_DETAIL + " text," +

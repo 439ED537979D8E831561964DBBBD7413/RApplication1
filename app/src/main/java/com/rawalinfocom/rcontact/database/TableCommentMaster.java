@@ -46,7 +46,7 @@ public class TableCommentMaster {
     private static final String COLUMN_EVM_RECORD_INDEX_ID = "evm_record_index_id";
 
     // Table Create Statements
-    static final String CREATE_TABLE_RC_COMMENT_MASTER = "CREATE TABLE " + TABLE_RC_COMMENT_MASTER +
+    static final String CREATE_TABLE_RC_COMMENT_MASTER = "CREATE TABLE IF NOT EXISTS " + TABLE_RC_COMMENT_MASTER +
             " (" +
             " " + COLUMN_CRM_ID + " integer NOT NULL CONSTRAINT rc_comment_master_pk PRIMARY KEY " +
             "AUTOINCREMENT," +

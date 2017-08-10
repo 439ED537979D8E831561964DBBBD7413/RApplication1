@@ -37,7 +37,7 @@ public class TableRelationMaster {
 
 
     // Table Create Statements
-    static final String CREATE_TABLE_RC_RELATION_MASTER = "CREATE TABLE " +
+    static final String CREATE_TABLE_RC_RELATION_MASTER = "CREATE TABLE IF NOT EXISTS " +
             TABLE_RC_RELATION_MASTER + " (" +
             " " + COLUMN_RM_ID + " integer NOT NULL CONSTRAINT rc_relation_master_pk PRIMARY KEY," +
             " " + COLUMN_RM_RELATION_NAME + " text NOT NULL," +

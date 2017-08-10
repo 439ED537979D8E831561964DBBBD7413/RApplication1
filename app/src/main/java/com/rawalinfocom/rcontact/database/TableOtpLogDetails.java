@@ -36,7 +36,7 @@ public class TableOtpLogDetails {
     private static final String COLUMN_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
 
     // Table Create Statements
-    static final String CREATE_TABLE_OTP_LOG_DETAILS = "CREATE TABLE " +
+    static final String CREATE_TABLE_OTP_LOG_DETAILS = "CREATE TABLE IF NOT EXISTS " +
             TABLE_RC_OTP_LOG_DETAILS +
             "(" + COLUMN_OLD_ID + " integer NOT NULL PRIMARY KEY AUTOINCREMENT," +
             " " + COLUMN_OLD_OTP + " text NOT NULL," +

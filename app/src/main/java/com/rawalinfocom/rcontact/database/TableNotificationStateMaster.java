@@ -37,7 +37,7 @@ public class TableNotificationStateMaster {
     private static final String COLUMN_NS_MASTER_ID = "ns_master_id";
 
     // Table Create Statements
-    static final String CREATE_TABLE_NOTIFICATION_STATE_MASTER = "CREATE TABLE " + TABLE_NOTIFICATION_STATE_MASTER +
+    static final String CREATE_TABLE_NOTIFICATION_STATE_MASTER = "CREATE TABLE IF NOT EXISTS " + TABLE_NOTIFICATION_STATE_MASTER +
             " (" +
             " " + COLUMN_NS_ID + " integer NOT NULL CONSTRAINT rc_notification_state_pk PRIMARY KEY AUTOINCREMENT," +
             " " + COLUMN_NS_STATE + " integer NOT NULL DEFAULT 1," +
