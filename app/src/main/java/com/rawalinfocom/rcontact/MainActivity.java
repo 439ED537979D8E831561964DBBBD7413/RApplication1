@@ -2734,14 +2734,19 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
     private ArrayList<CallLogType> divideCallLogByChunck() {
         callLogsListbyChunck = new ArrayList<>();
+        try {
+            for (ArrayList<CallLogType> partition : choppedCallLog(callLogTypeArrayListMain,
+                    CALL_LOG_CHUNK)) {
+                // do something with partition
+                callLogsListbyChunck.addAll(partition);
+                callLogTypeArrayListMain.removeAll(partition);
+                break;
+            }
 
-        for (ArrayList<CallLogType> partition : choppedCallLog(callLogTypeArrayListMain,
-                CALL_LOG_CHUNK)) {
-            // do something with partition
-            callLogsListbyChunck.addAll(partition);
-            callLogTypeArrayListMain.removeAll(partition);
-            break;
+        }catch (Exception e){
+            e.printStackTrace();
         }
+
         return callLogsListbyChunck;
     }
 
