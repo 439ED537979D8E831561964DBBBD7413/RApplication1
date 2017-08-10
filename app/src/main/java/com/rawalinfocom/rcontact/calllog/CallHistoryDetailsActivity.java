@@ -198,6 +198,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
     ProgressBar progressBarLoadCallLogs;
     private boolean isCallLogRcpUser;
     private String isRcpVerifiedUser;
+    private boolean isRcpFromNoti;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -213,6 +214,10 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
             if (intent.hasExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER)) {
                 historyNumber = intent.getStringExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER);
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_RCP_FROM_NOTI)) {
+                isRcpFromNoti = intent.getBooleanExtra(AppConstants.EXTRA_RCP_FROM_NOTI,false);
             }
 
             if (intent.hasExtra(AppConstants.EXTRA_IS_RCP_VERIFIED_SPAM)) {
@@ -837,7 +842,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                         profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                 arrayListName, contactName, 0, isFromCallLogTab,
                                 arrayListHistory, contactName, "", hashMapKey, profileThumbnail,
-                                pmId, isCallLogRcpUser, "");
+                                pmId, isCallLogRcpUser, "",cloudContactName);
                         profileMenuOptionDialog.showDialog();
 
                     } else {
@@ -854,7 +859,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                     arrayListNumber, profileContactNumber, 0, isFromCallLogTab,
                                     arrayListHistory, "", uniqueContactId, hashMapKey,
-                                    profileThumbnail, pmId, isCallLogRcpUser, "");
+                                    profileThumbnail, pmId, isCallLogRcpUser, "",cloudContactName);
                             profileMenuOptionDialog.showDialog();
                         }
                     }
@@ -878,7 +883,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                         profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                 arrayListName, number, 0, isFromCallLogTab,
                                 arrayListHistory, contactName, "", phoneBookId, profileThumbnail,
-                                pmId, isCallLogRcpUser, "");
+                                pmId, isCallLogRcpUser, "",cloudContactName);
                         profileMenuOptionDialog.showDialog();
 
                     } else {
@@ -895,7 +900,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                     arrayListNumber, profileContactNumber, 0, isFromCallLogTab,
                                     arrayListHistory, "", uniqueContactId, "", profileThumbnail,
-                                    pmId, isCallLogRcpUser, "");
+                                    pmId, isCallLogRcpUser, "",cloudContactName);
                             profileMenuOptionDialog.showDialog();
                         }
                     }
@@ -915,10 +920,16 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
             for (int i = arrayListHistory.size() - 1; i >= 0; i--) {
                 CallLogType callLogType = arrayListHistory.get(i);
                 String number = callLogType.getHistoryNumber();
-                String formattedNumber = Utils.getFormattedNumber(this, number);
+//                String formattedNumber = Utils.getFormattedNumber(this, number);
+                if (!StringUtils.isEmpty(number)){
+                    if (number.startsWith("+91"))
+                        number = number.replace("+", "");
+                    else
+                        number = "91" + number;
+                }
                 long date = callLogType.getHistoryDate();
                 CallLogHistoryType callLogHistoryType = new CallLogHistoryType();
-                callLogHistoryType.setHistoryNumber(formattedNumber);
+                callLogHistoryType.setHistoryNumber(number);
                 callLogHistoryType.setHistoryDate(date);
                 if (arrayListToSend.size() == 0) {
                     arrayListToSend.add(callLogHistoryType);
@@ -2180,9 +2191,11 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                     else if (!StringUtils.isEmpty(isRcpVerifiedUser)) {
                         if ((StringUtils.isEmpty(userName)))
                             logObject.setIsHistoryRcpVerifiedId(isRcpVerifiedUser);
-                    } else {
+                    } else if(isRcpFromNoti){
+                        isRcpFromNoti = false;
+                        logObject.setIsHistoryRcpVerifiedId("1");
+                    }else{
                         logObject.setIsHistoryRcpVerifiedId("");
-
                     }
 
                     callDetails.add(logObject);
