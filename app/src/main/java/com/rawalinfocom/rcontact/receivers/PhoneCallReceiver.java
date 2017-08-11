@@ -143,7 +143,7 @@ public class PhoneCallReceiver extends BroadcastReceiver {
     //Incoming call-  goes from IDLE to RINGING when it rings, to OFFHOOK when it's answered, to
     // IDLE when its hung up
     //Outgoing call-  goes from IDLE to OFFHOOK when it dials out, to IDLE when hung up
-    public void onCallStateChanged(Context context, int state, String number) {-+
+    public void onCallStateChanged(Context context, int state, String number) {
         if (lastState == state) {
             //No change, debounce extras
             return;
