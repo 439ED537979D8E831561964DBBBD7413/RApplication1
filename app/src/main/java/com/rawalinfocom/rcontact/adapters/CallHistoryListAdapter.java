@@ -56,17 +56,17 @@ public class CallHistoryListAdapter extends RecyclerView.Adapter<CallHistoryList
         CallLogType callLogType = listCallHistory.get(position);
         String number = callLogType.getHistoryNumber();
         if (!TextUtils.isEmpty(number)) {
-            if(StringUtils.equalsIgnoreCase(callLogType.getIsHistoryRcpVerifiedId(),"0")){
+            if (StringUtils.equalsIgnoreCase(callLogType.getIsHistoryRcpVerifiedId(), "0")) {
                 holder.textHistoryNumber.setTextColor(ContextCompat.getColor(context, R.color
                         .textColorBlue));
-            }else if(StringUtils.equalsIgnoreCase(callLogType.getIsHistoryRcpVerifiedId(),"1")){
+            } else if (StringUtils.equalsIgnoreCase(callLogType.getIsHistoryRcpVerifiedId(), "1")) {
                 holder.textHistoryNumber.setTextColor(ContextCompat.getColor(context, R.color
                         .colorAccent));
-            }else{
+            } else {
                 holder.textHistoryNumber.setTextColor(ContextCompat.getColor(context, R.color
                         .darkGray));
             }
-            holder.textHistoryNumber.setText(Utils.getFormattedNumber(context,number));
+            holder.textHistoryNumber.setText(Utils.getFormattedNumber(context, number));
         }
 
         String numberType = callLogType.getHistoryNumberType();
@@ -75,9 +75,11 @@ public class CallHistoryListAdapter extends RecyclerView.Adapter<CallHistoryList
                     "");
         }
 
+
         long logDate1 = callLogType.getHistoryDate();
         Date date1 = new Date(logDate1);
         String logDate = new SimpleDateFormat("yyyy-MM-dd").format(date1);
+
 
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -1);
@@ -89,7 +91,7 @@ public class CallHistoryListAdapter extends RecyclerView.Adapter<CallHistoryList
         Date cDate = c.getTime();
         String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(cDate);
 
-        String finalDate;
+        String finalDate = "";
         if (logDate.equalsIgnoreCase(currentDate)) {
             finalDate = context.getString(R.string.str_today);
         } else if (logDate.equalsIgnoreCase(yesterdayDate)) {

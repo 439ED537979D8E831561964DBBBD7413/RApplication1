@@ -420,6 +420,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             if (StringUtils.isEmpty(name)) {
                 name = getNameFromNumber(Utils.getFormattedNumber(getActivity(), number));
             }
+//            String formattedNumber =  Utils.getFormattedNumber(getActivity(), number);
 
             Long date = cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE));
 
@@ -440,7 +441,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             callLogType.setDurationToPass(callLogType.getCoolDuration(Float.parseFloat
                     (cursor.getString(cursor.getColumnIndex(CallLog.Calls.DURATION)))));
 
-            String photoThumbNail = getPhotoUrlFromNumber(number);
+            String photoThumbNail = getPhotoUrlFromNumber(Utils.getFormattedNumber(getActivity(), number));
 
             if (!TextUtils.isEmpty(photoThumbNail)) {
                 callLogType.setProfileImage(photoThumbNail);
@@ -591,11 +592,16 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         if (callLogType != null) {
             String updatedNumber = callLogType.getNumber();
             TableSpamDetailMaster tableSpamDetailMaster = new TableSpamDetailMaster(getDatabaseHandler());
+//            String savedNumberFormat = Utils.getFormattedNumber(getActivity(),updatedNumber);
+            if(updatedNumber.startsWith("0")){
+                updatedNumber =  Utils.getFormattedNumber(getActivity(),updatedNumber);
+            }
             String savedNumberFormat = updatedNumber;
             if (savedNumberFormat.startsWith("+91"))
                 savedNumberFormat = savedNumberFormat.replace("+", "");
             else
                 savedNumberFormat = "91" + savedNumberFormat;
+
             SpamDataType spamDataType = tableSpamDetailMaster.getSpamDetailsFromNumber(savedNumberFormat);
             String spamCount = spamDataType.getSpamCount();
             if (callLogTypeArrayList.size() > 0) {
@@ -936,6 +942,11 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         try {
             TableSpamDetailMaster tableSpamDetailMaster = new TableSpamDetailMaster(getDatabaseHandler());
             if (!StringUtils.isEmpty(number)) {
+
+                if(number.startsWith("0")){
+                    number =  Utils.getFormattedNumber(getActivity(),number);
+                }
+
                 if (number.startsWith("+91"))
                     number = number.replace("+", "");
                 else
@@ -1006,6 +1017,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     CallLogType callLogType = callLogTypeArrayList.get(i);
                     String number = callLogType.getNumber();
                     if (!StringUtils.isEmpty(number)) {
+                        if(number.startsWith("0")){
+                            number =  Utils.getFormattedNumber(getActivity(),number);
+                        }
                         if (number.startsWith("+91"))
                             number = number.replace("+", "");
                         else

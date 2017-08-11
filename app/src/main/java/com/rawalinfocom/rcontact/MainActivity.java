@@ -338,8 +338,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
                 Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                 sharingIntent.setType("text/plain");
-                String shareBody = AppConstants.PLAY_STORE_LINK + getPackageName() + "&utm_source=" + Utils.getStringPreference(this, AppConstants.PREF_USER_NUMBER, "")
-                        + "&utm_medium=" + Utils.getStringPreference(this, AppConstants.PREF_USER_NUMBER, "");
+                String shareBody = AppConstants.PLAY_STORE_LINK + getPackageName();
                 sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
                 startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_via)));
 

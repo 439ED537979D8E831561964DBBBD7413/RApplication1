@@ -83,6 +83,7 @@ public class PhoneCallReceiver extends BroadcastReceiver {
     boolean isCallEnded = false;
     static Dialog incomingDialog, endCallDialog;
     boolean outGoingCall;
+    boolean isIncomingCall;
 
     public PhoneCallReceiver() {
     }
@@ -154,6 +155,7 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                 callStartTime = new Date();
                 savedNumber = number;
                 isCallEnded = false;
+                isIncomingCall = true;
                 String name = getNameFromNumber(Utils.getFormattedNumber(context, savedNumber));
                 if (StringUtils.isEmpty(name)) {
                     callSpamServiceApi();
@@ -175,11 +177,14 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                 //Went to idle-  this is the end of a call.  What type depends on previous state(s)
                 if (lastState == TelephonyManager.CALL_STATE_RINGING) {
                     //Ring but no pickup-  a miss
+                    isIncomingCall = true;
                     onMissedCall(context, savedNumber, callStartTime);
                 } else if (isIncoming) {
+                    isIncomingCall = true;
                     onIncomingCallEnded(context, savedNumber, callStartTime, new Date());
                 } else {
 //                    Toast.makeText(context, "Outgoing call", Toast.LENGTH_SHORT).show();
+                    isIncomingCall = false;
                     onOutgoingCallEnded(context, savedNumber, callStartTime, new Date());
                     String nameOutgoing = getNameFromNumber(Utils.getFormattedNumber(context, savedNumber));
                     if (StringUtils.isEmpty(nameOutgoing)) {
@@ -194,8 +199,13 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                 if (StringUtils.isEmpty(contactName)) {
                     final SpamDataType spamDataType = setRCPDetailsAndSpamCountforUnsavedNumbers(savedNumber);
                     if (StringUtils.length(spamDataType.getRcpVerfiy()) > 0) {
-                        if (!Utils.getBooleanPreference(context, AppConstants.PREF_DISABLE_POPUP, false))
-                            initializeEndCallDialog();
+                        if (!Utils.getBooleanPreference(context, AppConstants.PREF_DISABLE_POPUP, false)) {
+                            if (isIncomingCall) {
+                                isIncomingCall = false;
+                                initializeEndCallDialog();
+                            }
+
+                        }
                     } else {
                         callSpamServiceApi();
                     }
@@ -312,6 +322,9 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                                 if (StringUtils.isEmpty(spamDataType.getMobileNumber())) {
                                     spamDataType = setRCPDetailsAndSpamCountforUnsavedNumbers(savedNumber);
                                     String numberToUpdate = spamDataType.getMobileNumber();
+                                    if(savedNumber.startsWith("0")){
+                                        savedNumber = Utils.getFormattedNumber(context,savedNumber);
+                                    }
                                     String savedNumberFormat = savedNumber;
                                     if (savedNumberFormat.startsWith("+91"))
                                         savedNumberFormat = savedNumberFormat.replace("+", "");
@@ -365,7 +378,8 @@ public class PhoneCallReceiver extends BroadcastReceiver {
 
         if (Utils.isNetworkAvailable(context)) {
             WsRequestObject deviceDetailObject = new WsRequestObject();
-            deviceDetailObject.setUnknownNumberList(new ArrayList<String>(Arrays.asList(savedNumber)));
+            deviceDetailObject.setUnknownNumberList(new ArrayList<String>(Arrays.asList(Utils.
+                    getFormattedNumber(context,savedNumber))));
 
             new AsyncWebServiceCall(context, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     deviceDetailObject, null, WsResponseObject.class, WsConstants
@@ -386,6 +400,9 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                                     TableSpamDetailMaster tableSpamDetailMaster = new TableSpamDetailMaster(databaseHandler);
                                     spamDataType = setRCPDetailsAndSpamCountforUnsavedNumbers(savedNumber);
                                     String numberToUpdate = spamDataType.getMobileNumber();
+                                    if(savedNumber.startsWith("0")){
+                                        savedNumber =  Utils.getFormattedNumber(context,savedNumber);
+                                    }
                                     String savedNumberFormat = savedNumber;
                                     if (savedNumberFormat.startsWith("+91"))
                                         savedNumberFormat = savedNumberFormat.replace("+", "");
@@ -418,13 +435,16 @@ public class PhoneCallReceiver extends BroadcastReceiver {
 
                         if (isCallEnded) {
                             isCallEnded = false;
-//                            initializeEndCallDialog();
+                            if (!Utils.getBooleanPreference(context, AppConstants.PREF_DISABLE_POPUP, false)) {
+                                initializeEndCallDialog();
+
+                            }
                         } else {
                             if (outGoingCall) {
                                 outGoingCall = false;
                             } else {
                                 if (!Utils.getBooleanPreference(context, AppConstants.PREF_DISABLE_POPUP, false))
-                                initializeIncomingCallDialog();
+                                    initializeIncomingCallDialog();
                             }
                         }
 
@@ -960,10 +980,16 @@ public class PhoneCallReceiver extends BroadcastReceiver {
         try {
             TableSpamDetailMaster tableSpamDetailMaster = new TableSpamDetailMaster(databaseHandler);
             if (!StringUtils.isEmpty(number)) {
+                if(number.startsWith("0")){
+                    number =  Utils.getFormattedNumber(context,number);
+                }else{
+
+                }
                 if (number.startsWith("+91"))
                     number = number.replace("+", "");
                 else
                     number = "91" + number;
+
 
                 spamDataType = tableSpamDetailMaster.getSpamDetailsFromNumber(number);
                 if (spamDataType != null && !StringUtils.isEmpty(spamDataType.getSpamCount())) {
