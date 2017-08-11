@@ -593,11 +593,15 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             String updatedNumber = callLogType.getNumber();
             TableSpamDetailMaster tableSpamDetailMaster = new TableSpamDetailMaster(getDatabaseHandler());
 //            String savedNumberFormat = Utils.getFormattedNumber(getActivity(),updatedNumber);
+            if(updatedNumber.startsWith("0")){
+                updatedNumber =  Utils.getFormattedNumber(getActivity(),updatedNumber);
+            }
             String savedNumberFormat = updatedNumber;
             if (savedNumberFormat.startsWith("+91"))
                 savedNumberFormat = savedNumberFormat.replace("+", "");
             else
                 savedNumberFormat = "91" + savedNumberFormat;
+
             SpamDataType spamDataType = tableSpamDetailMaster.getSpamDetailsFromNumber(savedNumberFormat);
             String spamCount = spamDataType.getSpamCount();
             if (callLogTypeArrayList.size() > 0) {
@@ -938,6 +942,11 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         try {
             TableSpamDetailMaster tableSpamDetailMaster = new TableSpamDetailMaster(getDatabaseHandler());
             if (!StringUtils.isEmpty(number)) {
+
+                if(number.startsWith("0")){
+                    number =  Utils.getFormattedNumber(getActivity(),number);
+                }
+
                 if (number.startsWith("+91"))
                     number = number.replace("+", "");
                 else
@@ -1008,6 +1017,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     CallLogType callLogType = callLogTypeArrayList.get(i);
                     String number = callLogType.getNumber();
                     if (!StringUtils.isEmpty(number)) {
+                        if(number.startsWith("0")){
+                            number =  Utils.getFormattedNumber(getActivity(),number);
+                        }
                         if (number.startsWith("+91"))
                             number = number.replace("+", "");
                         else
