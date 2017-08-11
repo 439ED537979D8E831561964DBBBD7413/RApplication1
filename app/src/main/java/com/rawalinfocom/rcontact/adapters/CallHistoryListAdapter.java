@@ -75,13 +75,11 @@ public class CallHistoryListAdapter extends RecyclerView.Adapter<CallHistoryList
                     "");
         }
 
-        String logDate = "";
-        Date date1 = null;
-        if (callLogType.getHistoryDate() > 0) {
-            long logDate1 = callLogType.getHistoryDate();
-            date1 = new Date(logDate1);
-            logDate = new SimpleDateFormat("yyyy-MM-dd").format(date1);
-        }
+
+        long logDate1 = callLogType.getHistoryDate();
+        Date date1 = new Date(logDate1);
+        String logDate = new SimpleDateFormat("yyyy-MM-dd").format(date1);
+
 
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -1);
@@ -99,8 +97,7 @@ public class CallHistoryListAdapter extends RecyclerView.Adapter<CallHistoryList
         } else if (logDate.equalsIgnoreCase(yesterdayDate)) {
             finalDate = context.getString(R.string.str_yesterday);
         } else {
-            if (date1 != null)
-                finalDate = new SimpleDateFormat("EEE,dd/MM").format(date1);
+            finalDate = new SimpleDateFormat("EEE,dd/MM").format(date1);
         }
         holder.textHistoryDate.setText(finalDate);
 
