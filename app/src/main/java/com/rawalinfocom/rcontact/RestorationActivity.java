@@ -95,52 +95,52 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
         if (error == null) {
 
             // <editor-fold desc="REQ_GET_RCP_CONTACT">
-            if (serviceType.contains(WsConstants.REQ_GET_RCP_CONTACT)) {
-                WsResponseObject getRCPContactUpdateResponse = (WsResponseObject) data;
-                if (getRCPContactUpdateResponse != null && StringUtils.equalsIgnoreCase
-                        (getRCPContactUpdateResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
-
-                    if (!Utils.isArraylistNullOrEmpty(getRCPContactUpdateResponse
-                            .getArrayListUserRcProfile())) {
-
-                        try {
-
-                            /* Store Unique Contacts to ProfileMobileMapping */
-                            storeToMobileMapping(getRCPContactUpdateResponse
-                                    .getArrayListUserRcProfile());
-
-                                /* Store Unique Emails to ProfileEmailMapping */
-                            storeToEmailMapping(getRCPContactUpdateResponse
-                                    .getArrayListUserRcProfile());
-
-                                /* Store Profile Details to respective Table */
-                            storeProfileDataToDb(getRCPContactUpdateResponse
-                                    .getArrayListUserRcProfile(), getRCPContactUpdateResponse
-                                    .getArrayListMapping());
-
-                        } catch (Exception e) {
-                            System.out.println("RContact error");
-                        }
-                    }
-                    if (!Utils.isArraylistNullOrEmpty(getRCPContactUpdateResponse
-                            .getArrayListMapping())) {
-                        removeRemovedDataFromDb(getRCPContactUpdateResponse
-                                .getArrayListMapping());
-                    }
-
-                    pullMechanismServiceCall("", "", WsConstants.REQ_GET_CONTACT_REQUEST);
-
-
-                } else {
-                    if (getRCPContactUpdateResponse != null) {
-                        System.out.println("RContact error --> " + getRCPContactUpdateResponse.getMessage());
-                    } else {
-                        System.out.println("RContact error --> getContactUpdateResponse null");
-                    }
-
-                    pullMechanismServiceCall("", "", WsConstants.REQ_GET_CONTACT_REQUEST);
-                }
-            }
+//            if (serviceType.contains(WsConstants.REQ_GET_RCP_CONTACT)) {
+//                WsResponseObject getRCPContactUpdateResponse = (WsResponseObject) data;
+//                if (getRCPContactUpdateResponse != null && StringUtils.equalsIgnoreCase
+//                        (getRCPContactUpdateResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+//
+//                    if (!Utils.isArraylistNullOrEmpty(getRCPContactUpdateResponse
+//                            .getArrayListUserRcProfile())) {
+//
+//                        try {
+//
+//                            /* Store Unique Contacts to ProfileMobileMapping */
+//                            storeToMobileMapping(getRCPContactUpdateResponse
+//                                    .getArrayListUserRcProfile());
+//
+//                                /* Store Unique Emails to ProfileEmailMapping */
+//                            storeToEmailMapping(getRCPContactUpdateResponse
+//                                    .getArrayListUserRcProfile());
+//
+//                                /* Store Profile Details to respective Table */
+//                            storeProfileDataToDb(getRCPContactUpdateResponse
+//                                    .getArrayListUserRcProfile(), getRCPContactUpdateResponse
+//                                    .getArrayListMapping());
+//
+//                        } catch (Exception e) {
+//                            System.out.println("RContact error");
+//                        }
+//                    }
+//                    if (!Utils.isArraylistNullOrEmpty(getRCPContactUpdateResponse
+//                            .getArrayListMapping())) {
+//                        removeRemovedDataFromDb(getRCPContactUpdateResponse
+//                                .getArrayListMapping());
+//                    }
+//
+//                    pullMechanismServiceCall("", "", WsConstants.REQ_GET_CONTACT_REQUEST);
+//
+//
+//                } else {
+//                    if (getRCPContactUpdateResponse != null) {
+//                        System.out.println("RContact error --> " + getRCPContactUpdateResponse.getMessage());
+//                    } else {
+//                        System.out.println("RContact error --> getContactUpdateResponse null");
+//                    }
+//
+//                    pullMechanismServiceCall("", "", WsConstants.REQ_GET_CONTACT_REQUEST);
+//                }
+//            }
 
             // <editor-fold desc="REQ_GET_CONTACT_REQUEST">
             if (serviceType.contains(WsConstants.REQ_GET_CONTACT_REQUEST)) {
@@ -249,6 +249,7 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
                 comment.setCrmReply(dataItem.getReply());
                 comment.setCrmProfileDetails(dataItem.getName());
                 comment.setCrmImage(dataItem.getPmProfilePhoto());
+                comment.setEvmRecordIndexId(dataItem.getEventRecordIndexId());
                 comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getCreatedAt()));
                 comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getUpdatedAt()));
                 comment.setCrmRepliedAt(Utils.getLocalTimeFromUTCTime(dataItem.getReplyAt()));
@@ -276,6 +277,7 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
                 comment.setCrmReply(dataItem.getReply());
                 comment.setCrmProfileDetails(dataItem.getName());
                 comment.setCrmImage(dataItem.getPmProfilePhoto());
+                comment.setEvmRecordIndexId(dataItem.getEventRecordIndexId());
                 comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getCreatedAt()));
                 comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getUpdatedAt()));
                 comment.setCrmRepliedAt(Utils.getLocalTimeFromUTCTime(dataItem.getReplyAt()));
@@ -437,7 +439,8 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
         buttonRestore.setTypeface(Utils.typefaceRegular(RestorationActivity.this));
         buttonRestore.setEnabled(false);
         buttonRestore.setBackgroundResource(R.drawable.bg_circle_light_green);
-        RCPContactServiceCall("", WsConstants.REQ_GET_RCP_CONTACT);
+        pullMechanismServiceCall("", "", WsConstants.REQ_GET_CONTACT_REQUEST);
+//        RCPContactServiceCall("", WsConstants.REQ_GET_RCP_CONTACT);
 
         buttonRestore.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -463,20 +466,20 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
         }
     }
 
-    private void RCPContactServiceCall(String timestamp, String url) {
-
-        if (Utils.isNetworkAvailable(RestorationActivity.this)) {
-            WsRequestObject deviceDetailObject = new WsRequestObject();
-
-            deviceDetailObject.setTimeStamp(timestamp);
-
-            if (Utils.isNetworkAvailable(this)) {
-                new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
-                        deviceDetailObject, null, WsResponseObject.class, url, null, true).executeOnExecutor(AsyncTask
-                        .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + url);
-            }
-        }
-    }
+//    private void RCPContactServiceCall(String timestamp, String url) {
+//
+//        if (Utils.isNetworkAvailable(RestorationActivity.this)) {
+//            WsRequestObject deviceDetailObject = new WsRequestObject();
+//
+//            deviceDetailObject.setTimeStamp(timestamp);
+//
+//            if (Utils.isNetworkAvailable(this)) {
+//                new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+//                        deviceDetailObject, null, WsResponseObject.class, url, null, true).executeOnExecutor(AsyncTask
+//                        .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + url);
+//            }
+//        }
+//    }
 
     private void storeToMobileMapping(ArrayList<ProfileDataOperation> profileData) {
 
