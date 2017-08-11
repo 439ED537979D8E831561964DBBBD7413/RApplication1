@@ -25,7 +25,7 @@ public class TableEventMaster {
     }
 
     // Table Names
-    static final String TABLE_RC_EVENT_MASTER = "rc_event_master";
+    public static final String TABLE_RC_EVENT_MASTER = "rc_event_master";
 
     // Column Names
     private static final String COLUMN_EVM_ID = "evm_id";

@@ -26,7 +26,7 @@ public class TableCommentMaster {
     }
 
     // Table Names
-    static final String TABLE_RC_COMMENT_MASTER = "rc_comment_master";
+    public static final String TABLE_RC_COMMENT_MASTER = "rc_comment_master";
 
     // Column Names
     private static final String COLUMN_CRM_ID = "crm_id";

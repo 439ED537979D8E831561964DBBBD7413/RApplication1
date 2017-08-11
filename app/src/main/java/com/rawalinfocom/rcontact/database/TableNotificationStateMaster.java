@@ -20,7 +20,7 @@ public class TableNotificationStateMaster {
     }
 
     // Table Names
-    private static final String TABLE_NOTIFICATION_STATE_MASTER = "rc_notification_state";
+    public static final String TABLE_NOTIFICATION_STATE_MASTER = "rc_notification_state";
 
     // Column Names
     private static final String COLUMN_NS_ID = "ns_id";

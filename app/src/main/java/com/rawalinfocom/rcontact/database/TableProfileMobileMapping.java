@@ -40,7 +40,7 @@ public class TableProfileMobileMapping {
     }
 
     // Table Names
-    static final String TABLE_PB_PROFILE_MOBILE_MAPPING = "pb_profile_mobile_mapping";
+    public static final String TABLE_PB_PROFILE_MOBILE_MAPPING = "pb_profile_mobile_mapping";
 
     // Column Names
     private static final String COLUMN_MPM_ID = "mpm_id";

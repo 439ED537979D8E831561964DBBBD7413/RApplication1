@@ -23,7 +23,7 @@ public class TableSpamDetailMaster {
     }
 
     // Table Names
-    static final String TABLE_SPAM_DETAIL_MASTER = "table_spam_detail_master";
+    public static final String TABLE_SPAM_DETAIL_MASTER = "table_spam_detail_master";
 
     // Column Names
     private static final String COLUMN_PB_LAST_NAME = "pb_name_last";
@@ -54,7 +54,7 @@ public class TableSpamDetailMaster {
             " " + COLUMN_PROFILE_RATING + " text," +
             " " + COLUMN_TOTAL_PROFILE_RATE_USER + " text," +
             " " + COLUMN_PUBLIC_URL + " text," +
-            " " + COLUMN_PHOTO_URL + " text" +
+            " " + COLUMN_PHOTO_URL + " text " +
             ");";
 
     public void insertSpamDetails(ArrayList<SpamDataType> spamDataTypeList) {

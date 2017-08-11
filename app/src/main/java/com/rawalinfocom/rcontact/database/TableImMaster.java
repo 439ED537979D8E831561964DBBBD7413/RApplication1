@@ -25,7 +25,7 @@ public class TableImMaster {
     }
 
     // Table Names
-    static final String TABLE_RC_IM_MASTER = "rc_im_master";
+    public static final String TABLE_RC_IM_MASTER = "rc_im_master";
 
     // Column Names
     private static final String COLUMN_IM_ID = "im_id";

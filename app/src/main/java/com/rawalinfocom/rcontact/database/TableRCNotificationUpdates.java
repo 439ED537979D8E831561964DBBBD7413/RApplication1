@@ -24,7 +24,7 @@ public class TableRCNotificationUpdates {
     }
 
     // Table Names
-    private static final String TABLE_RC_NOTIFICATION_UPDATES = "rc_notification_updates";
+    public static final String TABLE_RC_NOTIFICATION_UPDATES = "rc_notification_updates";
 
     // Column Names
     private static final String COLUMN_NU_ID = "nu_id";

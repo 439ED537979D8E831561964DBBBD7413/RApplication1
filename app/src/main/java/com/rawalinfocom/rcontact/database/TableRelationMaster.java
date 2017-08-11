@@ -23,7 +23,7 @@ public class TableRelationMaster {
     }
 
     // Table Names
-    private static final String TABLE_RC_RELATION_MASTER = "rc_relation_master";
+    public static final String TABLE_RC_RELATION_MASTER = "rc_relation_master";
 
     // Column Names
     private static final String COLUMN_RM_ID = "rm_id";

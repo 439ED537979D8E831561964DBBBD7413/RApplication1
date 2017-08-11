@@ -23,7 +23,7 @@ public class TableFlagMaster {
     }
 
     // Table Names
-    private static final String TABLE_RC_FLAG_MASTER = "rc_flag_master";
+    public static final String TABLE_RC_FLAG_MASTER = "rc_flag_master";
 
 
     // Column Names

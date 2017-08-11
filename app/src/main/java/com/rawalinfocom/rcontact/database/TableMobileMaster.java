@@ -28,7 +28,7 @@ public class TableMobileMaster {
     }
 
     // Table Names
-    static final String TABLE_RC_MOBILE_NUMBER_MASTER = "rc_mobile_number_master";
+    public static final String TABLE_RC_MOBILE_NUMBER_MASTER = "rc_mobile_number_master";
 
     // Column Names
     private static final String COLUMN_MNM_ID = "mnm_id";

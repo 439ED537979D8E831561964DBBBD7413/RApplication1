@@ -25,7 +25,7 @@ public class TableAddressMaster {
     }
 
     // Table Names
-    static final String TABLE_RC_ADDRESS_MASTER = "rc_address_master";
+    public static final String TABLE_RC_ADDRESS_MASTER = "rc_address_master";
 
     // Column Names
     private static final String COLUMN_AM_ID = "am_id";

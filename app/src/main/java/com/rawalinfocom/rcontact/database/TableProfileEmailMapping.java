@@ -23,7 +23,7 @@ public class TableProfileEmailMapping {
     }
 
     // Table Names
-    static final String TABLE_PB_PROFILE_EMAIL_MAPPING = "pb_profile_email_mapping";
+    public static final String TABLE_PB_PROFILE_EMAIL_MAPPING = "pb_profile_email_mapping";
 
     // Column Names
     private static final String COLUMN_EPM_ID = "epm_id";

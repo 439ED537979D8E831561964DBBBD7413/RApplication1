@@ -26,7 +26,7 @@ public class TableProfileMaster {
     }
 
     // Table Names
-    static final String TABLE_RC_PROFILE_MASTER = "rc_profile_master";
+    public static final String TABLE_RC_PROFILE_MASTER = "rc_profile_master";
 
     // Column Names
 //    private static final String COLUMN_PM_ID = "pm_id";

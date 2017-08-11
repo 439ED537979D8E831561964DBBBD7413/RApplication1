@@ -23,7 +23,7 @@ public class TableOtpLogDetails {
     }
 
     // Table Names
-    private static final String TABLE_RC_OTP_LOG_DETAILS = "rc_otp_log_details";
+    public static final String TABLE_RC_OTP_LOG_DETAILS = "rc_otp_log_details";
 
 
     // Column Names

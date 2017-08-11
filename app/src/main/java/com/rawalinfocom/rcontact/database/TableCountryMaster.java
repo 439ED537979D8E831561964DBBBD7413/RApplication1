@@ -23,7 +23,7 @@ public class TableCountryMaster {
     }
 
     // Table Names
-    private static final String TABLE_RC_COUNTRY_MASTER = "rc_country_master";
+    public static final String TABLE_RC_COUNTRY_MASTER = "rc_country_master";
 
 
     // Column Names

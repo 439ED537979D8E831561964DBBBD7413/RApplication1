@@ -24,7 +24,7 @@ public class TableOrganizationMaster {
     }
 
     // Table Names
-    static final String TABLE_RC_ORGANIZATION_MASTER = "rc_organization_master";
+    public static final String TABLE_RC_ORGANIZATION_MASTER = "rc_organization_master";
 
     // Column Names
     private static final String COLUMN_OM_ID = "om_id";

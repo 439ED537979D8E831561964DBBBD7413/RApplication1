@@ -24,7 +24,7 @@ public class TableEmailMaster {
     }
 
     // Table Names
-    static final String TABLE_RC_EMAIL_MASTER = "rc_email_master";
+    public static final String TABLE_RC_EMAIL_MASTER = "rc_email_master";
 
     // Column Names
     private static final String COLUMN_EM_ID = "em_id";

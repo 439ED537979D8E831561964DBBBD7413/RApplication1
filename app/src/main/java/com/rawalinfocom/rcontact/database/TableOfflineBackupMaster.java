@@ -23,7 +23,7 @@ public class TableOfflineBackupMaster {
     }
 
     // Table Names
-    private static final String TABLE_PB_OFFLINE_BACKUP_MASTER = "pb_offline_backup_master";
+    public static final String TABLE_PB_OFFLINE_BACKUP_MASTER = "pb_offline_backup_master";
 
     // Column Names
     private static final String COLUMN_OBM_ID = "obm_id";
