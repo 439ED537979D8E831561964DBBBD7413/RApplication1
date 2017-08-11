@@ -338,7 +338,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
                 Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                 sharingIntent.setType("text/plain");
-                String shareBody = AppConstants.PLAY_STORE_LINK + getPackageName();
+                String shareBody = AppConstants.PLAY_STORE_LINK + getPackageName() + "&utm_source=" + Utils.getStringPreference(this, AppConstants.PREF_USER_NUMBER, "")
+                        + "&utm_medium=" + Utils.getStringPreference(this, AppConstants.PREF_USER_NUMBER, "");
                 sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
                 startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_via)));
 
@@ -521,33 +522,44 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 WsResponseObject uploadContactResponse = (WsResponseObject) data;
                 if (uploadContactResponse != null && StringUtils.equalsIgnoreCase
                         (uploadContactResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
-                    if (!Utils.isArraylistNullOrEmpty(uploadContactResponse
-                            .getArrayListUserRcProfile())) {
+
+
+                    lastSyncedData = lastSyncedData + CONTACT_CHUNK;
+                    Utils.setIntegerPreference(MainActivity.this, AppConstants.PREF_SYNCED_CONTACTS,
+                            lastSyncedData);
+
+                    if (lastSyncedData < (arrayListReSyncUserContact.size() + CONTACT_CHUNK)) {
+                        backgroundSync(true, uploadContactResponse);
+                    } else {
+
+                        if (!Utils.isArraylistNullOrEmpty(uploadContactResponse
+                                .getArrayListUserRcProfile())) {
 
                                 /* Store Unique Contacts to ProfileMobileMapping */
-                        storeToMobileMapping(uploadContactResponse
-                                .getArrayListUserRcProfile());
+                            storeToMobileMapping(uploadContactResponse
+                                    .getArrayListUserRcProfile());
 
                                 /* Store Unique Emails to ProfileEmailMapping */
-                        storeToEmailMapping(uploadContactResponse
-                                .getArrayListUserRcProfile());
+                            storeToEmailMapping(uploadContactResponse
+                                    .getArrayListUserRcProfile());
 
                                 /* Store Profile Details to respective Table */
-                        storeProfileDataToDb(uploadContactResponse
-                                .getArrayListUserRcProfile(), uploadContactResponse
-                                .getArrayListMapping());
+                            storeProfileDataToDb(uploadContactResponse
+                                    .getArrayListUserRcProfile(), uploadContactResponse
+                                    .getArrayListMapping());
+                        }
+                        if (!Utils.isArraylistNullOrEmpty(uploadContactResponse
+                                .getArrayListMapping())) {
+                            removeRemovedDataFromDb(uploadContactResponse
+                                    .getArrayListMapping());
+                        }
                     }
-                    if (!Utils.isArraylistNullOrEmpty(uploadContactResponse
-                            .getArrayListMapping())) {
-                        removeRemovedDataFromDb(uploadContactResponse
-                                .getArrayListMapping());
-                    }
-                    Log.i(TAG, "Sync Successful");
 
-                    if (uploadContactResponse.getArrayListMapping().size() > 0) {
-                        uploadContacts(uploadContactResponse.getResponseKey(), new ArrayList
-                                <ProfileData>());
-                    }
+//                    if (uploadContactResponse.getArrayListMapping().size() > 0) {
+//                        uploadContacts(uploadContactResponse.getResponseKey(), new ArrayList
+//                                <ProfileData>());
+//                    }
+
                     String currentTimeStamp = (StringUtils.split(serviceType, "_"))[1];
                     PhoneBookContacts phoneBookContacts = new PhoneBookContacts(this);
                     phoneBookContacts.saveRawIdsToPref();
@@ -2257,6 +2269,9 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     }
 
     private void reSyncPhoneBookContactList() {
+
+        lastSyncedData = Utils.getIntegerPreference(MainActivity.this, AppConstants.PREF_SYNCED_CONTACTS, 0);
+
         currentStamp = String.valueOf(System.currentTimeMillis());
         String lastStamp = Utils.getStringPreference(this, AppConstants
                 .PREF_CONTACT_LAST_SYNC_TIME, currentStamp);
@@ -2320,7 +2335,15 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
         }
         if (Utils.isNetworkAvailable(this) && arrayListReSyncUserContact.size() > 0) {
-            uploadContacts("", arrayListReSyncUserContact);
+
+            if (lastSyncedData < arrayListReSyncUserContact.size()) {
+                if (reSyncContactAsyncTask != null && reSyncContactAsyncTask.isCancelled()) {
+                    return;
+                }
+                backgroundSync(false, null);
+            }
+
+//            uploadContacts("", arrayListReSyncUserContact);
 //            if (arrayListReSyncUserContact.size() <= 100) {
 //                Log.i(TAG, "sending updated contacts to server");
 //                uploadContacts();
@@ -2328,6 +2351,62 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 //                Log.i(TAG, "need to apply resync mechanism:");
 //            }
         }
+    }
+
+    private final int CONTACT_CHUNK = 50;
+    int lastSyncedData = 0;
+
+    private void backgroundSync(final boolean addToDatabase, final WsResponseObject
+            uploadContactResponse) {
+        if (reSyncContactAsyncTask != null && reSyncContactAsyncTask.isCancelled()) {
+            return;
+        }
+        Runnable run = new Runnable() {
+            @Override
+            public void run() {
+                String responseKey;
+                if (addToDatabase) {
+                    if (uploadContactResponse != null) {
+                        responseKey = uploadContactResponse.getResponseKey();
+                        Utils.setStringPreference(MainActivity.this, AppConstants.PREF_RESPONSE_KEY,
+                                responseKey);
+                        if (reSyncContactAsyncTask != null && reSyncContactAsyncTask.isCancelled()) {
+                            return;
+                        }
+                        if (!Utils.isArraylistNullOrEmpty(uploadContactResponse
+                                .getArrayListUserRcProfile())) {
+
+                        /* Store Unique Contacts to ProfileMobileMapping */
+                            storeToMobileMapping(uploadContactResponse.getArrayListUserRcProfile());
+
+                        /* Store Unique Emails to ProfileEmailMapping */
+                            storeToEmailMapping(uploadContactResponse.getArrayListUserRcProfile());
+
+                        /* Store Profile Details to respective Table */
+                            storeProfileDataToDb(uploadContactResponse.getArrayListUserRcProfile(),
+                                    uploadContactResponse.getArrayListMapping());
+
+                        }
+                    }
+                }
+                int limit;
+                if (arrayListReSyncUserContact.size() > (lastSyncedData + CONTACT_CHUNK)) {
+                    limit = lastSyncedData + CONTACT_CHUNK;
+                } else {
+                    limit = arrayListReSyncUserContact.size();
+                }
+                if (lastSyncedData <= limit) {
+                    ArrayList<ProfileData> subList = new ArrayList<>(arrayListReSyncUserContact
+                            .subList(lastSyncedData, limit));
+                    uploadContacts(Utils.getStringPreference(MainActivity.this,
+                            AppConstants.PREF_RESPONSE_KEY, ""), subList);
+                } else {
+                    uploadContacts(Utils.getStringPreference(MainActivity.this,
+                            AppConstants.PREF_RESPONSE_KEY, ""), new ArrayList<ProfileData>());
+                }
+            }
+        };
+        AsyncTask.execute(run);
     }
 
     private void prepareData(int flag, String inCaluse) {
@@ -2741,7 +2820,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 break;
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
