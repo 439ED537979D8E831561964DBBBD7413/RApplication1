@@ -420,7 +420,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             if (StringUtils.isEmpty(name)) {
                 name = getNameFromNumber(Utils.getFormattedNumber(getActivity(), number));
             }
-            String formattedNumber =  Utils.getFormattedNumber(getActivity(), number);
+//            String formattedNumber =  Utils.getFormattedNumber(getActivity(), number);
 
             Long date = cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE));
 
@@ -428,8 +428,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
             callLogType.setType(cursor.getInt(cursor.getColumnIndex(CallLog.Calls.TYPE)));
 
-            if (!StringUtils.isEmpty(formattedNumber))
-                callLogType.setNumber(formattedNumber);
+            if (!StringUtils.isEmpty(number))
+                callLogType.setNumber(number);
 //            else
 //                callLogType.setNumber("");
 
@@ -441,7 +441,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             callLogType.setDurationToPass(callLogType.getCoolDuration(Float.parseFloat
                     (cursor.getString(cursor.getColumnIndex(CallLog.Calls.DURATION)))));
 
-            String photoThumbNail = getPhotoUrlFromNumber(formattedNumber);
+            String photoThumbNail = getPhotoUrlFromNumber(Utils.getFormattedNumber(getActivity(), number));
 
             if (!TextUtils.isEmpty(photoThumbNail)) {
                 callLogType.setProfileImage(photoThumbNail);
@@ -482,7 +482,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
                 if (!StringUtils.isEmpty(name)) {
                     ProfileMobileMapping profileMobileMapping =
-                            tableProfileMobileMapping.getCloudPmIdFromProfileMappingFromNumber(formattedNumber);
+                            tableProfileMobileMapping.getCloudPmIdFromProfileMappingFromNumber(number);
 
                     if (profileMobileMapping != null) {
                         String cloudPmId = profileMobileMapping.getMpmCloudPmId();
@@ -508,21 +508,21 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
                             callLogType.setRcpUser(true);
 
-                            callLogType = setRCPDetailsAndSpamCountforUnsavedNumbers(formattedNumber, callLogType);
+                            callLogType = setRCPDetailsAndSpamCountforUnsavedNumbers(number, callLogType);
                             callLogTypeArrayList.add(0, callLogType);
                             updateOldLogWithUpdatedDetails = new UpdateOldLogWithUpdatedDetails();
                             updateOldLogWithUpdatedDetails.execute(callLogType);
 //                            rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
                         }
                     } else {
-                        callLogType = setRCPDetailsAndSpamCountforUnsavedNumbers(formattedNumber, callLogType);
+                        callLogType = setRCPDetailsAndSpamCountforUnsavedNumbers(number, callLogType);
                         callLogTypeArrayList.add(0, callLogType);
                         updateOldLogWithUpdatedDetails = new UpdateOldLogWithUpdatedDetails();
                         updateOldLogWithUpdatedDetails.execute(callLogType);
 //                        rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
                     }
                 } else {
-                    callLogType = setRCPDetailsAndSpamCountforUnsavedNumbers(formattedNumber, callLogType);
+                    callLogType = setRCPDetailsAndSpamCountforUnsavedNumbers(number, callLogType);
                     callLogTypeArrayList.add(0, callLogType);
                     updateOldLogWithUpdatedDetails = new UpdateOldLogWithUpdatedDetails();
                     updateOldLogWithUpdatedDetails.execute(callLogType);
@@ -592,6 +592,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         if (callLogType != null) {
             String updatedNumber = callLogType.getNumber();
             TableSpamDetailMaster tableSpamDetailMaster = new TableSpamDetailMaster(getDatabaseHandler());
+//            String savedNumberFormat = Utils.getFormattedNumber(getActivity(),updatedNumber);
             String savedNumberFormat = updatedNumber;
             if (savedNumberFormat.startsWith("+91"))
                 savedNumberFormat = savedNumberFormat.replace("+", "");
