@@ -170,7 +170,6 @@ public class RatingHistory extends BaseActivity implements RippleView
                         updateHeight();
                     }
                 }
-
             }
 
             @Override
