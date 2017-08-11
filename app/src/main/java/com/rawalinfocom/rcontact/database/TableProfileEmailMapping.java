@@ -32,7 +32,6 @@ public class TableProfileEmailMapping {
     static final String COLUMN_EPM_CLOUD_PM_ID = "epm_cloud_pm_id";
     static final String COLUMN_EPM_IS_RCP = "epm_is_rcp";
 
-
     // Table Create Statements
     static final String CREATE_TABLE_PB_PROFILE_EMAIL_MAPPING = "CREATE TABLE IF NOT EXISTS " +
             TABLE_PB_PROFILE_EMAIL_MAPPING + " (" +

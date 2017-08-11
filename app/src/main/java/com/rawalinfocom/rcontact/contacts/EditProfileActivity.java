@@ -825,6 +825,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         if (android.util.Patterns.EMAIL_ADDRESS.matcher(email.getEmEmailId())
                                 .matches()) {
                             arrayListNewEmail.add(email);
+                        } else if (!emailId.isEnabled()) {
+                            arrayListNewEmail.add(email);
                         } else {
                             isValid = false;
                             Utils.showErrorSnackBar(this, relativeRootEditProfile,
@@ -2427,7 +2429,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         inputValue.setEnabled(false);
                         spinnerType.setVisibility(View.GONE);
 //                        textImageCross.setVisibility(View.INVISIBLE);
-                        imageViewDelete.setVisibility(View.INVISIBLE);
+                        imageViewDelete.setVisibility(View.GONE);
                     }
                     ProfileDataOperationPhoneNumber phoneNumber = (ProfileDataOperationPhoneNumber)
                             detailObject;
@@ -2474,9 +2476,14 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     inputValue.setText(email.getEmEmailId());
 
                     if (email.getEmRcpType() == IntegerConstants.RCP_TYPE_PRIMARY) {
+                        inputValue.setTypeface(Utils.typefaceIcons(EditProfileActivity.this));
                         inputValue.setEnabled(false);
+                        spinnerType.setEnabled(false);
+                        imageViewDelete.setVisibility(View.INVISIBLE);
+                        inputValue.setText(String.format("%s %s", email.getEmEmailId(),
+                                getString(R.string.im_icon_verify)));
                     } else {
-                        inputValue.setEnabled(true);
+                        inputValue.setText(email.getEmEmailId());
                     }
 
                     textIsPublic.setText(String.valueOf(email.getEmPublic()));
@@ -3043,7 +3050,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         != PackageManager.PERMISSION_GRANTED) {
 
                     ActivityCompat.requestPermissions(EditProfileActivity.this, new
-                            String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, AppConstants
+                            String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest
+                            .permission.READ_EXTERNAL_STORAGE}, AppConstants
                             .MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
 
                 } else {
@@ -3208,59 +3216,68 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 if (!StringUtils.isBlank(inputCustomName.getText().toString())) {
                     Utils.hideSoftKeyboard(EditProfileActivity.this, inputCustomName);
                     dialog.dismiss();
+                    ArrayAdapter<String> tempSpinnerAdapter = (ArrayAdapter<String>) spinnerType
+                            .getAdapter();
                     switch ((Integer) spinnerType.getTag(R.id.spinner_type)) {
                         case AppConstants.PHONE_NUMBER:
-                            spinnerPhoneAdapter.add(inputCustomName.getText().toString());
+                            /*spinnerPhoneAdapter.add(inputCustomName.getText().toString());
                             spinnerPhoneAdapter.notifyDataSetChanged();
                             spinnerType.setSelection(spinnerPhoneAdapter.getPosition(inputCustomName
                                     .getText().toString()));
                             spinnerType.setTag(R.id.spinner_position, spinnerPhoneAdapter
+                                    .getPosition(inputCustomName.getText().toString()));*/
+                            tempSpinnerAdapter.add(inputCustomName.getText().toString());
+                            tempSpinnerAdapter.notifyDataSetChanged();
+                            spinnerType.setSelection(tempSpinnerAdapter.getPosition
+                                    (inputCustomName
+                                            .getText().toString()));
+                            spinnerType.setTag(R.id.spinner_position, tempSpinnerAdapter
                                     .getPosition(inputCustomName.getText().toString()));
                             break;
 
                         case AppConstants.EMAIL:
-                            spinnerEmailAdapter.add(inputCustomName.getText().toString());
-                            spinnerEmailAdapter.notifyDataSetChanged();
-                            spinnerType.setSelection(spinnerEmailAdapter.getPosition(inputCustomName
+                            tempSpinnerAdapter.add(inputCustomName.getText().toString());
+                            tempSpinnerAdapter.notifyDataSetChanged();
+                            spinnerType.setSelection(tempSpinnerAdapter.getPosition(inputCustomName
                                     .getText().toString()));
-                            spinnerType.setTag(R.id.spinner_position, spinnerEmailAdapter
+                            spinnerType.setTag(R.id.spinner_position, tempSpinnerAdapter
                                     .getPosition(inputCustomName.getText().toString()));
                             break;
 
                         case AppConstants.WEBSITE:
-                            spinnerWebsiteAdapter.add(inputCustomName.getText().toString());
-                            spinnerWebsiteAdapter.notifyDataSetChanged();
-                            spinnerType.setSelection(spinnerWebsiteAdapter.getPosition
+                            tempSpinnerAdapter.add(inputCustomName.getText().toString());
+                            tempSpinnerAdapter.notifyDataSetChanged();
+                            spinnerType.setSelection(tempSpinnerAdapter.getPosition
                                     (inputCustomName
                                             .getText().toString()));
-                            spinnerType.setTag(R.id.spinner_position, spinnerWebsiteAdapter
+                            spinnerType.setTag(R.id.spinner_position, tempSpinnerAdapter
                                     .getPosition(inputCustomName.getText().toString()));
                             break;
 
                         case AppConstants.EVENT:
-                            spinnerEventAdapter.add(inputCustomName.getText().toString());
-                            spinnerEventAdapter.notifyDataSetChanged();
-                            spinnerType.setSelection(spinnerEventAdapter.getPosition(inputCustomName
+                            tempSpinnerAdapter.add(inputCustomName.getText().toString());
+                            tempSpinnerAdapter.notifyDataSetChanged();
+                            spinnerType.setSelection(tempSpinnerAdapter.getPosition(inputCustomName
                                     .getText().toString()));
-                            spinnerType.setTag(R.id.spinner_position, spinnerEventAdapter
+                            spinnerType.setTag(R.id.spinner_position, tempSpinnerAdapter
                                     .getPosition(inputCustomName.getText().toString()));
                             break;
 
                         case AppConstants.IM_ACCOUNT:
-                            spinnerImAccountAdapter.add(inputCustomName.getText().toString());
-                            spinnerImAccountAdapter.notifyDataSetChanged();
-                            spinnerType.setSelection(spinnerImAccountAdapter.getPosition
+                            tempSpinnerAdapter.add(inputCustomName.getText().toString());
+                            tempSpinnerAdapter.notifyDataSetChanged();
+                            spinnerType.setSelection(tempSpinnerAdapter.getPosition
                                     (inputCustomName.getText().toString()));
-                            spinnerType.setTag(R.id.spinner_position, spinnerImAccountAdapter
+                            spinnerType.setTag(R.id.spinner_position, tempSpinnerAdapter
                                     .getPosition(inputCustomName.getText().toString()));
                             break;
 
                         case AppConstants.ADDRESS:
-                            spinnerAddressAdapter.add(inputCustomName.getText().toString());
-                            spinnerAddressAdapter.notifyDataSetChanged();
-                            spinnerType.setSelection(spinnerAddressAdapter.getPosition
+                            tempSpinnerAdapter.add(inputCustomName.getText().toString());
+                            tempSpinnerAdapter.notifyDataSetChanged();
+                            spinnerType.setSelection(tempSpinnerAdapter.getPosition
                                     (inputCustomName.getText().toString()));
-                            spinnerType.setTag(R.id.spinner_position, spinnerAddressAdapter
+                            spinnerType.setTag(R.id.spinner_position, tempSpinnerAdapter
                                     .getPosition(inputCustomName.getText().toString()));
                             break;
                     }

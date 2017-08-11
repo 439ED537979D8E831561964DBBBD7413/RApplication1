@@ -218,36 +218,45 @@ public class NotiCommentsFragment extends BaseFragment implements WsResponseList
     }
 
     private List<NotiCommentsItem> createReplyList(ArrayList<Comment> replyList) {
-        TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
-        UserProfile currentUserProfile = tableProfileMaster.getProfileFromCloudPmId(Integer.parseInt(getUserPmId()));
+
         List<NotiCommentsItem> list = new ArrayList<>();
-        for (Comment comment : replyList) {
-            NotiCommentsItem item = new NotiCommentsItem();
-            TableEventMaster tableEventMaster = new TableEventMaster(getDatabaseHandler());
 
-            if (getResources().getString(R.string.str_tab_rating).equalsIgnoreCase(comment.getCrmType())) {
+        try {
+            TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
+            UserProfile currentUserProfile = tableProfileMaster.getProfileFromCloudPmId(Integer.parseInt(getUserPmId()));
+            for (Comment comment : replyList) {
+                NotiCommentsItem item = new NotiCommentsItem();
+                TableEventMaster tableEventMaster = new TableEventMaster(getDatabaseHandler());
 
-            } else {
-                Event event = tableEventMaster.getEventByEvmRecordIndexId(comment.getEvmRecordIndexId());
-                item.setEventName(event.getEvmEventType());
+                if (getResources().getString(R.string.str_tab_rating).equalsIgnoreCase(comment.getCrmType())) {
+
+                } else {
+                    Event event = tableEventMaster.getEventByEvmRecordIndexId(comment.getEvmRecordIndexId());
+                    item.setEventName(event.getEvmEventType());
+                }
+
+                int pmId = comment.getRcProfileMasterPmId();
+                UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(pmId);
+                item.setCommenterName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
+                item.setCommenterImage(userProfile.getPmProfileImage());
+                item.setCommenterInfo(getResources().getString(R.string.text_reply_you_on_your, userProfile.getPmFirstName()));
+                item.setNotiCommentTime(comment.getCrmRepliedAt());
+                item.setComment(comment.getCrmComment());
+                item.setReply(comment.getCrmReply());
+                item.setCommentTime(comment.getCrmCreatedAt());
+                item.setReplyTime(comment.getCrmRepliedAt());
+                item.setReplyTime(comment.getCrmRepliedAt());
+                item.setReceiverPersonImage(currentUserProfile.getPmProfileImage());
+
+                list.add(item);
+
             }
+            return list;
 
-            int pmId = comment.getRcProfileMasterPmId();
-            UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(pmId);
-            item.setCommenterName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
-            item.setCommenterImage(userProfile.getPmProfileImage());
-            item.setCommenterInfo(getResources().getString(R.string.text_reply_you_on_your, userProfile.getPmFirstName()));
-            item.setNotiCommentTime(comment.getCrmRepliedAt());
-            item.setComment(comment.getCrmComment());
-            item.setReply(comment.getCrmReply());
-            item.setCommentTime(comment.getCrmCreatedAt());
-            item.setReplyTime(comment.getCrmRepliedAt());
-            item.setReplyTime(comment.getCrmRepliedAt());
-            item.setReceiverPersonImage(currentUserProfile.getPmProfileImage());
-
-            list.add(item);
-
+        } catch (Exception e) {
+            System.out.println("RContact noticomment error");
         }
+
         return list;
     }
 
