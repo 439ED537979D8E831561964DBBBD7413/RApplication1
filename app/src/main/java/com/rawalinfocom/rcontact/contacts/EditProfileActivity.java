@@ -825,6 +825,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         if (android.util.Patterns.EMAIL_ADDRESS.matcher(email.getEmEmailId())
                                 .matches()) {
                             arrayListNewEmail.add(email);
+                        } else if (!emailId.isEnabled()) {
+                            arrayListNewEmail.add(email);
                         } else {
                             isValid = false;
                             Utils.showErrorSnackBar(this, relativeRootEditProfile,

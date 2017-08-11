@@ -482,8 +482,13 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         progressAllContact.setVisibility(View.GONE);
 
         if (!Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CONTACT_SYNCED, false)) {
+
+//            if (syncingTask != null && syncingTask.getStatus() == AsyncTask.Status.RUNNING) {
+//                System.out.println("RContact syncCallLogAsyncTask ---> running");
+//            } else {
             syncingTask = new SyncingTask();
             syncingTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+//            }
         }
         Intent localBroadcastIntent = new Intent(AppConstants
                 .ACTION_LOCAL_BROADCAST_CONTACT_DISPLAYED);

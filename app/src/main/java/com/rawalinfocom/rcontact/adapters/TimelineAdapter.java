@@ -29,6 +29,8 @@ import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 import com.rawalinfocom.rcontact.notifications.TimelineActivity;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.List;
 
 import butterknife.BindView;
@@ -99,7 +101,10 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
         if (notiType == 1) {
             holder.ratingInfo.setVisibility(View.VISIBLE);
             holder.textRatingGiven.setText(item.getCrmRating());
-            holder.givenRatingBar.setRating(Float.parseFloat(item.getCrmRating()));
+            if (!StringUtils.isEmpty(item.getCrmRating()))
+                holder.givenRatingBar.setRating(Float.parseFloat(item.getCrmRating()));
+            else
+                holder.givenRatingBar.setRating(0f);
             LayerDrawable stars = (LayerDrawable) holder.givenRatingBar.getProgressDrawable();
             // Filled stars
             Utils.setRatingStarColor(stars.getDrawable(2), ContextCompat.getColor(activity, R.color
