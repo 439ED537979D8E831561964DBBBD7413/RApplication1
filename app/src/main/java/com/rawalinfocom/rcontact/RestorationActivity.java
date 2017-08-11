@@ -436,7 +436,9 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
     //<editor-fold desc="Private Methods">
     private void init() {
 
+        textRestoreHeader.setTypeface(Utils.typefaceRegular(RestorationActivity.this));
         buttonRestore.setTypeface(Utils.typefaceRegular(RestorationActivity.this));
+
         buttonRestore.setEnabled(false);
         buttonRestore.setBackgroundResource(R.drawable.bg_circle_light_green);
         pullMechanismServiceCall("", "", WsConstants.REQ_GET_CONTACT_REQUEST);
