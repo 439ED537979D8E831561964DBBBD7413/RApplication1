@@ -420,6 +420,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             if (StringUtils.isEmpty(name)) {
                 name = getNameFromNumber(Utils.getFormattedNumber(getActivity(), number));
             }
+            String formattedNumber =  Utils.getFormattedNumber(getActivity(), number);
 
             Long date = cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE));
 
@@ -427,8 +428,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
             callLogType.setType(cursor.getInt(cursor.getColumnIndex(CallLog.Calls.TYPE)));
 
-            if (!StringUtils.isEmpty(number))
-                callLogType.setNumber(number);
+            if (!StringUtils.isEmpty(formattedNumber))
+                callLogType.setNumber(formattedNumber);
 //            else
 //                callLogType.setNumber("");
 
@@ -440,7 +441,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             callLogType.setDurationToPass(callLogType.getCoolDuration(Float.parseFloat
                     (cursor.getString(cursor.getColumnIndex(CallLog.Calls.DURATION)))));
 
-            String photoThumbNail = getPhotoUrlFromNumber(number);
+            String photoThumbNail = getPhotoUrlFromNumber(formattedNumber);
 
             if (!TextUtils.isEmpty(photoThumbNail)) {
                 callLogType.setProfileImage(photoThumbNail);
@@ -481,7 +482,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
                 if (!StringUtils.isEmpty(name)) {
                     ProfileMobileMapping profileMobileMapping =
-                            tableProfileMobileMapping.getCloudPmIdFromProfileMappingFromNumber(number);
+                            tableProfileMobileMapping.getCloudPmIdFromProfileMappingFromNumber(formattedNumber);
 
                     if (profileMobileMapping != null) {
                         String cloudPmId = profileMobileMapping.getMpmCloudPmId();
@@ -507,21 +508,21 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
                             callLogType.setRcpUser(true);
 
-                            callLogType = setRCPDetailsAndSpamCountforUnsavedNumbers(number, callLogType);
+                            callLogType = setRCPDetailsAndSpamCountforUnsavedNumbers(formattedNumber, callLogType);
                             callLogTypeArrayList.add(0, callLogType);
                             updateOldLogWithUpdatedDetails = new UpdateOldLogWithUpdatedDetails();
                             updateOldLogWithUpdatedDetails.execute(callLogType);
 //                            rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
                         }
                     } else {
-                        callLogType = setRCPDetailsAndSpamCountforUnsavedNumbers(number, callLogType);
+                        callLogType = setRCPDetailsAndSpamCountforUnsavedNumbers(formattedNumber, callLogType);
                         callLogTypeArrayList.add(0, callLogType);
                         updateOldLogWithUpdatedDetails = new UpdateOldLogWithUpdatedDetails();
                         updateOldLogWithUpdatedDetails.execute(callLogType);
 //                        rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
                     }
                 } else {
-                    callLogType = setRCPDetailsAndSpamCountforUnsavedNumbers(number, callLogType);
+                    callLogType = setRCPDetailsAndSpamCountforUnsavedNumbers(formattedNumber, callLogType);
                     callLogTypeArrayList.add(0, callLogType);
                     updateOldLogWithUpdatedDetails = new UpdateOldLogWithUpdatedDetails();
                     updateOldLogWithUpdatedDetails.execute(callLogType);
