@@ -21,6 +21,8 @@ import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransforma
 import com.rawalinfocom.rcontact.model.NotiRatingItem;
 import com.rawalinfocom.rcontact.notifications.RatingHistoryPopupDialog;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -94,9 +96,15 @@ public class NotiRatingHistoryAdapter extends RecyclerView.Adapter<NotiRatingHis
         } else {
             holder.textRaterName.setText(item.getRaterName());
         }
-        Float rating = Float.parseFloat(item.getRating());
-        holder.textRatingGiven.setText(String.format("%s", rating));
-        holder.givenRatingBar.setRating(rating);
+
+        if (!StringUtils.isEmpty(item.getRating())) {
+            Float rating = Float.parseFloat(item.getRating());
+            holder.textRatingGiven.setText(String.format("%s", rating));
+            holder.givenRatingBar.setRating(rating);
+        } else {
+            holder.textRatingGiven.setText(String.format("%s", "0"));
+            holder.givenRatingBar.setRating(0f);
+        }
 
         LayerDrawable stars = (LayerDrawable) holder.givenRatingBar.getProgressDrawable();
         Utils.setRatingStarColor(stars.getDrawable(2), ContextCompat.getColor(context, R.color

@@ -277,8 +277,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
                     long elapsedMinutes = difference / minutesInMilli;
 
-                    if (elapsedDays > 0 || elapsedHours > 8) {
-//                    if (elapsedDays > 0 || elapsedHours > 0 || elapsedMinutes > 30) {
+//                    if (elapsedDays > 0 || elapsedHours > 8) {
+                    if (elapsedDays > 0 || elapsedHours > 0 || elapsedMinutes > 5) {
 
                         if (Utils.getBooleanPreference(MainActivity.this, AppConstants.KEY_IS_FIRST_TIME, false)) {
 //                            System.out.println("RContact callPullMechanismService first time");
@@ -875,7 +875,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                             dataItem.getCarPpmParticular(),
                             Utils.getLocalTimeFromUTCTime(dataItem.getCreatedAt()),
                             Utils.getLocalTimeFromUTCTime(dataItem.getUpdatedAt()),
-                            dataItem.getName(),dataItem.getPmProfilePhoto());
+                            dataItem.getName(), dataItem.getPmProfilePhoto());
                 }
             }
 
@@ -897,7 +897,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                             dataItem.getCarPpmParticular(),
                             Utils.getLocalTimeFromUTCTime(dataItem.getCreatedAt()),
                             Utils.getLocalTimeFromUTCTime(dataItem.getUpdatedAt()),
-                            dataItem.getName(),dataItem.getPmProfilePhoto());
+                            dataItem.getName(), dataItem.getPmProfilePhoto());
                 }
             }
 
@@ -1196,9 +1196,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     syncCallLogAsyncTask = new SyncCallLogAsyncTask();
                     syncCallLogAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 }
-
             }
-
         }
 
         if (Utils.isNetworkAvailable(this)
@@ -2734,14 +2732,19 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
     private ArrayList<CallLogType> divideCallLogByChunck() {
         callLogsListbyChunck = new ArrayList<>();
+        try {
+            for (ArrayList<CallLogType> partition : choppedCallLog(callLogTypeArrayListMain,
+                    CALL_LOG_CHUNK)) {
+                // do something with partition
+                callLogsListbyChunck.addAll(partition);
+                callLogTypeArrayListMain.removeAll(partition);
+                break;
+            }
 
-        for (ArrayList<CallLogType> partition : choppedCallLog(callLogTypeArrayListMain,
-                CALL_LOG_CHUNK)) {
-            // do something with partition
-            callLogsListbyChunck.addAll(partition);
-            callLogTypeArrayListMain.removeAll(partition);
-            break;
+        }catch (Exception e){
+            e.printStackTrace();
         }
+
         return callLogsListbyChunck;
     }
 
@@ -3101,7 +3104,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
     private void getNumbersFromCallLog() {
         try {
-            if(callListForSpamCount != null && callListForSpamCount.size() > 0)
+            if (callListForSpamCount != null && callListForSpamCount.size() > 0)
                 callListForSpamCount.clear();
             Uri uri = CallLog.Calls.CONTENT_URI;
             String order = CallLog.Calls.DATE + " DESC";
@@ -3110,8 +3113,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 while (cursor.moveToNext()) {
                     String userNumber = cursor.getString(cursor.getColumnIndex(CallLog.Calls.NUMBER));
                     String numberToSend = Utils.getFormattedNumber(MainActivity.this, userNumber);
-                    String name =  getNameFromNumber(numberToSend);
-                    if(StringUtils.isEmpty(name))
+                    String name = getNameFromNumber(numberToSend);
+                    if (StringUtils.isEmpty(name))
                         callListForSpamCount.add(numberToSend);
                 }
                 cursor.close();

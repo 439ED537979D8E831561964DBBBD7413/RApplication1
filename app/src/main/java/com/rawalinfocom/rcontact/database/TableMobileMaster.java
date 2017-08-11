@@ -49,7 +49,7 @@ public class TableMobileMaster {
     //    private static final String COLUMN_MNM_IS_VERIFIED = "mnm_is_verified";
 
     // Table Create Statements
-  /*  static final String CREATE_TABLE_RC_MOBILE_NUMBER_MASTER = "CREATE TABLE " +
+  /*  static final String CREATE_TABLE_RC_MOBILE_NUMBER_MASTER = "CREATE TABLE IF NOT EXISTS " +
             TABLE_RC_MOBILE_NUMBER_MASTER + " (" +
             " " + COLUMN_MNM_ID + " integer NOT NULL CONSTRAINT rc_mobile_number_master_pk " +
             "PRIMARY KEY AUTOINCREMENT," +

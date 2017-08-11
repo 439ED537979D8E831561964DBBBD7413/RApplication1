@@ -444,9 +444,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
             if (!TextUtils.isEmpty(photoThumbNail)) {
                 callLogType.setProfileImage(photoThumbNail);
-            } else {
+            } /*else {
                 callLogType.setProfileImage("");
-            }
+            }*/
 
             callLogType.setUniqueContactId(rowId);
             String uniquePhoneBookId = getStarredStatusFromNumber(Utils.getFormattedNumber(getActivity(), number));
@@ -735,7 +735,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     callLogType.setDate(cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE)));
                     callLogType.setUniqueContactId(cursor.getString(cursor.getColumnIndex(CallLog.Calls._ID)));
                     callLogType.setLocalPbRowId(" ");
-                    callLogType.setProfileImage("");
+//                    callLogType.setProfileImage("");
                     if(callLogType.getType() != AppConstants.NEW_CONTACT_MI){
                         callLogTypeArrayList.add(callLogType);
                     }
@@ -820,7 +820,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                         callLogType.setDate(cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE)));
                         callLogType.setUniqueContactId(cursor.getString(cursor.getColumnIndex(CallLog.Calls._ID)));
                         callLogType.setLocalPbRowId(" ");
-                        callLogType.setProfileImage("");
+//                        callLogType.setProfileImage("");
                         if(callLogType.getType() != AppConstants.NEW_CONTACT_MI){
                             callLogTypeArrayList.add(callLogType);
                         }
@@ -892,9 +892,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
         protected Void doInBackground(Void... urls) {
             getContactName();
+            getPhoto();
             setRCPUserName();
             setRCPDetailsAndSpamCountforUnsavedNumbers();
-            getPhoto();
             return null;
         }
 
@@ -1082,9 +1082,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                         String photoThumbNail = getPhotoUrlFromNumber(number);
                         if (!TextUtils.isEmpty(photoThumbNail)) {
                             callLogType.setProfileImage(photoThumbNail);
-                        } else {
+                        } /*else {
                             callLogType.setProfileImage("");
-                        }
+                        }*/
                         callLogTypeArrayList.set(i, callLogType);
                     }
                 }

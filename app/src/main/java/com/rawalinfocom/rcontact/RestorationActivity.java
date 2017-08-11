@@ -95,52 +95,52 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
         if (error == null) {
 
             // <editor-fold desc="REQ_GET_RCP_CONTACT">
-            if (serviceType.contains(WsConstants.REQ_GET_RCP_CONTACT)) {
-                WsResponseObject getRCPContactUpdateResponse = (WsResponseObject) data;
-                if (getRCPContactUpdateResponse != null && StringUtils.equalsIgnoreCase
-                        (getRCPContactUpdateResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
-
-                    if (!Utils.isArraylistNullOrEmpty(getRCPContactUpdateResponse
-                            .getArrayListUserRcProfile())) {
-
-                        try {
-
-                            /* Store Unique Contacts to ProfileMobileMapping */
-                            storeToMobileMapping(getRCPContactUpdateResponse
-                                    .getArrayListUserRcProfile());
-
-                                /* Store Unique Emails to ProfileEmailMapping */
-                            storeToEmailMapping(getRCPContactUpdateResponse
-                                    .getArrayListUserRcProfile());
-
-                                /* Store Profile Details to respective Table */
-                            storeProfileDataToDb(getRCPContactUpdateResponse
-                                    .getArrayListUserRcProfile(), getRCPContactUpdateResponse
-                                    .getArrayListMapping());
-
-                        } catch (Exception e) {
-                            System.out.println("RContact error");
-                        }
-                    }
-                    if (!Utils.isArraylistNullOrEmpty(getRCPContactUpdateResponse
-                            .getArrayListMapping())) {
-                        removeRemovedDataFromDb(getRCPContactUpdateResponse
-                                .getArrayListMapping());
-                    }
-
-                    pullMechanismServiceCall("", "", WsConstants.REQ_GET_CONTACT_REQUEST);
-
-
-                } else {
-                    if (getRCPContactUpdateResponse != null) {
-                        System.out.println("RContact error --> " + getRCPContactUpdateResponse.getMessage());
-                    } else {
-                        System.out.println("RContact error --> getContactUpdateResponse null");
-                    }
-
-                    pullMechanismServiceCall("", "", WsConstants.REQ_GET_CONTACT_REQUEST);
-                }
-            }
+//            if (serviceType.contains(WsConstants.REQ_GET_RCP_CONTACT)) {
+//                WsResponseObject getRCPContactUpdateResponse = (WsResponseObject) data;
+//                if (getRCPContactUpdateResponse != null && StringUtils.equalsIgnoreCase
+//                        (getRCPContactUpdateResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+//
+//                    if (!Utils.isArraylistNullOrEmpty(getRCPContactUpdateResponse
+//                            .getArrayListUserRcProfile())) {
+//
+//                        try {
+//
+//                            /* Store Unique Contacts to ProfileMobileMapping */
+//                            storeToMobileMapping(getRCPContactUpdateResponse
+//                                    .getArrayListUserRcProfile());
+//
+//                                /* Store Unique Emails to ProfileEmailMapping */
+//                            storeToEmailMapping(getRCPContactUpdateResponse
+//                                    .getArrayListUserRcProfile());
+//
+//                                /* Store Profile Details to respective Table */
+//                            storeProfileDataToDb(getRCPContactUpdateResponse
+//                                    .getArrayListUserRcProfile(), getRCPContactUpdateResponse
+//                                    .getArrayListMapping());
+//
+//                        } catch (Exception e) {
+//                            System.out.println("RContact error");
+//                        }
+//                    }
+//                    if (!Utils.isArraylistNullOrEmpty(getRCPContactUpdateResponse
+//                            .getArrayListMapping())) {
+//                        removeRemovedDataFromDb(getRCPContactUpdateResponse
+//                                .getArrayListMapping());
+//                    }
+//
+//                    pullMechanismServiceCall("", "", WsConstants.REQ_GET_CONTACT_REQUEST);
+//
+//
+//                } else {
+//                    if (getRCPContactUpdateResponse != null) {
+//                        System.out.println("RContact error --> " + getRCPContactUpdateResponse.getMessage());
+//                    } else {
+//                        System.out.println("RContact error --> getContactUpdateResponse null");
+//                    }
+//
+//                    pullMechanismServiceCall("", "", WsConstants.REQ_GET_CONTACT_REQUEST);
+//                }
+//            }
 
             // <editor-fold desc="REQ_GET_CONTACT_REQUEST">
             if (serviceType.contains(WsConstants.REQ_GET_CONTACT_REQUEST)) {
@@ -227,6 +227,7 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
         finish();
     }
 
+    // PROFILE COMMENT HISTORY RESTORE
     private void storeCommentRequestResponseToDB(WsResponseObject getCommentUpdateResponse, ArrayList<RatingRequestResponseDataItem> commentReceive,
                                                  ArrayList<RatingRequestResponseDataItem> commentDone) {
 
@@ -238,9 +239,27 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
 
                 RatingRequestResponseDataItem dataItem = commentDone.get(i);
 
-                tableCommentMaster.addReply(dataItem.getCommentId(), dataItem.getReply(),
-                        Utils.getLocalTimeFromUTCTime(dataItem.getReplyAt()), Utils
-                                .getLocalTimeFromUTCTime(dataItem.getReplyAt()));
+                Comment comment = new Comment();
+                comment.setCrmStatus(AppConstants.COMMENT_STATUS_SENT);
+                comment.setCrmType(getResources().getString(R.string.str_tab_comment));
+                comment.setCrmCloudPrId(dataItem.getCommentId());
+                comment.setCrmRating(dataItem.getPrRatingStars());
+                comment.setRcProfileMasterPmId(dataItem.getToPmId());
+                comment.setCrmComment(dataItem.getComment());
+                comment.setCrmReply(dataItem.getReply());
+                comment.setCrmProfileDetails(dataItem.getName());
+                comment.setCrmImage(dataItem.getPmProfilePhoto());
+                comment.setEvmRecordIndexId(dataItem.getEventRecordIndexId());
+                comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getCreatedAt()));
+                comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getUpdatedAt()));
+                comment.setCrmRepliedAt(Utils.getLocalTimeFromUTCTime(dataItem.getReplyAt()));
+
+//                TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
+//                tableProfileMaster.updateUserProfileRating(toPmId, avgRating, totalUniqueRater);
+//                Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING, totalUniqueRater);
+//                Utils.setStringPreference(this, AppConstants.PREF_USER_RATING, avgRating);
+
+                tableCommentMaster.addComment(comment);
             }
 
             // eventCommentReceive
@@ -250,26 +269,25 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
 
                 Comment comment = new Comment();
                 comment.setCrmStatus(AppConstants.COMMENT_STATUS_RECEIVED);
-                comment.setCrmType(getResources().getString(R.string.str_tab_rating));
+                comment.setCrmType(getResources().getString(R.string.str_tab_comment));
                 comment.setCrmCloudPrId(dataItem.getCommentId());
                 comment.setCrmRating(dataItem.getPrRatingStars());
                 comment.setRcProfileMasterPmId(dataItem.getFromPmId());
                 comment.setCrmComment(dataItem.getComment());
+                comment.setCrmReply(dataItem.getReply());
                 comment.setCrmProfileDetails(dataItem.getName());
                 comment.setCrmImage(dataItem.getPmProfilePhoto());
+                comment.setEvmRecordIndexId(dataItem.getEventRecordIndexId());
                 comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getCreatedAt()));
                 comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getUpdatedAt()));
-                String avgRating = dataItem.getProfileRating();
-                String totalUniqueRater = dataItem.getTotalProfileRateUser();
-                String toPmId = String.valueOf(dataItem.getToPmId());
+                comment.setCrmRepliedAt(Utils.getLocalTimeFromUTCTime(dataItem.getReplyAt()));
 
-                TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
-                tableProfileMaster.updateUserProfileRating(toPmId, avgRating, totalUniqueRater);
-                Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING, totalUniqueRater);
-                Utils.setStringPreference(this, AppConstants.PREF_USER_RATING, avgRating);
+//                TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
+//                tableProfileMaster.updateUserProfileRating(toPmId, avgRating, totalUniqueRater);
+//                Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING, totalUniqueRater);
+//                Utils.setStringPreference(this, AppConstants.PREF_USER_RATING, avgRating);
 
                 tableCommentMaster.addComment(comment);
-
             }
 
         } catch (Exception e) {
@@ -283,6 +301,7 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
         }
     }
 
+    // PROFILE RATING HISTORY RESTORE
     private void storeRatingRequestResponseToDB(WsResponseObject getRatingUpdateResponse, ArrayList<RatingRequestResponseDataItem> ratingReceive,
                                                 ArrayList<RatingRequestResponseDataItem> ratingDone, RatingRequestResponseDataItem ratingDetails) {
 
@@ -294,8 +313,21 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
 
                 RatingRequestResponseDataItem dataItem = ratingDone.get(i);
 
-                tableCommentMaster.addReply(dataItem.getPrId(), dataItem.getReply(),
-                        Utils.getLocalTimeFromUTCTime(dataItem.getReplyAt()), Utils.getLocalTimeFromUTCTime(dataItem.getReplyAt()));
+                Comment comment = new Comment();
+                comment.setCrmStatus(AppConstants.COMMENT_STATUS_SENT);
+                comment.setCrmType(getResources().getString(R.string.str_tab_rating));
+                comment.setCrmCloudPrId(dataItem.getPrId());
+                comment.setCrmRating(dataItem.getPrRatingStars());
+                comment.setRcProfileMasterPmId(dataItem.getToPmId());
+                comment.setCrmComment(dataItem.getComment());
+                comment.setCrmReply(dataItem.getReply());
+                comment.setCrmProfileDetails(dataItem.getName());
+                comment.setCrmImage(dataItem.getPmProfilePhoto());
+                comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getCreatedAt()));
+                comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getUpdatedAt()));
+                comment.setCrmRepliedAt(Utils.getLocalTimeFromUTCTime(dataItem.getReplyAt()));
+
+                tableCommentMaster.addComment(comment);
             }
 
             // profileRatingReply
@@ -310,12 +342,15 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
                 comment.setCrmRating(dataItem.getPrRatingStars());
                 comment.setRcProfileMasterPmId(dataItem.getFromPmId());
                 comment.setCrmComment(dataItem.getComment());
+                comment.setCrmReply(dataItem.getReply());
                 comment.setCrmProfileDetails(dataItem.getName());
                 comment.setCrmImage(dataItem.getPmProfilePhoto());
                 comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getCreatedAt()));
                 comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getUpdatedAt()));
+                comment.setCrmRepliedAt(Utils.getLocalTimeFromUTCTime(dataItem.getReplyAt()));
 
                 tableCommentMaster.addComment(comment);
+
             }
 
             if (ratingDetails != null) {
@@ -341,6 +376,7 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
         }
     }
 
+    // PROFILE PRIVATE DATA SHOWN REQUEST HISTORY RESTORE
     private void storeContactRequestResponseToDB(WsResponseObject getContactUpdateResponse, ArrayList<ContactRequestResponseDataItem> requestData,
                                                  ArrayList<ContactRequestResponseDataItem> responseData) {
 
@@ -363,12 +399,9 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
                             dataItem.getCarPpmParticular(),
                             Utils.getLocalTimeFromUTCTime(dataItem.getCreatedAt()),
                             Utils.getLocalTimeFromUTCTime(dataItem.getUpdatedAt()),
-                            dataItem.getName(),dataItem.getPmProfilePhoto());
+                            dataItem.getName(), dataItem.getPmProfilePhoto());
                 }
             }
-
-            TableRCContactRequest tableRCContactRequest1 = new TableRCContactRequest
-                    (databaseHandler);
 
             for (int i = 0; i < responseData.size(); i++) {
 
@@ -377,7 +410,7 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
                 if (String.valueOf(dataItem.getCarPmIdFrom()).equals(Utils.getStringPreference(this, AppConstants
                         .PREF_USER_PM_ID, "0"))
                         && MoreObjects.firstNonNull(dataItem.getCarAccessPermissionStatus(), "0").equals("0")) {
-                    tableRCContactRequest1.addRequest(AppConstants
+                    tableRCContactRequest.addRequest(AppConstants
                                     .COMMENT_STATUS_SENT,
                             String.valueOf(dataItem.getCarId()),
                             dataItem.getCarMongodbRecordIndex(),
@@ -385,7 +418,7 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
                             dataItem.getCarPpmParticular(),
                             Utils.getLocalTimeFromUTCTime(dataItem.getCreatedAt()),
                             Utils.getLocalTimeFromUTCTime(dataItem.getUpdatedAt()),
-                            dataItem.getName(),dataItem.getPmProfilePhoto());
+                            dataItem.getName(), dataItem.getPmProfilePhoto());
                 }
             }
 
@@ -403,10 +436,13 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
     //<editor-fold desc="Private Methods">
     private void init() {
 
+        textRestoreHeader.setTypeface(Utils.typefaceRegular(RestorationActivity.this));
         buttonRestore.setTypeface(Utils.typefaceRegular(RestorationActivity.this));
+
         buttonRestore.setEnabled(false);
         buttonRestore.setBackgroundResource(R.drawable.bg_circle_light_green);
-        RCPContactServiceCall("", WsConstants.REQ_GET_RCP_CONTACT);
+        pullMechanismServiceCall("", "", WsConstants.REQ_GET_CONTACT_REQUEST);
+//        RCPContactServiceCall("", WsConstants.REQ_GET_RCP_CONTACT);
 
         buttonRestore.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -432,20 +468,20 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
         }
     }
 
-    private void RCPContactServiceCall(String timestamp, String url) {
-
-        if (Utils.isNetworkAvailable(RestorationActivity.this)) {
-            WsRequestObject deviceDetailObject = new WsRequestObject();
-
-            deviceDetailObject.setTimeStamp(timestamp);
-
-            if (Utils.isNetworkAvailable(this)) {
-                new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
-                        deviceDetailObject, null, WsResponseObject.class, url, null, true).executeOnExecutor(AsyncTask
-                        .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + url);
-            }
-        }
-    }
+//    private void RCPContactServiceCall(String timestamp, String url) {
+//
+//        if (Utils.isNetworkAvailable(RestorationActivity.this)) {
+//            WsRequestObject deviceDetailObject = new WsRequestObject();
+//
+//            deviceDetailObject.setTimeStamp(timestamp);
+//
+//            if (Utils.isNetworkAvailable(this)) {
+//                new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+//                        deviceDetailObject, null, WsResponseObject.class, url, null, true).executeOnExecutor(AsyncTask
+//                        .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + url);
+//            }
+//        }
+//    }
 
     private void storeToMobileMapping(ArrayList<ProfileDataOperation> profileData) {
 

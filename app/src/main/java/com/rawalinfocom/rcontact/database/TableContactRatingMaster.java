@@ -42,7 +42,7 @@ class TableContactRatingMaster {
             COLUMN_CRM_REPLIED_AT, COLUMN_RC_PROFILE_MASTER_PM_ID};
 
     // Table Create Statements
-    static final String CREATE_TABLE_RC_CONTACT_RATING_MASTER = "CREATE TABLE " +
+    static final String CREATE_TABLE_RC_CONTACT_RATING_MASTER = "CREATE TABLE IF NOT EXISTS " +
             TABLE_RC_CONTACT_RATING_MASTER + " " +
             "(" +
             " " + COLUMN_CRM_ID + " integer NOT NULL CONSTRAINT rc_contact_rating_master_pk " +

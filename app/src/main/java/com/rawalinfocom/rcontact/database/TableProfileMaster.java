@@ -58,7 +58,7 @@ public class TableProfileMaster {
     private static final String COLUMN_PM_JOINING_DATE = "pm_joining_date";
 
     // Table Create Statements
-//    static final String CREATE_TABLE_RC_PROFILE_MASTER = "CREATE TABLE " +
+//    static final String CREATE_TABLE_RC_PROFILE_MASTER = "CREATE TABLE IF NOT EXISTS " +
 //            TABLE_RC_PROFILE_MASTER + " (" +
 //            " " + COLUMN_PM_RAW_ID + " text," +
 //            " " + COLUMN_PM_RCP_ID + " integer UNIQUE," +
