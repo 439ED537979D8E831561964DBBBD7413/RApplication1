@@ -43,7 +43,7 @@ public class AppConstants {
     //<editor-fold desc="GCM Constants">
 
     public static final String GCM_SERVER_KEY = "AIzaSyBv-bFhNJmIhNW4_8jROcy46_axuK3Fl6g";
-    public static final String GCM_SENDER_ID = "842331483294";
+    public static final String GCM_SENDER_ID = "376651096541";
 
     //</editor-fold>
 

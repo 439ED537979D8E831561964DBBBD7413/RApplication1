@@ -204,7 +204,6 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                                 isIncomingCall = false;
                                 initializeEndCallDialog();
                             }
-
                         }
                     } else {
                         callSpamServiceApi();
@@ -322,6 +321,9 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                                 if (StringUtils.isEmpty(spamDataType.getMobileNumber())) {
                                     spamDataType = setRCPDetailsAndSpamCountforUnsavedNumbers(savedNumber);
                                     String numberToUpdate = spamDataType.getMobileNumber();
+                                    if(savedNumber.startsWith("0")){
+                                        savedNumber = Utils.getFormattedNumber(context,savedNumber);
+                                    }
                                     String savedNumberFormat = savedNumber;
                                     if (savedNumberFormat.startsWith("+91"))
                                         savedNumberFormat = savedNumberFormat.replace("+", "");
@@ -375,7 +377,8 @@ public class PhoneCallReceiver extends BroadcastReceiver {
 
         if (Utils.isNetworkAvailable(context)) {
             WsRequestObject deviceDetailObject = new WsRequestObject();
-            deviceDetailObject.setUnknownNumberList(new ArrayList<String>(Arrays.asList(savedNumber)));
+            deviceDetailObject.setUnknownNumberList(new ArrayList<String>(Arrays.asList(Utils.
+                    getFormattedNumber(context,savedNumber))));
 
             new AsyncWebServiceCall(context, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     deviceDetailObject, null, WsResponseObject.class, WsConstants
@@ -396,6 +399,9 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                                     TableSpamDetailMaster tableSpamDetailMaster = new TableSpamDetailMaster(databaseHandler);
                                     spamDataType = setRCPDetailsAndSpamCountforUnsavedNumbers(savedNumber);
                                     String numberToUpdate = spamDataType.getMobileNumber();
+                                    if(savedNumber.startsWith("0")){
+                                        savedNumber =  Utils.getFormattedNumber(context,savedNumber);
+                                    }
                                     String savedNumberFormat = savedNumber;
                                     if (savedNumberFormat.startsWith("+91"))
                                         savedNumberFormat = savedNumberFormat.replace("+", "");
@@ -973,10 +979,16 @@ public class PhoneCallReceiver extends BroadcastReceiver {
         try {
             TableSpamDetailMaster tableSpamDetailMaster = new TableSpamDetailMaster(databaseHandler);
             if (!StringUtils.isEmpty(number)) {
+                if(number.startsWith("0")){
+                    number =  Utils.getFormattedNumber(context,number);
+                }else{
+
+                }
                 if (number.startsWith("+91"))
                     number = number.replace("+", "");
                 else
                     number = "91" + number;
+
 
                 spamDataType = tableSpamDetailMaster.getSpamDetailsFromNumber(number);
                 if (spamDataType != null && !StringUtils.isEmpty(spamDataType.getSpamCount())) {
