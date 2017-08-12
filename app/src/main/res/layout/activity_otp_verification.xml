@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/relative_root_otp_verification"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.rawalinfocom.rcontact.OtpVerificationActivity">
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/relative_root_otp_verification"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context="com.rawalinfocom.rcontact.OtpVerificationActivity">
 
     <include
         android:id="@+id/includeToolbar"
         layout="@layout/partial_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"/>
 
     <TextView
         android:id="@+id/text_verify_number"
@@ -25,7 +25,7 @@
         android:gravity="center"
         android:text="@string/title_verifying_mobile_number"
         android:textColor="@color/colorVeryDarkGrayishBlue1"
-        android:textSize="16sp" />
+        android:textSize="@dimen/text_size_18sp"/>
 
     <TextView
         android:id="@+id/text_enter_otp"
@@ -39,7 +39,7 @@
         android:gravity="center"
         android:text="@string/msg_enter_otp"
         android:textAppearance="?android:textAppearanceSmall"
-        android:textColor="@color/colorVeryDarkGrayishBlue2" />
+        android:textColor="@color/colorVeryDarkGrayishBlue2"/>
 
     <EditText
         android:id="@+id/input_otp"
@@ -51,7 +51,7 @@
         android:ems="6"
         android:gravity="center"
         android:inputType="number"
-        android:maxLength="6" />
+        android:maxLength="6"/>
 
     <com.rawalinfocom.rcontact.helper.RippleView
         android:id="@+id/ripple_submit"
@@ -70,9 +70,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/linear_country_number"
-            android:background="@color/colorAccent"
+            android:background="@drawable/background_rounded_corner"
             android:text="@string/action_submit"
-            android:textColor="@color/colorWhite" />
+            android:textColor="@color/colorWhite"
+            tools:backgroundTint="@color/colorAccent"/>
 
     </com.rawalinfocom.rcontact.helper.RippleView>
 
@@ -92,9 +93,10 @@
             android:id="@+id/button_resend"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/vividRed"
+            android:background="@drawable/background_rounded_corner"
             android:text="@string/action_resend"
-            android:textColor="@color/colorWhite" />
+            android:textColor="@color/colorWhite"
+            tools:backgroundTint="@color/vividRed"/>
 
     </com.rawalinfocom.rcontact.helper.RippleView>
 
