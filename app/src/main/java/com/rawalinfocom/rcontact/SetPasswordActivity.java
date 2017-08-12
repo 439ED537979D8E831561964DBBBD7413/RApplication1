@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -103,12 +104,16 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
         rippleRegister.setOnRippleCompleteListener(this);
         textToolbarTitle.setText(getResources().getString(R.string.set_password));
         textToolbarTitle.setTypeface(Utils.typefaceRegular(this));
-        textConfigurePassword.setTypeface(Utils.typefaceRegular(this));
+        textConfigurePassword.setTypeface(Utils.typefaceBold(this));
         textMsgSetPassword.setTypeface(Utils.typefaceRegular(this));
         inputSetPassword.setTypeface(Utils.typefaceRegular(this));
         inputSetConfirmPassword.setTypeface(Utils.typefaceRegular(this));
         buttonSubmit.setTypeface(Utils.typefaceRegular(this));
         textTip.setTypeface(Utils.typefaceRegular(this));
+
+        Utils.setRoundedCornerBackground(buttonSubmit, ContextCompat.getColor
+                (SetPasswordActivity.this, R.color.colorAccent), 5, 0, ContextCompat
+                .getColor(SetPasswordActivity.this, R.color.colorAccent));
 
         Bundle bundle = getIntent().getExtras();
 
@@ -193,9 +198,12 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
                         Utils.setStringPreference(this, AppConstants.PREF_USER_PHOTO,
                                 profileDetail.getPbProfilePhoto());
 
-                        Utils.setBooleanPreference(SetPasswordActivity.this, AppConstants.PREF_DISABLE_PUSH, false);
-                        Utils.setBooleanPreference(SetPasswordActivity.this, AppConstants.PREF_DISABLE_EVENT_PUSH, false);
-                        Utils.setBooleanPreference(SetPasswordActivity.this, AppConstants.PREF_DISABLE_POPUP, false);
+                        Utils.setBooleanPreference(SetPasswordActivity.this, AppConstants
+                                .PREF_DISABLE_PUSH, false);
+                        Utils.setBooleanPreference(SetPasswordActivity.this, AppConstants
+                                .PREF_DISABLE_EVENT_PUSH, false);
+                        Utils.setBooleanPreference(SetPasswordActivity.this, AppConstants
+                                .PREF_DISABLE_POPUP, false);
 
                         storeProfileDataToDb(profileDetail);
 
@@ -224,7 +232,8 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
                 if (setPasswordResponse != null && StringUtils.equalsIgnoreCase(setPasswordResponse
                         .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                    Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME, String.valueOf(System.currentTimeMillis()));
+                    Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME, String
+                            .valueOf(System.currentTimeMillis()));
                     Utils.setBooleanPreference(this, AppConstants.KEY_IS_FIRST_TIME, true);
 
                     // Redirect to MainActivity
@@ -371,7 +380,8 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
                         .getPhoneNumber());
                 mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber
                         .get(i).getPhonePublic()));
-                mobileNumber.setMnmIsPrimary(String.valueOf(arrayListPhoneNumber.get(i).getPbRcpType()));
+                mobileNumber.setMnmIsPrimary(String.valueOf(arrayListPhoneNumber.get(i)
+                        .getPbRcpType()));
                 mobileNumber.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 arrayListMobileNumber.add(mobileNumber);
             }
