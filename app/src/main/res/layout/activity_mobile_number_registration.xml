@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/relative_root_mobile_registration"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.rawalinfocom.rcontact.MobileNumberRegistrationActivity">
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/relative_root_mobile_registration"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                tools:context="com.rawalinfocom.rcontact.MobileNumberRegistrationActivity">
 
     <ImageView
         android:id="@+id/image_registration_logo"
@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:contentDescription="@string/description_registration_logo"
-        android:src="@drawable/img_registration_logo" />
+        android:src="@drawable/img_registration_logo"/>
 
     <TextView
         android:id="@+id/text_verify_number"
@@ -26,10 +26,10 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/image_registration_logo"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="@dimen/margin_huge"
         android:text="@string/title_verify_number"
         android:textColor="@color/colorVeryDarkGrayishBlue1"
-        android:textSize="16sp" />
+        android:textSize="@dimen/text_size_18sp"/>
 
     <TextView
         android:id="@+id/text_enter_number"
@@ -37,17 +37,20 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/text_verify_number"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/activity_horizontal_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/margin_10dp"
         android:gravity="center_horizontal"
         android:text="@string/msg_enter_number"
-        android:textColor="@color/colorVeryDarkGrayishBlue2" />
+        android:textColor="@color/regularFontColor"
+        android:textSize="@dimen/text_size_14sp"/>
 
     <LinearLayout
         android:id="@+id/linear_country_number"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/text_enter_number"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_marginTop="@dimen/padding_between_title_body"
         android:orientation="horizontal">
 
         <!-- <LinearLayout
@@ -67,7 +70,8 @@
             android:inputType="number"
             android:singleLine="true"
             android:text="(IN)+91"
-            android:textColor="@drawable/selector_registration_number_edittext" />
+            android:textColor="@color/colorVeryDarkGrayishBlue2"
+            android:textSize="@dimen/text_size_16sp"/>
 
         <!-- <ImageView
              android:layout_width="wrap_content"
@@ -85,7 +89,9 @@
             android:hint="@string/str_mobile_number"
             android:inputType="number"
             android:maxLength="10"
-            android:singleLine="true" />
+            android:singleLine="true"
+            android:textColor="@color/colorVeryDarkGrayishBlue2"
+            android:textSize="@dimen/text_size_16sp"/>
 
     </LinearLayout>
 
@@ -104,9 +110,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/linear_country_number"
-            android:background="@color/colorAccent"
+            android:background="@drawable/background_rounded_corner"
             android:text="@string/action_submit"
-            android:textColor="@color/colorWhite" />
+            android:textColor="@color/colorWhite"
+            tools:backgroundTint="@color/colorAccent"/>
 
     </com.rawalinfocom.rcontact.helper.RippleView>
 
