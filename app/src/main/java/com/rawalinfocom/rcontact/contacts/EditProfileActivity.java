@@ -687,8 +687,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
             //<editor-fold desc="button_name_update">
             case R.id.button_name_update:
-                String firstName = inputFirstName.getText().toString();
-                String lastName = inputLastName.getText().toString();
+                String firstName = inputFirstName.getText().toString().trim();
+                String lastName = inputLastName.getText().toString().trim();
                 /*if (!StringUtils.isBlank(firstName) && !StringUtils.isBlank(lastName)) {
                     profileDataOperation.setPbNameFirst(firstName);
                     profileDataOperation.setPbNameLast(lastName);
@@ -753,18 +753,18 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             .text_is_verified);
                     RelativeLayout relativeRowEditProfile = (RelativeLayout) linearPhone
                             .findViewById(R.id.relative_row_edit_profile);
-                    phoneNumber.setPhoneNumber(emailId.getText().toString());
+                    phoneNumber.setPhoneNumber(emailId.getText().toString().trim());
                     phoneNumber.setPhoneType((String) emailType.getSelectedItem());
                     phoneNumber.setPhoneId((String) relativeRowEditProfile.getTag());
                     if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
                         phoneNumber.setPhonePublic(Integer.parseInt(textIsPublic.getText()
-                                .toString()));
+                                .toString().trim()));
                     } else {
                         phoneNumber.setPhonePublic(IntegerConstants.PRIVACY_MY_CONTACT);
                     }
                     if (StringUtils.length(textIsVerified.getText().toString()) > 0) {
                         phoneNumber.setPbRcpType(Integer.parseInt(textIsVerified.getText()
-                                .toString()));
+                                .toString().trim()));
                     }
 
                     if (!StringUtils.isBlank(phoneNumber.getPhoneNumber())) {
@@ -809,16 +809,16 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             .text_is_verified);
                     RelativeLayout relativeRowEditProfile = (RelativeLayout) linearEmail
                             .findViewById(R.id.relative_row_edit_profile);
-                    email.setEmEmailId(StringUtils.trim(emailId.getText().toString()));
+                    email.setEmEmailId(StringUtils.trim(emailId.getText().toString().trim()));
                     email.setEmType((String) emailType.getSelectedItem());
                     email.setEmId((String) relativeRowEditProfile.getTag());
                     if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
-                        email.setEmPublic(Integer.parseInt(textIsPublic.getText().toString()));
+                        email.setEmPublic(Integer.parseInt(textIsPublic.getText().toString().trim()));
                     } else {
                         email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
                     }
                     if (StringUtils.length(textIsVerified.getText().toString()) > 0) {
-                        email.setEmRcpType(Integer.parseInt(textIsVerified.getText().toString()));
+                        email.setEmRcpType(Integer.parseInt(textIsVerified.getText().toString().trim()));
                     }
 
                     if (!StringUtils.isBlank(email.getEmEmailId())) {
@@ -873,13 +873,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             .text_is_public);
                     RelativeLayout relativeRowEditProfile = (RelativeLayout) linearSocialContact
                             .findViewById(R.id.relative_row_edit_profile);
-                    imAccount.setIMAccountDetails(imAccountName.getText().toString());
+                    imAccount.setIMAccountDetails(imAccountName.getText().toString().trim());
                     imAccount.setIMAccountProtocol((String) imAccountProtocol.getSelectedItem());
                     imAccount.setIMId((String) relativeRowEditProfile.getTag());
 
                     if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
                         imAccount.setIMAccountPublic(Integer.parseInt(textIsPublic.getText()
-                                .toString()));
+                                .toString().trim()));
                     } else {
                         imAccount.setIMAccountPublic(IntegerConstants.PRIVACY_MY_CONTACT);
                     }
@@ -925,7 +925,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     Spinner websiteType = (Spinner) linearWebsite.findViewById(R.id.spinner_type);
                     RelativeLayout relativeRowEditProfile = (RelativeLayout) linearWebsite
                             .findViewById(R.id.relative_row_edit_profile);
-                    webAddress.setWebAddress(website.getText().toString());
+                    webAddress.setWebAddress(website.getText().toString().trim());
                     webAddress.setWebType((String) websiteType.getSelectedItem());
                     webAddress.setWebId((String) relativeRowEditProfile.getTag());
 
@@ -976,8 +976,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             .findViewById(R.id.relative_row_edit_profile);
                     CheckBox checkboxOrganization = (CheckBox) linearOrganization.findViewById(R
                             .id.checkbox_organization);
-                    organization.setOrgName(inputCompanyName.getText().toString());
-                    organization.setOrgJobTitle(inputDesignationName.getText().toString());
+                    organization.setOrgName(inputCompanyName.getText().toString().trim());
+                    organization.setOrgJobTitle(inputDesignationName.getText().toString().trim());
                     organization.setOrgId((String) relativeRowEditProfile.getTag());
                     organization.setIsCurrent(checkboxOrganization.isChecked() ? 1 : 0);
 
@@ -1059,19 +1059,19 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     event.setEventType((String) eventType.getSelectedItem());
                     event.setIsYearHidden(checkboxHideYear.isChecked() ? 1 : 0);
                     event.setEventId((String) relativeRowEditProfile.getTag());
-                    if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
-                        event.setEventPublic(Integer.parseInt(textIsPublic.getText().toString()));
+                    if (StringUtils.length(textIsPublic.getText().toString().trim()) > 0) {
+                        event.setEventPublic(Integer.parseInt(textIsPublic.getText().toString().trim()));
                     } else {
                         event.setEventPublic(IntegerConstants.PRIVACY_MY_CONTACT);
                     }
                     if (!StringUtils.isBlank(eventDate.getText().toString())) {
 
                         event.setEventDateTime(Utils.convertDateFormat(eventDate.getText()
-                                .toString(), getEventDateFormatForUpdate(eventDate.getText()
-                                .toString()), "yyyy-MM-dd HH:mm:ss"));
-                        event.setEventDate(Utils.convertDateFormat(eventDate.getText().toString(),
+                                .toString().trim(), getEventDateFormatForUpdate(eventDate.getText()
+                                .toString().trim()), "yyyy-MM-dd HH:mm:ss"));
+                        event.setEventDate(Utils.convertDateFormat(eventDate.getText().toString().trim(),
                                 getEventDateFormatForUpdate(eventDate.getText()
-                                        .toString()), "yyyy-MM-dd HH:mm:ss"));
+                                        .toString().trim()), "yyyy-MM-dd HH:mm:ss"));
                         arrayListNewEvent.add(event);
                     } else {
                         if (i != 0) {
@@ -1145,12 +1145,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     TextView textImageMapMarker = (TextView) linearAddress.findViewById(R.id
                             .text_image_map_marker);
 
-                    String countryName = country.getText().toString();
-                    String stateName = state.getText().toString();
-                    String cityName = city.getText().toString();
-                    String streetName = street.getText().toString();
-                    String neighborhoodName = neighborhood.getText().toString();
-                    String pinCodeName = pinCode.getText().toString();
+                    String countryName = country.getText().toString().trim();
+                    String stateName = state.getText().toString().trim();
+                    String cityName = city.getText().toString().trim();
+                    String streetName = street.getText().toString().trim();
+                    String neighborhoodName = neighborhood.getText().toString().trim();
+                    String pinCodeName = pinCode.getText().toString().trim();
 
                     address.setCountry(countryName);
                     address.setState(stateName);
@@ -1161,15 +1161,15 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     address.setFormattedAddress(Utils.setFormattedAddress(streetName,
                             neighborhoodName, cityName, stateName, countryName, pinCodeName));
                     address.setAddressType((String) addressType.getSelectedItem());
-                    address.setGoogleAddress(textGoogleAddress.getText().toString());
+                    address.setGoogleAddress(textGoogleAddress.getText().toString().trim());
                     ArrayList<String> arrayListLatLong = new ArrayList<>();
-                    arrayListLatLong.add(textLongitude.getText().toString());
-                    arrayListLatLong.add(textLatitude.getText().toString());
+                    arrayListLatLong.add(textLongitude.getText().toString().trim());
+                    arrayListLatLong.add(textLatitude.getText().toString().trim());
                     address.setGoogleLatLong(arrayListLatLong);
                     address.setAddId((String) relativeRowEditProfile.getTag());
-                    if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
+                    if (StringUtils.length(textIsPublic.getText().toString().trim()) > 0) {
                         address.setAddPublic(Integer.parseInt(textIsPublic.getText().toString
-                                ()));
+                                ().trim()));
                     } else {
                         address.setAddPublic(IntegerConstants.PRIVACY_MY_CONTACT);
                     }
@@ -1186,7 +1186,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                                 ().get(1))) {
 //                                            if (!isAddressModified) {
                                             if (!StringUtils.equalsAnyIgnoreCase
-                                                    (inputIsAddressModified.getText().toString(),
+                                                    (inputIsAddressModified.getText().toString().trim(),
                                                             "true")) {
                                                 arrayListNewAddress.add(address);
                                             } else {
@@ -3026,11 +3026,15 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         textFromSocialMedia.setText(R.string.str_choose_photo);
         textRemovePhoto.setText(R.string.str_remove_photo);
 
-        if (userProfile.getPmProfileImage().length() > 0) {
-            textRemovePhoto.setVisibility(View.VISIBLE);
-        } else {
+        if (Utils.getStringPreference(this, AppConstants.PREF_USER_PHOTO, "").equals("")) {
             textRemovePhoto.setVisibility(View.GONE);
+        } else {
+            textRemovePhoto.setVisibility(View.VISIBLE);
         }
+
+//        if (userProfile.getPmProfileImage().length() > 0) {
+//        } else {
+//        }
 
         buttonLeft.setText(R.string.action_cancel);
 

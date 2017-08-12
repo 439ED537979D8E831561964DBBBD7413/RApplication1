@@ -923,6 +923,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         }
     }
 
+
     @Override
     @TargetApi(Build.VERSION_CODES.M)
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
@@ -2269,6 +2270,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
     private void reSyncPhoneBookContactList() {
 
+        System.out.println("RContacts reSync");
+
         lastSyncedData = Utils.getIntegerPreference(MainActivity.this, AppConstants.PREF_SYNCED_CONTACTS, 0);
 
         currentStamp = String.valueOf(System.currentTimeMillis());
@@ -2349,6 +2352,13 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 //            } else {
 //                Log.i(TAG, "need to apply resync mechanism:");
 //            }
+        } else {
+
+            Utils.setIntegerPreference(MainActivity.this, AppConstants.PREF_SYNCED_CONTACTS, 0);
+
+            Utils.setStringPreference(MainActivity.this, AppConstants
+                    .PREF_CONTACT_LAST_SYNC_TIME, String.valueOf(System.currentTimeMillis() - 10000));
+            Utils.setBooleanPreference(MainActivity.this, AppConstants.PREF_CONTACT_SYNCED, true);
         }
     }
 
@@ -3267,6 +3277,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
     private void uploadContacts(String responseKey, ArrayList<ProfileData>
             arrayListUserContact) {
+
+        System.out.println("RContacts reSync uploadContacts");
 
         WsRequestObject uploadContactObject = new WsRequestObject();
         uploadContactObject.setResponseKey(responseKey);
