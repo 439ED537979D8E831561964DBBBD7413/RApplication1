@@ -34,6 +34,7 @@
     <string name="str_welcom">આપનું સ્વાગત છેै</string>
     <string name="str_welcom_message">તમારા સંપર્કોનો સ્માર્ટ થવાનો સમય આવી ગયો છે </string>
     <string name="str_done">થઈ ગયું</string>
+    <string name="str_vcf_done">VCF file generated successfully!!</string>
 
     <!--  Other  -->
     <string name="error_facebook_login_cancelled">ફેસબુક લૉગિન નિષ્ફળ!</string>

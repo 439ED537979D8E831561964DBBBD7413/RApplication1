@@ -217,7 +217,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
             }
 
             if (intent.hasExtra(AppConstants.EXTRA_RCP_FROM_NOTI)) {
-                isRcpFromNoti = intent.getBooleanExtra(AppConstants.EXTRA_RCP_FROM_NOTI,false);
+                isRcpFromNoti = intent.getBooleanExtra(AppConstants.EXTRA_RCP_FROM_NOTI, false);
             }
 
             if (intent.hasExtra(AppConstants.EXTRA_IS_RCP_VERIFIED_SPAM)) {
@@ -403,10 +403,11 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         public void onReceive(Context context, Intent intent) {
             Log.i("Profile Activity ", "onReceive() of LocalBroadcast");
 
-            arrayListHistory.clear();
-            recyclerCallHistory.setVisibility(View.GONE);
-            setHistoryAdapter();
-
+            if (intent.getStringExtra("action").equals("delete")) {
+                arrayListHistory.clear();
+                recyclerCallHistory.setVisibility(View.GONE);
+                setHistoryAdapter();
+            }
         }
     };
 
@@ -607,111 +608,159 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
             case R.id.ripple_sms:
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    if (ContextCompat.checkSelfPermission(this, Manifest.permission
-                            .READ_SMS) != PackageManager.PERMISSION_GRANTED) {
-                        requestPermissions(new String[]{Manifest.permission.READ_SMS},
-                                AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS);
-                    } else {
-
-                        if (tempPhoneNumber != null && tempPhoneNumber.size() > 1) {
-                            if (tempPhoneNumber != null && tempPhoneNumber.size() > 0) {
-                                int count = tempPhoneNumber.size();
-                                ArrayList<String> listPhoneNumber = new ArrayList<>();
-                                if (count > 1) {
-                                    for (int i = 0; i < tempPhoneNumber.size(); i++) {
-                                        ProfileDataOperationPhoneNumber phoneNumber =
-                                                (ProfileDataOperationPhoneNumber) tempPhoneNumber
-                                                        .get(i);
-                                        String number = phoneNumber.getPhoneNumber();
-
-                                        if (!number.startsWith("+XX")) {
-                                            listPhoneNumber.add(number);
-                                        }
-                                    }
-
-                                    CallConfirmationListDialog callConfirmationListDialog = new
-                                            CallConfirmationListDialog(this, listPhoneNumber,
-                                            false);
-                                    callConfirmationListDialog.setDialogTitle(getString(R.string
-                                            .please_select_number_view_sms_log));
-                                    callConfirmationListDialog.showDialog();
-
-                                } else {
-                                    profileContactNumber = Utils.getFormattedNumber(CallHistoryDetailsActivity.this, profileContactNumber);
-                                    Utils.callIntent(CallHistoryDetailsActivity.this, profileContactNumber);
-//                                    showCallConfirmationDialog(profileContactNumber);
-                                }
-                            }
-                        } else {
-                            if (tempPhoneNumber != null && tempPhoneNumber.size() == 1) {
+                if (tempPhoneNumber != null && tempPhoneNumber.size() > 1) {
+                    if (tempPhoneNumber != null && tempPhoneNumber.size() > 0) {
+                        int count = tempPhoneNumber.size();
+                        ArrayList<String> listPhoneNumber = new ArrayList<>();
+                        if (count > 1) {
+                            for (int i = 0; i < tempPhoneNumber.size(); i++) {
                                 ProfileDataOperationPhoneNumber phoneNumber =
-                                        (ProfileDataOperationPhoneNumber) tempPhoneNumber.get(0);
-                                if (phoneNumber != null) {
-                                    historyNumber = phoneNumber.getPhoneNumber();
-                                }
-                            }
-                            if (!TextUtils.isEmpty(historyNumber)) {
-                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.fromParts
-                                        ("sms", historyNumber, null));
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                                    intent.setPackage(Telephony.Sms.getDefaultSmsPackage(this));
-                                }
-                                intent.putExtra("finishActivityOnSaveCompleted", true);
-                                startActivity(intent);
-                            }
-                        }
+                                        (ProfileDataOperationPhoneNumber) tempPhoneNumber
+                                                .get(i);
+                                String number = phoneNumber.getPhoneNumber();
 
+                                if (!number.startsWith("+XX")) {
+                                    listPhoneNumber.add(number);
+                                }
+                            }
+
+                            CallConfirmationListDialog callConfirmationListDialog = new
+                                    CallConfirmationListDialog(this, listPhoneNumber,
+                                    false);
+                            callConfirmationListDialog.setDialogTitle(getString(R.string
+                                    .please_select_number_view_sms_log));
+                            callConfirmationListDialog.showDialog();
+
+                        } else {
+                            profileContactNumber = Utils.getFormattedNumber(CallHistoryDetailsActivity.this, profileContactNumber);
+                            Utils.callIntent(CallHistoryDetailsActivity.this, profileContactNumber);
+//                                    showCallConfirmationDialog(profileContactNumber);
+                        }
                     }
                 } else {
-                    if (tempPhoneNumber != null && tempPhoneNumber.size() > 1) {
-                        if (tempPhoneNumber != null && tempPhoneNumber.size() > 0) {
-                            int count = tempPhoneNumber.size();
-                            ArrayList<String> listPhoneNumber = new ArrayList<>();
-                            if (count > 1) {
-                                for (int i = 0; i < tempPhoneNumber.size(); i++) {
-                                    ProfileDataOperationPhoneNumber phoneNumber =
-                                            (ProfileDataOperationPhoneNumber) tempPhoneNumber.get
-                                                    (i);
-                                    String number = phoneNumber.getPhoneNumber();
-
-                                    if (!number.startsWith("+XX")) {
-                                        listPhoneNumber.add(number);
-                                    }
-                                }
-
-                                CallConfirmationListDialog callConfirmationListDialog = new
-                                        CallConfirmationListDialog(this, listPhoneNumber, false);
-                                callConfirmationListDialog.setDialogTitle(getString(R.string
-                                        .please_select_number_view_sms_log));
-                                callConfirmationListDialog.showDialog();
-
-                            } else {
-                                profileContactNumber = Utils.getFormattedNumber(CallHistoryDetailsActivity.this, profileContactNumber);
-                                Utils.callIntent(CallHistoryDetailsActivity.this, profileContactNumber);
-//                                showCallConfirmationDialog(profileContactNumber);
-                            }
+                    if (tempPhoneNumber != null && tempPhoneNumber.size() == 1) {
+                        ProfileDataOperationPhoneNumber phoneNumber =
+                                (ProfileDataOperationPhoneNumber) tempPhoneNumber.get(0);
+                        if (phoneNumber != null) {
+                            historyNumber = phoneNumber.getPhoneNumber();
                         }
-                    } else {
-                        if (tempPhoneNumber != null && tempPhoneNumber.size() == 1) {
-                            ProfileDataOperationPhoneNumber phoneNumber =
-                                    (ProfileDataOperationPhoneNumber) tempPhoneNumber.get(0);
-                            if (phoneNumber != null) {
-                                historyNumber = phoneNumber.getPhoneNumber();
-                            }
+                    }
+                    if (!TextUtils.isEmpty(historyNumber)) {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.fromParts
+                                ("sms", historyNumber, null));
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                            intent.setPackage(Telephony.Sms.getDefaultSmsPackage(this));
                         }
-                        if (!TextUtils.isEmpty(historyNumber)) {
-                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.fromParts("sms",
-                                    historyNumber, null));
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                                intent.setPackage(Telephony.Sms.getDefaultSmsPackage(this));
-                            }
-                            intent.putExtra("finishActivityOnSaveCompleted", true);
-                            startActivity(intent);
-                        }
-
+                        intent.putExtra("finishActivityOnSaveCompleted", true);
+                        startActivity(intent);
                     }
                 }
+
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                    if (ContextCompat.checkSelfPermission(this, Manifest.permission
+//                            .READ_SMS) != PackageManager.PERMISSION_GRANTED) {
+//                        requestPermissions(new String[]{Manifest.permission.READ_SMS},
+//                                AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+//                    } else {
+//
+//                        if (tempPhoneNumber != null && tempPhoneNumber.size() > 1) {
+//                            if (tempPhoneNumber != null && tempPhoneNumber.size() > 0) {
+//                                int count = tempPhoneNumber.size();
+//                                ArrayList<String> listPhoneNumber = new ArrayList<>();
+//                                if (count > 1) {
+//                                    for (int i = 0; i < tempPhoneNumber.size(); i++) {
+//                                        ProfileDataOperationPhoneNumber phoneNumber =
+//                                                (ProfileDataOperationPhoneNumber) tempPhoneNumber
+//                                                        .get(i);
+//                                        String number = phoneNumber.getPhoneNumber();
+//
+//                                        if (!number.startsWith("+XX")) {
+//                                            listPhoneNumber.add(number);
+//                                        }
+//                                    }
+//
+//                                    CallConfirmationListDialog callConfirmationListDialog = new
+//                                            CallConfirmationListDialog(this, listPhoneNumber,
+//                                            false);
+//                                    callConfirmationListDialog.setDialogTitle(getString(R.string
+//                                            .please_select_number_view_sms_log));
+//                                    callConfirmationListDialog.showDialog();
+//
+//                                } else {
+//                                    profileContactNumber = Utils.getFormattedNumber(CallHistoryDetailsActivity.this, profileContactNumber);
+//                                    Utils.callIntent(CallHistoryDetailsActivity.this, profileContactNumber);
+////                                    showCallConfirmationDialog(profileContactNumber);
+//                                }
+//                            }
+//                        } else {
+//                            if (tempPhoneNumber != null && tempPhoneNumber.size() == 1) {
+//                                ProfileDataOperationPhoneNumber phoneNumber =
+//                                        (ProfileDataOperationPhoneNumber) tempPhoneNumber.get(0);
+//                                if (phoneNumber != null) {
+//                                    historyNumber = phoneNumber.getPhoneNumber();
+//                                }
+//                            }
+//                            if (!TextUtils.isEmpty(historyNumber)) {
+//                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.fromParts
+//                                        ("sms", historyNumber, null));
+//                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//                                    intent.setPackage(Telephony.Sms.getDefaultSmsPackage(this));
+//                                }
+//                                intent.putExtra("finishActivityOnSaveCompleted", true);
+//                                startActivity(intent);
+//                            }
+//                        }
+//
+//                    }
+//                } else {
+//                    if (tempPhoneNumber != null && tempPhoneNumber.size() > 1) {
+//                        if (tempPhoneNumber != null && tempPhoneNumber.size() > 0) {
+//                            int count = tempPhoneNumber.size();
+//                            ArrayList<String> listPhoneNumber = new ArrayList<>();
+//                            if (count > 1) {
+//                                for (int i = 0; i < tempPhoneNumber.size(); i++) {
+//                                    ProfileDataOperationPhoneNumber phoneNumber =
+//                                            (ProfileDataOperationPhoneNumber) tempPhoneNumber.get
+//                                                    (i);
+//                                    String number = phoneNumber.getPhoneNumber();
+//
+//                                    if (!number.startsWith("+XX")) {
+//                                        listPhoneNumber.add(number);
+//                                    }
+//                                }
+//
+//                                CallConfirmationListDialog callConfirmationListDialog = new
+//                                        CallConfirmationListDialog(this, listPhoneNumber, false);
+//                                callConfirmationListDialog.setDialogTitle(getString(R.string
+//                                        .please_select_number_view_sms_log));
+//                                callConfirmationListDialog.showDialog();
+//
+//                            } else {
+//                                profileContactNumber = Utils.getFormattedNumber(CallHistoryDetailsActivity.this, profileContactNumber);
+//                                Utils.callIntent(CallHistoryDetailsActivity.this, profileContactNumber);
+////                                showCallConfirmationDialog(profileContactNumber);
+//                            }
+//                        }
+//                    } else {
+//                        if (tempPhoneNumber != null && tempPhoneNumber.size() == 1) {
+//                            ProfileDataOperationPhoneNumber phoneNumber =
+//                                    (ProfileDataOperationPhoneNumber) tempPhoneNumber.get(0);
+//                            if (phoneNumber != null) {
+//                                historyNumber = phoneNumber.getPhoneNumber();
+//                            }
+//                        }
+//                        if (!TextUtils.isEmpty(historyNumber)) {
+//                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.fromParts("sms",
+//                                    historyNumber, null));
+//                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//                                intent.setPackage(Telephony.Sms.getDefaultSmsPackage(this));
+//                            }
+//                            intent.putExtra("finishActivityOnSaveCompleted", true);
+//                            startActivity(intent);
+//                        }
+//
+//                    }
+//                }
                 break;
 
             case R.id.ripple_action_right_center:
@@ -845,7 +894,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                         profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                 arrayListName, contactName, 0, isFromCallLogTab,
                                 arrayListHistory, contactName, "", hashMapKey, profileThumbnail,
-                                pmId, isCallLogRcpUser, "",cloudContactName);
+                                pmId, isCallLogRcpUser, "", cloudContactName);
                         profileMenuOptionDialog.showDialog();
 
                     } else {
@@ -862,7 +911,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                     arrayListNumber, profileContactNumber, 0, isFromCallLogTab,
                                     arrayListHistory, "", uniqueContactId, hashMapKey,
-                                    profileThumbnail, pmId, isCallLogRcpUser, "",cloudContactName);
+                                    profileThumbnail, pmId, isCallLogRcpUser, "", cloudContactName);
                             profileMenuOptionDialog.showDialog();
                         }
                     }
@@ -886,7 +935,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                         profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                 arrayListName, number, 0, isFromCallLogTab,
                                 arrayListHistory, contactName, "", phoneBookId, profileThumbnail,
-                                pmId, isCallLogRcpUser, "",cloudContactName);
+                                pmId, isCallLogRcpUser, "", cloudContactName);
                         profileMenuOptionDialog.showDialog();
 
                     } else {
@@ -903,18 +952,15 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                     arrayListNumber, profileContactNumber, 0, isFromCallLogTab,
                                     arrayListHistory, "", uniqueContactId, "", profileThumbnail,
-                                    pmId, isCallLogRcpUser, "",cloudContactName);
+                                    pmId, isCallLogRcpUser, "", cloudContactName);
                             profileMenuOptionDialog.showDialog();
                         }
                     }
 
                 }
                 break;
-
         }
-
     }
-
 
     private void getOldCallHistory() {
         ArrayList<CallLogHistoryType> arrayListToSend = new ArrayList<>();
@@ -924,7 +970,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 CallLogType callLogType = arrayListHistory.get(i);
                 String number = callLogType.getHistoryNumber();
 //                String formattedNumber = Utils.getFormattedNumber(this, number);
-                if (!StringUtils.isEmpty(number)){
+                if (!StringUtils.isEmpty(number)) {
                     if (number.startsWith("+91"))
                         number = number.replace("+", "");
                     else
@@ -2130,8 +2176,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
             cursor = getCallHistoryDataByNumber(number);
         } else {
             cursor = getCallHistoryDataByName(number);
-            if(cursor!=null && cursor.getCount() == 0){
-                if(!StringUtils.isEmpty(historyNumber))
+            if (cursor != null && cursor.getCount() == 0) {
+                if (!StringUtils.isEmpty(historyNumber))
                     cursor = getCallHistoryDataByNumber(historyNumber);
             }
         }
@@ -2194,10 +2240,10 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                     else if (!StringUtils.isEmpty(isRcpVerifiedUser)) {
                         if ((StringUtils.isEmpty(userName)))
                             logObject.setIsHistoryRcpVerifiedId(isRcpVerifiedUser);
-                    } else if(isRcpFromNoti){
+                    } else if (isRcpFromNoti) {
                         isRcpFromNoti = false;
                         logObject.setIsHistoryRcpVerifiedId("1");
-                    }else{
+                    } else {
                         logObject.setIsHistoryRcpVerifiedId("");
                     }
 

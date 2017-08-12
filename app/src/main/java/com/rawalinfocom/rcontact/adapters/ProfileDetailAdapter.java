@@ -138,34 +138,40 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         holder.imgActionType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (ContextCompat.checkSelfPermission(activity, android.Manifest
-                        .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                    activity.requestPermissions(new String[]{Manifest.permission
-                            .CALL_PHONE}, AppConstants
-                            .MY_PERMISSIONS_REQUEST_PHONE_CALL);
-                    if (activity instanceof ProfileDetailActivity) {
-                        ((ProfileDetailActivity) activity).callNumber = number;
-                    }
-                } else {
-                    Utils.callIntent(activity, number);
-                }
 
+                if (!number.startsWith("+xx") && !number.startsWith("+XX")) {
+
+                    if (ContextCompat.checkSelfPermission(activity, android.Manifest
+                            .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                        activity.requestPermissions(new String[]{Manifest.permission
+                                .CALL_PHONE}, AppConstants
+                                .MY_PERMISSIONS_REQUEST_PHONE_CALL);
+                        if (activity instanceof ProfileDetailActivity) {
+                            ((ProfileDetailActivity) activity).callNumber = number;
+                        }
+                    } else {
+                        Utils.callIntent(activity, number);
+                    }
+                }
             }
         });
 
         holder.llProfileData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (ContextCompat.checkSelfPermission(activity, android.Manifest
-                        .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                    activity.requestPermissions(new String[]{Manifest.permission
-                            .CALL_PHONE}, AppConstants
-                            .MY_PERMISSIONS_REQUEST_PHONE_CALL);
-                    if (activity instanceof ProfileDetailActivity) {
-                        ((ProfileDetailActivity) activity).callNumber = number;
+
+                if (!number.startsWith("+xx") && !number.startsWith("+XX")) {
+                    if (ContextCompat.checkSelfPermission(activity, android.Manifest
+                            .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                        activity.requestPermissions(new String[]{Manifest.permission
+                                .CALL_PHONE}, AppConstants
+                                .MY_PERMISSIONS_REQUEST_PHONE_CALL);
+                        if (activity instanceof ProfileDetailActivity) {
+                            ((ProfileDetailActivity) activity).callNumber = number;
+                        }
+                    } else {
+                        Utils.callIntent(activity, number);
                     }
-                } else {
-                    Utils.callIntent(activity, number);
                 }
             }
         });
@@ -262,20 +268,28 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         holder.imgActionType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" +
-                        holder.textMain1.getText()));
-                activity.startActivity(Intent.createChooser(emailIntent, activity.getString(R
-                        .string.str_send_email)));
+
+                String email = holder.textMain1.getText().toString();
+                if (!email.startsWith("XX") && !email.startsWith("xx")) {
+                    Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" +
+                            email));
+                    activity.startActivity(Intent.createChooser(emailIntent, activity.getString(R
+                            .string.str_send_email)));
+                }
             }
         });
 
         holder.llProfileData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" +
-                        holder.textMain1.getText()));
-                activity.startActivity(Intent.createChooser(emailIntent, activity.getString(R
-                        .string.str_send_email)));
+
+                String email = holder.textMain1.getText().toString();
+                if (!email.startsWith("XX") && !email.startsWith("xx")) {
+                    Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" +
+                            email));
+                    activity.startActivity(Intent.createChooser(emailIntent, activity.getString(R
+                            .string.str_send_email)));
+                }
             }
         });
 
@@ -373,28 +387,34 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         holder.imgActionType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_VIEW);
+
                 String url = holder.textMain1.getText().toString();
-                if (!StringUtils.startsWithIgnoreCase(url, "http://") && !StringUtils
-                        .startsWithIgnoreCase(url, "https://")) {
-                    url = "http://" + url;
+                if (!url.startsWith("XX") && !url.startsWith("xx")) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    if (!StringUtils.startsWithIgnoreCase(url, "http://") && !StringUtils
+                            .startsWithIgnoreCase(url, "https://")) {
+                        url = "http://" + url;
+                    }
+                    intent.setData(Uri.parse(url));
+                    activity.startActivity(intent);
                 }
-                intent.setData(Uri.parse(url));
-                activity.startActivity(intent);
             }
         });
 
         holder.llProfileData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_VIEW);
+
                 String url = holder.textMain1.getText().toString();
-                if (!StringUtils.startsWithIgnoreCase(url, "http://") && !StringUtils
-                        .startsWithIgnoreCase(url, "https://")) {
-                    url = "http://" + url;
+                if (!url.startsWith("XX") && !url.startsWith("xx")) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    if (!StringUtils.startsWithIgnoreCase(url, "http://") && !StringUtils
+                            .startsWithIgnoreCase(url, "https://")) {
+                        url = "http://" + url;
+                    }
+                    intent.setData(Uri.parse(url));
+                    activity.startActivity(intent);
                 }
-                intent.setData(Uri.parse(url));
-                activity.startActivity(intent);
             }
         });
 
@@ -433,19 +453,23 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         holder.imgActionType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (address.getGoogleLatLong() != null) {
-                    ArrayList<String> arrayListLatLong = new ArrayList<>();
-                    arrayListLatLong.addAll(address.getGoogleLatLong());
-                    String latitude = arrayListLatLong.get(1);
-                    String longitude = arrayListLatLong.get(0);
-                    Intent intent = new Intent(Intent.ACTION_VIEW,
-                            Uri.parse("google.navigation:q=" + latitude + "," + longitude));
-                    activity.startActivity(intent);
-                } else {
-                    Intent intent = new Intent(Intent.ACTION_VIEW,
-                            Uri.parse("google.navigation:q=" + holder.textMain1
-                                    .getText()));
-                    activity.startActivity(intent);
+
+                String strAddress = holder.textMain1.getText().toString();
+                if (!strAddress.startsWith("XX") && !strAddress.startsWith("xx")) {
+                    if (address.getGoogleLatLong() != null) {
+                        ArrayList<String> arrayListLatLong = new ArrayList<>();
+                        arrayListLatLong.addAll(address.getGoogleLatLong());
+                        String latitude = arrayListLatLong.get(1);
+                        String longitude = arrayListLatLong.get(0);
+                        Intent intent = new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("google.navigation:q=" + latitude + "," + longitude));
+                        activity.startActivity(intent);
+                    } else {
+                        Intent intent = new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("google.navigation:q=" + holder.textMain1
+                                        .getText()));
+                        activity.startActivity(intent);
+                    }
                 }
             }
         });
@@ -453,19 +477,23 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         holder.llProfileData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (address.getGoogleLatLong() != null) {
-                    ArrayList<String> arrayListLatLong = new ArrayList<>();
-                    arrayListLatLong.addAll(address.getGoogleLatLong());
-                    String latitude = arrayListLatLong.get(1);
-                    String longitude = arrayListLatLong.get(0);
-                    Intent intent = new Intent(Intent.ACTION_VIEW,
-                            Uri.parse("google.navigation:q=" + latitude + "," + longitude));
-                    activity.startActivity(intent);
-                } else {
-                    Intent intent = new Intent(Intent.ACTION_VIEW,
-                            Uri.parse("google.navigation:q=" + holder.textMain1
-                                    .getText()));
-                    activity.startActivity(intent);
+
+                String strAddress = holder.textMain1.getText().toString();
+                if (!strAddress.startsWith("XX") && !strAddress.startsWith("xx")) {
+                    if (address.getGoogleLatLong() != null) {
+                        ArrayList<String> arrayListLatLong = new ArrayList<>();
+                        arrayListLatLong.addAll(address.getGoogleLatLong());
+                        String latitude = arrayListLatLong.get(1);
+                        String longitude = arrayListLatLong.get(0);
+                        Intent intent = new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("google.navigation:q=" + latitude + "," + longitude));
+                        activity.startActivity(intent);
+                    } else {
+                        Intent intent = new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("google.navigation:q=" + holder.textMain1
+                                        .getText()));
+                        activity.startActivity(intent);
+                    }
                 }
             }
         });
@@ -567,30 +595,34 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         holder.imgActionType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (StringUtils.length(imAccount.getIMAccountDetails()) > 0) {
-                    String url = null;
 
-                    if (imAccount.getIMAccountProtocol().equalsIgnoreCase("facebook")) {
-                        url = "https://www.facebook.com/" + imAccount.getIMAccountDetails();
-                    } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("twitter")) {
-                        url = "https://twitter.com/" + imAccount.getIMAccountDetails();
-                    } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("linkedin")) {
-                        url = "https://www.linkedin.com/in/" + imAccount.getIMAccountDetails();
-                    } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
-                            ("google")) {
-                        url = "https://plus.google.com/" + imAccount.getIMAccountDetails();
-                    } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
-                            ("skype")) {
-                        url = "https://web.skype.com/" + imAccount.getIMAccountDetails();
-                    } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
-                            ("whatsapp")) {
-                        url = "https://web.whatsapp.com/" + imAccount.getIMAccountDetails();
-                    }
+                String ima = holder.textMain1.getText().toString();
+                if (!ima.startsWith("XX") && !ima.startsWith("xx")) {
+                    if (StringUtils.length(imAccount.getIMAccountDetails()) > 0) {
+                        String url = null;
 
-                    if (url != null) {
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setData(Uri.parse(url));
-                        activity.startActivity(intent);
+                        if (imAccount.getIMAccountProtocol().equalsIgnoreCase("facebook")) {
+                            url = "https://www.facebook.com/" + imAccount.getIMAccountDetails();
+                        } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("twitter")) {
+                            url = "https://twitter.com/" + imAccount.getIMAccountDetails();
+                        } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("linkedin")) {
+                            url = "https://www.linkedin.com/in/" + imAccount.getIMAccountDetails();
+                        } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
+                                ("google")) {
+                            url = "https://plus.google.com/" + imAccount.getIMAccountDetails();
+                        } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
+                                ("skype")) {
+                            url = "https://web.skype.com/" + imAccount.getIMAccountDetails();
+                        } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
+                                ("whatsapp")) {
+                            url = "https://web.whatsapp.com/" + imAccount.getIMAccountDetails();
+                        }
+
+                        if (url != null) {
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setData(Uri.parse(url));
+                            activity.startActivity(intent);
+                        }
                     }
                 }
             }
@@ -658,29 +690,33 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         holder.llProfileData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (StringUtils.length(imAccount.getIMAccountDetails()) > 0) {
-                    String url = null;
-                    if (imAccount.getIMAccountProtocol().equalsIgnoreCase("facebook")) {
-                        url = "https://www.facebook.com/" + imAccount.getIMAccountDetails();
-                    } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("twitter")) {
-                        url = "https://twitter.com/" + imAccount.getIMAccountDetails();
-                    } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("linkedin")) {
-                        url = "https://www.linkedin.com/in/" + imAccount.getIMAccountDetails();
-                    } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
-                            ("google")) {
-                        url = "https://plus.google.com/" + imAccount.getIMAccountDetails();
-                    } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
-                            ("skype")) {
-                        url = "https://web.skype.com/" + imAccount.getIMAccountDetails();
-                    } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
-                            ("whatsapp")) {
-                        url = "https://web.whatsapp.com/" + imAccount.getIMAccountDetails();
-                    }
 
-                    if (url != null) {
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setData(Uri.parse(url));
-                        activity.startActivity(intent);
+                String ima = holder.textMain1.getText().toString();
+                if (!ima.startsWith("XX") && !ima.startsWith("xx")) {
+                    if (StringUtils.length(imAccount.getIMAccountDetails()) > 0) {
+                        String url = null;
+                        if (imAccount.getIMAccountProtocol().equalsIgnoreCase("facebook")) {
+                            url = "https://www.facebook.com/" + imAccount.getIMAccountDetails();
+                        } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("twitter")) {
+                            url = "https://twitter.com/" + imAccount.getIMAccountDetails();
+                        } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("linkedin")) {
+                            url = "https://www.linkedin.com/in/" + imAccount.getIMAccountDetails();
+                        } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
+                                ("google")) {
+                            url = "https://plus.google.com/" + imAccount.getIMAccountDetails();
+                        } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
+                                ("skype")) {
+                            url = "https://web.skype.com/" + imAccount.getIMAccountDetails();
+                        } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
+                                ("whatsapp")) {
+                            url = "https://web.whatsapp.com/" + imAccount.getIMAccountDetails();
+                        }
+
+                        if (url != null) {
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setData(Uri.parse(url));
+                            activity.startActivity(intent);
+                        }
                     }
                 }
             }

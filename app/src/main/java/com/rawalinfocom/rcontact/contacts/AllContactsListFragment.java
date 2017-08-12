@@ -1592,8 +1592,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     .getInstance(getActivity());
             myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
         }
-
-
     }
 
     private void backgroundSync(final boolean addToDatabase, final WsResponseObject
@@ -1665,6 +1663,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         if (syncingTask != null && syncingTask.isCancelled()) {
             return;
         }
+
+        System.out.println("RContacts first time uploadContacts");
+
         WsRequestObject uploadContactObject = new WsRequestObject();
         uploadContactObject.setResponseKey(responseKey);
         uploadContactObject.setProfileData(arrayListUserContact);
