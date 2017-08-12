@@ -10,7 +10,7 @@
 
     <!-- Google -->
     <!--<string name="server_client_id">842331483294-os1beu18aonoukiskj67li7l0e4orn61.apps.googleusercontent.com</string>-->
-    <string name="server_client_id">842331483294-ehe2r3r6mdbn6e1g9b33ecuakb5j0n28.apps.googleusercontent.com</string>
+    <string name="server_client_id">376651096541-14itosgf92vffhppbo1fblmpa1q08kf1.apps.googleusercontent.com</string>
 
     <!-- Common -->
     <string name="msg_try_later">There is some error! Please try again later.</string>
