@@ -239,7 +239,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         } else {
             initSpinner();
         }
-
+//        telephonyInit();
         initSwipe();
     }
 
@@ -828,7 +828,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                         callLogType.setLocalPbRowId(" ");
 //                        callLogType.setProfileImage("");
                         if(callLogType.getType() != AppConstants.NEW_CONTACT_MI){
-                            callLogTypeArrayList.add(callLogType);
+                            callLogTypeArrayList.add(0,callLogType);
                         }
 //                        callLogTypeArrayList.add(0, callLogType);
 

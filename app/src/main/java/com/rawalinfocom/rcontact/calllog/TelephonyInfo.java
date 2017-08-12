@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Build;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.lang.reflect.Method;
 
@@ -83,7 +84,7 @@ public final class TelephonyInfo {
 //            String simSerialNumber =  telephonyManager.getSimSerialNumber();
             simSerialNumber =  telephonyManager.getSimSerialNumber();
             if(!TextUtils.isEmpty(simSerialNumber)){
-               /* Log.e("Sim Serial Number" , simSerialNumber + " NO " + telephonyManager.getNetworkOperator()
+                /*Log.e("Sim Serial Number" , simSerialNumber + " NO " + telephonyManager.getNetworkOperator()
                         + " NON " + telephonyManager.getNetworkOperatorName() + " SO " + telephonyManager.getSimOperator() + " SON "
                         + telephonyManager.getSimOperatorName());*/
             }
