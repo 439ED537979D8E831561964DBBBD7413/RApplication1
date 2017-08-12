@@ -100,7 +100,6 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:singleLine="true"
-                    android:maxLength="20"
                     tools:text="Aniruddh"/>
 
                 <TextView
@@ -109,7 +108,6 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:singleLine="true"
-                    android:maxLength="20"
                     tools:text=" (Aniruddh Pal)"/>
 
             </LinearLayout>
