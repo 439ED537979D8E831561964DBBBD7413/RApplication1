@@ -1,6 +1,5 @@
 package com.rawalinfocom.rcontact.calllog;
 
-import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
@@ -8,7 +7,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
@@ -51,6 +49,7 @@ import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
+import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.database.QueryManager;
 import com.rawalinfocom.rcontact.database.TableCommentMaster;
@@ -196,6 +195,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
     RippleView rippleInvite;
     @BindView(R.id.progressBarLoadCallLogs)
     ProgressBar progressBarLoadCallLogs;
+    @BindView(R.id.button_invite)
+    Button buttonInvite;
     private boolean isCallLogRcpUser;
     private String isRcpVerifiedUser;
     private boolean isRcpFromNoti;
@@ -252,6 +253,11 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 rippleInvite.setVisibility(View.GONE);
                 linearBasicDetailRating.setVisibility(View.VISIBLE);
             } else {
+
+                Utils.setRoundedCornerBackground(buttonInvite, ContextCompat.getColor
+                        (CallHistoryDetailsActivity.this, R.color.colorAccent), 5, 0, ContextCompat.getColor
+                        (CallHistoryDetailsActivity.this, R.color.colorAccent));
+
                 rippleInvite.setVisibility(View.VISIBLE);
                 linearBasicDetailRating.setVisibility(View.GONE);
             }
@@ -624,12 +630,24 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                                 }
                             }
 
-                            CallConfirmationListDialog callConfirmationListDialog = new
-                                    CallConfirmationListDialog(this, listPhoneNumber,
-                                    false);
-                            callConfirmationListDialog.setDialogTitle(getString(R.string
-                                    .please_select_number_view_sms_log));
-                            callConfirmationListDialog.showDialog();
+                            if (listPhoneNumber.size() == 1) {
+                                if (!TextUtils.isEmpty(listPhoneNumber.get(0))) {
+                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.fromParts
+                                            ("sms", listPhoneNumber.get(0), null));
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                                        intent.setPackage(Telephony.Sms.getDefaultSmsPackage(this));
+                                    }
+                                    intent.putExtra("finishActivityOnSaveCompleted", true);
+                                    startActivity(intent);
+                                }
+                            } else {
+                                CallConfirmationListDialog callConfirmationListDialog = new
+                                        CallConfirmationListDialog(this, listPhoneNumber,
+                                        false);
+                                callConfirmationListDialog.setDialogTitle(getString(R.string
+                                        .please_select_number_view_sms_log));
+                                callConfirmationListDialog.showDialog();
+                            }
 
                         } else {
                             profileContactNumber = Utils.getFormattedNumber(CallHistoryDetailsActivity.this, profileContactNumber);

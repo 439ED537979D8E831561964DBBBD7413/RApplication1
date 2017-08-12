@@ -408,7 +408,8 @@ public class TimelineActivity extends BaseActivity implements RippleView
                 if (wsResponseObject != null) {
                     Rating rating = wsResponseObject.getProfileRating();
 
-                    int updated = tableCommentMaster.addReply(rating.getPrId() + "", rating.getPrReply(), Utils.getLocalTimeFromUTCTime(rating.getReplyAt()), Utils.getLocalTimeFromUTCTime(rating.getReplyAt()));
+                    int updated = tableCommentMaster.addReply(rating.getPrId() + "", rating.getPrReply(),
+                            Utils.getLocalTimeFromUTCTime(rating.getReplyAt()), Utils.getLocalTimeFromUTCTime(rating.getReplyAt()));
                     if (updated != 0) {
                         if (selectedRecycler != -1 && selectedRecyclerItem != -1) {
                             switch (selectedRecycler) {
