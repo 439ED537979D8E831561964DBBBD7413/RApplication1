@@ -1,5 +1,6 @@
 package com.rawalinfocom.rcontact;
 
+import android.*;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
@@ -15,6 +16,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -285,31 +287,9 @@ public class ContactsSettingsActivity1 extends BaseActivity implements RippleVie
                         case "0":
                             new ExportContact(shortByContactListAdapter.getSelectedType()).execute();
                             break;
+
                         case "1":
-
-                            if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-                                new ExportContact("1").execute();
-                            } else {
-                                buildGoogleDriveClient();
-                            }
-
-
-//                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//                                checkPermissionToExecute(requiredPermissions, GOOGLE_LOGIN_PERMISSION);
-//                            } else {
-//                                IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_GOOGLE;
-//                                googleSignIn();
-//                            }
-
-//                            if (checkExternalStorageState())
-//                                new ExportContact(shortByContactListAdapter.getSelectedType()).execute();
-//                            else
-//                                Utils.showErrorSnackBar(activity, activityContactSettings,
-//                                        "External storage not available!!");
-                            break;
-                        case "2":
-
-
+                            checkPermission();
                             break;
                         default:
                             break;
@@ -319,6 +299,48 @@ public class ContactsSettingsActivity1 extends BaseActivity implements RippleVie
         });
 
         dialog.show();
+    }
+
+    private void checkPermission() {
+
+        if (ContextCompat.checkSelfPermission(activity,
+                android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(activity, new
+                    String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, AppConstants
+                    .MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+
+        } else {
+            if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+                new ExportContact("1").execute();
+            } else {
+                buildGoogleDriveClient();
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode) {
+            case AppConstants.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE:
+
+                if (permissions[0].equals(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        && permissions[1].equals(android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
+
+                    if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+                        new ExportContact("1").execute();
+                    } else {
+                        buildGoogleDriveClient();
+                    }
+                }
+
+                break;
+
+        }
     }
 
 //    @TargetApi(Build.VERSION_CODES.M)

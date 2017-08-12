@@ -252,7 +252,9 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
                 comment.setEvmRecordIndexId(dataItem.getEventRecordIndexId());
                 comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getCreatedAt()));
                 comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getUpdatedAt()));
-                comment.setCrmRepliedAt(Utils.getLocalTimeFromUTCTime(dataItem.getReplyAt()));
+                if (!StringUtils.isEmpty(dataItem.getReplyAt()))
+                    comment.setCrmRepliedAt(Utils.getLocalTimeFromUTCTime(dataItem.getReplyAt()));
+                else comment.setCrmRepliedAt("");
 
 //                TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
 //                tableProfileMaster.updateUserProfileRating(toPmId, avgRating, totalUniqueRater);
@@ -280,7 +282,9 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
                 comment.setEvmRecordIndexId(dataItem.getEventRecordIndexId());
                 comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getCreatedAt()));
                 comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getUpdatedAt()));
-                comment.setCrmRepliedAt(Utils.getLocalTimeFromUTCTime(dataItem.getReplyAt()));
+                if (!StringUtils.isEmpty(dataItem.getReplyAt()))
+                    comment.setCrmRepliedAt(Utils.getLocalTimeFromUTCTime(dataItem.getReplyAt()));
+                else comment.setCrmRepliedAt("");
 
 //                TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
 //                tableProfileMaster.updateUserProfileRating(toPmId, avgRating, totalUniqueRater);
@@ -325,7 +329,9 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
                 comment.setCrmImage(dataItem.getPmProfilePhoto());
                 comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getCreatedAt()));
                 comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getUpdatedAt()));
-                comment.setCrmRepliedAt(Utils.getLocalTimeFromUTCTime(dataItem.getReplyAt()));
+                if (!StringUtils.isEmpty(dataItem.getReplyAt()))
+                    comment.setCrmRepliedAt(Utils.getLocalTimeFromUTCTime(dataItem.getReplyAt()));
+                else comment.setCrmRepliedAt("");
 
                 tableCommentMaster.addComment(comment);
             }
@@ -347,7 +353,9 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
                 comment.setCrmImage(dataItem.getPmProfilePhoto());
                 comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getCreatedAt()));
                 comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getUpdatedAt()));
-                comment.setCrmRepliedAt(Utils.getLocalTimeFromUTCTime(dataItem.getReplyAt()));
+                if (!StringUtils.isEmpty(dataItem.getReplyAt()))
+                    comment.setCrmRepliedAt(Utils.getLocalTimeFromUTCTime(dataItem.getReplyAt()));
+                else comment.setCrmRepliedAt("");
 
                 tableCommentMaster.addComment(comment);
 
