@@ -47,6 +47,7 @@
     <dimen name="margin_15dp">15dp</dimen>
     <dimen name="padding_15dp">15dp</dimen>
     <dimen name="padding_20dp">20dp</dimen>
+    <dimen name="margin_2dp">2dp</dimen>
 
     <dimen name="text_size_12sp">12sp</dimen>
     <dimen name="text_size_8sp">8sp</dimen>
