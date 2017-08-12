@@ -78,7 +78,8 @@
                 android:background="@drawable/background_rounded_corner"
                 android:text="@string/get_started"
                 android:textColor="@color/colorWhite"
-                android:textSize="@dimen/text_size_14sp"/>
+                android:textSize="@dimen/text_size_14sp"
+                tools:backgroundTint="@color/colorAccent"/>
 
         </com.rawalinfocom.rcontact.helper.RippleView>
 

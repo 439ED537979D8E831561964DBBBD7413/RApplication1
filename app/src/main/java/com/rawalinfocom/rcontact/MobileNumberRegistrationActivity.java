@@ -12,6 +12,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -71,11 +72,17 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(ContextCompat.getColor(MobileNumberRegistrationActivity
+                    .this, R.color.iconColor));
+        }
         setContentView(R.layout.activity_mobile_number_registration);
         ButterKnife.bind(this);
         // Hide the status bar.
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager
-                .LayoutParams.FLAG_FULLSCREEN);
+        /*getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager
+                .LayoutParams.FLAG_FULLSCREEN);*/
 
 //        new AsyncGetDeviceToken(this).execute();
 
@@ -247,11 +254,15 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
 
     private void init() {
 
-        textVerifyNumber.setTypeface(Utils.typefaceRegular(this));
+        textVerifyNumber.setTypeface(Utils.typefaceBold(this));
         textEnterNumber.setTypeface(Utils.typefaceRegular(this));
         inputCountryCode.setTypeface(Utils.typefaceRegular(this));
         inputNumber.setTypeface(Utils.typefaceRegular(this));
         buttonSubmit.setTypeface(Utils.typefaceSemiBold(this));
+
+        Utils.setRoundedCornerBackground(buttonSubmit, ContextCompat.getColor
+                (MobileNumberRegistrationActivity.this, R.color.colorAccent), 5, 0, ContextCompat
+                .getColor(MobileNumberRegistrationActivity.this, R.color.colorAccent));
 
         rippleSubmit.setOnRippleCompleteListener(this);
 
@@ -285,7 +296,8 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), otpObject,
                     null, WsResponseObject.class, WsConstants.REQ_CHECK_NUMBER, getString(R.string
                     .msg_please_wait), false)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants.REQ_CHECK_NUMBER);
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT +
+                            WsConstants.REQ_CHECK_NUMBER);
         } else {
             Utils.showErrorSnackBar(this, relativeRootMobileRegistration, getResources()
                     .getString(R.string.msg_no_network));
