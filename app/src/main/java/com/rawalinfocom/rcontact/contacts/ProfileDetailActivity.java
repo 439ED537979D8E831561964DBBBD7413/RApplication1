@@ -901,7 +901,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
-            case AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS: {
+            case AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS:
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager
                         .PERMISSION_GRANTED) {
@@ -915,9 +915,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     showPermissionConfirmationDialog();
 
                 }
-            }
+                break;
 
-            case AppConstants.MY_PERMISSIONS_REQUEST_PHONE_CALL: {
+            case AppConstants.MY_PERMISSIONS_REQUEST_PHONE_CALL:
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager
                         .PERMISSION_GRANTED) {
@@ -929,8 +929,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     showPermissionConfirmationDialog(AppConstants
                             .MY_PERMISSIONS_REQUEST_PHONE_CALL);
                 }*/
-            }
-            break;
+                break;
         }
     }
 

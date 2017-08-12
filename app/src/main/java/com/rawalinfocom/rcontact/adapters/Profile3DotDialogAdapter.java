@@ -73,7 +73,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                                     long date, boolean isFromCallLogs, ArrayList<CallLogType>
                                             list, String name, String uniqueRowId, String key,
                                     String profileUrl, String pmId, boolean isCallLogRcpUser,
-                                    String rcpVerifiedId,String cloudName) {
+                                    String rcpVerifiedId, String cloudName) {
         this.context = context;
         this.arrayListString = arrayList;
         this.numberToCall = number;
@@ -87,7 +87,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
         this.pmId = pmId;
         this.isCallLogRcpUser = isCallLogRcpUser;
         this.rcpVerifiedId = rcpVerifiedId;
-        this.cloudName =  cloudName;
+        this.cloudName = cloudName;
     }
 
     @Override
@@ -146,7 +146,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                     intent.putExtra(AppConstants.EXTRA_PM_ID, pmId);
                     intent.putExtra(AppConstants.EXTRA_IS_RCP_USER, isCallLogRcpUser);
                     intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, numberToCall);
-                    intent.putExtra(AppConstants.EXTRA_CALL_LOG_CLOUD_NAME , cloudName);
+                    intent.putExtra(AppConstants.EXTRA_CALL_LOG_CLOUD_NAME, cloudName);
                     context.startActivity(intent);
 
                 } else if (value.equalsIgnoreCase(context.getString(R.string.block))) {
@@ -291,13 +291,13 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                     Bundle b = new Bundle();
                     b.putSerializable(AppConstants.EXTRA_CALL_ARRAY_LIST, arrayListCallLogType);
 
-                    if(StringUtils.isEmpty(dialogName))
-                        b.putString(AppConstants.EXTRA_RCP_VERIFIED_ID,rcpVerifiedId);
-                    else{
-                        b.putString(AppConstants.EXTRA_RCP_VERIFIED_ID,"");
-                        if(isCallLogRcpUser){
+                    if (StringUtils.isEmpty(dialogName))
+                        b.putString(AppConstants.EXTRA_RCP_VERIFIED_ID, rcpVerifiedId);
+                    else {
+                        b.putString(AppConstants.EXTRA_RCP_VERIFIED_ID, "");
+                        if (isCallLogRcpUser) {
                             rcpVerifiedId = "1";
-                            b.putString(AppConstants.EXTRA_RCP_VERIFIED_ID,rcpVerifiedId);
+                            b.putString(AppConstants.EXTRA_RCP_VERIFIED_ID, rcpVerifiedId);
                         }
                     }
                     intent.putExtras(b);
@@ -528,6 +528,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
 
                 Intent localBroadcastIntent2 = new Intent(AppConstants
                         .ACTION_LOCAL_BROADCAST_CALL_HISTORY_ACTIVITY);
+                localBroadcastIntent2.putExtra("action", "delete");
                 LocalBroadcastManager myLocalBroadcastManager2 = LocalBroadcastManager
                         .getInstance(context);
                 myLocalBroadcastManager2.sendBroadcast(localBroadcastIntent2);

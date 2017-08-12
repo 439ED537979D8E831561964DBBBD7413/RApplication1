@@ -139,7 +139,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             @Override
             public void onClick(View view) {
 
-                if (!number.startsWith("+xx") || !number.startsWith("+XX")) {
+                if (!number.startsWith("+xx") && !number.startsWith("+XX")) {
 
                     if (ContextCompat.checkSelfPermission(activity, android.Manifest
                             .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
@@ -160,7 +160,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             @Override
             public void onClick(View v) {
 
-                if (!number.startsWith("+xx") || !number.startsWith("+XX")) {
+                if (!number.startsWith("+xx") && !number.startsWith("+XX")) {
                     if (ContextCompat.checkSelfPermission(activity, android.Manifest
                             .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                         activity.requestPermissions(new String[]{Manifest.permission
@@ -270,7 +270,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             public void onClick(View view) {
 
                 String email = holder.textMain1.getText().toString();
-                if (!email.startsWith("XX") || !email.startsWith("xx")) {
+                if (!email.startsWith("XX") && !email.startsWith("xx")) {
                     Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" +
                             email));
                     activity.startActivity(Intent.createChooser(emailIntent, activity.getString(R
@@ -284,7 +284,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             public void onClick(View v) {
 
                 String email = holder.textMain1.getText().toString();
-                if (!email.startsWith("XX") || !email.startsWith("xx")) {
+                if (!email.startsWith("XX") && !email.startsWith("xx")) {
                     Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" +
                             email));
                     activity.startActivity(Intent.createChooser(emailIntent, activity.getString(R
@@ -389,7 +389,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             public void onClick(View view) {
 
                 String url = holder.textMain1.getText().toString();
-                if (!url.startsWith("XX") || !url.startsWith("xx")) {
+                if (!url.startsWith("XX") && !url.startsWith("xx")) {
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     if (!StringUtils.startsWithIgnoreCase(url, "http://") && !StringUtils
                             .startsWithIgnoreCase(url, "https://")) {
@@ -406,7 +406,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             public void onClick(View v) {
 
                 String url = holder.textMain1.getText().toString();
-                if (!url.startsWith("XX") || !url.startsWith("xx")) {
+                if (!url.startsWith("XX") && !url.startsWith("xx")) {
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     if (!StringUtils.startsWithIgnoreCase(url, "http://") && !StringUtils
                             .startsWithIgnoreCase(url, "https://")) {
@@ -455,7 +455,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             public void onClick(View view) {
 
                 String strAddress = holder.textMain1.getText().toString();
-                if (!strAddress.startsWith("XX") || !strAddress.startsWith("xx")) {
+                if (!strAddress.startsWith("XX") && !strAddress.startsWith("xx")) {
                     if (address.getGoogleLatLong() != null) {
                         ArrayList<String> arrayListLatLong = new ArrayList<>();
                         arrayListLatLong.addAll(address.getGoogleLatLong());
@@ -479,7 +479,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             public void onClick(View v) {
 
                 String strAddress = holder.textMain1.getText().toString();
-                if (!strAddress.startsWith("XX") || !strAddress.startsWith("xx")) {
+                if (!strAddress.startsWith("XX") && !strAddress.startsWith("xx")) {
                     if (address.getGoogleLatLong() != null) {
                         ArrayList<String> arrayListLatLong = new ArrayList<>();
                         arrayListLatLong.addAll(address.getGoogleLatLong());
@@ -597,7 +597,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             public void onClick(View view) {
 
                 String ima = holder.textMain1.getText().toString();
-                if (!ima.startsWith("XX") || !ima.startsWith("xx")) {
+                if (!ima.startsWith("XX") && !ima.startsWith("xx")) {
                     if (StringUtils.length(imAccount.getIMAccountDetails()) > 0) {
                         String url = null;
 
@@ -692,7 +692,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             public void onClick(View v) {
 
                 String ima = holder.textMain1.getText().toString();
-                if (!ima.startsWith("XX") || !ima.startsWith("xx")) {
+                if (!ima.startsWith("XX") && !ima.startsWith("xx")) {
                     if (StringUtils.length(imAccount.getIMAccountDetails()) > 0) {
                         String url = null;
                         if (imAccount.getIMAccountProtocol().equalsIgnoreCase("facebook")) {
