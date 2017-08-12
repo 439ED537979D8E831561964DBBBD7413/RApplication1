@@ -3,13 +3,17 @@ package com.rawalinfocom.rcontact;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
@@ -53,6 +57,12 @@ public class TermsConditionsActivity extends BaseActivity implements RippleView
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(ContextCompat.getColor(TermsConditionsActivity.this, R.color
+                    .iconColor));
+        }
         setContentView(R.layout.activity_terms_conditions);
         ButterKnife.bind(this);
 
@@ -96,6 +106,10 @@ public class TermsConditionsActivity extends BaseActivity implements RippleView
         textTermsConditionsContent.setTypeface(Utils.typefaceRegular(TermsConditionsActivity.this));
         textTermsConditions.setTypeface(Utils.typefaceRegular(TermsConditionsActivity.this));
         buttonGetStarted.setTypeface(Utils.typefaceRegular(TermsConditionsActivity.this));
+
+        Utils.setRoundedCornerBackground(buttonGetStarted, ContextCompat.getColor
+                (TermsConditionsActivity.this, R.color.colorAccent), 5, 0, ContextCompat.getColor
+                (TermsConditionsActivity.this, R.color.colorAccent));
 
         SpannableString ss = new SpannableString("By continuing you accept Terms and Conditions");
         ClickableSpan clickableSpan = new ClickableSpan() {
