@@ -239,7 +239,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         } else {
             initSpinner();
         }
-
+//        telephonyInit();
         initSwipe();
     }
 
