@@ -1191,6 +1191,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     case R.id.rippleRight:
                         permissionConfirmationDialog.dismissDialog();
                         isFromSettings = true;
+                        getActivity().finish();
                         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
                                 Uri.fromParts("package", getActivity().getPackageName(), null));
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

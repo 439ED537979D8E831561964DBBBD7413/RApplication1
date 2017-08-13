@@ -67,7 +67,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -290,11 +293,13 @@ public class ContactsSettingsActivity1 extends BaseActivity implements RippleVie
 
                     switch (selectedType) {
                         case "0":
-                            checkPermission();
+                            if (checkPermission())
+                                generateExport();
                             break;
 
                         case "1":
-                            checkPermission();
+                            if (checkPermission())
+                                generateExport();
                             break;
                         default:
                             break;
@@ -306,54 +311,64 @@ public class ContactsSettingsActivity1 extends BaseActivity implements RippleVie
         dialog.show();
     }
 
-    private void checkPermission() {
+    private boolean checkPermission() {
 
-        if (ContextCompat.checkSelfPermission(activity,
-                android.Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            int readPermission = ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE);
+            int writePermission = ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
-            ActivityCompat.requestPermissions(activity, new
-                    String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, AppConstants
-                    .MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+            List<String> listPermissionsNeeded = new ArrayList<>();
+            if (readPermission != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+            }
+            if (writePermission != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            }
 
-        } else {
-
-            if (selectedType.equals("0")) {
-                new ExportContact("0").execute();
+            if (!listPermissionsNeeded.isEmpty()) {
+                ActivityCompat.requestPermissions(activity, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), 1);
+                return false;
             } else {
-                if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-                    new ExportContact("1").execute();
-                } else {
-                    buildGoogleDriveClient();
-                }
+                return true;
             }
         }
+        return true;
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
-            case AppConstants.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE:
+            case 1:
 
-                if (permissions[0].equals(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) &&
-                        permissions[1].equals(android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                Map<String, Integer> perms = new HashMap<String, Integer>();
+                // Initial
+                perms.put(Manifest.permission.READ_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
 
-                    if (selectedType.equals("0")) {
-                        new ExportContact("0").execute();
-                    } else {
-                        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-                            new ExportContact("1").execute();
-                        } else {
-                            buildGoogleDriveClient();
-                        }
-                    }
-                }
+                // Fill with results
+                for (int i = 0; i < permissions.length; i++)
+                    perms.put(permissions[i], grantResults[i]);
 
+                boolean isStorage = perms.get(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+                boolean isStorageWrite = perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+
+                if (isStorage && isStorageWrite)
+                    generateExport();
+//                else
+//                    Toast.makeText(activity, "Please grant both permission to work camera properly!!", Toast.LENGTH_SHORT).show();
                 break;
+        }
+    }
 
+    private void generateExport() {
+        if (selectedType.equals("0")) {
+            new ExportContact("0").execute();
+        } else {
+            if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+                new ExportContact("1").execute();
+            } else {
+                buildGoogleDriveClient();
+            }
         }
     }
 

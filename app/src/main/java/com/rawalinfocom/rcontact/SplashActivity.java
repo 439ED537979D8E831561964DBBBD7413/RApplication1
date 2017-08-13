@@ -39,7 +39,7 @@ public class SplashActivity extends BaseActivity {
                 if (Utils.getIntegerPreference(SplashActivity.this, AppConstants
                         .PREF_LAUNCH_SCREEN_INT, IntegerConstants.LAUNCH_TUTORIAL_ACTIVITY) ==
                         IntegerConstants.LAUNCH_TUTORIAL_ACTIVITY) {
-                    SPLASH_TIME_OUT = 100;
+                    SPLASH_TIME_OUT = 300;
                     startActivityIntent(SplashActivity.this, TutorialActivity.class, null);
                     finish();
 

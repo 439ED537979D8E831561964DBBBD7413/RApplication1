@@ -254,6 +254,7 @@
     <string name="msg_tip_password">Tip: At least 1 upper &amp; lower case letter, 1 number &amp; special character and min 8 character long</string>
     <string name="title_password_protected">Password Protected</string>
     <string name="msg_enter_password_tips">Please enter password to access and open account.</string>
+    <string name="str_signin_signup">Sign in or sign up with different account</string>
     <string name="str_enter_password">Enter Password</string>
     <string name="action_login">Login</string>
     <string name="action_forget_password">Forgot Password</string>
@@ -670,5 +671,6 @@
     <string name="txt_save">SAVE</string>
     <string name="report_spam">Report as spam</string>
     <string name="reported_spam">Reported as spam</string>
+    <string name="no_history_to_delete">No call history found</string>
 
 </resources>

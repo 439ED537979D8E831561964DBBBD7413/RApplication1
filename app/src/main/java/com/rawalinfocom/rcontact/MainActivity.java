@@ -284,7 +284,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
 //                    long elapsedMinutes = difference / minutesInMilli;
 
-                    if (elapsedDays > 0 || elapsedHours > 8) {
+                    if (elapsedDays > 0 || elapsedHours > 12) {
 //                    if (elapsedDays > 0 || elapsedHours > 0 || elapsedMinutes > 5) {
 
                         if (Utils.getBooleanPreference(MainActivity.this, AppConstants
@@ -578,6 +578,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                             removeRemovedDataFromDb(uploadContactResponse
                                     .getArrayListMapping());
                         }
+                        Utils.setIntegerPreference(MainActivity.this, AppConstants.PREF_SYNCED_CONTACTS, 0);
                     }
 
 //                    if (uploadContactResponse.getArrayListMapping().size() > 0) {
@@ -2422,15 +2423,13 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     return;
                 }
                 backgroundSync(false, null);
-            }
+            } else {
+                Utils.setIntegerPreference(MainActivity.this, AppConstants.PREF_SYNCED_CONTACTS, 0);
 
-//            uploadContacts("", arrayListReSyncUserContact);
-//            if (arrayListReSyncUserContact.size() <= 100) {
-//                Log.i(TAG, "sending updated contacts to server");
-//                uploadContacts();
-//            } else {
-//                Log.i(TAG, "need to apply resync mechanism:");
-//            }
+                Utils.setStringPreference(MainActivity.this, AppConstants
+                        .PREF_CONTACT_LAST_SYNC_TIME, String.valueOf(System.currentTimeMillis() - 10000));
+                Utils.setBooleanPreference(MainActivity.this, AppConstants.PREF_CONTACT_SYNCED, true);
+            }
         } else {
 
             Utils.setIntegerPreference(MainActivity.this, AppConstants.PREF_SYNCED_CONTACTS, 0);
@@ -2439,6 +2438,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     .PREF_CONTACT_LAST_SYNC_TIME, String.valueOf(System.currentTimeMillis() - 10000));
             Utils.setBooleanPreference(MainActivity.this, AppConstants.PREF_CONTACT_SYNCED, true);
         }
+
     }
 
     private final int CONTACT_CHUNK = 50;
@@ -2633,9 +2633,12 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                             ProfileDataOperationPhoneNumber phoneNumber = new
                                     ProfileDataOperationPhoneNumber();
 
-                            phoneNumber.setPhoneNumber(cursor
-                                    .getString(cursor.getColumnIndex(ContactsContract
-                                            .CommonDataKinds.Phone.NUMBER)));
+                            String number = cursor.getString(cursor.getColumnIndex
+                                    (ContactsContract
+                                            .CommonDataKinds.Phone.NUMBER));
+                            number = Utils.getFormattedNumber(MainActivity.this, number);
+                            phoneNumber.setPhoneNumber(number);
+
                             phoneNumber.setPhoneType(phoneBookContacts.getPhoneNumberType
                                     (cursor.getInt(cursor.getColumnIndex
                                             (ContactsContract.CommonDataKinds.Phone.TYPE))));
