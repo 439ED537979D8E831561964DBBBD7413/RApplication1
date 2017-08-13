@@ -283,7 +283,12 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                         }
 
                     }*/
-                    showClearConfirmationDialog();
+
+                    if(callLogHistory(numberToCall) > 0){
+                        showClearConfirmationDialog();
+                    }else{
+                        Toast.makeText(context, context.getString(R.string.no_history_to_delete), Toast.LENGTH_SHORT).show();
+                    }
 
                 } else if (value.equalsIgnoreCase(context.getString(R.string.delete))) {
 
@@ -698,6 +703,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                         break;
 
                     case R.id.rippleRight:
+                        clearConfirmationDialog.dismissDialog();
                         if (isFromCallLogFragment) {
 
                             deleteCallLogByNumber(numberToCall);
@@ -728,4 +734,66 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
         clearConfirmationDialog.showDialog();
 
     }
+
+    private ArrayList<CallLogType> callLogHistoryList(String number) {
+        ArrayList<CallLogType> callDetails = new ArrayList<>();
+        Cursor cursor = null;
+        try {
+            if (!TextUtils.isEmpty(number)) {
+                Pattern numberPat = Pattern.compile("\\d+");
+                Matcher matcher1 = numberPat.matcher(number);
+                if (matcher1.find()) {
+                    cursor = getCallHistoryDataByNumber(number);
+                } else {
+                }
+            }
+
+            if (cursor != null && cursor.getCount() > 0) {
+                int number1 = cursor.getColumnIndex(CallLog.Calls.NUMBER);
+                int type = cursor.getColumnIndex(CallLog.Calls.TYPE);
+                int date = cursor.getColumnIndex(CallLog.Calls.DATE);
+                int duration = cursor.getColumnIndex(CallLog.Calls.DURATION);
+                int callLogId = cursor.getColumnIndex(CallLog.Calls._ID);
+                int numberType = cursor.getColumnIndex(CallLog.Calls.CACHED_NUMBER_TYPE);
+                int account_id = -1;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    //for versions above lollipop
+                    account_id = cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_ID);
+                } else {
+                    account_id = cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_ID);
+                }
+                while (cursor.moveToNext()) {
+                    String phNum = cursor.getString(number1);
+                    int callType = Integer.parseInt(cursor.getString(type));
+                    String callDate = cursor.getString(date);
+                    long dateOfCall = Long.parseLong(callDate);
+                    String callDuration = cursor.getString(duration);
+
+                    int histroyId = Integer.parseInt(cursor.getString(callLogId));
+                    CallLogType logObject = new CallLogType();
+                    logObject.setHistoryNumber(phNum);
+                    logObject.setHistoryType(callType);
+                    logObject.setHistoryDate(dateOfCall);
+                    logObject.setHistoryDuration(Integer.parseInt(callDuration));
+                    if (account_id != -1)
+                        logObject.setHistoryCallSimNumber(cursor.getString(account_id));
+                    else
+                        logObject.setHistoryCallSimNumber(" ");
+
+                    logObject.setHistoryId(histroyId);
+                    Date date1 = new Date(dateOfCall);
+                    String callDataAndTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a").format
+                            (date1);
+                    logObject.setCallDateAndTime(callDataAndTime);
+                    callDetails.add(logObject);
+                }
+                cursor.close();
+            }
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+
+        return callDetails;
+    }
+
 }

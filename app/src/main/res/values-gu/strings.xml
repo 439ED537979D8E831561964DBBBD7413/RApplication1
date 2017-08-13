@@ -255,6 +255,7 @@
     <string name="title_password_protected">પાસવર્ડ થી સુરક્ષિત</string>
     <string name="msg_enter_password_tips">કૃપા કરીને તમારા ખાતા ને ઍક્સેસ કરવા માટે પાસવર્ડ દાખલ કરો</string>
     <string name="str_enter_password">પાસવર્ડ દાખલ કરો</string>
+    <string name="str_signin_signup">સાઇન ઇન કરો અથવા અલગ એકાઉન્ટ સાથે સાઇન અપ કરો</string>
     <string name="action_login">લૉગિન</string>
     <string name="action_forget_password">પાસવર્ડ ભૂલી ગયા</string>
     <string name="err_msg_please_enter_password">પાસવર્ડ ખાલી ન હોઈ શકે</string>
@@ -420,10 +421,12 @@
     <string name="str_copy_email">ઇમેઇલ કૉપિ કરવામાં આવ્યો</string>
     <string name="str_copy_website">વેબસાઈટ કૉપિ કરવામાં આવ્યો</string>
     <string name="str_copy_address">એડ્રેસ કૉપિ કરવામાં આવ્યો</string>
+    <string name="str_copy_im_account">કૉપિ કરવામાં આવ્યો</string>
     <string name="str_copy_number_clip_board">નંબર ક્લિપબોર્ડ પર કૉપિ કરવામાં આવ્યો</string>
     <string name="str_copy_email_clip_board">ઇમેઇલ ક્લિપબોર્ડ પર કૉપિ કરવામાં આવ્યો</string>
     <string name="str_copy_website_clip_board">વેબસાઈટ ક્લિપબોર્ડ પર કૉપિ કરવામાં આવ્યો</string>
     <string name="str_copy_address_clip_board">એડ્રેસ ક્લિપબોર્ડ પર કૉપિ કરવામાં આવ્યો</string>
+    <string name="str_copy_im_account_clip_board">ક્લિપબોર્ડ પર કૉપિ કરવામાં આવ્યો</string>
     <string name="str_invalid_email">અમાન્ય ઇમેઇલ આઈડી</string>
     <string name="str_account_required">ખાતું આવશ્યક છે</string>
     <string name="str_web_required">વેબ એડ્રેસ આવશ્યક છે</string>
@@ -668,5 +671,6 @@
     <string name="txt_save">સંગ્રહિત કરો</string>
     <string name="report_spam">સ્પામ તરીકે રિપોર્ટ કરો</string>
     <string name="reported_spam">સ્પામ તરીકે રિપોર્ટ કર્યો</string>
+    <string name="no_history_to_delete">કોઈ કૉલ ઇતિહાસ મળ્યો નથી</string>
 
 </resources>

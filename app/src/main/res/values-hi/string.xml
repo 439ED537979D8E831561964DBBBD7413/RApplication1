@@ -6,6 +6,7 @@
     <string name="facebook_app_id">1410546345629965</string>
     <!--11/08/2017-->
     <!--<string name="facebook_app_id">110263789676833</string>-->
+
     <string name="google_maps_key">AIzaSyBJSXzIhhMakvEuZ8JCLfbs5m1nKXf0zHA</string>
 
     <!--  Google  -->
@@ -254,6 +255,7 @@
     <string name="msg_tip_password">युक्ति: पासवर्ड न्यूनतम 8 अक्षर लंबा जिसमे कम से कम 1 ऊपरी और 1 लोअर केस लेटर, 1 नंबर और 1 स्पेशल कैरेक्टर होना चाहिए</string>
     <string name="title_password_protected">पासवर्ड से सुरक्षित</string>
     <string name="msg_enter_password_tips">कृपया अपना खाता एक्सेस करने के लिए पासवर्ड दर्ज करें</string>
+    <string name="str_signin_signup">साइन इन करें या दूसरे खाते के साथ साइन अप करें</string>
     <string name="str_enter_password">पासवर्ड दर्ज करें</string>
     <string name="action_login">लॉग इन</string>
     <string name="action_forget_password">पासवर्ड भूल गए</string>
@@ -420,10 +422,12 @@
     <string name="str_copy_email">ईमेल कॉपी किया गया</string>
     <string name="str_copy_website">वेबसाइट कॉपी की गई</string>
     <string name="str_copy_address">पता कॉपी किया गया</string>
+    <string name="str_copy_im_account">कॉपी किया गया</string>
     <string name="str_copy_number_clip_board">नंबर क्लिपबोर्ड पर कॉपी किया गया</string>
     <string name="str_copy_email_clip_board"> ईमेल क्लिपबोर्ड पर कॉपी किया गया</string>
     <string name="str_copy_website_clip_board">वेबसाइट क्लिपबोर्ड पर कॉपी किया गया</string>
     <string name="str_copy_address_clip_board">पता क्लिपबोर्ड पर कॉपी किया गया</string>
+    <string name="str_copy_im_account_clip_board">क्लिपबोर्ड पर कॉपी किया गया</string>
     <string name="str_invalid_email">अमान्य ईमेल आईडी</string>
     <string name="str_account_required">खाता आवश्यक है</string>
     <string name="str_web_required">वेब एड्रेस आवश्यक है</string>
@@ -668,5 +672,6 @@
     <string name="txt_save">संगृहीत करें</string>
     <string name="report_spam">स्पैम के रूप में रिपोर्ट करें</string>
     <string name="reported_spam">स्पैम के रूप में रिपोर्ट किया गया</string>
+    <string name="no_history_to_delete">कोई कॉल इतिहास नहीं मिला</string>
 
 </resources>

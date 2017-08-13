@@ -628,6 +628,18 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             }
         });
 
+        holder.textMain1.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                Utils.copyToClipboard(activity, activity.getString(R.string.str_copy_im_account), (
+                        (TextView) view).getText().toString());
+                Utils.showSuccessSnackBar(activity, ((ProfileDetailActivity) activity)
+                        .getRelativeRootProfileDetail(), activity.getString(R.string
+                        .str_copy_im_account_clip_board));
+                return false;
+            }
+        });
+
         int imRcpType = Integer.parseInt(StringUtils.defaultIfEmpty(imAccount.getIMRcpType(),
                 String.valueOf(IntegerConstants.RCP_TYPE_SECONDARY)));
 

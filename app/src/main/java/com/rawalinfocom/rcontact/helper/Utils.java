@@ -110,7 +110,8 @@ public class Utils {
 
     public static void showKeyBoard(Activity activity) {
 
-        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context
+                .INPUT_METHOD_SERVICE);
         if (imm != null) {
             imm.toggleSoftInput(0, InputMethodManager.SHOW_IMPLICIT);
         }
@@ -118,7 +119,8 @@ public class Utils {
 
     public static void hideKeyBoard(Activity activity) {
 
-        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context
+                .INPUT_METHOD_SERVICE);
         if (imm != null) {
             imm.toggleSoftInput(0, InputMethodManager.HIDE_IMPLICIT_ONLY);
         }
@@ -660,7 +662,7 @@ public class Utils {
         clipboard.setPrimaryClip(clip);
     }
 
-    public static void changeTabsFont(Context context, TabLayout tabLayout) {
+    public static void changeTabsFont(Context context, TabLayout tabLayout, boolean setSize) {
         ViewGroup vg = (ViewGroup) tabLayout.getChildAt(0);
         int tabsCount = vg.getChildCount();
         for (int j = 0; j < tabsCount; j++) {
@@ -669,7 +671,12 @@ public class Utils {
             for (int i = 0; i < tabChildCount; i++) {
                 View tabViewChild = vgTab.getChildAt(i);
                 if (tabViewChild instanceof TextView) {
-                    ((TextView) tabViewChild).setTypeface(Utils.typefaceSemiBold(context));
+                    if (setSize) {
+                        ((TextView) tabViewChild).setTypeface(Utils.typefaceRegular(context));
+                        ((TextView) tabViewChild).setTextSize(12);
+                    } else {
+                        ((TextView) tabViewChild).setTypeface(Utils.typefaceSemiBold(context));
+                    }
                 }
             }
         }
@@ -809,7 +816,8 @@ public class Utils {
     }
 
     public static void openWebSite(Context context) {
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(WsConstants.WS_WEBSITE_URL));
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(WsConstants
+                .WS_WEBSITE_URL));
         browserIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(browserIntent);
     }

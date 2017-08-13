@@ -408,11 +408,12 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.i("Profile Activity ", "onReceive() of LocalBroadcast");
-
-            if (intent.getStringExtra("action").equals("delete")) {
-                arrayListHistory.clear();
-                recyclerCallHistory.setVisibility(View.GONE);
-                setHistoryAdapter();
+            if(intent.hasExtra("action")){
+                if (intent.getStringExtra("action").equals("delete")) {
+                    arrayListHistory.clear();
+                    recyclerCallHistory.setVisibility(View.GONE);
+                    setHistoryAdapter();
+                }
             }
         }
     };
