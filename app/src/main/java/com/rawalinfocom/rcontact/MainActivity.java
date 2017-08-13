@@ -1253,7 +1253,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     !smsLogs)*/) {
 
                 if (reSyncContactAsyncTask != null && reSyncContactAsyncTask.getStatus() == AsyncTask.Status.RUNNING) {
-                    System.out.println("RContact syncCallLogAsyncTask ---> running");
+                    System.out.println("RContact reSyncContactAsyncTask ---> running");
                 } else {
                     reSyncContactAsyncTask = new ReSyncContactAsyncTask();
                     reSyncContactAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -3363,7 +3363,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                                     .PREF_SMS_SYNCED, false)*/) {
 
                                 if (reSyncContactAsyncTask != null && reSyncContactAsyncTask.getStatus() == AsyncTask.Status.RUNNING) {
-                                    System.out.println("RContact syncCallLogAsyncTask ---> running");
+                                    System.out.println("RContact reSyncContactAsyncTask ---> running");
                                 } else {
                                     reSyncContactAsyncTask = new ReSyncContactAsyncTask();
                                     reSyncContactAsyncTask.executeOnExecutor(AsyncTask
