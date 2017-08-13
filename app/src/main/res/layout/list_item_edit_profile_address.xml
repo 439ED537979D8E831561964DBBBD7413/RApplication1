@@ -62,23 +62,54 @@
                 android:src="@drawable/ic_delete"
                 android:visibility="visible"/>
 
-            <Spinner
-                android:id="@+id/spinner_type"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/margin_small"
-                android:layout_marginLeft="@dimen/margin_small"
-                android:layout_marginRight="@dimen/margin_small"
-                android:layout_marginStart="@dimen/margin_small"
-                android:layout_toStartOf="@id/image_delete"/>
+            <!-- <Spinner
+                 android:id="@+id/spinner_type"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_marginEnd="@dimen/margin_small"
+                 android:layout_marginLeft="@dimen/margin_small"
+                 android:layout_marginRight="@dimen/margin_small"
+                 android:layout_marginStart="@dimen/margin_small"
+                 android:layout_toStartOf="@id/image_delete"/>
 
-            <EditText
-                android:id="@+id/input_country"
+             <EditText
+                 android:id="@+id/input_country"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:layout_toStartOf="@id/spinner_type"
+                 android:textColor="@color/colorAccent"
+                 android:textSize="16sp"/>-->
+            <LinearLayout
+                android:id="@+id/linear_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_toStartOf="@id/spinner_type"
-                android:textColor="@color/colorAccent"
-                android:textSize="16sp"/>
+                android:layout_toStartOf="@id/image_delete"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <EditText
+                    android:id="@+id/input_country"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.25"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="16sp"
+                    tools:ignore="TextFields"
+                    tools:text="1234567890"/>
+
+                <Spinner
+                    android:id="@+id/spinner_type"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin_small"
+                    android:layout_marginLeft="@dimen/margin_small"
+                    android:layout_marginRight="@dimen/margin_small"
+                    android:layout_marginStart="@dimen/margin_small"
+                    android:layout_weight="0.75"
+                    android:background="@null"
+                    android:padding="0dp"/>
+
+            </LinearLayout>
 
         </RelativeLayout>
 
