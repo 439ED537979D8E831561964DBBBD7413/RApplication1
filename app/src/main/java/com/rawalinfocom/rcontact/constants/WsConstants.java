@@ -15,7 +15,7 @@ public class WsConstants {
 //    public static final String WS_ROOT = "http://apistaging.rcontacts.in/api/v1/";
 
     // QA Server
-    public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
+//    public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
 
     // Monal
 //    public static final String WS_ROOT = "http://10.0.21.163/api/v1/";
@@ -58,8 +58,8 @@ public class WsConstants {
     /**
      * FAQ URL
      */
-    public static final String URL_FAQ = "http://webstaging.rcontacts.in/global/faqs";
-//    public static final String URL_FAQ = "https://web.rcontacts.in/global/faqs";
+//    public static final String URL_FAQ = "http://webstaging.rcontacts.in/global/faqs";
+    public static final String URL_FAQ = "https://web.rcontacts.in/global/faqs";
 
     /**
      * Profile View
