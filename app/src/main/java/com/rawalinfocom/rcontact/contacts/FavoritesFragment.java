@@ -352,8 +352,9 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
                     Utils.callIntent(getActivity(), callNumber);
                 } else {
                     // Permission Denied
-                    showPermissionConfirmationDialog(AppConstants
-                            .MY_PERMISSIONS_REQUEST_PHONE_CALL);
+                   /* showPermissionConfirmationDialog(AppConstants
+                            .MY_PERMISSIONS_REQUEST_PHONE_CALL);*/
+                    Utils.showErrorSnackBar(getActivity(), relativeRootFavourite, getString(R.string.error_call_permission));
                 }
             }
             break;
@@ -458,8 +459,9 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
                 } else {
 
                     callNumber = Utils.getFormattedNumber(getActivity(), actionNumber);
-                    Utils.callIntent(getActivity(), callNumber);
+//                    Utils.callIntent(getActivity(), callNumber);
 //                    showCallConfirmationDialog();
+                    swipeToCall();
                 }
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -549,6 +551,19 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
 
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.scrollToPosition(scrollPosition);
+    }
+
+    private void swipeToCall() {
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest
+                .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission
+                    .CALL_PHONE}, AppConstants
+                    .MY_PERMISSIONS_REQUEST_PHONE_CALL);
+        } else {
+            AppConstants.setIsFirstTime(false);
+            Utils.callIntent(getActivity(), Utils.getFormattedNumber(getActivity
+                    (), callNumber));
+        }
     }
 
     private void getRcpDetail() {

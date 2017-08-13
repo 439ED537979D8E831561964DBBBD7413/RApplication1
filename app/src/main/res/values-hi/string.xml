@@ -673,5 +673,7 @@
     <string name="report_spam">स्पैम के रूप में रिपोर्ट करें</string>
     <string name="reported_spam">स्पैम के रूप में रिपोर्ट किया गया</string>
     <string name="no_history_to_delete">कोई कॉल इतिहास नहीं मिला</string>
-
+    <string name="error_call_permission">कॉल की अनुमति आवश्यक है!</string>
+    <string name="error_camera_permission">कैमरा अनुमति आवश्यक है!</string>
+    <string name="error_storage_permission">संग्रहण अनुमति आवश्यक है!</string>
 </resources>

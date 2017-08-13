@@ -3109,18 +3109,39 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         switch (requestCode) {
             case AppConstants.MY_PERMISSIONS_REQUEST_CAMERA:
 
-                if (permissions[0].equals(Manifest.permission
+                if (grantResults.length > 0 && grantResults[0] == PackageManager
+                        .PERMISSION_GRANTED) {
+                    AppConstants.setIsFirstTime(false);
+                    // Permission Granted
+                    selectImageFromCamera();
+                } else {
+                    // Permission Denied
+                    Utils.showErrorSnackBar(EditProfileActivity.this, relativeRootEditProfile, getString(R.string.error_camera_permission));
+                }
+
+                /*if (permissions[0].equals(Manifest.permission
                         .CAMERA)) {
                     selectImageFromCamera();
-                }
+                }*/
 
                 break;
             case AppConstants.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE:
 
-                if (permissions[0].equals(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                if (grantResults.length > 0 && grantResults[0] == PackageManager
+                        .PERMISSION_GRANTED && grantResults[1] == PackageManager
+                        .PERMISSION_GRANTED) {
+                    AppConstants.setIsFirstTime(false);
+                    // Permission Granted
+                    selectImageFromGallery();
+                } else {
+                    // Permission Denied
+                    Utils.showErrorSnackBar(EditProfileActivity.this, relativeRootEditProfile, getString(R.string.error_storage_permission));
+                }
+
+                /*if (permissions[0].equals(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         && permissions[1].equals(Manifest.permission.READ_EXTERNAL_STORAGE)) {
                     selectImageFromGallery();
-                }
+                }*/
 
                 break;
 

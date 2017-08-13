@@ -672,5 +672,8 @@
     <string name="report_spam">Report as spam</string>
     <string name="reported_spam">Reported as spam</string>
     <string name="no_history_to_delete">No call history found</string>
+    <string name="error_call_permission">Call Permission Required!</string>
+    <string name="error_camera_permission">Camera Permission Required!</string>
+    <string name="error_storage_permission">Storage Permission Required!</string>
 
 </resources>
