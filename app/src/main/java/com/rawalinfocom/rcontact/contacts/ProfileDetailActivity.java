@@ -1533,6 +1533,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 linearBasicDetailRating.setVisibility(View.VISIBLE);
                 rippleInvite.setVisibility(View.GONE);
             } else if (StringUtils.length(callLogCloudName) > 0) {
+                String phoneBookName = getNameFromNumber(historyNumber);
+                if(!StringUtils.equalsIgnoreCase(phoneBookName,contactName)){
+                    textFullScreenText.setText(phoneBookName);
+                }
                 textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
                 if (!StringUtils.isEmpty(callLogCloudName)) {
                     textName.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
@@ -1542,6 +1546,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 rippleInvite.setVisibility(View.GONE);
             } else {
                 if (StringUtils.equalsIgnoreCase(pmId, "-1")) {
+                    String phoneBookName = getNameFromNumber(historyNumber);
+                    if(StringUtils.length(phoneBookName)>0){
+                        if(!StringUtils.equalsIgnoreCase(phoneBookName,contactName)){
+                            textFullScreenText.setText(phoneBookName);
+                        }
+                    }
                     textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color
                             .colorBlack));
                     linearBasicDetailRating.setVisibility(View.GONE);
@@ -1718,6 +1728,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         initSwipe();
 
     }
+
+
+
 
     private void getDataFromDB() {
         ProfileDataOperation profileDataOperation = queryManager.getRcProfileDetail

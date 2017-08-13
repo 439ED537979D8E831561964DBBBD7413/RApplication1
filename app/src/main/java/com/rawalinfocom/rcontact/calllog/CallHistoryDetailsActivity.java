@@ -51,6 +51,7 @@ import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
+import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.database.QueryManager;
 import com.rawalinfocom.rcontact.database.TableCommentMaster;
@@ -1510,6 +1511,19 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
             } else {
                 textViewAllOrganization.setVisibility(View.VISIBLE);
             }
+
+            if (arrayListOrganization.size() > 0) {
+                textDesignation.setTextColor(ContextCompat.getColor(CallHistoryDetailsActivity
+                        .this, R.color.colorAccent));
+                textOrganization.setTextColor(ContextCompat.getColor(CallHistoryDetailsActivity
+                        .this, R.color.colorAccent));
+            } else {
+                textDesignation.setTextColor(ContextCompat.getColor(CallHistoryDetailsActivity
+                        .this, R.color.colorBlack));
+                textOrganization.setTextColor(ContextCompat.getColor(CallHistoryDetailsActivity
+                        .this, R.color.colorBlack));
+            }
+
             textDesignation.setText(tempOrganization.get(0).getOrgJobTitle());
             textOrganization.setText(tempOrganization.get(0).getOrgName());
 
