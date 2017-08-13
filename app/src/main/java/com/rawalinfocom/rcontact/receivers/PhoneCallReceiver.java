@@ -204,7 +204,6 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                                 isIncomingCall = false;
                                 initializeEndCallDialog();
                             }
-
                         }
                     } else {
                         callSpamServiceApi();

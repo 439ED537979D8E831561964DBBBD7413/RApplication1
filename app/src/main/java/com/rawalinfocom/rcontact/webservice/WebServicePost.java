@@ -97,6 +97,11 @@ class WebServicePost {
                 urlConnection.setRequestProperty("Content-Type", "application/json");
                 urlConnection.setRequestProperty("Accept", "application/json");
                 if (setHeader) {
+
+                    System.out.println("RContact set header token --> " + Utils
+                            .getStringPreference
+                                    (activity, AppConstants.PREF_ACCESS_TOKEN, ""));
+
                     urlConnection.addRequestProperty(WsConstants.REQ_HEADER, Utils
                             .getStringPreference
                                     (activity, AppConstants.PREF_ACCESS_TOKEN, ""));
@@ -134,6 +139,10 @@ class WebServicePost {
                     if (url.toString().endsWith(WsConstants.REQ_SAVE_PASSWORD)
                             || url.toString().endsWith(WsConstants.REQ_CHECK_LOGIN)
                             || url.toString().endsWith(WsConstants.REQ_OTP_CONFIRMED)) {
+
+                        System.out.println("RContact get header token --> " + header);
+
+
                         Utils.setStringPreference(activity, AppConstants.PREF_ACCESS_TOKEN, header);
                     }
 

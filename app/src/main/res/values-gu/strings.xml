@@ -34,6 +34,7 @@
     <string name="str_welcom">આપનું સ્વાગત છેै</string>
     <string name="str_welcom_message">તમારા સંપર્કોનો સ્માર્ટ થવાનો સમય આવી ગયો છે </string>
     <string name="str_done">થઈ ગયું</string>
+    <string name="str_vcf_done">VCF file generated successfully!!</string>
 
     <!--  Other  -->
     <string name="error_facebook_login_cancelled">ફેસબુક લૉગિન નિષ્ફળ!</string>
@@ -284,7 +285,7 @@
     <string name="edit">એડિટ</string>
     <string name="delete">કાઢી નાંખો</string>
     <string name="clear_call_log">કૉલ લૉગ કાઢો</string>
-    <string name="view_in_ac">AC માં જુઓ</string>
+    <string name="view_in_ac">મારા સંપર્કો માં જુઓ</string>
     <string name="view_in_rc">RC માં જુઓ</string>
     <string name="text_rate">રેટ કરો</string>
     <string name="characters_left">અક્ષરો બાકી</string>

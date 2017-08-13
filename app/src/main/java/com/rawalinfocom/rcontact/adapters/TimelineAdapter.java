@@ -122,8 +122,8 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
         holder.buttonUserCommentSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String userComment = holder.edittextUserComment.getText().toString();
-                if (userComment != null && userComment.length() > 0) {
+                String userComment = holder.edittextUserComment.getText().toString().trim();
+                if (!(userComment.matches(""))) {
                     TimelineActivity.selectedRecycler = recyclerPosition;
                     TimelineActivity.selectedRecyclerItem = position;
                     addReplyonComment(item.getCrmType(), item.getCrmCloudPrId(), userComment, AppConstants.COMMENT_STATUS_RECEIVED, item.getEvmRecordIndexId());

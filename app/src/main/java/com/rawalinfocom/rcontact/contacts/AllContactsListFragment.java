@@ -1362,9 +1362,12 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                             ProfileDataOperationPhoneNumber phoneNumber = new
                                     ProfileDataOperationPhoneNumber();
 
-                            phoneNumber.setPhoneNumber(cursor.getString(cursor.getColumnIndex
+                            String number = cursor.getString(cursor.getColumnIndex
                                     (ContactsContract
-                                            .CommonDataKinds.Phone.NUMBER)));
+                                            .CommonDataKinds.Phone.NUMBER));
+                            number = Utils.getFormattedNumber(getActivity(), number);
+
+                            phoneNumber.setPhoneNumber(number);
                             phoneNumber.setPhoneType(phoneBookContacts.getPhoneNumberType
                                     (cursor.getInt(cursor.getColumnIndex
                                             (ContactsContract.CommonDataKinds.Phone.TYPE))));
@@ -1592,8 +1595,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     .getInstance(getActivity());
             myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
         }
-
-
     }
 
     private void backgroundSync(final boolean addToDatabase, final WsResponseObject
@@ -1665,6 +1666,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         if (syncingTask != null && syncingTask.isCancelled()) {
             return;
         }
+
+        System.out.println("RContacts first time uploadContacts");
+
         WsRequestObject uploadContactObject = new WsRequestObject();
         uploadContactObject.setResponseKey(responseKey);
         uploadContactObject.setProfileData(arrayListUserContact);

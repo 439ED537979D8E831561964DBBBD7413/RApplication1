@@ -9,7 +9,7 @@ package com.rawalinfocom.rcontact.constants;
 public class WsConstants {
 
     //Production Env
-//    public static final String WS_ROOT = "https://api.rcontacts.in/api/v1/";
+    public static final String WS_ROOT = "https://api.rcontacts.in/api/v1/";
 
     // Staging Env
 //    public static final String WS_ROOT = "http://apistaging.rcontacts.in/api/v1/";
@@ -18,7 +18,7 @@ public class WsConstants {
 //    public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
 
     // Monal
-    public static final String WS_ROOT = "http://10.0.21.163/api/v1/";
+//    public static final String WS_ROOT = "http://10.0.21.163/api/v1/";
 
     // Aniruddh
 //    public static final String WS_ROOT = "http://10.0.21.122/api/v1/";
@@ -44,11 +44,11 @@ public class WsConstants {
      */
 
     // Production Env
-//    public static final String URL_TERMS_CONDITIONS = "https://web.rcontacts.in/global/terms";
+    public static final String URL_TERMS_CONDITIONS = "https://web.rcontacts.in/global/terms";
 
 
     // Staging Env
-    public static final String URL_TERMS_CONDITIONS = "http://webstaging.rcontacts.in/global/terms";
+//    public static final String URL_TERMS_CONDITIONS = "http://webstaging.rcontacts.in/global/terms";
 
     /**
      * Feedback URL
@@ -79,8 +79,8 @@ public class WsConstants {
     /**
      * WEBSITE URL
      */
-    public static final String WS_WEBSITE_URL = "http://webstaging.rcontacts.in";
-//    public static final String WS_WEBSITE_URL = "https://web.rcontacts.in";
+//    public static final String WS_WEBSITE_URL = "http://webstaging.rcontacts.in";
+    public static final String WS_WEBSITE_URL = "https://web.rcontacts.in";
 
     public static final String WS_FACEBOOK_URL = "https://www.facebook.com/RContacts/";
     public static final String WS_TWITTER_URL = "https://twitter.com/RContactsApp";

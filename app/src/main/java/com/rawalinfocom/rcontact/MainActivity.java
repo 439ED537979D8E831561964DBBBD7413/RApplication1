@@ -282,10 +282,10 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     long elapsedHours = difference / hoursInMilli;
                     difference = difference % hoursInMilli;
 
-                    long elapsedMinutes = difference / minutesInMilli;
+//                    long elapsedMinutes = difference / minutesInMilli;
 
-//                    if (elapsedDays > 0 || elapsedHours > 8) {
-                    if (elapsedDays > 0 || elapsedHours > 0 || elapsedMinutes > 5) {
+                    if (elapsedDays > 0 || elapsedHours > 8) {
+//                    if (elapsedDays > 0 || elapsedHours > 0 || elapsedMinutes > 5) {
 
                         if (Utils.getBooleanPreference(MainActivity.this, AppConstants
                                 .KEY_IS_FIRST_TIME, false)) {
@@ -1321,8 +1321,13 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     false) || !logs)
                     /*&& (Utils.getBooleanPreference(this, AppConstants.PREF_SMS_SYNCED, false) ||
                     !smsLogs)*/) {
-                reSyncContactAsyncTask = new ReSyncContactAsyncTask();
-                reSyncContactAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+                if (reSyncContactAsyncTask != null && reSyncContactAsyncTask.getStatus() == AsyncTask.Status.RUNNING) {
+                    System.out.println("RContact reSyncContactAsyncTask ---> running");
+                } else {
+                    reSyncContactAsyncTask = new ReSyncContactAsyncTask();
+                    reSyncContactAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                }
             }
         }
     }
@@ -2344,8 +2349,9 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
     private void reSyncPhoneBookContactList() {
 
-        lastSyncedData = Utils.getIntegerPreference(MainActivity.this, AppConstants
-                .PREF_SYNCED_CONTACTS, 0);
+        System.out.println("RContacts reSync");
+
+        lastSyncedData = Utils.getIntegerPreference(MainActivity.this, AppConstants.PREF_SYNCED_CONTACTS, 0);
 
         currentStamp = String.valueOf(System.currentTimeMillis());
         String lastStamp = Utils.getStringPreference(this, AppConstants
@@ -2425,6 +2431,13 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 //            } else {
 //                Log.i(TAG, "need to apply resync mechanism:");
 //            }
+        } else {
+
+            Utils.setIntegerPreference(MainActivity.this, AppConstants.PREF_SYNCED_CONTACTS, 0);
+
+            Utils.setStringPreference(MainActivity.this, AppConstants
+                    .PREF_CONTACT_LAST_SYNC_TIME, String.valueOf(System.currentTimeMillis() - 10000));
+            Utils.setBooleanPreference(MainActivity.this, AppConstants.PREF_CONTACT_SYNCED, true);
         }
     }
 
@@ -3348,6 +3361,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     private void uploadContacts(String responseKey, ArrayList<ProfileData>
             arrayListUserContact) {
 
+        System.out.println("RContacts reSync uploadContacts");
+
         WsRequestObject uploadContactObject = new WsRequestObject();
         uploadContactObject.setResponseKey(responseKey);
         uploadContactObject.setProfileData(arrayListUserContact);
@@ -3427,9 +3442,14 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                                     .PREF_CALL_LOG_SYNCED, false)
                                     /*&& Utils.getBooleanPreference(MainActivity.this, AppConstants
                                     .PREF_SMS_SYNCED, false)*/) {
-                                reSyncContactAsyncTask = new ReSyncContactAsyncTask();
-                                reSyncContactAsyncTask.executeOnExecutor(AsyncTask
-                                        .THREAD_POOL_EXECUTOR);
+
+                                if (reSyncContactAsyncTask != null && reSyncContactAsyncTask.getStatus() == AsyncTask.Status.RUNNING) {
+                                    System.out.println("RContact reSyncContactAsyncTask ---> running");
+                                } else {
+                                    reSyncContactAsyncTask = new ReSyncContactAsyncTask();
+                                    reSyncContactAsyncTask.executeOnExecutor(AsyncTask
+                                            .THREAD_POOL_EXECUTOR);
+                                }
                             }
                         }
                     }
