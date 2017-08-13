@@ -341,7 +341,7 @@ public class TimelineActivity extends BaseActivity implements RippleView
                 item.setWisherName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
                 item.setWisherProfileImage(userProfile.getPmProfileImage());
             } else {
-                item.setWisherName("+" + comment.getCrmProfileDetails());
+                item.setWisherName(comment.getCrmProfileDetails());
             }
             final UserProfile ownProfile = tableProfileMaster.getProfileFromCloudPmId(Integer.parseInt(getUserPmId()));
             item.setWisherComment(comment.getCrmComment());

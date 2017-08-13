@@ -275,10 +275,10 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     long elapsedHours = difference / hoursInMilli;
                     difference = difference % hoursInMilli;
 
-                    long elapsedMinutes = difference / minutesInMilli;
+//                    long elapsedMinutes = difference / minutesInMilli;
 
-//                    if (elapsedDays > 0 || elapsedHours > 8) {
-                    if (elapsedDays > 0 || elapsedHours > 0 || elapsedMinutes > 5) {
+                    if (elapsedDays > 0 || elapsedHours > 8) {
+//                    if (elapsedDays > 0 || elapsedHours > 0 || elapsedMinutes > 2) {
 
                         if (Utils.getBooleanPreference(MainActivity.this, AppConstants.KEY_IS_FIRST_TIME, false)) {
 //                            System.out.println("RContact callPullMechanismService first time");
@@ -1251,8 +1251,13 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     false) || !logs)
                     /*&& (Utils.getBooleanPreference(this, AppConstants.PREF_SMS_SYNCED, false) ||
                     !smsLogs)*/) {
-                reSyncContactAsyncTask = new ReSyncContactAsyncTask();
-                reSyncContactAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+                if (reSyncContactAsyncTask != null && reSyncContactAsyncTask.getStatus() == AsyncTask.Status.RUNNING) {
+                    System.out.println("RContact syncCallLogAsyncTask ---> running");
+                } else {
+                    reSyncContactAsyncTask = new ReSyncContactAsyncTask();
+                    reSyncContactAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                }
             }
         }
     }
@@ -3356,9 +3361,14 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                                     .PREF_CALL_LOG_SYNCED, false)
                                     /*&& Utils.getBooleanPreference(MainActivity.this, AppConstants
                                     .PREF_SMS_SYNCED, false)*/) {
-                                reSyncContactAsyncTask = new ReSyncContactAsyncTask();
-                                reSyncContactAsyncTask.executeOnExecutor(AsyncTask
-                                        .THREAD_POOL_EXECUTOR);
+
+                                if (reSyncContactAsyncTask != null && reSyncContactAsyncTask.getStatus() == AsyncTask.Status.RUNNING) {
+                                    System.out.println("RContact syncCallLogAsyncTask ---> running");
+                                } else {
+                                    reSyncContactAsyncTask = new ReSyncContactAsyncTask();
+                                    reSyncContactAsyncTask.executeOnExecutor(AsyncTask
+                                            .THREAD_POOL_EXECUTOR);
+                                }
                             }
                         }
                     }
