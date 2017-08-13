@@ -445,9 +445,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
             if (!TextUtils.isEmpty(photoThumbNail)) {
                 callLogType.setProfileImage(photoThumbNail);
-            } /*else {
+            } else {
                 callLogType.setProfileImage("");
-            }*/
+            }
 
             callLogType.setUniqueContactId(rowId);
             String uniquePhoneBookId = getStarredStatusFromNumber(Utils.getFormattedNumber(getActivity(), number));
@@ -613,6 +613,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
                     CallLogType callLogTypeOfList = callLogTypeArrayList.get(i);
                     String numberToUpdate = callLogTypeOfList.getNumber();
+                    // TODO: 13/08/17 Need to handle number begin with 0 and add logic to remove + and add 91
+                    // (if issue found)
                     if (StringUtils.equalsIgnoreCase(updatedNumber, numberToUpdate)) {
                         callLogTypeOfList.setRcpLastName(callLogType.getRcpLastName());
                         callLogTypeOfList.setRcpFirstName(callLogType.getRcpFirstName());
@@ -1096,9 +1098,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                         String photoThumbNail = getPhotoUrlFromNumber(number);
                         if (!TextUtils.isEmpty(photoThumbNail)) {
                             callLogType.setProfileImage(photoThumbNail);
-                        } /*else {
+                        } else {
                             callLogType.setProfileImage("");
-                        }*/
+                        }
                         callLogTypeArrayList.set(i, callLogType);
                     }
                 }
@@ -1573,8 +1575,10 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         Cursor cursor = null;
         String order = CallLog.Calls.DATE + " DESC";
         try {
-            cursor = getActivity().getContentResolver().query(CallLog.Calls.CONTENT_URI, null,
-                    CallLog.Calls.NUMBER + " =?", new String[]{number}, order);
+            if(getActivity() != null){
+                cursor = getActivity().getContentResolver().query(CallLog.Calls.CONTENT_URI, null,
+                        CallLog.Calls.NUMBER + " =?", new String[]{number}, order);
+            }
 
         } catch (SecurityException e) {
             e.printStackTrace();

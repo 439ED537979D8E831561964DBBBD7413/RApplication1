@@ -79,8 +79,8 @@ public class WsConstants {
     /**
      * WEBSITE URL
      */
-    public static final String WS_WEBSITE_URL = "http://webstaging.rcontacts.in";
-//    public static final String WS_WEBSITE_URL = "https://web.rcontacts.in";
+//    public static final String WS_WEBSITE_URL = "http://webstaging.rcontacts.in";
+    public static final String WS_WEBSITE_URL = "https://web.rcontacts.in";
 
     public static final String WS_FACEBOOK_URL = "https://www.facebook.com/RContacts/";
     public static final String WS_TWITTER_URL = "https://twitter.com/RContactsApp";

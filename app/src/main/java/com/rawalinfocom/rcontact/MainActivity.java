@@ -278,7 +278,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 //                    long elapsedMinutes = difference / minutesInMilli;
 
                     if (elapsedDays > 0 || elapsedHours > 8) {
-//                    if (elapsedDays > 0 || elapsedHours > 0 || elapsedMinutes > 2) {
+//                    if (elapsedDays > 0 || elapsedHours > 0 || elapsedMinutes > 5) {
 
                         if (Utils.getBooleanPreference(MainActivity.this, AppConstants.KEY_IS_FIRST_TIME, false)) {
 //                            System.out.println("RContact callPullMechanismService first time");

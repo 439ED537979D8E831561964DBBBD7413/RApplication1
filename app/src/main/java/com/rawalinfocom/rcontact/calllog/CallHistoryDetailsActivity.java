@@ -1528,6 +1528,19 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
             } else {
                 textViewAllOrganization.setVisibility(View.VISIBLE);
             }
+
+            if (arrayListOrganization.size() > 0) {
+                textDesignation.setTextColor(ContextCompat.getColor(CallHistoryDetailsActivity
+                        .this, R.color.colorAccent));
+                textOrganization.setTextColor(ContextCompat.getColor(CallHistoryDetailsActivity
+                        .this, R.color.colorAccent));
+            } else {
+                textDesignation.setTextColor(ContextCompat.getColor(CallHistoryDetailsActivity
+                        .this, R.color.colorBlack));
+                textOrganization.setTextColor(ContextCompat.getColor(CallHistoryDetailsActivity
+                        .this, R.color.colorBlack));
+            }
+
             textDesignation.setText(tempOrganization.get(0).getOrgJobTitle());
             textOrganization.setText(tempOrganization.get(0).getOrgName());
 
