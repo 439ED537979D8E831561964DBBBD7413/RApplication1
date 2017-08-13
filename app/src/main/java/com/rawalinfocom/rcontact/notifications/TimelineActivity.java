@@ -341,7 +341,7 @@ public class TimelineActivity extends BaseActivity implements RippleView
                 item.setWisherName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
                 item.setWisherProfileImage(userProfile.getPmProfileImage());
             } else {
-                item.setWisherName("+" + comment.getCrmProfileDetails());
+                item.setWisherName(comment.getCrmProfileDetails());
             }
             final UserProfile ownProfile = tableProfileMaster.getProfileFromCloudPmId(Integer.parseInt(getUserPmId()));
             item.setWisherComment(comment.getCrmComment());
@@ -408,7 +408,8 @@ public class TimelineActivity extends BaseActivity implements RippleView
                 if (wsResponseObject != null) {
                     Rating rating = wsResponseObject.getProfileRating();
 
-                    int updated = tableCommentMaster.addReply(rating.getPrId() + "", rating.getPrReply(), Utils.getLocalTimeFromUTCTime(rating.getReplyAt()), Utils.getLocalTimeFromUTCTime(rating.getReplyAt()));
+                    int updated = tableCommentMaster.addReply(rating.getPrId() + "", rating.getPrReply(),
+                            Utils.getLocalTimeFromUTCTime(rating.getReplyAt()), Utils.getLocalTimeFromUTCTime(rating.getReplyAt()));
                     if (updated != 0) {
                         if (selectedRecycler != -1 && selectedRecyclerItem != -1) {
                             switch (selectedRecycler) {
