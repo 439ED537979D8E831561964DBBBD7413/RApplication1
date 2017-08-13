@@ -421,10 +421,12 @@
     <string name="str_copy_email">ईमेल कॉपी किया गया</string>
     <string name="str_copy_website">वेबसाइट कॉपी की गई</string>
     <string name="str_copy_address">पता कॉपी किया गया</string>
+    <string name="str_copy_im_account">कॉपी किया गया</string>
     <string name="str_copy_number_clip_board">नंबर क्लिपबोर्ड पर कॉपी किया गया</string>
     <string name="str_copy_email_clip_board"> ईमेल क्लिपबोर्ड पर कॉपी किया गया</string>
     <string name="str_copy_website_clip_board">वेबसाइट क्लिपबोर्ड पर कॉपी किया गया</string>
     <string name="str_copy_address_clip_board">पता क्लिपबोर्ड पर कॉपी किया गया</string>
+    <string name="str_copy_im_account_clip_board">क्लिपबोर्ड पर कॉपी किया गया</string>
     <string name="str_invalid_email">अमान्य ईमेल आईडी</string>
     <string name="str_account_required">खाता आवश्यक है</string>
     <string name="str_web_required">वेब एड्रेस आवश्यक है</string>

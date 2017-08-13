@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -244,12 +245,20 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
 
         textToolbarTitle.setText(getString(R.string.title_verification));
 
-        textToolbarTitle.setTypeface(Utils.typefaceSemiBold(this));
-        textVerifyNumber.setTypeface(Utils.typefaceRegular(this));
+        textToolbarTitle.setTypeface(Utils.typefaceRegular(this));
+        textVerifyNumber.setTypeface(Utils.typefaceBold(this));
         textEnterOtp.setTypeface(Utils.typefaceRegular(this));
         inputOtp.setTypeface(Utils.typefaceRegular(this));
-        buttonSubmit.setTypeface(Utils.typefaceSemiBold(this));
-        buttonResend.setTypeface(Utils.typefaceSemiBold(this));
+        buttonSubmit.setTypeface(Utils.typefaceRegular(this));
+        buttonResend.setTypeface(Utils.typefaceRegular(this));
+
+        Utils.setRoundedCornerBackground(buttonSubmit, ContextCompat.getColor
+                (OtpVerificationActivity.this, R.color.colorAccent), 5, 0, ContextCompat
+                .getColor(OtpVerificationActivity.this, R.color.colorAccent));
+
+        Utils.setRoundedCornerBackground(buttonResend, ContextCompat.getColor
+                (OtpVerificationActivity.this, R.color.vividRed), 5, 0, ContextCompat
+                .getColor(OtpVerificationActivity.this, R.color.vividRed));
 
         rippleActionBack.setOnRippleCompleteListener(this);
         rippleResend.setOnRippleCompleteListener(this);

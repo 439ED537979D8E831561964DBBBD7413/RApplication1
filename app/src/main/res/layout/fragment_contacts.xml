@@ -56,17 +56,17 @@
         app:tabSelectedTextColor="@color/colorAccent"
         app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget"/>
 
+    <FrameLayout
+        android:id="@+id/frame_container_call_tab"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/tab_contact"/>
+
     <include
         android:id="@+id/include_elevation"
         layout="@layout/layout_elevation"
         android:layout_width="match_parent"
         android:layout_height="@dimen/height_elevation"
-        android:layout_below="@id/tab_contact"/>
-
-    <FrameLayout
-        android:id="@+id/frame_container_call_tab"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:layout_below="@id/tab_contact"/>
 
 </RelativeLayout>

@@ -157,7 +157,8 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         googleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this, this).addApi
                 (Auth.GOOGLE_SIGN_IN_API, gso).build();
 
-        switch (Utils.getIntegerPreference(ProfileRegistrationActivity.this, AppConstants.PREF_LOGIN_TYPE, IntegerConstants.REGISTRATION_VIA)) {
+        switch (Utils.getIntegerPreference(ProfileRegistrationActivity.this, AppConstants
+                .PREF_LOGIN_TYPE, IntegerConstants.REGISTRATION_VIA)) {
             case 0:
                 IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_EMAIL;
                 inputEmailId.setEnabled(true);
@@ -387,7 +388,8 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 //                                userProfileRegistered.getPmId());
 //                    }
 
-                    Utils.setIntegerPreference(ProfileRegistrationActivity.this, AppConstants.PREF_LOGIN_TYPE, IntegerConstants.REGISTRATION_VIA);
+                    Utils.setIntegerPreference(ProfileRegistrationActivity.this, AppConstants
+                            .PREF_LOGIN_TYPE, IntegerConstants.REGISTRATION_VIA);
 
                     // Redirect to SetPasswordActivity
                     Bundle bundle = new Bundle();
@@ -513,9 +515,13 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
         rippleActionBack.setVisibility(View.INVISIBLE);
 
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout
+                .LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+        textToolbarTitle.setLayoutParams(layoutParams);
         textToolbarTitle.setText(R.string.title_profile_registration);
 
-        textToolbarTitle.setTypeface(Utils.typefaceSemiBold(this));
+        textToolbarTitle.setTypeface(Utils.typefaceRegular(this));
         inputFirstName.setTypeface(Utils.typefaceRegular(this));
         inputLastName.setTypeface(Utils.typefaceRegular(this));
         inputEmailId.setTypeface(Utils.typefaceRegular(this));
@@ -523,7 +529,23 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         buttonFacebook.setTypeface(Utils.typefaceSemiBold(this));
         buttonGoogle.setTypeface(Utils.typefaceSemiBold(this));
         buttonLinkedIn.setTypeface(Utils.typefaceSemiBold(this));
-        textOr.setTypeface(Utils.typefaceSemiBold(this));
+        textOr.setTypeface(Utils.typefaceRegular(this));
+
+        Utils.setRoundedCornerBackground(buttonFacebook, ContextCompat.getColor
+                (ProfileRegistrationActivity.this, R.color.colorFacebookBlue), 5, 0, ContextCompat
+                .getColor(ProfileRegistrationActivity.this, R.color.colorFacebookBlue));
+
+        Utils.setRoundedCornerBackground(buttonGoogle, ContextCompat.getColor
+                (ProfileRegistrationActivity.this, R.color.colorGoogleRed), 5, 0, ContextCompat
+                .getColor(ProfileRegistrationActivity.this, R.color.colorGoogleRed));
+
+        Utils.setRoundedCornerBackground(buttonLinkedIn, ContextCompat.getColor
+                (ProfileRegistrationActivity.this, R.color.colorLinkedInBlue), 5, 0, ContextCompat
+                .getColor(ProfileRegistrationActivity.this, R.color.colorLinkedInBlue));
+
+        Utils.setRoundedCornerBackground(buttonContinue, ContextCompat.getColor
+                (ProfileRegistrationActivity.this, R.color.colorAccent), 5, 0, ContextCompat
+                .getColor(ProfileRegistrationActivity.this, R.color.colorAccent));
 
         rippleRegister.setOnRippleCompleteListener(this);
         rippleFacebook.setOnRippleCompleteListener(this);
@@ -972,7 +994,8 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Utils.setIntegerPreference(ProfileRegistrationActivity.this, AppConstants.PREF_LOGIN_TYPE, 0);
+        Utils.setIntegerPreference(ProfileRegistrationActivity.this, AppConstants
+                .PREF_LOGIN_TYPE, 0);
     }
 
     public void getUserData() {
