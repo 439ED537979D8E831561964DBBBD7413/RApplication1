@@ -552,6 +552,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                             removeRemovedDataFromDb(uploadContactResponse
                                     .getArrayListMapping());
                         }
+
+                        Utils.setIntegerPreference(MainActivity.this, AppConstants.PREF_SYNCED_CONTACTS, 0);
                     }
 
 //                    if (uploadContactResponse.getArrayListMapping().size() > 0) {
@@ -2348,15 +2350,13 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     return;
                 }
                 backgroundSync(false, null);
-            }
+            } else {
+                Utils.setIntegerPreference(MainActivity.this, AppConstants.PREF_SYNCED_CONTACTS, 0);
 
-//            uploadContacts("", arrayListReSyncUserContact);
-//            if (arrayListReSyncUserContact.size() <= 100) {
-//                Log.i(TAG, "sending updated contacts to server");
-//                uploadContacts();
-//            } else {
-//                Log.i(TAG, "need to apply resync mechanism:");
-//            }
+                Utils.setStringPreference(MainActivity.this, AppConstants
+                        .PREF_CONTACT_LAST_SYNC_TIME, String.valueOf(System.currentTimeMillis() - 10000));
+                Utils.setBooleanPreference(MainActivity.this, AppConstants.PREF_CONTACT_SYNCED, true);
+            }
         } else {
 
             Utils.setIntegerPreference(MainActivity.this, AppConstants.PREF_SYNCED_CONTACTS, 0);
@@ -2557,10 +2557,11 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                         case ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE:
                             ProfileDataOperationPhoneNumber phoneNumber = new
                                     ProfileDataOperationPhoneNumber();
-
-                            phoneNumber.setPhoneNumber(cursor
-                                    .getString(cursor.getColumnIndex(ContactsContract
-                                            .CommonDataKinds.Phone.NUMBER)));
+                            String number = cursor.getString(cursor.getColumnIndex
+                                    (ContactsContract
+                                            .CommonDataKinds.Phone.NUMBER));
+                            number = Utils.getFormattedNumber(MainActivity.this, number);
+                            phoneNumber.setPhoneNumber(number);
                             phoneNumber.setPhoneType(phoneBookContacts.getPhoneNumberType
                                     (cursor.getInt(cursor.getColumnIndex
                                             (ContactsContract.CommonDataKinds.Phone.TYPE))));
