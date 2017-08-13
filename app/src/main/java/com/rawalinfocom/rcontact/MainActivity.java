@@ -38,7 +38,9 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
@@ -246,17 +248,22 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             try {
 
                 if (Utils.isNetworkAvailable(MainActivity.this)
-                        && Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CONTACT_SYNCED, false)
-                        && (Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CALL_LOG_SYNCED,
+                        && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                        .PREF_CONTACT_SYNCED, false)
+                        && (Utils.getBooleanPreference(MainActivity.this, AppConstants
+                                .PREF_CALL_LOG_SYNCED,
                         false))) {
 
 //                    System.out.println("RContact callPullMechanismService ");
 
-                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault());
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd " +
+                            "hh:mm:ss", Locale.getDefault());
 
                     String toDate = simpleDateFormat.format(new Date(System.currentTimeMillis()));
 
-                    long compare = Long.parseLong(Utils.getStringPreference(MainActivity.this, AppConstants.KEY_API_CALL_TIME, String.valueOf(System.currentTimeMillis())));
+                    long compare = Long.parseLong(Utils.getStringPreference(MainActivity.this,
+                            AppConstants.KEY_API_CALL_TIME, String.valueOf(System
+                                    .currentTimeMillis())));
                     String fromDate = simpleDateFormat.format(new Date(compare));
 
                     Date currDate = simpleDateFormat.parse(toDate);
@@ -280,23 +287,29 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 //                    if (elapsedDays > 0 || elapsedHours > 8) {
                     if (elapsedDays > 0 || elapsedHours > 0 || elapsedMinutes > 5) {
 
-                        if (Utils.getBooleanPreference(MainActivity.this, AppConstants.KEY_IS_FIRST_TIME, false)) {
+                        if (Utils.getBooleanPreference(MainActivity.this, AppConstants
+                                .KEY_IS_FIRST_TIME, false)) {
 //                            System.out.println("RContact callPullMechanismService first time");
                             fromDate = "";
                         } else {
-                            fromDate = Utils.getStringPreference(MainActivity.this, AppConstants.KEY_API_CALL_TIME_STAMP, "");
+                            fromDate = Utils.getStringPreference(MainActivity.this, AppConstants
+                                    .KEY_API_CALL_TIME_STAMP, "");
                         }
                         toDate = "";
 
                         RCPContactServiceCall(fromDate, WsConstants.REQ_GET_RCP_CONTACT);
-                        pullMechanismServiceCall(fromDate, toDate, WsConstants.REQ_GET_CONTACT_REQUEST);
-                        pullMechanismServiceCall(fromDate, toDate, WsConstants.REQ_GET_RATING_DETAILS);
-                        pullMechanismServiceCall(fromDate, toDate, WsConstants.REQ_GET_COMMENT_DETAILS);
+                        pullMechanismServiceCall(fromDate, toDate, WsConstants
+                                .REQ_GET_CONTACT_REQUEST);
+                        pullMechanismServiceCall(fromDate, toDate, WsConstants
+                                .REQ_GET_RATING_DETAILS);
+                        pullMechanismServiceCall(fromDate, toDate, WsConstants
+                                .REQ_GET_COMMENT_DETAILS);
                     }
                 }
 
             } catch (Exception e) {
-//                System.out.println("RContact PullMechanismService call error --> " + e.getMessage());
+//                System.out.println("RContact PullMechanismService call error --> " + e
+// .getMessage());
             }
 
             return null;
@@ -403,7 +416,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             if (serviceType.contains(WsConstants.REQ_GET_RCP_CONTACT)) {
                 WsResponseObject getRCPContactUpdateResponse = (WsResponseObject) data;
                 if (getRCPContactUpdateResponse != null && StringUtils.equalsIgnoreCase
-                        (getRCPContactUpdateResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+                        (getRCPContactUpdateResponse.getStatus(), WsConstants
+                                .RESPONSE_STATUS_TRUE)) {
 
                     if (!Utils.isArraylistNullOrEmpty(getRCPContactUpdateResponse
                             .getArrayListUserRcProfile())) {
@@ -434,14 +448,17 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     }
 
                     if (!StringUtils.isEmpty(getRCPContactUpdateResponse.getTimestamp())) {
-                        Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME, String.valueOf(System.currentTimeMillis()));
-                        Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME_STAMP, getRCPContactUpdateResponse.getTimestamp());
+                        Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME, String
+                                .valueOf(System.currentTimeMillis()));
+                        Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME_STAMP,
+                                getRCPContactUpdateResponse.getTimestamp());
                         Utils.setBooleanPreference(this, AppConstants.KEY_IS_FIRST_TIME, false);
                     }
 
                 } else {
                     if (getRCPContactUpdateResponse != null) {
-                        System.out.println("RContact error --> " + getRCPContactUpdateResponse.getMessage());
+                        System.out.println("RContact error --> " + getRCPContactUpdateResponse
+                                .getMessage());
                     } else {
                         System.out.println("RContact error --> getContactUpdateResponse null");
                     }
@@ -454,11 +471,14 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 if (getContactUpdateResponse != null && StringUtils.equalsIgnoreCase
                         (getContactUpdateResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                    storeContactRequestResponseToDB(getContactUpdateResponse, getContactUpdateResponse.getRequestData(), getContactUpdateResponse.getResponseData());
+                    storeContactRequestResponseToDB(getContactUpdateResponse,
+                            getContactUpdateResponse.getRequestData(), getContactUpdateResponse
+                                    .getResponseData());
 
                 } else {
                     if (getContactUpdateResponse != null) {
-                        System.out.println("RContact error --> " + getContactUpdateResponse.getMessage());
+                        System.out.println("RContact error --> " + getContactUpdateResponse
+                                .getMessage());
                     } else {
                         System.out.println("RContact error --> getContactUpdateResponse null");
                     }
@@ -471,12 +491,15 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 if (getRatingUpdateResponse != null && StringUtils.equalsIgnoreCase
                         (getRatingUpdateResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                    storeRatingRequestResponseToDB(getRatingUpdateResponse, getRatingUpdateResponse.getRatingReceive(), getRatingUpdateResponse.getRatingDone()
+                    storeRatingRequestResponseToDB(getRatingUpdateResponse,
+                            getRatingUpdateResponse.getRatingReceive(), getRatingUpdateResponse
+                                    .getRatingDone()
                             , getRatingUpdateResponse.getRatingDetails());
 
                 } else {
                     if (getRatingUpdateResponse != null) {
-                        System.out.println("RContact error --> " + getRatingUpdateResponse.getMessage());
+                        System.out.println("RContact error --> " + getRatingUpdateResponse
+                                .getMessage());
                     } else {
                         System.out.println("RContact error --> getRatingUpdateResponse null");
                     }
@@ -489,11 +512,14 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 if (getCommentUpdateResponse != null && StringUtils.equalsIgnoreCase
                         (getCommentUpdateResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                    storeCommentRequestResponseToDB(getCommentUpdateResponse, getCommentUpdateResponse.getCommentReceive(), getCommentUpdateResponse.getCommentDone());
+                    storeCommentRequestResponseToDB(getCommentUpdateResponse,
+                            getCommentUpdateResponse.getCommentReceive(),
+                            getCommentUpdateResponse.getCommentDone());
 
                 } else {
                     if (getCommentUpdateResponse != null) {
-                        System.out.println("RContact error --> " + getCommentUpdateResponse.getMessage());
+                        System.out.println("RContact error --> " + getCommentUpdateResponse
+                                .getMessage());
                     } else {
                         System.out.println("RContact error --> getCommentUpdateResponse null");
                     }
@@ -585,22 +611,27 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
                         try {
 
-                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale
-                                    .getDefault());
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss",
+                                    Locale
+                                            .getDefault());
 
                             if (Utils.getStringPreference
                                     (this, AppConstants.PREF_CALL_LOG_SYNC_TIME, "0").equals("0")) {
 
-                                Utils.setStringPreference(this, AppConstants.PREF_CALL_LOG_SYNC_TIME,
+                                Utils.setStringPreference(this, AppConstants
+                                                .PREF_CALL_LOG_SYNC_TIME,
                                         callLogInsertionResponse.getCallDateAndTime());
 
                             } else {
 
                                 Date prefDate = new Date(sdf.parse(Utils.getStringPreference
-                                        (this, AppConstants.PREF_CALL_LOG_SYNC_TIME, "0")).getTime());
-                                Date currDate = new Date(sdf.parse(callLogInsertionResponse.getCallDateAndTime()).getTime());
+                                        (this, AppConstants.PREF_CALL_LOG_SYNC_TIME, "0"))
+                                        .getTime());
+                                Date currDate = new Date(sdf.parse(callLogInsertionResponse
+                                        .getCallDateAndTime()).getTime());
 
-                                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a", Locale
+                                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss" +
+                                        " a", Locale
                                         .getDefault());
 
                                 String prefDateToCompare = dateFormat.format(prefDate);
@@ -610,14 +641,16 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                                 Date preferenceDate = dateFormat.parse(prefDateToCompare);
 
                                 if (curDate.getTime() > preferenceDate.getTime()) {
-                                    Utils.setStringPreference(this, AppConstants.PREF_CALL_LOG_SYNC_TIME,
+                                    Utils.setStringPreference(this, AppConstants
+                                                    .PREF_CALL_LOG_SYNC_TIME,
                                             callLogInsertionResponse.getCallDateAndTime());
                                 }
 
                             }
 
                         } catch (Exception e) {
-                            System.out.println("RContact call log sync error --> " + e.getMessage());
+                            System.out.println("RContact call log sync error --> " + e.getMessage
+                                    ());
                         }
                     }
 
@@ -625,7 +658,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                         Utils.setStringPreference(this, AppConstants.PREF_CALL_LOG_ROW_ID,
                                 callLogInsertionResponse.getCallLogRowId());
 
-                    Utils.setStringPreference(MainActivity.this, AppConstants.PREF_CALL_LOG_RESPONSE_KEY,
+                    Utils.setStringPreference(MainActivity.this, AppConstants
+                                    .PREF_CALL_LOG_RESPONSE_KEY,
                             callLogInsertionResponse.getResponseKey());
 
                     ArrayList<CallLogType> callLogTypeArrayList = divideCallLogByChunck();
@@ -645,8 +679,10 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                                 insertServiceCall(new ArrayList<CallLogType>());
                             }
                         } else {
-                            if ((Utils.getIntegerPreference(this, AppConstants.PREF_CALL_LOG_SYNCED_COUNT, 0) >=
-                                    Utils.getArrayListPreference(this, AppConstants.PREF_CALL_LOGS_ID_SET)
+                            if ((Utils.getIntegerPreference(this, AppConstants
+                                    .PREF_CALL_LOG_SYNCED_COUNT, 0) >=
+                                    Utils.getArrayListPreference(this, AppConstants
+                                            .PREF_CALL_LOGS_ID_SET)
                                             .size())) {
                                 insertServiceCall(new ArrayList<CallLogType>());
                             }
@@ -750,8 +786,11 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         }
     }
 
-    private void storeCommentRequestResponseToDB(WsResponseObject getCommentUpdateResponse, ArrayList<RatingRequestResponseDataItem> commentReceive,
-                                                 ArrayList<RatingRequestResponseDataItem> commentDone) {
+    private void storeCommentRequestResponseToDB(WsResponseObject getCommentUpdateResponse,
+                                                 ArrayList<RatingRequestResponseDataItem>
+                                                         commentReceive,
+                                                 ArrayList<RatingRequestResponseDataItem>
+                                                         commentDone) {
 
         try {
             TableCommentMaster tableCommentMaster = new TableCommentMaster(databaseHandler);
@@ -788,7 +827,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
                 TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
                 tableProfileMaster.updateUserProfileRating(toPmId, avgRating, totalUniqueRater);
-                Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING, totalUniqueRater);
+                Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING,
+                        totalUniqueRater);
                 Utils.setStringPreference(this, AppConstants.PREF_USER_RATING, avgRating);
 
                 tableCommentMaster.addComment(comment);
@@ -800,14 +840,20 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         }
 
         if (!StringUtils.isEmpty(getCommentUpdateResponse.getTimestamp())) {
-            Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME, String.valueOf(System.currentTimeMillis()));
-            Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME_STAMP, getCommentUpdateResponse.getTimestamp());
+            Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME, String.valueOf(System
+                    .currentTimeMillis()));
+            Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME_STAMP,
+                    getCommentUpdateResponse.getTimestamp());
             Utils.setBooleanPreference(this, AppConstants.KEY_IS_FIRST_TIME, false);
         }
     }
 
-    private void storeRatingRequestResponseToDB(WsResponseObject getRatingUpdateResponse, ArrayList<RatingRequestResponseDataItem> ratingReceive,
-                                                ArrayList<RatingRequestResponseDataItem> ratingDone, RatingRequestResponseDataItem ratingDetails) {
+    private void storeRatingRequestResponseToDB(WsResponseObject getRatingUpdateResponse,
+                                                ArrayList<RatingRequestResponseDataItem>
+                                                        ratingReceive,
+                                                ArrayList<RatingRequestResponseDataItem>
+                                                        ratingDone, RatingRequestResponseDataItem
+                                                        ratingDetails) {
 
         try {
             TableCommentMaster tableCommentMaster = new TableCommentMaster(databaseHandler);
@@ -818,7 +864,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 RatingRequestResponseDataItem dataItem = ratingDone.get(i);
 
                 tableCommentMaster.addReply(dataItem.getPrId(), dataItem.getReply(),
-                        Utils.getLocalTimeFromUTCTime(dataItem.getReplyAt()), Utils.getLocalTimeFromUTCTime(dataItem.getReplyAt()));
+                        Utils.getLocalTimeFromUTCTime(dataItem.getReplyAt()), Utils
+                                .getLocalTimeFromUTCTime(dataItem.getReplyAt()));
             }
 
             // profileRatingReply
@@ -849,7 +896,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
                 TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
                 tableProfileMaster.updateUserProfileRating(toPmId, avgRating, totalUniqueRater);
-                Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING, totalUniqueRater);
+                Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING,
+                        totalUniqueRater);
                 Utils.setStringPreference(this, AppConstants.PREF_USER_RATING, avgRating);
             }
 
@@ -858,14 +906,19 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         }
 
         if (!StringUtils.isEmpty(getRatingUpdateResponse.getTimestamp())) {
-            Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME, String.valueOf(System.currentTimeMillis()));
-            Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME_STAMP, getRatingUpdateResponse.getTimestamp());
+            Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME, String.valueOf(System
+                    .currentTimeMillis()));
+            Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME_STAMP,
+                    getRatingUpdateResponse.getTimestamp());
             Utils.setBooleanPreference(this, AppConstants.KEY_IS_FIRST_TIME, false);
         }
     }
 
-    private void storeContactRequestResponseToDB(WsResponseObject getContactUpdateResponse, ArrayList<ContactRequestResponseDataItem> requestData,
-                                                 ArrayList<ContactRequestResponseDataItem> responseData) {
+    private void storeContactRequestResponseToDB(WsResponseObject getContactUpdateResponse,
+                                                 ArrayList<ContactRequestResponseDataItem>
+                                                         requestData,
+                                                 ArrayList<ContactRequestResponseDataItem>
+                                                         responseData) {
 
         try {
 
@@ -875,8 +928,9 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             for (int i = 0; i < requestData.size(); i++) {
 
                 ContactRequestResponseDataItem dataItem = requestData.get(i);
-                if (String.valueOf(dataItem.getCarPmIdTo()).equals(Utils.getStringPreference(this, AppConstants
-                        .PREF_USER_PM_ID, "0"))
+                if (String.valueOf(dataItem.getCarPmIdTo()).equals(Utils.getStringPreference
+                        (this, AppConstants
+                                .PREF_USER_PM_ID, "0"))
                         && String.valueOf(dataItem.getCarAccessPermissionStatus()).equals("0")) {
                     tableRCContactRequest.addRequest(AppConstants
                                     .COMMENT_STATUS_RECEIVED,
@@ -897,9 +951,11 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
                 ContactRequestResponseDataItem dataItem = responseData.get(i);
 
-                if (String.valueOf(dataItem.getCarPmIdFrom()).equals(Utils.getStringPreference(this, AppConstants
-                        .PREF_USER_PM_ID, "0"))
-                        && MoreObjects.firstNonNull(dataItem.getCarAccessPermissionStatus(), "0").equals("0")) {
+                if (String.valueOf(dataItem.getCarPmIdFrom()).equals(Utils.getStringPreference
+                        (this, AppConstants
+                                .PREF_USER_PM_ID, "0"))
+                        && MoreObjects.firstNonNull(dataItem.getCarAccessPermissionStatus(), "0")
+                        .equals("0")) {
                     tableRCContactRequest1.addRequest(AppConstants
                                     .COMMENT_STATUS_SENT,
                             String.valueOf(dataItem.getCarId()),
@@ -917,8 +973,10 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         }
 
         if (!StringUtils.isEmpty(getContactUpdateResponse.getTimestamp())) {
-            Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME, String.valueOf(System.currentTimeMillis()));
-            Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME_STAMP, getContactUpdateResponse.getTimestamp());
+            Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME, String.valueOf(System
+                    .currentTimeMillis()));
+            Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME_STAMP,
+                    getContactUpdateResponse.getTimestamp());
             Utils.setBooleanPreference(this, AppConstants.KEY_IS_FIRST_TIME, false);
         }
     }
@@ -994,6 +1052,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
         imageNotification = (ImageView) toolbar.findViewById(R.id.image_notification);
         ImageView imageViewSearch = (ImageView) toolbar.findViewById(R.id.image_search);
+        EditText inputSearch = (EditText) toolbar.findViewById(R.id.input_search);
         badgeLayout = (LinearLayout) toolbar.findViewById(R.id.badge_layout);
         badgeTextView = (TextView) toolbar.findViewById(R.id.badge_count);
         imageNotification.setOnClickListener(new View.OnClickListener() {
@@ -1003,9 +1062,20 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             }
         });
 
+        inputSearch.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                if (MotionEvent.ACTION_UP == event.getAction()) {
+                    startActivityIntent(MainActivity.this, SearchActivity.class, null);
+                }
+                return true;
+            }
+        });
+
         imageViewSearch.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 startActivityIntent(MainActivity.this, SearchActivity.class, null);
             }
         });
@@ -1039,7 +1109,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
         bindWidgetsWithAnEvent();
         setupTabLayout();
-        Utils.changeTabsFont(this, tabMain);
+        Utils.changeTabsFont(this, tabMain, false);
 
     }
 
@@ -1201,7 +1271,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     && Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)
                     && !Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED,
                     false)) {
-                if (syncCallLogAsyncTask != null && syncCallLogAsyncTask.getStatus() == AsyncTask.Status.RUNNING) {
+                if (syncCallLogAsyncTask != null && syncCallLogAsyncTask.getStatus() == AsyncTask
+                        .Status.RUNNING) {
                     System.out.println("RContact syncCallLogAsyncTask ---> running");
                 } else {
                     syncCallLogAsyncTask = new SyncCallLogAsyncTask();
@@ -1410,7 +1481,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                                 .getPhonePublic()));
                         mobileNumber.setMnmIsPrivate(arrayListPhoneNumber.get(j).getIsPrivate());
                         mobileNumber.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
-                        if (StringUtils.equalsIgnoreCase(profileData.get(i).getVerifiedMobileNumber()
+                        if (StringUtils.equalsIgnoreCase(profileData.get(i)
+                                        .getVerifiedMobileNumber()
                                 , mobileNumber.getMnmMobileNumber())) {
                             mobileNumber.setMnmIsPrimary(String.valueOf(IntegerConstants
                                     .RCP_TYPE_PRIMARY));
@@ -1438,8 +1510,9 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                             email.setEmEmailType(arrayListEmailId.get(j).getEmType());
                             email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(j)
                                     .getEmPublic()));
-                            email.setEmIsVerified(String.valueOf(arrayListEmailId.get(j).getEmRcpType
-                                    ()));
+                            email.setEmIsVerified(String.valueOf(arrayListEmailId.get(j)
+                                    .getEmRcpType
+                                            ()));
                             email.setEmIsPrivate(arrayListEmailId.get(j).getEmIsPrivate());
 
                             email.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
@@ -1607,7 +1680,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                             String newRawIds = existingRawId + "," + mapLocalRcpId.get(profileData
                                     .get(i)
                                     .getRcpPmId());
-                            tableProfileMaster.updateRawIds(Integer.parseInt(userProfile.getPmRcpId()),
+                            tableProfileMaster.updateRawIds(Integer.parseInt(userProfile
+                                            .getPmRcpId()),
                                     newRawIds);
                         }
                     } else {
@@ -1618,7 +1692,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                             String newRawIds = existingRawId + "," + mapLocalRcpId.get(profileData
                                     .get(i)
                                     .getRcpPmId());
-                            tableProfileMaster.updateRawIds(Integer.parseInt(userProfile.getPmRcpId()),
+                            tableProfileMaster.updateRawIds(Integer.parseInt(userProfile
+                                            .getPmRcpId()),
                                     newRawIds);
                         }
                     }
@@ -2269,7 +2344,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
     private void reSyncPhoneBookContactList() {
 
-        lastSyncedData = Utils.getIntegerPreference(MainActivity.this, AppConstants.PREF_SYNCED_CONTACTS, 0);
+        lastSyncedData = Utils.getIntegerPreference(MainActivity.this, AppConstants
+                .PREF_SYNCED_CONTACTS, 0);
 
         currentStamp = String.valueOf(System.currentTimeMillis());
         String lastStamp = Utils.getStringPreference(this, AppConstants
@@ -2369,7 +2445,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                         responseKey = uploadContactResponse.getResponseKey();
                         Utils.setStringPreference(MainActivity.this, AppConstants.PREF_RESPONSE_KEY,
                                 responseKey);
-                        if (reSyncContactAsyncTask != null && reSyncContactAsyncTask.isCancelled()) {
+                        if (reSyncContactAsyncTask != null && reSyncContactAsyncTask.isCancelled
+                                ()) {
                             return;
                         }
                         if (!Utils.isArraylistNullOrEmpty(uploadContactResponse
@@ -3189,7 +3266,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             Cursor cursor = this.getContentResolver().query(uri, null, null, null, order);
             if (cursor != null && cursor.getCount() > 0) {
                 while (cursor.moveToNext()) {
-                    String userNumber = cursor.getString(cursor.getColumnIndex(CallLog.Calls.NUMBER));
+                    String userNumber = cursor.getString(cursor.getColumnIndex(CallLog.Calls
+                            .NUMBER));
                     String numberToSend = Utils.getFormattedNumber(MainActivity.this, userNumber);
                     String name = getNameFromNumber(numberToSend);
                     if (StringUtils.isEmpty(name))
@@ -3210,9 +3288,11 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         String contactName = "";
         try {
 
-            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
+            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri
+                    .encode(phoneNumber));
 
-            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME, ContactsContract.PhoneLookup.LOOKUP_KEY};
+            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME,
+                    ContactsContract.PhoneLookup.LOOKUP_KEY};
             Cursor cursor = this.getContentResolver().query(uri, projection, null, null, null);
 
             if (cursor != null) {
@@ -3301,11 +3381,14 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                                     .PREF_CONTACT_SYNCED, false)
                                     && !Utils.getBooleanPreference(MainActivity.this,
                                     AppConstants.PREF_CALL_LOG_SYNCED, false)) {
-                                if (syncCallLogAsyncTask != null && syncCallLogAsyncTask.getStatus() == AsyncTask.Status.RUNNING) {
-                                    System.out.println("RContact syncCallLogAsyncTask ---> running");
+                                if (syncCallLogAsyncTask != null && syncCallLogAsyncTask
+                                        .getStatus() == AsyncTask.Status.RUNNING) {
+                                    System.out.println("RContact syncCallLogAsyncTask ---> " +
+                                            "running");
                                 } else {
                                     syncCallLogAsyncTask = new SyncCallLogAsyncTask();
-                                    syncCallLogAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                                    syncCallLogAsyncTask.executeOnExecutor(AsyncTask
+                                            .THREAD_POOL_EXECUTOR);
                                 }
                             }
 
@@ -3419,7 +3502,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                             .PREF_CONTACT_SYNCED, false)
                             && !Utils.getBooleanPreference(MainActivity.this, AppConstants
                             .PREF_CALL_LOG_SYNCED, false)) {
-                        if (syncCallLogAsyncTask != null && syncCallLogAsyncTask.getStatus() == AsyncTask.Status.RUNNING) {
+                        if (syncCallLogAsyncTask != null && syncCallLogAsyncTask.getStatus() ==
+                                AsyncTask.Status.RUNNING) {
                             System.out.println("RContact syncCallLogAsyncTask ---> running");
                         } else {
                             syncCallLogAsyncTask = new SyncCallLogAsyncTask();
@@ -3646,8 +3730,9 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
             if (Utils.isNetworkAvailable(this)) {
                 new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
-                        deviceDetailObject, null, WsResponseObject.class, url, null, true).executeOnExecutor(AsyncTask
-                        .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + url);
+                        deviceDetailObject, null, WsResponseObject.class, url, null, true)
+                        .executeOnExecutor(AsyncTask
+                                .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + url);
             }
         }
 
@@ -3662,8 +3747,9 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
             if (Utils.isNetworkAvailable(this)) {
                 new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
-                        deviceDetailObject, null, WsResponseObject.class, url, null, true).executeOnExecutor(AsyncTask
-                        .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + url);
+                        deviceDetailObject, null, WsResponseObject.class, url, null, true)
+                        .executeOnExecutor(AsyncTask
+                                .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + url);
             }
         }
 
