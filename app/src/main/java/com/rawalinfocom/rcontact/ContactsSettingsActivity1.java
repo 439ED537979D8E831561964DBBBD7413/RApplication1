@@ -1,6 +1,7 @@
 package com.rawalinfocom.rcontact;
 
 import android.*;
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
@@ -308,7 +309,7 @@ public class ContactsSettingsActivity1 extends BaseActivity implements RippleVie
                 != PackageManager.PERMISSION_GRANTED) {
 
             ActivityCompat.requestPermissions(activity, new
-                    String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, AppConstants
+                    String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, AppConstants
                     .MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
 
         } else {
@@ -328,8 +329,8 @@ public class ContactsSettingsActivity1 extends BaseActivity implements RippleVie
         switch (requestCode) {
             case AppConstants.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE:
 
-                if (permissions[0].equals(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        && permissions[1].equals(android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                if (permissions[0].equals(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) &&
+                        permissions[1].equals(android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
 
                     if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
                         new ExportContact("1").execute();

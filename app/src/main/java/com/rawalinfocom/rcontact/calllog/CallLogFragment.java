@@ -613,6 +613,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
                     CallLogType callLogTypeOfList = callLogTypeArrayList.get(i);
                     String numberToUpdate = callLogTypeOfList.getNumber();
+                    // TO DO: Need to add condition for number begin with 0 and removing + and adding 91
                     if (StringUtils.equalsIgnoreCase(updatedNumber, numberToUpdate)) {
                         callLogTypeOfList.setRcpLastName(callLogType.getRcpLastName());
                         callLogTypeOfList.setRcpFirstName(callLogType.getRcpFirstName());
