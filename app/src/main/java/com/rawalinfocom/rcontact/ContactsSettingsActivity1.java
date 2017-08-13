@@ -59,9 +59,11 @@ import com.rawalinfocom.rcontact.model.AppLanguage;
 
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -97,7 +99,7 @@ public class ContactsSettingsActivity1 extends BaseActivity implements RippleVie
     TextView txtExportContact;
 
     private Activity activity;
-    private String vfile;
+    private String vfile, selectedType;
     private GoogleApiClient mGoogleApiClient;
     //    private final int RC_SIGN_IN = 7;
 //    private static final int GOOGLE_LOGIN_PERMISSION = 22;
@@ -284,9 +286,11 @@ public class ContactsSettingsActivity1 extends BaseActivity implements RippleVie
 
                     dialog.dismiss();
 
-                    switch (shortByContactListAdapter.getSelectedType()) {
+                    selectedType = shortByContactListAdapter.getSelectedType();
+
+                    switch (selectedType) {
                         case "0":
-                            new ExportContact(shortByContactListAdapter.getSelectedType()).execute();
+                            checkPermission();
                             break;
 
                         case "1":
@@ -313,10 +317,15 @@ public class ContactsSettingsActivity1 extends BaseActivity implements RippleVie
                     .MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
 
         } else {
-            if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-                new ExportContact("1").execute();
+
+            if (selectedType.equals("0")) {
+                new ExportContact("0").execute();
             } else {
-                buildGoogleDriveClient();
+                if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+                    new ExportContact("1").execute();
+                } else {
+                    buildGoogleDriveClient();
+                }
             }
         }
     }
@@ -332,10 +341,14 @@ public class ContactsSettingsActivity1 extends BaseActivity implements RippleVie
                 if (permissions[0].equals(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) &&
                         permissions[1].equals(android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
 
-                    if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-                        new ExportContact("1").execute();
+                    if (selectedType.equals("0")) {
+                        new ExportContact("0").execute();
                     } else {
-                        buildGoogleDriveClient();
+                        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+                            new ExportContact("1").execute();
+                        } else {
+                            buildGoogleDriveClient();
+                        }
                     }
                 }
 
@@ -388,6 +401,7 @@ public class ContactsSettingsActivity1 extends BaseActivity implements RippleVie
         }
 
         protected void onPostExecute(Void result) {
+
             Utils.hideProgressDialog();
 
             Utils.showSuccessSnackBar(activity, activityContactSettings, getString(R.string.str_vcf_done));
@@ -417,6 +431,15 @@ public class ContactsSettingsActivity1 extends BaseActivity implements RippleVie
                     try {
                         fd = activity.getContentResolver().openAssetFileDescriptor(uri,
                                 "r");
+
+                        /* Test for Android 7.0 */
+//                        FileDescriptor fdd = fd.getFileDescriptor();
+//                        InputStream in = new FileInputStream(fdd);
+//                        System.out.println("RContacts BLA BLA Len is :: " + (int) fd.getDeclaredLength());
+//                        byte[] buf = new byte[(int) fd.getDeclaredLength()];
+//                        in.read(buf);
+//                        fd.close();
+
                         FileInputStream fis = fd.createInputStream();
                         byte[] buf = new byte[(int) fd.getDeclaredLength()];
                         fis.read(buf);
