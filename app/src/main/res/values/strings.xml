@@ -420,10 +420,12 @@
     <string name="str_copy_email">Copied Email</string>
     <string name="str_copy_website">Copied Website</string>
     <string name="str_copy_address">Copied Address</string>
+    <string name="str_copy_im_account">Copied</string>
     <string name="str_copy_number_clip_board">Number copied to Clipboard</string>
     <string name="str_copy_email_clip_board">Email copied to Clipboard</string>
     <string name="str_copy_website_clip_board">Website copied to Clipboard</string>
     <string name="str_copy_address_clip_board">Address copied to Clipboard</string>
+    <string name="str_copy_im_account_clip_board">Copied to Clipboard</string>
     <string name="str_invalid_email">Invalid EmailId!</string>
     <string name="str_account_required">Account is required</string>
     <string name="str_web_required">Web address is required</string>

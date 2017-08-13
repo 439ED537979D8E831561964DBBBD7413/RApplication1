@@ -108,7 +108,7 @@ public class ContactsFragment extends BaseFragment {
 
         bindWidgetsWithAnEvent();
         setupTabLayout();
-        Utils.changeTabsFont(getActivity(), tabContact);
+        Utils.changeTabsFont(getActivity(), tabContact, true);
 
     }
 
@@ -121,9 +121,12 @@ public class ContactsFragment extends BaseFragment {
     }
 
     private void setupTabLayout() {
-        tabContact.addTab(tabContact.newTab().setText(getActivity().getString(R.string.tab_all_contact)), true);
-        tabContact.addTab(tabContact.newTab().setText(getActivity().getString(R.string.tab_r_contact)));
-        tabContact.addTab(tabContact.newTab().setText(getActivity().getString(R.string.tab_favorites)));
+        tabContact.addTab(tabContact.newTab().setText(getActivity().getString(R.string
+                .tab_all_contact)), true);
+        tabContact.addTab(tabContact.newTab().setText(getActivity().getString(R.string
+                .tab_r_contact)));
+        tabContact.addTab(tabContact.newTab().setText(getActivity().getString(R.string
+                .tab_favorites)));
     }
 
     private void bindWidgetsWithAnEvent() {

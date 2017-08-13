@@ -721,18 +721,26 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     }*/
 
                     if (!StringUtils.equalsAnyIgnoreCase(pmId, "-1")) {
-                        TableProfileMaster tableProfileMaster = new TableProfileMaster
+                       /* TableProfileMaster tableProfileMaster = new TableProfileMaster
                                 (databaseHandler);
                         UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer
-                                .parseInt(pmId));
+                                .parseInt(pmId));*/
+                        ArrayList<ProfileData> arrayListProfileData = queryManager
+                                .getRcpNumberName(pmId);
+                        String number = StringUtils.trimToEmpty(arrayListProfileData.get(0)
+                                .getTempNumber());
+                        if (StringUtils.startsWith(number, "+")) {
+                            number = StringUtils.substring(number, 1);
+                        }
 //                        if (!StringUtils.equalsAnyIgnoreCase(pmId, "-1")) {
                         // RCP profile or Own Profile
                         Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                         sharingIntent.setType("text/plain");
-                        String shareBody = WsConstants.WS_PROFILE_VIEW_ROOT + StringUtils
+                        /*String shareBody = WsConstants.WS_PROFILE_VIEW_ROOT + StringUtils
                                 .trimToEmpty(userProfile.getPmFirstName()) + "." +
                                 StringUtils.trimToEmpty(userProfile.getPmLastName()) + "." +
-                                pmId;
+                                pmId;*/
+                        String shareBody = WsConstants.WS_PROFILE_VIEW_ROOT + number;
                         sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
                         startActivity(Intent.createChooser(sharingIntent, getString(R.string
                                 .str_share_contact_via)));
