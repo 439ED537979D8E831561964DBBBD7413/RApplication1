@@ -677,7 +677,7 @@ public class TableProfileMaster {
 
         String selectQuery = "SELECT " + COLUMN_PM_RCP_ID + "," + COLUMN_PM_FIRST_NAME + "," +
                 COLUMN_PM_PROFILE_IMAGE + "," + COLUMN_PM_LAST_NAME + " FROM " +
-                TABLE_RC_PROFILE_MASTER + " WHERE " + COLUMN_PM_RAW_ID + " IN (" + allRcpId + ")";
+                TABLE_RC_PROFILE_MASTER + " WHERE " + COLUMN_PM_RCP_ID + " IN (" + allRcpId + ")";
 
         userProfiles = new ArrayList<>();
         db = databaseHandler.getWritableDatabase();
