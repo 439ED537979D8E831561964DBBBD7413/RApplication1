@@ -340,7 +340,13 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
                 Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                 sharingIntent.setType("text/plain");
-                String shareBody = AppConstants.PLAY_STORE_LINK + getPackageName();
+                QueryManager queryManager = new QueryManager(databaseHandler);
+                ArrayList<ProfileData> profileDataArrayList = queryManager.getRcpNumberName(getUserPmId());
+                String number = StringUtils.trimToEmpty(profileDataArrayList.get(0).getTempNumber());
+                if (StringUtils.startsWith(number, "+")) {
+                    number = StringUtils.substring(number, 1);
+                }
+                String shareBody = AppConstants.PLAY_STORE_LINK + getPackageName() + "&utm_source=" + number + "&utm_medium=" + number;
                 sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
                 startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_via)));
 

@@ -672,5 +672,8 @@
     <string name="report_spam">સ્પામ તરીકે રિપોર્ટ કરો</string>
     <string name="reported_spam">સ્પામ તરીકે રિપોર્ટ કર્યો</string>
     <string name="no_history_to_delete">કોઈ કૉલ ઇતિહાસ મળ્યો નથી</string>
+    <string name="error_call_permission">કૉલ પરવાનગી આવશ્યક છે!</string>
+    <string name="error_camera_permission">કૅમેરા પરવાનગી આવશ્યક છે!</string>
+    <string name="error_storage_permission">સંગ્રહ પરવાનગી જરૂરી!</string>
 
 </resources>

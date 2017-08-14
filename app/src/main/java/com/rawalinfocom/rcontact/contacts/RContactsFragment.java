@@ -1,10 +1,12 @@
 package com.rawalinfocom.rcontact.contacts;
 
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -13,6 +15,7 @@ import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -22,9 +25,9 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.util.Util;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
@@ -34,7 +37,6 @@ import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.ProgressWheel;
 import com.rawalinfocom.rcontact.helper.RecyclerItemDecoration;
-import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.UserProfile;
 
@@ -44,6 +46,7 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -65,15 +68,19 @@ public class RContactsFragment extends BaseFragment {
     ColorGroupSectionTitleIndicator titleIndicator;*/
 
     ArrayList<String> arrayListContactHeaders;
+    @BindView(R.id.relative_root_rcontacts)
+    RelativeLayout relativeRootRcontacts;
+    Unbinder unbinder;
     private ArrayList<UserProfile> arrayListDisplayProfile;
     public ArrayList<Object> arrayListRContact;
 
     RContactListAdapter rContactListAdapter;
 
-    MaterialDialog callConfirmationDialog;
+    MaterialDialog callConfirmationDialog, permissionConfirmationDialog;
 
     private View rootView;
     private boolean isReload = false;
+    private String callNumber;
 
     //<editor-fold desc="Constructors">
 
@@ -111,6 +118,7 @@ public class RContactsFragment extends BaseFragment {
             ButterKnife.bind(this, rootView);
         }
         registerLocalBroadCast();
+        unbinder = ButterKnife.bind(this, rootView);
         return rootView;
     }
 
@@ -145,6 +153,27 @@ public class RContactsFragment extends BaseFragment {
         //  rating update broadcast receiver unregister
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver
                 (localBroadcastReceiverRatingUpdate);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case AppConstants.MY_PERMISSIONS_REQUEST_PHONE_CALL: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager
+                        .PERMISSION_GRANTED) {
+                    AppConstants.setIsFirstTime(false);
+                    // Permission Granted
+                    Utils.callIntent(getActivity(), callNumber);
+                } else {
+                    // Permission Denied
+                    Utils.showErrorSnackBar(getActivity(), relativeRootRcontacts, getString(R.string.error_call_permission));
+                }
+            }
+            break;
+        }
     }
 
     // rating update broadcast receiver
@@ -237,7 +266,7 @@ public class RContactsFragment extends BaseFragment {
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getAdapterPosition();
-                String actionNumber = StringUtils.defaultString(((RContactListAdapter
+                callNumber = StringUtils.defaultString(((RContactListAdapter
                         .RContactViewHolder) viewHolder).textContactNumber.getText()
                         .toString());
                 if (direction == ItemTouchHelper.LEFT) {
@@ -248,13 +277,14 @@ public class RContactsFragment extends BaseFragment {
                   /*  smsIntent.setData(Uri.parse("sms:" + ((ProfileData)
                             arrayListPhoneBookContacts.get(position)).getOperation().get(0)
                             .getPbPhoneNumber().get(0).getPhoneNumber()));*/
-                    smsIntent.setData(Uri.parse("sms:" + actionNumber));
+                    smsIntent.setData(Uri.parse("sms:" + callNumber));
                     startActivity(smsIntent);
 
                 } else {
 
-                    actionNumber = Utils.getFormattedNumber(getActivity(), actionNumber);
-                    Utils.callIntent(getActivity(), actionNumber);
+                    callNumber = Utils.getFormattedNumber(getActivity(), callNumber);
+//                    Utils.callIntent(getActivity(), actionNumber);
+                    swipeToCall();
 //                    showCallConfirmationDialog(actionNumber);
                 }
                 Handler handler = new Handler();
@@ -322,6 +352,19 @@ public class RContactsFragment extends BaseFragment {
         itemTouchHelper.attachToRecyclerView(recyclerViewContactList);
     }
 
+    private void swipeToCall() {
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest
+                .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission
+                    .CALL_PHONE}, AppConstants
+                    .MY_PERMISSIONS_REQUEST_PHONE_CALL);
+        } else {
+            AppConstants.setIsFirstTime(false);
+            Utils.callIntent(getActivity(), Utils.getFormattedNumber(getActivity
+                    (), callNumber));
+        }
+    }
+
     /**
      * Set RecyclerView's LayoutManager
      */
@@ -342,6 +385,12 @@ public class RContactsFragment extends BaseFragment {
                 .getColor(getActivity(), R.color.colorVeryLightGray), 0.7f);
         recyclerView.addItemDecoration(decoration);
         recyclerView.scrollToPosition(scrollPosition);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 
 //    private void showCallConfirmationDialog(final String number) {
