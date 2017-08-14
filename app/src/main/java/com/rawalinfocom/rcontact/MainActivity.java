@@ -248,22 +248,17 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             try {
 
                 if (Utils.isNetworkAvailable(MainActivity.this)
-                        && Utils.getBooleanPreference(MainActivity.this, AppConstants
-                        .PREF_CONTACT_SYNCED, false)
-                        && (Utils.getBooleanPreference(MainActivity.this, AppConstants
-                                .PREF_CALL_LOG_SYNCED,
+                        && Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CONTACT_SYNCED, false)
+                        && (Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CALL_LOG_SYNCED,
                         false))) {
 
 //                    System.out.println("RContact callPullMechanismService ");
 
-                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd " +
-                            "hh:mm:ss", Locale.getDefault());
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault());
 
                     String toDate = simpleDateFormat.format(new Date(System.currentTimeMillis()));
 
-                    long compare = Long.parseLong(Utils.getStringPreference(MainActivity.this,
-                            AppConstants.KEY_API_CALL_TIME, String.valueOf(System
-                                    .currentTimeMillis())));
+                    long compare = Long.parseLong(Utils.getStringPreference(MainActivity.this, AppConstants.KEY_API_CALL_TIME, String.valueOf(System.currentTimeMillis())));
                     String fromDate = simpleDateFormat.format(new Date(compare));
 
                     Date currDate = simpleDateFormat.parse(toDate);
@@ -287,29 +282,23 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     if (elapsedDays > 0 || elapsedHours > 12) {
 //                    if (elapsedDays > 0 || elapsedHours > 0 || elapsedMinutes > 5) {
 
-                        if (Utils.getBooleanPreference(MainActivity.this, AppConstants
-                                .KEY_IS_FIRST_TIME, false)) {
+                        if (Utils.getBooleanPreference(MainActivity.this, AppConstants.KEY_IS_FIRST_TIME, false)) {
 //                            System.out.println("RContact callPullMechanismService first time");
                             fromDate = "";
                         } else {
-                            fromDate = Utils.getStringPreference(MainActivity.this, AppConstants
-                                    .KEY_API_CALL_TIME_STAMP, "");
+                            fromDate = Utils.getStringPreference(MainActivity.this, AppConstants.KEY_API_CALL_TIME_STAMP, "");
                         }
                         toDate = "";
 
                         RCPContactServiceCall(fromDate, WsConstants.REQ_GET_RCP_CONTACT);
-                        pullMechanismServiceCall(fromDate, toDate, WsConstants
-                                .REQ_GET_CONTACT_REQUEST);
-                        pullMechanismServiceCall(fromDate, toDate, WsConstants
-                                .REQ_GET_RATING_DETAILS);
-                        pullMechanismServiceCall(fromDate, toDate, WsConstants
-                                .REQ_GET_COMMENT_DETAILS);
+                        pullMechanismServiceCall(fromDate, toDate, WsConstants.REQ_GET_CONTACT_REQUEST);
+                        pullMechanismServiceCall(fromDate, toDate, WsConstants.REQ_GET_RATING_DETAILS);
+                        pullMechanismServiceCall(fromDate, toDate, WsConstants.REQ_GET_COMMENT_DETAILS);
                     }
                 }
 
             } catch (Exception e) {
-//                System.out.println("RContact PullMechanismService call error --> " + e
-// .getMessage());
+//                System.out.println("RContact PullMechanismService call error --> " + e.getMessage());
             }
 
             return null;
@@ -422,8 +411,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             if (serviceType.contains(WsConstants.REQ_GET_RCP_CONTACT)) {
                 WsResponseObject getRCPContactUpdateResponse = (WsResponseObject) data;
                 if (getRCPContactUpdateResponse != null && StringUtils.equalsIgnoreCase
-                        (getRCPContactUpdateResponse.getStatus(), WsConstants
-                                .RESPONSE_STATUS_TRUE)) {
+                        (getRCPContactUpdateResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
                     if (!Utils.isArraylistNullOrEmpty(getRCPContactUpdateResponse
                             .getArrayListUserRcProfile())) {
@@ -793,11 +781,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         }
     }
 
-    private void storeCommentRequestResponseToDB(WsResponseObject getCommentUpdateResponse,
-                                                 ArrayList<RatingRequestResponseDataItem>
-                                                         commentReceive,
-                                                 ArrayList<RatingRequestResponseDataItem>
-                                                         commentDone) {
+    private void storeCommentRequestResponseToDB(WsResponseObject getCommentUpdateResponse, ArrayList<RatingRequestResponseDataItem> commentReceive,
+                                                 ArrayList<RatingRequestResponseDataItem> commentDone) {
 
         try {
             TableCommentMaster tableCommentMaster = new TableCommentMaster(databaseHandler);
@@ -855,12 +840,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         }
     }
 
-    private void storeRatingRequestResponseToDB(WsResponseObject getRatingUpdateResponse,
-                                                ArrayList<RatingRequestResponseDataItem>
-                                                        ratingReceive,
-                                                ArrayList<RatingRequestResponseDataItem>
-                                                        ratingDone, RatingRequestResponseDataItem
-                                                        ratingDetails) {
+    private void storeRatingRequestResponseToDB(WsResponseObject getRatingUpdateResponse, ArrayList<RatingRequestResponseDataItem> ratingReceive,
+                                                ArrayList<RatingRequestResponseDataItem> ratingDone, RatingRequestResponseDataItem ratingDetails) {
 
         try {
             TableCommentMaster tableCommentMaster = new TableCommentMaster(databaseHandler);
