@@ -527,12 +527,12 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                             .getArrayListCallLogHistory();
                     if (oldHistoryList != null && oldHistoryList.size() > 0) {
                         rippleViewOldRecords.setVisibility(View.VISIBLE);
-                        ArrayList<CallLogType> listToAppend =  new ArrayList<>();
-                        for(int i=0 ; i<oldHistoryList.size() ; i++){
-                            CallLogType callLogType =  oldHistoryList.get(i);
-                            String number =  callLogType.getNumber();
-                            if(number.startsWith("91"))
-                                number =  "+" + number;
+                        ArrayList<CallLogType> listToAppend = new ArrayList<>();
+                        for (int i = 0; i < oldHistoryList.size(); i++) {
+                            CallLogType callLogType = oldHistoryList.get(i);
+                            String number = callLogType.getNumber();
+                            if (number.startsWith("91"))
+                                number = "+" + number;
                             callLogType.setHistoryNumber(number);
                             callLogType.setHistoryNumberType(callLogType.getNumberType());
                             callLogType.setHistoryDate(Long.parseLong(callLogType.getCallDateAndTime()));
@@ -806,7 +806,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                     if (tempPhoneNumber == null) {
                         if (!StringUtils.isEmpty(historyNumber)) {
                             if (historyNumber.matches("[+][0-9]+") || historyNumber.matches("[0-9]+")) {
-                                profileContactNumber = Utils.getFormattedNumber(CallHistoryDetailsActivity.this, profileContactNumber);
+                                profileContactNumber = Utils.getFormattedNumber(CallHistoryDetailsActivity.this, historyNumber);
                                 Utils.callIntent(CallHistoryDetailsActivity.this, profileContactNumber);
 //                                showCallConfirmationDialog(historyNumber);
                             }
@@ -953,47 +953,66 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                         }
                     }
                 } else {
-                    if (!TextUtils.isEmpty(contactName) /*&& !contactName.equalsIgnoreCase
-                    ("[Unknown]")*/) {
-                        String number = "";
-                        if (StringUtils.isEmpty(historyNumber)) {
-                            number = contactName;
-                        } else {
-                            number = historyNumber;
-                        }
-                        ArrayList<String> arrayListName = new ArrayList<>(Arrays.asList(this
-                                        .getString(R.string.edit), this.getString(R.string
-                                        .view_in_ac),
-                                /*this.getString(R.string.view_in_ac), this.getString(R.string
-                                .view_in_rc),
-                                this.getString(R.string.call_reminder),
-                                this.getString(R.string.block),*/ this.getString(R.string.delete),
-                                this.getString(R.string.clear_call_log)));
-                        profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
-                                arrayListName, number, 0, isFromCallLogTab,
-                                arrayListHistory, contactName, "", phoneBookId, profileThumbnail,
-                                pmId, isCallLogRcpUser, "", cloudContactName);
-                        profileMenuOptionDialog.showDialog();
 
-                    } else {
-                        if (!TextUtils.isEmpty(profileContactNumber)) {
+                    if (isRcpVerifiedUser.equalsIgnoreCase("0") || isRcpVerifiedUser.equalsIgnoreCase("1")) {
+                        if (!TextUtils.isEmpty(historyNumber)) {
                             ArrayList<String> arrayListNumber = new ArrayList<>(Arrays.asList
                                     (this.getString(R.string.add_to_contact),
-                                            this.getString(R.string.add_to_existing_contact), this
-                                                    .getString(R.string.view_profile),
+                                            this.getString(R.string.add_to_existing_contact),
                                             this.getString(R.string.copy_phone_number),
                                     /*this.getString(R.string.call_reminder), this.getString(R
                                     .string.block),*/
                                             this.getString(R.string.delete), this.getString(R.string
                                                     .clear_call_log)));
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
-                                    arrayListNumber, profileContactNumber, 0, isFromCallLogTab,
+                                    arrayListNumber, historyNumber, 0, false,
                                     arrayListHistory, "", uniqueContactId, "", profileThumbnail,
-                                    pmId, isCallLogRcpUser, "", cloudContactName);
+                                    pmId, isCallLogRcpUser, isRcpVerifiedUser
+                                    , cloudContactName);
                             profileMenuOptionDialog.showDialog();
                         }
-                    }
+                    } else {
+                        if (!TextUtils.isEmpty(contactName) /*&& !contactName.equalsIgnoreCase
+                    ("[Unknown]")*/) {
+                            String number = "";
+                            if (StringUtils.isEmpty(historyNumber)) {
+                                number = contactName;
+                            } else {
+                                number = historyNumber;
+                            }
+                            ArrayList<String> arrayListName = new ArrayList<>(Arrays.asList(this
+                                            .getString(R.string.edit), this.getString(R.string
+                                            .view_in_ac),
+                                /*this.getString(R.string.view_in_ac), this.getString(R.string
+                                .view_in_rc),
+                                this.getString(R.string.call_reminder),
+                                this.getString(R.string.block),*/ this.getString(R.string.delete),
+                                    this.getString(R.string.clear_call_log)));
+                            profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
+                                    arrayListName, number, 0, isFromCallLogTab,
+                                    arrayListHistory, contactName, "", phoneBookId, profileThumbnail,
+                                    pmId, isCallLogRcpUser, "", cloudContactName);
+                            profileMenuOptionDialog.showDialog();
 
+                        } else {
+                            if (!TextUtils.isEmpty(profileContactNumber)) {
+                                ArrayList<String> arrayListNumber = new ArrayList<>(Arrays.asList
+                                        (this.getString(R.string.add_to_contact),
+                                                this.getString(R.string.add_to_existing_contact), this
+                                                        .getString(R.string.view_profile),
+                                                this.getString(R.string.copy_phone_number),
+                                    /*this.getString(R.string.call_reminder), this.getString(R
+                                    .string.block),*/
+                                                this.getString(R.string.delete), this.getString(R.string
+                                                        .clear_call_log)));
+                                profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
+                                        arrayListNumber, profileContactNumber, 0, isFromCallLogTab,
+                                        arrayListHistory, "", uniqueContactId, "", profileThumbnail,
+                                        pmId, isCallLogRcpUser, "", cloudContactName);
+                                profileMenuOptionDialog.showDialog();
+                            }
+                        }
+                    }
                 }
                 break;
         }
@@ -1005,8 +1024,9 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         if (arrayListHistory != null && arrayListHistory.size() > 0) {
             for (int i = arrayListHistory.size() - 1; i >= 0; i--) {
                 CallLogType callLogType = arrayListHistory.get(i);
-                String number = callLogType.getHistoryNumber();
+//                String number = callLogType.getHistoryNumber();
 //                String formattedNumber = Utils.getFormattedNumber(this, number);
+                String number = Utils.getFormattedNumber(this, callLogType.getHistoryNumber());
                 if (!StringUtils.isEmpty(number)) {
                     if (number.startsWith("+91"))
                         number = number.replace("+", "");

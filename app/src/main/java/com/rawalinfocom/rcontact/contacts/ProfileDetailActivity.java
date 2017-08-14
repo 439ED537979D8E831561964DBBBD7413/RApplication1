@@ -50,6 +50,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.util.Util;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.ContactListingActivity;
 import com.rawalinfocom.rcontact.R;
@@ -3549,7 +3550,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         ArrayList<CallLogHistoryType> arrayListToSend = new ArrayList<>();
         if (arrayListHistory != null && arrayListHistory.size() > 0) {
             CallLogType callLogType = arrayListHistory.get(arrayListHistory.size() - 1);
-            String number = callLogType.getHistoryNumber();
+//            String number = callLogType.getHistoryNumber();
+            String number = Utils.getFormattedNumber(this,callLogType.getHistoryNumber());
             if (!StringUtils.isEmpty(number)) {
                 if (number.startsWith("+91"))
                     number = number.replace("+", "");
