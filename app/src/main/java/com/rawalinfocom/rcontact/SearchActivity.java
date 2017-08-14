@@ -222,7 +222,9 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                 .READ_CALL_LOG) /*&& permissions[1].equals(Manifest.permission.READ_SMS)*/) {
             if (grantResults[0] == PermissionChecker.PERMISSION_GRANTED /*&& grantResults[1] ==
                     PermissionChecker.PERMISSION_GRANTED*/) {
-                getCallLogData();
+//                getCallLogData();
+                syncCallLogAsyncTask = new SyncCallLogAsyncTask();
+                syncCallLogAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 //                getSMSData();
             } else {
                 showPermissionConfirmationDialog();
