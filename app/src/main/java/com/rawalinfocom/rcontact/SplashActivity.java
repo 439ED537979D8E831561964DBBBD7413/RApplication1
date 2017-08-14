@@ -13,7 +13,7 @@ import com.rawalinfocom.rcontact.helper.Utils;
 public class SplashActivity extends BaseActivity {
 
     // Splash screen timer
-    private final static int SPLASH_TIME_OUT = 100;
+    private final static int SPLASH_TIME_OUT = 1500;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +39,7 @@ public class SplashActivity extends BaseActivity {
                 if (Utils.getIntegerPreference(SplashActivity.this, AppConstants
                         .PREF_LAUNCH_SCREEN_INT, IntegerConstants.LAUNCH_TUTORIAL_ACTIVITY) ==
                         IntegerConstants.LAUNCH_TUTORIAL_ACTIVITY) {
-
+//                    SPLASH_TIME_OUT = 1500;
                     startActivityIntent(SplashActivity.this, TutorialActivity.class, null);
                     finish();
 
@@ -94,7 +94,8 @@ public class SplashActivity extends BaseActivity {
 
                 } else {
 
-                    if (Utils.getBooleanPreference(SplashActivity.this, AppConstants.KEY_IS_RESTORE_DONE, false)) {
+                    if (Utils.getBooleanPreference(SplashActivity.this, AppConstants
+                            .KEY_IS_RESTORE_DONE, false)) {
                         // Redirect to MainActivity
                         startActivityIntent(SplashActivity.this, MainActivity.class, null);
                         overridePendingTransition(R.anim.enter, R.anim.exit);

@@ -1191,6 +1191,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     case R.id.rippleRight:
                         permissionConfirmationDialog.dismissDialog();
                         isFromSettings = true;
+                        getActivity().finish();
                         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
                                 Uri.fromParts("package", getActivity().getPackageName(), null));
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -1362,9 +1363,12 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                             ProfileDataOperationPhoneNumber phoneNumber = new
                                     ProfileDataOperationPhoneNumber();
 
-                            phoneNumber.setPhoneNumber(cursor.getString(cursor.getColumnIndex
+                            String number = cursor.getString(cursor.getColumnIndex
                                     (ContactsContract
-                                            .CommonDataKinds.Phone.NUMBER)));
+                                            .CommonDataKinds.Phone.NUMBER));
+                            number = Utils.getFormattedNumber(getActivity(), number);
+
+                            phoneNumber.setPhoneNumber(number);
                             phoneNumber.setPhoneType(phoneBookContacts.getPhoneNumberType
                                     (cursor.getInt(cursor.getColumnIndex
                                             (ContactsContract.CommonDataKinds.Phone.TYPE))));

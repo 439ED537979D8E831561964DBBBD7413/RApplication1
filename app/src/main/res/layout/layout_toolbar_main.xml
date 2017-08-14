@@ -92,6 +92,18 @@
             android:layout_toRightOf="@id/imgActionDrawer"
             android:visibility="gone"/>
 
+        <EditText
+            android:id="@+id/input_search"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/margin_5dp"
+            android:layout_toEndOf="@+id/image_search"
+            android:layout_toStartOf="@+id/linear_action_right"
+            android:backgroundTint="@color/finestWhite30"
+            android:cursorVisible="false"
+            android:hint="Search"/>
+
         <ImageView
             android:id="@+id/image_search"
             android:layout_width="wrap_content"

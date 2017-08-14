@@ -97,6 +97,11 @@ class WebServicePost {
                 urlConnection.setRequestProperty("Content-Type", "application/json");
                 urlConnection.setRequestProperty("Accept", "application/json");
                 if (setHeader) {
+
+                    /*System.out.println("RContact set header token --> " + Utils
+                            .getStringPreference
+                                    (activity, AppConstants.PREF_ACCESS_TOKEN, ""));*/
+
                     urlConnection.addRequestProperty(WsConstants.REQ_HEADER, Utils
                             .getStringPreference
                                     (activity, AppConstants.PREF_ACCESS_TOKEN, ""));
@@ -109,7 +114,7 @@ class WebServicePost {
 
                     // Json string passed as request
                     jsonObject = writer.writeValueAsString(request);
-                    System.out.println("RContact param -->  " + jsonObject);
+//                    System.out.println("RContact param -->  " + jsonObject);
 //					 FileUtilities utilities = new FileUtilities();
 //					 utilities.write("Filter file", jsonObject);
                 }
@@ -134,6 +139,10 @@ class WebServicePost {
                     if (url.toString().endsWith(WsConstants.REQ_SAVE_PASSWORD)
                             || url.toString().endsWith(WsConstants.REQ_CHECK_LOGIN)
                             || url.toString().endsWith(WsConstants.REQ_OTP_CONFIRMED)) {
+
+//                        System.out.println("RContact get header token --> " + header);
+
+
                         Utils.setStringPreference(activity, AppConstants.PREF_ACCESS_TOKEN, header);
                     }
 
@@ -141,29 +150,29 @@ class WebServicePost {
                     String responseString = convertInputStreamToString(inputStream);
                     response = getMapper().readValue(responseString, responseType);
                 } else if (statusCode == HttpsURLConnection.HTTP_BAD_REQUEST) {
-                    Log.e("Status Code: ", HttpsURLConnection.HTTP_BAD_REQUEST + " : Bad Request " +
-                            ": Due to user error");
+//                    Log.e("Status Code: ", HttpsURLConnection.HTTP_BAD_REQUEST + " : Bad Request " +
+//                            ": Due to user error");
                     inputStream = new BufferedInputStream(urlConnection.getErrorStream());
                     String responseString = convertInputStreamToString(inputStream);
                     response = getMapper().readValue(responseString, responseType);
                 } else if (statusCode == 429) {
-                    Log.e("Status Code: ", ": Due to throttling");
+//                    Log.e("Status Code: ", ": Due to throttling");
                     final String header = urlConnection.getHeaderField(WsConstants
                             .REQ_THROTTLING_HEADER);
                     String responseString = "{\"message\":\"Retry after " + header + " seconds\"}";
                     response = getMapper().readValue(responseString, responseType);
                 } else if (statusCode == HttpsURLConnection.HTTP_INTERNAL_ERROR) {
-                    Log.e("Status Code: ", HttpsURLConnection.HTTP_INTERNAL_ERROR + " : Internal " +
-                            "Server Error : Due to any unhandled error on server");
+//                    Log.e("Status Code: ", HttpsURLConnection.HTTP_INTERNAL_ERROR + " : Internal " +
+//                            "Server Error : Due to any unhandled error on server");
                     response = null;
                 } else if (statusCode == HttpsURLConnection.HTTP_NOT_FOUND) {
-                    Log.e("Status Code: ", HttpsURLConnection.HTTP_NOT_FOUND + " :  Not Found :  " +
-                            "Request resource not found");
+//                    Log.e("Status Code: ", HttpsURLConnection.HTTP_NOT_FOUND + " :  Not Found :  " +
+//                            "Request resource not found");
                     response = null;
                 } else if (statusCode == HttpsURLConnection.HTTP_UNAUTHORIZED) {
-                    Log.e("Status Code: ", HttpsURLConnection.HTTP_UNAUTHORIZED + " :  " +
-                            "Unauthorised Access :  Due to invalid credentials or invalid access " +
-                            "token or expired token");
+//                    Log.e("Status Code: ", HttpsURLConnection.HTTP_UNAUTHORIZED + " :  " +
+//                            "Unauthorised Access :  Due to invalid credentials or invalid access " +
+//                            "token or expired token");
                     response = null;
 
                     Utils.setIntegerPreference(activity, AppConstants.PREF_LAUNCH_SCREEN_INT,
@@ -223,8 +232,8 @@ class WebServicePost {
             }
 
         } catch (Exception e) {
-            Log.e(TAG_LOG, "Status code: " + Integer.toString(statusCode)
-                    + " Exception thrown: " + e.getMessage());
+//            Log.e(TAG_LOG, "Status code: " + Integer.toString(statusCode)
+//                    + " Exception thrown: " + e.getMessage());
             throw e;
         }
 

@@ -3,9 +3,9 @@
 
     <!-- facebook -->
     <!--old-->
-    <!--<string name="facebook_app_id">1410546345629965</string>-->
+    <string name="facebook_app_id">1410546345629965</string>
     <!--11/08/2017-->
-    <string name="facebook_app_id">110263789676833</string>
+    <!--<string name="facebook_app_id">110263789676833</string>-->
     <string name="google_maps_key">AIzaSyBJSXzIhhMakvEuZ8JCLfbs5m1nKXf0zHA</string>
 
     <!-- Google -->
@@ -254,6 +254,7 @@
     <string name="msg_tip_password">Tip: At least 1 upper &amp; lower case letter, 1 number &amp; special character and min 8 character long</string>
     <string name="title_password_protected">Password Protected</string>
     <string name="msg_enter_password_tips">Please enter password to access and open account.</string>
+    <string name="str_signin_signup">Sign in or sign up with different account</string>
     <string name="str_enter_password">Enter Password</string>
     <string name="action_login">Login</string>
     <string name="action_forget_password">Forgot Password</string>
@@ -420,10 +421,12 @@
     <string name="str_copy_email">Copied Email</string>
     <string name="str_copy_website">Copied Website</string>
     <string name="str_copy_address">Copied Address</string>
+    <string name="str_copy_im_account">Copied</string>
     <string name="str_copy_number_clip_board">Number copied to Clipboard</string>
     <string name="str_copy_email_clip_board">Email copied to Clipboard</string>
     <string name="str_copy_website_clip_board">Website copied to Clipboard</string>
     <string name="str_copy_address_clip_board">Address copied to Clipboard</string>
+    <string name="str_copy_im_account_clip_board">Copied to Clipboard</string>
     <string name="str_invalid_email">Invalid EmailId!</string>
     <string name="str_account_required">Account is required</string>
     <string name="str_web_required">Web address is required</string>
@@ -668,5 +671,9 @@
     <string name="txt_save">SAVE</string>
     <string name="report_spam">Report as spam</string>
     <string name="reported_spam">Reported as spam</string>
+    <string name="no_history_to_delete">No call history found</string>
+    <string name="error_call_permission">Call Permission Required!</string>
+    <string name="error_camera_permission">Camera Permission Required!</string>
+    <string name="error_storage_permission">Storage Permission Required!</string>
 
 </resources>

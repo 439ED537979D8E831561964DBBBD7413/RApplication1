@@ -1,6 +1,7 @@
 package com.rawalinfocom.rcontact;
 
 import android.*;
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
@@ -58,13 +59,18 @@ import com.rawalinfocom.rcontact.model.AppLanguage;
 
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -96,7 +102,7 @@ public class ContactsSettingsActivity1 extends BaseActivity implements RippleVie
     TextView txtExportContact;
 
     private Activity activity;
-    private String vfile;
+    private String vfile, selectedType;
     private GoogleApiClient mGoogleApiClient;
     //    private final int RC_SIGN_IN = 7;
 //    private static final int GOOGLE_LOGIN_PERMISSION = 22;
@@ -283,13 +289,17 @@ public class ContactsSettingsActivity1 extends BaseActivity implements RippleVie
 
                     dialog.dismiss();
 
-                    switch (shortByContactListAdapter.getSelectedType()) {
+                    selectedType = shortByContactListAdapter.getSelectedType();
+
+                    switch (selectedType) {
                         case "0":
-                            new ExportContact(shortByContactListAdapter.getSelectedType()).execute();
+                            if (checkPermission())
+                                generateExport();
                             break;
 
                         case "1":
-                            checkPermission();
+                            if (checkPermission())
+                                generateExport();
                             break;
                         default:
                             break;
@@ -301,45 +311,64 @@ public class ContactsSettingsActivity1 extends BaseActivity implements RippleVie
         dialog.show();
     }
 
-    private void checkPermission() {
+    private boolean checkPermission() {
 
-        if (ContextCompat.checkSelfPermission(activity,
-                android.Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            int readPermission = ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE);
+            int writePermission = ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
-            ActivityCompat.requestPermissions(activity, new
-                    String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, AppConstants
-                    .MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+            List<String> listPermissionsNeeded = new ArrayList<>();
+            if (readPermission != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+            }
+            if (writePermission != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            }
 
+            if (!listPermissionsNeeded.isEmpty()) {
+                ActivityCompat.requestPermissions(activity, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), 1);
+                return false;
+            } else {
+                return true;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 1:
+
+                Map<String, Integer> perms = new HashMap<String, Integer>();
+                // Initial
+                perms.put(Manifest.permission.READ_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+
+                // Fill with results
+                for (int i = 0; i < permissions.length; i++)
+                    perms.put(permissions[i], grantResults[i]);
+
+                boolean isStorage = perms.get(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+                boolean isStorageWrite = perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+
+                if (isStorage && isStorageWrite)
+                    generateExport();
+//                else
+//                    Toast.makeText(activity, "Please grant both permission to work camera properly!!", Toast.LENGTH_SHORT).show();
+                break;
+        }
+    }
+
+    private void generateExport() {
+        if (selectedType.equals("0")) {
+            new ExportContact("0").execute();
         } else {
             if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
                 new ExportContact("1").execute();
             } else {
                 buildGoogleDriveClient();
             }
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        switch (requestCode) {
-            case AppConstants.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE:
-
-                if (permissions[0].equals(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        && permissions[1].equals(android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
-
-                    if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-                        new ExportContact("1").execute();
-                    } else {
-                        buildGoogleDriveClient();
-                    }
-                }
-
-                break;
-
         }
     }
 
@@ -387,6 +416,7 @@ public class ContactsSettingsActivity1 extends BaseActivity implements RippleVie
         }
 
         protected void onPostExecute(Void result) {
+
             Utils.hideProgressDialog();
 
             Utils.showSuccessSnackBar(activity, activityContactSettings, getString(R.string.str_vcf_done));
@@ -416,6 +446,15 @@ public class ContactsSettingsActivity1 extends BaseActivity implements RippleVie
                     try {
                         fd = activity.getContentResolver().openAssetFileDescriptor(uri,
                                 "r");
+
+                        /* Test for Android 7.0 */
+//                        FileDescriptor fdd = fd.getFileDescriptor();
+//                        InputStream in = new FileInputStream(fdd);
+//                        System.out.println("RContacts BLA BLA Len is :: " + (int) fd.getDeclaredLength());
+//                        byte[] buf = new byte[(int) fd.getDeclaredLength()];
+//                        in.read(buf);
+//                        fd.close();
+
                         FileInputStream fis = fd.createInputStream();
                         byte[] buf = new byte[(int) fd.getDeclaredLength()];
                         fis.read(buf);

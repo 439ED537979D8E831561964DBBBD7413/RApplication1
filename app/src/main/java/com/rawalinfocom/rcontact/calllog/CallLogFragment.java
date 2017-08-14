@@ -1575,10 +1575,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         Cursor cursor = null;
         String order = CallLog.Calls.DATE + " DESC";
         try {
-            if(getActivity() != null){
-                cursor = getActivity().getContentResolver().query(CallLog.Calls.CONTENT_URI, null,
-                        CallLog.Calls.NUMBER + " =?", new String[]{number}, order);
-            }
+            cursor = getActivity().getContentResolver().query(CallLog.Calls.CONTENT_URI, null,
+                    CallLog.Calls.NUMBER + " =?", new String[]{number}, order);
 
         } catch (SecurityException e) {
             e.printStackTrace();
