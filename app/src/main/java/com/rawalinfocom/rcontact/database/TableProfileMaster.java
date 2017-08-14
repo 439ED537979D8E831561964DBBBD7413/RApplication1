@@ -654,7 +654,7 @@ public class TableProfileMaster {
         ArrayList<String> rcpIds = new ArrayList<>();
         for (int i = 0; i < userProfiles.size(); i++) {
             if (StringUtils.contains(userProfiles.get(i).getPmRawId(), ",")) {
-                String[] tempRawIds = StringUtils.split(userProfiles.get(i).getPmRawId());
+                String[] tempRawIds = StringUtils.split(userProfiles.get(i).getPmRawId(), ",");
                 for (String tempRawId : tempRawIds) {
                     rawIds.add(tempRawId);
                     rcpIds.add(userProfiles.get(i).getPmRcpId());
