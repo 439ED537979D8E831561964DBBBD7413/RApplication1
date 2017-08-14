@@ -65,7 +65,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
         String userComment = item.getUserComment();
 
         int notiType = 0;
-        if (activity.getResources().getString(R.string.str_tab_rating).equalsIgnoreCase(item.getCrmType()))
+        if (item.getCrmType().equalsIgnoreCase("Rating"))
             notiType = 1;
         if (wisherComment != null && wisherComment.length() > 0) {
             holder.textWisherComment.setVisibility(View.VISIBLE);

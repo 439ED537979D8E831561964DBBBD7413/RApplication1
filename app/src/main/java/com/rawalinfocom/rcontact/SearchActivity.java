@@ -142,7 +142,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
     LinearLayoutManager mLinearLayoutManager;
     ArrayList<GlobalSearchType> globalSearchTypeArrayListMain;
     private SyncCallLogAsyncTask syncCallLogAsyncTask;
-//    private SyncSmsLogAsyncTask syncSmsLogAsyncTask;
+    //    private SyncSmsLogAsyncTask syncSmsLogAsyncTask;
     int count = 0;
     int maxRecords = 5;
     int startAt = 0;
@@ -222,13 +222,14 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                 .READ_CALL_LOG) /*&& permissions[1].equals(Manifest.permission.READ_SMS)*/) {
             if (grantResults[0] == PermissionChecker.PERMISSION_GRANTED /*&& grantResults[1] ==
                     PermissionChecker.PERMISSION_GRANTED*/) {
-                getCallLogData();
+//                getCallLogData();
+                syncCallLogAsyncTask = new SyncCallLogAsyncTask();
+                syncCallLogAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 //                getSMSData();
             } else {
                 showPermissionConfirmationDialog();
             }
         }
-
     }
 
     @TargetApi(Build.VERSION_CODES.M)
@@ -969,10 +970,10 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
             while (cursor.moveToNext()) {
                 callLogsIdsList.add(cursor.getString(rowId));
             }
+            cursor.close();
         }
-        cursor.close();
 
-        if (callLogsIdsList != null && callLogsIdsList.size() > 0) {
+        if (callLogsIdsList.size() > 0) {
             fetchCallLogsFromIds(callLogsIdsList);
         }
     }

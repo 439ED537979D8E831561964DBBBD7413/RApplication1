@@ -50,6 +50,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.util.Util;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.ContactListingActivity;
 import com.rawalinfocom.rcontact.R;
@@ -725,13 +726,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 (databaseHandler);
                         UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer
                                 .parseInt(pmId));*/
-                        ArrayList<ProfileData> arrayListProfileData = queryManager
-                                .getRcpNumberName(pmId);
-                        String number = StringUtils.trimToEmpty(arrayListProfileData.get(0)
-                                .getTempNumber());
+                        TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
+                        String number = tableMobileMaster.getUserMobileNumber(getUserPmId());
+
                         if (StringUtils.startsWith(number, "+")) {
                             number = StringUtils.substring(number, 1);
                         }
+
 //                        if (!StringUtils.equalsAnyIgnoreCase(pmId, "-1")) {
                         // RCP profile or Own Profile
                         Intent sharingIntent = new Intent(Intent.ACTION_SEND);
@@ -1181,7 +1182,20 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     if (oldHistoryList != null && oldHistoryList.size() > 0) {
                         // Log.i("HistoryServiceCalled", "Data Received");
                         rippleViewOldRecords.setVisibility(View.VISIBLE);
-                        arrayListHistory.addAll(oldHistoryList);
+                        ArrayList<CallLogType> listToAppend =  new ArrayList<>();
+                        for(int i=0 ; i<oldHistoryList.size() ; i++){
+                            CallLogType callLogType =  oldHistoryList.get(i);
+                            String number =  callLogType.getNumber();
+                            if(number.startsWith("91"))
+                                number =  "+" + number;
+                            callLogType.setHistoryNumber(number);
+                            callLogType.setHistoryNumberType(callLogType.getNumberType());
+                            callLogType.setHistoryDate(Long.parseLong(callLogType.getCallDateAndTime()));
+                            callLogType.setHistoryType(Integer.parseInt(callLogType.getTypeOfCall()));
+                            callLogType.setWebDuration(callLogType.getDurationToPass());
+                            listToAppend.add(callLogType);
+                        }
+                        arrayListHistory.addAll(listToAppend);
                         if (callHistoryListAdapter != null) {
                             callHistoryListAdapter.notifyDataSetChanged();
                         }
@@ -3485,16 +3499,20 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         if (!StringUtils.isEmpty(historyNumber))
             intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, historyNumber);
         else {
-            if (tempPhoneNumber != null) {
-                ProfileDataOperationPhoneNumber phoneNumber =
-                        (ProfileDataOperationPhoneNumber) tempPhoneNumber.get
-                                (0);
-                String profilePrimaryNumber = "";
-                if (phoneNumber != null) {
-                    profilePrimaryNumber = phoneNumber.getPhoneNumber();
+            if(intent.hasExtra(AppConstants.EXTRA_FROM_NOTI_PROFILE)){
+                if(intent.getBooleanExtra(AppConstants.EXTRA_FROM_NOTI_PROFILE,false)){
+                    if (tempPhoneNumber != null) {
+                        ProfileDataOperationPhoneNumber phoneNumber =
+                                (ProfileDataOperationPhoneNumber) tempPhoneNumber.get
+                                        (0);
+                        String profilePrimaryNumber = "";
+                        if (phoneNumber != null) {
+                            profilePrimaryNumber = phoneNumber.getPhoneNumber();
+                        }
+                        intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, profilePrimaryNumber);
+                        intent.putExtra(AppConstants.EXTRA_RCP_FROM_NOTI, true);
+                    }
                 }
-                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, profilePrimaryNumber);
-                intent.putExtra(AppConstants.EXTRA_RCP_FROM_NOTI, true);
             }
         }
         intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NAME, historyName);
@@ -3528,7 +3546,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         ArrayList<CallLogHistoryType> arrayListToSend = new ArrayList<>();
         if (arrayListHistory != null && arrayListHistory.size() > 0) {
             CallLogType callLogType = arrayListHistory.get(arrayListHistory.size() - 1);
-            String number = callLogType.getHistoryNumber();
+//            String number = callLogType.getHistoryNumber();
+            String number = Utils.getFormattedNumber(this,callLogType.getHistoryNumber());
             if (!StringUtils.isEmpty(number)) {
                 if (number.startsWith("+91"))
                     number = number.replace("+", "");
