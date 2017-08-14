@@ -9,13 +9,13 @@ package com.rawalinfocom.rcontact.constants;
 public class WsConstants {
 
     //Production Env
-    public static final String WS_ROOT = "https://api.rcontacts.in/api/v1/";
+//    public static final String WS_ROOT = "https://api.rcontacts.in/api/v1/";
 
     // Staging Env
 //    public static final String WS_ROOT = "http://apistaging.rcontacts.in/api/v1/";
 
     // QA Server
-//    public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
+    public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
 
     // Monal
 //    public static final String WS_ROOT = "http://10.0.21.163/api/v1/";

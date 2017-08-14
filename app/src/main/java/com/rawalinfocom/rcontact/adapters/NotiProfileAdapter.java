@@ -124,8 +124,8 @@ public class NotiProfileAdapter extends RecyclerView.Adapter<NotiProfileAdapter.
                     bundle.putString(AppConstants.EXTRA_PM_ID, item.getRcpUserPmId());
                     bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, "-1");
                     bundle.putString(AppConstants.EXTRA_CONTACT_NAME, item.getPersonName());
-                    ((BaseActivity) (activity.getActivity())).startActivityIntent(activity.getActivity(), ProfileDetailActivity
-                            .class, bundle);
+                    ((BaseActivity) (activity.getActivity())).startActivityIntent(activity
+                            .getActivity(), ProfileDetailActivity.class, bundle);
                 }
             }
         });
