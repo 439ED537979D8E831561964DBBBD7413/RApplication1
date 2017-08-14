@@ -726,17 +726,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 (databaseHandler);
                         UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer
                                 .parseInt(pmId));*/
-                       /* ArrayList<ProfileData> arrayListProfileData = queryManager
-                                .getRcpNumberName(pmId);
-                        String number = StringUtils.trimToEmpty(arrayListProfileData.get(0)
-                                .getTempNumber());*/
-
-                       TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
+                        TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
                         String number = tableMobileMaster.getUserMobileNumber(getUserPmId());
 
                         if (StringUtils.startsWith(number, "+")) {
                             number = StringUtils.substring(number, 1);
                         }
+
 //                        if (!StringUtils.equalsAnyIgnoreCase(pmId, "-1")) {
                         // RCP profile or Own Profile
                         Intent sharingIntent = new Intent(Intent.ACTION_SEND);
