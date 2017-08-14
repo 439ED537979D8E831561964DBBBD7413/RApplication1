@@ -26,7 +26,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        System.out.println("RContact db create --> ");
+//        System.out.println("RContact db create --> ");
 
         // creating required tables
         db.execSQL(TableCountryMaster.CREATE_TABLE_RC_COUNTRY_MASTER);
@@ -55,7 +55,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-        System.out.println("RContact db version --> " + oldVersion  +  " --" + newVersion);
+//        System.out.println("RContact db version --> " + oldVersion  +  " --" + newVersion);
 
         // on upgrade drop older tables
         if(newVersion > oldVersion){
@@ -92,7 +92,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             db.execSQL("ALTER TABLE " + TableRCContactRequest.TABLE_RC_CONTACT_ACCESS_REQUEST +
                     " ADD COLUMN " +  TableRCContactRequest.COLUMN_CAR_PROFILE_DETAILS  + " text ") ;
 
-            System.out.println("RContact db drop --> ");
+//            System.out.println("RContact db drop --> ");
 
             // create new tables
             onCreate(db);

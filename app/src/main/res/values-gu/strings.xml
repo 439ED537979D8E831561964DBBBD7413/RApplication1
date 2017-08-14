@@ -3,9 +3,9 @@
 
     <!--  facebook  -->
     <!--old-->
-    <!--<string name="facebook_app_id">1410546345629965</string>-->
+    <string name="facebook_app_id">1410546345629965</string>
     <!--11/08/2017-->
-    <string name="facebook_app_id">110263789676833</string>
+    <!--<string name="facebook_app_id">110263789676833</string>-->
     <string name="google_maps_key">AIzaSyBJSXzIhhMakvEuZ8JCLfbs5m1nKXf0zHA</string>
 
     <!--  Google  -->
@@ -255,6 +255,7 @@
     <string name="title_password_protected">પાસવર્ડ થી સુરક્ષિત</string>
     <string name="msg_enter_password_tips">કૃપા કરીને તમારા ખાતા ને ઍક્સેસ કરવા માટે પાસવર્ડ દાખલ કરો</string>
     <string name="str_enter_password">પાસવર્ડ દાખલ કરો</string>
+    <string name="str_signin_signup">સાઇન ઇન કરો અથવા અલગ એકાઉન્ટ સાથે સાઇન અપ કરો</string>
     <string name="action_login">લૉગિન</string>
     <string name="action_forget_password">પાસવર્ડ ભૂલી ગયા</string>
     <string name="err_msg_please_enter_password">પાસવર્ડ ખાલી ન હોઈ શકે</string>
@@ -670,5 +671,9 @@
     <string name="txt_save">સંગ્રહિત કરો</string>
     <string name="report_spam">સ્પામ તરીકે રિપોર્ટ કરો</string>
     <string name="reported_spam">સ્પામ તરીકે રિપોર્ટ કર્યો</string>
+    <string name="no_history_to_delete">કોઈ કૉલ ઇતિહાસ મળ્યો નથી</string>
+    <string name="error_call_permission">કૉલ પરવાનગી આવશ્યક છે!</string>
+    <string name="error_camera_permission">કૅમેરા પરવાનગી આવશ્યક છે!</string>
+    <string name="error_storage_permission">સંગ્રહ પરવાનગી જરૂરી!</string>
 
 </resources>
