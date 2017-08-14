@@ -94,7 +94,8 @@ public class CallLogType implements Serializable {
     private Boolean isHistoryRcpUser;
     @JsonIgnore
     private String isHistoryRcpVerifiedId;
-
+    @JsonIgnore
+    private String webDuration;
 
     //    @JsonProperty("flag")
 //    @JsonIgnore
@@ -625,5 +626,13 @@ public class CallLogType implements Serializable {
 
     public void setCallLogTotalProfileRateUser(String callLogTotalProfileRateUser) {
         this.callLogTotalProfileRateUser = callLogTotalProfileRateUser;
+    }
+
+    public String getWebDuration() {
+        return webDuration;
+    }
+
+    public void setWebDuration(String webDuration) {
+        this.webDuration = webDuration;
     }
 }
