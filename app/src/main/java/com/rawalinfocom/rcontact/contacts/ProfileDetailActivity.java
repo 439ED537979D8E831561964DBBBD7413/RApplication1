@@ -725,10 +725,14 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 (databaseHandler);
                         UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer
                                 .parseInt(pmId));*/
-                        ArrayList<ProfileData> arrayListProfileData = queryManager
+                       /* ArrayList<ProfileData> arrayListProfileData = queryManager
                                 .getRcpNumberName(pmId);
                         String number = StringUtils.trimToEmpty(arrayListProfileData.get(0)
-                                .getTempNumber());
+                                .getTempNumber());*/
+
+                       TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
+                        String number = tableMobileMaster.getUserMobileNumber(getUserPmId());
+
                         if (StringUtils.startsWith(number, "+")) {
                             number = StringUtils.substring(number, 1);
                         }
@@ -1181,7 +1185,20 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     if (oldHistoryList != null && oldHistoryList.size() > 0) {
                         // Log.i("HistoryServiceCalled", "Data Received");
                         rippleViewOldRecords.setVisibility(View.VISIBLE);
-                        arrayListHistory.addAll(oldHistoryList);
+                        ArrayList<CallLogType> listToAppend =  new ArrayList<>();
+                        for(int i=0 ; i<oldHistoryList.size() ; i++){
+                            CallLogType callLogType =  oldHistoryList.get(i);
+                            String number =  callLogType.getNumber();
+                            if(number.startsWith("91"))
+                                number =  "+" + number;
+                            callLogType.setHistoryNumber(number);
+                            callLogType.setHistoryNumberType(callLogType.getNumberType());
+                            callLogType.setHistoryDate(Long.parseLong(callLogType.getCallDateAndTime()));
+                            callLogType.setHistoryType(Integer.parseInt(callLogType.getTypeOfCall()));
+                            callLogType.setWebDuration(callLogType.getDurationToPass());
+                            listToAppend.add(callLogType);
+                        }
+                        arrayListHistory.addAll(listToAppend);
                         if (callHistoryListAdapter != null) {
                             callHistoryListAdapter.notifyDataSetChanged();
                         }
@@ -3485,16 +3502,20 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         if (!StringUtils.isEmpty(historyNumber))
             intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, historyNumber);
         else {
-            if (tempPhoneNumber != null) {
-                ProfileDataOperationPhoneNumber phoneNumber =
-                        (ProfileDataOperationPhoneNumber) tempPhoneNumber.get
-                                (0);
-                String profilePrimaryNumber = "";
-                if (phoneNumber != null) {
-                    profilePrimaryNumber = phoneNumber.getPhoneNumber();
+            if(intent.hasExtra(AppConstants.EXTRA_FROM_NOTI_PROFILE)){
+                if(intent.getBooleanExtra(AppConstants.EXTRA_FROM_NOTI_PROFILE,false)){
+                    if (tempPhoneNumber != null) {
+                        ProfileDataOperationPhoneNumber phoneNumber =
+                                (ProfileDataOperationPhoneNumber) tempPhoneNumber.get
+                                        (0);
+                        String profilePrimaryNumber = "";
+                        if (phoneNumber != null) {
+                            profilePrimaryNumber = phoneNumber.getPhoneNumber();
+                        }
+                        intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, profilePrimaryNumber);
+                        intent.putExtra(AppConstants.EXTRA_RCP_FROM_NOTI, true);
+                    }
                 }
-                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, profilePrimaryNumber);
-                intent.putExtra(AppConstants.EXTRA_RCP_FROM_NOTI, true);
             }
         }
         intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NAME, historyName);

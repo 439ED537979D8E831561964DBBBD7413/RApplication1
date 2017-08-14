@@ -522,7 +522,20 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                             .getArrayListCallLogHistory();
                     if (oldHistoryList != null && oldHistoryList.size() > 0) {
                         rippleViewOldRecords.setVisibility(View.VISIBLE);
-                        arrayListHistory.addAll(oldHistoryList);
+                        ArrayList<CallLogType> listToAppend =  new ArrayList<>();
+                        for(int i=0 ; i<oldHistoryList.size() ; i++){
+                            CallLogType callLogType =  oldHistoryList.get(i);
+                            String number =  callLogType.getNumber();
+                            if(number.startsWith("91"))
+                                number =  "+" + number;
+                            callLogType.setHistoryNumber(number);
+                            callLogType.setHistoryNumberType(callLogType.getNumberType());
+                            callLogType.setHistoryDate(Long.parseLong(callLogType.getCallDateAndTime()));
+                            callLogType.setHistoryType(Integer.parseInt(callLogType.getTypeOfCall()));
+                            callLogType.setWebDuration(callLogType.getDurationToPass());
+                            listToAppend.add(callLogType);
+                        }
+                        arrayListHistory.addAll(listToAppend);
                         if (callHistoryListAdapter != null) {
                             callHistoryListAdapter.notifyDataSetChanged();
                         }
