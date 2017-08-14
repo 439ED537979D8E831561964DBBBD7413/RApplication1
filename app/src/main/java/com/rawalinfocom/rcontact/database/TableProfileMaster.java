@@ -563,7 +563,7 @@ public class TableProfileMaster {
         return name;
     }
 
-    public ArrayList<UserProfile> getProfileDetailsFromRawId(String rawId) {
+    public ArrayList<UserProfile> getProfileDetailsFromRawIdTemp(String rawId) {
 
         ArrayList<UserProfile> userProfiles = new ArrayList<>();
         // Select All Query
@@ -621,6 +621,88 @@ public class TableProfileMaster {
         db.close();
 
         // return user profile list
+        return userProfiles;
+    }
+
+    public ArrayList<UserProfile> getProfileDetailsFromRawId(String rawId) {
+
+        ArrayList<UserProfile> userProfiles = new ArrayList<>();
+
+        String selectQuery1 = "SELECT " + COLUMN_PM_RAW_ID + ", " + COLUMN_PM_RCP_ID + " FROM " +
+                TABLE_RC_PROFILE_MASTER + " WHERE " + COLUMN_PM_RAW_ID + " LIKE '%" + rawId + "%'";
+
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery1, null);
+
+        if (cursor != null) {
+
+            if (cursor.moveToFirst()) {
+                do {
+                    UserProfile userProfile = new UserProfile();
+                    userProfile.setPmRcpId(cursor.getString(cursor.getColumnIndex
+                            (COLUMN_PM_RCP_ID)));
+                    userProfile.setPmRawId(cursor.getString(cursor.getColumnIndex
+                            (COLUMN_PM_RAW_ID)));
+                    userProfiles.add(userProfile);
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
+        db.close();
+
+        ArrayList<String> rawIds = new ArrayList<>();
+        ArrayList<String> rcpIds = new ArrayList<>();
+        for (int i = 0; i < userProfiles.size(); i++) {
+            if (StringUtils.contains(userProfiles.get(i).getPmRawId(), ",")) {
+                String[] tempRawIds = StringUtils.split(userProfiles.get(i).getPmRawId(), ",");
+                for (String tempRawId : tempRawIds) {
+                    rawIds.add(tempRawId);
+                    rcpIds.add(userProfiles.get(i).getPmRcpId());
+                }
+            } else {
+                rawIds.add(userProfiles.get(i).getPmRawId());
+                rcpIds.add(userProfiles.get(i).getPmRcpId());
+            }
+        }
+
+        ArrayList<String> finalRcpIds = new ArrayList<>();
+        for (int i = 0; i < rawIds.size(); i++) {
+            if (StringUtils.equalsAnyIgnoreCase(rawIds.get(i), rawId)) {
+                finalRcpIds.add(rcpIds.get(i));
+            }
+        }
+
+        String allRcpId = StringUtils.join(finalRcpIds.toArray(new String[finalRcpIds.size()]),
+                ",");
+
+        String selectQuery = "SELECT " + COLUMN_PM_RCP_ID + "," + COLUMN_PM_FIRST_NAME + "," +
+                COLUMN_PM_PROFILE_IMAGE + "," + COLUMN_PM_LAST_NAME + " FROM " +
+                TABLE_RC_PROFILE_MASTER + " WHERE " + COLUMN_PM_RCP_ID + " IN (" + allRcpId + ")";
+
+        userProfiles = new ArrayList<>();
+        db = databaseHandler.getWritableDatabase();
+        cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor != null) {
+
+            if (cursor.moveToFirst()) {
+                do {
+                    UserProfile userProfile = new UserProfile();
+                    userProfile.setPmFirstName(cursor.getString(cursor.getColumnIndex
+                            (COLUMN_PM_FIRST_NAME)));
+                    userProfile.setPmLastName(cursor.getString(cursor.getColumnIndex
+                            (COLUMN_PM_LAST_NAME)));
+                    userProfile.setPmRcpId(cursor.getString(cursor.getColumnIndex
+                            (COLUMN_PM_RCP_ID)));
+                    userProfile.setPmProfileImage(cursor.getString(cursor.getColumnIndex
+                            (COLUMN_PM_PROFILE_IMAGE)));
+                    userProfiles.add(userProfile);
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
+        db.close();
+
         return userProfiles;
     }
 
