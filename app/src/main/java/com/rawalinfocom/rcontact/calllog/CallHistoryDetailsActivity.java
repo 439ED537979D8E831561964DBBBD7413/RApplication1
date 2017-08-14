@@ -198,7 +198,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
     @BindView(R.id.button_invite)
     Button buttonInvite;
     private boolean isCallLogRcpUser;
-    private String isRcpVerifiedUser;
+    private String isRcpVerifiedUser = "";
     private boolean isRcpFromNoti;
 
     @Override
@@ -249,17 +249,22 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 isCallLogRcpUser = intent.getBooleanExtra(AppConstants.EXTRA_IS_RCP_USER, false);
             }
 
-            if (isCallLogRcpUser) {
+            if (isRcpVerifiedUser.equalsIgnoreCase("0") || isRcpVerifiedUser.equalsIgnoreCase("1")) {
                 rippleInvite.setVisibility(View.GONE);
-                linearBasicDetailRating.setVisibility(View.VISIBLE);
-            } else {
-
-                Utils.setRoundedCornerBackground(buttonInvite, ContextCompat.getColor
-                        (CallHistoryDetailsActivity.this, R.color.colorAccent), 5, 0, ContextCompat.getColor
-                        (CallHistoryDetailsActivity.this, R.color.colorAccent));
-
-                rippleInvite.setVisibility(View.VISIBLE);
                 linearBasicDetailRating.setVisibility(View.GONE);
+            } else {
+                if (isCallLogRcpUser) {
+                    rippleInvite.setVisibility(View.GONE);
+                    linearBasicDetailRating.setVisibility(View.VISIBLE);
+                } else {
+
+                    Utils.setRoundedCornerBackground(buttonInvite, ContextCompat.getColor
+                            (CallHistoryDetailsActivity.this, R.color.colorAccent), 5, 0, ContextCompat.getColor
+                            (CallHistoryDetailsActivity.this, R.color.colorAccent));
+
+                    rippleInvite.setVisibility(View.VISIBLE);
+                    linearBasicDetailRating.setVisibility(View.GONE);
+                }
             }
 
             if (intent.hasExtra(AppConstants.EXTRA_PM_ID)) {
@@ -408,7 +413,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.i("Profile Activity ", "onReceive() of LocalBroadcast");
-            if(intent.hasExtra("action")){
+            if (intent.hasExtra("action")) {
                 if (intent.getStringExtra("action").equals("delete")) {
                     arrayListHistory.clear();
                     recyclerCallHistory.setVisibility(View.GONE);
