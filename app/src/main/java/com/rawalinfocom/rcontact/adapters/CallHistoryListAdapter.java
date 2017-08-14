@@ -120,8 +120,23 @@ public class CallHistoryListAdapter extends RecyclerView.Adapter<CallHistoryList
             }
         }
 
-        String duration = callLogType.getHistroyCoolDuration();
-        holder.textHistoryDurationValue.setText(duration);
+        /*if(!StringUtils.isEmpty(callLogType.getHistroyCoolDuration())){
+            String duration = callLogType.getHistroyCoolDuration();
+            holder.textHistoryDurationValue.setText(duration);
+        }else{
+            if(!StringUtils.isEmpty(callLogType.getWebDuration())){
+                String duration = callLogType.getWebDuration();
+                holder.textHistoryDurationValue.setText(duration);
+            }
+        }*/
+
+        if (!StringUtils.isEmpty(callLogType.getWebDuration())) {
+            String duration = callLogType.getWebDuration();
+            holder.textHistoryDurationValue.setText(duration);
+        } else {
+            String duration = callLogType.getHistroyCoolDuration();
+            holder.textHistoryDurationValue.setText(duration);
+        }
 
         Date historyDate = new Date(callLogType.getHistoryDate());
         String callTime = new SimpleDateFormat("hh:mm a").format(historyDate);
