@@ -304,6 +304,10 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                             rcpVerifiedId = "1";
                             b.putString(AppConstants.EXTRA_RCP_VERIFIED_ID, rcpVerifiedId);
                         }
+//                        else if (!StringUtils.isEmpty(rcpVerifiedId)) {
+//                            if ((StringUtils.isEmpty(userName)))
+//                                logObject.setIsHistoryRcpVerifiedId(isRcpVerifiedUser);
+//                        }
                     }
                     intent.putExtras(b);
                     context.startActivity(intent);

@@ -50,6 +50,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.util.Util;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.ContactListingActivity;
 import com.rawalinfocom.rcontact.R;
@@ -725,17 +726,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 (databaseHandler);
                         UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer
                                 .parseInt(pmId));*/
-                       /* ArrayList<ProfileData> arrayListProfileData = queryManager
-                                .getRcpNumberName(pmId);
-                        String number = StringUtils.trimToEmpty(arrayListProfileData.get(0)
-                                .getTempNumber());*/
-
-                       TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
+                        TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
                         String number = tableMobileMaster.getUserMobileNumber(getUserPmId());
 
                         if (StringUtils.startsWith(number, "+")) {
                             number = StringUtils.substring(number, 1);
                         }
+
 //                        if (!StringUtils.equalsAnyIgnoreCase(pmId, "-1")) {
                         // RCP profile or Own Profile
                         Intent sharingIntent = new Intent(Intent.ACTION_SEND);
@@ -3549,7 +3546,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         ArrayList<CallLogHistoryType> arrayListToSend = new ArrayList<>();
         if (arrayListHistory != null && arrayListHistory.size() > 0) {
             CallLogType callLogType = arrayListHistory.get(arrayListHistory.size() - 1);
-            String number = callLogType.getHistoryNumber();
+//            String number = callLogType.getHistoryNumber();
+            String number = Utils.getFormattedNumber(this,callLogType.getHistoryNumber());
             if (!StringUtils.isEmpty(number)) {
                 if (number.startsWith("+91"))
                     number = number.replace("+", "");

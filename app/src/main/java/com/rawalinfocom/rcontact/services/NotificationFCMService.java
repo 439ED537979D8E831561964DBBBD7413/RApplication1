@@ -200,7 +200,7 @@ public class NotificationFCMService extends FirebaseMessagingService {
             switch (api) {
                 case "profileRatingComment":
                     comment.setCrmStatus(AppConstants.COMMENT_STATUS_RECEIVED);
-                    comment.setCrmType(getResources().getString(R.string.str_tab_rating));
+                    comment.setCrmType("Rating");
                     comment.setCrmCloudPrId(m.get("pr_id"));
                     comment.setCrmRating(m.get("pr_rating_stars"));
                     comment.setRcProfileMasterPmId(Integer.parseInt(m.get("pr_from_pm_id")));

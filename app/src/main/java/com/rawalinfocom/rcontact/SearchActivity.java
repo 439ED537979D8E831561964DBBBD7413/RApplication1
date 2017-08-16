@@ -142,7 +142,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
     LinearLayoutManager mLinearLayoutManager;
     ArrayList<GlobalSearchType> globalSearchTypeArrayListMain;
     private SyncCallLogAsyncTask syncCallLogAsyncTask;
-//    private SyncSmsLogAsyncTask syncSmsLogAsyncTask;
+    //    private SyncSmsLogAsyncTask syncSmsLogAsyncTask;
     int count = 0;
     int maxRecords = 5;
     int startAt = 0;
@@ -230,7 +230,6 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                 showPermissionConfirmationDialog();
             }
         }
-
     }
 
     @TargetApi(Build.VERSION_CODES.M)
@@ -971,10 +970,10 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
             while (cursor.moveToNext()) {
                 callLogsIdsList.add(cursor.getString(rowId));
             }
+            cursor.close();
         }
-        cursor.close();
 
-        if (callLogsIdsList != null && callLogsIdsList.size() > 0) {
+        if (callLogsIdsList.size() > 0) {
             fetchCallLogsFromIds(callLogsIdsList);
         }
     }
