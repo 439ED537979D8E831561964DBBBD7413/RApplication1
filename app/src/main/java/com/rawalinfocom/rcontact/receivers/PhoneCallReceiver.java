@@ -841,6 +841,7 @@ public class PhoneCallReceiver extends BroadcastReceiver {
 
                 if (StringUtils.equalsIgnoreCase(spamDataType.getRcpVerfiy(), "0")) {
                     if (contactNameToDisplay.length() > 0)
+
                         intent.putExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME, contactNameToDisplay);
 
                     intent.putExtra(AppConstants.EXTRA_IS_RCP_USER, false);
