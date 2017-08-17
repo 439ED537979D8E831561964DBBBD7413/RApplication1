@@ -164,8 +164,24 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
 
             @Override
             public void onMarkerDragEnd(Marker marker) {
+                place = null;
                 latitude = marker.getPosition().latitude;
                 longitude = marker.getPosition().longitude;
+            }
+        });
+
+        googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+            @Override
+            public void onMapLongClick(LatLng latLng) {
+                place = null;
+                latitude = latLng.latitude;
+                longitude = latLng.longitude;
+                addMapMarker(false);
+                /*googleMap.clear();
+                googleMap.addMarker(new MarkerOptions()
+                        .position(latLng)
+                        .draggable(true));
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18.0f));*/
             }
         });
     }
@@ -183,7 +199,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                         locationCall++;
                     }
                 } else {
-                    addMapMarker();
+                    addMapMarker(true);
                 }
             }
             /*else {
@@ -224,7 +240,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                         }
                         if (latitude != 0 && longitude != 0) {
                             if (serviceType.contains("_TRUE")) {
-                                addMapMarker();
+                                addMapMarker(true);
                             } else {
                                 Intent intent = new Intent();
                                 if (place != null) {
@@ -340,7 +356,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                 AsyncGeoCoding asyncGeoCoding = new AsyncGeoCoding(MapsActivity.this,
                         true, WsConstants.REQ_GEO_CODING_ADDRESS + "_TRUE");
                 asyncGeoCoding.execute(StringUtils.trim(inputSearchLocation.getText()
-                        .toString()));
+                        .toString()), null, null);
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Status status = PlaceAutocomplete.getStatus(this, data);
                 Log.i("onActivityResult", status.getStatusMessage());
@@ -433,7 +449,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                     (defaultFormattedAddress, "Surat, Gujarat, India"))) {
                 AsyncGeoCoding asyncGeoCoding = new AsyncGeoCoding(this, true, WsConstants
                         .REQ_GEO_CODING_ADDRESS + "_TRUE");
-                asyncGeoCoding.execute(StringUtils.trim(defaultFormattedAddress));
+                asyncGeoCoding.execute(StringUtils.trim(defaultFormattedAddress), null, null);
             }
         } else {
             AsyncReverseGeoCoding asyncReverseGeoCoding = new AsyncReverseGeoCoding(this,
@@ -456,19 +472,27 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
         });
     }
 
-    public void addMapMarker() {
+    public void addMapMarker(boolean showDelay) {
         googleMap.clear();
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                LatLng latLng = new LatLng(latitude, longitude);
-                googleMap.addMarker(new MarkerOptions()
-                        .position(latLng)
-                        .draggable(true));
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18.0f));
-            }
-        }, 1000);
+        if (showDelay) {
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    LatLng latLng = new LatLng(latitude, longitude);
+                    googleMap.addMarker(new MarkerOptions()
+                            .position(latLng)
+                            .draggable(true));
+                    googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18.0f));
+                }
+            }, 1000);
+        } else {
+            LatLng latLng = new LatLng(latitude, longitude);
+            googleMap.addMarker(new MarkerOptions()
+                    .position(latLng)
+                    .draggable(true));
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18.0f));
+        }
     }
 
     private void getLocationDetail() {

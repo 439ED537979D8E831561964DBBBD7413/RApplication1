@@ -24,16 +24,16 @@ import java.util.List;
 public class AsyncReverseGeoCoding extends AsyncTask<LatLng, Void, Object> {
 
     private final String LOG_TAG = "AsyncReverseGeoCoding";
-    Exception error = null;
+    private Exception error = null;
 
-    Context mContext;
+    private Context mContext;
 
-    WsResponseListener wsResponseListener;
-    boolean showProgress;
+    private WsResponseListener wsResponseListener;
+    private boolean showProgress;
 
-    ReverseGeocodingAddress objAddress;
+    private ReverseGeocodingAddress objAddress;
 
-    String serviceType;
+    private String serviceType;
 
     public AsyncReverseGeoCoding(Context mContext, String serviceType, boolean
             showProgress) {
@@ -59,8 +59,7 @@ public class AsyncReverseGeoCoding extends AsyncTask<LatLng, Void, Object> {
     protected void onPreExecute() {
         super.onPreExecute();
         if (showProgress) {
-            Utils.showProgressDialog(mContext, mContext.getString(R.string.str_fetching_address),
-                    true);
+            Utils.showProgressDialog(mContext, mContext.getString(R.string.str_fetching_address), true);
         }
     }
 

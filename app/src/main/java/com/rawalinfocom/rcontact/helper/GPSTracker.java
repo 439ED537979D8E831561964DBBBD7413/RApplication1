@@ -212,7 +212,7 @@ public class GPSTracker extends Service implements LocationListener {
                         if (mContext instanceof MapsActivity) {
                             latitude = 21.1702;
                             longitude = 72.8311;
-                            ((MapsActivity) mContext).addMapMarker();
+                            ((MapsActivity) mContext).addMapMarker(true);
                         }
                         break;
 

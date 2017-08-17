@@ -40,7 +40,6 @@ import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.database.QueryManager;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.RecyclerItemDecoration;
-import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.model.ProfileData;
@@ -312,7 +311,8 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         String contactDisplayName = "";
 
-        if (Utils.getStringPreference(activity, AppConstants.PREF_SHORT_BY_CONTACT, "0").equalsIgnoreCase("0")) {
+        if (Utils.getStringPreference(activity, AppConstants.PREF_SHORT_BY_CONTACT, "0")
+                .equalsIgnoreCase("0")) {
             contactDisplayName = StringUtils.defaultIfEmpty(profileData.getName(), "");
         } else {
 

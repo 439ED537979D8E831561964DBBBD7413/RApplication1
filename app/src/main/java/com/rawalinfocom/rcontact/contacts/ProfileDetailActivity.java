@@ -50,7 +50,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.util.Util;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.ContactListingActivity;
 import com.rawalinfocom.rcontact.R;
@@ -726,8 +725,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 (databaseHandler);
                         UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer
                                 .parseInt(pmId));*/
-                        TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
-                        String number = tableMobileMaster.getUserMobileNumber(getUserPmId());
+                        TableMobileMaster tableMobileMaster = new TableMobileMaster
+                                (databaseHandler);
+                        String number = tableMobileMaster.getUserMobileNumber(pmId);
 
                         if (StringUtils.startsWith(number, "+")) {
                             number = StringUtils.substring(number, 1);
@@ -1182,16 +1182,18 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     if (oldHistoryList != null && oldHistoryList.size() > 0) {
                         // Log.i("HistoryServiceCalled", "Data Received");
                         rippleViewOldRecords.setVisibility(View.VISIBLE);
-                        ArrayList<CallLogType> listToAppend =  new ArrayList<>();
-                        for(int i=0 ; i<oldHistoryList.size() ; i++){
-                            CallLogType callLogType =  oldHistoryList.get(i);
-                            String number =  callLogType.getNumber();
-                            if(number.startsWith("91"))
-                                number =  "+" + number;
+                        ArrayList<CallLogType> listToAppend = new ArrayList<>();
+                        for (int i = 0; i < oldHistoryList.size(); i++) {
+                            CallLogType callLogType = oldHistoryList.get(i);
+                            String number = callLogType.getNumber();
+                            if (number.startsWith("91"))
+                                number = "+" + number;
                             callLogType.setHistoryNumber(number);
                             callLogType.setHistoryNumberType(callLogType.getNumberType());
-                            callLogType.setHistoryDate(Long.parseLong(callLogType.getCallDateAndTime()));
-                            callLogType.setHistoryType(Integer.parseInt(callLogType.getTypeOfCall()));
+                            callLogType.setHistoryDate(Long.parseLong(callLogType
+                                    .getCallDateAndTime()));
+                            callLogType.setHistoryType(Integer.parseInt(callLogType.getTypeOfCall
+                                    ()));
                             callLogType.setWebDuration(callLogType.getDurationToPass());
                             listToAppend.add(callLogType);
                         }
@@ -1622,7 +1624,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 rippleInvite.setVisibility(View.GONE);
             } else if (StringUtils.length(callLogCloudName) > 0) {
                 String phoneBookName = getNameFromNumber(historyNumber);
-                if(!StringUtils.equalsIgnoreCase(phoneBookName,contactName)){
+                if (!StringUtils.equalsIgnoreCase(phoneBookName, contactName)) {
                     textFullScreenText.setText(phoneBookName);
                 }
                 textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
@@ -1635,8 +1637,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             } else {
                 if (StringUtils.equalsIgnoreCase(pmId, "-1")) {
                     String phoneBookName = getNameFromNumber(historyNumber);
-                    if(StringUtils.length(phoneBookName)>0){
-                        if(!StringUtils.equalsIgnoreCase(phoneBookName,contactName)){
+                    if (StringUtils.length(phoneBookName) > 0) {
+                        if (!StringUtils.equalsIgnoreCase(phoneBookName, contactName)) {
                             textFullScreenText.setText(phoneBookName);
                         }
                     }
@@ -1816,8 +1818,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         initSwipe();
 
     }
-
-
 
 
     private void getDataFromDB() {
@@ -3499,8 +3499,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         if (!StringUtils.isEmpty(historyNumber))
             intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, historyNumber);
         else {
-            if(intent.hasExtra(AppConstants.EXTRA_FROM_NOTI_PROFILE)){
-                if(intent.getBooleanExtra(AppConstants.EXTRA_FROM_NOTI_PROFILE,false)){
+            if (intent.hasExtra(AppConstants.EXTRA_FROM_NOTI_PROFILE)) {
+                if (intent.getBooleanExtra(AppConstants.EXTRA_FROM_NOTI_PROFILE, false)) {
                     if (tempPhoneNumber != null) {
                         ProfileDataOperationPhoneNumber phoneNumber =
                                 (ProfileDataOperationPhoneNumber) tempPhoneNumber.get
@@ -3509,7 +3509,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         if (phoneNumber != null) {
                             profilePrimaryNumber = phoneNumber.getPhoneNumber();
                         }
-                        intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, profilePrimaryNumber);
+                        intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER,
+                                profilePrimaryNumber);
                         intent.putExtra(AppConstants.EXTRA_RCP_FROM_NOTI, true);
                     }
                 }
@@ -3547,7 +3548,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         if (arrayListHistory != null && arrayListHistory.size() > 0) {
             CallLogType callLogType = arrayListHistory.get(arrayListHistory.size() - 1);
 //            String number = callLogType.getHistoryNumber();
-            String number = Utils.getFormattedNumber(this,callLogType.getHistoryNumber());
+            String number = Utils.getFormattedNumber(this, callLogType.getHistoryNumber());
             if (!StringUtils.isEmpty(number)) {
                 if (number.startsWith("+91"))
                     number = number.replace("+", "");

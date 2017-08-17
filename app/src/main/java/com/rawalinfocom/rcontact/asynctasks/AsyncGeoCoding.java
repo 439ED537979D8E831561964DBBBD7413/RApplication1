@@ -42,7 +42,8 @@ public class AsyncGeoCoding extends AsyncTask<String, Void, Object> {
     protected void onPreExecute() {
         super.onPreExecute();
         if (showProgress) {
-            Utils.showProgressDialog(context, context.getString(R.string.str_fetching_address), true);
+            Utils.showProgressDialog(context, context.getString(R.string.str_fetching_address),
+                    true);
         }
     }
 
@@ -55,12 +56,16 @@ public class AsyncGeoCoding extends AsyncTask<String, Void, Object> {
             List<Address> addresses = null;
             String addressText = "";
 
+            String paramAddress = params[0];
+            String paramLatitude = params[1];
+            String paramLongitude = params[2];
+
             try {
-                if (params[0] != null) {
-                    addresses = geocoder.getFromLocationName(params[0], 1);
+                if (paramAddress != null) {
+                    addresses = geocoder.getFromLocationName(paramAddress, 1);
                 } else {
-                    addresses = geocoder.getFromLocation(Double.parseDouble(params[1]), Double
-                            .parseDouble(params[2]), 1);
+                    addresses = geocoder.getFromLocation(Double.parseDouble(paramLatitude), Double
+                            .parseDouble(paramLongitude), 1);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -106,10 +111,19 @@ public class AsyncGeoCoding extends AsyncTask<String, Void, Object> {
                     }
                 }
 
-                objAddress.setLatitude(StringUtils.defaultString(Double.toString(address
-                        .getLatitude()), "0"));
-                objAddress.setLongitude(StringUtils.defaultString(Double.toString(address
-                        .getLongitude()), "0"));
+                if (paramLatitude != null) {
+                    objAddress.setLatitude(paramLatitude);
+                } else {
+                    objAddress.setLatitude(StringUtils.defaultString(Double.toString(address
+                            .getLatitude()), "0"));
+                }
+                if (paramLongitude != null) {
+                    objAddress.setLongitude(paramLongitude);
+                } else {
+                    objAddress.setLongitude(StringUtils.defaultString(Double.toString(address
+                            .getLongitude()), "0"));
+                }
+
                 objAddress.setAddress(StringUtils.defaultString(addressText));
                 objAddress.setPostalCode(StringUtils.defaultString(address.getPostalCode()));
                 objAddress.setAddressLine(StringUtils.defaultString(address.getAddressLine(0)));
