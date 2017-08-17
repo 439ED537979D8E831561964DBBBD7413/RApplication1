@@ -730,7 +730,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         String number = StringUtils.trimToEmpty(arrayListProfileData.get(0)
                                 .getTempNumber());*/
 
-                       TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
+                        TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
                         String number = tableMobileMaster.getUserMobileNumber(getUserPmId());
 
                         if (StringUtils.startsWith(number, "+")) {
@@ -1185,12 +1185,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     if (oldHistoryList != null && oldHistoryList.size() > 0) {
                         // Log.i("HistoryServiceCalled", "Data Received");
                         rippleViewOldRecords.setVisibility(View.VISIBLE);
-                        ArrayList<CallLogType> listToAppend =  new ArrayList<>();
-                        for(int i=0 ; i<oldHistoryList.size() ; i++){
-                            CallLogType callLogType =  oldHistoryList.get(i);
-                            String number =  callLogType.getNumber();
-                            if(number.startsWith("91"))
-                                number =  "+" + number;
+                        ArrayList<CallLogType> listToAppend = new ArrayList<>();
+                        for (int i = 0; i < oldHistoryList.size(); i++) {
+                            CallLogType callLogType = oldHistoryList.get(i);
+                            String number = callLogType.getNumber();
+                            if (number.startsWith("91"))
+                                number = "+" + number;
                             callLogType.setHistoryNumber(number);
                             callLogType.setHistoryNumberType(callLogType.getNumberType());
                             callLogType.setHistoryDate(Long.parseLong(callLogType.getCallDateAndTime()));
@@ -1625,7 +1625,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 rippleInvite.setVisibility(View.GONE);
             } else if (StringUtils.length(callLogCloudName) > 0) {
                 String phoneBookName = getNameFromNumber(historyNumber);
-                if(!StringUtils.equalsIgnoreCase(phoneBookName,contactName)){
+                if (!StringUtils.equalsIgnoreCase(phoneBookName, contactName)) {
                     textFullScreenText.setText(phoneBookName);
                 }
                 textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
@@ -1638,10 +1638,20 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             } else {
                 if (StringUtils.equalsIgnoreCase(pmId, "-1")) {
                     String phoneBookName = getNameFromNumber(historyNumber);
-                    if(StringUtils.length(phoneBookName)>0){
-                        if(!StringUtils.equalsIgnoreCase(phoneBookName,contactName)){
+                    if (StringUtils.length(phoneBookName) > 0) {
+                        if (!StringUtils.equalsIgnoreCase(phoneBookName, contactName)) {
                             textFullScreenText.setText(phoneBookName);
                         }
+                    } else {
+                        /*// Updated on 17/08/2019
+                        if (historyNumber.startsWith("+91")) {
+
+                        } else if (historyNumber.startsWith("0")) {
+                            historyNumber = Utils.getFormattedNumber(ProfileDetailActivity.this, historyNumber);
+                        } else {
+                            historyNumber = Utils.getFormattedNumber(ProfileDetailActivity.this, historyNumber);
+                        }
+                        textFullScreenText.setText(historyNumber);*/
                     }
                     textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color
                             .colorBlack));
@@ -1821,8 +1831,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     }
 
 
-
-
     private void getDataFromDB() {
         ProfileDataOperation profileDataOperation = queryManager.getRcProfileDetail
                 (this, pmId);
@@ -1870,7 +1878,25 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 rippleInvite.setVisibility(View.VISIBLE);
                 linearBasicDetailRating.setVisibility(View.GONE);
                 textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
-                textFullScreenText.setText(historyName);
+//                textFullScreenText.setText(historyName);
+                String phoneBookName = getNameFromNumber(historyNumber);
+                if (StringUtils.length(phoneBookName) > 0) {
+                    textFullScreenText.setText(phoneBookName);
+                } else {
+                    if (StringUtils.length(historyName) > 0) {
+                        textFullScreenText.setText(historyName);
+                    } else {
+                        //Updated on 17/08/2017
+                        if (historyNumber.startsWith("+91")) {
+
+                        } else if (historyNumber.startsWith("0")) {
+                            historyNumber = Utils.getFormattedNumber(ProfileDetailActivity.this, historyNumber);
+                        } else {
+                            historyNumber = Utils.getFormattedNumber(ProfileDetailActivity.this, historyNumber);
+                        }
+                        textFullScreenText.setText(historyNumber);
+                    }
+                }
             }
 
         } else {
@@ -3502,8 +3528,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         if (!StringUtils.isEmpty(historyNumber))
             intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, historyNumber);
         else {
-            if(intent.hasExtra(AppConstants.EXTRA_FROM_NOTI_PROFILE)){
-                if(intent.getBooleanExtra(AppConstants.EXTRA_FROM_NOTI_PROFILE,false)){
+            if (intent.hasExtra(AppConstants.EXTRA_FROM_NOTI_PROFILE)) {
+                if (intent.getBooleanExtra(AppConstants.EXTRA_FROM_NOTI_PROFILE, false)) {
                     if (tempPhoneNumber != null) {
                         ProfileDataOperationPhoneNumber phoneNumber =
                                 (ProfileDataOperationPhoneNumber) tempPhoneNumber.get
