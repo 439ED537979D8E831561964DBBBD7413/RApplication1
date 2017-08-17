@@ -1867,7 +1867,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 rippleInvite.setVisibility(View.VISIBLE);
                 linearBasicDetailRating.setVisibility(View.GONE);
                 textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
-                textFullScreenText.setText(historyName);
+                String phoneBookName = getNameFromNumber(historyNumber);
+                if(StringUtils.length(phoneBookName)>0){
+                    textFullScreenText.setText(phoneBookName);
+                }else{
+                    textFullScreenText.setText(historyName);
+                }
             }
 
         } else {
