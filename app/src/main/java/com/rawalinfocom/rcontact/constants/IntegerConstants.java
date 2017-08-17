@@ -7,15 +7,15 @@ package com.rawalinfocom.rcontact.constants;
 public class IntegerConstants {
 
     // Launcher Screen Constants
-    public static int LAUNCH_TUTORIAL_ACTIVITY = 0;
-    public static int LAUNCH_TERMS_CONDITIONS_ACTIVITY = 1;
-    public static int LAUNCH_MOBILE_REGISTRATION = 2;
-    public static int LAUNCH_OTP_VERIFICATION = 3;
-    public static int LAUNCH_PROFILE_REGISTRATION = 4;
-    public static int LAUNCH_RE_LOGIN_PASSWORD = 5;
-    public static int LAUNCH_ENTER_PASSWORD = 6;
-    public static int LAUNCH_SET_PASSWORD = 7;
-    public static int LAUNCH_MAIN_ACTIVITY = 8;
+    public final static int LAUNCH_TUTORIAL_ACTIVITY = 0;
+    public final static int LAUNCH_TERMS_CONDITIONS_ACTIVITY = 1;
+    public final static int LAUNCH_MOBILE_REGISTRATION = 2;
+    public final static int LAUNCH_OTP_VERIFICATION = 3;
+    public final static int LAUNCH_PROFILE_REGISTRATION = 4;
+    public final static int LAUNCH_RE_LOGIN_PASSWORD = 5;
+    public final static int LAUNCH_ENTER_PASSWORD = 6;
+    public final static int LAUNCH_SET_PASSWORD = 7;
+    public final static int LAUNCH_MAIN_ACTIVITY = 8;
 
 
     // Profile Registration Constants

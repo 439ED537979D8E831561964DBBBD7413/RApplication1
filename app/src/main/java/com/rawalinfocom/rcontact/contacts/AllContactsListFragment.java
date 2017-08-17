@@ -575,9 +575,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                 }
                             }
                         } else if (userProfiles.size() == 1) {
-                            name = userProfiles.get(0).getPmFirstName() + " " + userProfiles
-                                    .get(0)
-                                    .getPmLastName();
+                            name = userProfiles.get(0).getPmFirstName() + " " + userProfiles.get
+                                    (0).getPmLastName();
                             rcpID = userProfiles.get(0).getPmRcpId();
                             rcpProfileImage = userProfiles.get(0).getPmProfileImage();
                         }
