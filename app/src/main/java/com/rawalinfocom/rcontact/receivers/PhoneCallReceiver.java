@@ -620,7 +620,6 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                     textSpamReport.setText(context.getString(R.string.report_spam));
                 }
 
-
             } else {
                 llSpam.setVisibility(View.GONE);
             }
