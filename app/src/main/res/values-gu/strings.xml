@@ -267,6 +267,7 @@
     <string name="unblock_All">બધા ને અનબ્લોક કરો</string>
     <string name="block_action_title">બ્લોક કરેલા સંપર્કો સૂચિ</string>
     <string name="contacts">સંપર્કો</string>
+    <string name="str_count_contacts">સંપર્કો</string>
 
     <!--  Call History Details  -->
     <string name="sms">SMS</string>
@@ -459,7 +460,7 @@
     <string name="str_account_name">ખાતાનું નામ</string>
     <string name="str_choose_date">તારીખ પસંદ કરો</string>
     <string name="str_public_profile">public_profile</string>
-    <string name="str_social_connect">સોશિઅલ ખાતા</string>
+    <string name="str_social_connect">સોશિઅલ સંપર્ક</string>
     <string name="str_view_all_organizations">તમામ સંસ્થાઓ જુઓ</string>
     <string name="str_search_location">સ્થાન શોધો...</string>
     <string name="str_sync_with_google_map">Google Maps સાથે સિંક કરો</string>
