@@ -177,11 +177,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                 latitude = latLng.latitude;
                 longitude = latLng.longitude;
                 addMapMarker(false);
-                /*googleMap.clear();
-                googleMap.addMarker(new MarkerOptions()
-                        .position(latLng)
-                        .draggable(true));
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18.0f));*/
             }
         });
     }
@@ -414,6 +409,9 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        buttonFetchAddress.setTypeface(Utils.typefaceRegular(MapsActivity.this));
+        inputSearchLocation.setTypeface(Utils.typefaceRegular(MapsActivity.this));
+
        /* RecyclerItemDecoration decoration = new RecyclerItemDecoration(this, ContextCompat
        .getColor
                 (this, R.color.darkGray), 0.5f);
@@ -519,13 +517,13 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
 
         dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
 
-        TextView textLabelMyAddress = (TextView) dialog.findViewById(R.id.text_label_my_address);
-        final TextView textMyAddress = (TextView) dialog.findViewById(R.id.text_my_address);
-        TextView textLabelGoogleAddress = (TextView) dialog.findViewById(R.id
+        TextView textLabelMyAddress = dialog.findViewById(R.id.text_label_my_address);
+        final TextView textMyAddress = dialog.findViewById(R.id.text_my_address);
+        TextView textLabelGoogleAddress = dialog.findViewById(R.id
                 .text_label_google_address);
-        final TextView textGoogleAddress = (TextView) dialog.findViewById(R.id.text_google_address);
-        Button buttonMyAddress = (Button) dialog.findViewById(R.id.button_my_address);
-        Button buttonGoogleAddress = (Button) dialog.findViewById(R.id.button_google_address);
+        final TextView textGoogleAddress = dialog.findViewById(R.id.text_google_address);
+        Button buttonMyAddress = dialog.findViewById(R.id.button_my_address);
+        Button buttonGoogleAddress = dialog.findViewById(R.id.button_google_address);
 
         textMyAddress.setText(defaultFormattedAddress);
         textGoogleAddress.setText(googleAddress);

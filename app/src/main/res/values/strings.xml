@@ -462,7 +462,7 @@
     <string name="str_social_connect">Social Connect</string>
     <string name="str_view_all_organizations">View All Organizations</string>
     <string name="str_search_location">Search Location...</string>
-    <string name="str_sync_with_google_map">Sync with Google Map</string>
+    <string name="str_sync_with_google_map">Sync with Google Maps</string>
     <string name="str_country_hint">Country (Required)</string>
     <string name="str_state_hint">State (Required)</string>
     <string name="str_city_hint">City (Required)</string>
