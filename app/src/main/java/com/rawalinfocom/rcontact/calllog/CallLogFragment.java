@@ -270,22 +270,23 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                         String numberToUpdate = callLogType.getNumber();
                         if (numberToUpdate.equalsIgnoreCase(number)) {
                             callLogType.setName(phoneBookName);
-                            callLogTypeArrayList.set(i,callLogType);
+                            callLogTypeArrayList.set(i, callLogType);
                             rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
                             simpleCallLogListAdapter.notifyDataSetChanged();
-//                            simpleCallLogListAdapter.notifyItemRangeChanged(itemIndexToUpdate, simpleCallLogListAdapter.getItemCount());
+                            //simpleCallLogListAdapter.notifyItemRangeChanged(itemIndexToUpdate, simpleCallLogListAdapter.getItemCount());
                         }
                     }
-                }else{
-                    String number = simpleCallLogListAdapter.getSelectedCallLogData().getNumber();;
+                } else {
+                    String number = simpleCallLogListAdapter.getSelectedCallLogData().getNumber();
+                    ;
                     for (int i = 0; i < callLogTypeArrayList.size(); i++) {
                         CallLogType callLogType = callLogTypeArrayList.get(i);
                         String numberToUpdate = callLogType.getNumber();
                         if (numberToUpdate.equalsIgnoreCase(number)) {
                             callLogType.setName("");
-                            callLogType.setNumber(Utils.getFormattedNumber(getActivity(),number));
+                            callLogType.setNumber(Utils.getFormattedNumber(getActivity(), number));
                             callLogType = setRCPDetailsAndSpamCountforUnsavedNumbers(number, callLogType);
-                            callLogTypeArrayList.set(i,callLogType);
+                            callLogTypeArrayList.set(i, callLogType);
                             rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
                             simpleCallLogListAdapter.notifyDataSetChanged();
 //                            simpleCallLogListAdapter.notifyItemRangeChanged(itemIndexToUpdate, simpleCallLogListAdapter.getItemCount());
@@ -627,8 +628,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             String updatedNumber = callLogType.getNumber();
             TableSpamDetailMaster tableSpamDetailMaster = new TableSpamDetailMaster(getDatabaseHandler());
 //            String savedNumberFormat = Utils.getFormattedNumber(getActivity(),updatedNumber);
-            if(updatedNumber.startsWith("0")){
-                updatedNumber =  Utils.getFormattedNumber(getActivity(),updatedNumber);
+            if (updatedNumber.startsWith("0")) {
+                updatedNumber = Utils.getFormattedNumber(getActivity(), updatedNumber);
             }
             String savedNumberFormat = updatedNumber;
             if (savedNumberFormat.startsWith("+91"))
@@ -778,7 +779,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     callLogType.setUniqueContactId(cursor.getString(cursor.getColumnIndex(CallLog.Calls._ID)));
                     callLogType.setLocalPbRowId(" ");
 //                    callLogType.setProfileImage("");
-                    if(callLogType.getType() != AppConstants.NEW_CONTACT_MI){
+                    if (callLogType.getType() != AppConstants.NEW_CONTACT_MI) {
                         callLogTypeArrayList.add(callLogType);
                     }
                 }
@@ -863,8 +864,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                         callLogType.setUniqueContactId(cursor.getString(cursor.getColumnIndex(CallLog.Calls._ID)));
                         callLogType.setLocalPbRowId(" ");
 //                        callLogType.setProfileImage("");
-                        if(callLogType.getType() != AppConstants.NEW_CONTACT_MI){
-                            callLogTypeArrayList.add(0,callLogType);
+                        if (callLogType.getType() != AppConstants.NEW_CONTACT_MI) {
+                            callLogTypeArrayList.add(0, callLogType);
                         }
 //                        callLogTypeArrayList.add(0, callLogType);
 
@@ -979,8 +980,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             TableSpamDetailMaster tableSpamDetailMaster = new TableSpamDetailMaster(getDatabaseHandler());
             if (!StringUtils.isEmpty(number)) {
 
-                if(number.startsWith("0")){
-                    number =  Utils.getFormattedNumber(getActivity(),number);
+                if (number.startsWith("0")) {
+                    number = Utils.getFormattedNumber(getActivity(), number);
                 }
 
                 if (number.startsWith("+91"))
@@ -1053,8 +1054,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     CallLogType callLogType = callLogTypeArrayList.get(i);
                     String number = callLogType.getNumber();
                     if (!StringUtils.isEmpty(number)) {
-                        if(number.startsWith("0")){
-                            number =  Utils.getFormattedNumber(getActivity(),number);
+                        if (number.startsWith("0")) {
+                            number = Utils.getFormattedNumber(getActivity(), number);
                         }
                         if (number.startsWith("+91"))
                             number = number.replace("+", "");
