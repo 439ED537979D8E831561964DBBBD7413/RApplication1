@@ -278,7 +278,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     }
                 } else {
                     String number = simpleCallLogListAdapter.getSelectedCallLogData().getNumber();
-                    ;
                     for (int i = 0; i < callLogTypeArrayList.size(); i++) {
                         CallLogType callLogType = callLogTypeArrayList.get(i);
                         String numberToUpdate = callLogType.getNumber();

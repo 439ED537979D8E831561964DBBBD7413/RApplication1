@@ -1874,7 +1874,26 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 } else {
                     textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color
                             .colorBlack));
-                    textFullScreenText.setText(historyName);
+//                    textFullScreenText.setText(historyName);
+                    // updated on 17/08/2017
+                    String phoneBookName = getNameFromNumber(historyNumber);
+                    if (StringUtils.length(phoneBookName) > 0) {
+                        textFullScreenText.setText(phoneBookName);
+                    } else {
+                        if (StringUtils.length(historyName) > 0) {
+                            textFullScreenText.setText(historyName);
+                        } else {
+                            //Updated on 17/08/2017
+                            if (historyNumber.startsWith("+91")) {
+
+                            } else if (historyNumber.startsWith("0")) {
+                                historyNumber = Utils.getFormattedNumber(ProfileDetailActivity.this, historyNumber);
+                            } else {
+                                historyNumber = Utils.getFormattedNumber(ProfileDetailActivity.this, historyNumber);
+                            }
+                            textFullScreenText.setText(historyNumber);
+                        }
+                    }
                     textName.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
                     textName.setText(callLogCloudName);
                 }
