@@ -88,8 +88,7 @@ class OptionMenuDialog {
 
         dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
 
-        RecyclerView recyclerViewOptionMenu = (RecyclerView) dialog.findViewById(R.id
-                .recycler_view_option_menu);
+        RecyclerView recyclerViewOptionMenu = dialog.findViewById(R.id.recycler_view_option_menu);
 
         String[] menus = new String[0];
         switch (menuType) {
