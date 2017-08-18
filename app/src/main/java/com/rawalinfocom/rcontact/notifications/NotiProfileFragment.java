@@ -161,6 +161,9 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
             public void onTabSelected(TabLayout.Tab tab) {
                 tabIndex = tab.getPosition();
                 if (tabIndex == 0) {
+
+                    textPastTitle.setText(getString(R.string.past_pending_requests));
+
                     if (todayProfileAdapter != null)
                         todayProfileAdapter.updateList(listTodayRequest);
                     if (pastProfileAdapter != null) {
@@ -178,6 +181,9 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
                     }
 
                 } else {
+
+                    textPastTitle.setText(getString(R.string.past_given_response));
+
                     if (todayProfileAdapter != null)
                         todayProfileAdapter.updateList(listTodayResponse);
                     if (pastProfileAdapter != null) {
@@ -420,14 +426,12 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
             if (listType == 0) {
 
                 item.setProfileNotiType(0);
-                item.setNotiInfo(item.getPersonName() + " " + getActivity().getString(R.string
-                        .str_requested_for_your) + " "
-                        + request.getPpmTag());
+                item.setNotiInfo(String.format(item.getPersonName() + " " + getActivity().getString(R.string
+                        .str_requested_for_your) + " ", request.getPpmTag()));
             } else {
                 item.setProfileNotiType(1);
-                item.setNotiInfo(item.getPersonName() + " " + getActivity().getString(R.string
-                        .str_confirmed_your_request_for) + " "
-                        + request.getPpmTag());
+                item.setNotiInfo(String.format(item.getPersonName() + " " + getActivity().getString(R.string
+                        .str_confirmed_your_request_for) + " ", request.getPpmTag()));
             }
             item.setRcpUserPmId(pmId + "");
             item.setCardCloudId(request.getCarId());

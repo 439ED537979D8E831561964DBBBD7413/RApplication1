@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context="com.rawalinfocom.rcontact.contacts.EditProfileActivity">
 
-
     <include
         android:id="@+id/include_toolbar"
         layout="@layout/layout_toolbar_edit_profile_details"

@@ -170,6 +170,7 @@
     <string name="recent_events">Recent Events</string>
     <string name="upcoming_events">Upcoming Events</string>
     <string name="past_pending_requests">Past Pending Requests</string>
+    <string name="past_given_response">Past Given Responses</string>
     <string name="text_custom">Custom</string>
     <string name="msg_please_enter_some_comment">Please enter some comment first!</string>
     <string name="text_wishes_on_your">Wishes you on your\u0020</string>
@@ -251,7 +252,8 @@
     <string name="msg_enter_password">To prevent unauthorized access please set password.</string>
     <string name="str_password">Password</string>
     <string name="str_confirm_password">Confirm Password</string>
-    <string name="msg_tip_password">Tip: At least 1 upper &amp; lower case letter, 1 number &amp; special character and min 8 character long</string>
+    <!--<string name="msg_tip_password">Tip: At least 1 upper &amp; lower case letter, 1 number &amp; special character and min 8 character long</string>-->
+    <string name="msg_tip_password">The password should be of min 4 characters</string>
     <string name="title_password_protected">Password Protected</string>
     <string name="msg_enter_password_tips">Please enter password to access and open account.</string>
     <string name="str_signin_signup">Sign in or sign up with different account</string>
@@ -414,8 +416,8 @@
     <string name="str_tab_comment">Comment</string>
 
     <!--<string name="str_tab_r_contact">RContact</string>-->
-    <string name="str_requested_for_your">Requested for your </string>
-    <string name="str_confirmed_your_request_for">confirmed your request for </string>
+    <string name="str_requested_for_your">Requested for your %1$s</string>
+    <string name="str_confirmed_your_request_for">confirmed your request for %1$s</string>
 
     <!-- Profile -->
     <string name="str_copy_number">Copied Number</string>
@@ -457,7 +459,7 @@
     <string name="str_website">Website</string>
     <string name="str_address">Address</string>
     <string name="str_link">Link</string>
-    <string name="str_account_name">Account Name</string>
+    <!--<string name="str_account_name">Account Name</string>-->
     <string name="str_choose_date">Choose date</string>
     <string name="str_public_profile">public_profile</string>
     <string name="str_social_connect">Social Contact</string>
@@ -567,7 +569,7 @@
     <string name="error_once_birthday_anniversary">You can add Birthday and Anniversary only once!</string>
     <string name="error_no_update">Nothing to Update</string>
     <string name="error_required_address_mapping">Address mapping on Map is required!</string>
-    <string name="hint_account_name">Account Name</string>
+    <string name="hint_account_name">User Id</string>
     <string name="hint_country_required">Country (Required)</string>
     <string name="hint_state_required">State (Required)</string>
     <string name="hint_city_town_required">City / Town (Required)</string>

@@ -170,6 +170,7 @@
     <string name="recent_events">તાજેતરના ઇવેન્ટ્સ</string>
     <string name="upcoming_events">આવનાર ઈવેન્ટ્સ</string>
     <string name="past_pending_requests">અપૂર્ણ વિનંતીઓ</string>
+    <string name="past_given_response">પાછલા આપેલ જવાબો</string>
     <string name="text_custom">કસ્ટમ</string>
     <string name="msg_please_enter_some_comment">કૃપા કરી કોઈ ટિપ્પણી દાખલ કરો</string>
     <string name="text_wishes_on_your">એ તમને \u0020 ની શુભકામનાઓ આપી</string>
@@ -190,7 +191,7 @@
     <string name="text_notifications">સૂચનાઓ</string>
     <string name="text_you_rated">તમે રેટ ને કર્યું</string>
     <string name="text_rated_you">એ તમને રેટ કર્યું</string>
-    <string name="footer_noti_rating_text">પાછલા રેટિંગ જોવા માટે વેબસાઈટ પર જાઓ</string>
+    <string name="footer_noti_rating_text">પાછલા સૂચનાઓ જોવા માટે વેબસાઈટ પર જાઓ</string>
     <string name="footer_noti_comments_text">પાછલા ટાઈમલાઈન ની ટિપ્પણીઓ જોવા માટે વેબસાઈટ પર જાઓ</string>
     <string name="footer_events_text">આવનારી ઇવેન્ટ્સ જોવા માટે વેબસાઈટ પર જાઓ</string>
     <string name="footer_timeline_text">પાછલા ટાઈમલાઈન ની ઇવેન્ટ્સ જોવા માટે વેબસાઈટ પર જાઓ</string>
@@ -251,7 +252,8 @@
     <string name="msg_enter_password">કૃપા કરીને અનધિકૃત ઍક્સેસ અટકાવવા માટે પાસવર્ડ સેટ કરો</string>
     <string name="str_password">પાસવર્ડ</string>
     <string name="str_confirm_password">પાસવર્ડ કન્ફર્મ કરો</string>
-    <string name="msg_tip_password">ટિપ: પાસવર્ડ ઓછામાં ઓછો 8 અક્ષર લાંબો હોવો જોઈએ જેમાં લઘુત્તમ 1 અપ્પર અને 1 લોઅર કેસ અક્ષર, 1 નંબર અને 1 સ્પેશિઅલ અક્ષર હોવો જોઈએ</string>
+    <!--<string name="msg_tip_password">ટિપ: પાસવર્ડ ઓછામાં ઓછો 8 અક્ષર લાંબો હોવો જોઈએ જેમાં લઘુત્તમ 1 અપ્પર અને 1 લોઅર કેસ અક્ષર, 1 નંબર અને 1 સ્પેશિઅલ અક્ષર હોવો જોઈએ</string>-->
+    <string name="msg_tip_password">પાસવર્ડ ઓછામાં ઓછો 4 અક્ષર લાંબો હોવો જોઈએ</string>
     <string name="title_password_protected">પાસવર્ડ થી સુરક્ષિત</string>
     <string name="msg_enter_password_tips">કૃપા કરીને તમારા ખાતા ને ઍક્સેસ કરવા માટે પાસવર્ડ દાખલ કરો</string>
     <string name="str_enter_password">પાસવર્ડ દાખલ કરો</string>
@@ -414,8 +416,8 @@
     <string name="str_tab_comment">ટિપ્પણી</string>
 
     <!-- <string name="str_tab_r_contact">RContact</string>  -->
-    <string name="str_requested_for_your">એ તમારો જોવા માટે પરવાનગી માંગી છે</string>
-    <string name="str_confirmed_your_request_for">એ તમારી ની વિનંતી સ્વીકારી લીધી છે</string>
+    <string name="str_requested_for_your">એ તમારો %1$s જોવા માટે પરવાનગી માંગી છે</string>
+    <string name="str_confirmed_your_request_for">એ તમારી %1$s જોવાની ની વિનંતી સ્વીકારી લીધી છે</string>
 
     <!--  Profile  -->
     <string name="str_copy_number">નંબર કૉપિ કરવામાં આવ્યો</string>
@@ -457,7 +459,7 @@
     <string name="str_website">વેબસાઈટ</string>
     <string name="str_address">એડ્રેસ</string>
     <string name="str_link">લિંક</string>
-    <string name="str_account_name">ખાતાનું નામ</string>
+    <!--<string name="str_account_name">ખાતાનું નામ</string>-->
     <string name="str_choose_date">તારીખ પસંદ કરો</string>
     <string name="str_public_profile">public_profile</string>
     <string name="str_social_connect">સોશિઅલ સંપર્ક</string>
@@ -567,7 +569,7 @@
     <string name="error_once_birthday_anniversary">જન્મદિવસ અને વર્ષગાંઠ માત્ર એકવાર જ ઉમેરી શકાય છે!</string>
     <string name="error_no_update">અપડેટ કરવા માટે કંઈ નથી</string>
     <string name="error_required_address_mapping">એડ્રેસ ને મેપ પર સિંક કરવું આવશ્યક છે!</string>
-    <string name="hint_account_name">ખાતાનું નામ</string>
+    <string name="hint_account_name">વપરાશકર્તા id</string>
     <string name="hint_country_required">દેશ (આવશ્યક)</string>
     <string name="hint_state_required">રાજ્ય (આવશ્યક)</string>
     <string name="hint_city_town_required">શહેર/નગર (આવશ્યક)</string>

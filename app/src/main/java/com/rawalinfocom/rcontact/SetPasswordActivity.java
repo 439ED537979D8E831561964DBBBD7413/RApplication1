@@ -300,8 +300,8 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
     }
 
     private void registerButtonClicked() {
-        String password = inputSetPassword.getText().toString();
-        String confirmPassword = inputSetConfirmPassword.getText().toString();
+        String password = inputSetPassword.getText().toString().trim();
+        String confirmPassword = inputSetConfirmPassword.getText().toString().trim();
         if (StringUtils.isEmpty(password)) {
             Utils.showErrorSnackBar(this, layoutRoot, getResources().getString(R.string
                     .err_msg_please_enter_password));
@@ -318,12 +318,19 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
             return;
         }
         if (password.equalsIgnoreCase(confirmPassword)) {
-            if (isPasswordValid(password)) {
+
+            if (password.length() > 3) {
                 SavePassword(password, confirmPassword);
             } else {
                 Utils.showErrorSnackBar(this, layoutRoot, getResources().getString(R.string
                         .msg_tip_password));
             }
+
+//            if (isPasswordValid(password)) {
+//            } else {
+//                Utils.showErrorSnackBar(this, layoutRoot, getResources().getString(R.string
+//                        .msg_tip_password));
+//            }
         }
     }
 

@@ -364,12 +364,10 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                     } else {
                         if (globalSearchTypeArrayListMain != null &&
                                 globalSearchTypeArrayListMain.size() > 0) {
-                            if (globalSearchRecordsResponse != null) {
-                                String responseMessage = globalSearchRecordsResponse.getMessage();
-                                if (!StringUtils.isEmpty(responseMessage)) {
-                                    Utils.showSuccessSnackBar(SearchActivity.this, rlSearchRoot,
-                                            responseMessage);
-                                }
+                            String responseMessage = globalSearchRecordsResponse.getMessage();
+                            if (!StringUtils.isEmpty(responseMessage)) {
+                                Utils.showSuccessSnackBar(SearchActivity.this, rlSearchRoot,
+                                        responseMessage);
                             }
 
                         } else {
@@ -634,7 +632,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                     textGlobalText.setVisibility(View.GONE);
                     progressBar.setVisibility(View.VISIBLE);
                 } else
-                    Utils.showSuccessSnackBar(SearchActivity.this, rlSearchRoot, getString(R
+                    Utils.showErrorSnackBar(SearchActivity.this, rlSearchRoot, getString(R
                             .string.search_query_validation));
 
                 break;
@@ -646,7 +644,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                     rippleViewMoreGlobalContacts.setVisibility(View.GONE);
                     progressBar.setVisibility(View.VISIBLE);
                 } else
-                    Utils.showSuccessSnackBar(SearchActivity.this, rlSearchRoot, getString(R
+                    Utils.showErrorSnackBar(SearchActivity.this, rlSearchRoot, getString(R
                             .string.search_query_validation));
 
                 break;

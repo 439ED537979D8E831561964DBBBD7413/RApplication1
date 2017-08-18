@@ -170,6 +170,7 @@
     <string name="recent_events">हाल के इवेंट्स</string>
     <string name="upcoming_events">आने वाले इवेंट्स</string>
     <string name="past_pending_requests">अपूर्ण निवेदन</string>
+    <string name="past_given_response">अतीत दिया हुआ जवाब</string>
     <string name="text_custom">कस्टम</string>
     <string name="msg_please_enter_some_comment">कृपया कोई टिप्पणी दर्ज करें</string>
     <string name="text_wishes_on_your">ने आपको \u0020 की शुभकामनाएं दी</string>
@@ -190,7 +191,7 @@
     <string name="text_notifications">सूचनाएं</string>
     <string name="text_you_rated">को आपने रेट किया</string>
     <string name="text_rated_you">ने आपको रेट किया</string>
-    <string name="footer_noti_rating_text">पिछले रेटिंग्स देखने के लिए वेबसाइट पर जाएं</string>
+    <string name="footer_noti_rating_text">पिछले सूचनाएं देखने के लिए वेबसाइट पर जाएं</string>
     <string name="footer_noti_comments_text">पिछली टाइमलाइन टिप्पणियां देखने के लिए वेबसाइट पर जाएं</string>
     <string name="footer_events_text">आगामी इवेंट्स देखने के लिए वेबसाइट पर जाएं</string>
     <string name="footer_timeline_text">पिछले टाइमलाइन इवेंट्स देखने के लिए वेबसाइट पर जाएं</string>
@@ -251,7 +252,8 @@
     <string name="msg_enter_password">कृपया अनधिकृत पहुंच को रोकने के लिए पासवर्ड सेट करें</string>
     <string name="str_password">पासवर्ड</string>
     <string name="str_confirm_password">पासवर्ड कन्फर्म करें</string>
-    <string name="msg_tip_password">युक्ति: पासवर्ड न्यूनतम 8 अक्षर लंबा जिसमे कम से कम 1 ऊपरी और 1 लोअर केस लेटर, 1 नंबर और 1 स्पेशल कैरेक्टर होना चाहिए</string>
+    <!--<string name="msg_tip_password">युक्ति: पासवर्ड न्यूनतम 8 अक्षर लंबा जिसमे कम से कम 1 ऊपरी और 1 लोअर केस लेटर, 1 नंबर और 1 स्पेशल कैरेक्टर होना चाहिए</string>-->
+    <string name="msg_tip_password">पासवर्ड न्यूनतम 4 अक्षर लंबा होना चाहिए</string>
     <string name="title_password_protected">पासवर्ड से सुरक्षित</string>
     <string name="msg_enter_password_tips">कृपया अपना खाता एक्सेस करने के लिए पासवर्ड दर्ज करें</string>
     <string name="str_signin_signup">साइन इन करें या दूसरे खाते के साथ साइन अप करें</string>
@@ -414,8 +416,8 @@
     <string name="str_tab_comment">टिपण्णी</string>
 
     <!-- <string name="str_tab_r_contact">RContact</string>  -->
-    <string name="str_requested_for_your">ने आपका देखने के लिए अनुमति मांगी है।</string>
-    <string name="str_confirmed_your_request_for">ने आपका निवेदन के लिए स्वीकार कर लिया</string>
+    <string name="str_requested_for_your">ने आपका %1$s देखने के लिए अनुमति मांगी है।</string>
+    <string name="str_confirmed_your_request_for">ने आपका %1$s देखनेका का निवेदन स्वीकार कर लिया हे</string>
 
     <!--  Profile  -->
     <string name="str_copy_number">नम्बर कॉपी किया गया</string>
@@ -457,7 +459,7 @@
     <string name="str_website">वेबसाइट</string>
     <string name="str_address">पता</string>
     <string name="str_link">लिंक</string>
-    <string name="str_account_name">खाते का नाम</string>
+    <!--<string name="str_account_name">खाते का नाम</string>-->
     <string name="str_choose_date">दिनांक चुनें</string>
     <string name="str_public_profile">public_profile</string>
     <string name="str_social_connect">सोशिअल संपर्क</string>
