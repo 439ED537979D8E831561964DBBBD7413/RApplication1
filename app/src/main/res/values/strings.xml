@@ -170,7 +170,7 @@
     <string name="recent_events">Recent Events</string>
     <string name="upcoming_events">Upcoming Events</string>
     <string name="past_pending_requests">Past Pending Requests</string>
-    <string name="past_given_response">Past Given Responses</string>
+    <string name="past_received_response">Past Received Responses</string>
     <string name="text_custom">Custom</string>
     <string name="msg_please_enter_some_comment">Please enter some comment first!</string>
     <string name="text_wishes_on_your">Wishes you on your\u0020</string>

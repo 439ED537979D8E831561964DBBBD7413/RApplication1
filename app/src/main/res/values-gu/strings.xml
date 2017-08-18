@@ -170,7 +170,7 @@
     <string name="recent_events">તાજેતરના ઇવેન્ટ્સ</string>
     <string name="upcoming_events">આવનાર ઈવેન્ટ્સ</string>
     <string name="past_pending_requests">અપૂર્ણ વિનંતીઓ</string>
-    <string name="past_given_response">પાછલા આપેલ જવાબો</string>
+    <string name="past_received_response">છેલ્લા પ્રાપ્ત પ્રતિસાદો</string>
     <string name="text_custom">કસ્ટમ</string>
     <string name="msg_please_enter_some_comment">કૃપા કરી કોઈ ટિપ્પણી દાખલ કરો</string>
     <string name="text_wishes_on_your">એ તમને \u0020 ની શુભકામનાઓ આપી</string>
@@ -569,7 +569,7 @@
     <string name="error_once_birthday_anniversary">જન્મદિવસ અને વર્ષગાંઠ માત્ર એકવાર જ ઉમેરી શકાય છે!</string>
     <string name="error_no_update">અપડેટ કરવા માટે કંઈ નથી</string>
     <string name="error_required_address_mapping">એડ્રેસ ને મેપ પર સિંક કરવું આવશ્યક છે!</string>
-    <string name="hint_account_name">વપરાશકર્તા id</string>
+    <string name="hint_account_name">વપરાશકર્તા આઈડી</string>
     <string name="hint_country_required">દેશ (આવશ્યક)</string>
     <string name="hint_state_required">રાજ્ય (આવશ્યક)</string>
     <string name="hint_city_town_required">શહેર/નગર (આવશ્યક)</string>

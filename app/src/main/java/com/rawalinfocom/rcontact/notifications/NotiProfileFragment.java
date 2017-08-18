@@ -182,7 +182,7 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
 
                 } else {
 
-                    textPastTitle.setText(getString(R.string.past_given_response));
+                    textPastTitle.setText(getString(R.string.past_received_response));
 
                     if (todayProfileAdapter != null)
                         todayProfileAdapter.updateList(listTodayResponse);
@@ -421,6 +421,7 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
             } else {
                 item.setPersonName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
                 item.setPersonImage(userProfile.getPmProfileImage());
+                item.setPmRawId(userProfile.getPmRawId());
             }
 
             if (listType == 0) {

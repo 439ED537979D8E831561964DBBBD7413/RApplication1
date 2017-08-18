@@ -170,7 +170,7 @@
     <string name="recent_events">हाल के इवेंट्स</string>
     <string name="upcoming_events">आने वाले इवेंट्स</string>
     <string name="past_pending_requests">अपूर्ण निवेदन</string>
-    <string name="past_given_response">अतीत दिया हुआ जवाब</string>
+    <string name="past_received_response">पिछले प्राप्त प्रतिक्रियाएं</string>
     <string name="text_custom">कस्टम</string>
     <string name="msg_please_enter_some_comment">कृपया कोई टिप्पणी दर्ज करें</string>
     <string name="text_wishes_on_your">ने आपको \u0020 की शुभकामनाएं दी</string>
@@ -569,7 +569,7 @@
     <string name="error_once_birthday_anniversary">जन्मदिन और सालगिरह केवल एक बार जोड़ा जा सकता है!</string>
     <string name="error_no_update">अपडेट करने के लिए कुछ नहीं है</string>
     <string name="error_required_address_mapping">पते का मैप पर सिंक होना आवश्यक है</string>
-    <string name="hint_account_name">खाते का नाम</string>
+    <string name="hint_account_name">यूज़र आईडी</string>
     <string name="hint_country_required">देश (आवश्यक)</string>
     <string name="hint_state_required">राज्य (आवश्यक)</string>
     <string name="hint_city_town_required">शहर/नगर (आवश्यक)</string>
