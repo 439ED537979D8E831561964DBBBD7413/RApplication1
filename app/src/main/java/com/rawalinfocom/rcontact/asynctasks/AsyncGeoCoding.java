@@ -57,12 +57,16 @@ public class AsyncGeoCoding extends AsyncTask<String, Void, Object> {
             String addressText = "";
 
             String paramAddress = params[0];
-            String paramLatitude = params[1];
-            String paramLongitude = params[2];
+            String paramCity = params[1];
+            String paramLatitude = params[2];
+            String paramLongitude = params[3];
 
             try {
                 if (paramAddress != null) {
                     addresses = geocoder.getFromLocationName(paramAddress, 1);
+                    if (addresses.size() <= 0) {
+                        addresses = geocoder.getFromLocationName(paramCity, 1);
+                    }
                 } else {
                     addresses = geocoder.getFromLocation(Double.parseDouble(paramLatitude), Double
                             .parseDouble(paramLongitude), 1);

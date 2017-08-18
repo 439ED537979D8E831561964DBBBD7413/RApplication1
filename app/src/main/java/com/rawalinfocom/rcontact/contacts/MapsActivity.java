@@ -74,6 +74,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
     Place place;
 
     private String defaultFormattedAddress = "Surat, Gujarat, India";
+    private String defaultCity = "Surat";
 
     //<editor-fold desc="Override Methods">
 
@@ -89,6 +90,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
             if (intent.hasExtra(AppConstants.EXTRA_FORMATTED_ADDRESS)) {
                 defaultFormattedAddress = intent.getStringExtra(AppConstants
                         .EXTRA_FORMATTED_ADDRESS);
+                defaultCity = intent.getStringExtra(AppConstants.EXTRA_CITY);
             }
             if (intent.hasExtra(AppConstants.EXTRA_LATITUDE)) {
                 try {
@@ -308,7 +310,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                 if (latitude != 0 && longitude != 0) {
                     AsyncGeoCoding asyncGeoCodingFetch = new AsyncGeoCoding(this, true, WsConstants
                             .REQ_GEO_CODING_ADDRESS + "_FALSE");
-                    asyncGeoCodingFetch.execute(null, String.valueOf(latitude), String.valueOf
+                    asyncGeoCodingFetch.execute(null, null, String.valueOf(latitude), String.valueOf
                             (longitude));
                 } else {
                     Utils.showErrorSnackBar(this, relativeRootMap, getString(R.string
@@ -350,8 +352,10 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                 inputSearchLocation.setText(place.getName());
                 AsyncGeoCoding asyncGeoCoding = new AsyncGeoCoding(MapsActivity.this,
                         true, WsConstants.REQ_GEO_CODING_ADDRESS + "_TRUE");
-                asyncGeoCoding.execute(StringUtils.trim(inputSearchLocation.getText()
-                        .toString()), null, null);
+                /*asyncGeoCoding.execute(StringUtils.trim(inputSearchLocation.getText()
+                        .toString()), null, null);*/
+                asyncGeoCoding.execute(null, null, String.valueOf(place.getLatLng().latitude),
+                        String.valueOf(place.getLatLng().longitude));
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Status status = PlaceAutocomplete.getStatus(this, data);
                 Log.i("onActivityResult", status.getStatusMessage());
@@ -447,7 +451,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                     (defaultFormattedAddress, "Surat, Gujarat, India"))) {
                 AsyncGeoCoding asyncGeoCoding = new AsyncGeoCoding(this, true, WsConstants
                         .REQ_GEO_CODING_ADDRESS + "_TRUE");
-                asyncGeoCoding.execute(StringUtils.trim(defaultFormattedAddress), null, null);
+                asyncGeoCoding.execute(StringUtils.trim(defaultFormattedAddress), StringUtils
+                        .trim(defaultCity), null, null);
             }
         } else {
             AsyncReverseGeoCoding asyncReverseGeoCoding = new AsyncReverseGeoCoding(this,

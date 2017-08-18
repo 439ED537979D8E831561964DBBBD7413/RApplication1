@@ -455,14 +455,14 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 ReverseGeocodingAddress objAddress = (ReverseGeocodingAddress) data
                         .getSerializableExtra(AppConstants.EXTRA_OBJECT_ADDRESS);
                 View linearView = linearAddressDetails.getChildAt(clickedPosition);
-                TextView textLatitude = (TextView) linearView.findViewById(R.id.input_latitude);
-                TextView textLongitude = (TextView) linearView.findViewById(R.id
+                TextView textLatitude = linearView.findViewById(R.id.input_latitude);
+                TextView textLongitude = linearView.findViewById(R.id
                         .input_longitude);
-                TextView textImageMapMarker = (TextView) linearView.findViewById(R.id
+                TextView textImageMapMarker = linearView.findViewById(R.id
                         .text_image_map_marker);
-                TextView textGoogleAddress = (TextView) linearView.findViewById(R.id
+                TextView textGoogleAddress = linearView.findViewById(R.id
                         .input_google_address);
-                TextView inputIsAddressModified = (TextView) linearView.findViewById(R.id
+                TextView inputIsAddressModified = linearView.findViewById(R.id
                         .input_is_address_modified);
                 textLatitude.setText(objAddress.getLatitude());
                 textLongitude.setText(objAddress.getLongitude());
@@ -745,13 +745,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     ProfileDataOperationPhoneNumber phoneNumber = new
                             ProfileDataOperationPhoneNumber();
                     View linearPhone = linearPhoneDetails.getChildAt(i);
-                    EditText emailId = (EditText) linearPhone.findViewById(R.id.input_value);
-                    Spinner emailType = (Spinner) linearPhone.findViewById(R.id.spinner_type);
-                    TextView textIsPublic = (TextView) linearPhone.findViewById(R.id
+                    EditText emailId = linearPhone.findViewById(R.id.input_value);
+                    Spinner emailType = linearPhone.findViewById(R.id.spinner_type);
+                    TextView textIsPublic = linearPhone.findViewById(R.id
                             .text_is_public);
-                    TextView textIsVerified = (TextView) linearPhone.findViewById(R.id
+                    TextView textIsVerified = linearPhone.findViewById(R.id
                             .text_is_verified);
-                    RelativeLayout relativeRowEditProfile = (RelativeLayout) linearPhone
+                    RelativeLayout relativeRowEditProfile = linearPhone
                             .findViewById(R.id.relative_row_edit_profile);
                     phoneNumber.setPhoneNumber(emailId.getText().toString().trim());
                     phoneNumber.setPhoneType((String) emailType.getSelectedItem());
@@ -801,24 +801,26 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 for (int i = 0; i < linearEmailDetails.getChildCount(); i++) {
                     ProfileDataOperationEmail email = new ProfileDataOperationEmail();
                     View linearEmail = linearEmailDetails.getChildAt(i);
-                    EditText emailId = (EditText) linearEmail.findViewById(R.id.input_value);
-                    Spinner emailType = (Spinner) linearEmail.findViewById(R.id.spinner_type);
-                    TextView textIsPublic = (TextView) linearEmail.findViewById(R.id
+                    EditText emailId = linearEmail.findViewById(R.id.input_value);
+                    Spinner emailType = linearEmail.findViewById(R.id.spinner_type);
+                    TextView textIsPublic = linearEmail.findViewById(R.id
                             .text_is_public);
-                    TextView textIsVerified = (TextView) linearEmail.findViewById(R.id
+                    TextView textIsVerified = linearEmail.findViewById(R.id
                             .text_is_verified);
-                    RelativeLayout relativeRowEditProfile = (RelativeLayout) linearEmail
+                    RelativeLayout relativeRowEditProfile = linearEmail
                             .findViewById(R.id.relative_row_edit_profile);
                     email.setEmEmailId(StringUtils.trim(emailId.getText().toString().trim()));
                     email.setEmType((String) emailType.getSelectedItem());
                     email.setEmId((String) relativeRowEditProfile.getTag());
                     if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
-                        email.setEmPublic(Integer.parseInt(textIsPublic.getText().toString().trim()));
+                        email.setEmPublic(Integer.parseInt(textIsPublic.getText().toString().trim
+                                ()));
                     } else {
                         email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
                     }
                     if (StringUtils.length(textIsVerified.getText().toString()) > 0) {
-                        email.setEmRcpType(Integer.parseInt(textIsVerified.getText().toString().trim()));
+                        email.setEmRcpType(Integer.parseInt(textIsVerified.getText().toString()
+                                .trim()));
                     }
 
                     if (!StringUtils.isBlank(email.getEmEmailId())) {
@@ -865,13 +867,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 for (int i = 0; i < linearSocialContactDetails.getChildCount(); i++) {
                     ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
                     View linearSocialContact = linearSocialContactDetails.getChildAt(i);
-                    EditText imAccountName = (EditText) linearSocialContact.findViewById(R.id
+                    EditText imAccountName = linearSocialContact.findViewById(R.id
                             .input_value);
-                    Spinner imAccountProtocol = (Spinner) linearSocialContact.findViewById(R.id
+                    Spinner imAccountProtocol = linearSocialContact.findViewById(R.id
                             .spinner_type);
-                    TextView textIsPublic = (TextView) linearSocialContact.findViewById(R.id
+                    TextView textIsPublic = linearSocialContact.findViewById(R.id
                             .text_is_public);
-                    RelativeLayout relativeRowEditProfile = (RelativeLayout) linearSocialContact
+                    RelativeLayout relativeRowEditProfile = linearSocialContact
                             .findViewById(R.id.relative_row_edit_profile);
                     imAccount.setIMAccountDetails(imAccountName.getText().toString().trim());
                     imAccount.setIMAccountProtocol((String) imAccountProtocol.getSelectedItem());
@@ -921,9 +923,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     ProfileDataOperationWebAddress webAddress = new
                             ProfileDataOperationWebAddress();
                     View linearWebsite = linearWebsiteDetails.getChildAt(i);
-                    EditText website = (EditText) linearWebsite.findViewById(R.id.input_value);
-                    Spinner websiteType = (Spinner) linearWebsite.findViewById(R.id.spinner_type);
-                    RelativeLayout relativeRowEditProfile = (RelativeLayout) linearWebsite
+                    EditText website = linearWebsite.findViewById(R.id.input_value);
+                    Spinner websiteType = linearWebsite.findViewById(R.id.spinner_type);
+                    RelativeLayout relativeRowEditProfile = linearWebsite
                             .findViewById(R.id.relative_row_edit_profile);
                     webAddress.setWebAddress(website.getText().toString().trim());
                     webAddress.setWebType((String) websiteType.getSelectedItem());
@@ -968,13 +970,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     ProfileDataOperationOrganization organization = new
                             ProfileDataOperationOrganization();
                     View linearOrganization = linearOrganizationDetails.getChildAt(i);
-                    EditText inputCompanyName = (EditText) linearOrganization.findViewById(R.id
+                    EditText inputCompanyName = linearOrganization.findViewById(R.id
                             .input_company_name);
-                    EditText inputDesignationName = (EditText) linearOrganization.findViewById(R.id
+                    EditText inputDesignationName = linearOrganization.findViewById(R.id
                             .input_designation_name);
-                    RelativeLayout relativeRowEditProfile = (RelativeLayout) linearOrganization
+                    RelativeLayout relativeRowEditProfile = linearOrganization
                             .findViewById(R.id.relative_row_edit_profile);
-                    CheckBox checkboxOrganization = (CheckBox) linearOrganization.findViewById(R
+                    CheckBox checkboxOrganization = linearOrganization.findViewById(R
                             .id.checkbox_organization);
                     organization.setOrgName(inputCompanyName.getText().toString().trim());
                     organization.setOrgJobTitle(inputDesignationName.getText().toString().trim());
@@ -1048,19 +1050,20 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 for (int i = 0; i < linearEventDetails.getChildCount(); i++) {
                     ProfileDataOperationEvent event = new ProfileDataOperationEvent();
                     View linearEvent = linearEventDetails.getChildAt(i);
-                    EditText eventDate = (EditText) linearEvent.findViewById(R.id.input_value);
-                    Spinner eventType = (Spinner) linearEvent.findViewById(R.id.spinner_type);
-                    TextView textIsPublic = (TextView) linearEvent.findViewById(R.id
+                    EditText eventDate = linearEvent.findViewById(R.id.input_value);
+                    Spinner eventType = linearEvent.findViewById(R.id.spinner_type);
+                    TextView textIsPublic = linearEvent.findViewById(R.id
                             .text_is_public);
-                    CheckBox checkboxHideYear = (CheckBox) linearEvent.findViewById(R.id
+                    CheckBox checkboxHideYear = linearEvent.findViewById(R.id
                             .checkbox_hide_year);
-                    RelativeLayout relativeRowEditProfile = (RelativeLayout) linearEvent
+                    RelativeLayout relativeRowEditProfile = linearEvent
                             .findViewById(R.id.relative_row_edit_profile);
                     event.setEventType((String) eventType.getSelectedItem());
                     event.setIsYearHidden(checkboxHideYear.isChecked() ? 1 : 0);
                     event.setEventId((String) relativeRowEditProfile.getTag());
                     if (StringUtils.length(textIsPublic.getText().toString().trim()) > 0) {
-                        event.setEventPublic(Integer.parseInt(textIsPublic.getText().toString().trim()));
+                        event.setEventPublic(Integer.parseInt(textIsPublic.getText().toString()
+                                .trim()));
                     } else {
                         event.setEventPublic(IntegerConstants.PRIVACY_MY_CONTACT);
                     }
@@ -1069,7 +1072,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         event.setEventDateTime(Utils.convertDateFormat(eventDate.getText()
                                 .toString().trim(), getEventDateFormatForUpdate(eventDate.getText()
                                 .toString().trim()), "yyyy-MM-dd HH:mm:ss"));
-                        event.setEventDate(Utils.convertDateFormat(eventDate.getText().toString().trim(),
+                        event.setEventDate(Utils.convertDateFormat(eventDate.getText().toString()
+                                        .trim(),
                                 getEventDateFormatForUpdate(eventDate.getText()
                                         .toString().trim()), "yyyy-MM-dd HH:mm:ss"));
                         arrayListNewEvent.add(event);
@@ -1118,31 +1122,31 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 for (int i = 0; i < linearAddressDetails.getChildCount(); i++) {
                     ProfileDataOperationAddress address = new ProfileDataOperationAddress();
                     View linearAddress = linearAddressDetails.getChildAt(i);
-                    Spinner addressType = (Spinner) linearAddress.findViewById(R.id
+                    Spinner addressType = linearAddress.findViewById(R.id
                             .spinner_type);
 
-                    EditText country = (EditText) linearAddress.findViewById(R.id
+                    EditText country = linearAddress.findViewById(R.id
                             .input_country);
-                    EditText state = (EditText) linearAddress.findViewById(R.id.input_state);
-                    EditText city = (EditText) linearAddress.findViewById(R.id.input_city);
-                    EditText street = (EditText) linearAddress.findViewById(R.id.input_street);
-                    EditText neighborhood = (EditText) linearAddress.findViewById(R.id
+                    EditText state = linearAddress.findViewById(R.id.input_state);
+                    EditText city = linearAddress.findViewById(R.id.input_city);
+                    EditText street = linearAddress.findViewById(R.id.input_street);
+                    EditText neighborhood = linearAddress.findViewById(R.id
                             .input_neighborhood);
-                    EditText pinCode = (EditText) linearAddress.findViewById(R.id
+                    EditText pinCode = linearAddress.findViewById(R.id
                             .input_pin_code);
-                    RelativeLayout relativeRowEditProfile = (RelativeLayout) linearAddress
+                    RelativeLayout relativeRowEditProfile = linearAddress
                             .findViewById(R.id.relative_row_edit_profile);
-                    TextView textLatitude = (TextView) linearAddress.findViewById(R.id
+                    TextView textLatitude = linearAddress.findViewById(R.id
                             .input_latitude);
-                    TextView textLongitude = (TextView) linearAddress.findViewById(R.id
+                    TextView textLongitude = linearAddress.findViewById(R.id
                             .input_longitude);
-                    TextView textGoogleAddress = (TextView) linearAddress.findViewById(R.id
+                    TextView textGoogleAddress = linearAddress.findViewById(R.id
                             .input_google_address);
-                    TextView textIsPublic = (TextView) linearAddress.findViewById(R.id
+                    TextView textIsPublic = linearAddress.findViewById(R.id
                             .text_is_public);
-                    TextView inputIsAddressModified = (TextView) linearAddress.findViewById(R.id
+                    TextView inputIsAddressModified = linearAddress.findViewById(R.id
                             .input_is_address_modified);
-                    TextView textImageMapMarker = (TextView) linearAddress.findViewById(R.id
+                    TextView textImageMapMarker = linearAddress.findViewById(R.id
                             .text_image_map_marker);
 
                     String countryName = country.getText().toString().trim();
@@ -1186,7 +1190,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                                 ().get(1))) {
 //                                            if (!isAddressModified) {
                                             if (!StringUtils.equalsAnyIgnoreCase
-                                                    (inputIsAddressModified.getText().toString().trim(),
+                                                    (inputIsAddressModified.getText().toString()
+                                                                    .trim(),
                                                             "true")) {
                                                 arrayListNewAddress.add(address);
                                             } else {
@@ -2081,7 +2086,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             }
             for (int i = 0; i < linearPhoneDetails.getChildCount(); i++) {
                 View linearPhone = linearPhoneDetails.getChildAt(i);
-                EditText emailId = (EditText) linearPhone.findViewById(R.id.input_value);
+                EditText emailId = linearPhone.findViewById(R.id.input_value);
                 emailId.addTextChangedListener(valueTextWatcher);
             }
 //            inputValue.addTextChangedListener(valueTextWatcher);
@@ -2111,7 +2116,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             }
             for (int i = 0; i < linearEmailDetails.getChildCount(); i++) {
                 View linearEmail = linearEmailDetails.getChildAt(i);
-                EditText emailId = (EditText) linearEmail.findViewById(R.id.input_value);
+                EditText emailId = linearEmail.findViewById(R.id.input_value);
                 emailId.addTextChangedListener(valueTextWatcher);
             }
         } else {
@@ -2141,7 +2146,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             }
             for (int i = 0; i < linearWebsiteDetails.getChildCount(); i++) {
                 View linearWebsite = linearWebsiteDetails.getChildAt(i);
-                EditText Website = (EditText) linearWebsite.findViewById(R.id.input_value);
+                EditText Website = linearWebsite.findViewById(R.id.input_value);
                 Website.addTextChangedListener(valueTextWatcher);
             }
         } else {
@@ -2174,7 +2179,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             }
             for (int i = 0; i < linearSocialContactDetails.getChildCount(); i++) {
                 View linearSocialContact = linearSocialContactDetails.getChildAt(i);
-                EditText socialContact = (EditText) linearSocialContact.findViewById(R.id
+                EditText socialContact = linearSocialContact.findViewById(R.id
                         .input_value);
                 socialContact.addTextChangedListener(valueTextWatcher);
             }
@@ -2214,7 +2219,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             }
             for (int i = 0; i < linearEventDetails.getChildCount(); i++) {
                 View linearEvent = linearEventDetails.getChildAt(i);
-                EditText event = (EditText) linearEvent.findViewById(R.id.input_value);
+                EditText event = linearEvent.findViewById(R.id.input_value);
                 event.addTextChangedListener(valueTextWatcher);
             }
         } else {
@@ -2286,16 +2291,15 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             }
             for (int i = 0; i < linearAddressDetails.getChildCount(); i++) {
                 View linearAddress = linearAddressDetails.getChildAt(i);
-                EditText inputCountry = (EditText) linearAddress.findViewById(R.id.input_country);
-                EditText inputState = (EditText) linearAddress.findViewById(R.id.input_state);
-                EditText inputCity = (EditText) linearAddress.findViewById(R.id.input_city);
-                EditText inputStreet = (EditText) linearAddress.findViewById(R.id.input_street);
-                EditText inputNeighborhood = (EditText) linearAddress.findViewById(R.id
-                        .input_neighborhood);
-                EditText inputPinCode = (EditText) linearAddress.findViewById(R.id.input_pin_code);
-                TextView inputIsAddressModified = (TextView) linearAddress.findViewById(R.id
+                EditText inputCountry = linearAddress.findViewById(R.id.input_country);
+                EditText inputState = linearAddress.findViewById(R.id.input_state);
+                EditText inputCity = linearAddress.findViewById(R.id.input_city);
+                EditText inputStreet = linearAddress.findViewById(R.id.input_street);
+                EditText inputNeighborhood = linearAddress.findViewById(R.id.input_neighborhood);
+                EditText inputPinCode = linearAddress.findViewById(R.id.input_pin_code);
+                TextView inputIsAddressModified = linearAddress.findViewById(R.id
                         .input_is_address_modified);
-                TextView textImageMapMarker = (TextView) linearAddress.findViewById(R.id
+                TextView textImageMapMarker = linearAddress.findViewById(R.id
                         .text_image_map_marker);
                 setAddressTextWatcher(inputCountry, textImageMapMarker, inputIsAddressModified);
                 setAddressTextWatcher(inputState, textImageMapMarker, inputIsAddressModified);
@@ -2314,12 +2318,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         boolean toAdd = false;
         for (int i = 0; i < linearAddressDetails.getChildCount(); i++) {
             View linearView = linearAddressDetails.getChildAt(i);
-            EditText inputCountry = (EditText) linearView.findViewById(R.id.input_country);
-            EditText inputState = (EditText) linearView.findViewById(R.id.input_state);
-            EditText inputCity = (EditText) linearView.findViewById(R.id.input_city);
-            EditText inputStreet = (EditText) linearView.findViewById(R.id.input_street);
-            TextView inputLatitude = (TextView) linearView.findViewById(R.id.input_latitude);
-            TextView inputLongitude = (TextView) linearView.findViewById(R.id.input_longitude);
+            EditText inputCountry = linearView.findViewById(R.id.input_country);
+            EditText inputState = linearView.findViewById(R.id.input_state);
+            EditText inputCity = linearView.findViewById(R.id.input_city);
+            EditText inputStreet = linearView.findViewById(R.id.input_street);
+            TextView inputLatitude = linearView.findViewById(R.id.input_latitude);
+            TextView inputLongitude = linearView.findViewById(R.id.input_longitude);
             if (StringUtils.length(StringUtils.trimToEmpty(inputCountry.getText().toString())) <
                     1 ||
                     StringUtils.length(StringUtils.trimToEmpty(inputState.getText().toString()))
@@ -2348,8 +2352,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         boolean toAdd = false;
         for (int i = 0; i < linearOrganizationDetails.getChildCount(); i++) {
             View linearView = linearOrganizationDetails.getChildAt(i);
-            EditText inputCompanyName = (EditText) linearView.findViewById(R.id.input_company_name);
-            EditText inputDesignationName = (EditText) linearView.findViewById(R.id
+            EditText inputCompanyName = linearView.findViewById(R.id.input_company_name);
+            EditText inputDesignationName = linearView.findViewById(R.id
                     .input_designation_name);
             if (StringUtils.length(StringUtils.trimToEmpty(inputCompanyName.getText().toString())
             ) < 1 || StringUtils.length(StringUtils.trimToEmpty(inputDesignationName.getText()
@@ -2370,7 +2374,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         boolean toAdd = false;
         for (int i = 0; i < linearLayout.getChildCount(); i++) {
             View linearView = linearLayout.getChildAt(i);
-            EditText editText = (EditText) linearView.findViewById(R.id.input_value);
+            EditText editText = linearView.findViewById(R.id.input_value);
             if (StringUtils.length(StringUtils.trimToEmpty(editText.getText().toString())) < 1) {
                 toAdd = false;
                 break;
@@ -2388,18 +2392,18 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     private void addView(int viewType, final LinearLayout linearLayout, Object detailObject, int
             position) {
         View view = LayoutInflater.from(this).inflate(R.layout.list_item_edit_profile, null);
-        ImageView imageViewDelete = (ImageView) view.findViewById(R.id.image_delete);
-        final Spinner spinnerType = (Spinner) view.findViewById(R.id.spinner_type);
+        ImageView imageViewDelete = view.findViewById(R.id.image_delete);
+        final Spinner spinnerType = view.findViewById(R.id.spinner_type);
 //        final EditText inputValue = (EditText) view.findViewById(R.id.input_value);
-        final EditText inputValue = (EditText) view.findViewById(R.id.input_value);
-        LinearLayout linerCheckbox = (LinearLayout) view.findViewById(R.id.liner_checkbox);
-        final CheckBox checkboxHideYear = (CheckBox) view.findViewById(R.id.checkbox_hide_year);
-        TextView textLabelCheckbox = (TextView) view.findViewById(R.id.text_label_checkbox);
-        TextView textIsPublic = (TextView) view.findViewById(R.id.text_is_public);
-        TextView textIsVerified = (TextView) view.findViewById(R.id.text_is_verified);
-        ImageView imageViewCalender = (ImageView) view.findViewById(R.id.image_calender);
+        final EditText inputValue = view.findViewById(R.id.input_value);
+        LinearLayout linerCheckbox = view.findViewById(R.id.liner_checkbox);
+        final CheckBox checkboxHideYear = view.findViewById(R.id.checkbox_hide_year);
+        TextView textLabelCheckbox = view.findViewById(R.id.text_label_checkbox);
+        TextView textIsPublic = view.findViewById(R.id.text_is_public);
+        TextView textIsVerified = view.findViewById(R.id.text_is_verified);
+        ImageView imageViewCalender = view.findViewById(R.id.image_calender);
         imageViewCalender.setVisibility(View.GONE);
-        final RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R.id
+        final RelativeLayout relativeRowEditProfile = view.findViewById(R.id
                 .relative_row_edit_profile);
 
         inputValue.setTypeface(Utils.typefaceRegular(this));
@@ -2709,15 +2713,15 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     private void addOrganizationView(Object detailObject) {
         View view = LayoutInflater.from(this).inflate(R.layout
                 .list_item_my_profile_edit_organization, null);
-        ImageView deleteOrganization = (ImageView) view.findViewById(R.id.deleteOrganization);
-        inputCompanyName = (EditText) view.findViewById(R.id.input_company_name);
-        inputDesignationName = (EditText) view.findViewById(R.id.input_designation_name);
-        final CheckBox checkboxOrganization = (CheckBox) view.findViewById(R.id
+        ImageView deleteOrganization = view.findViewById(R.id.deleteOrganization);
+        inputCompanyName = view.findViewById(R.id.input_company_name);
+        inputDesignationName = view.findViewById(R.id.input_designation_name);
+        final CheckBox checkboxOrganization = view.findViewById(R.id
                 .checkbox_organization);
 
         checkboxOrganization.setTag(linearOrganizationDetails.getChildCount());
 
-        final RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R.id
+        final RelativeLayout relativeRowEditProfile = view.findViewById(R.id
                 .relative_row_edit_profile);
 
         inputCompanyName.setInputType(InputType.TYPE_CLASS_TEXT | InputType
@@ -2749,7 +2753,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 if (isChecked) {
                     for (int i = 0; i < linearOrganizationDetails.getChildCount(); i++) {
                         View view = linearOrganizationDetails.getChildAt(i);
-                        CheckBox checkbox = (CheckBox) view.findViewById(R.id
+                        CheckBox checkbox = view.findViewById(R.id
                                 .checkbox_organization);
                         if (checkbox != null) {
                             if (!(checkbox.getTag() == buttonView.getTag())) {
@@ -2784,25 +2788,25 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     private void addAddressView(final Object detailObject, final int position) {
         final View view = LayoutInflater.from(this).inflate(R.layout.list_item_edit_profile_address,
                 null);
-        ImageView imageViewDelete = (ImageView) view.findViewById(R.id.image_delete);
-        final TextView textImageMapMarker = (TextView) view.findViewById(R.id
+        ImageView imageViewDelete = view.findViewById(R.id.image_delete);
+        final TextView textImageMapMarker = view.findViewById(R.id
                 .text_image_map_marker);
-        final Spinner spinnerType = (Spinner) view.findViewById(R.id.spinner_type);
-        final EditText inputCountry = (EditText) view.findViewById(R.id.input_country);
-        final EditText inputState = (EditText) view.findViewById(R.id.input_state);
-        final EditText inputCity = (EditText) view.findViewById(R.id.input_city);
-        final EditText inputStreet = (EditText) view.findViewById(R.id.input_street);
-        final EditText inputNeighborhood = (EditText) view.findViewById(R.id.input_neighborhood);
-        final EditText inputPinCode = (EditText) view.findViewById(R.id.input_pin_code);
-        final EditText inputPoBox = (EditText) view.findViewById(R.id.input_po_box);
-        final TextView textLatitude = (TextView) view.findViewById(R.id.input_latitude);
-        final TextView textLongitude = (TextView) view.findViewById(R.id.input_longitude);
-        final TextView textGoogleAddress = (TextView) view.findViewById(R.id.input_google_address);
-        final TextView textIsPublic = (TextView) view.findViewById(R.id.text_is_public);
-        final TextView inputIsAddressModified = (TextView) view.findViewById(R.id
+        final Spinner spinnerType = view.findViewById(R.id.spinner_type);
+        final EditText inputCountry = view.findViewById(R.id.input_country);
+        final EditText inputState = view.findViewById(R.id.input_state);
+        final EditText inputCity = view.findViewById(R.id.input_city);
+        final EditText inputStreet = view.findViewById(R.id.input_street);
+        final EditText inputNeighborhood = view.findViewById(R.id.input_neighborhood);
+        final EditText inputPinCode = view.findViewById(R.id.input_pin_code);
+        final EditText inputPoBox = view.findViewById(R.id.input_po_box);
+        final TextView textLatitude = view.findViewById(R.id.input_latitude);
+        final TextView textLongitude = view.findViewById(R.id.input_longitude);
+        final TextView textGoogleAddress = view.findViewById(R.id.input_google_address);
+        final TextView textIsPublic = view.findViewById(R.id.text_is_public);
+        final TextView inputIsAddressModified = view.findViewById(R.id
                 .input_is_address_modified);
 
-        final RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R.id
+        final RelativeLayout relativeRowEditProfile = view.findViewById(R.id
                 .relative_row_edit_profile);
 
         inputCountry.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
@@ -2811,7 +2815,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         inputStreet.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
         inputNeighborhood.setInputType(InputType.TYPE_CLASS_TEXT | InputType
                 .TYPE_TEXT_FLAG_CAP_WORDS);
-        inputPinCode.setInputType(InputType.TYPE_CLASS_NUMBER);
+        inputPinCode.setInputType(InputType.TYPE_CLASS_TEXT);
 
         textImageMapMarker.setTypeface(Utils.typefaceIcons(this));
         inputCountry.setTypeface(Utils.typefaceRegular(this));
@@ -2827,7 +2831,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         inputCity.setHint(R.string.hint_city_town_required);
         inputStreet.setHint(R.string.hint_address_line_1_required);
         inputNeighborhood.setHint(R.string.hint_address_line_2_optional);
-        inputPinCode.setHint(R.string.hint_pincode_required);
+        inputPinCode.setHint(R.string.hint_pincode_optional);
         inputPoBox.setHint("Po. Box No.");
 
         inputPoBox.setVisibility(View.GONE);
@@ -2903,14 +2907,14 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             public void onClick(View v) {
 
                 View view = linearAddressDetails.getChildAt(position);
-                TextView textLatitude = (TextView) view.findViewById(R.id.input_latitude);
-                TextView textLongitude = (TextView) view.findViewById(R.id.input_longitude);
-                EditText country = (EditText) view.findViewById(R.id.input_country);
-                EditText state = (EditText) view.findViewById(R.id.input_state);
-                EditText city = (EditText) view.findViewById(R.id.input_city);
-                EditText street = (EditText) view.findViewById(R.id.input_street);
-                EditText neighborhood = (EditText) view.findViewById(R.id.input_neighborhood);
-                EditText pinCode = (EditText) view.findViewById(R.id.input_pin_code);
+                TextView textLatitude = view.findViewById(R.id.input_latitude);
+                TextView textLongitude = view.findViewById(R.id.input_longitude);
+                EditText country = view.findViewById(R.id.input_country);
+                EditText state = view.findViewById(R.id.input_state);
+                EditText city = view.findViewById(R.id.input_city);
+                EditText street = view.findViewById(R.id.input_street);
+                EditText neighborhood = view.findViewById(R.id.input_neighborhood);
+                EditText pinCode = view.findViewById(R.id.input_pin_code);
 
                 String countryName = country.getText().toString();
                 String stateName = state.getText().toString();
@@ -2920,8 +2924,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 String pinCodeName = pinCode.getText().toString();
 
                 if (!StringUtils.isBlank(countryName) && !StringUtils.isBlank(stateName) &&
-                        !StringUtils.isBlank(cityName) && !StringUtils.isBlank(streetName) &&
-                        !StringUtils.isBlank(pinCodeName)) {
+                        !StringUtils.isBlank(cityName) && !StringUtils.isBlank(streetName)) {
 
                     Intent intent = new Intent(EditProfileActivity.this, MapsActivity.class);
 
@@ -2947,6 +2950,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                 neighborhoodName, cityName, stateName, countryName, pinCodeName);
                         if (StringUtils.length(formattedAddress) > 0) {
                             intent.putExtra(AppConstants.EXTRA_FORMATTED_ADDRESS, formattedAddress);
+                            intent.putExtra(AppConstants.EXTRA_CITY, cityName);
                         }
                     }
                    /* if (detailObject != null && position != -1) {
@@ -2967,7 +2971,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     textImageMapMarker.setTextColor(ContextCompat.getColor(EditProfileActivity
                             .this, R.color.colorSnackBarNegative));
                     Utils.showErrorSnackBar(EditProfileActivity.this, relativeRootEditProfile,
-                            "Please add address!");
+                            getString(R.string.str_valid_address));
                 }
             }
         });
@@ -3008,13 +3012,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
         dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
 
-        TextView textDialogTitle = (TextView) dialog.findViewById(R.id.text_dialog_title);
-        TextView textFromContact = (TextView) dialog.findViewById(R.id.text_from_contact);
-        TextView textFromSocialMedia = (TextView) dialog.findViewById(R.id.text_from_social_media);
-        TextView textRemovePhoto = (TextView) dialog.findViewById(R.id.text_remove_photo);
+        TextView textDialogTitle = dialog.findViewById(R.id.text_dialog_title);
+        TextView textFromContact = dialog.findViewById(R.id.text_from_contact);
+        TextView textFromSocialMedia = dialog.findViewById(R.id.text_from_social_media);
+        TextView textRemovePhoto = dialog.findViewById(R.id.text_remove_photo);
 
-        RippleView rippleLeft = (RippleView) dialog.findViewById(R.id.ripple_left);
-        Button buttonLeft = (Button) dialog.findViewById(R.id.button_left);
+        RippleView rippleLeft = dialog.findViewById(R.id.ripple_left);
+        Button buttonLeft = dialog.findViewById(R.id.button_left);
 
         textDialogTitle.setTypeface(Utils.typefaceSemiBold(this));
         textFromContact.setTypeface(Utils.typefaceRegular(this));
@@ -3116,7 +3120,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     selectImageFromCamera();
                 } else {
                     // Permission Denied
-                    Utils.showErrorSnackBar(EditProfileActivity.this, relativeRootEditProfile, getString(R.string.error_camera_permission));
+                    Utils.showErrorSnackBar(EditProfileActivity.this, relativeRootEditProfile,
+                            getString(R.string.error_camera_permission));
                 }
 
                 /*if (permissions[0].equals(Manifest.permission
@@ -3135,7 +3140,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     selectImageFromGallery();
                 } else {
                     // Permission Denied
-                    Utils.showErrorSnackBar(EditProfileActivity.this, relativeRootEditProfile, getString(R.string.error_storage_permission));
+                    Utils.showErrorSnackBar(EditProfileActivity.this, relativeRootEditProfile,
+                            getString(R.string.error_storage_permission));
                 }
 
                 /*if (permissions[0].equals(Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -3210,13 +3216,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
         dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
 
-        TextView textDialogTitle = (TextView) dialog.findViewById(R.id.text_dialog_title);
-        final EditText inputCustomName = (EditText) dialog.findViewById(R.id.input_custom_name);
+        TextView textDialogTitle = dialog.findViewById(R.id.text_dialog_title);
+        final EditText inputCustomName = dialog.findViewById(R.id.input_custom_name);
 
-        RippleView rippleLeft = (RippleView) dialog.findViewById(R.id.ripple_left);
-        Button buttonLeft = (Button) dialog.findViewById(R.id.button_left);
-        RippleView rippleRight = (RippleView) dialog.findViewById(R.id.ripple_right);
-        Button buttonRight = (Button) dialog.findViewById(R.id.button_right);
+        RippleView rippleLeft = dialog.findViewById(R.id.ripple_left);
+        Button buttonLeft = dialog.findViewById(R.id.button_left);
+        RippleView rippleRight = dialog.findViewById(R.id.ripple_right);
+        Button buttonRight = dialog.findViewById(R.id.button_right);
 
         textDialogTitle.setTypeface(Utils.typefaceSemiBold(this));
         inputCustomName.setTypeface(Utils.typefaceRegular(this));

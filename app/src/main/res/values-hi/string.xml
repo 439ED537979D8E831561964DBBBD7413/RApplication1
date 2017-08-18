@@ -573,7 +573,7 @@
     <string name="hint_city_town_required">शहर/नगर (आवश्यक)</string>
     <string name="hint_address_line_1_required">पता पंक्ति 1 (आवश्यक)</string>
     <string name="hint_address_line_2_optional">पता पंक्ति 2 (वैकल्पिक)</string>
-    <string name="hint_pincode_required">पिनकोड (आवश्यक)</string>
+    <string name="hint_pincode_optional">पिनकोड (वैकल्पिक)</string>
     <string name="error_current_organization">कृपया वर्तमान संगठन का चयन करें</string>
     <string name="error_required_city">शहर/नगर का नाम आवश्यक है</string>
     <string name="error_required_street">गली का विस्तार आवश्यक है</string>
