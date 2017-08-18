@@ -493,11 +493,11 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private void configureFooterViewHolder(ContactFooterViewHolder holder) {
         if (fragment instanceof AllContactsListFragment) {
             holder.textTotalContacts.setText(String.format(Locale.getDefault(), "%d %s",
-                    arrayListUserContact.size(), activity.getString(R.string.contacts)));
+                    arrayListUserContact.size(), activity.getString(R.string.str_count_contacts)));
         } else if (fragment instanceof FavoritesFragment) {
             holder.textTotalContacts.setText(String.format(Locale.getDefault(), "%d %s",
                     arrayListUserContact.size() -
-                            arrayListContactHeader.size(), activity.getString(R.string.contacts)));
+                            arrayListContactHeader.size(), activity.getString(R.string.str_count_contacts)));
 
         }
     }

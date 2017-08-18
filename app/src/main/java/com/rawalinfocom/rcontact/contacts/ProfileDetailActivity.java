@@ -2771,11 +2771,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 String actionNumber;
                 if (displayOwnProfile) {
                     actionNumber = StringUtils.defaultString(((ProfileDetailAdapter
-                            .ProfileDetailViewHolder) viewHolder).textMain1.getText()
+                            .ProfileDetailViewHolder) viewHolder).textMain.getText()
                             .toString());
                 } else {
                     actionNumber = StringUtils.defaultString(((ProfileDetailAdapter
-                            .ProfileDetailViewHolder) viewHolder).textMain1.getText()
+                            .ProfileDetailViewHolder) viewHolder).textMain.getText()
                             .toString());
                 }
                 if (direction == ItemTouchHelper.LEFT) {
@@ -2808,7 +2808,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
                 if (viewHolder instanceof ProfileDetailAdapter.ProfileDetailViewHolder &&
                         StringUtils.startsWithIgnoreCase(((ProfileDetailAdapter
-                                .ProfileDetailViewHolder) viewHolder).textMain1.getText()
+                                .ProfileDetailViewHolder) viewHolder).textMain.getText()
                                 .toString(), "+XX")) {
                     return 0;
                 }
