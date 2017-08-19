@@ -2643,11 +2643,12 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                             ProfileDataOperationPhoneNumber phoneNumber = new
                                     ProfileDataOperationPhoneNumber();
 
-                            String number = cursor.getString(cursor.getColumnIndex
+//                            String number = ;
+//                            number = Utils.getFormattedNumber(MainActivity.this, number);
+
+                            phoneNumber.setPhoneNumber(cursor.getString(cursor.getColumnIndex
                                     (ContactsContract
-                                            .CommonDataKinds.Phone.NUMBER));
-                            number = Utils.getFormattedNumber(MainActivity.this, number);
-                            phoneNumber.setPhoneNumber(number);
+                                            .CommonDataKinds.Phone.NUMBER)));
 
                             phoneNumber.setPhoneType(phoneBookContacts.getPhoneNumberType
                                     (cursor.getInt(cursor.getColumnIndex

@@ -122,9 +122,12 @@ public class NotiProfileAdapter extends RecyclerView.Adapter<NotiProfileAdapter.
                 } else {
                     Bundle bundle = new Bundle();
                     bundle.putString(AppConstants.EXTRA_PM_ID, item.getRcpUserPmId());
+                    bundle.putString(AppConstants.EXTRA_CHECK_NUMBER_FAVOURITE, item.getPmRawId());
                     bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, "-1");
                     bundle.putString(AppConstants.EXTRA_CONTACT_NAME, item.getPersonName());
-                    bundle.putBoolean(AppConstants.EXTRA_FROM_NOTI_PROFILE,true);
+                    bundle.putBoolean(AppConstants.EXTRA_FROM_NOTI_PROFILE, true);
+                    bundle.putBoolean(AppConstants.EXTRA_IS_RCP_USER, true);
+                    bundle.putString(AppConstants.EXTRA_PROFILE_IMAGE_URL, item.getPersonImage());
                     ((BaseActivity) (activity.getActivity())).startActivityIntent(activity.getActivity(), ProfileDetailActivity
                             .class, bundle);
                 }

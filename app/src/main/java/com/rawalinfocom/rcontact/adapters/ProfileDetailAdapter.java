@@ -131,8 +131,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         final ProfileDataOperationPhoneNumber phoneNumber = (ProfileDataOperationPhoneNumber)
                 arrayList.get(position);
         final String number = phoneNumber.getPhoneNumber();
-        holder.textSub1.setText(phoneNumber.getPhoneType());
-        holder.textSub1.setVisibility(View.VISIBLE);
+        holder.textSub.setText(phoneNumber.getPhoneType());
+        holder.textSub.setVisibility(View.VISIBLE);
 
         holder.imgActionType.setImageResource(R.drawable.ico_phone_alt_svg);
         holder.imgActionType.setOnClickListener(new View.OnClickListener() {
@@ -177,7 +177,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         });
 
 
-        holder.textMain1.setOnLongClickListener(new View.OnLongClickListener() {
+        holder.textMain.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
                 Utils.copyToClipboard(activity, activity.getString(R.string.str_copy_number), (
@@ -193,17 +193,17 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         int pbRcpType = phoneNumber.getPbRcpType();
         final ProfileDetailViewHolder viewHodler = holder;
         if (pbRcpType == IntegerConstants.RCP_TYPE_PRIMARY) {
-            holder.textMain1.setTypeface(Utils.typefaceIcons(activity));
-            holder.textMain1.setText(String.format("%s %s", number, activity.getString(R.string
+            holder.textMain.setTypeface(Utils.typefaceIcons(activity));
+            holder.textMain.setText(String.format("%s %s", number, activity.getString(R.string
                     .im_icon_verify)));
-            holder.textMain1.setTextColor(colorPineGreen);
+            holder.textMain.setTextColor(colorPineGreen);
             if (isOwnProfile)
                 holder.llPrivacy.setVisibility(View.GONE);
             else
                 holder.llPrivacy.setVisibility(View.GONE);
         } else if (pbRcpType == IntegerConstants.RCP_TYPE_SECONDARY) {
-            holder.textMain1.setText(number);
-            holder.textMain1.setTextColor(colorPineGreen);
+            holder.textMain.setText(number);
+            holder.textMain.setTextColor(colorPineGreen);
             if (isOwnProfile) {
                 switch ((MoreObjects.firstNonNull(phoneNumber.getPhonePublic(), 2))) {
                     case 1:
@@ -253,23 +253,23 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 }
             });
         } else {
-            holder.textMain1.setText(number);
-            holder.textMain1.setTextColor(colorBlack);
+            holder.textMain.setText(number);
+            holder.textMain.setTextColor(colorBlack);
         }
     }
 
     private void displayEmail(final ProfileDetailViewHolder holder, final int position) {
         final ProfileDataOperationEmail email = (ProfileDataOperationEmail) arrayList.get(position);
         String emailId = email.getEmEmailId();
-        holder.textSub1.setText(email.getEmType());
-        holder.textSub1.setVisibility(View.VISIBLE);
+        holder.textSub.setText(email.getEmType());
+        holder.textSub.setVisibility(View.VISIBLE);
 
         holder.imgActionType.setImageResource(R.drawable.ico_envelop_svg);
         holder.imgActionType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                String email = holder.textMain1.getText().toString();
+                String email = holder.textMain.getText().toString();
                 if (!email.startsWith("XX") && !email.startsWith("xx")) {
                     Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" +
                             email));
@@ -283,7 +283,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             @Override
             public void onClick(View v) {
 
-                String email = holder.textMain1.getText().toString();
+                String email = holder.textMain.getText().toString();
                 if (!email.startsWith("XX") && !email.startsWith("xx")) {
                     Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" +
                             email));
@@ -293,7 +293,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             }
         });
 
-        holder.textMain1.setOnLongClickListener(new View.OnLongClickListener() {
+        holder.textMain.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
                 Utils.copyToClipboard(activity, activity.getString(R.string.str_copy_email), (
@@ -309,17 +309,17 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         int emRcpType = email.getEmRcpType();
         final ProfileDetailViewHolder viewHodler = holder;
         if (emRcpType == IntegerConstants.RCP_TYPE_PRIMARY) {
-            holder.textMain1.setTypeface(Utils.typefaceIcons(activity));
-            holder.textMain1.setText(String.format("%s %s", emailId, activity.getString(R.string
+            holder.textMain.setTypeface(Utils.typefaceIcons(activity));
+            holder.textMain.setText(String.format("%s %s", emailId, activity.getString(R.string
                     .im_icon_verify)));
-            holder.textMain1.setTextColor(colorPineGreen);
+            holder.textMain.setTextColor(colorPineGreen);
             if (isOwnProfile)
                 holder.llPrivacy.setVisibility(View.INVISIBLE);
             else
                 holder.llPrivacy.setVisibility(View.GONE);
         } else if (emRcpType == IntegerConstants.RCP_TYPE_SECONDARY) {
-            holder.textMain1.setText(emailId);
-            holder.textMain1.setTextColor(colorPineGreen);
+            holder.textMain.setText(emailId);
+            holder.textMain.setTextColor(colorPineGreen);
             if (isOwnProfile) {
                 switch ((MoreObjects.firstNonNull(email.getEmPublic(), 2))) {
                     case 1:
@@ -368,8 +368,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 }
             });
         } else {
-            holder.textMain1.setText(emailId);
-            holder.textMain1.setTextColor(colorBlack);
+            holder.textMain.setText(emailId);
+            holder.textMain.setTextColor(colorBlack);
         }
     }
 
@@ -378,7 +378,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         ProfileDataOperationWebAddress webAddress = (ProfileDataOperationWebAddress) arrayList
                 .get(position);
 
-        holder.textSub1.setVisibility(View.GONE);
+        holder.textSub.setVisibility(View.GONE);
 
         if (!isOwnProfile)
             holder.llPrivacy.setVisibility(View.GONE);
@@ -388,7 +388,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             @Override
             public void onClick(View view) {
 
-                String url = holder.textMain1.getText().toString();
+                String url = holder.textMain.getText().toString();
                 if (!url.startsWith("XX") && !url.startsWith("xx")) {
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     if (!StringUtils.startsWithIgnoreCase(url, "http://") && !StringUtils
@@ -405,7 +405,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             @Override
             public void onClick(View v) {
 
-                String url = holder.textMain1.getText().toString();
+                String url = holder.textMain.getText().toString();
                 if (!url.startsWith("XX") && !url.startsWith("xx")) {
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     if (!StringUtils.startsWithIgnoreCase(url, "http://") && !StringUtils
@@ -418,9 +418,9 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             }
         });
 
-        holder.textMain1.setText(webAddress.getWebAddress());
+        holder.textMain.setText(webAddress.getWebAddress());
 
-        holder.textMain1.setOnLongClickListener(new View.OnLongClickListener() {
+        holder.textMain.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
                 Utils.copyToClipboard(activity, activity.getString(R.string.str_copy_website), (
@@ -436,25 +436,25 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         int rcpType = Integer.parseInt(StringUtils.defaultIfEmpty(webAddress.getWebRcpType(),
                 String.valueOf(IntegerConstants.RCP_TYPE_SECONDARY)));
         if (rcpType == IntegerConstants.RCP_TYPE_LOCAL_PHONE_BOOK) {
-            holder.textMain1.setTextColor(colorBlack);
+            holder.textMain.setTextColor(colorBlack);
         } else {
-            holder.textMain1.setTextColor(colorPineGreen);
+            holder.textMain.setTextColor(colorPineGreen);
         }
     }
 
     private void displayAddress(final ProfileDetailViewHolder holder, final int position) {
         final ProfileDataOperationAddress address = (ProfileDataOperationAddress) arrayList.get
                 (position);
-        holder.textMain1.setText(address.getFormattedAddress());
-        holder.textSub1.setText(address.getAddressType());
-        holder.textSub1.setVisibility(View.VISIBLE);
+        holder.textMain.setText(address.getFormattedAddress());
+        holder.textSub.setText(address.getAddressType());
+        holder.textSub.setVisibility(View.VISIBLE);
 
         holder.imgActionType.setImageResource(R.drawable.ico_address_svg);
         holder.imgActionType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                String strAddress = holder.textMain1.getText().toString();
+                String strAddress = holder.textMain.getText().toString();
                 if (!strAddress.startsWith("XX") && !strAddress.startsWith("xx")) {
                     if (address.getGoogleLatLong() != null) {
                         ArrayList<String> arrayListLatLong = new ArrayList<>();
@@ -466,7 +466,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                         activity.startActivity(intent);
                     } else {
                         Intent intent = new Intent(Intent.ACTION_VIEW,
-                                Uri.parse("google.navigation:q=" + holder.textMain1
+                                Uri.parse("google.navigation:q=" + holder.textMain
                                         .getText()));
                         activity.startActivity(intent);
                     }
@@ -478,7 +478,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             @Override
             public void onClick(View v) {
 
-                String strAddress = holder.textMain1.getText().toString();
+                String strAddress = holder.textMain.getText().toString();
                 if (!strAddress.startsWith("XX") && !strAddress.startsWith("xx")) {
                     if (address.getGoogleLatLong() != null) {
                         ArrayList<String> arrayListLatLong = new ArrayList<>();
@@ -490,7 +490,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                         activity.startActivity(intent);
                     } else {
                         Intent intent = new Intent(Intent.ACTION_VIEW,
-                                Uri.parse("google.navigation:q=" + holder.textMain1
+                                Uri.parse("google.navigation:q=" + holder.textMain
                                         .getText()));
                         activity.startActivity(intent);
                     }
@@ -498,7 +498,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             }
         });
 
-        holder.textMain1.setOnLongClickListener(new View.OnLongClickListener() {
+        holder.textMain.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
                 Utils.copyToClipboard(activity, activity.getString(R.string.str_copy_address), (
@@ -515,9 +515,9 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 String.valueOf(IntegerConstants.RCP_TYPE_SECONDARY)));
         final ProfileDetailViewHolder viewHodler = holder;
         if (addressRcpType == IntegerConstants.RCP_TYPE_LOCAL_PHONE_BOOK) {
-            holder.textMain1.setTextColor(colorBlack);
+            holder.textMain.setTextColor(colorBlack);
         } else {
-            holder.textMain1.setTextColor(colorPineGreen);
+            holder.textMain.setTextColor(colorPineGreen);
             if (isOwnProfile) {
 
                 switch ((MoreObjects.firstNonNull(address.getAddPublic(), 2))) {
@@ -573,8 +573,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
     private void displayImAccount(final ProfileDetailViewHolder holder, final int position) {
         final ProfileDataOperationImAccount imAccount = (ProfileDataOperationImAccount) arrayList
                 .get(position);
-        holder.textMain1.setText(imAccount.getIMAccountDetails());
-        holder.textSub1.setText(imAccount.getIMAccountProtocol());
+        holder.textMain.setText(imAccount.getIMAccountDetails());
+        holder.textSub.setText(imAccount.getIMAccountProtocol());
 
         if (imAccount.getIMAccountProtocol().equalsIgnoreCase("facebook")) {
             holder.imgActionType.setImageResource(R.drawable.ico_facebook_svg);
@@ -596,7 +596,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             @Override
             public void onClick(View view) {
 
-                String ima = holder.textMain1.getText().toString();
+                String ima = holder.textMain.getText().toString();
                 if (!ima.startsWith("XX") && !ima.startsWith("xx")) {
                     if (StringUtils.length(imAccount.getIMAccountDetails()) > 0) {
                         String url = null;
@@ -628,7 +628,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             }
         });
 
-        holder.textMain1.setOnLongClickListener(new View.OnLongClickListener() {
+        holder.textMain.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
                 Utils.copyToClipboard(activity, activity.getString(R.string.str_copy_im_account), (
@@ -644,9 +644,9 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 String.valueOf(IntegerConstants.RCP_TYPE_SECONDARY)));
 
         if (imRcpType == IntegerConstants.RCP_TYPE_LOCAL_PHONE_BOOK) {
-            holder.textMain1.setTextColor(colorBlack);
+            holder.textMain.setTextColor(colorBlack);
         } else {
-            holder.textMain1.setTextColor(colorPineGreen);
+            holder.textMain.setTextColor(colorPineGreen);
             final ProfileDetailViewHolder viewHodler = holder;
             if (isOwnProfile) {
                 holder.buttonPrivacy.setVisibility(View.VISIBLE);
@@ -703,7 +703,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             @Override
             public void onClick(View v) {
 
-                String ima = holder.textMain1.getText().toString();
+                String ima = holder.textMain.getText().toString();
                 if (!ima.startsWith("XX") && !ima.startsWith("xx")) {
                     if (StringUtils.length(imAccount.getIMAccountDetails()) > 0) {
                         String url = null;
@@ -780,9 +780,9 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             convertedDate = event.getEventDateTime();
         }
 
-        holder.textMain1.setText(convertedDate);
-        holder.textSub1.setText(event.getEventType());
-        holder.textSub1.setVisibility(View.VISIBLE);
+        holder.textMain.setText(convertedDate);
+        holder.textSub.setText(event.getEventType());
+        holder.textSub.setVisibility(View.VISIBLE);
 
         if (event.getEventType().equals("Birthday"))
             holder.imgActionType.setImageResource(R.drawable.ico_birthday_svg);
@@ -796,9 +796,9 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
         if (eventRcType == IntegerConstants.RCP_TYPE_LOCAL_PHONE_BOOK) {
 
-            holder.textMain1.setTextColor(colorBlack);
+            holder.textMain.setTextColor(colorBlack);
         } else {
-            holder.textMain1.setTextColor(colorPineGreen);
+            holder.textMain.setTextColor(colorPineGreen);
             if (isOwnProfile) {
                 holder.buttonPrivacy.setVisibility(View.VISIBLE);
                 switch (event.getEventPublic()) {
@@ -852,9 +852,9 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
     private void displayGender(ProfileDetailViewHolder holder, final int position) {
         String gender = (String) arrayList.get(position);
-        holder.textMain1.setText(gender);
-        holder.textSub1.setVisibility(View.GONE);
-        holder.textMain1.setTextColor(colorBlack);
+        holder.textMain.setText(gender);
+        holder.textSub.setVisibility(View.GONE);
+        holder.textMain.setTextColor(colorBlack);
 
         if (gender.equals("Male"))
             holder.imgActionType.setImageResource(R.drawable.ico_male_svg);
@@ -970,9 +970,9 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         @BindView(R.id.img_action_type)
         ImageView imgActionType;
         @BindView(R.id.text_main)
-        public TextView textMain1;
+        public TextView textMain;
         @BindView(R.id.text_sub)
-        TextView textSub1;
+        TextView textSub;
         @BindView(R.id.button_privacy)
         ImageView buttonPrivacy;
         @BindView(R.id.button_request)
@@ -986,8 +986,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             super(itemView);
             ButterKnife.bind(this, itemView);
 
-            textMain1.setTypeface(Utils.typefaceRegular(activity));
-            textSub1.setTypeface(Utils.typefaceRegular(activity));
+            textMain.setTypeface(Utils.typefaceRegular(activity));
+            textSub.setTypeface(Utils.typefaceRegular(activity));
         }
     }
 }
