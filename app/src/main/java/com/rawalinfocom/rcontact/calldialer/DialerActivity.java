@@ -287,6 +287,17 @@ public class DialerActivity extends BaseActivity {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context
                 .INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(editTextNumber.getWindowToken(), 0);
+//        editTextNumber.getText().clear();
+        /*int length = editTextNumber.getText().length();
+        if (length == 0) {
+            showContactDetail(editTextNumber.getText().toString());
+        }*/
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        finish();
     }
 
     @SuppressLint("NewApi")
@@ -1049,13 +1060,19 @@ public class DialerActivity extends BaseActivity {
 //                        showCallConfirmationDialog(actionNumber);
                     }
                 }
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        allContactAdapter.notifyDataSetChanged();
-                    }
-                }, 1000);
+                try {
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(allContactAdapter!=null)
+                                allContactAdapter.notifyDataSetChanged();
+                        }
+                    }, 1000);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
             }
 
             @Override

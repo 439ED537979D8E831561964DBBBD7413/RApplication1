@@ -200,6 +200,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
     private boolean isCallLogRcpUser;
     private String isRcpVerifiedUser = "";
     private boolean isRcpFromNoti;
+    private boolean isCallLogInstance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -356,17 +357,35 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
         protected Void doInBackground(Void... urls) {
             try {
-                if (!StringUtils.isEmpty(historyNumber)) {
-                    fetchAllCallLogHistory(historyNumber);
-                } else {
+                Intent intent = getIntent();
+                if (intent.hasExtra(AppConstants.EXTRA_DIALOG_CALL_LOG_INSTANCE)) {
+                    isCallLogInstance = intent.getBooleanExtra(AppConstants.EXTRA_DIALOG_CALL_LOG_INSTANCE, false);
+                }
+                if (isCallLogInstance) {
                     if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase("[Unknown]")) {
                         fetchAllCallLogHistory(contactName);
+                    } else if (!TextUtils.isEmpty(profileContactNumber)) {
+                        fetchAllCallLogHistory(profileContactNumber);
                     } else {
-                        if (!TextUtils.isEmpty(profileContactNumber)) {
-                            fetchAllCallLogHistory(profileContactNumber);
+                        if (!StringUtils.isEmpty(historyNumber)) {
+                            fetchAllCallLogHistory(historyNumber);
+                        }
+                    }
+
+                } else {
+                    if (!StringUtils.isEmpty(historyNumber)) {
+                        fetchAllCallLogHistory(historyNumber);
+                    } else {
+                        if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase("[Unknown]")) {
+                            fetchAllCallLogHistory(contactName);
+                        } else {
+                            if (!TextUtils.isEmpty(profileContactNumber)) {
+                                fetchAllCallLogHistory(profileContactNumber);
+                            }
                         }
                     }
                 }
+
             } catch (Exception e) {
                 runOnUiThread(new Runnable() {
                     @Override

@@ -130,6 +130,7 @@ public class AppConstants {
     public static String EXTRA_RCP_VERIFIED_ID = "extra_rcp_verified_id";
     public static String EXTRA_RCP_FROM_NOTI = "extra_rcp_from_noti";
     public static String EXTRA_FROM_NOTI_PROFILE = "extra_from_noti_profile";
+    public static String EXTRA_DIALOG_CALL_LOG_INSTANCE = "extra_dialog_call_log_instance";
     //</editor-fold>
 
     //<editor-fold desc="Intent Action">
