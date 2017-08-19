@@ -100,7 +100,7 @@ public class TermsConditionsActivity extends BaseActivity implements RippleView
     private void init() {
 
         textTermsConditionsHeader.setText(R.string.str_welcome);
-        textTermsConditionsContent.setText(R.string.terms_conditions_content);
+        textTermsConditionsContent.setText(R.string.str_welcom_message);
 
         textTermsConditionsHeader.setTypeface(Utils.typefaceSemiBold(TermsConditionsActivity.this));
         textTermsConditionsContent.setTypeface(Utils.typefaceRegular(TermsConditionsActivity.this));
@@ -111,7 +111,7 @@ public class TermsConditionsActivity extends BaseActivity implements RippleView
                 (TermsConditionsActivity.this, R.color.colorAccent), 5, 0, ContextCompat.getColor
                 (TermsConditionsActivity.this, R.color.colorAccent));
 
-        SpannableString ss = new SpannableString("By continuing you accept Terms and Conditions");
+        SpannableString ss = new SpannableString("By continuing you accept Terms of Use");
         ClickableSpan clickableSpan = new ClickableSpan() {
             @Override
             public void onClick(View textView) {
@@ -126,7 +126,7 @@ public class TermsConditionsActivity extends BaseActivity implements RippleView
                 ds.setUnderlineText(true);
             }
         };
-        ss.setSpan(clickableSpan, 25, 45, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        ss.setSpan(clickableSpan, 25, 37, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         textTermsConditions.setText(ss);
         textTermsConditions.setMovementMethod(LinkMovementMethod.getInstance());
         textTermsConditions.setHighlightColor(Color.TRANSPARENT);

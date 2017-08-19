@@ -203,7 +203,8 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
 
                 buttonRestore.setBackgroundResource(R.drawable.bg_circle_green);
                 progressBar.setVisibility(View.GONE);
-                textProgress.setText(getString(R.string.str_done));
+                textProgress.setVisibility(View.GONE);
+                // textProgress.setText(getString(R.string.str_done));
                 buttonRestore.setEnabled(true);
             }
             //</editor-fold>
@@ -397,8 +398,7 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
 
                 ContactRequestResponseDataItem dataItem = requestData.get(i);
                 if (String.valueOf(dataItem.getCarPmIdTo()).equals(Utils.getStringPreference(this, AppConstants
-                        .PREF_USER_PM_ID, "0"))
-                        && String.valueOf(dataItem.getCarAccessPermissionStatus()).equals("0")) {
+                        .PREF_USER_PM_ID, "0")) && dataItem.getCarAccessPermissionStatus() == 0) {
                     tableRCContactRequest.addRequest(AppConstants
                                     .COMMENT_STATUS_RECEIVED,
                             String.valueOf(dataItem.getCarId()),
@@ -414,10 +414,9 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
             for (int i = 0; i < responseData.size(); i++) {
 
                 ContactRequestResponseDataItem dataItem = responseData.get(i);
-
                 if (String.valueOf(dataItem.getCarPmIdFrom()).equals(Utils.getStringPreference(this, AppConstants
                         .PREF_USER_PM_ID, "0"))
-                        && MoreObjects.firstNonNull(dataItem.getCarAccessPermissionStatus(), "0").equals("0")) {
+                        && dataItem.getCarAccessPermissionStatus() == 1) {
                     tableRCContactRequest.addRequest(AppConstants
                                     .COMMENT_STATUS_SENT,
                             String.valueOf(dataItem.getCarId()),

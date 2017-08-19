@@ -134,7 +134,6 @@ public class NotificationsActivity extends BaseActivity implements RippleView
 
     }
 
-
     private int getNotificationCountByType(DatabaseHandler databaseHandler, int type) {
 
         TableNotificationStateMaster notificationStateMaster = new TableNotificationStateMaster

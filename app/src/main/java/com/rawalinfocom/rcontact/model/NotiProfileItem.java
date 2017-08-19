@@ -1,5 +1,7 @@
 package com.rawalinfocom.rcontact.model;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * Created by maulik on 15/03/17.
  */
@@ -11,6 +13,7 @@ public class NotiProfileItem {
     private String notiInfo;
     private String notiRequestTime;
     private Integer profileNotiType;
+    private String pmRawId;
 
     public String getRcpUserPmId() {
         return rcpUserPmId;
@@ -71,5 +74,13 @@ public class NotiProfileItem {
 
     public void setPersonImage(String personImage) {
         this.personImage = personImage;
+    }
+
+    public String getPmRawId() {
+        return StringUtils.defaultString(pmRawId);
+    }
+
+    public void setPmRawId(String pmRawId) {
+        this.pmRawId = pmRawId;
     }
 }

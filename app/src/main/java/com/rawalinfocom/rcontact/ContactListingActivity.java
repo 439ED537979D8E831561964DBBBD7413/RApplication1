@@ -7,6 +7,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.ContactsContract;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -53,7 +56,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ContactListingActivity extends BaseActivity implements RippleView
-        .OnRippleCompleteListener, WsResponseListener {
+        .OnRippleCompleteListener, WsResponseListener, LoaderManager.LoaderCallbacks<Cursor> {
 
 
     PhoneBookContacts phoneBookContacts;
@@ -332,7 +335,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
 //                        arrayListFilteredUserProfile.addAll(arrayListUserProfile);
                         phoneBookContactListAdapter.updateList(arrayListUserProfile);
                     } else {
-                        new GetContactData().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        loadContacts();
                     }
                 } else if (position == 1) {
                     filterType = "sms";
@@ -380,6 +383,9 @@ public class ContactListingActivity extends BaseActivity implements RippleView
         });
     }
 
+    private void loadContacts() {
+        getSupportLoaderManager().initLoader(0, null, this);
+    }
 
     private void setFilterList() {
 
@@ -411,125 +417,245 @@ public class ContactListingActivity extends BaseActivity implements RippleView
             phoneBookContactListAdapter.updateList(arrayListEmailUserProfile);
     }
 
-    private class GetContactData extends AsyncTask<Void, Void, Void> {
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            Utils.showProgressDialog(ContactListingActivity.this, "Please wait...", false);
-//            System.out.println("RContact start --> " + System.currentTimeMillis());
-        }
+        Utils.showProgressDialog(ContactListingActivity.this, "Please wait...", false);
 
-        protected Void doInBackground(Void... urls) {
+        Set<String> set = new HashSet<>();
+        set.add(ContactsContract.Data.MIMETYPE);
+        set.add(ContactsContract.CommonDataKinds.Phone.NUMBER);
+        set.add(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+        set.add(ContactsContract.CommonDataKinds.Email.ADDRESS);
+        set.add(ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI);
 
-            Cursor cursor = null;
-            String mobileNumber = "";
+        Uri uri = ContactsContract.Data.CONTENT_URI;
+        String[] projection = set.toArray(new String[0]);
 
-            try {
+        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?)" +
+                " and " + ContactsContract.RawContacts.ACCOUNT_TYPE + " in (" + ContactStorageConstants.CONTACT_STORAGE + ")";
+        String[] selectionArgs = {
+                ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE,
+        };
+        String sortOrder = "upper(" + ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME
+                + ") ASC";
 
-                Set<String> set = new HashSet<>();
-                set.add(ContactsContract.Data.MIMETYPE);
-                set.add(ContactsContract.CommonDataKinds.Phone.NUMBER);
-                set.add(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
-                set.add(ContactsContract.CommonDataKinds.Email.ADDRESS);
-                set.add(ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI);
+        return new CursorLoader(ContactListingActivity.this, uri, projection, selection, selectionArgs,
+                sortOrder);
+    }
 
-                Uri uri = ContactsContract.Data.CONTENT_URI;
-                String[] projection = set.toArray(new String[0]);
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 
-                String selection = ContactsContract.Data.MIMETYPE + " in (?, ?)" +
-                        " and " + ContactsContract.RawContacts.ACCOUNT_TYPE + " in (" + ContactStorageConstants.CONTACT_STORAGE + ")";
-                String[] selectionArgs = {
-                        ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
-                        ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE,
-                };
-                String sortOrder = "upper(" + ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME
-                        + ") ASC";
+        getContactsFromPhoneBook(cursor);
+        setRCPUser();
+        cursor.close();
+        setRecyclerViewLayoutManager();
 
-                cursor = getContentResolver().query(uri, projection, selection, selectionArgs,
-                        sortOrder);
+        Utils.hideProgressDialog();
+    }
 
-                if (cursor != null) {
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
 
-                    final int mobile = cursor.getColumnIndex(ContactsContract.CommonDataKinds
-                            .Phone.NUMBER);
+    }
 
-                    while (cursor.moveToNext()) {
-                        try {
+    private void getContactsFromPhoneBook(Cursor cursor) {
 
-                            if (cursor.getString(mobile) != null) {
-                                mobileNumber = Utils.getFormattedNumber(getApplicationContext(),
-                                        cursor.getString(mobile));
-                            }
+        String mobileNumber = "";
 
-                            UserProfile userProfile = new UserProfile();
+        try {
 
-                            String mimeType = cursor.getString(cursor.getColumnIndex
-                                    (ContactsContract.Data.MIMETYPE));
-                            switch (mimeType) {
-                                case ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE:
-                                    userProfile.setMobileNumber(mobileNumber);
-                                    break;
-                                case ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE:
-                                    userProfile.setEmailId(cursor.getString(cursor.getColumnIndex
-                                            (ContactsContract.CommonDataKinds.Email.ADDRESS)));
-                                    userProfile.setPmProfileImage(cursor.getString(cursor.getColumnIndex
-                                            (ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI)));
-                                    break;
-                            }
+            if (cursor != null) {
 
-                            if (!cursor.getString(cursor.getColumnIndex
-                                    (ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)).equals(cursor.getString(mobile))) {
-                                userProfile.setPmFirstName(cursor.getString(cursor.getColumnIndex
-                                        (ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)));
-                            }
+                final int mobile = cursor.getColumnIndex(ContactsContract.CommonDataKinds
+                        .Phone.NUMBER);
 
-                            arrayListUserProfile.add(userProfile);
+                while (cursor.moveToNext()) {
+                    try {
 
-                        } catch (Exception e) {
-                            Log.i("AllContacts", "Crash occurred when displaying contacts" + e
-                                    .toString());
+                        if (cursor.getString(mobile) != null) {
+                            mobileNumber = Utils.getFormattedNumber(getApplicationContext(),
+                                    cursor.getString(mobile));
                         }
+
+                        UserProfile userProfile = new UserProfile();
+
+                        String mimeType = cursor.getString(cursor.getColumnIndex
+                                (ContactsContract.Data.MIMETYPE));
+                        switch (mimeType) {
+                            case ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE:
+                                userProfile.setMobileNumber(mobileNumber);
+                                break;
+                            case ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE:
+                                userProfile.setEmailId(cursor.getString(cursor.getColumnIndex
+                                        (ContactsContract.CommonDataKinds.Email.ADDRESS)));
+                                userProfile.setPmProfileImage(cursor.getString(cursor.getColumnIndex
+                                        (ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI)));
+                                break;
+                        }
+
+                        if (!cursor.getString(cursor.getColumnIndex
+                                (ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)).equals(cursor.getString(mobile))) {
+                            userProfile.setPmFirstName(cursor.getString(cursor.getColumnIndex
+                                    (ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)));
+                        }
+
+                        arrayListUserProfile.add(userProfile);
+
+                    } catch (Exception e) {
+                        Log.i("AllContacts", "Crash occurred when displaying contacts" + e
+                                .toString());
                     }
-                    cursor.close();
                 }
-
-                setRCPUser();
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                if (cursor != null) cursor.close();
             }
 
-            return null;
-        }
-
-        protected void onPostExecute(Void result) {
-
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Utils.hideProgressDialog();
-                    phoneBookContactListAdapter = new PhoneBookContactListAdapter(ContactListingActivity.this,
-                            arrayListUserProfile, new PhoneBookContactListAdapter.OnClickListener() {
-                        @Override
-                        public void onClick(String number, String email) {
-
-                            ArrayList<String> mobileNumbers = new ArrayList<>();
-                            ArrayList<String> emailIds = new ArrayList<>();
-
-                            mobileNumbers.add(number);
-                            emailIds.add(email);
-
-                            inviteContact(mobileNumbers, emailIds);
-
-                        }
-                    });
-                    recyclerViewContacts.setAdapter(phoneBookContactListAdapter);
-                }
-            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) cursor.close();
         }
     }
+
+    private void setRecyclerViewLayoutManager() {
+        phoneBookContactListAdapter = new PhoneBookContactListAdapter(ContactListingActivity.this,
+                arrayListUserProfile, new PhoneBookContactListAdapter.OnClickListener() {
+            @Override
+            public void onClick(String number, String email) {
+
+                ArrayList<String> mobileNumbers = new ArrayList<>();
+                ArrayList<String> emailIds = new ArrayList<>();
+
+                mobileNumbers.add(number);
+                emailIds.add(email);
+
+                inviteContact(mobileNumbers, emailIds);
+
+            }
+        });
+        recyclerViewContacts.setAdapter(phoneBookContactListAdapter);
+    }
+
+//    private class GetContactData extends AsyncTask<Void, Void, Void> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//            Utils.showProgressDialog(ContactListingActivity.this, "Please wait...", false);
+////            System.out.println("RContact start --> " + System.currentTimeMillis());
+//        }
+//
+//        protected Void doInBackground(Void... urls) {
+//
+//            Cursor cursor = null;
+//            String mobileNumber = "";
+//
+//            try {
+//
+//                Set<String> set = new HashSet<>();
+//                set.add(ContactsContract.Data.MIMETYPE);
+//                set.add(ContactsContract.CommonDataKinds.Phone.NUMBER);
+//                set.add(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+//                set.add(ContactsContract.CommonDataKinds.Email.ADDRESS);
+//                set.add(ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI);
+//
+//                Uri uri = ContactsContract.Data.CONTENT_URI;
+//                String[] projection = set.toArray(new String[0]);
+//
+//                String selection = ContactsContract.Data.MIMETYPE + " in (?, ?)" +
+//                        " and " + ContactsContract.RawContacts.ACCOUNT_TYPE + " in (" + ContactStorageConstants.CONTACT_STORAGE + ")";
+//                String[] selectionArgs = {
+//                        ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
+//                        ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE,
+//                };
+//                String sortOrder = "upper(" + ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME
+//                        + ") ASC";
+//
+//                cursor = getContentResolver().query(uri, projection, selection, selectionArgs,
+//                        sortOrder);
+//
+//                if (cursor != null) {
+//
+//                    final int mobile = cursor.getColumnIndex(ContactsContract.CommonDataKinds
+//                            .Phone.NUMBER);
+//
+//                    while (cursor.moveToNext()) {
+//                        try {
+//
+//                            if (cursor.getString(mobile) != null) {
+//                                mobileNumber = Utils.getFormattedNumber(getApplicationContext(),
+//                                        cursor.getString(mobile));
+//                            }
+//
+//                            UserProfile userProfile = new UserProfile();
+//
+//                            String mimeType = cursor.getString(cursor.getColumnIndex
+//                                    (ContactsContract.Data.MIMETYPE));
+//                            switch (mimeType) {
+//                                case ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE:
+//                                    userProfile.setMobileNumber(mobileNumber);
+//                                    break;
+//                                case ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE:
+//                                    userProfile.setEmailId(cursor.getString(cursor.getColumnIndex
+//                                            (ContactsContract.CommonDataKinds.Email.ADDRESS)));
+//                                    userProfile.setPmProfileImage(cursor.getString(cursor.getColumnIndex
+//                                            (ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI)));
+//                                    break;
+//                            }
+//
+//                            if (!cursor.getString(cursor.getColumnIndex
+//                                    (ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)).equals(cursor.getString(mobile))) {
+//                                userProfile.setPmFirstName(cursor.getString(cursor.getColumnIndex
+//                                        (ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)));
+//                            }
+//
+//                            arrayListUserProfile.add(userProfile);
+//
+//                        } catch (Exception e) {
+//                            Log.i("AllContacts", "Crash occurred when displaying contacts" + e
+//                                    .toString());
+//                        }
+//                    }
+//                    cursor.close();
+//                }
+//
+//                setRCPUser();
+//
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                if (cursor != null) cursor.close();
+//            }
+//
+//            return null;
+//        }
+//
+//        protected void onPostExecute(Void result) {
+//
+//            runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    Utils.hideProgressDialog();
+//                    phoneBookContactListAdapter = new PhoneBookContactListAdapter(ContactListingActivity.this,
+//                            arrayListUserProfile, new PhoneBookContactListAdapter.OnClickListener() {
+//                        @Override
+//                        public void onClick(String number, String email) {
+//
+//                            ArrayList<String> mobileNumbers = new ArrayList<>();
+//                            ArrayList<String> emailIds = new ArrayList<>();
+//
+//                            mobileNumbers.add(number);
+//                            emailIds.add(email);
+//
+//                            inviteContact(mobileNumbers, emailIds);
+//
+//                        }
+//                    });
+//                    recyclerViewContacts.setAdapter(phoneBookContactListAdapter);
+//                }
+//            });
+//        }
+//    }
 
     private void setRCPUser() {
 
