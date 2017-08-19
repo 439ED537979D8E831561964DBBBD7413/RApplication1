@@ -147,6 +147,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                     intent.putExtra(AppConstants.EXTRA_IS_RCP_USER, isCallLogRcpUser);
                     intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, numberToCall);
                     intent.putExtra(AppConstants.EXTRA_CALL_LOG_CLOUD_NAME, cloudName);
+                    intent.putExtra(AppConstants.EXTRA_DIALOG_CALL_LOG_INSTANCE, isFromCallLogFragment);
                     context.startActivity(intent);
 
                 } else if (value.equalsIgnoreCase(context.getString(R.string.block))) {

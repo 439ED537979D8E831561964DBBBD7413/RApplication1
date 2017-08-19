@@ -270,6 +270,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     Button buttonInvite;
     String callLogCloudName;
     boolean isCallLogRcpUser, isRatingUpdate = false;
+    boolean isDialogCallLogInstance;
 
     RelativeLayout relativeRootRatingDialog;
 
@@ -731,7 +732,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         String number = StringUtils.trimToEmpty(arrayListProfileData.get(0)
                                 .getTempNumber());*/
 
-                       TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
+                        TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
                         String number = tableMobileMaster.getUserMobileNumber(getUserPmId());
 
                         if (StringUtils.startsWith(number, "+")) {
@@ -1398,6 +1399,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     private void getIntentDetails(Intent intent) {
         if (intent != null) {
 
+            if (intent.hasExtra(AppConstants.EXTRA_DIALOG_CALL_LOG_INSTANCE)) {
+                isDialogCallLogInstance= intent.getBooleanExtra(AppConstants.EXTRA_DIALOG_CALL_LOG_INSTANCE, false);
+            }
+
             if (intent.hasExtra(AppConstants.EXTRA_RCP_VERIFIED_ID)) {
                 callLogRcpVerfiedId = intent.getStringExtra(AppConstants.EXTRA_RCP_VERIFIED_ID);
             }
@@ -1831,8 +1836,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         initSwipe();
 
     }
-
-
 
 
     private void getDataFromDB() {
@@ -3308,12 +3311,22 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         }
 
         protected Void doInBackground(Void... urls) {
-            if (!TextUtils.isEmpty(historyName)) {
-                fetchAllCallLogHistory(historyName);
-            } else {
-                fetchAllCallLogHistory(historyNumber);
-            }
 
+            if (profileActivityCallInstance) {
+                if (!TextUtils.isEmpty(historyNumber)) {
+                    fetchAllCallLogHistory(historyNumber);
+                } else {
+                    if (!TextUtils.isEmpty(historyName)) {
+                        fetchAllCallLogHistory(historyName);
+                    }
+                }
+            } else {
+                if (!TextUtils.isEmpty(historyName)) {
+                    fetchAllCallLogHistory(historyName);
+                } else {
+                    fetchAllCallLogHistory(historyNumber);
+                }
+            }
             return null;
         }
 
@@ -3579,7 +3592,17 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         intent.putExtra(AppConstants.EXTRA_PHONE_BOOK_ID, rawId);
 //        intent.putExtra(AppConstants.EXTRA_PHONE_BOOK_ID, phoneBookId);
         intent.putExtra(AppConstants.EXTRA_CONTACT_NAME, contactName);
-        intent.putExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME, cloudContactName);
+        if(!StringUtils.isEmpty(cloudContactName))
+            intent.putExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME, cloudContactName);
+        else{
+            if(!StringUtils.isEmpty(callLogCloudName))
+                intent.putExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME, callLogCloudName);
+            else{
+                intent.putExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME, "");
+            }
+
+        }
+        intent.putExtra(AppConstants.EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE, profileActivityCallInstance);
         intent.putExtra(AppConstants.EXTRA_CHECK_NUMBER_FAVOURITE, checkNumberFavourite);
         intent.putExtra(AppConstants.EXTRA_CONTACT_POSITION, listClickedPosition);
         intent.putExtra(AppConstants.EXTRA_CALL_UNIQUE_ID, hashMapKey);
@@ -3590,6 +3613,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         } else {
             intent.putExtra(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE, thumbnailUrl);
         }
+        intent.putExtra(AppConstants.EXTRA_DIALOG_CALL_LOG_INSTANCE, isDialogCallLogInstance);
         startActivity(intent);
         overridePendingTransition(R.anim.enter, R.anim.exit);
     }
@@ -3599,7 +3623,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         if (arrayListHistory != null && arrayListHistory.size() > 0) {
             CallLogType callLogType = arrayListHistory.get(arrayListHistory.size() - 1);
 //            String number = callLogType.getHistoryNumber();
-            String number = Utils.getFormattedNumber(this,callLogType.getHistoryNumber());
+            String number = Utils.getFormattedNumber(this, callLogType.getHistoryNumber());
             if (!StringUtils.isEmpty(number)) {
                 if (number.startsWith("+91"))
                     number = number.replace("+", "");
