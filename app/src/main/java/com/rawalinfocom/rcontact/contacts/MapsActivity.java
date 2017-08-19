@@ -73,7 +73,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
 
     private double latitude = 0, longitude = 0;
     int locationCall = 0;
-    //    GPSTracker gpsTracker;
+    GPSTracker gpsTracker;
     ReverseGeocodingAddress objAddress;
     Place place;
 
@@ -123,10 +123,13 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                 latitude = gpsTracker.getLatitude();
                 longitude = gpsTracker.getLongitude();
 
-                addMapMarker();*/
+                addMapMarker();
                 Intent intent = getIntent();
                 finish();
-                startActivity(intent);
+                startActivity(intent);*/
+                if (googleMap != null) {
+                    googleMap.setMyLocationEnabled(true);
+                }
             }
         }
     }
@@ -144,6 +147,10 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                     .MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         } else {
             googleMap.setMyLocationEnabled(true);
+            gpsTracker = new GPSTracker(this, null);
+            if (!gpsTracker.getIsGPSTrackingEnabled()) {
+                gpsTracker.showSettingsAlert();
+            }
         }
        /* Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -385,15 +392,18 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                     if (Utils.isLocationEnabled(this)) {
                         googleMap.getUiSettings().setZoomControlsEnabled(true);
                         googleMap.setMyLocationEnabled(true);
-                      /*  gpsTracker = new GPSTracker(this, null);
-                        latitude = gpsTracker.getLatitude();
+                        gpsTracker = new GPSTracker(this, null);
+                        if (!gpsTracker.getIsGPSTrackingEnabled()) {
+                            gpsTracker.showSettingsAlert();
+                        }
+                       /* latitude = gpsTracker.getLatitude();
                         longitude = gpsTracker.getLongitude();
 
                         addMapMarker();*/
-                    }
-                  /*  else {
+                    } else {
+                        gpsTracker = new GPSTracker(this, null);
                         gpsTracker.showSettingsAlert();
-                    }*/
+                    }
 
                 }
                 /*else {
