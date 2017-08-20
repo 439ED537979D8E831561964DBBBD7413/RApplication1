@@ -209,11 +209,11 @@ public class GPSTracker extends Service implements LocationListener {
                 switch (rippleView.getId()) {
                     case R.id.rippleLeft:
                         dialogGps.dismissDialog();
-                        if (mContext instanceof MapsActivity) {
+                        /*if (mContext instanceof MapsActivity) {
                             latitude = 21.1702;
                             longitude = 72.8311;
-                            ((MapsActivity) mContext).addMapMarker();
-                        }
+                            ((MapsActivity) mContext).addMapMarker(true);
+                        }*/
                         break;
 
                     case R.id.rippleRight:

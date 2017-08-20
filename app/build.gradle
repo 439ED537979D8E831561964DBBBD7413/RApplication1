@@ -74,6 +74,7 @@ dependencies {
     compile "com.android.support:design:$SUPPORT_LIBRARY_VERSION"
     compile "com.android.support:recyclerview-v7:$SUPPORT_LIBRARY_VERSION"
     compile "com.android.support:palette-v7:$SUPPORT_LIBRARY_VERSION"
+
     compile "com.google.android.gms:play-services-gcm:$PLAY_SERVICES_VERSION"
     compile "com.google.firebase:firebase-messaging:$PLAY_SERVICES_VERSION"
     compile "com.google.android.gms:play-services-auth:$PLAY_SERVICES_VERSION"
@@ -81,9 +82,11 @@ dependencies {
     compile "com.google.android.gms:play-services-maps:$PLAY_SERVICES_VERSION"
     compile "com.google.android.gms:play-services-places:$PLAY_SERVICES_VERSION"
     compile "com.google.android.gms:play-services-drive:$PLAY_SERVICES_VERSION"
+
     compile "com.fasterxml.jackson.core:jackson-core:$JACKSON_CORE_VERSION"
     compile "com.fasterxml.jackson.core:jackson-databind:$JACKSON_CORE_VERSION"
     compile "com.fasterxml.jackson.core:jackson-annotations:$JACKSON_CORE_VERSION"
+
     compile "com.jakewharton:butterknife:$BUTTER_KNIFE_VERSION"
     apt "com.jakewharton:butterknife-compiler:$BUTTER_KNIFE_VERSION"
     compile project(path: ':linkedin-sdk')

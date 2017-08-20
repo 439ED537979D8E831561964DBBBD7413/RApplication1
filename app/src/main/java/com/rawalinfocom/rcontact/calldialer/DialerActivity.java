@@ -147,6 +147,8 @@ public class DialerActivity extends BaseActivity {
     ImageButton imageBtnCloseDrawer;
     @BindView(R.id.number_pad)
     LinearLayout numberPad;
+
+
     MaterialDialog callConfirmationDialog;
     boolean isCalledOnce = false;
 
@@ -171,6 +173,24 @@ public class DialerActivity extends BaseActivity {
     RelativeLayout relativeContact;
 
     String numberToCall;
+    @BindView(R.id.text_abc)
+    TextView textAbc;
+    @BindView(R.id.text_def)
+    TextView textDef;
+    @BindView(R.id.text_ghi)
+    TextView textGhi;
+    @BindView(R.id.text_jkl)
+    TextView textJkl;
+    @BindView(R.id.text_mno)
+    TextView textMno;
+    @BindView(R.id.text_pqrs)
+    TextView textPqrs;
+    @BindView(R.id.text_tuv)
+    TextView textTuv;
+    @BindView(R.id.text_wxyz)
+    TextView textWxyz;
+    @BindView(R.id.text_plus)
+    TextView textPlus;
     private String[] requiredPermissions = {Manifest.permission.READ_CALL_LOG};
     MaterialDialog permissionConfirmationDialog;
     ArrayList<Object> objectArrayListContact;
@@ -336,6 +356,27 @@ public class DialerActivity extends BaseActivity {
 
     private void initandClickEvents() {
 
+        textAddToContact.setTypeface(Utils.typefaceRegular(DialerActivity.this));
+        editTextNumber.setTypeface(Utils.typefaceRegular(DialerActivity.this));
+        btn0.setTypeface(Utils.typefaceRegular(DialerActivity.this));
+        btn1.setTypeface(Utils.typefaceRegular(DialerActivity.this));
+        btn2.setTypeface(Utils.typefaceRegular(DialerActivity.this));
+        btn3.setTypeface(Utils.typefaceRegular(DialerActivity.this));
+        btn4.setTypeface(Utils.typefaceRegular(DialerActivity.this));
+        btn5.setTypeface(Utils.typefaceRegular(DialerActivity.this));
+        btn6.setTypeface(Utils.typefaceRegular(DialerActivity.this));
+        btn7.setTypeface(Utils.typefaceRegular(DialerActivity.this));
+        btn8.setTypeface(Utils.typefaceRegular(DialerActivity.this));
+        btn9.setTypeface(Utils.typefaceRegular(DialerActivity.this));
+        textAbc.setTypeface(Utils.typefaceRegular(DialerActivity.this));
+        textDef.setTypeface(Utils.typefaceRegular(DialerActivity.this));
+        textGhi.setTypeface(Utils.typefaceRegular(DialerActivity.this));
+        textJkl.setTypeface(Utils.typefaceRegular(DialerActivity.this));
+        textMno.setTypeface(Utils.typefaceRegular(DialerActivity.this));
+        textPqrs.setTypeface(Utils.typefaceRegular(DialerActivity.this));
+        textTuv.setTypeface(Utils.typefaceRegular(DialerActivity.this));
+        textWxyz.setTypeface(Utils.typefaceRegular(DialerActivity.this));
+        textPlus.setTypeface(Utils.typefaceRegular(DialerActivity.this));
 
         linearAddToContact.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -599,11 +640,13 @@ public class DialerActivity extends BaseActivity {
 
                     String numberToCall = editTextNumber.getText().toString();
                     if (!TextUtils.isEmpty(numberToCall)) {
-                        TelephonyInfo telephonyInfo = TelephonyInfo.getInstance(DialerActivity.this);
+                        TelephonyInfo telephonyInfo = TelephonyInfo.getInstance(DialerActivity
+                                .this);
                         if (telephonyInfo != null) {
                             String simSerialNumber = telephonyInfo.simSerialNumber;
                             if (!StringUtils.isEmpty(simSerialNumber)) {
-                                numberToCall = Utils.getFormattedNumber(DialerActivity.this, numberToCall);
+                                numberToCall = Utils.getFormattedNumber(DialerActivity.this,
+                                        numberToCall);
                                 Utils.callIntent(DialerActivity.this, numberToCall);
 //                                showCallConfirmationDialog(numberToCall);
                             } else {

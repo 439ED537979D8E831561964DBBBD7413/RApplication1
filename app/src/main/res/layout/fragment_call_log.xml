@@ -1,12 +1,11 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/linearCallLogMain"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorWhite"
-    android:orientation="vertical"
-    tools:context="com.rawalinfocom.rcontact.contacts.AllContactsFragment">
+    android:orientation="vertical">
 
     <!-- <RelativeLayout
          android:layout_width="match_parent"
@@ -21,16 +20,31 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:visibility="gone" />
+        android:visibility="gone"/>
 
 
     <!--</RelativeLayout>-->
 
-    <Spinner
-        android:id="@+id/spinner_call_filter"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:id="@+id/relative_header"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true" />
+        android:padding="@dimen/margin_small">
+
+        <Spinner
+            android:id="@+id/spinner_call_filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"/>
+
+    </RelativeLayout>
+
+    <include
+        android:id="@+id/include_elevation"
+        layout="@layout/layout_elevation"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_elevation"
+        android:layout_below="@id/relative_header"/>
 
 
     <!-- <ScrollView
@@ -46,24 +60,24 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/spinner_call_filter">
+        android:layout_below="@+id/relative_header">
 
         <LinearLayout
             android:id="@+id/linearMainContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="visible"
+            android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_alignParentStart="true">
+            android:orientation="vertical"
+            android:visibility="visible">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler_call_logs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="visible"
+                android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                android:layout_alignParentStart="true" />
+                android:visibility="visible"/>
 
         </LinearLayout>
 
@@ -89,7 +103,7 @@
                 android:background="@color/colorAccent"
                 android:padding="@dimen/padding_10dp"
                 android:text="@string/str_view_previous_logs"
-                android:textColor="@color/colorWhite" />
+                android:textColor="@color/colorWhite"/>
         </com.rawalinfocom.rcontact.helper.RippleView>
 
         <ProgressBar
@@ -97,11 +111,11 @@
             style="?android:attr/progressBarStyle"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_gravity="center"
             android:layout_below="@+id/linearMainContent"
             android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
             android:layout_marginTop="@dimen/margin_10dp"
-            android:visibility="gone" />
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/text_loading_logs"
@@ -111,7 +125,7 @@
             android:layout_centerHorizontal="true"
             android:padding="@dimen/margin_10dp"
             android:text="@string/str_loading"
-            android:visibility="gone" />
+            android:visibility="gone"/>
 
         <RelativeLayout
             android:id="@+id/relativeLoadingData"
@@ -127,7 +141,7 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_centerInParent="true"
-                android:visibility="visible" />
+                android:visibility="visible"/>
 
             <!-- <TextView
                  android:layout_width="wrap_content"
@@ -149,7 +163,7 @@
             android:layout_gravity="center_horizontal"
             android:padding="@dimen/margin_10dp"
             android:text="@string/str_no_call_logs"
-            android:visibility="gone" />
+            android:visibility="gone"/>
     </RelativeLayout>
 
     <TextView
@@ -160,7 +174,7 @@
         android:layout_centerVertical="true"
         android:padding="@dimen/margin_10dp"
         android:text="@string/no_logs_found"
-        android:visibility="gone" />
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/text_grant_permission"
@@ -170,7 +184,7 @@
         android:layout_centerVertical="true"
         android:padding="@dimen/margin_10dp"
         android:text="@string/permission_text"
-        android:visibility="gone" />
+        android:visibility="gone"/>
 
     <!--
          </ScrollView>

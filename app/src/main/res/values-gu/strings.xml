@@ -575,7 +575,7 @@
     <string name="hint_city_town_required">શહેર/નગર (આવશ્યક)</string>
     <string name="hint_address_line_1_required">એડ્રેસ લાઈન 1 (આવશ્યક)</string>
     <string name="hint_address_line_2_optional">એડ્રેસ લાઈન 2 (વૈકલ્પિક)</string>
-    <string name="hint_pincode_required">પીનકોડ (આવશ્યક)</string>
+    <string name="hint_pincode_optional">પીનકોડ (વૈકલ્પિક)</string>
     <string name="error_current_organization">વર્તમાન સંસ્થા પસંદ કરો</string>
     <string name="error_required_city">શહેરનું નામ આવશ્યક છે</string>
     <string name="error_required_street">શેરીની વિગતો આવશ્યક છે</string>
