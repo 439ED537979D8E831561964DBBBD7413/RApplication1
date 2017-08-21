@@ -557,6 +557,7 @@
     <string name="tutorial_content_4">RContacts like a Special Agent will alert and rescue you of the numbers marked as Spam</string>
     <string name="tutorial_content_5">Earn reputation stars and get yourself authenticated in the world of Contacts</string>
     <string name="tutorial_and">And?</string>
+    <string name="tutorial_skip">Skip>></string>
     <string name="tutorial_lets_go">Let\'s Go!</string>
     <string name="get_started">Get Started</string>
     <string name="str_welcome">WELCOME</string>
@@ -622,7 +623,6 @@
     encryption, which means RContacts app and third parties can\'t read or listen to them</string>
 
     <string name="security_link_text">Learn more about RContacts app security</string>
-    <string name="security_link">http://webstaging.rcontacts.in/global/privacy-policy</string>
 
     <!-- Settings -->
     <string name="app_language">App Language</string>

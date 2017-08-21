@@ -2786,6 +2786,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
     @SuppressLint("InflateParams")
     private void addAddressView(final Object detailObject, final int position) {
+
+        List<String> typeList;
+
         final View view = LayoutInflater.from(this).inflate(R.layout.list_item_edit_profile_address,
                 null);
         ImageView imageViewDelete = view.findViewById(R.id.image_delete);
@@ -2840,8 +2843,11 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
         spinnerType.setTag(R.id.spinner_type, AppConstants.ADDRESS);
 
+        typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
+                .array.types_email_address)));
+
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, R.layout
-                .list_item_spinner, getResources().getStringArray(R.array.types_email_address));
+                .list_item_spinner, typeList);
         spinnerType.setAdapter(spinnerAdapter);
 
         if (detailObject != null) {
@@ -2859,12 +2865,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             formattedAddress = address.getFormattedAddress();
             textImageMapMarker.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
             int spinnerPosition;
-            spinnerAddressAdapter = new ArrayAdapter<>(this, R.layout.list_item_spinner, new
-                    ArrayList<>(Arrays.asList(getResources().getStringArray(R.array
-                    .types_email_address))));
+            spinnerAddressAdapter = new ArrayAdapter<>(this, R.layout.list_item_spinner, typeList);
             spinnerType.setAdapter(spinnerAddressAdapter);
-            if (Arrays.asList(getResources().getStringArray(R.array.types_email_address))
-                    .contains(StringUtils.defaultString(address.getAddressType()))) {
+            if (typeList.contains(StringUtils.defaultString(address.getAddressType()))) {
                 spinnerPosition = spinnerAddressAdapter.getPosition(address.getAddressType());
             } else {
                 spinnerAddressAdapter.add(address.getAddressType());

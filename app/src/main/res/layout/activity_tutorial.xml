@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -17,7 +16,7 @@
         android:layout_marginTop="@dimen/activity_double_horizontal_margin"
         android:textAppearance="?android:textAppearanceLarge"
         android:textColor="@color/colorAccent"
-        tools:text="Contacts Redefined"/>
+        tools:text="Contacts Redefined" />
 
     <!--<TextView
         android:id="@+id/text_tutorial_content"
@@ -39,7 +38,7 @@
         android:layout_marginEnd="@dimen/activity_double_horizontal_margin"
         android:layout_marginStart="@dimen/activity_double_horizontal_margin"
         android:layout_marginTop="@dimen/activity_half_vertical_margin"
-        android:gravity="center"/>
+        android:gravity="center" />
 
     <RelativeLayout
         android:id="@+id/relative_indicator"
@@ -49,6 +48,17 @@
         android:layout_marginBottom="@dimen/activity_double_horizontal_margin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent">
+
+        <TextView
+            android:id="@+id/text_skip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@id/linear_indicator"
+            android:gravity="center"
+            android:padding="@dimen/activity_half_horizontal_margin"
+            android:textAppearance="?android:textAppearanceMedium"
+            tools:text="Skip>>" />
 
         <LinearLayout
             android:id="@+id/linear_indicator"
@@ -65,7 +75,7 @@
                 android:layout_marginEnd="@dimen/margin_tiny"
                 android:contentDescription="@string/str_content_description"
                 android:src="@drawable/ic_filled_indicator"
-                tools:tint="@color/colorAccent"/>
+                tools:tint="@color/colorAccent" />
 
             <ImageView
                 android:id="@+id/image_tutorial_2"
@@ -75,7 +85,7 @@
                 android:layout_marginStart="@dimen/margin_tiny"
                 android:contentDescription="@string/str_content_description"
                 android:src="@drawable/ic_filled_indicator"
-                tools:tint="@color/lightGrey"/>
+                tools:tint="@color/lightGrey" />
 
             <ImageView
                 android:id="@+id/image_tutorial_3"
@@ -85,7 +95,7 @@
                 android:layout_marginStart="@dimen/margin_tiny"
                 android:contentDescription="@string/str_content_description"
                 android:src="@drawable/ic_filled_indicator"
-                tools:tint="@color/lightGrey"/>
+                tools:tint="@color/lightGrey" />
 
             <ImageView
                 android:id="@+id/image_tutorial_4"
@@ -95,7 +105,7 @@
                 android:layout_marginStart="@dimen/margin_tiny"
                 android:contentDescription="@string/str_content_description"
                 android:src="@drawable/ic_filled_indicator"
-                tools:tint="@color/lightGrey"/>
+                tools:tint="@color/lightGrey" />
 
             <ImageView
                 android:id="@+id/image_tutorial_5"
@@ -104,7 +114,7 @@
                 android:layout_marginStart="@dimen/margin_tiny"
                 android:contentDescription="@string/str_content_description"
                 android:src="@drawable/ic_filled_indicator"
-                tools:tint="@color/lightGrey"/>
+                tools:tint="@color/lightGrey" />
 
         </LinearLayout>
 
@@ -117,7 +127,7 @@
             android:gravity="center_horizontal"
             android:padding="@dimen/activity_half_horizontal_margin"
             android:textAppearance="?android:textAppearanceMedium"
-            tools:text="And?"/>
+            tools:text="And?" />
 
     </RelativeLayout>
 
@@ -127,6 +137,6 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/relative_indicator"
         android:layout_below="@+id/switcher_tutorial_content"
-        android:overScrollMode="never"/>
+        android:overScrollMode="never" />
 
 </RelativeLayout>

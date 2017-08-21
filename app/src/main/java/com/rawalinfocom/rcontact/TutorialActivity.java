@@ -43,6 +43,8 @@ public class TutorialActivity extends BaseActivity {
      TextView textTutorialContent;*/
     @BindView(R.id.text_next)
     TextView textNext;
+    @BindView(R.id.text_skip)
+    TextView textSkip;
     @BindView(R.id.linear_indicator)
     LinearLayout linearIndicator;
     @BindView(R.id.relative_indicator)
@@ -155,10 +157,13 @@ public class TutorialActivity extends BaseActivity {
 //        textTutorialContent.setText(R.string.tutorial_content_1);
         switcherTutorialContent.setText(getString(tutorialContents[0]));
         textNext.setText(R.string.tutorial_and);
+        textSkip.setText(R.string.tutorial_skip);
+        textSkip.setVisibility(View.GONE);
 
         textTutorialHeader.setTypeface(Utils.typefaceSemiBold(TutorialActivity.this));
 //        textTutorialContent.setTypeface(Utils.typefaceRegular(TutorialActivity.this));
         textNext.setTypeface(Utils.typefaceRegular(TutorialActivity.this));
+        textSkip.setTypeface(Utils.typefaceRegular(TutorialActivity.this));
 
         pagerTutorial.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
@@ -180,6 +185,7 @@ public class TutorialActivity extends BaseActivity {
                         textTutorialHeader.setText(getString(R.string.tutorial_header_1));
 //                        textTutorialContent.setText(R.string.tutorial_content_1);
                         textNext.setText(R.string.tutorial_and);
+                        textSkip.setVisibility(View.GONE);
                         break;
 
                     case 1:
@@ -193,6 +199,7 @@ public class TutorialActivity extends BaseActivity {
                         textTutorialHeader.setText(getString(R.string.tutorial_header_2));
 //                        textTutorialContent.setText(R.string.tutorial_content_2);
                         textNext.setText(R.string.tutorial_and);
+                        textSkip.setVisibility(View.VISIBLE);
                         break;
 
                     case 2:
@@ -211,6 +218,7 @@ public class TutorialActivity extends BaseActivity {
                         textTutorialHeader.setText(getString(R.string.tutorial_header_5));
 //                        textTutorialContent.setText(R.string.tutorial_content_5);
                         textNext.setText(R.string.tutorial_lets_go);
+                        textSkip.setVisibility(View.GONE);
                         break;
                 }
             }
@@ -233,6 +241,17 @@ public class TutorialActivity extends BaseActivity {
                     startActivityIntent(TutorialActivity.this, TermsConditionsActivity.class, null);
                     finish();
                 }
+            }
+        });
+
+        textSkip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Utils.setIntegerPreference(TutorialActivity.this, AppConstants
+                        .PREF_LAUNCH_SCREEN_INT, IntegerConstants
+                        .LAUNCH_TERMS_CONDITIONS_ACTIVITY);
+                startActivityIntent(TutorialActivity.this, TermsConditionsActivity.class, null);
+                finish();
             }
         });
     }

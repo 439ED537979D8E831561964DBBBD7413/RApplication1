@@ -557,6 +557,7 @@
     <string name="tutorial_content_4">एक विशेष एजेंट की तरह RContacts स्पैम के रूप में चिह्नित नंबरों से आपका बचाव करेगा</string>
     <string name="tutorial_content_5">प्रतिष्ठा सितारों को कमाएँ और संपर्कों की दुनिया में अपने आप को प्रमाणित करें</string>
     <string name="tutorial_and">और?</string>
+    <string name="tutorial_skip">Skip>></string>
     <string name="tutorial_lets_go">चलते हैं!</string>
     <string name="get_started">शुरू करें</string>
     <string name="str_welcome">स्वागत है</string>
@@ -622,7 +623,6 @@
         जिससे RContacts ऐप या कोई भी तीसरे पक्ष की पार्टी उन्हें पढ़ नहीं सकती। </string>
 
     <string name="security_link_text">RContacts की सुरक्षा के बारे में अधिक जानें</string>
-    <string name="security_link">http://webstaging.rcontacts.in/global/privacy-policy</string>
 
     <!-- Settings -->
     <string name="app_language">भाषा</string>

@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.bumptech.glide.util.Util;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 
@@ -62,20 +63,19 @@ public class SecurityActivity extends BaseActivity implements RippleView
         setFonts();
     }
 
-    private void setFonts(){
+    private void setFonts() {
         textViewSecurityInfo.setTypeface(Utils.typefaceRegular(SecurityActivity.this));
         textViewSecurityLink.setTypeface(Utils.typefaceRegular(SecurityActivity.this));
         clickEvent();
     }
 
-    private void clickEvent(){
+    private void clickEvent() {
 
         textViewSecurityLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String url = getResources().getString(R.string.security_link);
                 Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(url));
+                i.setData(Uri.parse(WsConstants.URL_PRIVACY_POLICY));
                 startActivity(i);
             }
         });
