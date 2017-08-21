@@ -623,7 +623,6 @@
         જેના થી RContacts એપ્લિકેશન અને ત્રીજા પક્ષો સંદેશોને વાંચી શકતા નથી.</string>
 
     <string name="security_link_text">RContacts ની સુરક્ષા વિશે વધુ જાણો</string>
-    <string name="security_link">http://webstaging.rcontacts.in/global/privacy-policy</string>
 
     <!-- Settings -->
     <string name="app_language">ભાષા</string>

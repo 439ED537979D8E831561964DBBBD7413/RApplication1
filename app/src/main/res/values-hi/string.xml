@@ -623,7 +623,6 @@
         जिससे RContacts ऐप या कोई भी तीसरे पक्ष की पार्टी उन्हें पढ़ नहीं सकती। </string>
 
     <string name="security_link_text">RContacts की सुरक्षा के बारे में अधिक जानें</string>
-    <string name="security_link">http://webstaging.rcontacts.in/global/privacy-policy</string>
 
     <!-- Settings -->
     <string name="app_language">भाषा</string>
