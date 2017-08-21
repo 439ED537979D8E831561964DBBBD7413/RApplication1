@@ -157,6 +157,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                     String uniqueContactId = "";
                     if (!TextUtils.isEmpty(dialogName)) {
                         listToBlock = getNumbersFromName(dialogName);
+
                         // Log.i("block list size =", listToBlock.size() + "");
                         for (int i = 0; i < listToBlock.size(); i++) {
                             CallLogType callLogType = listToBlock.get(i);

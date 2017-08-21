@@ -59,8 +59,9 @@ public class WsConstants {
     /**
      * FAQ URL
      */
-//    public static final String URL_FAQ = "http://webstaging.rcontacts.in/global/faqs";
-    public static final String URL_FAQ = "https://www.rcontacts.in/global/faqs";
+//    public static final String URL_FAQ = "http://webqa.rcontacts.in/global/faqs";
+    public static final String URL_FAQ = "http://webstaging.rcontacts.in/global/faqs";
+//    public static final String URL_FAQ = "https://www.rcontacts.in/global/faqs";
 //    public static final String URL_FAQ = "https://web.rcontacts.in/global/faqs";
 
     /*

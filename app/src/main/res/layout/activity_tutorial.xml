@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -16,7 +17,7 @@
         android:layout_marginTop="@dimen/activity_double_horizontal_margin"
         android:textAppearance="?android:textAppearanceLarge"
         android:textColor="@color/colorAccent"
-        tools:text="Contacts Redefined" />
+        tools:text="Contacts Redefined"/>
 
     <!--<TextView
         android:id="@+id/text_tutorial_content"
@@ -38,7 +39,7 @@
         android:layout_marginEnd="@dimen/activity_double_horizontal_margin"
         android:layout_marginStart="@dimen/activity_double_horizontal_margin"
         android:layout_marginTop="@dimen/activity_half_vertical_margin"
-        android:gravity="center" />
+        android:gravity="center"/>
 
     <RelativeLayout
         android:id="@+id/relative_indicator"

@@ -2788,7 +2788,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     private void addAddressView(final Object detailObject, final int position) {
 
         List<String> typeList;
-
         final View view = LayoutInflater.from(this).inflate(R.layout.list_item_edit_profile_address,
                 null);
         ImageView imageViewDelete = view.findViewById(R.id.image_delete);

@@ -97,7 +97,7 @@ public class TutorialActivity extends BaseActivity {
 
                     // Permission Denied
                     boolean showRationale = false;
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         showRationale = shouldShowRequestPermissionRationale(Manifest.permission.READ_CONTACTS);
                     }
 
@@ -206,12 +206,14 @@ public class TutorialActivity extends BaseActivity {
                         textTutorialHeader.setText(getString(R.string.tutorial_header_3));
 //                        textTutorialContent.setText(R.string.tutorial_content_3);
                         textNext.setText(R.string.tutorial_and);
+                        textSkip.setVisibility(View.VISIBLE);
                         break;
 
                     case 3:
                         textTutorialHeader.setText(getString(R.string.tutorial_header_4));
 //                        textTutorialContent.setText(R.string.tutorial_content_4);
                         textNext.setText(R.string.tutorial_and);
+                        textSkip.setVisibility(View.VISIBLE);
                         break;
 
                     case 4:
@@ -247,11 +249,13 @@ public class TutorialActivity extends BaseActivity {
         textSkip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 Utils.setIntegerPreference(TutorialActivity.this, AppConstants
                         .PREF_LAUNCH_SCREEN_INT, IntegerConstants
                         .LAUNCH_TERMS_CONDITIONS_ACTIVITY);
                 startActivityIntent(TutorialActivity.this, TermsConditionsActivity.class, null);
                 finish();
+
             }
         });
     }
