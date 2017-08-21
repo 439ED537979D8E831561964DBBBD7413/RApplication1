@@ -1,9 +1,13 @@
 package com.rawalinfocom.rcontact.contacts;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -69,11 +73,12 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
 
     private double latitude = 0, longitude = 0;
     int locationCall = 0;
-    //    GPSTracker gpsTracker;
+    GPSTracker gpsTracker;
     ReverseGeocodingAddress objAddress;
     Place place;
 
     private String defaultFormattedAddress = "Surat, Gujarat, India";
+    private String defaultCity = "Surat";
 
     //<editor-fold desc="Override Methods">
 
@@ -89,6 +94,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
             if (intent.hasExtra(AppConstants.EXTRA_FORMATTED_ADDRESS)) {
                 defaultFormattedAddress = intent.getStringExtra(AppConstants
                         .EXTRA_FORMATTED_ADDRESS);
+                defaultCity = intent.getStringExtra(AppConstants.EXTRA_CITY);
             }
             if (intent.hasExtra(AppConstants.EXTRA_LATITUDE)) {
                 try {
@@ -117,10 +123,13 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                 latitude = gpsTracker.getLatitude();
                 longitude = gpsTracker.getLongitude();
 
-                addMapMarker();*/
+                addMapMarker();
                 Intent intent = getIntent();
                 finish();
-                startActivity(intent);
+                startActivity(intent);*/
+                if (googleMap != null) {
+                    googleMap.setMyLocationEnabled(true);
+                }
             }
         }
     }
@@ -128,16 +137,21 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
     @Override
     public void onMapReady(final GoogleMap googleMap) {
         this.googleMap = googleMap;
-/*        googleMap.getUiSettings().setZoomControlsEnabled(true);
-        googleMap.setMyLocationEnabled(true);*/
-  /*      if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
-                PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission
-                    .ACCESS_FINE_LOCATION}, AppConstants
-                    .MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-        } else {*/
         googleMap.getUiSettings().setZoomControlsEnabled(true);
-//        googleMap.setMyLocationEnabled(true);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission
+                    .ACCESS_FINE_LOCATION, Manifest.permission
+                    .ACCESS_COARSE_LOCATION}, AppConstants
+                    .MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+        } else {
+            googleMap.setMyLocationEnabled(true);
+            gpsTracker = new GPSTracker(this, null);
+            if (!gpsTracker.getIsGPSTrackingEnabled()) {
+                gpsTracker.showSettingsAlert();
+            }
+        }
        /* Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -164,8 +178,19 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
 
             @Override
             public void onMarkerDragEnd(Marker marker) {
+                place = null;
                 latitude = marker.getPosition().latitude;
                 longitude = marker.getPosition().longitude;
+            }
+        });
+
+        googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+            @Override
+            public void onMapLongClick(LatLng latLng) {
+                place = null;
+                latitude = latLng.latitude;
+                longitude = latLng.longitude;
+                addMapMarker(false);
             }
         });
     }
@@ -183,7 +208,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                         locationCall++;
                     }
                 } else {
-                    addMapMarker();
+                    addMapMarker(true);
                 }
             }
             /*else {
@@ -224,7 +249,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                         }
                         if (latitude != 0 && longitude != 0) {
                             if (serviceType.contains("_TRUE")) {
-                                addMapMarker();
+                                addMapMarker(true);
                             } else {
                                 Intent intent = new Intent();
                                 if (place != null) {
@@ -297,7 +322,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                 if (latitude != 0 && longitude != 0) {
                     AsyncGeoCoding asyncGeoCodingFetch = new AsyncGeoCoding(this, true, WsConstants
                             .REQ_GEO_CODING_ADDRESS + "_FALSE");
-                    asyncGeoCodingFetch.execute(null, String.valueOf(latitude), String.valueOf
+                    asyncGeoCodingFetch.execute(null, null, String.valueOf(latitude), String.valueOf
                             (longitude));
                 } else {
                     Utils.showErrorSnackBar(this, relativeRootMap, getString(R.string
@@ -339,8 +364,10 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                 inputSearchLocation.setText(place.getName());
                 AsyncGeoCoding asyncGeoCoding = new AsyncGeoCoding(MapsActivity.this,
                         true, WsConstants.REQ_GEO_CODING_ADDRESS + "_TRUE");
-                asyncGeoCoding.execute(StringUtils.trim(inputSearchLocation.getText()
-                        .toString()));
+                /*asyncGeoCoding.execute(StringUtils.trim(inputSearchLocation.getText()
+                        .toString()), null, null);*/
+                asyncGeoCoding.execute(null, null, String.valueOf(place.getLatLng().latitude),
+                        String.valueOf(place.getLatLng().longitude));
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Status status = PlaceAutocomplete.getStatus(this, data);
                 Log.i("onActivityResult", status.getStatusMessage());
@@ -350,7 +377,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
         }
     }
 
-    /* @Override
+    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -366,16 +393,20 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                         googleMap.getUiSettings().setZoomControlsEnabled(true);
                         googleMap.setMyLocationEnabled(true);
                         gpsTracker = new GPSTracker(this, null);
-                        latitude = gpsTracker.getLatitude();
+                        if (!gpsTracker.getIsGPSTrackingEnabled()) {
+                            gpsTracker.showSettingsAlert();
+                        }
+                       /* latitude = gpsTracker.getLatitude();
                         longitude = gpsTracker.getLongitude();
 
-                        addMapMarker();
+                        addMapMarker();*/
                     } else {
+                        gpsTracker = new GPSTracker(this, null);
                         gpsTracker.showSettingsAlert();
                     }
 
-
-                } else {
+                }
+                /*else {
 
                     // Permission Denied
                     latitude = 21.1702;
@@ -383,11 +414,11 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                     addMapMarker();
 
 
-                }
+                }*/
             }
             break;
         }
-    }*/
+    }
 
     //</editor-fold>
 
@@ -397,6 +428,9 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
 
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        buttonFetchAddress.setTypeface(Utils.typefaceRegular(MapsActivity.this));
+        inputSearchLocation.setTypeface(Utils.typefaceRegular(MapsActivity.this));
 
        /* RecyclerItemDecoration decoration = new RecyclerItemDecoration(this, ContextCompat
        .getColor
@@ -433,7 +467,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                     (defaultFormattedAddress, "Surat, Gujarat, India"))) {
                 AsyncGeoCoding asyncGeoCoding = new AsyncGeoCoding(this, true, WsConstants
                         .REQ_GEO_CODING_ADDRESS + "_TRUE");
-                asyncGeoCoding.execute(StringUtils.trim(defaultFormattedAddress));
+                asyncGeoCoding.execute(StringUtils.trim(defaultFormattedAddress), StringUtils
+                        .trim(defaultCity), null, null);
             }
         } else {
             AsyncReverseGeoCoding asyncReverseGeoCoding = new AsyncReverseGeoCoding(this,
@@ -456,19 +491,27 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
         });
     }
 
-    public void addMapMarker() {
+    public void addMapMarker(boolean showDelay) {
         googleMap.clear();
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                LatLng latLng = new LatLng(latitude, longitude);
-                googleMap.addMarker(new MarkerOptions()
-                        .position(latLng)
-                        .draggable(true));
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18.0f));
-            }
-        }, 1000);
+        if (showDelay) {
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    LatLng latLng = new LatLng(latitude, longitude);
+                    googleMap.addMarker(new MarkerOptions()
+                            .position(latLng)
+                            .draggable(true));
+                    googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18.0f));
+                }
+            }, 1000);
+        } else {
+            LatLng latLng = new LatLng(latitude, longitude);
+            googleMap.addMarker(new MarkerOptions()
+                    .position(latLng)
+                    .draggable(true));
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18.0f));
+        }
     }
 
     private void getLocationDetail() {
@@ -495,13 +538,13 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
 
         dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
 
-        TextView textLabelMyAddress = (TextView) dialog.findViewById(R.id.text_label_my_address);
-        final TextView textMyAddress = (TextView) dialog.findViewById(R.id.text_my_address);
-        TextView textLabelGoogleAddress = (TextView) dialog.findViewById(R.id
+        TextView textLabelMyAddress = dialog.findViewById(R.id.text_label_my_address);
+        final TextView textMyAddress = dialog.findViewById(R.id.text_my_address);
+        TextView textLabelGoogleAddress = dialog.findViewById(R.id
                 .text_label_google_address);
-        final TextView textGoogleAddress = (TextView) dialog.findViewById(R.id.text_google_address);
-        Button buttonMyAddress = (Button) dialog.findViewById(R.id.button_my_address);
-        Button buttonGoogleAddress = (Button) dialog.findViewById(R.id.button_google_address);
+        final TextView textGoogleAddress = dialog.findViewById(R.id.text_google_address);
+        Button buttonMyAddress = dialog.findViewById(R.id.button_my_address);
+        Button buttonGoogleAddress = dialog.findViewById(R.id.button_google_address);
 
         textMyAddress.setText(defaultFormattedAddress);
         textGoogleAddress.setText(googleAddress);

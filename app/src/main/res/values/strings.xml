@@ -465,7 +465,7 @@
     <string name="str_social_connect">Social Contact</string>
     <string name="str_view_all_organizations">View All Organizations</string>
     <string name="str_search_location">Search Location...</string>
-    <string name="str_sync_with_google_map">Sync with Google Map</string>
+    <string name="str_sync_with_google_map">Sync with Google Maps</string>
     <string name="str_country_hint">Country (Required)</string>
     <string name="str_state_hint">State (Required)</string>
     <string name="str_city_hint">City (Required)</string>
@@ -575,7 +575,7 @@
     <string name="hint_city_town_required">City / Town (Required)</string>
     <string name="hint_address_line_1_required">Address Line 1 (Required)</string>
     <string name="hint_address_line_2_optional">Address Line 2 (Optional)</string>
-    <string name="hint_pincode_required">Pincode (Required)</string>
+    <string name="hint_pincode_optional">Pincode (Optional)</string>
     <string name="error_current_organization">Select current Organization!</string>
     <string name="error_required_city">City is required!</string>
     <string name="error_required_street">Street is required!</string>
