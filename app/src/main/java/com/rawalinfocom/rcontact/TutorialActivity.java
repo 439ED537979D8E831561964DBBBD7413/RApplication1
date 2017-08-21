@@ -206,12 +206,14 @@ public class TutorialActivity extends BaseActivity {
                         textTutorialHeader.setText(getString(R.string.tutorial_header_3));
 //                        textTutorialContent.setText(R.string.tutorial_content_3);
                         textNext.setText(R.string.tutorial_and);
+                        textSkip.setVisibility(View.VISIBLE);
                         break;
 
                     case 3:
                         textTutorialHeader.setText(getString(R.string.tutorial_header_4));
 //                        textTutorialContent.setText(R.string.tutorial_content_4);
                         textNext.setText(R.string.tutorial_and);
+                        textSkip.setVisibility(View.VISIBLE);
                         break;
 
                     case 4:
