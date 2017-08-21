@@ -50,7 +50,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.util.Util;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.ContactListingActivity;
 import com.rawalinfocom.rcontact.R;
@@ -727,13 +726,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 (databaseHandler);
                         UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer
                                 .parseInt(pmId));*/
-                       /* ArrayList<ProfileData> arrayListProfileData = queryManager
-                                .getRcpNumberName(pmId);
-                        String number = StringUtils.trimToEmpty(arrayListProfileData.get(0)
-                                .getTempNumber());*/
-
-                        TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
-                        String number = tableMobileMaster.getUserMobileNumber(getUserPmId());
+                        TableMobileMaster tableMobileMaster = new TableMobileMaster
+                                (databaseHandler);
+                        String number = tableMobileMaster.getUserMobileNumber(pmId);
 
                         if (StringUtils.startsWith(number, "+")) {
                             number = StringUtils.substring(number, 1);
@@ -3574,7 +3569,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         if (phoneNumber != null) {
                             profilePrimaryNumber = phoneNumber.getPhoneNumber();
                         }
-                        intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, profilePrimaryNumber);
+                        intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER,
+                                profilePrimaryNumber);
                         intent.putExtra(AppConstants.EXTRA_RCP_FROM_NOTI, true);
                     }
                 }

@@ -603,8 +603,9 @@ public class Utils {
     public static String setFormattedAddress(String streetName, String neighborhoodName, String
             cityName, String stateName, String countryName, String pinCodeName) {
 
-        String[] addressStrings = {streetName, neighborhoodName, cityName, stateName,
-                countryName, pinCodeName};
+        String[] addressStrings = {StringUtils.trim(streetName), StringUtils.trim
+                (neighborhoodName), StringUtils.trim(cityName), StringUtils.trim(stateName),
+                StringUtils.trim(countryName), StringUtils.trim(pinCodeName)};
 
         String formattedAddress = "";
 

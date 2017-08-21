@@ -117,6 +117,7 @@ public class AppConstants {
     public static String EXTRA_CALL_UNIQUE_ID = "extra_call_unique_id";
     public static String EXTRA_UNIQUE_CONTACT_ID = "extra_unique_contact_id";
     public static String EXTRA_FORMATTED_ADDRESS = "extra_formatted_address";
+    public static String EXTRA_CITY = "extra_city";
     public static String EXTRA_LATITUDE = "extra_latitude";
     public static String EXTRA_LONGITUDE = "extra_longitude";
     public static String EXTRA_CONTACT_PROFILE_IMAGE = "extra_contact_profile_image";
@@ -261,8 +262,8 @@ public class AppConstants {
     public static String PREF_SMS_LOG_SYNCED = "pref_sms_log_synced";
     public static String PREF_GOT_ALL_PROFILE_DATA = "pref_got_all_profile_data";
     public static String PREF_IS_CALL_UPLOAD_CONTACT = "pref_is_call_upload_contact";
-    public static String PREF_LATEST_CALL_DATE_TIME =  "pref_latest_call_date_time";
-    public static String PREF_LATEST_CALL_RAW_ID= "pref_latest_call_raw_id";
+    public static String PREF_LATEST_CALL_DATE_TIME = "pref_latest_call_date_time";
+    public static String PREF_LATEST_CALL_RAW_ID = "pref_latest_call_raw_id";
 
 
     public static String[] arrayPrefKeys = {PREF_SELECTED_COUNTRY_OBJECT, PREF_DEVICE_TOKEN_ID,
