@@ -115,12 +115,13 @@ public class ContactListExpandAdapter extends RecyclerView.Adapter<RecyclerView.
             @Override
             public void onClick(View view) {
 
-                TextView textName = (TextView) view.findViewById(R.id.text_contact_name);
-                TextView textCloudName = (TextView) view.findViewById(R.id
+                TextView textName = view.findViewById(R.id.text_contact_name);
+                TextView textCloudName = view.findViewById(R.id
                         .text_cloud_contact_name);
 
                 Bundle bundle = new Bundle();
                 bundle.putString(AppConstants.EXTRA_PM_ID, contact.getTempRcpId());
+                bundle.putBoolean(AppConstants.EXTRA_IS_RCP_USER, contact.getTempIsRcp());
                 bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, phonebookId);
                 bundle.putString(AppConstants.EXTRA_CONTACT_NAME, textName.getText().toString());
                 if (textCloudName.getVisibility() == View.VISIBLE) {
@@ -166,7 +167,7 @@ public class ContactListExpandAdapter extends RecyclerView.Adapter<RecyclerView.
 
         @BindView(R.id.image_profile)
         ImageView imageProfile;
-//        @BindView(R.id.image_social_media)
+        //        @BindView(R.id.image_social_media)
 //        ImageView imageSocialMedia;
         @BindView(R.id.text_contact_name)
         TextView textContactName;
@@ -178,8 +179,8 @@ public class ContactListExpandAdapter extends RecyclerView.Adapter<RecyclerView.
         RatingBar ratingUser;
         @BindView(R.id.text_contact_number)
         public TextView textContactNumber;
-       /* @BindView(R.id.divider_all_contact)
-        View dividerAllContact;*/
+        /* @BindView(R.id.divider_all_contact)
+         View dividerAllContact;*/
         @BindView(R.id.relative_row_all_contact)
         RelativeLayout relativeRowAllContact;
         @BindView(R.id.linear_rating)

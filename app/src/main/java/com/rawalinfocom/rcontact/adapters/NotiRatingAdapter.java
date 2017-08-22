@@ -80,7 +80,7 @@ public class NotiRatingAdapter extends RecyclerView.Adapter<NotiRatingAdapter.My
         } else {
             holder.textRatingNotiTime.setText(Utils.formatDateTime(item.getNotiTime(), "hh:mm a"));
         }
-        holder.textRatingDetailInfo.setText(String.format("%s %s", item.getRaterName(), context.getString(R.string.str_rating_comment_hint_1)));
+        holder.textRatingDetailInfo.setText(String.format(context.getString(R.string.str_rating_comment_hint_1), item.getRaterName()));
         if (!TextUtils.isEmpty(item.getRaterPersonImage())) {
             Glide.with(context)
                     .load(item.getRaterPersonImage())

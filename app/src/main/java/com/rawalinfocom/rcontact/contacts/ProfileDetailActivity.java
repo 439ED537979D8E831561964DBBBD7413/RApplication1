@@ -1395,7 +1395,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         if (intent != null) {
 
             if (intent.hasExtra(AppConstants.EXTRA_DIALOG_CALL_LOG_INSTANCE)) {
-                isDialogCallLogInstance= intent.getBooleanExtra(AppConstants.EXTRA_DIALOG_CALL_LOG_INSTANCE, false);
+                isDialogCallLogInstance = intent.getBooleanExtra(AppConstants.EXTRA_DIALOG_CALL_LOG_INSTANCE, false);
             }
 
             if (intent.hasExtra(AppConstants.EXTRA_RCP_VERIFIED_ID)) {
@@ -3588,12 +3588,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         intent.putExtra(AppConstants.EXTRA_PHONE_BOOK_ID, rawId);
 //        intent.putExtra(AppConstants.EXTRA_PHONE_BOOK_ID, phoneBookId);
         intent.putExtra(AppConstants.EXTRA_CONTACT_NAME, contactName);
-        if(!StringUtils.isEmpty(cloudContactName))
+        if (!StringUtils.isEmpty(cloudContactName))
             intent.putExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME, cloudContactName);
-        else{
-            if(!StringUtils.isEmpty(callLogCloudName))
+        else {
+            if (!StringUtils.isEmpty(callLogCloudName))
                 intent.putExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME, callLogCloudName);
-            else{
+            else {
                 intent.putExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME, "");
             }
 
@@ -4162,6 +4162,4 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     }
 
     //</editor-fold>
-
-
 }

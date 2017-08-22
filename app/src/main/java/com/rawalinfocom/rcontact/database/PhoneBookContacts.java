@@ -756,7 +756,7 @@ public class PhoneBookContacts {
         };
 
         String selection = ContactsContract.Data.MIMETYPE + " in (?, ?, ?, ?, ?, ?, ?, ?) and " +
-                ContactsContract.Contacts.CONTACT_LAST_UPDATED_TIMESTAMP + ">=? and " + ContactsContract
+                ContactsContract.RawContacts.DIRTY + "=1 and " + ContactsContract.Contacts.CONTACT_LAST_UPDATED_TIMESTAMP + ">=? and " + ContactsContract
                 .RawContacts.ACCOUNT_TYPE + " in (" + ContactStorageConstants.CONTACT_STORAGE + ")";
 
 //        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?, ?, ?, ?, ?, ?, ?) and " +

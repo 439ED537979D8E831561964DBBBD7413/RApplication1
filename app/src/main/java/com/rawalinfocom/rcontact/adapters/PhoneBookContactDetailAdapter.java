@@ -52,9 +52,7 @@ public class PhoneBookContactDetailAdapter extends RecyclerView
     }
 
     @Override
-    public void onBindViewHolder(final ContactDetailViewHolder holder, int position) {
-
-        holder.checkboxSelectContact.setTag(position);
+    public void onBindViewHolder(final ContactDetailViewHolder holder, final int position) {
 
         if (arrayListContactDetail.get(position) instanceof String) {
             holder.textSub.setVisibility(View.GONE);
@@ -92,32 +90,60 @@ public class PhoneBookContactDetailAdapter extends RecyclerView
             holder.checkboxSelectContact.setChecked(true);
         }
 
-        holder.checkboxSelectContact.setOnCheckedChangeListener(new CompoundButton
-                .OnCheckedChangeListener() {
+        holder.checkboxSelectContact.setTag(position);
 
+        holder.checkboxSelectContact.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if ((Integer) buttonView.getTag() == 0) {
-                    isSelectAll(isChecked);
-                    if (!isChecked) {
-                        arrayListSelectedContacts.clear();
-                    }
+            public void onClick(View view) {
+
+                int pos = (int) view.getTag();
+
+                CheckBox checkBox = (CheckBox) view;
+                if (pos == 0) {
+                    isSelectAll(checkBox.isChecked());
                 } else {
-                    if (isChecked) {
-                        if (!arrayListSelectedContacts.contains(buttonView.getTag())) {
-                            arrayListSelectedContacts.add((Integer) buttonView.getTag());
+                    if (checkBox.isChecked()) {
+                        if (!arrayListSelectedContacts.contains(pos)) {
+                            arrayListSelectedContacts.add(pos);
                         }
                         if (arrayListSelectedContacts.size() == (arrayListContactDetail.size() -
                                 1)) {
                             isSelectAll(true);
                         }
                     } else {
-                        removeChecked((Integer) buttonView.getTag());
+                        removeChecked(pos);
                     }
                 }
-                Log.i("onCheckedChanged", arrayListSelectedContacts.toString());
+
             }
         });
+
+//        holder.checkboxSelectContact.setOnCheckedChangeListener(new CompoundButton
+//                .OnCheckedChangeListener() {
+//
+//            @Override
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                if ((Integer) buttonView.getTag() == 0) {
+//                    isSelectAll(isChecked);
+////                    if (!isChecked) {
+////                        arrayListSelectedContacts.clear();
+////                    }
+//                } else {
+//                    if (isChecked) {
+//                        if (!arrayListSelectedContacts.contains(buttonView.getTag())) {
+//                            arrayListSelectedContacts.add((Integer) buttonView.getTag());
+//                        }
+//                        if (arrayListSelectedContacts.size() == (arrayListContactDetail.size() -
+//                                1)) {
+//                            isSelectAll(true);
+//                        }
+//                    } else {
+//                        removeChecked((Integer) buttonView.getTag());
+//                    }
+//                }
+//                Log.i("onCheckedChanged", arrayListSelectedContacts.toString());
+//            }
+//        });
 
     }
 
@@ -145,11 +171,12 @@ public class PhoneBookContactDetailAdapter extends RecyclerView
     private void removeChecked(int tagPosition) {
         isSelectedAll = false;
         arrayListSelectedContacts.remove((Integer) 0);
-        if (!arrayListSelectedContacts.contains(tagPosition)) {
+        if (arrayListSelectedContacts.contains(tagPosition)) {
             arrayListSelectedContacts.remove((Integer) tagPosition);
         }
         try {
-            notifyItemChanged(0);
+            notifyDataSetChanged();
+//            notifyItemChanged(0);
         } catch (Exception ignore) {
         }
     }
