@@ -39,30 +39,20 @@ public class WsConstants {
 //     public static final String WS_ROOT = "http://10.0.21.16/api/v1/";
 
 
-    /**
-     * Redirection URL
+    /*
+     * TERMS-CONDITIONS URL
      */
+    public static final String URL_TERMS_CONDITIONS = "https://www.rcontacts.in/global/terms";
 
-    // Production Env
-//    public static final String URL_TERMS_CONDITIONS = "https://www.rcontacts.in/global/terms";
-//    public static final String URL_TERMS_CONDITIONS = "https://web.rcontacts.in/global/terms";
-
-
-    // Staging Env
-    public static final String URL_TERMS_CONDITIONS = "http://webstaging.rcontacts.in/global/terms";
-
-    /**
+    /*
      * Feedback URL
      */
     public static final String URL_FEEDBACK = "http://feedback.rcontacts.in";
 
-    /**
+    /*
      * FAQ URL
      */
-//    public static final String URL_FAQ = "http://webqa.rcontacts.in/global/faqs";
-    public static final String URL_FAQ = "http://webstaging.rcontacts.in/global/faqs";
-//    public static final String URL_FAQ = "https://www.rcontacts.in/global/faqs";
-//    public static final String URL_FAQ = "https://web.rcontacts.in/global/faqs";
+    public static final String URL_FAQ = "https://www.rcontacts.in/global/faqs";
 
     /*
      * Profile View
@@ -79,19 +69,17 @@ public class WsConstants {
 
     // Production Env
 //    public static final String WS_PROFILE_VIEW_ROOT = "https://www.rcontacts.in/global/public/";
-//    public static final String WS_PROFILE_VIEW_ROOT = "https://web.rcontacts.in/global/public/";
 
     /*
      * WEBSITE URL
      */
     public static final String WS_WEBSITE_URL = "http://webstaging.rcontacts.in";
 //    public static final String WS_WEBSITE_URL = "https://www.rcontacts.in";
-//    public static final String WS_WEBSITE_URL = "https://web.rcontacts.in";
 
 
     /*
-    * PRIVACY-POLICY URL
-    * */
+     * PRIVACY-POLICY URL
+     */
     public static final String URL_PRIVACY_POLICY = "https://www.rcontacts.in/global/privacy-policy";
 
     public static final String WS_FACEBOOK_URL = "https://www.facebook.com/RContacts/";
