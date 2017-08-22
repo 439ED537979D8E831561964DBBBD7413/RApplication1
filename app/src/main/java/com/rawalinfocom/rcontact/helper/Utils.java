@@ -695,7 +695,9 @@ public class Utils {
                 if (country != null) {
                     defaultCountryCode = country.getCountryCodeNumber();
                 }
-                if (!StringUtils.startsWith(phoneNumber, "+")) {
+//                if (!StringUtils.startsWith(phoneNumber, "+")) {
+                if (StringUtils.indexOf(phoneNumber, "+") != 0 && StringUtils.indexOf
+                        (phoneNumber, "+") != 1) {
                     if (StringUtils.startsWith(phoneNumber, "00")) {
                         phoneNumber = "+" + StringUtils.substring(phoneNumber, 2);
                     } else if (StringUtils.startsWith(phoneNumber, "0")) {

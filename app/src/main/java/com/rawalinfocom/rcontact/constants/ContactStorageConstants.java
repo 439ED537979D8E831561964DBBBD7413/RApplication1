@@ -6,28 +6,7 @@ package com.rawalinfocom.rcontact.constants;
 
 public class ContactStorageConstants {
 
-    /*public static final String CONTACT_STORAGES = "" +
-            // Google
-            "'com.google'," +
-            // Samsung default storage
-            "'vnd.sec.contact.phone'," +
-            // Samsung default sim
-            "'vnd.sec.contact.sim'," +
-            // Mi default storage
-            "'com.xiaomi'," +
-            // Asus/HTC/Panasonic/Sony Defalul storage
-            "'Local Phone Account'," +
-            // Asus Sim storage
-            "'USIM Account'," +
-            // Panasonic/Sony Sim storage
-            "'SIM Account'," +
-            // Lenovo/Letv Defalul storage
-            "'com.android.localphone'," +
-            // Oppo Defalul storage
-            "'com.oppo.contacts.device'," +
-            // Lenovo Sim storage
-            "'com.android.sim'" +
-            "";*/
+    // Added on: 22/08/17
 
     public static final String CONTACT_STORAGE = "" +
             // Google
@@ -49,18 +28,26 @@ public class ContactStorageConstants {
             "'SIM Account'," +   // Sim
             "'USIM Account'," +   // Sim
 
+            // HONOR
+            "'com.android.huawei.phone'," +   // Default
+            "'com.android.huawei.secondsim'," +   // Sim
+            "'com.android.huawei.sim'," +   // Sim
+
             // HTC
             "'Local Phone Account'," +   // Default
             "'USIM Account'," +          // Sim
+            "'com.htc.contacts.sim'," +          // Sim
+            "'com.htc.contacts.sim_slot2'," +          // Sim
 
             // HUAWEI
             "'com.android.huawei.phone'," +   // Default
             "'SIM Account'," +          // Sim
 
-            // Karbonn
+            // Karbonn/Lava
             "'sprd.com.android.account.phone'," +   // Default
             "'Local Phone Account'," +   // Default
             "'sprd.com.android.account.usim'," +     // Sim
+            "'sprd.com.android.account.sim'," +     // Sim
             "'USIM Account'," +     // Sim
 
             // Lenovo
@@ -82,6 +69,7 @@ public class ContactStorageConstants {
 
             // Oppo
             "'com.oppo.contacts.device'," +  // Default
+            "'com.oppo.contacts.sim'," +  // Default
 
             // Samsung
             "'vnd.sec.contact.phone'," + // Default
