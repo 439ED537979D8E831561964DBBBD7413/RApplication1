@@ -623,7 +623,6 @@
     encryption, which means RContacts app and third parties can\'t read or listen to them</string>
 
     <string name="security_link_text">Learn more about RContacts app security</string>
-    <string name="security_link">http://webstaging.rcontacts.in/global/privacy-policy</string>
 
     <!-- Settings -->
     <string name="app_language">App Language</string>

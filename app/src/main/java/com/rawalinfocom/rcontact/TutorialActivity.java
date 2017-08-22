@@ -43,6 +43,8 @@ public class TutorialActivity extends BaseActivity {
      TextView textTutorialContent;*/
     @BindView(R.id.text_next)
     TextView textNext;
+    @BindView(R.id.text_skip)
+    TextView textSkip;
     @BindView(R.id.linear_indicator)
     LinearLayout linearIndicator;
     @BindView(R.id.relative_indicator)
@@ -70,8 +72,6 @@ public class TutorialActivity extends BaseActivity {
     TutorialPagerAdapter tutorialPagerAdapter;
 
     int pagerCurrentPosition = 0;
-    @BindView(R.id.text_skip)
-    TextView textSkip;
 
 
     //<editor-fold desc="Override Methods">
@@ -183,7 +183,6 @@ public class TutorialActivity extends BaseActivity {
                 switch (position) {
                     case 0:
                         textTutorialHeader.setText(getString(R.string.tutorial_header_1));
-//                        textTutorialContent.setText(R.string.tutorial_content_1);
                         textNext.setText(R.string.tutorial_and);
                         textSkip.setVisibility(View.GONE);
                         break;
@@ -197,28 +196,24 @@ public class TutorialActivity extends BaseActivity {
                                     .MY_PERMISSIONS_REQUEST_READ_CONTACTS);
                         }
                         textTutorialHeader.setText(getString(R.string.tutorial_header_2));
-//                        textTutorialContent.setText(R.string.tutorial_content_2);
                         textNext.setText(R.string.tutorial_and);
                         textSkip.setVisibility(View.VISIBLE);
                         break;
 
                     case 2:
                         textTutorialHeader.setText(getString(R.string.tutorial_header_3));
-//                        textTutorialContent.setText(R.string.tutorial_content_3);
                         textNext.setText(R.string.tutorial_and);
                         textSkip.setVisibility(View.VISIBLE);
                         break;
 
                     case 3:
                         textTutorialHeader.setText(getString(R.string.tutorial_header_4));
-//                        textTutorialContent.setText(R.string.tutorial_content_4);
                         textNext.setText(R.string.tutorial_and);
                         textSkip.setVisibility(View.VISIBLE);
                         break;
 
                     case 4:
                         textTutorialHeader.setText(getString(R.string.tutorial_header_5));
-//                        textTutorialContent.setText(R.string.tutorial_content_5);
                         textNext.setText(R.string.tutorial_lets_go);
                         textSkip.setVisibility(View.GONE);
                         break;

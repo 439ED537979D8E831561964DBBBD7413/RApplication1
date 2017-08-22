@@ -15,7 +15,7 @@ public class WsConstants {
 //    public static final String WS_ROOT = "http://apistaging.rcontacts.in/api/v1/";
 
     // QA Server
-    public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
+//    public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
 
     // Monal
 //    public static final String WS_ROOT = "http://10.0.21.163/api/v1/";
@@ -83,13 +83,19 @@ public class WsConstants {
 //    public static final String WS_PROFILE_VIEW_ROOT = "https://www.rcontacts.in/global/public/";
 //    public static final String WS_PROFILE_VIEW_ROOT = "https://web.rcontacts.in/global/public/";
 
-    /**
+    /*
      * WEBSITE URL
      */
 //    public static final String WS_WEBSITE_URL = "http://webstaging.rcontacts.in";
     public static final String WS_WEBSITE_URL = "http://webqa.rcontacts.in";
 //    public static final String WS_WEBSITE_URL = "https://www.rcontacts.in";
 //    public static final String WS_WEBSITE_URL = "https://web.rcontacts.in";
+
+
+    /*
+    * PRIVACY-POLICY URL
+    * */
+    public static final String URL_PRIVACY_POLICY = "https://www.rcontacts.in/global/privacy-policy";
 
     public static final String WS_FACEBOOK_URL = "https://www.facebook.com/RContacts/";
     public static final String WS_TWITTER_URL = "https://twitter.com/RContactsApp";
