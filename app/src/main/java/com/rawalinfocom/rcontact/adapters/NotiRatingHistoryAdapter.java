@@ -121,12 +121,11 @@ public class NotiRatingHistoryAdapter extends RecyclerView.Adapter<NotiRatingHis
         }
         if (item.getHistoryType() == 0) {
             holder.historyPlaceHolder.setText(context.getResources().getString(R.string.text_you_rated));
-            holder.textRatingDetailInfo.setText(String.format("%s%s", context.getString(R.string.str_rating_comment_hint_2)
-                    , " " + item.getReceiverPersonName()));
+            holder.textRatingDetailInfo.setText(String.format(context.getString(R.string.str_rating_comment_hint_2)
+                    , item.getReceiverPersonName()));
         } else {
             holder.historyPlaceHolder.setText(context.getResources().getString(R.string.text_rated_you));
-            holder.textRatingDetailInfo.setText(String.format("%s%s", context.getString(R.string.str_rating_comment_hint_3)
-                    , " " + item.getRaterName()));
+            holder.textRatingDetailInfo.setText(String.format(context.getString(R.string.str_rating_comment_hint_3), item.getRaterName()));
         }
         String imageurl = "";
         if (item.getHistoryType() == 0) {

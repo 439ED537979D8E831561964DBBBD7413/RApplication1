@@ -170,6 +170,7 @@
     <string name="recent_events">તાજેતરના ઇવેન્ટ્સ</string>
     <string name="upcoming_events">આવનાર ઈવેન્ટ્સ</string>
     <string name="past_pending_requests">અપૂર્ણ વિનંતીઓ</string>
+    <string name="past_received_response">છેલ્લા પ્રાપ્ત પ્રતિસાદો</string>
     <string name="text_custom">કસ્ટમ</string>
     <string name="msg_please_enter_some_comment">કૃપા કરી કોઈ ટિપ્પણી દાખલ કરો</string>
     <string name="text_wishes_on_your">એ તમને \u0020 ની શુભકામનાઓ આપી</string>
@@ -190,7 +191,7 @@
     <string name="text_notifications">સૂચનાઓ</string>
     <string name="text_you_rated">તમે રેટ ને કર્યું</string>
     <string name="text_rated_you">એ તમને રેટ કર્યું</string>
-    <string name="footer_noti_rating_text">પાછલા રેટિંગ જોવા માટે વેબસાઈટ પર જાઓ</string>
+    <string name="footer_noti_rating_text">પાછલા સૂચનાઓ જોવા માટે વેબસાઈટ પર જાઓ</string>
     <string name="footer_noti_comments_text">પાછલા ટાઈમલાઈન ની ટિપ્પણીઓ જોવા માટે વેબસાઈટ પર જાઓ</string>
     <string name="footer_events_text">આવનારી ઇવેન્ટ્સ જોવા માટે વેબસાઈટ પર જાઓ</string>
     <string name="footer_timeline_text">પાછલા ટાઈમલાઈન ની ઇવેન્ટ્સ જોવા માટે વેબસાઈટ પર જાઓ</string>
@@ -251,7 +252,8 @@
     <string name="msg_enter_password">કૃપા કરીને અનધિકૃત ઍક્સેસ અટકાવવા માટે પાસવર્ડ સેટ કરો</string>
     <string name="str_password">પાસવર્ડ</string>
     <string name="str_confirm_password">પાસવર્ડ કન્ફર્મ કરો</string>
-    <string name="msg_tip_password">ટિપ: પાસવર્ડ ઓછામાં ઓછો 8 અક્ષર લાંબો હોવો જોઈએ જેમાં લઘુત્તમ 1 અપ્પર અને 1 લોઅર કેસ અક્ષર, 1 નંબર અને 1 સ્પેશિઅલ અક્ષર હોવો જોઈએ</string>
+    <!--<string name="msg_tip_password">ટિપ: પાસવર્ડ ઓછામાં ઓછો 8 અક્ષર લાંબો હોવો જોઈએ જેમાં લઘુત્તમ 1 અપ્પર અને 1 લોઅર કેસ અક્ષર, 1 નંબર અને 1 સ્પેશિઅલ અક્ષર હોવો જોઈએ</string>-->
+    <string name="msg_tip_password">પાસવર્ડ ઓછામાં ઓછો 4 અક્ષર લાંબો હોવો જોઈએ</string>
     <string name="title_password_protected">પાસવર્ડ થી સુરક્ષિત</string>
     <string name="msg_enter_password_tips">કૃપા કરીને તમારા ખાતા ને ઍક્સેસ કરવા માટે પાસવર્ડ દાખલ કરો</string>
     <string name="str_enter_password">પાસવર્ડ દાખલ કરો</string>
@@ -267,6 +269,7 @@
     <string name="unblock_All">બધા ને અનબ્લોક કરો</string>
     <string name="block_action_title">બ્લોક કરેલા સંપર્કો સૂચિ</string>
     <string name="contacts">સંપર્કો</string>
+    <string name="str_count_contacts">સંપર્કો</string>
 
     <!--  Call History Details  -->
     <string name="sms">SMS</string>
@@ -401,9 +404,9 @@
     <string name="str_unread_notification_hint_1">તમારી પાસે</string>
     <string name="str_unread_notification_hint_2">વાંચ્યા વગરની સૂચના(ઓ) છે.</string>
     <string name="str_unread_notification_hint_3">તમારી પાસે કોઈ વાંચ્યા વગરની સૂચના(ઓ) નથી.</string>
-    <string name="str_rating_comment_hint_1">એ તમારા રેટિંગ અને ટિપ્પણી નો જવાબ આપ્યો</string>
-    <string name="str_rating_comment_hint_2">ને તમે રેટ કર્યું અને એમના માટે ટિપ્પણી કરી</string>
-    <string name="str_rating_comment_hint_3">થી તમને રેટિંગ મળી</string>
+    <string name="str_rating_comment_hint_1">%1$s એ તમારા રેટિંગ અને ટિપ્પણી નો જવાબ આપ્યો</string>
+    <string name="str_rating_comment_hint_2">%1$s ને તમે રેટ કર્યું અને એમના માટે ટિપ્પણી કરી</string>
+    <string name="str_rating_comment_hint_3">%1$s થી તમને રેટિંગ મળી</string>
     <string name="str_view_more">વધુ જુવો</string>
     <string name="str_view_less">ઓછું જુવો</string>
     <string name="str_confirm">કન્ફર્મ</string>
@@ -413,8 +416,8 @@
     <string name="str_tab_comment">ટિપ્પણી</string>
 
     <!-- <string name="str_tab_r_contact">RContact</string>  -->
-    <string name="str_requested_for_your">એ તમારો જોવા માટે પરવાનગી માંગી છે</string>
-    <string name="str_confirmed_your_request_for">એ તમારી ની વિનંતી સ્વીકારી લીધી છે</string>
+    <string name="str_requested_for_your">એ તમારો %1$s જોવા માટે પરવાનગી માંગી છે</string>
+    <string name="str_confirmed_your_request_for">એ તમારી %1$s જોવાની ની વિનંતી સ્વીકારી લીધી છે</string>
 
     <!--  Profile  -->
     <string name="str_copy_number">નંબર કૉપિ કરવામાં આવ્યો</string>
@@ -456,10 +459,10 @@
     <string name="str_website">વેબસાઈટ</string>
     <string name="str_address">એડ્રેસ</string>
     <string name="str_link">લિંક</string>
-    <string name="str_account_name">ખાતાનું નામ</string>
+    <!--<string name="str_account_name">ખાતાનું નામ</string>-->
     <string name="str_choose_date">તારીખ પસંદ કરો</string>
     <string name="str_public_profile">public_profile</string>
-    <string name="str_social_connect">સોશિઅલ ખાતા</string>
+    <string name="str_social_connect">સોશિઅલ સંપર્ક</string>
     <string name="str_view_all_organizations">તમામ સંસ્થાઓ જુઓ</string>
     <string name="str_search_location">સ્થાન શોધો...</string>
     <string name="str_sync_with_google_map">Google Maps સાથે સિંક કરો</string>
@@ -554,6 +557,7 @@
     <string name="tutorial_content_4">RContacts સ્પેશિયલ એજન્ટ ની જેમ તમને સ્પામ તરીકે ચિહ્નિત કરેલા નંબરો થી તમારું બચાવ કરશે</string>
     <string name="tutorial_content_5">પ્રતિષ્ઠા સિતારા કમાવો અને પોતાને સંપર્કોની દુનિયામાં પ્રમાણિત કરો</string>
     <string name="tutorial_and">અને?</string>
+    <string name="tutorial_skip">Skip>></string>
     <string name="tutorial_lets_go">ચાલો જઇએ!</string>
     <string name="get_started">શરૂ કરો</string>
     <string name="str_welcome">સ્વાગત છે</string>
@@ -566,13 +570,13 @@
     <string name="error_once_birthday_anniversary">જન્મદિવસ અને વર્ષગાંઠ માત્ર એકવાર જ ઉમેરી શકાય છે!</string>
     <string name="error_no_update">અપડેટ કરવા માટે કંઈ નથી</string>
     <string name="error_required_address_mapping">એડ્રેસ ને મેપ પર સિંક કરવું આવશ્યક છે!</string>
-    <string name="hint_account_name">ખાતાનું નામ</string>
+    <string name="hint_account_name">વપરાશકર્તા આઈડી</string>
     <string name="hint_country_required">દેશ (આવશ્યક)</string>
     <string name="hint_state_required">રાજ્ય (આવશ્યક)</string>
     <string name="hint_city_town_required">શહેર/નગર (આવશ્યક)</string>
     <string name="hint_address_line_1_required">એડ્રેસ લાઈન 1 (આવશ્યક)</string>
     <string name="hint_address_line_2_optional">એડ્રેસ લાઈન 2 (વૈકલ્પિક)</string>
-    <string name="hint_pincode_required">પીનકોડ (આવશ્યક)</string>
+    <string name="hint_pincode_optional">પીનકોડ (વૈકલ્પિક)</string>
     <string name="error_current_organization">વર્તમાન સંસ્થા પસંદ કરો</string>
     <string name="error_required_city">શહેરનું નામ આવશ્યક છે</string>
     <string name="error_required_street">શેરીની વિગતો આવશ્યક છે</string>
@@ -619,7 +623,6 @@
         જેના થી RContacts એપ્લિકેશન અને ત્રીજા પક્ષો સંદેશોને વાંચી શકતા નથી.</string>
 
     <string name="security_link_text">RContacts ની સુરક્ષા વિશે વધુ જાણો</string>
-    <string name="security_link">http://webstaging.rcontacts.in/global/privacy-policy</string>
 
     <!-- Settings -->
     <string name="app_language">ભાષા</string>

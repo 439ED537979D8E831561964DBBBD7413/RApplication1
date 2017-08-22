@@ -6,7 +6,6 @@
     <string name="facebook_app_id">1410546345629965</string>
     <!--11/08/2017-->
     <!--<string name="facebook_app_id">110263789676833</string>-->
-
     <string name="google_maps_key">AIzaSyBJSXzIhhMakvEuZ8JCLfbs5m1nKXf0zHA</string>
 
     <!--  Google  -->
@@ -171,6 +170,7 @@
     <string name="recent_events">हाल के इवेंट्स</string>
     <string name="upcoming_events">आने वाले इवेंट्स</string>
     <string name="past_pending_requests">अपूर्ण निवेदन</string>
+    <string name="past_received_response">पिछले प्राप्त प्रतिक्रियाएं</string>
     <string name="text_custom">कस्टम</string>
     <string name="msg_please_enter_some_comment">कृपया कोई टिप्पणी दर्ज करें</string>
     <string name="text_wishes_on_your">ने आपको \u0020 की शुभकामनाएं दी</string>
@@ -191,7 +191,7 @@
     <string name="text_notifications">सूचनाएं</string>
     <string name="text_you_rated">को आपने रेट किया</string>
     <string name="text_rated_you">ने आपको रेट किया</string>
-    <string name="footer_noti_rating_text">पिछले रेटिंग्स देखने के लिए वेबसाइट पर जाएं</string>
+    <string name="footer_noti_rating_text">पिछले सूचनाएं देखने के लिए वेबसाइट पर जाएं</string>
     <string name="footer_noti_comments_text">पिछली टाइमलाइन टिप्पणियां देखने के लिए वेबसाइट पर जाएं</string>
     <string name="footer_events_text">आगामी इवेंट्स देखने के लिए वेबसाइट पर जाएं</string>
     <string name="footer_timeline_text">पिछले टाइमलाइन इवेंट्स देखने के लिए वेबसाइट पर जाएं</string>
@@ -252,7 +252,8 @@
     <string name="msg_enter_password">कृपया अनधिकृत पहुंच को रोकने के लिए पासवर्ड सेट करें</string>
     <string name="str_password">पासवर्ड</string>
     <string name="str_confirm_password">पासवर्ड कन्फर्म करें</string>
-    <string name="msg_tip_password">युक्ति: पासवर्ड न्यूनतम 8 अक्षर लंबा जिसमे कम से कम 1 ऊपरी और 1 लोअर केस लेटर, 1 नंबर और 1 स्पेशल कैरेक्टर होना चाहिए</string>
+    <!--<string name="msg_tip_password">युक्ति: पासवर्ड न्यूनतम 8 अक्षर लंबा जिसमे कम से कम 1 ऊपरी और 1 लोअर केस लेटर, 1 नंबर और 1 स्पेशल कैरेक्टर होना चाहिए</string>-->
+    <string name="msg_tip_password">पासवर्ड न्यूनतम 4 अक्षर लंबा होना चाहिए</string>
     <string name="title_password_protected">पासवर्ड से सुरक्षित</string>
     <string name="msg_enter_password_tips">कृपया अपना खाता एक्सेस करने के लिए पासवर्ड दर्ज करें</string>
     <string name="str_signin_signup">साइन इन करें या दूसरे खाते के साथ साइन अप करें</string>
@@ -268,6 +269,7 @@
     <string name="unblock_All">सभी संपर्क अनब्लॉक करें</string>
     <string name="block_action_title">ब्लॉक किये गए सम्पर्को की सूचि</string>
     <string name="contacts">संपर्क</string>
+    <string name="str_count_contacts">संपर्क</string>
 
     <!--  Call History Details  -->
     <string name="sms">SMS</string>
@@ -402,9 +404,9 @@
     <string name="str_unread_notification_hint_1">आपके पास</string>
     <string name="str_unread_notification_hint_2">अपठित सूचना(एं) है</string>
     <string name="str_unread_notification_hint_3">आपके पास कोई अपठित सूचना(एं) नहीं है</string>
-    <string name="str_rating_comment_hint_1">आपकी रेटिंग और टिप्पणी पर आपको उत्तर दिया</string>
-    <string name="str_rating_comment_hint_2">को आपने रेटिंग दी और उनके लिए टिपण्णी लिखी</string>
-    <string name="str_rating_comment_hint_3">से आपको रेटिंग प्राप्त हुई</string>
+    <string name="str_rating_comment_hint_1">%1$s ने आपकी रेटिंग और टिप्पणी पर आपको उत्तर दिया</string>
+    <string name="str_rating_comment_hint_2">%1$s को आपने रेटिंग दी और उनके लिए टिपण्णी लिखी</string>
+    <string name="str_rating_comment_hint_3">%1$s से आपको रेटिंग प्राप्त हुई</string>
     <string name="str_view_more">अधिक देखें</string>
     <string name="str_view_less">कम देखें</string>
     <string name="str_confirm">कन्फर्म</string>
@@ -414,8 +416,8 @@
     <string name="str_tab_comment">टिपण्णी</string>
 
     <!-- <string name="str_tab_r_contact">RContact</string>  -->
-    <string name="str_requested_for_your">ने आपका देखने के लिए अनुमति मांगी है।</string>
-    <string name="str_confirmed_your_request_for">ने आपका निवेदन के लिए स्वीकार कर लिया</string>
+    <string name="str_requested_for_your">ने आपका %1$s देखने के लिए अनुमति मांगी है।</string>
+    <string name="str_confirmed_your_request_for">ने आपका %1$s देखनेका का निवेदन स्वीकार कर लिया हे</string>
 
     <!--  Profile  -->
     <string name="str_copy_number">नम्बर कॉपी किया गया</string>
@@ -457,10 +459,10 @@
     <string name="str_website">वेबसाइट</string>
     <string name="str_address">पता</string>
     <string name="str_link">लिंक</string>
-    <string name="str_account_name">खाते का नाम</string>
+    <!--<string name="str_account_name">खाते का नाम</string>-->
     <string name="str_choose_date">दिनांक चुनें</string>
     <string name="str_public_profile">public_profile</string>
-    <string name="str_social_connect">सोशिअल खाते</string>
+    <string name="str_social_connect">सोशिअल संपर्क</string>
     <string name="str_view_all_organizations">सभी संगठन देखें</string>
     <string name="str_search_location">स्थान खोजें...</string>
     <string name="str_sync_with_google_map">Google Maps के साथ सिंक करें</string>
@@ -555,6 +557,7 @@
     <string name="tutorial_content_4">एक विशेष एजेंट की तरह RContacts स्पैम के रूप में चिह्नित नंबरों से आपका बचाव करेगा</string>
     <string name="tutorial_content_5">प्रतिष्ठा सितारों को कमाएँ और संपर्कों की दुनिया में अपने आप को प्रमाणित करें</string>
     <string name="tutorial_and">और?</string>
+    <string name="tutorial_skip">Skip>></string>
     <string name="tutorial_lets_go">चलते हैं!</string>
     <string name="get_started">शुरू करें</string>
     <string name="str_welcome">स्वागत है</string>
@@ -567,13 +570,13 @@
     <string name="error_once_birthday_anniversary">जन्मदिन और सालगिरह केवल एक बार जोड़ा जा सकता है!</string>
     <string name="error_no_update">अपडेट करने के लिए कुछ नहीं है</string>
     <string name="error_required_address_mapping">पते का मैप पर सिंक होना आवश्यक है</string>
-    <string name="hint_account_name">खाते का नाम</string>
+    <string name="hint_account_name">यूज़र आईडी</string>
     <string name="hint_country_required">देश (आवश्यक)</string>
     <string name="hint_state_required">राज्य (आवश्यक)</string>
     <string name="hint_city_town_required">शहर/नगर (आवश्यक)</string>
     <string name="hint_address_line_1_required">पता पंक्ति 1 (आवश्यक)</string>
     <string name="hint_address_line_2_optional">पता पंक्ति 2 (वैकल्पिक)</string>
-    <string name="hint_pincode_required">पिनकोड (आवश्यक)</string>
+    <string name="hint_pincode_optional">पिनकोड (वैकल्पिक)</string>
     <string name="error_current_organization">कृपया वर्तमान संगठन का चयन करें</string>
     <string name="error_required_city">शहर/नगर का नाम आवश्यक है</string>
     <string name="error_required_street">गली का विस्तार आवश्यक है</string>
@@ -620,7 +623,6 @@
         जिससे RContacts ऐप या कोई भी तीसरे पक्ष की पार्टी उन्हें पढ़ नहीं सकती। </string>
 
     <string name="security_link_text">RContacts की सुरक्षा के बारे में अधिक जानें</string>
-    <string name="security_link">http://webstaging.rcontacts.in/global/privacy-policy</string>
 
     <!-- Settings -->
     <string name="app_language">भाषा</string>
@@ -676,4 +678,5 @@
     <string name="error_call_permission">कॉल की अनुमति आवश्यक है!</string>
     <string name="error_camera_permission">कैमरा अनुमति आवश्यक है!</string>
     <string name="error_storage_permission">संग्रहण अनुमति आवश्यक है!</string>
+
 </resources>

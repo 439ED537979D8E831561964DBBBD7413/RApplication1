@@ -40,7 +40,6 @@ import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.database.QueryManager;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.RecyclerItemDecoration;
-import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.model.ProfileData;
@@ -312,7 +311,8 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         String contactDisplayName = "";
 
-        if (Utils.getStringPreference(activity, AppConstants.PREF_SHORT_BY_CONTACT, "0").equalsIgnoreCase("0")) {
+        if (Utils.getStringPreference(activity, AppConstants.PREF_SHORT_BY_CONTACT, "0")
+                .equalsIgnoreCase("0")) {
             contactDisplayName = StringUtils.defaultIfEmpty(profileData.getName(), "");
         } else {
 
@@ -395,6 +395,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 TextView textCloudName = (TextView) v.findViewById(R.id.text_cloud_contact_name);
 
                 bundle.putBoolean(AppConstants.EXTRA_IS_RCP_USER, profileData.getTempIsRcp());
+                bundle.putString(AppConstants.EXTRA_CALL_HISTORY_NAME, profileData.getName());
 
                 if (holder.recyclerViewMultipleRc.getVisibility() == View.GONE) {
                     if (StringUtils.contains(String.valueOf(v.getTag()), ",")) {
@@ -493,11 +494,11 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private void configureFooterViewHolder(ContactFooterViewHolder holder) {
         if (fragment instanceof AllContactsListFragment) {
             holder.textTotalContacts.setText(String.format(Locale.getDefault(), "%d %s",
-                    arrayListUserContact.size(), activity.getString(R.string.contacts)));
+                    arrayListUserContact.size(), activity.getString(R.string.str_count_contacts)));
         } else if (fragment instanceof FavoritesFragment) {
             holder.textTotalContacts.setText(String.format(Locale.getDefault(), "%d %s",
                     arrayListUserContact.size() -
-                            arrayListContactHeader.size(), activity.getString(R.string.contacts)));
+                            arrayListContactHeader.size(), activity.getString(R.string.str_count_contacts)));
 
         }
     }

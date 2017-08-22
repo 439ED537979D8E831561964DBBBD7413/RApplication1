@@ -8,9 +8,8 @@ package com.rawalinfocom.rcontact.constants;
 
 public class WsConstants {
 
-
     //Production Env
-    public static final String WS_ROOT = "https://api.rcontacts.in/api/v1/";
+//    public static final String WS_ROOT = "https://api.rcontacts.in/api/v1/";
 
     // Staging Env
 //    public static final String WS_ROOT = "http://apistaging.rcontacts.in/api/v1/";
@@ -40,8 +39,8 @@ public class WsConstants {
 //     public static final String WS_ROOT = "http://10.0.21.16/api/v1/";
 
 
-    /**
-     * Redirection URL
+    /*
+     * TERMS-CONDITIONS URL
      */
 
     // Production Env
@@ -51,18 +50,24 @@ public class WsConstants {
 
     // Staging Env
 //    public static final String URL_TERMS_CONDITIONS = "http://webstaging.rcontacts.in/global/terms";
+//    public static final String URL_TERMS_CONDITIONS = "http://webstaging.rcontacts.in/global/terms";
+    // QA Env
+    public static final String URL_TERMS_CONDITIONS = "http://webqa.rcontacts.in/global/terms";
 
     /**
      * Feedback URL
      */
     public static final String URL_FEEDBACK = "http://feedback.rcontacts.in";
 
-    /**
+    /*
      * FAQ URL
      */
 //    public static final String URL_FAQ = "http://webstaging.rcontacts.in/global/faqs";
     public static final String URL_FAQ = "https://www.rcontacts.in/global/faqs";
 //    public static final String URL_FAQ = "https://web.rcontacts.in/global/faqs";
+    public static final String URL_FAQ = "http://webqa.rcontacts.in/global/faqs";
+//    public static final String URL_FAQ = "http://webstaging.rcontacts.in/global/faqs";
+//    public static final String URL_FAQ = "https://www.rcontacts.in/global/faqs";
 
     /**
      * Profile View
@@ -81,12 +86,18 @@ public class WsConstants {
     public static final String WS_PROFILE_VIEW_ROOT = "https://www.rcontacts.in/global/public/";
 //    public static final String WS_PROFILE_VIEW_ROOT = "https://web.rcontacts.in/global/public/";
 
-    /**
+    /*
      * WEBSITE URL
      */
 //    public static final String WS_WEBSITE_URL = "http://webstaging.rcontacts.in";
-    public static final String WS_WEBSITE_URL = "https://www.rcontacts.in";
-//    public static final String WS_WEBSITE_URL = "https://web.rcontacts.in";
+    public static final String WS_WEBSITE_URL = "http://webqa.rcontacts.in";
+//    public static final String WS_WEBSITE_URL = "https://www.rcontacts.in";
+
+
+    /*
+     * PRIVACY-POLICY URL
+     */
+    public static final String URL_PRIVACY_POLICY = "https://www.rcontacts.in/global/privacy-policy";
 
     public static final String WS_FACEBOOK_URL = "https://www.facebook.com/RContacts/";
     public static final String WS_TWITTER_URL = "https://twitter.com/RContactsApp";

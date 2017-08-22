@@ -195,7 +195,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 //        smsLogTypeArrayListMain = new ArrayList<>();
         callListForSpamCount = new ArrayList<>();
 //        CallLogFragment.callLogTypeReceiver = new CallLogType();
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         networkConnectionReceiver = new NetworkConnectionReceiver();
         init();
@@ -248,17 +248,22 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             try {
 
                 if (Utils.isNetworkAvailable(MainActivity.this)
-                        && Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CONTACT_SYNCED, false)
-                        && (Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CALL_LOG_SYNCED,
+                        && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                        .PREF_CONTACT_SYNCED, false)
+                        && (Utils.getBooleanPreference(MainActivity.this, AppConstants
+                                .PREF_CALL_LOG_SYNCED,
                         false))) {
 
 //                    System.out.println("RContact callPullMechanismService ");
 
-                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault());
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd " +
+                            "hh:mm:ss", Locale.getDefault());
 
                     String toDate = simpleDateFormat.format(new Date(System.currentTimeMillis()));
 
-                    long compare = Long.parseLong(Utils.getStringPreference(MainActivity.this, AppConstants.KEY_API_CALL_TIME, String.valueOf(System.currentTimeMillis())));
+                    long compare = Long.parseLong(Utils.getStringPreference(MainActivity.this,
+                            AppConstants.KEY_API_CALL_TIME, String.valueOf(System
+                                    .currentTimeMillis())));
                     String fromDate = simpleDateFormat.format(new Date(compare));
 
                     Date currDate = simpleDateFormat.parse(toDate);
@@ -282,23 +287,29 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     if (elapsedDays > 0 || elapsedHours > 12) {
 //                    if (elapsedDays > 0 || elapsedHours > 0 || elapsedMinutes > 5) {
 
-                        if (Utils.getBooleanPreference(MainActivity.this, AppConstants.KEY_IS_FIRST_TIME, false)) {
+                        if (Utils.getBooleanPreference(MainActivity.this, AppConstants
+                                .KEY_IS_FIRST_TIME, false)) {
 //                            System.out.println("RContact callPullMechanismService first time");
                             fromDate = "";
                         } else {
-                            fromDate = Utils.getStringPreference(MainActivity.this, AppConstants.KEY_API_CALL_TIME_STAMP, "");
+                            fromDate = Utils.getStringPreference(MainActivity.this, AppConstants
+                                    .KEY_API_CALL_TIME_STAMP, "");
                         }
                         toDate = "";
 
                         RCPContactServiceCall(fromDate, WsConstants.REQ_GET_RCP_CONTACT);
-                        pullMechanismServiceCall(fromDate, toDate, WsConstants.REQ_GET_CONTACT_REQUEST);
-                        pullMechanismServiceCall(fromDate, toDate, WsConstants.REQ_GET_RATING_DETAILS);
-                        pullMechanismServiceCall(fromDate, toDate, WsConstants.REQ_GET_COMMENT_DETAILS);
+                        pullMechanismServiceCall(fromDate, toDate, WsConstants
+                                .REQ_GET_CONTACT_REQUEST);
+                        pullMechanismServiceCall(fromDate, toDate, WsConstants
+                                .REQ_GET_RATING_DETAILS);
+                        pullMechanismServiceCall(fromDate, toDate, WsConstants
+                                .REQ_GET_COMMENT_DETAILS);
                     }
                 }
 
             } catch (Exception e) {
-//                System.out.println("RContact PullMechanismService call error --> " + e.getMessage());
+//                System.out.println("RContact PullMechanismService call error --> " + e
+// .getMessage());
             }
 
             return null;
@@ -341,12 +352,15 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                 sharingIntent.setType("text/plain");
                 QueryManager queryManager = new QueryManager(databaseHandler);
-                ArrayList<ProfileData> profileDataArrayList = queryManager.getRcpNumberName(getUserPmId());
-                String number = StringUtils.trimToEmpty(profileDataArrayList.get(0).getTempNumber());
+                ArrayList<ProfileData> profileDataArrayList = queryManager.getRcpNumberName
+                        (getUserPmId());
+                String number = StringUtils.trimToEmpty(profileDataArrayList.get(0).getTempNumber
+                        ());
                 if (StringUtils.startsWith(number, "+")) {
                     number = StringUtils.substring(number, 1);
                 }
-                String shareBody = AppConstants.PLAY_STORE_LINK + getPackageName() + "&utm_source=" + number + "&utm_medium=" + number;
+                String shareBody = AppConstants.PLAY_STORE_LINK + getPackageName() +
+                        "&utm_source=" + number + "&utm_medium=" + number;
                 sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
                 startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_via)));
 
@@ -389,13 +403,13 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 break;
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
     }
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -411,7 +425,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             if (serviceType.contains(WsConstants.REQ_GET_RCP_CONTACT)) {
                 WsResponseObject getRCPContactUpdateResponse = (WsResponseObject) data;
                 if (getRCPContactUpdateResponse != null && StringUtils.equalsIgnoreCase
-                        (getRCPContactUpdateResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+                        (getRCPContactUpdateResponse.getStatus(), WsConstants
+                                .RESPONSE_STATUS_TRUE)) {
 
                     if (!Utils.isArraylistNullOrEmpty(getRCPContactUpdateResponse
                             .getArrayListUserRcProfile())) {
@@ -572,7 +587,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                             removeRemovedDataFromDb(uploadContactResponse
                                     .getArrayListMapping());
                         }
-                        Utils.setIntegerPreference(MainActivity.this, AppConstants.PREF_SYNCED_CONTACTS, 0);
+                        Utils.setIntegerPreference(MainActivity.this, AppConstants
+                                .PREF_SYNCED_CONTACTS, 0);
                     }
 
 //                    if (uploadContactResponse.getArrayListMapping().size() > 0) {
@@ -781,8 +797,11 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         }
     }
 
-    private void storeCommentRequestResponseToDB(WsResponseObject getCommentUpdateResponse, ArrayList<RatingRequestResponseDataItem> commentReceive,
-                                                 ArrayList<RatingRequestResponseDataItem> commentDone) {
+    private void storeCommentRequestResponseToDB(WsResponseObject getCommentUpdateResponse,
+                                                 ArrayList<RatingRequestResponseDataItem>
+                                                         commentReceive,
+                                                 ArrayList<RatingRequestResponseDataItem>
+                                                         commentDone) {
 
         try {
             TableCommentMaster tableCommentMaster = new TableCommentMaster(databaseHandler);
@@ -840,8 +859,12 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         }
     }
 
-    private void storeRatingRequestResponseToDB(WsResponseObject getRatingUpdateResponse, ArrayList<RatingRequestResponseDataItem> ratingReceive,
-                                                ArrayList<RatingRequestResponseDataItem> ratingDone, RatingRequestResponseDataItem ratingDetails) {
+    private void storeRatingRequestResponseToDB(WsResponseObject getRatingUpdateResponse,
+                                                ArrayList<RatingRequestResponseDataItem>
+                                                        ratingReceive,
+                                                ArrayList<RatingRequestResponseDataItem>
+                                                        ratingDone, RatingRequestResponseDataItem
+                                                        ratingDetails) {
 
         try {
             TableCommentMaster tableCommentMaster = new TableCommentMaster(databaseHandler);
@@ -1038,11 +1061,11 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
     private void init() {
 
-        imageNotification = (ImageView) toolbar.findViewById(R.id.image_notification);
-        ImageView imageViewSearch = (ImageView) toolbar.findViewById(R.id.image_search);
-        EditText inputSearch = (EditText) toolbar.findViewById(R.id.input_search);
-        badgeLayout = (LinearLayout) toolbar.findViewById(R.id.badge_layout);
-        badgeTextView = (TextView) toolbar.findViewById(R.id.badge_count);
+        imageNotification = toolbar.findViewById(R.id.image_notification);
+        ImageView imageViewSearch = toolbar.findViewById(R.id.image_search);
+        EditText inputSearch = toolbar.findViewById(R.id.input_search);
+        badgeLayout = toolbar.findViewById(R.id.badge_layout);
+        badgeTextView = toolbar.findViewById(R.id.badge_count);
         imageNotification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1068,7 +1091,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             }
         });
 
-        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -1081,19 +1104,19 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             }
         });
 
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string
                 .navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
 
         // setNavigationHeaderData();
         setNavigationListData();
 
-        tabMain = (TabLayout) findViewById(R.id.tab_main);
+        tabMain = findViewById(R.id.tab_main);
 
         bindWidgetsWithAnEvent();
         setupTabLayout();
@@ -1103,12 +1126,12 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
     private void setNavigationHeaderData() {
 
-        LinearLayout mainContent = (LinearLayout) navigationView.findViewById(R.id.main_content);
-        TextView textUserName = (TextView) navigationView.findViewById(R.id.text_user_name);
-        TextView textNumber = (TextView) navigationView.findViewById(R.id.text_number);
-        TextView textRatingCount = (TextView) navigationView.findViewById(R.id.text_rating_count);
-        RatingBar ratingUser = (RatingBar) navigationView.findViewById(R.id.rating_user);
-        ImageView userProfileImage = (ImageView) navigationView.findViewById(R.id.userProfileImage);
+        LinearLayout mainContent = navigationView.findViewById(R.id.main_content);
+        TextView textUserName = navigationView.findViewById(R.id.text_user_name);
+        TextView textNumber = navigationView.findViewById(R.id.text_number);
+        TextView textRatingCount = navigationView.findViewById(R.id.text_rating_count);
+        RatingBar ratingUser = navigationView.findViewById(R.id.rating_user);
+        ImageView userProfileImage = navigationView.findViewById(R.id.userProfileImage);
 
         TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
         String number = tableMobileMaster.getUserMobileNumber(getUserPmId());
@@ -1166,7 +1189,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 bundle.putInt(AppConstants.EXTRA_CONTACT_POSITION, 1);
                 startActivityIntent(MainActivity.this, ProfileDetailActivity.class, bundle);
 
-                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                DrawerLayout drawer = findViewById(R.id.drawer_layout);
                 drawer.closeDrawer(GravityCompat.START);
             }
         });
@@ -1176,34 +1199,29 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
     private void setNavigationListData() {
 
-        TextView nav_txt_account = (TextView) navigationView.findViewById(R.id.nav_txt_account);
-        TextView nav_txt_timeline = (TextView) navigationView.findViewById(R.id.nav_txt_timeline);
-        TextView nav_txt_events = (TextView) navigationView.findViewById(R.id.nav_txt_events);
-        TextView nav_txt_rating = (TextView) navigationView.findViewById(R.id.nav_txt_rating);
-        TextView nav_txt_invite = (TextView) navigationView.findViewById(R.id.nav_txt_invite);
-        TextView nav_txt_share = (TextView) navigationView.findViewById(R.id.nav_txt_share);
-        TextView nav_txt_settings = (TextView) navigationView.findViewById(R.id.nav_txt_settings);
-        TextView nav_txt_rate = (TextView) navigationView.findViewById(R.id.nav_txt_rate);
-        TextView nav_txt_about = (TextView) navigationView.findViewById(R.id.nav_txt_about);
-        TextView nav_txt_export = (TextView) navigationView.findViewById(R.id.nav_txt_export);
-        TextView nav_txt_feedback = (TextView) navigationView.findViewById(R.id.nav_txt_feedback);
+        TextView nav_txt_account = navigationView.findViewById(R.id.nav_txt_account);
+        TextView nav_txt_timeline = navigationView.findViewById(R.id.nav_txt_timeline);
+        TextView nav_txt_events = navigationView.findViewById(R.id.nav_txt_events);
+        TextView nav_txt_rating = navigationView.findViewById(R.id.nav_txt_rating);
+        TextView nav_txt_invite = navigationView.findViewById(R.id.nav_txt_invite);
+        TextView nav_txt_share = navigationView.findViewById(R.id.nav_txt_share);
+        TextView nav_txt_settings = navigationView.findViewById(R.id.nav_txt_settings);
+        TextView nav_txt_rate = navigationView.findViewById(R.id.nav_txt_rate);
+        TextView nav_txt_about = navigationView.findViewById(R.id.nav_txt_about);
+        TextView nav_txt_export = navigationView.findViewById(R.id.nav_txt_export);
+        TextView nav_txt_feedback = navigationView.findViewById(R.id.nav_txt_feedback);
 
-        LinearLayout nav_ll_account = (LinearLayout) navigationView.findViewById(R.id
-                .nav_ll_account);
-        LinearLayout nav_ll_timeline = (LinearLayout) navigationView.findViewById(R.id
-                .nav_ll_timeline);
-        LinearLayout nav_ll_events = (LinearLayout) navigationView.findViewById(R.id.nav_ll_events);
-        LinearLayout nav_ll_rating = (LinearLayout) navigationView.findViewById(R.id
-                .nav_ll_rating_history);
-        LinearLayout nav_ll_invite = (LinearLayout) navigationView.findViewById(R.id.nav_ll_invite);
-        LinearLayout nav_ll_share = (LinearLayout) navigationView.findViewById(R.id.nav_ll_share);
-        LinearLayout nav_ll_settings = (LinearLayout) navigationView.findViewById(R.id
-                .nav_ll_settings);
-        LinearLayout nav_ll_rate = (LinearLayout) navigationView.findViewById(R.id.nav_ll_rate_us);
-        LinearLayout nav_ll_about = (LinearLayout) navigationView.findViewById(R.id.nav_ll_about);
-        LinearLayout nav_ll_export = (LinearLayout) navigationView.findViewById(R.id.nav_ll_export);
-        LinearLayout nav_ll_feedback = (LinearLayout) navigationView.findViewById(R.id
-                .nav_ll_feedback);
+        LinearLayout nav_ll_account = navigationView.findViewById(R.id.nav_ll_account);
+        LinearLayout nav_ll_timeline = navigationView.findViewById(R.id.nav_ll_timeline);
+        LinearLayout nav_ll_events = navigationView.findViewById(R.id.nav_ll_events);
+        LinearLayout nav_ll_rating = navigationView.findViewById(R.id.nav_ll_rating_history);
+        LinearLayout nav_ll_invite = navigationView.findViewById(R.id.nav_ll_invite);
+        LinearLayout nav_ll_share = navigationView.findViewById(R.id.nav_ll_share);
+        LinearLayout nav_ll_settings = navigationView.findViewById(R.id.nav_ll_settings);
+        LinearLayout nav_ll_rate = navigationView.findViewById(R.id.nav_ll_rate_us);
+        LinearLayout nav_ll_about = navigationView.findViewById(R.id.nav_ll_about);
+        LinearLayout nav_ll_export = navigationView.findViewById(R.id.nav_ll_export);
+        LinearLayout nav_ll_feedback = navigationView.findViewById(R.id.nav_ll_feedback);
 
         nav_ll_account.setOnClickListener(this);
         nav_ll_timeline.setOnClickListener(this);
@@ -1310,7 +1328,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     /*&& (Utils.getBooleanPreference(this, AppConstants.PREF_SMS_SYNCED, false) ||
                     !smsLogs)*/) {
 
-                if (reSyncContactAsyncTask != null && reSyncContactAsyncTask.getStatus() == AsyncTask.Status.RUNNING) {
+                if (reSyncContactAsyncTask != null && reSyncContactAsyncTask.getStatus() ==
+                        AsyncTask.Status.RUNNING) {
                     System.out.println("RContact reSyncContactAsyncTask ---> running");
                 } else {
                     reSyncContactAsyncTask = new ReSyncContactAsyncTask();
@@ -1331,7 +1350,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         count = getTimeLineNotificationCount(databaseHandler);
 //        LinearLayout view = (LinearLayout) navigationView.getMenu().findItem(R.id
 //                .nav_user_timeline).getActionView();
-        TextView badge_count = (TextView) navigationView.findViewById(R.id.badge_count);
+        TextView badge_count = navigationView.findViewById(R.id.badge_count);
         if (count > 0) {
             badge_count.setVisibility(View.VISIBLE);
             badge_count.setText(String.valueOf(count));
@@ -1790,7 +1809,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     }
 
     private void showAddToContact(boolean value) {
-        ImageView imageViewAddContact = (ImageView) findViewById(R.id.image_add_contact);
+        ImageView imageViewAddContact = findViewById(R.id.image_add_contact);
         if (value) {
             imageViewAddContact.setVisibility(View.GONE);
             imageViewAddContact.setVisibility(View.VISIBLE);
@@ -2339,7 +2358,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
         System.out.println("RContacts reSync");
 
-        lastSyncedData = Utils.getIntegerPreference(MainActivity.this, AppConstants.PREF_SYNCED_CONTACTS, 0);
+        lastSyncedData = Utils.getIntegerPreference(MainActivity.this, AppConstants
+                .PREF_SYNCED_CONTACTS, 0);
 
         currentStamp = String.valueOf(System.currentTimeMillis());
         String lastStamp = Utils.getStringPreference(this, AppConstants
@@ -2414,15 +2434,18 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 Utils.setIntegerPreference(MainActivity.this, AppConstants.PREF_SYNCED_CONTACTS, 0);
 
                 Utils.setStringPreference(MainActivity.this, AppConstants
-                        .PREF_CONTACT_LAST_SYNC_TIME, String.valueOf(System.currentTimeMillis() - 10000));
-                Utils.setBooleanPreference(MainActivity.this, AppConstants.PREF_CONTACT_SYNCED, true);
+                        .PREF_CONTACT_LAST_SYNC_TIME, String.valueOf(System.currentTimeMillis() -
+                        10000));
+                Utils.setBooleanPreference(MainActivity.this, AppConstants.PREF_CONTACT_SYNCED,
+                        true);
             }
         } else {
 
             Utils.setIntegerPreference(MainActivity.this, AppConstants.PREF_SYNCED_CONTACTS, 0);
 
             Utils.setStringPreference(MainActivity.this, AppConstants
-                    .PREF_CONTACT_LAST_SYNC_TIME, String.valueOf(System.currentTimeMillis() - 10000));
+                    .PREF_CONTACT_LAST_SYNC_TIME, String.valueOf(System.currentTimeMillis() -
+                    10000));
             Utils.setBooleanPreference(MainActivity.this, AppConstants.PREF_CONTACT_SYNCED, true);
         }
 
@@ -2620,11 +2643,12 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                             ProfileDataOperationPhoneNumber phoneNumber = new
                                     ProfileDataOperationPhoneNumber();
 
-                            String number = cursor.getString(cursor.getColumnIndex
+//                            String number = ;
+//                            number = Utils.getFormattedNumber(MainActivity.this, number);
+
+                            phoneNumber.setPhoneNumber(cursor.getString(cursor.getColumnIndex
                                     (ContactsContract
-                                            .CommonDataKinds.Phone.NUMBER));
-                            number = Utils.getFormattedNumber(MainActivity.this, number);
-                            phoneNumber.setPhoneNumber(number);
+                                            .CommonDataKinds.Phone.NUMBER)));
 
                             phoneNumber.setPhoneType(phoneBookContacts.getPhoneNumberType
                                     (cursor.getInt(cursor.getColumnIndex
@@ -3433,8 +3457,10 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                                     /*&& Utils.getBooleanPreference(MainActivity.this, AppConstants
                                     .PREF_SMS_SYNCED, false)*/) {
 
-                                if (reSyncContactAsyncTask != null && reSyncContactAsyncTask.getStatus() == AsyncTask.Status.RUNNING) {
-                                    System.out.println("RContact reSyncContactAsyncTask ---> running");
+                                if (reSyncContactAsyncTask != null && reSyncContactAsyncTask
+                                        .getStatus() == AsyncTask.Status.RUNNING) {
+                                    System.out.println("RContact reSyncContactAsyncTask ---> " +
+                                            "running");
                                 } else {
                                     reSyncContactAsyncTask = new ReSyncContactAsyncTask();
                                     reSyncContactAsyncTask.executeOnExecutor(AsyncTask

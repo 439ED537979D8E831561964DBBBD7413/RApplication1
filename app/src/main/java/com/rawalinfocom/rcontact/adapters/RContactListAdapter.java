@@ -19,16 +19,22 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.SearchActivity;
+import com.rawalinfocom.rcontact.calldialer.DialerActivity;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
+import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.UserProfile;
 
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -44,12 +50,14 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private Fragment fragment;
     private ArrayList<Object> arrayListUserProfile;
     private ArrayList<String> arrayListContactHeader;
+    private ArrayList<Object> arraylist;
 
     private final int HEADER = 0, CONTACT = 1, FOOTER = 2;
 
     private int previousPosition = 0;
 
     private ArrayList<Integer> mSectionPositions;
+    private int searchCount;
 
     //<editor-fold desc="Constructor">
     public RContactListAdapter(Fragment fragment, ArrayList<Object> arrayListUserProfile,
@@ -60,6 +68,16 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         this.arrayListContactHeader = arrayListContactHeader;
     }
 
+    public RContactListAdapter(Activity activity, ArrayList<Object> arrayListUserContact) {
+        this.activity = activity;
+        this.arrayListUserProfile = new ArrayList<>();
+        this.arrayListUserProfile.addAll(arrayListUserContact);
+        this.arraylist = new ArrayList<>();
+        this.arraylist.addAll(arrayListUserContact);
+    }
+
+
+
     public void updateList(int pos, ArrayList<Object> arrayListUserProfile) {
         this.arrayListUserProfile = arrayListUserProfile;
         notifyItemChanged(pos);
@@ -67,6 +85,15 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     //</editor-fold>
 
     //<editor-fold desc="Override Methods">
+
+
+    public int getSearchCount() {
+        return searchCount;
+    }
+
+    public void setSearchCount(int searchCount) {
+        this.searchCount = searchCount;
+    }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -108,7 +135,8 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public int getItemViewType(int position) {
-        if (position == arrayListUserProfile.size()) {
+        if (position == arrayListUserProfile.size() && !(activity instanceof SearchActivity)
+                && !(activity instanceof DialerActivity)) {
             return FOOTER;
         } else if (arrayListUserProfile.get(position) instanceof UserProfile) {
             return CONTACT;
@@ -118,7 +146,11 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public int getItemCount() {
-        return (arrayListUserProfile.size() + 1);
+        if (!(activity instanceof SearchActivity) && !(activity instanceof DialerActivity)) {
+            return (arrayListUserProfile.size() + 1);
+        }else{
+            return arrayListUserProfile.size();
+        }
     }
 
     /**
@@ -239,20 +271,33 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                 bundle.putString(AppConstants.EXTRA_CALL_HISTORY_NUMBER, userProfile
                         .getMobileNumber());
-                Intent intent = new Intent(activity, ProfileDetailActivity.class);
-                intent.putExtras(bundle);
-                fragment.startActivityForResult(intent, AppConstants
-                        .REQUEST_CODE_PROFILE_DETAIL);
-                ((BaseActivity) activity).overridePendingTransition(R.anim.enter, R
-                        .anim.exit);
+                if(fragment!=null){
+                    Intent intent = new Intent(activity, ProfileDetailActivity.class);
+                    intent.putExtras(bundle);
+                    fragment.startActivityForResult(intent, AppConstants
+                            .REQUEST_CODE_PROFILE_DETAIL);
+                    ((BaseActivity) activity).overridePendingTransition(R.anim.enter, R
+                            .anim.exit);
+                }else{
+                    Intent intent = new Intent(activity, ProfileDetailActivity.class);
+                    intent.putExtras(bundle);
+                    activity.startActivityForResult(intent, AppConstants
+                            .REQUEST_CODE_PROFILE_DETAIL);
+                    ((BaseActivity) activity).overridePendingTransition(R.anim.enter, R
+                            .anim.exit);
+                }
+
             }
         });
     }
 
     private void configureFooterViewHolder(ContactFooterViewHolder holder, int position) {
 //        String letter = (String) arrayListUserContact.get(position);
-        holder.textTotalContacts.setText(arrayListUserProfile.size() - arrayListContactHeader
-                .size() + " " + activity.getString(R.string.contacts));
+        if (!(activity instanceof SearchActivity) && !(activity instanceof DialerActivity)){
+            holder.textTotalContacts.setText(arrayListUserProfile.size() - arrayListContactHeader
+                    .size() + " " + activity.getString(R.string.contacts));
+        }
+
     }
 
     //</editor-fold>
@@ -330,4 +375,53 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
     //</editor-fold>
+
+    // Filter Class
+    public void filter(String charText) {
+        Pattern numberPat = Pattern.compile("\\d+");
+        Matcher matcher1 = numberPat.matcher(charText);
+        if (matcher1.find()) {
+            arrayListUserProfile.clear();
+            if (charText.length() == 0) {
+                arrayListUserProfile.addAll(arraylist);
+            } else {
+                for (int i = 0; i < arraylist.size(); i++) {
+                    if (arraylist.get(i) instanceof ProfileData) {
+                        charText = charText.trim();
+                        ProfileData profileData = (ProfileData) arraylist.get(i);
+                        if (!StringUtils.isEmpty(profileData.getTempNumber())) {
+                            String number = profileData.getTempNumber();
+                            number = number.replace(" ", "").replace("-", "");
+                            if (number.contains(charText)) {
+                                arrayListUserProfile.add(profileData);
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            charText = charText.toLowerCase(Locale.getDefault());
+            charText = charText.trim();
+            arrayListUserProfile.clear();
+            if (charText.length() == 0) {
+                arrayListUserProfile.addAll(arraylist);
+            } else {
+                for (int i = 0; i < arraylist.size(); i++) {
+                    if (arraylist.get(i) instanceof UserProfile) {
+                        UserProfile profileData = (UserProfile) arraylist.get(i);
+                        String name =  profileData.getPmFirstName() + " " + profileData.getPmLastName() ;
+                        if (!StringUtils.isEmpty(name)) {
+                            if (name.toLowerCase(Locale.getDefault()).contains
+                                    (charText)) {
+                                arrayListUserProfile.add(profileData);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        setSearchCount(arrayListUserProfile.size());
+        notifyDataSetChanged();
+    }
 }
