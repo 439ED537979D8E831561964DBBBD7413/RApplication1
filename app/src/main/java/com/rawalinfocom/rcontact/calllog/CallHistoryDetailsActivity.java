@@ -313,7 +313,12 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
             if (intent.hasExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME)) {
                 cloudContactName = intent.getStringExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME);
+                if(!StringUtils.isEmpty(cloudContactName)){
+                    rippleInvite.setVisibility(View.GONE);
+                    linearBasicDetailRating.setVisibility(View.VISIBLE);
+                }
             }
+
 
             if (intent.hasExtra(AppConstants.EXTRA_CHECK_NUMBER_FAVOURITE)) {
                 checkNumberFavourite = intent.getStringExtra(AppConstants

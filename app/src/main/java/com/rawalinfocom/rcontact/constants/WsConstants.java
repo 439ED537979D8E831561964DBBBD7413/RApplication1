@@ -49,7 +49,9 @@ public class WsConstants {
 
 
     // Staging Env
-    public static final String URL_TERMS_CONDITIONS = "http://webstaging.rcontacts.in/global/terms";
+//    public static final String URL_TERMS_CONDITIONS = "http://webstaging.rcontacts.in/global/terms";
+    // QA Env
+    public static final String URL_TERMS_CONDITIONS = "http://webqa.rcontacts.in/global/terms";
 
     /**
      * Feedback URL
@@ -59,12 +61,12 @@ public class WsConstants {
     /**
      * FAQ URL
      */
-//    public static final String URL_FAQ = "http://webqa.rcontacts.in/global/faqs";
-    public static final String URL_FAQ = "http://webstaging.rcontacts.in/global/faqs";
+    public static final String URL_FAQ = "http://webqa.rcontacts.in/global/faqs";
+//    public static final String URL_FAQ = "http://webstaging.rcontacts.in/global/faqs";
 //    public static final String URL_FAQ = "https://www.rcontacts.in/global/faqs";
 //    public static final String URL_FAQ = "https://web.rcontacts.in/global/faqs";
 
-    /*
+    /**
      * Profile View
      */
 
@@ -84,7 +86,8 @@ public class WsConstants {
     /*
      * WEBSITE URL
      */
-    public static final String WS_WEBSITE_URL = "http://webstaging.rcontacts.in";
+//    public static final String WS_WEBSITE_URL = "http://webstaging.rcontacts.in";
+    public static final String WS_WEBSITE_URL = "http://webqa.rcontacts.in";
 //    public static final String WS_WEBSITE_URL = "https://www.rcontacts.in";
 //    public static final String WS_WEBSITE_URL = "https://web.rcontacts.in";
 
