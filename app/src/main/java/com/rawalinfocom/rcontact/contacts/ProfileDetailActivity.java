@@ -2674,6 +2674,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 recyclerViewEvent.setAdapter(eventDetailAdapter);
             } else {
                 linearEvent.setVisibility(View.GONE);
+                cardOtherDetails.setVisibility(View.GONE);
             }
             //</editor-fold>
 

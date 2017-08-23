@@ -271,7 +271,7 @@ public class TableProfileMaster {
                     COLUMN_PM_FIRST_NAME,
                     COLUMN_PM_LAST_NAME,
                     COLUMN_PM_PROFILE_IMAGE, COLUMN_PM_RCP_ID,
-                    COLUMN_PM_GENDER, COLUMN_PM_PROFILE_RATING,
+                    COLUMN_PM_GENDER, COLUMN_PM_GENDER_PRIVACY, COLUMN_PM_PROFILE_RATING,
                     COLUMN_PM_PROFILE_RATE_USER, COLUMN_PM_IS_FAVOURITE,
                     COLUMN_PM_NOSQL_MASTER_ID,
                     COLUMN_PM_JOINING_DATE}, COLUMN_PM_RCP_ID

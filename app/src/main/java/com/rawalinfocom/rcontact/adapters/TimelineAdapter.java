@@ -173,7 +173,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
     private void addReplyonComment(String crmType, String crmCloudPrId, String userComment, int commentStatusReceived, String evmRecordIndexId) {
 
         WsRequestObject addCommentObject = new WsRequestObject();
-        if (crmType.equalsIgnoreCase(activity.getResources().getString(R.string.str_tab_rating))) {
+        if (crmType.equalsIgnoreCase("Rating")) {
             addCommentObject.setPrId(crmCloudPrId);
             addCommentObject.setPrReply(userComment);
             addCommentObject.setPrStatus(commentStatusReceived + "");
@@ -185,7 +185,8 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
             addCommentObject.setStatus(commentStatusReceived + "");
         }
         if (Utils.isNetworkAvailable(activity)) {
-            if (crmType.equalsIgnoreCase(activity.getResources().getString(R.string.str_tab_rating))) {
+//            if (crmType.equalsIgnoreCase(activity.getResources().getString(R.string.str_tab_rating))) {
+            if (crmType.equalsIgnoreCase("Rating")) {
                 new AsyncWebServiceCall(activity, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                         addCommentObject, null, WsResponseObject.class, WsConstants
                         .REQ_PROFILE_RATING, activity.getResources().getString(R.string.msg_please_wait), true)
