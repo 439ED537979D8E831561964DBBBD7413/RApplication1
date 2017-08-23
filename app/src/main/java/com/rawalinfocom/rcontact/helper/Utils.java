@@ -714,7 +714,22 @@ public class Utils {
                 }*/
 
                 if (StringUtils.contains(phoneNumber, "+")) {
-                    if (!StringUtils.isAllBlank(StringUtils.substring(phoneNumber, 0,
+
+                    if (!StringUtils.startsWith(phoneNumber, "+")) {
+                        if (!StringUtils.isAllBlank(StringUtils.substring(phoneNumber, 0,
+                                (StringUtils.indexOf(phoneNumber, "+") - 1)))) {
+                            if (StringUtils.startsWith(phoneNumber, "00")) {
+                                phoneNumber = "+" + StringUtils.substring(phoneNumber, 2);
+                            } else if (StringUtils.startsWith(phoneNumber, "0")) {
+                                phoneNumber = defaultCountryCode + StringUtils.substring
+                                        (phoneNumber, 1);
+                            } else {
+                                phoneNumber = defaultCountryCode + phoneNumber;
+                            }
+                        }
+                    }
+
+                  /*  if (!StringUtils.isAllBlank(StringUtils.substring(phoneNumber, 0,
                             (StringUtils.indexOf(phoneNumber, "+") - 1)))) {
                         // "+" is in-between
                         if (StringUtils.startsWith(phoneNumber, "00")) {
@@ -727,7 +742,7 @@ public class Utils {
                         }
                     } else {
                         // "+" is at starting of screen
-                    }
+                    }*/
                 } else {
                     if (StringUtils.startsWith(phoneNumber, "00")) {
                         phoneNumber = "+" + StringUtils.substring(phoneNumber, 2);
