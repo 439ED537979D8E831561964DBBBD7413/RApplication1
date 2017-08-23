@@ -685,6 +685,7 @@ public class Utils {
 
     public static String getFormattedNumber(Context context, String phoneNumber) {
         if (StringUtils.length(phoneNumber) > 0) {
+//            phoneNumber = StringUtils.trim(phoneNumber);
             if (StringUtils.contains(phoneNumber, "#") || StringUtils.contains(phoneNumber, "*")) {
 //                return phoneNumber.replace("*", Uri.encode("*")).replace("#", Uri.encode("#"));
                 return phoneNumber;
@@ -696,8 +697,38 @@ public class Utils {
                     defaultCountryCode = country.getCountryCodeNumber();
                 }
 //                if (!StringUtils.startsWith(phoneNumber, "+")) {
-                if (StringUtils.indexOf(phoneNumber, "+") != 0 && StringUtils.indexOf
+
+               /* if (!StringUtils.startsWith(phoneNumber, "+") && StringUtils.isAllBlank
+                        (StringUtils.substring(phoneNumber, 0, (StringUtils.indexOf
+                                (phoneNumber, "+") - 1)))) {*/
+                /*if (StringUtils.indexOf(phoneNumber, "+") != 0 && StringUtils.indexOf
                         (phoneNumber, "+") != 1) {
+                    // Not starts with "+"
+                    if (StringUtils.startsWith(phoneNumber, "00")) {
+                        phoneNumber = "+" + StringUtils.substring(phoneNumber, 2);
+                    } else if (StringUtils.startsWith(phoneNumber, "0")) {
+                        phoneNumber = defaultCountryCode + StringUtils.substring(phoneNumber, 1);
+                    } else {
+                        phoneNumber = defaultCountryCode + phoneNumber;
+                    }
+                }*/
+
+                if (StringUtils.contains(phoneNumber, "+")) {
+                    if (!StringUtils.isAllBlank(StringUtils.substring(phoneNumber, 0,
+                            (StringUtils.indexOf(phoneNumber, "+") - 1)))) {
+                        // "+" is in-between
+                        if (StringUtils.startsWith(phoneNumber, "00")) {
+                            phoneNumber = "+" + StringUtils.substring(phoneNumber, 2);
+                        } else if (StringUtils.startsWith(phoneNumber, "0")) {
+                            phoneNumber = defaultCountryCode + StringUtils.substring(phoneNumber,
+                                    1);
+                        } else {
+                            phoneNumber = defaultCountryCode + phoneNumber;
+                        }
+                    } else {
+                        // "+" is at starting of screen
+                    }
+                } else {
                     if (StringUtils.startsWith(phoneNumber, "00")) {
                         phoneNumber = "+" + StringUtils.substring(phoneNumber, 2);
                     } else if (StringUtils.startsWith(phoneNumber, "0")) {
@@ -707,7 +738,7 @@ public class Utils {
                     }
                 }
 
-        /* remove special characters from number */
+                /* remove special characters from number */
                 return "+" + StringUtils.replaceAll(StringUtils.substring(phoneNumber, 1),
                         "[\\D]", "");
             }

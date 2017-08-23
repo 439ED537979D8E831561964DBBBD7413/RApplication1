@@ -178,6 +178,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     int logsSyncedCount = 0;
     boolean isCompaseIcon = false;
     int tabPosition = -1;
+    private final int CONTACT_CHUNK = 50;
+    int lastSyncedData = 0;
 
     //<editor-fold desc="Override Methods">
     @Override
@@ -2451,8 +2453,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
     }
 
-    private final int CONTACT_CHUNK = 50;
-    int lastSyncedData = 0;
+
 
     private void backgroundSync(final boolean addToDatabase, final WsResponseObject
             uploadContactResponse) {
