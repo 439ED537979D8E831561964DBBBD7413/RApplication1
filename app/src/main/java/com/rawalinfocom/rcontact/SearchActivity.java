@@ -942,7 +942,6 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
 
                         }
                     }
-
                 }
 
                 if (arg0.length() == 0) {
