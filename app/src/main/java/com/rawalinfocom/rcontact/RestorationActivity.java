@@ -242,7 +242,7 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
 
                 Comment comment = new Comment();
                 comment.setCrmStatus(AppConstants.COMMENT_STATUS_SENT);
-                comment.setCrmType(getResources().getString(R.string.str_tab_comment));
+                comment.setCrmType("Comment");
                 comment.setCrmCloudPrId(dataItem.getCommentId());
                 comment.setCrmRating(dataItem.getPrRatingStars());
                 comment.setRcProfileMasterPmId(dataItem.getToPmId());
@@ -272,7 +272,7 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
 
                 Comment comment = new Comment();
                 comment.setCrmStatus(AppConstants.COMMENT_STATUS_RECEIVED);
-                comment.setCrmType(getResources().getString(R.string.str_tab_comment));
+                comment.setCrmType("Comment");
                 comment.setCrmCloudPrId(dataItem.getCommentId());
                 comment.setCrmRating(dataItem.getPrRatingStars());
                 comment.setRcProfileMasterPmId(dataItem.getFromPmId());
@@ -320,7 +320,7 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
 
                 Comment comment = new Comment();
                 comment.setCrmStatus(AppConstants.COMMENT_STATUS_SENT);
-                comment.setCrmType(getResources().getString(R.string.str_tab_rating));
+                comment.setCrmType("Rating");
                 comment.setCrmCloudPrId(dataItem.getPrId());
                 comment.setCrmRating(dataItem.getPrRatingStars());
                 comment.setRcProfileMasterPmId(dataItem.getToPmId());
@@ -344,7 +344,7 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
 
                 Comment comment = new Comment();
                 comment.setCrmStatus(AppConstants.COMMENT_STATUS_RECEIVED);
-                comment.setCrmType(getResources().getString(R.string.str_tab_rating));
+                comment.setCrmType("Rating");
                 comment.setCrmCloudPrId(dataItem.getPrId());
                 comment.setCrmRating(dataItem.getPrRatingStars());
                 comment.setRcProfileMasterPmId(dataItem.getFromPmId());

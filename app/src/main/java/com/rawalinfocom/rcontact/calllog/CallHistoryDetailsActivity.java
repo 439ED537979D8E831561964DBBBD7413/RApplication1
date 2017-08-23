@@ -312,6 +312,10 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
             if (intent.hasExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME)) {
                 cloudContactName = intent.getStringExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME);
+                if(!StringUtils.isEmpty(cloudContactName)){
+                    rippleInvite.setVisibility(View.GONE);
+                    linearBasicDetailRating.setVisibility(View.VISIBLE);
+                }
             }
 
             if (intent.hasExtra(AppConstants.EXTRA_CHECK_NUMBER_FAVOURITE)) {
@@ -360,6 +364,17 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 if (intent.hasExtra(AppConstants.EXTRA_DIALOG_CALL_LOG_INSTANCE)) {
                     isCallLogInstance = intent.getBooleanExtra(AppConstants.EXTRA_DIALOG_CALL_LOG_INSTANCE, false);
                 }
+
+                if (isCallLogRcpUser)
+                    if (StringUtils.isEmpty(historyNumber)) {
+                        ProfileDataOperationPhoneNumber phoneNumber =
+                                (ProfileDataOperationPhoneNumber) tempPhoneNumber.get
+                                        (0);
+                        if (phoneNumber != null) {
+                            historyNumber = phoneNumber.getPhoneNumber();
+                        }
+                    }
+
                 if (isCallLogInstance) {
                     if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase("[Unknown]")) {
                         fetchAllCallLogHistory(contactName);
@@ -1163,7 +1178,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         rippleViewOldRecords.setVisibility(View.VISIBLE);
         rippleViewOldRecords.setOnRippleCompleteListener(this);
         rippleSms.setOnRippleCompleteListener(this);
-
+        rippleInvite.setOnRippleCompleteListener(this);
 
         LayerDrawable stars = (LayerDrawable) ratingUser.getProgressDrawable();
         // Filled stars
@@ -1674,6 +1689,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
             profileDataOperationVcard.setPbPhoneNumber(arrayListPhoneBookNumberOperation);
         }
 
+        tempPhoneNumber = new ArrayList<>();
         if (!Utils.isArraylistNullOrEmpty(arrayListPhoneNumber) || !Utils.isArraylistNullOrEmpty
                 (arrayListPhoneBookNumber)) {
             tempPhoneNumber = new ArrayList<>();
@@ -1732,6 +1748,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
             profileDataOperationVcard.setPbEmailId(arrayListPhoneBookEmailOperation);
         }
 
+        tempEmail = new ArrayList<>();
         if (!Utils.isArraylistNullOrEmpty(arrayListEmail) || !Utils.isArraylistNullOrEmpty
                 (arrayListPhoneBookEmail)) {
             tempEmail = new ArrayList<>();

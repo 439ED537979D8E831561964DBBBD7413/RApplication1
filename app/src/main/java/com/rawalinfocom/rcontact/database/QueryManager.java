@@ -506,6 +506,7 @@ public class QueryManager {
                         (TableProfileEmailMapping.COLUMN_EPM_EMAIL_ID)));
                 profileData.setTempRcpId(cursor.getString(cursor.getColumnIndex
                         (TableProfileMaster.COLUMN_PM_RCP_ID)));
+                profileData.setTempIsRcp(true);
                 arrayListProfileData.add(profileData);
             } while (cursor.moveToNext());
             cursor.close();
