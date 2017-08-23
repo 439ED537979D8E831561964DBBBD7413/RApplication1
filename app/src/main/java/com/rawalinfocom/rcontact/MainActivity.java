@@ -2651,9 +2651,9 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                                     (ContactsContract
                                             .CommonDataKinds.Phone.NUMBER)));
 
-                            phoneNumber.setPhoneType(phoneBookContacts.getPhoneNumberType
-                                    (cursor.getInt(cursor.getColumnIndex
-                                            (ContactsContract.CommonDataKinds.Phone.TYPE))));
+                            phoneNumber.setPhoneType(phoneBookContacts.getPhoneNumberType(cursor,
+                                    cursor.getInt(cursor.getColumnIndex(ContactsContract
+                                            .CommonDataKinds.Phone.TYPE))));
                             phoneNumber.setPhonePublic(IntegerConstants.PRIVACY_EVERYONE);
 
                             phoneBookContact.addPhone(phoneNumber);
@@ -2763,7 +2763,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                                             .CommonDataKinds.Im.TYPE))));
 
                             imAccount.setIMAccountProtocol(phoneBookContacts.getImProtocol
-                                    (cursor.getInt((cursor.getColumnIndex
+                                    (cursor, cursor.getInt((cursor.getColumnIndex
                                             (ContactsContract.CommonDataKinds.Im.PROTOCOL)))));
 
                             imAccount.setIMAccountPublic(IntegerConstants.PRIVACY_EVERYONE);
