@@ -823,7 +823,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
                 Comment comment = new Comment();
                 comment.setCrmStatus(AppConstants.COMMENT_STATUS_RECEIVED);
-                comment.setCrmType(getResources().getString(R.string.str_tab_rating));
+                comment.setCrmType("Comment");
                 comment.setCrmCloudPrId(dataItem.getCommentId());
                 comment.setCrmRating(dataItem.getPrRatingStars());
                 comment.setRcProfileMasterPmId(dataItem.getFromPmId());
@@ -832,15 +832,15 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 comment.setCrmImage(dataItem.getPmProfilePhoto());
                 comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getCreatedAt()));
                 comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getUpdatedAt()));
-                String avgRating = dataItem.getProfileRating();
-                String totalUniqueRater = dataItem.getTotalProfileRateUser();
-                String toPmId = String.valueOf(dataItem.getToPmId());
+//                String avgRating = dataItem.getProfileRating();
+//                String totalUniqueRater = dataItem.getTotalProfileRateUser();
+//                String toPmId = String.valueOf(dataItem.getToPmId());
 
-                TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
-                tableProfileMaster.updateUserProfileRating(toPmId, avgRating, totalUniqueRater);
-                Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING,
-                        totalUniqueRater);
-                Utils.setStringPreference(this, AppConstants.PREF_USER_RATING, avgRating);
+//                TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
+//                tableProfileMaster.updateUserProfileRating(toPmId, avgRating, totalUniqueRater);
+//                Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING,
+//                        totalUniqueRater);
+//                Utils.setStringPreference(this, AppConstants.PREF_USER_RATING, avgRating);
 
                 tableCommentMaster.addComment(comment);
 
@@ -886,7 +886,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
                 Comment comment = new Comment();
                 comment.setCrmStatus(AppConstants.COMMENT_STATUS_RECEIVED);
-                comment.setCrmType(getResources().getString(R.string.str_tab_rating));
+                comment.setCrmType("Rating");
                 comment.setCrmCloudPrId(dataItem.getPrId());
                 comment.setCrmRating(dataItem.getPrRatingStars());
                 comment.setRcProfileMasterPmId(dataItem.getFromPmId());
