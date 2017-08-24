@@ -350,7 +350,7 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
 
         WsRequestObject enterPassWordObject = new WsRequestObject();
         enterPassWordObject.setMobileNumber(mobileNumber.replace("+", ""));
-        enterPassWordObject.setPassword(StringUtils.trimToEmpty(password));
+        enterPassWordObject.setPassword(password);
         enterPassWordObject.setCreatedBy("2"); // For Android Devices
         enterPassWordObject.setGcmToken(getDeviceTokenId());
 //        enterPassWordObject.setDeviceId(getDeviceId());
