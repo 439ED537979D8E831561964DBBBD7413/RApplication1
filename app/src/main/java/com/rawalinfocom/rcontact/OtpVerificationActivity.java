@@ -1,11 +1,17 @@
 package com.rawalinfocom.rcontact;
 
+import android.*;
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
@@ -61,6 +67,9 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
     @BindView(R.id.relative_root_otp_verification)
     RelativeLayout relativeRootOtpVerification;
 
+    private String[] requiredPermissions = {android.Manifest.permission.READ_SMS, Manifest
+            .permission.RECEIVE_SMS};
+
     String mobileNumber;
     Country selectedCountry;
     private String isFrom = "";
@@ -108,6 +117,31 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
         if (bundle != null) {
             isFrom = bundle.getString(AppConstants.EXTRA_IS_FROM, "");
         }
+
+        if (isFrom.equalsIgnoreCase(AppConstants.PREF_FORGOT_PASSWORD)) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                checkPermissionToExecute(requiredPermissions, AppConstants.READ_SMS);
+            }
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private void checkPermissionToExecute(String[] permissions, int requestCode) {
+        boolean READ_SMS = ContextCompat.checkSelfPermission(OtpVerificationActivity
+                .this, permissions[0]) !=
+                PackageManager.PERMISSION_GRANTED;
+        boolean RECEIVE_SMS = ContextCompat.checkSelfPermission(OtpVerificationActivity
+                .this, permissions[1]) !=
+                PackageManager.PERMISSION_GRANTED;
+        if (READ_SMS || RECEIVE_SMS) {
+            requestPermissions(permissions, requestCode);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override

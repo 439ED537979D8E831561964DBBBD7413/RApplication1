@@ -78,5 +78,7 @@
     <color name="finestBlack">#000000</color>
     <color name="finestSilver">#A5A5A5</color>
     <color name="finestGray">#E7E7E7</color>
+    <color name="colorTextHeader">#222222</color>
+    <color name="colorTextSub">#666666</color>
 
 </resources>

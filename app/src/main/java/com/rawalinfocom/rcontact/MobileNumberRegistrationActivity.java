@@ -84,8 +84,6 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
         /*getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager
                 .LayoutParams.FLAG_FULLSCREEN);*/
 
-//        new AsyncGetDeviceToken(this).execute();
-
         init();
 
     }
@@ -103,20 +101,6 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
             }
         }
     }
-
-//    @Override
-//    public void onComplete(RippleView rippleView) {
-//        switch (rippleView.getId()) {
-//            case R.id.ripple_submit:
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//                    checkPermissionToExecute(requiredPermissions, AppConstants.READ_SMS);
-//                } else {
-//                    prepareToReceiveOtp();
-//                }
-//                break;
-//
-//        }
-//    }
 
     @Override
     public void onComplete(RippleView rippleView) {
