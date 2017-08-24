@@ -113,8 +113,6 @@ public class NotiRatingAdapter extends RecyclerView.Adapter<NotiRatingAdapter.My
                 notificationPopupDialog.showDialog();
             }
         });
-
-
     }
 
     @Override
