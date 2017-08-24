@@ -162,7 +162,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         Utils.setBooleanPreference(getActivity(), AppConstants
                 .PREF_RECENT_CALLS_BROADCAST_RECEIVER_CALL_LOG_TAB, false);
 
-        lastSyncedData = Utils.getIntegerPreference(getActivity(), AppConstants.PREF_SYNCED_CONTACTS, 0);
+        lastSyncedData = Utils.getIntegerPreference(getActivity(), AppConstants
+                .PREF_SYNCED_CONTACTS, 0);
 
     }
 
@@ -277,7 +278,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                         .getArrayListMapping());
                             }
 
-                            Utils.setIntegerPreference(getActivity(), AppConstants.PREF_SYNCED_CONTACTS, 0);
+                            Utils.setIntegerPreference(getActivity(), AppConstants
+                                    .PREF_SYNCED_CONTACTS, 0);
 
                            /* Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts,
                                     getActivity().getString(R.string.str_all_contact_sync));*/
@@ -1369,7 +1371,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                     (ContactsContract
                                             .CommonDataKinds.Phone.NUMBER)));
                             phoneNumber.setPhoneType(phoneBookContacts.getPhoneNumberType
-                                    (cursor.getInt(cursor.getColumnIndex
+                                    (cursor, cursor.getInt(cursor.getColumnIndex
                                             (ContactsContract.CommonDataKinds.Phone.TYPE))));
                             phoneNumber.setPhonePublic(IntegerConstants.PRIVACY_EVERYONE);
 
@@ -1489,7 +1491,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                             .CommonDataKinds.Im.TYPE))));
 
                             imAccount.setIMAccountProtocol(phoneBookContacts.getImProtocol
-                                    (cursor.getInt((cursor.getColumnIndex
+                                    (cursor, cursor.getInt((cursor.getColumnIndex
                                             (ContactsContract.CommonDataKinds.Im.PROTOCOL)))));
 
                             imAccount.setIMAccountPublic(IntegerConstants.PRIVACY_EVERYONE);

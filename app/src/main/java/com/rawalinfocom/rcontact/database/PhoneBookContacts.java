@@ -201,7 +201,8 @@ public class PhoneBookContacts {
                 ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID,
                 ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
                 ContactsContract.CommonDataKinds.Phone.NUMBER,
-                ContactsContract.CommonDataKinds.Phone.TYPE
+                ContactsContract.CommonDataKinds.Phone.TYPE,
+                ContactsContract.CommonDataKinds.Email.LABEL
         };
 
 //        String selection = ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY + " = ?";
@@ -363,6 +364,7 @@ public class PhoneBookContacts {
                 ContactsContract.CommonDataKinds.Im.LABEL,
                 ContactsContract.CommonDataKinds.Im.DATA1,
                 ContactsContract.CommonDataKinds.Im.PROTOCOL,
+                ContactsContract.CommonDataKinds.Im.CUSTOM_PROTOCOL,
         };
 
 //        String selection = ContactsContract.CommonDataKinds.Event.LOOKUP_KEY + " = ? AND "
@@ -452,7 +454,7 @@ public class PhoneBookContacts {
 
     //<editor-fold desc="Types">
 
-    public String getPhoneNumberType(int type) {
+    public String getPhoneNumberType(Cursor cursor, int type) {
         switch (type) {
             case ContactsContract.CommonDataKinds.Phone.TYPE_HOME:
                 return context.getString(R.string.type_home);
@@ -513,6 +515,10 @@ public class PhoneBookContacts {
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_MMS:
                 return context.getString(R.string.type_mms);
+
+            case ContactsContract.CommonDataKinds.Phone.TYPE_CUSTOM:
+                return cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds
+                        .Phone.LABEL));
 
         }
         return context.getString(R.string.type_other);
@@ -575,23 +581,23 @@ public class PhoneBookContacts {
 
     public String getImAccountType(Cursor cursor, int type) {
         switch (type) {
-            case ContactsContract.CommonDataKinds.StructuredPostal.TYPE_HOME:
+            case ContactsContract.CommonDataKinds.Im.TYPE_HOME:
                 return context.getString(R.string.type_home);
 
-            case ContactsContract.CommonDataKinds.StructuredPostal.TYPE_WORK:
+            case ContactsContract.CommonDataKinds.Im.TYPE_WORK:
                 return context.getString(R.string.type_work);
 
-            case ContactsContract.CommonDataKinds.StructuredPostal.TYPE_OTHER:
+            case ContactsContract.CommonDataKinds.Im.TYPE_OTHER:
                 return context.getString(R.string.type_other);
 
-            case ContactsContract.CommonDataKinds.StructuredPostal.TYPE_CUSTOM:
+            case ContactsContract.CommonDataKinds.Im.TYPE_CUSTOM:
                 return cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds
-                        .StructuredPostal.LABEL));
+                        .Im.LABEL));
         }
         return context.getString(R.string.type_other);
     }
 
-    public String getImProtocol(int protocol) {
+    public String getImProtocol(Cursor cursor, int protocol) {
         switch (protocol) {
             case ContactsContract.CommonDataKinds.Im.PROTOCOL_AIM:
                 return context.getString(R.string.protocol_aim);
@@ -627,7 +633,9 @@ public class PhoneBookContacts {
                 return context.getString(R.string.protocol_facebook);
 
             case ContactsContract.CommonDataKinds.Im.PROTOCOL_CUSTOM:
-                return ContactsContract.CommonDataKinds.Im.CUSTOM_PROTOCOL;
+//                return ContactsContract.CommonDataKinds.Im.CUSTOM_PROTOCOL;
+                return cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Im
+                        .CUSTOM_PROTOCOL));
         }
         return context.getString(R.string.type_other);
     }
@@ -822,8 +830,10 @@ public class PhoneBookContacts {
                 ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID,
         };
 
-        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?, ?, ?, ?, ?, ?, ?) and " + ContactsContract
-                .RawContacts.ACCOUNT_TYPE + " in (" + ContactStorageConstants.CONTACT_STORAGE + ")";
+        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?, ?, ?, ?, ?, ?, ?) and " +
+                ContactsContract
+                        .RawContacts.ACCOUNT_TYPE + " in (" + ContactStorageConstants
+                .CONTACT_STORAGE + ")";
 
         String[] selectionArgs = {
                 ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,

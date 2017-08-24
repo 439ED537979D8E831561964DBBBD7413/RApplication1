@@ -26,7 +26,6 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -745,16 +744,16 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     ProfileDataOperationPhoneNumber phoneNumber = new
                             ProfileDataOperationPhoneNumber();
                     View linearPhone = linearPhoneDetails.getChildAt(i);
-                    EditText emailId = linearPhone.findViewById(R.id.input_value);
-                    Spinner emailType = linearPhone.findViewById(R.id.spinner_type);
+                    EditText inputPhoneNumber = linearPhone.findViewById(R.id.input_value);
+                    Spinner phoneNumberType = linearPhone.findViewById(R.id.spinner_type);
                     TextView textIsPublic = linearPhone.findViewById(R.id
                             .text_is_public);
                     TextView textIsVerified = linearPhone.findViewById(R.id
                             .text_is_verified);
                     RelativeLayout relativeRowEditProfile = linearPhone
                             .findViewById(R.id.relative_row_edit_profile);
-                    phoneNumber.setPhoneNumber(emailId.getText().toString().trim());
-                    phoneNumber.setPhoneType((String) emailType.getSelectedItem());
+                    phoneNumber.setPhoneNumber(inputPhoneNumber.getText().toString().trim());
+                    phoneNumber.setPhoneType((String) phoneNumberType.getSelectedItem());
                     phoneNumber.setPhoneId((String) relativeRowEditProfile.getTag());
                     if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
                         phoneNumber.setPhonePublic(Integer.parseInt(textIsPublic.getText()
@@ -3669,31 +3668,5 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     }
 
     //</editor-fold>
-
-    class SpinnerInteractionListener implements AdapterView.OnItemSelectedListener, View
-            .OnTouchListener {
-
-        boolean userSelect = false;
-
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            userSelect = true;
-            return false;
-        }
-
-        @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-            if (userSelect) {
-                // Your selection handling code here
-                userSelect = false;
-            }
-        }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> adapterView) {
-
-        }
-
-    }
 
 }
