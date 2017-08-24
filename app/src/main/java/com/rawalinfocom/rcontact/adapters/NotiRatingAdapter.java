@@ -108,7 +108,7 @@ public class NotiRatingAdapter extends RecyclerView.Adapter<NotiRatingAdapter.My
                 arrayListComments.add(item.getRaterPersonImage());
                 arrayListComments.add(item.getReceiverPersonImage());
                 notificationPopupDialog = new NotificationPopupDialog(context, arrayListComments, true);
-                notificationPopupDialog.setDialogTitle(item.getRaterName() + context.getString(R.string.text_reply_you));
+                notificationPopupDialog.setDialogTitle(item.getRaterName() + " " + context.getString(R.string.text_reply_you));
                 notificationPopupDialog.setRatingInfo(item.getRating());
                 notificationPopupDialog.showDialog();
             }
