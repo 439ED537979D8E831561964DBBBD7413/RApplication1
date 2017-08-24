@@ -338,7 +338,7 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
 
         WsRequestObject enterPassWordObject = new WsRequestObject();
         enterPassWordObject.setMobileNumber(mobileNumber.replace("+", ""));
-        enterPassWordObject.setPassword(StringUtils.trimToEmpty(password));
+        enterPassWordObject.setPassword(password);
         if (isFrom.equals(AppConstants.PREF_RE_LOGIN) || Utils.getBooleanPreference
                 (ReLoginEnterPasswordActivity.this,
                         AppConstants.PREF_TEMP_LOGOUT, false)) {

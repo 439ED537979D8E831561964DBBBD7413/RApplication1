@@ -254,12 +254,14 @@
     <string name="str_confirm_password">પાસવર્ડ કન્ફર્મ કરો</string>
     <!--<string name="msg_tip_password">ટિપ: પાસવર્ડ ઓછામાં ઓછો 8 અક્ષર લાંબો હોવો જોઈએ જેમાં લઘુત્તમ 1 અપ્પર અને 1 લોઅર કેસ અક્ષર, 1 નંબર અને 1 સ્પેશિઅલ અક્ષર હોવો જોઈએ</string>-->
     <string name="msg_tip_password">પાસવર્ડ ઓછામાં ઓછો 4 અક્ષર લાંબો હોવો જોઈએ</string>
+    <string name="password_tip">પ્રથમ અને છેલ્લો અક્ષર જગ્યાને મંજૂરી નથી</string>
     <string name="title_password_protected">પાસવર્ડ થી સુરક્ષિત</string>
     <string name="msg_enter_password_tips">કૃપા કરીને તમારા ખાતા ને ઍક્સેસ કરવા માટે પાસવર્ડ દાખલ કરો</string>
     <string name="str_enter_password">પાસવર્ડ દાખલ કરો</string>
     <string name="str_signin_signup">સાઇન ઇન કરો અથવા અલગ એકાઉન્ટ સાથે સાઇન અપ કરો</string>
     <string name="action_login">લૉગિન</string>
     <string name="action_forget_password">પાસવર્ડ ભૂલી ગયા</string>
+    <string name="err_msg_password_validation">પ્રથમ અને છેલ્લો અક્ષર જગ્યાને મંજૂરી નથી</string>
     <string name="err_msg_please_enter_password">પાસવર્ડ ખાલી ન હોઈ શકે</string>
     <string name="err_msg_please_confirm_password">કન્ફર્મ પાસવર્ડ ખાલી ન હોઈ શકે</string>
     <string name="err_msg_password_not_match">પાસવર્ડ મેળ ખાતા નથી</string>

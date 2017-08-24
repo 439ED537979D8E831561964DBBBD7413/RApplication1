@@ -49,7 +49,6 @@ import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
-import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.database.QueryManager;
 import com.rawalinfocom.rcontact.database.TableCommentMaster;
@@ -1674,14 +1673,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                         .getString(contactNumberCursor.getColumnIndex(ContactsContract
                                 .CommonDataKinds.Phone.NUMBER))));
                 phoneNumber.setPhoneType(phoneBookContacts.getPhoneNumberType
-                        (contactNumberCursor.getInt(contactNumberCursor.getColumnIndex
-                                (ContactsContract.CommonDataKinds.Phone.TYPE))));
-                phoneNumberOperation.setPhoneNumber(Utils.getFormattedNumber(this,
-                        contactNumberCursor.getString(contactNumberCursor.getColumnIndex
-                                (ContactsContract.CommonDataKinds.Phone.NUMBER))));
-                phoneNumberOperation.setPhoneType(phoneBookContacts.getPhoneNumberType
-                        (contactNumberCursor.getInt(contactNumberCursor.getColumnIndex
-                                (ContactsContract.CommonDataKinds.Phone.TYPE))));
+                        (contactNumberCursor, contactNumberCursor.getInt(contactNumberCursor
+                                .getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE))));
                 phoneNumber.setPbRcpType(IntegerConstants
                         .RCP_TYPE_LOCAL_PHONE_BOOK);
 
@@ -1957,8 +1950,9 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                                         (ContactsContract.CommonDataKinds.Im.TYPE))));
 
                 imAccount.setIMAccountProtocol(phoneBookContacts.getImProtocol
-                        (contactImAccountCursor.getInt((contactImAccountCursor.getColumnIndex
-                                (ContactsContract.CommonDataKinds.Im.PROTOCOL)))));
+                        (contactImAccountCursor, contactImAccountCursor.getInt(
+                                (contactImAccountCursor.getColumnIndex(ContactsContract
+                                        .CommonDataKinds.Im.PROTOCOL)))));
 
                 imAccount.setIMRcpType(String.valueOf(IntegerConstants.RCP_TYPE_LOCAL_PHONE_BOOK));
 

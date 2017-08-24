@@ -128,7 +128,7 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
         }
         final String uniqueRowID = callLogType.getUniqueContactId();
 
-        if (!StringUtils.isEmpty(number)) {
+        if (!StringUtils.isEmpty(formattedNumber)) {
             holder.textTempNumber.setText(formattedNumber);
         }
         if (!StringUtils.isEmpty(name)) {

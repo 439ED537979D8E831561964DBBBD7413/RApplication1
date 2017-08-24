@@ -391,8 +391,8 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
                 Bundle bundle = new Bundle();
 
-                TextView textName = (TextView) v.findViewById(R.id.text_contact_name);
-                TextView textCloudName = (TextView) v.findViewById(R.id.text_cloud_contact_name);
+                TextView textName = v.findViewById(R.id.text_contact_name);
+                TextView textCloudName = v.findViewById(R.id.text_cloud_contact_name);
 
                 bundle.putBoolean(AppConstants.EXTRA_IS_RCP_USER, profileData.getTempIsRcp());
                 bundle.putString(AppConstants.EXTRA_CALL_HISTORY_NAME, profileData.getName());

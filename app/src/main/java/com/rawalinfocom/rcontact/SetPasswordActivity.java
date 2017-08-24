@@ -5,6 +5,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.content.ContextCompat;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -300,8 +302,17 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
     }
 
     private void registerButtonClicked() {
-        String password = inputSetPassword.getText().toString().trim();
-        String confirmPassword = inputSetConfirmPassword.getText().toString().trim();
+
+        String password = inputSetPassword.getText().toString();
+        String confirmPassword = inputSetConfirmPassword.getText().toString();
+
+        if (password.startsWith(" ") || confirmPassword.startsWith(" ")
+                || password.endsWith(" ") || confirmPassword.endsWith(" ")) {
+            Utils.showErrorSnackBar(this, layoutRoot, getResources().getString(R.string
+                    .err_msg_password_validation));
+            return;
+        }
+
         if (StringUtils.isEmpty(password)) {
             Utils.showErrorSnackBar(this, layoutRoot, getResources().getString(R.string
                     .err_msg_please_enter_password));
@@ -320,17 +331,11 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
         if (password.equalsIgnoreCase(confirmPassword)) {
 
             if (password.length() > 3) {
-                SavePassword(password, confirmPassword);
+                SavePassword(password.trim(), confirmPassword.trim());
             } else {
                 Utils.showErrorSnackBar(this, layoutRoot, getResources().getString(R.string
                         .msg_tip_password));
             }
-
-//            if (isPasswordValid(password)) {
-//            } else {
-//                Utils.showErrorSnackBar(this, layoutRoot, getResources().getString(R.string
-//                        .msg_tip_password));
-//            }
         }
     }
 
