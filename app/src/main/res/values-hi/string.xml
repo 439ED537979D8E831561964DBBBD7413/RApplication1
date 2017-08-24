@@ -254,12 +254,14 @@
     <string name="str_confirm_password">पासवर्ड कन्फर्म करें</string>
     <!--<string name="msg_tip_password">युक्ति: पासवर्ड न्यूनतम 8 अक्षर लंबा जिसमे कम से कम 1 ऊपरी और 1 लोअर केस लेटर, 1 नंबर और 1 स्पेशल कैरेक्टर होना चाहिए</string>-->
     <string name="msg_tip_password">पासवर्ड न्यूनतम 4 अक्षर लंबा होना चाहिए</string>
+    <string name="password_tip">पहला और आखिरी चरित्र अंतरिक्ष की अनुमति नहीं है</string>
     <string name="title_password_protected">पासवर्ड से सुरक्षित</string>
     <string name="msg_enter_password_tips">कृपया अपना खाता एक्सेस करने के लिए पासवर्ड दर्ज करें</string>
     <string name="str_signin_signup">साइन इन करें या दूसरे खाते के साथ साइन अप करें</string>
     <string name="str_enter_password">पासवर्ड दर्ज करें</string>
     <string name="action_login">लॉग इन</string>
     <string name="action_forget_password">पासवर्ड भूल गए</string>
+    <string name="err_msg_password_validation">पहला और आखिरी चरित्र अंतरिक्ष की अनुमति नहीं है</string>
     <string name="err_msg_please_enter_password">पासवर्ड खाली नहीं हो सकता</string>
     <string name="err_msg_please_confirm_password">कन्फर्म पासवर्ड खाली नहीं हो सकता</string>
     <string name="err_msg_password_not_match">पासवर्ड मेल नहीं खा रहे</string>
