@@ -643,6 +643,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/linear_call_sms"
+            android:background="@color/colorWhite"
+            android:overScrollMode="never"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <RelativeLayout
@@ -665,7 +667,7 @@
                         android:paddingLeft="@dimen/padding_10dp"
                         android:paddingTop="10dp"
                         android:text="@string/call_history"
-                        android:textColor="@color/colorDarkGray"/>
+                        android:textColor="@color/colorTextHeader"/>
 
                     <TextView
                         android:id="@+id/text_no_history_to_show"
@@ -689,6 +691,7 @@
                         android:layout_below="@+id/text_text_call_history"
                         android:background="@color/colorWhite"
                         android:visibility="visible"/>
+
                 </RelativeLayout>
 
                 <com.rawalinfocom.rcontact.helper.RippleView
@@ -713,6 +716,7 @@
                         android:padding="@dimen/padding_10dp"
                         android:text="@string/view_old_records"
                         android:textColor="@color/colorWhite"/>
+
                 </com.rawalinfocom.rcontact.helper.RippleView>
 
                 <ProgressBar
@@ -724,8 +728,12 @@
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="@dimen/margin_10dp"
                     android:visibility="gone"/>
+
             </RelativeLayout>
+
         </android.support.v4.widget.NestedScrollView>
+
     </RelativeLayout>
+
 </RelativeLayout>
 
