@@ -64,7 +64,7 @@ public class CallHistoryListAdapter extends RecyclerView.Adapter<CallHistoryList
                         .colorAccent));
             } else {
                 holder.textHistoryNumber.setTextColor(ContextCompat.getColor(context, R.color
-                        .darkGray));
+                        .colorTextHeader));
             }
             holder.textHistoryNumber.setText(Utils.getFormattedNumber(context, number));
         }
@@ -174,6 +174,13 @@ public class CallHistoryListAdapter extends RecyclerView.Adapter<CallHistoryList
         MyViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, itemView);
+
+            textHistoryNumber.setTypeface(Utils.typefaceRegular(context));
+            textHistoryCallType.setTypeface(Utils.typefaceRegular(context));
+            textHistoryDate.setTypeface(Utils.typefaceRegular(context));
+            textDuration.setTypeface(Utils.typefaceRegular(context));
+            textHistoryDurationValue.setTypeface(Utils.typefaceRegular(context));
+            textHistoryCallTime.setTypeface(Utils.typefaceRegular(context));
 
         }
     }
