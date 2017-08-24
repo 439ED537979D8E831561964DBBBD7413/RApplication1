@@ -683,7 +683,7 @@ public class Utils {
         }
     }
 
-    public static String getFormattedNumber(Context context, String phoneNumber) {
+    /*public static String getFormattedNumber(Context context, String phoneNumber) {
         if (StringUtils.length(phoneNumber) > 0) {
             if (StringUtils.contains(phoneNumber, "#") || StringUtils.contains(phoneNumber, "*")) {
 //                return phoneNumber.replace("*", Uri.encode("*")).replace("#", Uri.encode("#"));
@@ -707,7 +707,86 @@ public class Utils {
                     }
                 }
 
-        /* remove special characters from number */
+        *//* remove special characters from number *//*
+                return "+" + StringUtils.replaceAll(StringUtils.substring(phoneNumber, 1),
+                        "[\\D]", "");
+            }
+        } else {
+            return "";
+        }
+    }*/
+
+    public static String getFormattedNumber(Context context, String phoneNumber) {
+        if (StringUtils.length(phoneNumber) > 0) {
+//            phoneNumber = StringUtils.trim(phoneNumber);
+            if (StringUtils.contains(phoneNumber, "#") || StringUtils.contains(phoneNumber, "*")) {
+//                return phoneNumber.replace("*", Uri.encode("*")).replace("#", Uri.encode("#"));
+                return phoneNumber;
+            } else {
+                Country country = (Country) Utils.getObjectPreference(context, AppConstants
+                        .PREF_SELECTED_COUNTRY_OBJECT, Country.class);
+                String defaultCountryCode = "+91";
+                if (country != null) {
+                    defaultCountryCode = country.getCountryCodeNumber();
+                }
+//                if (!StringUtils.startsWith(phoneNumber, "+")) {
+
+               /* if (!StringUtils.startsWith(phoneNumber, "+") && StringUtils.isAllBlank
+                        (StringUtils.substring(phoneNumber, 0, (StringUtils.indexOf
+                                (phoneNumber, "+") - 1)))) {*/
+                /*if (StringUtils.indexOf(phoneNumber, "+") != 0 && StringUtils.indexOf
+                        (phoneNumber, "+") != 1) {
+                    // Not starts with "+"
+                    if (StringUtils.startsWith(phoneNumber, "00")) {
+                        phoneNumber = "+" + StringUtils.substring(phoneNumber, 2);
+                    } else if (StringUtils.startsWith(phoneNumber, "0")) {
+                        phoneNumber = defaultCountryCode + StringUtils.substring(phoneNumber, 1);
+                    } else {
+                        phoneNumber = defaultCountryCode + phoneNumber;
+                    }
+                }*/
+
+                if (StringUtils.contains(phoneNumber, "+")) {
+
+                    if (!StringUtils.startsWith(phoneNumber, "+")) {
+                        if (!StringUtils.isAllBlank(StringUtils.substring(phoneNumber, 0,
+                                (StringUtils.indexOf(phoneNumber, "+") - 1)))) {
+                            if (StringUtils.startsWith(phoneNumber, "00")) {
+                                phoneNumber = "+" + StringUtils.substring(phoneNumber, 2);
+                            } else if (StringUtils.startsWith(phoneNumber, "0")) {
+                                phoneNumber = defaultCountryCode + StringUtils.substring
+                                        (phoneNumber, 1);
+                            } else {
+                                phoneNumber = defaultCountryCode + phoneNumber;
+                            }
+                        }
+                    }
+
+                  /*  if (!StringUtils.isAllBlank(StringUtils.substring(phoneNumber, 0,
+                            (StringUtils.indexOf(phoneNumber, "+") - 1)))) {
+                        // "+" is in-between
+                        if (StringUtils.startsWith(phoneNumber, "00")) {
+                            phoneNumber = "+" + StringUtils.substring(phoneNumber, 2);
+                        } else if (StringUtils.startsWith(phoneNumber, "0")) {
+                            phoneNumber = defaultCountryCode + StringUtils.substring(phoneNumber,
+                                    1);
+                        } else {
+                            phoneNumber = defaultCountryCode + phoneNumber;
+                        }
+                    } else {
+                        // "+" is at starting of screen
+                    }*/
+                } else {
+                    if (StringUtils.startsWith(phoneNumber, "00")) {
+                        phoneNumber = "+" + StringUtils.substring(phoneNumber, 2);
+                    } else if (StringUtils.startsWith(phoneNumber, "0")) {
+                        phoneNumber = defaultCountryCode + StringUtils.substring(phoneNumber, 1);
+                    } else {
+                        phoneNumber = defaultCountryCode + phoneNumber;
+                    }
+                }
+
+                /* remove special characters from number */
                 return "+" + StringUtils.replaceAll(StringUtils.substring(phoneNumber, 1),
                         "[\\D]", "");
             }
@@ -715,6 +794,8 @@ public class Utils {
             return "";
         }
     }
+
+
 
     public static boolean isLastItemDisplaying(RecyclerView recyclerView) {
         if (recyclerView.getAdapter().getItemCount() != 0) {

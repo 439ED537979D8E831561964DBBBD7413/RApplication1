@@ -295,7 +295,7 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 //        String letter = (String) arrayListUserContact.get(position);
         if (!(activity instanceof SearchActivity) && !(activity instanceof DialerActivity)){
             holder.textTotalContacts.setText(arrayListUserProfile.size() - arrayListContactHeader
-                    .size() + " " + activity.getString(R.string.contacts));
+                    .size() + " " + activity.getString(R.string.str_count_contacts));
         }
 
     }

@@ -319,7 +319,6 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 }
             }
 
-
             if (intent.hasExtra(AppConstants.EXTRA_CHECK_NUMBER_FAVOURITE)) {
                 checkNumberFavourite = intent.getStringExtra(AppConstants
                         .EXTRA_CHECK_NUMBER_FAVOURITE);
