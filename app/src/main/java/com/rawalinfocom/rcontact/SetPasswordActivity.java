@@ -336,12 +336,6 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
                 Utils.showErrorSnackBar(this, layoutRoot, getResources().getString(R.string
                         .msg_tip_password));
             }
-
-//            if (isPasswordValid(password)) {
-//            } else {
-//                Utils.showErrorSnackBar(this, layoutRoot, getResources().getString(R.string
-//                        .msg_tip_password));
-//            }
         }
     }
 
