@@ -55,6 +55,7 @@ public class TableProfileMaster {
     static final String COLUMN_PM_PROFILE_RATE_USER = "pm_total_user_rating";
     static final String COLUMN_PM_IS_FAVOURITE = "pm_is_favourite";
     private static final String COLUMN_PM_NOSQL_MASTER_ID = "pm_nosql_master_id";
+    static final String COLUMN_PM_BADGE = "pm_badge";
     private static final String COLUMN_PM_JOINING_DATE = "pm_joining_date";
 
     // Table Create Statements
@@ -99,6 +100,7 @@ public class TableProfileMaster {
             " " + COLUMN_PM_PROFILE_RATE_USER + " integer," +
             " " + COLUMN_PM_IS_FAVOURITE + " integer," +
             " " + COLUMN_PM_NOSQL_MASTER_ID + " text," +
+            " " + COLUMN_PM_BADGE + " text," +
             " " + COLUMN_PM_JOINING_DATE + " text" +
             ");";
 
@@ -120,6 +122,7 @@ public class TableProfileMaster {
         values.put(COLUMN_PM_PROFILE_RATE_USER, userProfile.getTotalProfileRateUser());
         values.put(COLUMN_PM_IS_FAVOURITE, userProfile.getPmIsFavourite());
         values.put(COLUMN_PM_NOSQL_MASTER_ID, userProfile.getPmNosqlMasterId());
+        values.put(COLUMN_PM_BADGE, userProfile.getPmNosqlMasterId());
         values.put(COLUMN_PM_JOINING_DATE, userProfile.getPmJoiningDate());
 
         int count = 0;
@@ -162,6 +165,7 @@ public class TableProfileMaster {
                     .getTotalProfileRateUser());
             values.put(COLUMN_PM_IS_FAVOURITE, arrayListUserProfile.get(i).getPmIsFavourite());
             values.put(COLUMN_PM_NOSQL_MASTER_ID, arrayListUserProfile.get(i).getPmNosqlMasterId());
+            values.put(COLUMN_PM_BADGE, arrayListUserProfile.get(i).getPmBadge());
             values.put(COLUMN_PM_JOINING_DATE, arrayListUserProfile.get(i).getPmJoiningDate());
 
             int count = 0;
@@ -274,6 +278,7 @@ public class TableProfileMaster {
                     COLUMN_PM_GENDER, COLUMN_PM_GENDER_PRIVACY, COLUMN_PM_PROFILE_RATING,
                     COLUMN_PM_PROFILE_RATE_USER, COLUMN_PM_IS_FAVOURITE,
                     COLUMN_PM_NOSQL_MASTER_ID,
+                    COLUMN_PM_BADGE,
                     COLUMN_PM_JOINING_DATE}, COLUMN_PM_RCP_ID
                     + "=?", new String[]{String.valueOf(cloudPmd)}, null, null, null, null);
             if (cursor != null)
@@ -350,6 +355,7 @@ public class TableProfileMaster {
                         (COLUMN_PM_IS_FAVOURITE)));
                 userProfile.setPmNosqlMasterId(cursor.getString(cursor.getColumnIndex
                         (COLUMN_PM_NOSQL_MASTER_ID)));
+                userProfile.setPmBadge(cursor.getString(cursor.getColumnIndex(COLUMN_PM_BADGE)));
                 userProfile.setPmJoiningDate(cursor.getString(cursor.getColumnIndex
                         (COLUMN_PM_JOINING_DATE)));
                 // Adding user profile to list
@@ -394,6 +400,7 @@ public class TableProfileMaster {
         values.put(COLUMN_PM_PROFILE_RATE_USER, userProfile.getTotalProfileRateUser());
         values.put(COLUMN_PM_IS_FAVOURITE, userProfile.getPmIsFavourite());
         values.put(COLUMN_PM_NOSQL_MASTER_ID, userProfile.getPmNosqlMasterId());
+        values.put(COLUMN_PM_BADGE, userProfile.getPmBadge());
         values.put(COLUMN_PM_JOINING_DATE, userProfile.getPmJoiningDate());
 
         int isUpdated = db.update(TABLE_RC_PROFILE_MASTER, values, COLUMN_PM_RCP_ID + " = ?",

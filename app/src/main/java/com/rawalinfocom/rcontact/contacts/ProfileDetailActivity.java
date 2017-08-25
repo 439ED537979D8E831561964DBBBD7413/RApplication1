@@ -1303,18 +1303,17 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
 
-            TextView textDialogTitle = (TextView) dialog.findViewById(R.id.text_dialog_title);
-            relativeRootRatingDialog = (RelativeLayout) dialog.findViewById(R.id
-                    .relative_root_rating_dialog);
-            final RatingBar ratingUser = (RatingBar) dialog.findViewById(R.id.rating_user);
-            TextView textComment = (TextView) dialog.findViewById(R.id.text_comment);
-            final TextView textRemainingCharacters = (TextView) dialog.findViewById(R.id
+            TextView textDialogTitle = dialog.findViewById(R.id.text_dialog_title);
+            relativeRootRatingDialog = dialog.findViewById(R.id.relative_root_rating_dialog);
+            final RatingBar ratingUser = dialog.findViewById(R.id.rating_user);
+            TextView textComment = dialog.findViewById(R.id.text_comment);
+            final TextView textRemainingCharacters = dialog.findViewById(R.id
                     .text_remaining_characters);
-            final EditText inputComment = (EditText) dialog.findViewById(R.id.input_comment);
-            RippleView rippleLeft = (RippleView) dialog.findViewById(R.id.ripple_left);
-            Button buttonLeft = (Button) dialog.findViewById(R.id.button_left);
-            RippleView rippleRight = (RippleView) dialog.findViewById(R.id.ripple_right);
-            Button buttonRight = (Button) dialog.findViewById(R.id.button_right);
+            final EditText inputComment = dialog.findViewById(R.id.input_comment);
+            RippleView rippleLeft = dialog.findViewById(R.id.ripple_left);
+            Button buttonLeft = dialog.findViewById(R.id.button_left);
+            RippleView rippleRight = dialog.findViewById(R.id.ripple_right);
+            Button buttonRight = dialog.findViewById(R.id.button_right);
 
             textDialogTitle.setTypeface(Utils.typefaceSemiBold(this));
             textComment.setTypeface(Utils.typefaceRegular(this));
