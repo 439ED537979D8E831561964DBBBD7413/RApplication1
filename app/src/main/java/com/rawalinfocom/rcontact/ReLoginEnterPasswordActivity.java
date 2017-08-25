@@ -106,6 +106,13 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
         textSignInUpDiffAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                Utils.clearData(ReLoginEnterPasswordActivity.this);
+                getDatabaseHandler().clearAllData();
+
+                Utils.setIntegerPreference(ReLoginEnterPasswordActivity.this, AppConstants
+                        .PREF_LAUNCH_SCREEN_INT, IntegerConstants.LAUNCH_MOBILE_REGISTRATION);
+
                 Intent intent = new Intent(ReLoginEnterPasswordActivity.this, MobileNumberRegistrationActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -263,13 +270,40 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
                         (enterPassWordResponse
                                 .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                    Intent intent = new Intent(this, MainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.enter, R.anim.exit);
-                    finish();
+                    if (isFrom.equals(AppConstants.PREF_FORGOT_PASSWORD)) {
+                        if (Utils.getBooleanPreference(this, AppConstants.KEY_IS_RESTORE_DONE, false)) {
+                            // Redirect to MainActivity
+                            Utils.setBooleanPreference(this, AppConstants.KEY_IS_RESTORE_DONE, true);
+                            Intent intent = new Intent(this, MainActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                            startActivity(intent);
+                            overridePendingTransition(R.anim.enter, R.anim.exit);
+                            finish();
+                        } else {
+                            // Redirect to RestorationActivity
+                            Intent intent = new Intent(this, RestorationActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                            startActivity(intent);
+                            overridePendingTransition(R.anim.enter, R.anim.exit);
+                            finish();
+                        }
+                    } else {
+
+                        Utils.setBooleanPreference(this, AppConstants.KEY_IS_RESTORE_DONE, true);
+
+                        Intent intent = new Intent(this, MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.enter, R.anim.exit);
+                        finish();
+                    }
+
 
                 } else {
 

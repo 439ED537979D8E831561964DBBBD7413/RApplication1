@@ -406,6 +406,7 @@
     <string name="str_unread_notification_hint_1">आपके पास</string>
     <string name="str_unread_notification_hint_2">अपठित सूचना(एं) है</string>
     <string name="str_unread_notification_hint_3">आपके पास कोई अपठित सूचना(एं) नहीं है</string>
+    <string name="str_comment_reply">आपकी टिप्पणी सफलतापूर्वक भेजी गई</string>
     <string name="str_rating_comment_hint_1">%1$s ने आपकी रेटिंग और टिप्पणी पर आपको उत्तर दिया</string>
     <string name="str_rating_comment_hint_2">%1$s को आपने रेटिंग दी और उनके लिए टिपण्णी लिखी</string>
     <string name="str_rating_comment_hint_3">%1$s से आपको रेटिंग प्राप्त हुई</string>

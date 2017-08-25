@@ -88,6 +88,8 @@ public class TimelineActivity extends BaseActivity implements RippleView
     TextView headerYesterdayTitle;
     @BindView(R.id.text_header3)
     TextView headerPast5DaysTitle;
+    @BindView(R.id.layout_root)
+    RelativeLayout layoutRoot;
 
     private TimelineAdapter todayTimelineAdapter;
     private TimelineAdapter yesterdayTimelineAdapter;
@@ -427,10 +429,11 @@ public class TimelineActivity extends BaseActivity implements RippleView
                             selectedRecyclerItem = -1;
                         }
                         Utils.hideProgressDialog();
+                        Utils.showSuccessSnackBar(TimelineActivity.this, layoutRoot, getString(R.string.str_comment_reply));
                     }
                 } else {
                     Utils.hideProgressDialog();
-                    Toast.makeText(TimelineActivity.this, getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
+                    Utils.showErrorSnackBar(TimelineActivity.this, layoutRoot, getString(R.string.msg_try_later));
                 }
             } else if (serviceType.equalsIgnoreCase(WsConstants.REQ_GET_EVENT_COMMENT)) {
 
@@ -439,9 +442,10 @@ public class TimelineActivity extends BaseActivity implements RippleView
                     ArrayList<EventCommentData> eventReceiveCommentData = wsResponseObject.getEventReceiveCommentData();
                     saveCommentDataToDb(eventReceiveCommentData);
                     Utils.hideProgressDialog();
+                    Utils.showSuccessSnackBar(TimelineActivity.this, layoutRoot, getString(R.string.str_comment_reply));
                 } else {
                     Utils.hideProgressDialog();
-                    Toast.makeText(TimelineActivity.this, getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
+                    Utils.showErrorSnackBar(TimelineActivity.this, layoutRoot, getString(R.string.msg_try_later));
                 }
             } else if (serviceType.equalsIgnoreCase(WsConstants.REQ_ADD_EVENT_COMMENT)) {
                 WsResponseObject wsResponseObject = (WsResponseObject) data;
@@ -468,19 +472,20 @@ public class TimelineActivity extends BaseActivity implements RippleView
                                 selectedRecyclerItem = -1;
                             }
                             Utils.hideProgressDialog();
+                            Utils.showSuccessSnackBar(TimelineActivity.this, layoutRoot, getString(R.string.str_comment_reply));
                         }
                     } else {
                         Utils.hideProgressDialog();
-                        Toast.makeText(TimelineActivity.this, getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
+                        Utils.showErrorSnackBar(TimelineActivity.this, layoutRoot, getString(R.string.msg_try_later));
                     }
                 } else {
                     Utils.hideProgressDialog();
-                    Toast.makeText(TimelineActivity.this, getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
+                    Utils.showErrorSnackBar(TimelineActivity.this, layoutRoot, getString(R.string.msg_try_later));
                 }
             }
         } else {
             Utils.hideProgressDialog();
-            Toast.makeText(TimelineActivity.this, getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
+            Utils.showErrorSnackBar(TimelineActivity.this, layoutRoot, getString(R.string.msg_try_later));
         }
     }
 
