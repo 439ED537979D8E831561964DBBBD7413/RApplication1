@@ -247,6 +247,13 @@ public class Utils {
 
     //<editor-fold desc="Shared Preferences">
 
+    public static void clearData(Context context) {
+        SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
+                .KEY_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+        editor.clear().commit();
+    }
+
     public static void setStringPreference(Context context, String key, @Nullable String value) {
         SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
                 .KEY_PREFERENCES, Context.MODE_PRIVATE);
@@ -794,7 +801,6 @@ public class Utils {
             return "";
         }
     }
-
 
 
     public static boolean isLastItemDisplaying(RecyclerView recyclerView) {
