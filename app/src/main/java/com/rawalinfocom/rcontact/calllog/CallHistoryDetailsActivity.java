@@ -2273,7 +2273,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         Pattern numberPat = Pattern.compile("\\d+");
         Matcher matcher1 = numberPat.matcher(number);
         if (matcher1.find()) {
-            cursor = getCallHistoryDataByNumber(number);
+            cursor = getCallHistoryDataByNumber(Utils.getFormattedNumber(this,number));
         } else {
             cursor = getCallHistoryDataByName(number);
             if (cursor != null && cursor.getCount() == 0) {
