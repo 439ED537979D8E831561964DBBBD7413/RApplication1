@@ -263,6 +263,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     RippleView rippleSms;
     @BindView(R.id.text_no_history_to_show)
     TextView textNoHistoryToShow;
+    @BindView(R.id.text_text_call_history)
+    TextView textCallHistory;
     @BindView(R.id.ripple_invite)
     RippleView rippleInvite;
     @BindView(R.id.button_invite)
@@ -1191,8 +1193,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 number = "+" + number;
                             callLogType.setHistoryNumber(number);
                             callLogType.setHistoryNumberType(callLogType.getNumberType());
-                            callLogType.setHistoryDate(Long.parseLong(callLogType.getCallDateAndTime()));
-                            callLogType.setHistoryType(Integer.parseInt(callLogType.getTypeOfCall()));
+                            callLogType.setHistoryDate(Long.parseLong(callLogType
+                                    .getCallDateAndTime()));
+                            callLogType.setHistoryType(Integer.parseInt(callLogType.getTypeOfCall
+                                    ()));
                             callLogType.setWebDuration(callLogType.getDurationToPass());
                             listToAppend.add(callLogType);
                         }
@@ -1395,7 +1399,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         if (intent != null) {
 
             if (intent.hasExtra(AppConstants.EXTRA_DIALOG_CALL_LOG_INSTANCE)) {
-                isDialogCallLogInstance = intent.getBooleanExtra(AppConstants.EXTRA_DIALOG_CALL_LOG_INSTANCE, false);
+                isDialogCallLogInstance = intent.getBooleanExtra(AppConstants
+                        .EXTRA_DIALOG_CALL_LOG_INSTANCE, false);
             }
 
             if (intent.hasExtra(AppConstants.EXTRA_RCP_VERIFIED_ID)) {
@@ -1649,9 +1654,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         if (historyNumber.startsWith("+91")) {
 
                         } else if (historyNumber.startsWith("0")) {
-                            historyNumber = Utils.getFormattedNumber(ProfileDetailActivity.this, historyNumber);
+                            historyNumber = Utils.getFormattedNumber(ProfileDetailActivity.this,
+                            historyNumber);
                         } else {
-                            historyNumber = Utils.getFormattedNumber(ProfileDetailActivity.this, historyNumber);
+                            historyNumber = Utils.getFormattedNumber(ProfileDetailActivity.this,
+                            historyNumber);
                         }
                         textFullScreenText.setText(historyNumber);*/
                     }
@@ -1840,6 +1847,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     }
 
     private void setCallLogHistoryDetails() {
+
+        textNoHistoryToShow.setTypeface(Utils.typefaceRegular(ProfileDetailActivity.this));
+        textCallHistory.setTypeface(Utils.typefaceRegular(ProfileDetailActivity.this));
+
+
         if (!TextUtils.isEmpty(historyName)) {
             if (StringUtils.containsOnly(historyName, "\\d+")) {
 //                textToolbarTitle.setText("Unknown number");
@@ -1885,9 +1897,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             if (historyNumber.startsWith("+91")) {
 
                             } else if (historyNumber.startsWith("0")) {
-                                historyNumber = Utils.getFormattedNumber(ProfileDetailActivity.this, historyNumber);
+                                historyNumber = Utils.getFormattedNumber(ProfileDetailActivity
+                                        .this, historyNumber);
                             } else {
-                                historyNumber = Utils.getFormattedNumber(ProfileDetailActivity.this, historyNumber);
+                                historyNumber = Utils.getFormattedNumber(ProfileDetailActivity
+                                        .this, historyNumber);
                             }
                             textFullScreenText.setText(historyNumber);
                         }
@@ -1911,9 +1925,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         if (historyNumber.startsWith("+91")) {
 
                         } else if (historyNumber.startsWith("0")) {
-                            historyNumber = Utils.getFormattedNumber(ProfileDetailActivity.this, historyNumber);
+                            historyNumber = Utils.getFormattedNumber(ProfileDetailActivity.this,
+                                    historyNumber);
                         } else {
-                            historyNumber = Utils.getFormattedNumber(ProfileDetailActivity.this, historyNumber);
+                            historyNumber = Utils.getFormattedNumber(ProfileDetailActivity.this,
+                                    historyNumber);
                         }
                         textFullScreenText.setText(historyNumber);
                     }
@@ -2945,13 +2961,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
 
-        TextView textDialogTitle = (TextView) dialog.findViewById(R.id.text_dialog_title);
-        TextView textFromContact = (TextView) dialog.findViewById(R.id.text_from_contact);
-        TextView textFromSocialMedia = (TextView) dialog.findViewById(R.id.text_from_social_media);
-        TextView textRemovePhoto = (TextView) dialog.findViewById(R.id.text_remove_photo);
+        TextView textDialogTitle = dialog.findViewById(R.id.text_dialog_title);
+        TextView textFromContact = dialog.findViewById(R.id.text_from_contact);
+        TextView textFromSocialMedia = dialog.findViewById(R.id.text_from_social_media);
+        TextView textRemovePhoto = dialog.findViewById(R.id.text_remove_photo);
 
-        RippleView rippleLeft = (RippleView) dialog.findViewById(R.id.ripple_left);
-        Button buttonLeft = (Button) dialog.findViewById(R.id.button_left);
+        RippleView rippleLeft = dialog.findViewById(R.id.ripple_left);
+        Button buttonLeft = dialog.findViewById(R.id.button_left);
 
         textDialogTitle.setTypeface(Utils.typefaceSemiBold(this));
         textFromContact.setTypeface(Utils.typefaceRegular(this));
@@ -3594,7 +3610,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
 
         }
-        intent.putExtra(AppConstants.EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE, profileActivityCallInstance);
+        intent.putExtra(AppConstants.EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE,
+                profileActivityCallInstance);
         intent.putExtra(AppConstants.EXTRA_CHECK_NUMBER_FAVOURITE, checkNumberFavourite);
         intent.putExtra(AppConstants.EXTRA_CONTACT_POSITION, listClickedPosition);
         intent.putExtra(AppConstants.EXTRA_CALL_UNIQUE_ID, hashMapKey);
