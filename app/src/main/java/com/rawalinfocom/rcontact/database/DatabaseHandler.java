@@ -86,6 +86,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         // create new tables
         onCreate(db);
+    }
 
     public void clearAllData() {
 
