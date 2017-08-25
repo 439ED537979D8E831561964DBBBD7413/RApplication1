@@ -35,6 +35,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -470,6 +472,16 @@ public class Utils {
         }
     }
 
+    public static SpannableStringBuilder setMultipleTypeface(Context context, CharSequence
+            charSequence, int startPosition, int midPosition, int endPosition) {
+        SpannableStringBuilder builder = new SpannableStringBuilder(charSequence);
+        builder.setSpan(new CustomTypefaceSpan("", typefaceRegular(context)), startPosition,
+                midPosition, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+        builder.setSpan(new CustomTypefaceSpan("", typefaceIcons(context)), midPosition,
+                endPosition, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+        return builder;
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="Image Conversion">
@@ -794,7 +806,6 @@ public class Utils {
             return "";
         }
     }
-
 
 
     public static boolean isLastItemDisplaying(RecyclerView recyclerView) {

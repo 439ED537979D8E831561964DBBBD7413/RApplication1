@@ -3567,9 +3567,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     private void openCallLogHistoryDetailsActivity() {
         Intent intent = new Intent(ProfileDetailActivity.this, CallHistoryDetailsActivity.class);
-        if (!StringUtils.isEmpty(historyNumber))
+        if (!StringUtils.isEmpty(historyNumber)) {
+            historyNumber = historyNumber.replace(" ", "").replace("-", "");
             intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, historyNumber);
-        else {
+        } else {
             if (intent.hasExtra(AppConstants.EXTRA_FROM_NOTI_PROFILE)) {
                 if (intent.getBooleanExtra(AppConstants.EXTRA_FROM_NOTI_PROFILE, false)) {
                     if (tempPhoneNumber != null) {

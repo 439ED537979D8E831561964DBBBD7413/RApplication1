@@ -2437,8 +2437,11 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     ProfileDataOperationPhoneNumber phoneNumber = (ProfileDataOperationPhoneNumber)
                             detailObject;
                     if (position == 0) {
-                        inputValue.setText(String.format("%s %s", phoneNumber.getPhoneNumber(),
-                                getString(R.string.im_icon_verify)));
+                        inputValue.setText(Utils.setMultipleTypeface(EditProfileActivity.this,
+                                phoneNumber.getPhoneNumber() + " " + getString(R.string
+                                        .im_icon_verify), 0, (StringUtils.length(phoneNumber
+                                        .getPhoneNumber()) + 1), ((StringUtils.length(phoneNumber
+                                        .getPhoneNumber()) + 1) + 1)));
                     } else {
                         inputValue.setText(phoneNumber.getPhoneNumber());
                     }
@@ -2483,8 +2486,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         inputValue.setEnabled(false);
                         spinnerType.setEnabled(false);
                         imageViewDelete.setVisibility(View.INVISIBLE);
-                        inputValue.setText(String.format("%s %s", email.getEmEmailId(),
-                                getString(R.string.im_icon_verify)));
+                       /* inputValue.setText(String.format("%s %s", email.getEmEmailId(),
+                                getString(R.string.im_icon_verify)));*/
+                        inputValue.setText(Utils.setMultipleTypeface(EditProfileActivity.this,
+                                email.getEmEmailId() + " " + getString(R.string.im_icon_verify),
+                                0, (StringUtils.length(email.getEmEmailId()) + 1), ((StringUtils
+                                        .length(email.getEmEmailId()) + 1) + 1)));
                     } else {
                         inputValue.setText(email.getEmEmailId());
                     }
