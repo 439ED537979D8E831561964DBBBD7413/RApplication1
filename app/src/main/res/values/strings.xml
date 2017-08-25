@@ -407,6 +407,7 @@
     <string name="str_unread_notification_hint_1">You have</string>
     <string name="str_unread_notification_hint_2">unread notification</string>
     <string name="str_unread_notification_hint_3">You have no unread Notifications</string>
+    <string name="str_comment_reply">Your comment sent successfully</string>
     <string name="str_rating_comment_hint_1">%1$s replied you for your Rating</string>
     <string name="str_rating_comment_hint_2">You Rated %1$s</string>
     <string name="str_rating_comment_hint_3">%1$s Rated You</string>

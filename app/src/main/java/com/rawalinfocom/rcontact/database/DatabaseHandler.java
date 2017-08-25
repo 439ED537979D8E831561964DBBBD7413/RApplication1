@@ -87,5 +87,33 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // create new tables
         onCreate(db);
 
+    public void clearAllData() {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        try {
+
+            db.execSQL("delete from " + TableCountryMaster.TABLE_RC_COUNTRY_MASTER);
+            db.execSQL("delete from " + TableProfileMaster.TABLE_RC_PROFILE_MASTER);
+            db.execSQL("delete from " + TableEmailMaster.TABLE_RC_EMAIL_MASTER);
+            db.execSQL("delete from " + TableMobileMaster.TABLE_RC_MOBILE_NUMBER_MASTER);
+            db.execSQL("delete from " + TableProfileMobileMapping.TABLE_PB_PROFILE_MOBILE_MAPPING);
+            db.execSQL("delete from " + TableProfileEmailMapping.TABLE_PB_PROFILE_EMAIL_MAPPING);
+            db.execSQL("delete from " + TableAddressMaster.TABLE_RC_ADDRESS_MASTER);
+            db.execSQL("delete from " + TableEventMaster.TABLE_RC_EVENT_MASTER);
+            db.execSQL("delete from " + TableFlagMaster.TABLE_RC_FLAG_MASTER);
+            db.execSQL("delete from " + TableImMaster.TABLE_RC_IM_MASTER);
+            db.execSQL("delete from " + TableOfflineBackupMaster.TABLE_PB_OFFLINE_BACKUP_MASTER);
+            db.execSQL("delete from " + TableOrganizationMaster.TABLE_RC_ORGANIZATION_MASTER);
+            db.execSQL("delete from " + TableRelationMaster.TABLE_RC_RELATION_MASTER);
+            db.execSQL("delete from " + TableWebsiteMaster.TABLE_RC_WEBSITE_MASTER);
+            db.execSQL("delete from " + TableCommentMaster.TABLE_RC_COMMENT_MASTER);
+            db.execSQL("delete from " + TableRCNotificationUpdates.TABLE_RC_NOTIFICATION_UPDATES);
+            db.execSQL("delete from " + TableRCContactRequest.TABLE_RC_CONTACT_ACCESS_REQUEST);
+            db.execSQL("delete from " + TableNotificationStateMaster.TABLE_NOTIFICATION_STATE_MASTER);
+            db.execSQL("delete from " + TableSpamDetailMaster.TABLE_SPAM_DETAIL_MASTER);
+        } catch (Exception e) {
+            System.out.println("RContacts table clear error");
+        }
     }
 }

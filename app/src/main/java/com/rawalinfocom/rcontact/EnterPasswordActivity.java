@@ -110,6 +110,13 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
         textSignInUpDiffAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                Utils.clearData(EnterPasswordActivity.this);
+                getDatabaseHandler().clearAllData();
+
+                Utils.setIntegerPreference(EnterPasswordActivity.this, AppConstants
+                        .PREF_LAUNCH_SCREEN_INT, IntegerConstants.LAUNCH_MOBILE_REGISTRATION);
+
                 Intent intent = new Intent(EnterPasswordActivity.this, MobileNumberRegistrationActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
