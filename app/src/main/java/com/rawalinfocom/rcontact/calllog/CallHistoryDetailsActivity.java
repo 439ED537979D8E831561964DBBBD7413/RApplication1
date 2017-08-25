@@ -249,7 +249,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 isCallLogRcpUser = intent.getBooleanExtra(AppConstants.EXTRA_IS_RCP_USER, false);
             }
 
-            if (isRcpVerifiedUser.equalsIgnoreCase("0") || isRcpVerifiedUser.equalsIgnoreCase("1")) {
+            if (isRcpVerifiedUser.equalsIgnoreCase("0") || isRcpVerifiedUser.equalsIgnoreCase
+                    ("1")) {
                 rippleInvite.setVisibility(View.GONE);
                 linearBasicDetailRating.setVisibility(View.GONE);
             } else {
@@ -259,7 +260,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 } else {
 
                     Utils.setRoundedCornerBackground(buttonInvite, ContextCompat.getColor
-                            (CallHistoryDetailsActivity.this, R.color.colorAccent), 5, 0, ContextCompat.getColor
+                            (CallHistoryDetailsActivity.this, R.color.colorAccent), 5, 0,
+                            ContextCompat.getColor
                             (CallHistoryDetailsActivity.this, R.color.colorAccent));
 
                     rippleInvite.setVisibility(View.VISIBLE);
@@ -312,7 +314,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
             if (intent.hasExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME)) {
                 cloudContactName = intent.getStringExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME);
-                if(!StringUtils.isEmpty(cloudContactName)){
+                if (!StringUtils.isEmpty(cloudContactName)) {
                     rippleInvite.setVisibility(View.GONE);
                     linearBasicDetailRating.setVisibility(View.VISIBLE);
                 }
@@ -362,7 +364,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
             try {
                 Intent intent = getIntent();
                 if (intent.hasExtra(AppConstants.EXTRA_DIALOG_CALL_LOG_INSTANCE)) {
-                    isCallLogInstance = intent.getBooleanExtra(AppConstants.EXTRA_DIALOG_CALL_LOG_INSTANCE, false);
+                    isCallLogInstance = intent.getBooleanExtra(AppConstants
+                            .EXTRA_DIALOG_CALL_LOG_INSTANCE, false);
                 }
 
                 if (isCallLogRcpUser)
@@ -376,7 +379,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                     }
 
                 if (isCallLogInstance) {
-                    if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase("[Unknown]")) {
+                    if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase
+                            ("[Unknown]")) {
                         fetchAllCallLogHistory(contactName);
                     } else if (!TextUtils.isEmpty(profileContactNumber)) {
                         fetchAllCallLogHistory(profileContactNumber);
@@ -390,7 +394,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                     if (!StringUtils.isEmpty(historyNumber)) {
                         fetchAllCallLogHistory(historyNumber);
                     } else {
-                        if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase("[Unknown]")) {
+                        if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase
+                                ("[Unknown]")) {
                             fetchAllCallLogHistory(contactName);
                         } else {
                             if (!TextUtils.isEmpty(profileContactNumber)) {
@@ -568,8 +573,10 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                                 number = "+" + number;
                             callLogType.setHistoryNumber(number);
                             callLogType.setHistoryNumberType(callLogType.getNumberType());
-                            callLogType.setHistoryDate(Long.parseLong(callLogType.getCallDateAndTime()));
-                            callLogType.setHistoryType(Integer.parseInt(callLogType.getTypeOfCall()));
+                            callLogType.setHistoryDate(Long.parseLong(callLogType
+                                    .getCallDateAndTime()));
+                            callLogType.setHistoryType(Integer.parseInt(callLogType.getTypeOfCall
+                                    ()));
                             callLogType.setWebDuration(callLogType.getDurationToPass());
                             listToAppend.add(callLogType);
                         }
@@ -702,7 +709,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                             }
 
                         } else {
-                            profileContactNumber = Utils.getFormattedNumber(CallHistoryDetailsActivity.this, profileContactNumber);
+                            profileContactNumber = Utils.getFormattedNumber
+                                    (CallHistoryDetailsActivity.this, profileContactNumber);
                             Utils.callIntent(CallHistoryDetailsActivity.this, profileContactNumber);
 //                                    showCallConfirmationDialog(profileContactNumber);
                         }
@@ -757,8 +765,10 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 //                                    callConfirmationListDialog.showDialog();
 //
 //                                } else {
-//                                    profileContactNumber = Utils.getFormattedNumber(CallHistoryDetailsActivity.this, profileContactNumber);
-//                                    Utils.callIntent(CallHistoryDetailsActivity.this, profileContactNumber);
+//                                    profileContactNumber = Utils.getFormattedNumber
+// (CallHistoryDetailsActivity.this, profileContactNumber);
+//                                    Utils.callIntent(CallHistoryDetailsActivity.this,
+// profileContactNumber);
 ////                                    showCallConfirmationDialog(profileContactNumber);
 //                                }
 //                            }
@@ -806,8 +816,10 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 //                                callConfirmationListDialog.showDialog();
 //
 //                            } else {
-//                                profileContactNumber = Utils.getFormattedNumber(CallHistoryDetailsActivity.this, profileContactNumber);
-//                                Utils.callIntent(CallHistoryDetailsActivity.this, profileContactNumber);
+//                                profileContactNumber = Utils.getFormattedNumber
+// (CallHistoryDetailsActivity.this, profileContactNumber);
+//                                Utils.callIntent(CallHistoryDetailsActivity.this,
+// profileContactNumber);
 ////                                showCallConfirmationDialog(profileContactNumber);
 //                            }
 //                        }
@@ -838,9 +850,12 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 if (StringUtils.equals(imageRightCenter.getTag().toString(), TAG_IMAGE_CALL)) {
                     if (tempPhoneNumber == null) {
                         if (!StringUtils.isEmpty(historyNumber)) {
-                            if (historyNumber.matches("[+][0-9]+") || historyNumber.matches("[0-9]+")) {
-                                profileContactNumber = Utils.getFormattedNumber(CallHistoryDetailsActivity.this, historyNumber);
-                                Utils.callIntent(CallHistoryDetailsActivity.this, profileContactNumber);
+                            if (historyNumber.matches("[+][0-9]+") || historyNumber.matches
+                                    ("[0-9]+")) {
+                                profileContactNumber = Utils.getFormattedNumber
+                                        (CallHistoryDetailsActivity.this, historyNumber);
+                                Utils.callIntent(CallHistoryDetailsActivity.this,
+                                        profileContactNumber);
 //                                showCallConfirmationDialog(historyNumber);
                             }
                         }
@@ -851,7 +866,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                             if (count > 1) {
                                 for (int i = 0; i < tempPhoneNumber.size(); i++) {
                                     ProfileDataOperationPhoneNumber phoneNumber =
-                                            (ProfileDataOperationPhoneNumber) tempPhoneNumber.get(i);
+                                            (ProfileDataOperationPhoneNumber) tempPhoneNumber.get
+                                                    (i);
                                     String number = phoneNumber.getPhoneNumber();
 
                                     if (!number.startsWith("+XX")) {
@@ -866,8 +882,10 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                                 callConfirmationListDialog.showDialog();
 
                             } else {
-                                profileContactNumber = Utils.getFormattedNumber(CallHistoryDetailsActivity.this, profileContactNumber);
-                                Utils.callIntent(CallHistoryDetailsActivity.this, profileContactNumber);
+                                profileContactNumber = Utils.getFormattedNumber
+                                        (CallHistoryDetailsActivity.this, profileContactNumber);
+                                Utils.callIntent(CallHistoryDetailsActivity.this,
+                                        profileContactNumber);
 //                                showCallConfirmationDialog(profileContactNumber);
                             }
                         }
@@ -987,7 +1005,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                     }
                 } else {
 
-                    if (isRcpVerifiedUser.equalsIgnoreCase("0") || isRcpVerifiedUser.equalsIgnoreCase("1")) {
+                    if (isRcpVerifiedUser.equalsIgnoreCase("0") || isRcpVerifiedUser
+                            .equalsIgnoreCase("1")) {
                         if (!TextUtils.isEmpty(historyNumber)) {
                             ArrayList<String> arrayListNumber = new ArrayList<>(Arrays.asList
                                     (this.getString(R.string.add_to_contact),
@@ -1023,7 +1042,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                                     this.getString(R.string.clear_call_log)));
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                     arrayListName, number, 0, isFromCallLogTab,
-                                    arrayListHistory, contactName, "", phoneBookId, profileThumbnail,
+                                    arrayListHistory, contactName, "", phoneBookId,
+                                    profileThumbnail,
                                     pmId, isCallLogRcpUser, "", cloudContactName);
                             profileMenuOptionDialog.showDialog();
 
@@ -1031,12 +1051,14 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                             if (!TextUtils.isEmpty(profileContactNumber)) {
                                 ArrayList<String> arrayListNumber = new ArrayList<>(Arrays.asList
                                         (this.getString(R.string.add_to_contact),
-                                                this.getString(R.string.add_to_existing_contact), this
+                                                this.getString(R.string.add_to_existing_contact),
+                                                this
                                                         .getString(R.string.view_profile),
                                                 this.getString(R.string.copy_phone_number),
                                     /*this.getString(R.string.call_reminder), this.getString(R
                                     .string.block),*/
-                                                this.getString(R.string.delete), this.getString(R.string
+                                                this.getString(R.string.delete), this.getString(R
+                                                        .string
                                                         .clear_call_log)));
                                 profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                         arrayListNumber, profileContactNumber, 0, isFromCallLogTab,
@@ -2103,7 +2125,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
 //    private void showCallConfirmationDialog(final String number) {
 //
-//        final String finalNumber = Utils.getFormattedNumber(CallHistoryDetailsActivity.this, number);
+//        final String finalNumber = Utils.getFormattedNumber(CallHistoryDetailsActivity.this,
+// number);
 //
 //       /* if (!number.startsWith("+91")) {
 //            finalNumber = "+91" + number;
@@ -2273,7 +2296,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         Pattern numberPat = Pattern.compile("\\d+");
         Matcher matcher1 = numberPat.matcher(number);
         if (matcher1.find()) {
-            cursor = getCallHistoryDataByNumber(number);
+            cursor = getCallHistoryDataByNumber(Utils.getFormattedNumber(this, number));
         } else {
             cursor = getCallHistoryDataByName(number);
             if (cursor != null && cursor.getCount() == 0) {
@@ -2386,9 +2409,11 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         String contactName = "";
         try {
 
-            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
+            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri
+                    .encode(phoneNumber));
 
-            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME, ContactsContract.PhoneLookup.LOOKUP_KEY};
+            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME,
+                    ContactsContract.PhoneLookup.LOOKUP_KEY};
             Cursor cursor = this.getContentResolver().query(uri, projection, null, null, null);
 
             if (cursor != null) {

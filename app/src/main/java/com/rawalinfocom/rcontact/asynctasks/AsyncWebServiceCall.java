@@ -11,8 +11,6 @@ import android.util.Log;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
-import com.rawalinfocom.rcontact.model.WsResponseObject;
-import com.rawalinfocom.rcontact.receivers.PhoneCallReceiver;
 import com.rawalinfocom.rcontact.webservice.RequestWs;
 
 import org.apache.commons.lang3.StringUtils;
@@ -51,8 +49,8 @@ public class AsyncWebServiceCall extends AsyncTask<String, Void, Object> {
         this.activity = activity;
         this.requestObject = requestObject;
         if (requestObject != null && StringUtils.isEmpty(requestObject.getDeviceId())) {
-            this.requestObject.setDeviceId(Settings.Secure.getString(activity.getContentResolver(), Settings
-                    .Secure.ANDROID_ID));
+            this.requestObject.setDeviceId(Settings.Secure.getString(activity.getContentResolver
+                    (), Settings.Secure.ANDROID_ID));
         }
         this.serviceType = serviceType;
         this.progressDialogMessage = progressDialogMessage;
@@ -73,8 +71,8 @@ public class AsyncWebServiceCall extends AsyncTask<String, Void, Object> {
         this.activity = fragment.getActivity();
         this.requestObject = requestObject;
         if (requestObject != null && StringUtils.isEmpty(requestObject.getDeviceId())) {
-            this.requestObject.setDeviceId(Settings.Secure.getString(activity.getContentResolver(), Settings
-                    .Secure.ANDROID_ID));
+            this.requestObject.setDeviceId(Settings.Secure.getString(activity.getContentResolver
+                    (), Settings.Secure.ANDROID_ID));
         }
         this.serviceType = serviceType;
         this.progressDialogMessage = progressDialogMessage;
@@ -95,8 +93,8 @@ public class AsyncWebServiceCall extends AsyncTask<String, Void, Object> {
         this.context = context;
         this.requestObject = requestObject;
         if (requestObject != null && StringUtils.isEmpty(requestObject.getDeviceId())) {
-            this.requestObject.setDeviceId(Settings.Secure.getString(context.getContentResolver(), Settings
-                    .Secure.ANDROID_ID));
+            this.requestObject.setDeviceId(Settings.Secure.getString(context.getContentResolver()
+                    , Settings.Secure.ANDROID_ID));
         }
         this.serviceType = serviceType;
         this.progressDialogMessage = progressDialogMessage;
@@ -122,12 +120,12 @@ public class AsyncWebServiceCall extends AsyncTask<String, Void, Object> {
     protected Object doInBackground(String... params) {
         try {
             if (activity != null) {
-                return new RequestWs().getPostRequest(activity, params[0], requestType, requestObject,
-                        responseClass, contentValues, setHeader);
+                return new RequestWs().getPostRequest(activity, params[0], requestType,
+                        requestObject, responseClass, contentValues, setHeader);
             } else {
-                return new com.rawalinfocom.rcontact.webservicedialog.RequestWs().getPostRequest(
-                        context, params[0], requestType, requestObject,
-                        responseClass, contentValues, setHeader);
+                return new com.rawalinfocom.rcontact.webservicedialog.RequestWs().getPostRequest
+                        (context, params[0], requestType, requestObject, responseClass,
+                                contentValues, setHeader);
             }
 
         } catch (Exception e) {

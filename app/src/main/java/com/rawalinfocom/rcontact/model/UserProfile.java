@@ -27,11 +27,12 @@ public class UserProfile implements Serializable {
     private String pmGender;
     private String pmGenderPrivacy;
     private String pmIsFavourite;
+    private String pmBadge;
     private String pmNosqlMasterId;
 
     private String emailId;
     private String mobileNumber;
-//    private String strEmailMobile;
+    //    private String strEmailMobile;
     private String profileRating;
     private String totalProfileRateUser;
     private String pmJoiningDate;
@@ -288,5 +289,13 @@ public class UserProfile implements Serializable {
 
     public void setPmJoiningDate(String pmJoiningDate) {
         this.pmJoiningDate = pmJoiningDate;
+    }
+
+    public String getPmBadge() {
+        return pmBadge;
+    }
+
+    public void setPmBadge(String pmBadge) {
+        this.pmBadge = pmBadge;
     }
 }

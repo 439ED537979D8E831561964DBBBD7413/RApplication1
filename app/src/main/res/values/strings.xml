@@ -23,6 +23,7 @@
     <string name="action_call">Call</string>
     <string name="action_delete">Delete</string>
     <string name="str_comment">Comment</string>
+    <string name="hint_comment">Wanna say something?</string>
     <string name="str_choose_from_contacts">Choose from Contacts</string>
     <string name="str_select_social_media">Select Social Media</string>
     <string name="str_select_all">Select all</string>
@@ -224,8 +225,8 @@
     <string name="add_field">+ ADD FIELD</string>
     <string name="update">UPDATE</string>
     <string name="cancel">CANCEL</string>
-    <string name="hint_organization_name">Organization name</string>
-    <string name="hint_organization_designation">Organization designation</string>
+    <string name="hint_organization_name">Name</string>
+    <string name="hint_organization_designation">Designation</string>
     <string name="check_text_current_organization">I Currently Work Here</string>
     <string name="hint_registered_number">Registered Number</string>
     <string name="hint_optional_number">Optional Number</string>
@@ -554,9 +555,9 @@
     <string name="tutorial_header_3">Global Search</string>
     <string name="tutorial_header_4">Spammers Banned</string>
     <string name="tutorial_header_5">Get Rated</string>
-    <string name="tutorial_content_1"><![CDATA[A Contact is not just a number but a profile consisting of Auto-Synced data & Social Info!]]></string>
-    <string name="tutorial_content_2">Manage Call Logs from a single icon! RContacts serves you with both in one platter.</string>
-    <string name="tutorial_content_3">Just place this EARTH on your homescreen and search for any number that belongs to it.</string>
+    <string name="tutorial_content_1"><![CDATA[A Contact is not just a number but a profile consisting of Bi-Color Auto-Synced data]]></string>
+    <string name="tutorial_content_2">Manage Call Logs and send SMS from a single icon! RContacts serves you with both in one platter</string>
+    <string name="tutorial_content_3">Just place this EARTH on your home screen and search for any number that belongs to it</string>
     <string name="tutorial_content_4">RContacts like a Special Agent will alert and rescue you of the numbers marked as Spam</string>
     <string name="tutorial_content_5">Earn reputation stars and get yourself authenticated in the world of Contacts</string>
     <string name="tutorial_and">And?</string>

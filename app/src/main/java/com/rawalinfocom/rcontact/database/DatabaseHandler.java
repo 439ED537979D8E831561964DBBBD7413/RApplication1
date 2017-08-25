@@ -14,7 +14,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     // All Static variables
     // Database Version
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     // Database Name
     public static final String DATABASE_NAME = "RContact.db";
@@ -55,48 +55,37 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-//        System.out.println("RContact db version --> " + oldVersion  +  " --" + newVersion);
-
         // on upgrade drop older tables
-        if (newVersion > oldVersion) {
-            /*db.execSQL("DROP TABLE IF EXISTS " + TableCountryMaster.TABLE_RC_COUNTRY_MASTER);
-            db.execSQL("DROP TABLE IF EXISTS " + TableOtpLogDetails.TABLE_RC_OTP_LOG_DETAILS);
-            db.execSQL("DROP TABLE IF EXISTS " + TableProfileMaster.TABLE_RC_PROFILE_MASTER);
-            db.execSQL("DROP TABLE IF EXISTS " + TableEmailMaster.TABLE_RC_EMAIL_MASTER);
-            db.execSQL("DROP TABLE IF EXISTS " + TableMobileMaster
-                    .TABLE_RC_MOBILE_NUMBER_MASTER);
-            db.execSQL("DROP TABLE IF EXISTS " + TableProfileMobileMapping
-                    .TABLE_PB_PROFILE_MOBILE_MAPPING);
-            db.execSQL("DROP TABLE IF EXISTS " + TableProfileEmailMapping
-                    .TABLE_PB_PROFILE_EMAIL_MAPPING);
-            db.execSQL("DROP TABLE IF EXISTS " + TableAddressMaster.TABLE_RC_ADDRESS_MASTER);
-            db.execSQL("DROP TABLE IF EXISTS " + TableEventMaster.TABLE_RC_EVENT_MASTER);
-            db.execSQL("DROP TABLE IF EXISTS " + TableFlagMaster.TABLE_RC_FLAG_MASTER);
-            db.execSQL("DROP TABLE IF EXISTS " + TableImMaster.TABLE_RC_IM_MASTER);
-            db.execSQL("DROP TABLE IF EXISTS " + TableOfflineBackupMaster
-                    .TABLE_PB_OFFLINE_BACKUP_MASTER);
-            db.execSQL("DROP TABLE IF EXISTS " + TableOrganizationMaster
-                    .TABLE_RC_ORGANIZATION_MASTER);
-            db.execSQL("DROP TABLE IF EXISTS " + TableRelationMaster.TABLE_RC_RELATION_MASTER);
-        db.execSQL("DROP TABLE IF EXISTS " + TableContactRatingMaster
-                .CREATE_TABLE_RC_CONTACT_RATING_MASTER);
-            db.execSQL("DROP TABLE IF EXISTS " + TableCommentMaster.TABLE_RC_COMMENT_MASTER);
-            db.execSQL("DROP TABLE IF EXISTS " + TableRCNotificationUpdates.TABLE_RC_NOTIFICATION_UPDATES);
-            db.execSQL("DROP TABLE IF EXISTS " + TableRCContactRequest.TABLE_RC_CONTACT_ACCESS_REQUEST);
-            db.execSQL("DROP TABLE IF EXISTS " + TableNotificationStateMaster.TABLE_NOTIFICATION_STATE_MASTER);
-            db.execSQL("DROP TABLE IF EXISTS " + TableSpamDetailMaster.TABLE_SPAM_DETAIL_MASTER);*/
+        /*if(newVersion > oldVersion){
 
             db.execSQL("ALTER TABLE " + TableRCContactRequest.TABLE_RC_CONTACT_ACCESS_REQUEST +
-                    " ADD COLUMN " + TableRCContactRequest.COLUMN_CAR_IMG + " text ");
+                    " ADD COLUMN " +  TableRCContactRequest.COLUMN_CAR_IMG  + " text ") ;
 
             db.execSQL("ALTER TABLE " + TableRCContactRequest.TABLE_RC_CONTACT_ACCESS_REQUEST +
-                    " ADD COLUMN " + TableRCContactRequest.COLUMN_CAR_PROFILE_DETAILS + " text ");
-
-//            System.out.println("RContact db drop --> ");
+                    " ADD COLUMN " +  TableRCContactRequest.COLUMN_CAR_PROFILE_DETAILS  + " text
+                    ") ;
 
             // create new tables
             onCreate(db);
+        }*/
+
+        switch (oldVersion) {
+            case 1:
+                // For version 2
+                db.execSQL("ALTER TABLE " + TableRCContactRequest.TABLE_RC_CONTACT_ACCESS_REQUEST +
+                        " ADD COLUMN " + TableRCContactRequest.COLUMN_CAR_IMG + " text ");
+
+                db.execSQL("ALTER TABLE " + TableRCContactRequest.TABLE_RC_CONTACT_ACCESS_REQUEST
+                        + " ADD COLUMN " + TableRCContactRequest.COLUMN_CAR_PROFILE_DETAILS + " " +
+                        "text ");
+            case 2:
+                // For version 3
+                db.execSQL("ALTER TABLE " + TableProfileMaster.TABLE_RC_PROFILE_MASTER + " ADD "
+                        + "COLUMN " + TableProfileMaster.COLUMN_PM_BADGE + " text ");
         }
+
+        // create new tables
+        onCreate(db);
     }
 
     public void clearAllData() {
