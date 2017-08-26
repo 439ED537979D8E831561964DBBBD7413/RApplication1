@@ -122,7 +122,7 @@ public class TableProfileMaster {
         values.put(COLUMN_PM_PROFILE_RATE_USER, userProfile.getTotalProfileRateUser());
         values.put(COLUMN_PM_IS_FAVOURITE, userProfile.getPmIsFavourite());
         values.put(COLUMN_PM_NOSQL_MASTER_ID, userProfile.getPmNosqlMasterId());
-        values.put(COLUMN_PM_BADGE, userProfile.getPmNosqlMasterId());
+        values.put(COLUMN_PM_BADGE, userProfile.getPmBadge());
         values.put(COLUMN_PM_JOINING_DATE, userProfile.getPmJoiningDate());
 
         int count = 0;

@@ -53,6 +53,7 @@ public class ProfileDataOperation implements Serializable {
     private String totalProfileRateUser;
     private String pbGender;
     private String pbProfilePhoto;
+    private String pmBadge;
 
     private String lookupKey;
     private long id;
@@ -347,7 +348,7 @@ public class ProfileDataOperation implements Serializable {
 
     @JsonProperty("total_profile_rate_user")
     public String getTotalProfileRateUser() {
-        return StringUtils.defaultString(totalProfileRateUser,"0");
+        return StringUtils.defaultString(totalProfileRateUser, "0");
     }
 
     public void setTotalProfileRateUser(String totalProfileRateUser) {
@@ -397,6 +398,15 @@ public class ProfileDataOperation implements Serializable {
 
     public void setCallLogId(String callLogId) {
         this.callLogId = callLogId;
+    }
+
+    @JsonProperty("pm_badge")
+    public String getPmBadge() {
+        return pmBadge;
+    }
+
+    public void setPmBadge(String pmBadge) {
+        this.pmBadge = pmBadge;
     }
 
     @JsonIgnore
