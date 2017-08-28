@@ -60,8 +60,8 @@ public class WsConstants {
     /*
      * FAQ URL
      */
-    public static final String URL_FAQ = "https://www.rcontacts.in/global/faqs";
-//    public static final String URL_FAQ = "http://webqa.rcontacts.in/global/faqs";
+//    public static final String URL_FAQ = "https://www.rcontacts.in/global/faqs";
+    public static final String URL_FAQ = "http://webqa.rcontacts.in/global/faqs";
 //    public static final String URL_FAQ = "http://webstaging.rcontacts.in/global/faqs";
 
     /**
@@ -72,13 +72,13 @@ public class WsConstants {
 //    public static final String WS_PROFILE_VIEW_ROOT = "http://web.rcontacts.in/global/public/";
 
     // QA Server
-//    public static final String WS_PROFILE_VIEW_ROOT = "http://webqa.rcontacts.in/global/public/";
+    public static final String WS_PROFILE_VIEW_ROOT = "http://webqa.rcontacts.in/global/public/";
 
     // Staging Env
 //    public static final String WS_PROFILE_VIEW_ROOT = "http://webstaging.rcontacts.in/global/public/";
 
     // Production Env
-    public static final String WS_PROFILE_VIEW_ROOT = "https://www.rcontacts.in/global/public/";
+//    public static final String WS_PROFILE_VIEW_ROOT = "https://www.rcontacts.in/global/public/";
 
     /*
      * WEBSITE URL
