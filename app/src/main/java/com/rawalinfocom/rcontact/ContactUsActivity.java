@@ -37,7 +37,6 @@ import com.rawalinfocom.rcontact.contacts.EditProfileActivity;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
-import com.rawalinfocom.rcontact.helper.finestwebview.FinestWebView;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;

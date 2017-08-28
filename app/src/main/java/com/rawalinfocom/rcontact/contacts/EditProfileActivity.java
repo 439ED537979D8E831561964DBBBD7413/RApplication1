@@ -13,17 +13,20 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,6 +44,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.common.base.MoreObjects;
@@ -63,6 +67,8 @@ import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
+import com.rawalinfocom.rcontact.helper.imgcrop.CropImage;
+import com.rawalinfocom.rcontact.helper.imgcrop.CropImageView;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.Address;
 import com.rawalinfocom.rcontact.model.Email;
@@ -86,6 +92,7 @@ import com.rawalinfocom.rcontact.model.WsResponseObject;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -97,8 +104,10 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -356,93 +365,72 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         init();
     }
 
-    @SuppressLint("SetTextI18n")
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CAMERA_CAPTURE_IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+    @SuppressLint("NewApi")
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-            selectedBitmap = BitmapFactory.decodeFile(fileUri.getPath());
+        // handle result of pick image chooser
+        if (requestCode == CAMERA_CAPTURE_IMAGE_REQUEST_CODE && resultCode == RESULT_OK) {
 
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inSampleSize = 2; //4, 8, etc. the more value, the worst quality of image
-            try {
-                selectedBitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream
-                        (fileUri), null, options);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
+            // For API >= 23 we need to check specifically that we have permissions to read external storage.
+            if (CropImage.isReadExternalStoragePermissionsRequired(EditProfileActivity.this, fileUri)) {
+                // request permissions and handle the result in onRequestPermissionsResult()
+                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 3);
+            } else {
+                // no permissions required or already grunted, can start crop image activity
+                startCropImageActivity(fileUri);
             }
+        }
 
-            Glide.with(this)
-                    .load(fileUri)
-                    .bitmapTransform(new CropCircleTransformation(EditProfileActivity.this))
-                    .override(512, 512)
-                    .into(imageProfile);
+        if (requestCode == GALLERY_IMAGE_REQUEST_CODE && resultCode == RESULT_OK) {
 
-            if (selectedBitmap != null) {
-                String bitmapString = Utils.convertBitmapToBase64(selectedBitmap, fileUri.getPath
-                        ());
-                ProfileDataOperation profileDataOperation = new ProfileDataOperation();
-                profileDataOperation.setPbProfilePhoto(bitmapString);
-                editProfile(profileDataOperation, AppConstants.PROFILE_IMAGE);
+            fileUri = data.getData();
+
+            // For API >= 23 we need to check specifically that we have permissions to read external storage.
+            if (CropImage.isReadExternalStoragePermissionsRequired(EditProfileActivity.this, fileUri)) {
+                // request permissions and handle the result in onRequestPermissionsResult()
+                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 3);
+            } else {
+                // no permissions required or already grunted, can start crop image activity
+                startCropImageActivity(fileUri);
             }
+        }
 
+        // handle result of CropImageActivity
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
 
-        } else if (requestCode == GALLERY_IMAGE_REQUEST_CODE) {
-            if (resultCode != Activity.RESULT_OK)
-                return;
+                File file = new File(getRealPathFromURI(result.getUri()));
+                Bitmap bitmap = Utils.decodeFile(file, 512, 512);
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-            if (null == data)
-                return;
-            Uri selectedImage = data.getData();
-            String[] filePath = {MediaStore.Images.Media.DATA};
-            Cursor c = getContentResolver().query(selectedImage, filePath, null, null, null);
-            String picturePath = "";
-            if (c != null) {
-                c.moveToFirst();
-                int columnIndex = c.getColumnIndex(filePath[0]);
-                picturePath = c.getString(columnIndex);
-                c.close();
-            }
-
-            try {
-                InputStream inputStream = getContentResolver().openInputStream(data.getData());
-                FileOutputStream fileOutputStream = new FileOutputStream(mFileTemp);
-                if (inputStream != null) {
-                    copyStream(inputStream, fileOutputStream);
-                    inputStream.close();
-                }
-                fileOutputStream.close();
-
-                selectedBitmap = BitmapFactory.decodeFile(picturePath);
+//                selectedBitmap = BitmapFactory.decodeFile(fileUri.getPath());
 
                 Glide.with(this)
-                        .load(mFileTemp)
+                        .load(Uri.fromFile(file))
                         .bitmapTransform(new CropCircleTransformation(EditProfileActivity.this))
                         .override(512, 512)
                         .into(imageProfile);
 
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inSampleSize = 2; //4, 8, etc. the more value, the worst quality of image
-                try {
-                    selectedBitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream
-                            (selectedImage), null, options);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
+                if (bitmap != null) {
 
-                if (selectedBitmap != null) {
-                    String bitmapString = Utils.convertBitmapToBase64(selectedBitmap, picturePath);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream);
+
+                    String bitmapString = Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT);
+
                     ProfileDataOperation profileDataOperation = new ProfileDataOperation();
                     profileDataOperation.setPbProfilePhoto(bitmapString);
                     editProfile(profileDataOperation, AppConstants.PROFILE_IMAGE);
                 }
 
-            } catch (Exception e) {
-                Log.e("TAG", "Error while creating temp file", e);
-            }
 
-        } else if (requestCode == AppConstants.REQUEST_CODE_MAP_LOCATION_SELECTION) {
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Toast.makeText(EditProfileActivity.this, "cropping failed: " + result.getError(), Toast.LENGTH_LONG).show();
+            }
+        }
+
+        if (requestCode == AppConstants.REQUEST_CODE_MAP_LOCATION_SELECTION) {
             if (data != null) {
 //                String locationString = data.getStringExtra(AppConstants.EXTRA_OBJECT_LOCATION);
   /*              if (data.hasExtra(AppConstants.EXTRA_OBJECT_ADDRESS_PLACE)) {
@@ -3044,10 +3032,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             textRemovePhoto.setVisibility(View.VISIBLE);
         }
 
-//        if (userProfile.getPmProfileImage().length() > 0) {
-//        } else {
-//        }
-
         buttonLeft.setText(R.string.action_cancel);
 
         rippleLeft.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
@@ -3061,16 +3045,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                if (ContextCompat.checkSelfPermission(EditProfileActivity.this,
-                        Manifest.permission.READ_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED) {
-
-                    ActivityCompat.requestPermissions(EditProfileActivity.this, new
-                            String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest
-                            .permission.READ_EXTERNAL_STORAGE}, AppConstants
-                            .MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
-
-                } else {
+                if (checkPermissionStorage()) {
                     selectImageFromGallery();
                 }
             }
@@ -3080,14 +3055,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                if (ContextCompat.checkSelfPermission(EditProfileActivity.this, Manifest
-                        .permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-
-                    ActivityCompat.requestPermissions(EditProfileActivity.this, new
-                            String[]{Manifest.permission.CAMERA}, AppConstants
-                            .MY_PERMISSIONS_REQUEST_CAMERA);
-
-                } else {
+                if (checkPermission()) {
                     selectImageFromCamera();
                 }
             }
@@ -3113,52 +3081,127 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         dialog.show();
     }
 
+    /**
+     * Start crop image activity for the given image.
+     */
+    private void startCropImageActivity(Uri imageUri) {
+        CropImage.activity(imageUri)
+                .setGuidelines(CropImageView.Guidelines.ON)
+                .setMultiTouchEnabled(true)
+                .start(EditProfileActivity.this);
+    }
+
+    private String getRealPathFromURI(Uri contentURI) {
+        String result;
+        Cursor cursor = EditProfileActivity.this.getContentResolver().query(contentURI, null, null, null, null);
+        if (cursor == null) { // Source is Dropbox or other similar local file path
+            result = contentURI.getPath();
+        } else {
+            cursor.moveToFirst();
+            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+            result = cursor.getString(idx);
+            cursor.close();
+        }
+        return result;
+    }
+
+    private boolean checkPermission() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int permissionCamera = ContextCompat.checkSelfPermission(EditProfileActivity.this,
+                    Manifest.permission.CAMERA);
+            int readPermission = ContextCompat.checkSelfPermission(EditProfileActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE);
+            int writePermission = ContextCompat.checkSelfPermission(EditProfileActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+            List<String> listPermissionsNeeded = new ArrayList<>();
+            if (permissionCamera != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(Manifest.permission.CAMERA);
+            }
+            if (readPermission != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+            }
+            if (writePermission != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            }
+
+            if (!listPermissionsNeeded.isEmpty()) {
+                ActivityCompat.requestPermissions(EditProfileActivity.this,
+                        listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), 1);
+                return false;
+            } else {
+                return true;
+            }
+        }
+        return true;
+    }
+
+    private boolean checkPermissionStorage() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int readPermission = ContextCompat.checkSelfPermission(EditProfileActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE);
+            int writePermission = ContextCompat.checkSelfPermission(EditProfileActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+            List<String> listPermissionsNeeded = new ArrayList<>();
+            if (readPermission != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+            }
+            if (writePermission != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            }
+
+            if (!listPermissionsNeeded.isEmpty()) {
+                ActivityCompat.requestPermissions(EditProfileActivity.this,
+                        listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), 2);
+                return false;
+            } else {
+                return true;
+            }
+        }
+        return true;
+    }
+
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
-            case AppConstants.MY_PERMISSIONS_REQUEST_CAMERA:
+            case 1:
 
-                if (grantResults.length > 0 && grantResults[0] == PackageManager
-                        .PERMISSION_GRANTED) {
-                    AppConstants.setIsFirstTime(false);
-                    // Permission Granted
+                Map<String, Integer> perms = new HashMap<String, Integer>();
+                // Initial
+                perms.put(Manifest.permission.CAMERA, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.READ_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+
+                // Fill with results
+                for (int i = 0; i < permissions.length; i++)
+                    perms.put(permissions[i], grantResults[i]);
+
+                boolean isCamera = perms.get(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+                boolean isStorage = perms.get(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+                boolean isStorageWrite = perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+
+                if (isCamera && isStorage && isStorageWrite)
                     selectImageFromCamera();
-                } else {
-                    // Permission Denied
-                    Utils.showErrorSnackBar(EditProfileActivity.this, relativeRootEditProfile,
-                            getString(R.string.error_camera_permission));
-                }
-
-                /*if (permissions[0].equals(Manifest.permission
-                        .CAMERA)) {
-                    selectImageFromCamera();
-                }*/
-
-                break;
-            case AppConstants.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE:
-
-                if (grantResults.length > 0 && grantResults[0] == PackageManager
-                        .PERMISSION_GRANTED && grantResults[1] == PackageManager
-                        .PERMISSION_GRANTED) {
-                    AppConstants.setIsFirstTime(false);
-                    // Permission Granted
-                    selectImageFromGallery();
-                } else {
-                    // Permission Denied
-                    Utils.showErrorSnackBar(EditProfileActivity.this, relativeRootEditProfile,
-                            getString(R.string.error_storage_permission));
-                }
-
-                /*if (permissions[0].equals(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        && permissions[1].equals(Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                    selectImageFromGallery();
-                }*/
-
+                else
+                    Toast.makeText(EditProfileActivity.this, "Please grant both permission to work camera properly!!", Toast.LENGTH_SHORT).show();
                 break;
 
+            case 2:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED)
+                    selectImageFromGallery();
+                else
+                    Toast.makeText(EditProfileActivity.this, "Storage permission denied!!", Toast.LENGTH_SHORT).show();
+                break;
+
+            case 3:
+
+                if (fileUri != null && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // required permissions granted, start crop image activity
+                    startCropImageActivity(fileUri);
+                } else {
+                    Toast.makeText(EditProfileActivity.this, "cancelling, required permissions are not granted", Toast.LENGTH_LONG).show();
+                }
+
+                break;
         }
     }
 
@@ -3330,24 +3373,31 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     }
 
     private void selectImageFromGallery() {
-        mFileTemp = getOutputMediaFile(MEDIA_TYPE_IMAGE);
 
         Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(i, GALLERY_IMAGE_REQUEST_CODE);
     }
 
     private void selectImageFromCamera() {
-        mFileTemp = getOutputMediaFile(MEDIA_TYPE_IMAGE);
+
+        File photoFile = getOutputMediaFile();
+
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
+        if (photoFile != null) {
 
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
-
-        // start the image capture Intent
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+                fileUri = Uri.fromFile(photoFile);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+            } else {
+                fileUri = FileProvider.getUriForFile(getApplicationContext(),
+                        getApplicationContext().getPackageName() + ".provider", photoFile);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+            }
+        }
         startActivityForResult(intent, CAMERA_CAPTURE_IMAGE_REQUEST_CODE);
     }
 
-    private File getOutputMediaFile(int type) {
+    private File getOutputMediaFile() {
 
         // External sdcard location
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment
@@ -3366,20 +3416,11 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format
                 (new Date());
         File mediaFile;
-        if (type == MEDIA_TYPE_IMAGE) {
 
-            TEMP_PHOTO_FILE_NAME = "IMG_" + timeStamp + ".jpg";
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator + TEMP_PHOTO_FILE_NAME);
-
-        } else {
-            return null;
-        }
+        TEMP_PHOTO_FILE_NAME = "IMG_" + timeStamp + ".jpg";
+        mediaFile = new File(mediaStorageDir.getPath() + File.separator + TEMP_PHOTO_FILE_NAME);
 
         return mediaFile;
-    }
-
-    private Uri getOutputMediaFileUri(int type) {
-        return Uri.fromFile(getOutputMediaFile(type));
     }
 
     private void copyStream(InputStream inputStream, FileOutputStream fileOutputStream) throws

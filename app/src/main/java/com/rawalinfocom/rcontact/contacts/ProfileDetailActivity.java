@@ -814,9 +814,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             null);*/
                     startActivityIntent(ProfileDetailActivity.this, EditProfileActivity.class,
                             null);
-                    /*Intent i = new Intent(ProfileDetailActivity.this, EditProfileActivity.class);
-                    startActivityForResult(i, 1);
-                    overridePendingTransition(R.anim.enter, R.anim.exit);*/
                 }
                 break;
             //</editor-fold>
