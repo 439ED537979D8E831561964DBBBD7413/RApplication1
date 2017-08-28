@@ -105,6 +105,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -426,7 +427,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
 
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                Toast.makeText(EditProfileActivity.this, "cropping failed: " + result.getError(), Toast.LENGTH_LONG).show();
+                Toast.makeText(EditProfileActivity.this, " " + getString(R.string.crop_failed) +
+                        result.getError(), Toast.LENGTH_LONG).show();
             }
         }
 
@@ -3105,36 +3107,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         return result;
     }
 
-    private boolean checkPermission() {
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            int permissionCamera = ContextCompat.checkSelfPermission(EditProfileActivity.this,
-                    Manifest.permission.CAMERA);
-            int readPermission = ContextCompat.checkSelfPermission(EditProfileActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE);
-            int writePermission = ContextCompat.checkSelfPermission(EditProfileActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-
-            List<String> listPermissionsNeeded = new ArrayList<>();
-            if (permissionCamera != PackageManager.PERMISSION_GRANTED) {
-                listPermissionsNeeded.add(Manifest.permission.CAMERA);
-            }
-            if (readPermission != PackageManager.PERMISSION_GRANTED) {
-                listPermissionsNeeded.add(Manifest.permission.READ_EXTERNAL_STORAGE);
-            }
-            if (writePermission != PackageManager.PERMISSION_GRANTED) {
-                listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-            }
-
-            if (!listPermissionsNeeded.isEmpty()) {
-                ActivityCompat.requestPermissions(EditProfileActivity.this,
-                        listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), 1);
-                return false;
-            } else {
-                return true;
-            }
-        }
-        return true;
-    }
-
     private boolean checkPermissionStorage() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -3182,14 +3154,14 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 if (isCamera && isStorage && isStorageWrite)
                     selectImageFromCamera();
                 else
-                    Toast.makeText(EditProfileActivity.this, "Please grant both permission to work camera properly!!", Toast.LENGTH_SHORT).show();
+                    Utils.showErrorSnackBar(EditProfileActivity.this, relativeRootEditProfile, getString(R.string.camera_permission));
                 break;
 
             case 2:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED)
                     selectImageFromGallery();
                 else
-                    Toast.makeText(EditProfileActivity.this, "Storage permission denied!!", Toast.LENGTH_SHORT).show();
+                    Utils.showErrorSnackBar(EditProfileActivity.this, relativeRootEditProfile, getString(R.string.storage_permission));
                 break;
 
             case 3:
@@ -3197,8 +3169,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 if (fileUri != null && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // required permissions granted, start crop image activity
                     startCropImageActivity(fileUri);
-                } else {
-                    Toast.makeText(EditProfileActivity.this, "cancelling, required permissions are not granted", Toast.LENGTH_LONG).show();
                 }
 
                 break;
