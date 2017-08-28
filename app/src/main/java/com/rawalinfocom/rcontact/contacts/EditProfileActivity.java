@@ -429,6 +429,37 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 Toast.makeText(EditProfileActivity.this, "cropping failed: " + result.getError(), Toast.LENGTH_LONG).show();
             }
         }
+
+        if (requestCode == AppConstants.REQUEST_CODE_MAP_LOCATION_SELECTION) {
+            if (data != null) {
+//                String locationString = data.getStringExtra(AppConstants.EXTRA_OBJECT_LOCATION);
+  /*              if (data.hasExtra(AppConstants.EXTRA_OBJECT_ADDRESS_PLACE)) {
+                    Place place = (Place) data
+                            .getSerializableExtra(AppConstants.EXTRA_OBJECT_ADDRESS_PLACE);
+                    Toast.makeText(this, place.getName() + ", " + place
+                            .getAddress(), Toast.LENGTH_SHORT).show();
+                } else if (data.hasExtra(AppConstants.EXTRA_OBJECT_ADDRESS)) {*/
+                ReverseGeocodingAddress objAddress = (ReverseGeocodingAddress) data
+                        .getSerializableExtra(AppConstants.EXTRA_OBJECT_ADDRESS);
+                View linearView = linearAddressDetails.getChildAt(clickedPosition);
+                TextView textLatitude = linearView.findViewById(R.id.input_latitude);
+                TextView textLongitude = linearView.findViewById(R.id
+                        .input_longitude);
+                TextView textImageMapMarker = linearView.findViewById(R.id
+                        .text_image_map_marker);
+                TextView textGoogleAddress = linearView.findViewById(R.id
+                        .input_google_address);
+                TextView inputIsAddressModified = linearView.findViewById(R.id
+                        .input_is_address_modified);
+                textLatitude.setText(objAddress.getLatitude());
+                textLongitude.setText(objAddress.getLongitude());
+                textGoogleAddress.setText(objAddress.getAddress());
+                textImageMapMarker.setTextColor(defaultMarkerColor);
+                inputIsAddressModified.setText("false");
+//                }
+
+            }
+        }
     }
 
     @Override

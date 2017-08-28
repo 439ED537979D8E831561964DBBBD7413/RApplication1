@@ -193,9 +193,6 @@
             android:name=".RestorationActivity"
             android:screenOrientation="portrait" />
 
-        <activity
-            android:name=".contacts.EditProfileActivity_temp"
-            android:screenOrientation="portrait" />
         <activity android:name=".helper.imgcrop.CropImageActivity" />
 
         <!-- receiver -->
@@ -257,9 +254,6 @@
         <activity
             android:name=".TermsConditionsActivity"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".MapsActivity"
-            android:label="@string/title_activity_maps"></activity>
     </application>
 
 </manifest>

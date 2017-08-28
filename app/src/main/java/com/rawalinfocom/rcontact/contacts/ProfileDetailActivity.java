@@ -812,7 +812,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 } else if (StringUtils.equals(imageRightLeft.getTag().toString(), TAG_IMAGE_EDIT)) {
                     /*startActivityIntent(ProfileDetailActivity.this, EditProfileActivity.class,
                             null);*/
-                    startActivityIntent(ProfileDetailActivity.this, EditProfileActivity_temp.class,
+                    startActivityIntent(ProfileDetailActivity.this, EditProfileActivity.class,
                             null);
                     /*Intent i = new Intent(ProfileDetailActivity.this, EditProfileActivity.class);
                     startActivityForResult(i, 1);
