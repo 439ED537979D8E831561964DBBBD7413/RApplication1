@@ -23,6 +23,7 @@
     <string name="action_call">कॉल करें</string>
     <string name="action_delete">मिटा दे</string>
     <string name="str_comment">टिप्पणी करें</string>
+    <string name="hint_comment">कुछ कहना चाहते हैं?</string>
     <string name="str_choose_from_contacts">संपर्कों में से चुनें</string>
     <string name="str_select_social_media">सोशल मीडिया चुनें</string>
     <string name="str_select_all">सभी का चयन करे</string>
@@ -224,7 +225,7 @@
     <string name="add_field">क्षेत्र जोड़ें</string>
     <string name="update">अपडेट करें</string>
     <string name="cancel">रद्द करें</string>
-    <string name="hint_organization_name">संस्था का नाम</string>
+    <string name="hint_organization_name">नाम</string>
     <string name="hint_organization_designation">पद</string>
     <string name="check_text_current_organization">वर्तमान कार्यस्थल</string>
     <string name="hint_registered_number">पंजीकृत नंबर</string>
@@ -406,6 +407,7 @@
     <string name="str_unread_notification_hint_1">आपके पास</string>
     <string name="str_unread_notification_hint_2">अपठित सूचना(एं) है</string>
     <string name="str_unread_notification_hint_3">आपके पास कोई अपठित सूचना(एं) नहीं है</string>
+    <string name="str_comment_reply">आपकी टिप्पणी सफलतापूर्वक भेजी गई</string>
     <string name="str_rating_comment_hint_1">%1$s ने आपकी रेटिंग और टिप्पणी पर आपको उत्तर दिया</string>
     <string name="str_rating_comment_hint_2">%1$s को आपने रेटिंग दी और उनके लिए टिपण्णी लिखी</string>
     <string name="str_rating_comment_hint_3">%1$s से आपको रेटिंग प्राप्त हुई</string>
@@ -553,13 +555,13 @@
     <string name="tutorial_header_3">वैश्विक पहुँच</string>
     <string name="tutorial_header_4">स्पैमर प्रतिबंधित</string>
     <string name="tutorial_header_5">रेटिंग प्राप्त करें</string>
-    <string name="tutorial_content_1"><![CDATA[एक संपर्क सिर्फ एक नंबर नहीं है, बल्कि ऑटो-सिंक डेटा और सोशिअल जानकारी से भरा एक प्रोफाइल है!]]></string>
+    <string name="tutorial_content_1"><![CDATA[संपर्क केवल एक संख्या नहीं है, लेकिन एक बाय-रंग ऑटो-सिंक डेटा से मिलकर एक प्रोफ़ाइल है]]></string>
     <string name="tutorial_content_2">RContacts द्वारा संपर्क और कॉल लॉग सिर्फ एक आइकॉन से प्रबंधित करें!</string>
     <string name="tutorial_content_3">बस अपने होमस्क्रीन पर इस धरती को जगह दें और उसके अंतर्गत शामिल किसी भी नंबर के विवरण खोजें</string>
     <string name="tutorial_content_4">एक विशेष एजेंट की तरह RContacts स्पैम के रूप में चिह्नित नंबरों से आपका बचाव करेगा</string>
     <string name="tutorial_content_5">प्रतिष्ठा सितारों को कमाएँ और संपर्कों की दुनिया में अपने आप को प्रमाणित करें</string>
     <string name="tutorial_and">और?</string>
-    <string name="tutorial_skip">Skip>></string>
+    <string name="tutorial_skip">स्किप>></string>
     <string name="tutorial_lets_go">चलते हैं!</string>
     <string name="get_started">शुरू करें</string>
     <string name="str_welcome">स्वागत है</string>
@@ -680,5 +682,16 @@
     <string name="error_call_permission">कॉल की अनुमति आवश्यक है!</string>
     <string name="error_camera_permission">कैमरा अनुमति आवश्यक है!</string>
     <string name="error_storage_permission">संग्रहण अनुमति आवश्यक है!</string>
+
+    <!-- Crop Image -->
+    <string name="crop_image_activity_title"></string>
+    <string name="crop_image_menu_rotate_left">Rotate counter clockwise</string>
+    <string name="crop_image_menu_rotate_right">Rotate</string>
+    <string name="crop_image_menu_crop">Crop</string>
+    <string name="crop_image_menu_flip">Flip</string>
+    <string name="crop_image_menu_flip_horizontally">Flip horizontally</string>
+    <string name="crop_image_menu_flip_vertically">Flip vertically</string>
+
+    <string name="pick_image_intent_chooser_title">Select source</string>
 
 </resources>

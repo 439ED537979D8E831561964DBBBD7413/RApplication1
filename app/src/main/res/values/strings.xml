@@ -23,6 +23,7 @@
     <string name="action_call">Call</string>
     <string name="action_delete">Delete</string>
     <string name="str_comment">Comment</string>
+    <string name="hint_comment">Wanna say something?</string>
     <string name="str_choose_from_contacts">Choose from Contacts</string>
     <string name="str_select_social_media">Select Social Media</string>
     <string name="str_select_all">Select all</string>
@@ -224,8 +225,8 @@
     <string name="add_field">+ ADD FIELD</string>
     <string name="update">UPDATE</string>
     <string name="cancel">CANCEL</string>
-    <string name="hint_organization_name">Organization name</string>
-    <string name="hint_organization_designation">Organization designation</string>
+    <string name="hint_organization_name">Name</string>
+    <string name="hint_organization_designation">Designation</string>
     <string name="check_text_current_organization">I Currently Work Here</string>
     <string name="hint_registered_number">Registered Number</string>
     <string name="hint_optional_number">Optional Number</string>
@@ -406,6 +407,7 @@
     <string name="str_unread_notification_hint_1">You have</string>
     <string name="str_unread_notification_hint_2">unread notification</string>
     <string name="str_unread_notification_hint_3">You have no unread Notifications</string>
+    <string name="str_comment_reply">Your comment sent successfully</string>
     <string name="str_rating_comment_hint_1">%1$s replied you for your Rating</string>
     <string name="str_rating_comment_hint_2">You Rated %1$s</string>
     <string name="str_rating_comment_hint_3">%1$s Rated You</string>
@@ -553,9 +555,9 @@
     <string name="tutorial_header_3">Global Search</string>
     <string name="tutorial_header_4">Spammers Banned</string>
     <string name="tutorial_header_5">Get Rated</string>
-    <string name="tutorial_content_1"><![CDATA[A Contact is not just a number but a profile consisting of Auto-Synced data & Social Info!]]></string>
-    <string name="tutorial_content_2">Manage Call Logs from a single icon! RContacts serves you with both in one platter.</string>
-    <string name="tutorial_content_3">Just place this EARTH on your homescreen and search for any number that belongs to it.</string>
+    <string name="tutorial_content_1"><![CDATA[A Contact is not just a number but a profile consisting of Bi-Color Auto-Synced data]]></string>
+    <string name="tutorial_content_2">Manage Call Logs and send SMS from a single icon! RContacts serves you with both in one platter</string>
+    <string name="tutorial_content_3">Just place this EARTH on your home screen and search for any number that belongs to it</string>
     <string name="tutorial_content_4">RContacts like a Special Agent will alert and rescue you of the numbers marked as Spam</string>
     <string name="tutorial_content_5">Earn reputation stars and get yourself authenticated in the world of Contacts</string>
     <string name="tutorial_and">And?</string>
@@ -680,5 +682,15 @@
     <string name="error_call_permission">Call Permission Required!</string>
     <string name="error_camera_permission">Camera Permission Required!</string>
     <string name="error_storage_permission">Storage Permission Required!</string>
+
+    <!-- Crop Image -->
+    <string name="crop_image_activity_title"></string>
+    <string name="crop_image_menu_rotate_left">Rotate counter clockwise</string>
+    <string name="crop_image_menu_rotate_right">Rotate</string>
+    <string name="crop_image_menu_crop">Crop</string>
+    <string name="crop_image_menu_flip">Flip</string>
+    <string name="crop_image_menu_flip_horizontally">Flip horizontally</string>
+    <string name="crop_image_menu_flip_vertically">Flip vertically</string>
+    <string name="pick_image_intent_chooser_title">Select source</string>
 
 </resources>

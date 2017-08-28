@@ -73,12 +73,18 @@ public class WsConstants {
 
     // QA Server
     public static final String WS_PROFILE_VIEW_ROOT = "http://webqa.rcontacts.in/global/public/";
+    public static final String WS_PROFILE_VIEW_BADGE_ROOT = "http://qa.rcrc.ac/p/";
+    public static final String WS_APP_SHARE_BADGE_ROOT = "http://qa.rcrc.ac/a/";
 
     // Staging Env
-//    public static final String WS_PROFILE_VIEW_ROOT = "http://webstaging.rcontacts.in/global/public/";
+    /*public static final String WS_PROFILE_VIEW_ROOT = "http://webstaging.rcontacts.in/global/public/";
+    public static final String WS_PROFILE_VIEW_BADGE_ROOT = "http://staging.rcrc.ac/p/";
+    public static final String WS_APP_SHARE_BADGE_ROOT = "http://staging.rcrc.ac/a/";*/
 
     // Production Env
-//    public static final String WS_PROFILE_VIEW_ROOT = "https://www.rcontacts.in/global/public/";
+   /* public static final String WS_PROFILE_VIEW_ROOT = "https://www.rcontacts.in/global/public/";
+    public static final String WS_PROFILE_VIEW_BADGE_ROOT = "https://rcrc.ac/p/";
+    public static final String WS_APP_SHARE_BADGE_ROOT = "https://rcrc.ac/a/";*/
 
     /*
      * WEBSITE URL
