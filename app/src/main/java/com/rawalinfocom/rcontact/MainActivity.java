@@ -353,16 +353,30 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
                 Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                 sharingIntent.setType("text/plain");
-                QueryManager queryManager = new QueryManager(databaseHandler);
+               /* QueryManager queryManager = new QueryManager(databaseHandler);
                 ArrayList<ProfileData> profileDataArrayList = queryManager.getRcpNumberName
                         (getUserPmId());
                 String number = StringUtils.trimToEmpty(profileDataArrayList.get(0).getTempNumber
-                        ());
+                        ());*/
+                TableProfileMaster tableProfileMaster = new TableProfileMaster
+                        (databaseHandler);
+                UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId
+                        (Integer.parseInt(getUserPmId()));
+                TableMobileMaster tableMobileMaster = new TableMobileMaster
+                        (databaseHandler);
+                String number = tableMobileMaster.getUserMobileNumber(getUserPmId());
                 if (StringUtils.startsWith(number, "+")) {
                     number = StringUtils.substring(number, 1);
                 }
-                String shareBody = AppConstants.PLAY_STORE_LINK + getPackageName() +
-                        "&utm_source=" + number + "&utm_medium=" + number;
+                String shareBody;
+                if (StringUtils.isBlank(userProfile.getPmBadge())) {
+                    shareBody = AppConstants.PLAY_STORE_LINK + getPackageName() +
+                            "&utm_source=" + number + "&utm_medium=" + number;
+                } else {
+                    shareBody = WsConstants.WS_APP_SHARE_BADGE_ROOT + userProfile
+                            .getPmBadge();
+                }
+
                 sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
                 startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_via)));
 
