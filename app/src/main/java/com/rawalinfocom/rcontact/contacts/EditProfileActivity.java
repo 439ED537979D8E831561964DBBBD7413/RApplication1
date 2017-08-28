@@ -13,12 +13,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputType;
@@ -41,10 +43,12 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.BaseActivity;
+import com.rawalinfocom.rcontact.BuildConfig;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
@@ -97,8 +101,10 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -386,7 +392,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 profileDataOperation.setPbProfilePhoto(bitmapString);
                 editProfile(profileDataOperation, AppConstants.PROFILE_IMAGE);
             }
-
 
         } else if (requestCode == GALLERY_IMAGE_REQUEST_CODE) {
             if (resultCode != Activity.RESULT_OK)
@@ -3073,14 +3078,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                if (ContextCompat.checkSelfPermission(EditProfileActivity.this, Manifest
-                        .permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-
-                    ActivityCompat.requestPermissions(EditProfileActivity.this, new
-                            String[]{Manifest.permission.CAMERA}, AppConstants
-                            .MY_PERMISSIONS_REQUEST_CAMERA);
-
-                } else {
+                if (checkPermission()) {
                     selectImageFromCamera();
                 }
             }
@@ -3114,22 +3112,28 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         switch (requestCode) {
             case AppConstants.MY_PERMISSIONS_REQUEST_CAMERA:
 
-                if (grantResults.length > 0 && grantResults[0] == PackageManager
-                        .PERMISSION_GRANTED) {
+
+                Map<String, Integer> perms = new HashMap<String, Integer>();
+                // Initial
+                perms.put(Manifest.permission.CAMERA, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.READ_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+
+                // Fill with results
+                for (int i = 0; i < permissions.length; i++)
+                    perms.put(permissions[i], grantResults[i]);
+
+                boolean isCamera = perms.get(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+                boolean isStorage = perms.get(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+                boolean isStorageWrite = perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+
+                if (isCamera && isStorage && isStorageWrite) {
                     AppConstants.setIsFirstTime(false);
                     // Permission Granted
                     selectImageFromCamera();
-                } else {
-                    // Permission Denied
+                } else
                     Utils.showErrorSnackBar(EditProfileActivity.this, relativeRootEditProfile,
                             getString(R.string.error_camera_permission));
-                }
-
-                /*if (permissions[0].equals(Manifest.permission
-                        .CAMERA)) {
-                    selectImageFromCamera();
-                }*/
-
                 break;
             case AppConstants.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE:
 
@@ -3153,6 +3157,38 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 break;
 
         }
+    }
+
+
+    private boolean checkPermission() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int permissionCamera = ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.CAMERA);
+            int readPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+            int writePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+            List<String> listPermissionsNeeded = new ArrayList<>();
+            if (permissionCamera != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(Manifest.permission.CAMERA);
+            }
+            if (readPermission != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+            }
+            if (writePermission != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            }
+
+            if (!listPermissionsNeeded.isEmpty()) {
+                ActivityCompat.requestPermissions(this,
+                        listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),
+                        AppConstants.MY_PERMISSIONS_REQUEST_CAMERA);
+                return false;
+            } else {
+                return true;
+            }
+        }
+        return true;
     }
 
     private void showBackConfirmationDialog() {
@@ -3332,7 +3368,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     private void selectImageFromCamera() {
         mFileTemp = getOutputMediaFile(MEDIA_TYPE_IMAGE);
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
+        fileUri = FileProvider.getUriForFile(EditProfileActivity.this,
+                BuildConfig.APPLICATION_ID + ".provider",
+                mFileTemp);
+//        getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
 
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
 
@@ -3359,14 +3398,14 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format
                 (new Date());
         File mediaFile;
-        if (type == MEDIA_TYPE_IMAGE) {
+//        if (type == MEDIA_TYPE_IMAGE) {
 
-            TEMP_PHOTO_FILE_NAME = "IMG_" + timeStamp + ".jpg";
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator + TEMP_PHOTO_FILE_NAME);
+        TEMP_PHOTO_FILE_NAME = "IMG_" + timeStamp + ".jpg";
+        mediaFile = new File(mediaStorageDir.getPath() + File.separator + TEMP_PHOTO_FILE_NAME);
 
-        } else {
-            return null;
-        }
+//        } else {
+//            return null;
+//        }
 
         return mediaFile;
     }

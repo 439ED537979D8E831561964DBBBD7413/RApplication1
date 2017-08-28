@@ -20,12 +20,14 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.StrictMode;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.provider.Telephony;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -51,6 +53,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.BaseActivity;
+import com.rawalinfocom.rcontact.BuildConfig;
 import com.rawalinfocom.rcontact.ContactListingActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
@@ -1015,6 +1018,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     public void onDeliveryResponse(String serviceType, Object data, Exception error) {
         if (error == null) {
 
+            Utils.hideProgressDialog();
             // <editor-fold desc="REQ_GET_PROFILE_DETAILS">
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_GET_PROFILE_DETAILS)) {
                 WsResponseObject getProfileResponse = (WsResponseObject) data;
@@ -1079,10 +1083,17 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         e.printStackTrace();
                     }
 
+//                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+//                        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+//                        StrictMode.setVmPolicy(builder.build());
+//                    }
+
                     Intent sendIntent = new Intent();
                     sendIntent.setAction(Intent.ACTION_SEND);
                     sendIntent.setType("text/x-vcard");
-                    sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(vcfFile));
+                    sendIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(ProfileDetailActivity.this,
+                            BuildConfig.APPLICATION_ID + ".provider",
+                            vcfFile));
                     startActivity(sendIntent);
 
                 } else {
@@ -1275,10 +1286,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         } else {
 //            AppUtils.hideProgressDialog();
+            Utils.hideProgressDialog();
             Utils.showErrorSnackBar(this, relativeRootProfileDetail, "" + error
                     .getLocalizedMessage());
         }
-
     }
 
     @Override
@@ -1576,7 +1587,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     private void layoutVisibility() {
         if (profileActivityCallInstance) {
 
-            new GetRCPNameAndProfileImage().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+//            new GetRCPNameAndProfileImage().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
             relativeContactDetails.setVisibility(View.GONE);
             relativeCallHistory.setVisibility(View.VISIBLE);
@@ -3344,9 +3355,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 public void run() {
 //                    Utils.hideProgressDialog();
                     setHistoryAdapter();
-
                 }
             });
+
         }
     }
 
@@ -3568,18 +3579,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     private void openCallLogHistoryDetailsActivity() {
         Intent intent = new Intent(ProfileDetailActivity.this, CallHistoryDetailsActivity.class);
-        if (!StringUtils.isEmpty(historyNumber))
-        {
+        if (!StringUtils.isEmpty(historyNumber)) {
             historyNumber = historyNumber.replace(" ", "").replace("-", "");
             intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, historyNumber);
-        }
-        else {
+        } else {
             if (intent.hasExtra(AppConstants.EXTRA_FROM_NOTI_PROFILE)) {
                 if (intent.getBooleanExtra(AppConstants.EXTRA_FROM_NOTI_PROFILE, false)) {
                     if (tempPhoneNumber != null) {
                         ProfileDataOperationPhoneNumber phoneNumber =
-                                (ProfileDataOperationPhoneNumber) tempPhoneNumber.get
-                                        (0);
+                                (ProfileDataOperationPhoneNumber) tempPhoneNumber.get(0);
                         String profilePrimaryNumber = "";
                         if (phoneNumber != null) {
                             profilePrimaryNumber = phoneNumber.getPhoneNumber();
