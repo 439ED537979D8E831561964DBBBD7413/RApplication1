@@ -14,7 +14,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
@@ -117,7 +116,8 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
                 Utils.setIntegerPreference(EnterPasswordActivity.this, AppConstants
                         .PREF_LAUNCH_SCREEN_INT, IntegerConstants.LAUNCH_MOBILE_REGISTRATION);
 
-                Intent intent = new Intent(EnterPasswordActivity.this, MobileNumberRegistrationActivity.class);
+                Intent intent = new Intent(EnterPasswordActivity.this,
+                        MobileNumberRegistrationActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
@@ -201,10 +201,12 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
                     Utils.setStringPreference(this, AppConstants.PREF_USER_PM_ID,
                             profileDetail.getRcpPmId());
 
-                    Utils.setStringPreference(this, AppConstants.PREF_CALL_LOG_SYNC_TIME, profileDetail.getCallLogTimestamp());
+                    Utils.setStringPreference(this, AppConstants.PREF_CALL_LOG_SYNC_TIME,
+                            profileDetail.getCallLogTimestamp());
                     Utils.setStringPreference(this, AppConstants.PREF_CALL_LOG_ROW_ID,
                             profileDetail.getCallLogId());
-                    Utils.setStringPreference(this, AppConstants.PREF_SMS_SYNC_TIME, profileDetail.getSmsLogTimestamp());
+                    Utils.setStringPreference(this, AppConstants.PREF_SMS_SYNC_TIME,
+                            profileDetail.getSmsLogTimestamp());
 
                     Utils.setStringPreference(this, AppConstants.PREF_USER_NAME,
                             profileDetail.getPbNameFirst() + " " + profileDetail.getPbNameLast());
@@ -223,15 +225,20 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
                     Utils.setStringPreference(this, AppConstants.PREF_USER_PHOTO,
                             profileDetail.getPbProfilePhoto());
 
-                    Utils.setBooleanPreference(EnterPasswordActivity.this, AppConstants.PREF_DISABLE_PUSH, false);
-                    Utils.setBooleanPreference(EnterPasswordActivity.this, AppConstants.PREF_DISABLE_EVENT_PUSH, false);
-                    Utils.setBooleanPreference(EnterPasswordActivity.this, AppConstants.PREF_DISABLE_POPUP, false);
+                    Utils.setBooleanPreference(EnterPasswordActivity.this, AppConstants
+                            .PREF_DISABLE_PUSH, false);
+                    Utils.setBooleanPreference(EnterPasswordActivity.this, AppConstants
+                            .PREF_DISABLE_EVENT_PUSH, false);
+                    Utils.setBooleanPreference(EnterPasswordActivity.this, AppConstants
+                            .PREF_DISABLE_POPUP, false);
 
                     storeProfileDataToDb(profileDetail);
 
-//                    if (MoreObjects.firstNonNull(enterPassWordResponse.getReSync(), 0).equals(1)) {
+//                    if (MoreObjects.firstNonNull(enterPassWordResponse.getReSync(), 0).equals
+// (1)) {
 //                        Utils.setBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false);
-//                        Utils.setBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false);
+//                        Utils.setBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED,
+// false);
 //                        Utils.setBooleanPreference(this, AppConstants.PREF_SMS_SYNCED, false);
 //                    }
 
@@ -263,7 +270,8 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
                         (enterPassWordResponse
                                 .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                    Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME, String.valueOf(System.currentTimeMillis()));
+                    Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME, String
+                            .valueOf(System.currentTimeMillis()));
                     Utils.setBooleanPreference(this, AppConstants.KEY_IS_FIRST_TIME, true);
 
                     if (Utils.getBooleanPreference(this, AppConstants.KEY_IS_RESTORE_DONE, false)) {
@@ -388,6 +396,7 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
         userProfile.setTotalProfileRateUser(profileDetail.getTotalProfileRateUser());
         userProfile.setPmProfileImage(profileDetail.getPbProfilePhoto());
         userProfile.setPmGender(profileDetail.getPbGender());
+        userProfile.setPmBadge(profileDetail.getPmBadge());
 
         tableProfileMaster.addProfile(userProfile);
         //</editor-fold>
@@ -409,7 +418,8 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
                         .getPhoneNumber());
                 mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber
                         .get(i).getPhonePublic()));
-                mobileNumber.setMnmIsPrimary(String.valueOf(arrayListPhoneNumber.get(i).getPbRcpType()));
+                mobileNumber.setMnmIsPrimary(String.valueOf(arrayListPhoneNumber.get(i)
+                        .getPbRcpType()));
                 mobileNumber.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 arrayListMobileNumber.add(mobileNumber);
             }

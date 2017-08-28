@@ -724,10 +724,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     }*/
 
                     if (!StringUtils.equalsAnyIgnoreCase(pmId, "-1")) {
-                       /* TableProfileMaster tableProfileMaster = new TableProfileMaster
+                        TableProfileMaster tableProfileMaster = new TableProfileMaster
                                 (databaseHandler);
-                        UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer
-                                .parseInt(pmId));*/
+                        UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId
+                                (Integer.parseInt(pmId));
                         TableMobileMaster tableMobileMaster = new TableMobileMaster
                                 (databaseHandler);
                         String number = tableMobileMaster.getUserMobileNumber(pmId);
@@ -740,11 +740,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         // RCP profile or Own Profile
                         Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                         sharingIntent.setType("text/plain");
-                        /*String shareBody = WsConstants.WS_PROFILE_VIEW_ROOT + StringUtils
-                                .trimToEmpty(userProfile.getPmFirstName()) + "." +
-                                StringUtils.trimToEmpty(userProfile.getPmLastName()) + "." +
-                                pmId;*/
-                        String shareBody = WsConstants.WS_PROFILE_VIEW_ROOT + number;
+                        String shareBody;
+                        if (StringUtils.isBlank(userProfile.getPmBadge())) {
+                            shareBody = WsConstants.WS_PROFILE_VIEW_ROOT + number;
+                        } else {
+                            shareBody = WsConstants.WS_PROFILE_VIEW_BADGE_ROOT + userProfile
+                                    .getPmBadge();
+                        }
                         sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
                         startActivity(Intent.createChooser(sharingIntent, getString(R.string
                                 .str_share_contact_via)));
@@ -3851,6 +3853,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         userProfile.setTotalProfileRateUser(profileDetail.getTotalProfileRateUser());
         userProfile.setPmProfileImage(profileDetail.getPbProfilePhoto());
         userProfile.setPmGender(profileDetail.getPbGender());
+        userProfile.setPmBadge(profileDetail.getPmBadge());
 
         tableProfileMaster.addProfile(userProfile);
         //</editor-fold>
