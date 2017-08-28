@@ -106,7 +106,15 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
         textSignInUpDiffAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ReLoginEnterPasswordActivity.this, MobileNumberRegistrationActivity.class);
+
+                Utils.clearData(ReLoginEnterPasswordActivity.this);
+                getDatabaseHandler().clearAllData();
+
+                Utils.setIntegerPreference(ReLoginEnterPasswordActivity.this, AppConstants
+                        .PREF_LAUNCH_SCREEN_INT, IntegerConstants.LAUNCH_MOBILE_REGISTRATION);
+
+                Intent intent = new Intent(ReLoginEnterPasswordActivity.this,
+                        MobileNumberRegistrationActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
@@ -200,11 +208,14 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
                             .getRcpPmId());
                     storeProfileDataToDb(profileDetail);
 
-                    Utils.setStringPreference(this, AppConstants.PREF_CALL_LOG_SYNC_TIME, profileDetail.getCallLogTimestamp());
-                    Utils.setStringPreference(this, AppConstants.PREF_SMS_SYNC_TIME, profileDetail.getSmsLogTimestamp());
+                    Utils.setStringPreference(this, AppConstants.PREF_CALL_LOG_SYNC_TIME,
+                            profileDetail.getCallLogTimestamp());
+                    Utils.setStringPreference(this, AppConstants.PREF_SMS_SYNC_TIME,
+                            profileDetail.getSmsLogTimestamp());
                     Utils.setStringPreference(this, AppConstants.PREF_CALL_LOG_ROW_ID,
                             profileDetail.getCallLogId());
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_NAME, profileDetail.getPbNameFirst() + " " + profileDetail.getPbNameLast());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_NAME, profileDetail
+                            .getPbNameFirst() + " " + profileDetail.getPbNameLast());
                     Utils.setStringPreference(this, AppConstants.PREF_USER_FIRST_NAME,
                             profileDetail.getPbNameFirst());
                     Utils.setStringPreference(this, AppConstants.PREF_USER_LAST_NAME,
@@ -212,10 +223,14 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
                     Utils.setStringPreference(this, AppConstants.PREF_USER_JOINING_DATE,
                             profileDetail.getJoiningDate());
 
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_NUMBER, profileDetail.getVerifiedMobileNumber());
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING, profileDetail.getTotalProfileRateUser());
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_RATING, profileDetail.getProfileRating());
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_PHOTO, profileDetail.getPbProfilePhoto());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_NUMBER, profileDetail
+                            .getVerifiedMobileNumber());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING,
+                            profileDetail.getTotalProfileRateUser());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_RATING, profileDetail
+                            .getProfileRating());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_PHOTO, profileDetail
+                            .getPbProfilePhoto());
 
                     if (MoreObjects.firstNonNull(enterPassWordResponse.getReSync(), 0).equals(1)) {
                         Utils.setBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false);
@@ -223,7 +238,8 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
                         Utils.setBooleanPreference(this, AppConstants.PREF_SMS_SYNCED, false);
                     }
 
-                    Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME, String.valueOf(System.currentTimeMillis()));
+                    Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME, String
+                            .valueOf(System.currentTimeMillis()));
 
                     // Redirect to MainActivity
                     if (isFrom.equals(AppConstants.PREF_RE_LOGIN)) {
@@ -247,7 +263,8 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
 
                     if (enterPassWordResponse != null) {
                         Log.e("error response", enterPassWordResponse.getMessage());
-                        Utils.showErrorSnackBar(this, relativeRootEnterPassword, enterPassWordResponse.getMessage());
+                        Utils.showErrorSnackBar(this, relativeRootEnterPassword,
+                                enterPassWordResponse.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "enterPassWordResponse null");
                         Utils.showErrorSnackBar(this, relativeRootEnterPassword, getString(R
@@ -263,19 +280,49 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
                         (enterPassWordResponse
                                 .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                    Intent intent = new Intent(this, MainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.enter, R.anim.exit);
-                    finish();
+                    if (isFrom.equals(AppConstants.PREF_FORGOT_PASSWORD)) {
+                        if (Utils.getBooleanPreference(this, AppConstants.KEY_IS_RESTORE_DONE,
+                                false)) {
+                            // Redirect to MainActivity
+                            Utils.setBooleanPreference(this, AppConstants.KEY_IS_RESTORE_DONE,
+                                    true);
+                            Intent intent = new Intent(this, MainActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                            startActivity(intent);
+                            overridePendingTransition(R.anim.enter, R.anim.exit);
+                            finish();
+                        } else {
+                            // Redirect to RestorationActivity
+                            Intent intent = new Intent(this, RestorationActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                            startActivity(intent);
+                            overridePendingTransition(R.anim.enter, R.anim.exit);
+                            finish();
+                        }
+                    } else {
+
+                        Utils.setBooleanPreference(this, AppConstants.KEY_IS_RESTORE_DONE, true);
+
+                        Intent intent = new Intent(this, MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.enter, R.anim.exit);
+                        finish();
+                    }
+
 
                 } else {
 
                     if (enterPassWordResponse != null) {
                         Log.e("error response", enterPassWordResponse.getMessage());
-                        Utils.showErrorSnackBar(this, relativeRootEnterPassword, enterPassWordResponse.getMessage());
+                        Utils.showErrorSnackBar(this, relativeRootEnterPassword,
+                                enterPassWordResponse.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "enterPassWordResponse null");
                         Utils.showErrorSnackBar(this, relativeRootEnterPassword, getString(R
@@ -342,7 +389,7 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
         if (isFrom.equals(AppConstants.PREF_RE_LOGIN) || Utils.getBooleanPreference
                 (ReLoginEnterPasswordActivity.this,
                         AppConstants.PREF_TEMP_LOGOUT, false)) {
-            enterPassWordObject.setReAuthenticate(1); // For Android Devices
+            enterPassWordObject.setReAuthenticate(1);
         }
         enterPassWordObject.setCreatedBy("2"); // For Android Devices
         enterPassWordObject.setGcmToken(getDeviceTokenId());
@@ -374,6 +421,7 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
         userProfile.setTotalProfileRateUser(profileDetail.getTotalProfileRateUser());
         userProfile.setPmProfileImage(profileDetail.getPbProfilePhoto());
         userProfile.setPmGender(profileDetail.getPbGender());
+        userProfile.setPmBadge(profileDetail.getPmBadge());
 
         tableProfileMaster.addProfile(userProfile);
         //</editor-fold>
@@ -395,7 +443,8 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
                         .getPhoneNumber());
                 mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber
                         .get(i).getPhonePublic()));
-                mobileNumber.setMnmIsPrimary(String.valueOf(arrayListPhoneNumber.get(i).getPbRcpType()));
+                mobileNumber.setMnmIsPrimary(String.valueOf(arrayListPhoneNumber.get(i)
+                        .getPbRcpType()));
                 mobileNumber.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 arrayListMobileNumber.add(mobileNumber);
             }

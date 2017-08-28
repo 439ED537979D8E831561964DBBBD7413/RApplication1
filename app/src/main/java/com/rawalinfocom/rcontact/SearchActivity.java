@@ -646,10 +646,15 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
             case R.id.ripple_view_search_on_global:
                 String searchQuery = search.getText().toString();
                 if (!StringUtils.isEmpty(searchQuery)) {
-                    getGlobalDataWebServiceCall(searchQuery, maxRecords, 0);
-                    rippleViewSearchOnGlobal.setVisibility(View.GONE);
-                    textGlobalText.setVisibility(View.GONE);
-                    progressBar.setVisibility(View.VISIBLE);
+                    if (Utils.isNetworkAvailable(this)) {
+                        getGlobalDataWebServiceCall(searchQuery, maxRecords, 0);
+                        rippleViewSearchOnGlobal.setVisibility(View.GONE);
+                        textGlobalText.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.VISIBLE);
+                    }else{
+                        Utils.showErrorSnackBar(this, rlSearchRoot, getResources()
+                                .getString(R.string.msg_no_network));
+                    }
                 } else
                     Utils.showErrorSnackBar(SearchActivity.this, rlSearchRoot, getString(R
                             .string.search_query_validation));

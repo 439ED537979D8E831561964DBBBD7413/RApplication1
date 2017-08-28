@@ -20,12 +20,14 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.StrictMode;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.provider.Telephony;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -51,6 +53,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.BaseActivity;
+import com.rawalinfocom.rcontact.BuildConfig;
 import com.rawalinfocom.rcontact.ContactListingActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
@@ -724,10 +727,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     }*/
 
                     if (!StringUtils.equalsAnyIgnoreCase(pmId, "-1")) {
-                       /* TableProfileMaster tableProfileMaster = new TableProfileMaster
+                        TableProfileMaster tableProfileMaster = new TableProfileMaster
                                 (databaseHandler);
-                        UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer
-                                .parseInt(pmId));*/
+                        UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId
+                                (Integer.parseInt(pmId));
                         TableMobileMaster tableMobileMaster = new TableMobileMaster
                                 (databaseHandler);
                         String number = tableMobileMaster.getUserMobileNumber(pmId);
@@ -740,11 +743,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         // RCP profile or Own Profile
                         Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                         sharingIntent.setType("text/plain");
-                        /*String shareBody = WsConstants.WS_PROFILE_VIEW_ROOT + StringUtils
-                                .trimToEmpty(userProfile.getPmFirstName()) + "." +
-                                StringUtils.trimToEmpty(userProfile.getPmLastName()) + "." +
-                                pmId;*/
-                        String shareBody = WsConstants.WS_PROFILE_VIEW_ROOT + number;
+                        String shareBody;
+                        if (StringUtils.isBlank(userProfile.getPmBadge())) {
+                            shareBody = WsConstants.WS_PROFILE_VIEW_ROOT + number;
+                        } else {
+                            shareBody = WsConstants.WS_PROFILE_VIEW_BADGE_ROOT + userProfile
+                                    .getPmBadge();
+                        }
                         sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
                         startActivity(Intent.createChooser(sharingIntent, getString(R.string
                                 .str_share_contact_via)));
@@ -812,9 +817,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             null);*/
                     startActivityIntent(ProfileDetailActivity.this, EditProfileActivity.class,
                             null);
-                    /*Intent i = new Intent(ProfileDetailActivity.this, EditProfileActivity.class);
-                    startActivityForResult(i, 1);
-                    overridePendingTransition(R.anim.enter, R.anim.exit);*/
                 }
                 break;
             //</editor-fold>
@@ -1015,6 +1017,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     public void onDeliveryResponse(String serviceType, Object data, Exception error) {
         if (error == null) {
 
+            Utils.hideProgressDialog();
             // <editor-fold desc="REQ_GET_PROFILE_DETAILS">
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_GET_PROFILE_DETAILS)) {
                 WsResponseObject getProfileResponse = (WsResponseObject) data;
@@ -1079,10 +1082,17 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         e.printStackTrace();
                     }
 
+//                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+//                        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+//                        StrictMode.setVmPolicy(builder.build());
+//                    }
+
                     Intent sendIntent = new Intent();
                     sendIntent.setAction(Intent.ACTION_SEND);
                     sendIntent.setType("text/x-vcard");
-                    sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(vcfFile));
+                    sendIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(ProfileDetailActivity.this,
+                            BuildConfig.APPLICATION_ID + ".provider",
+                            vcfFile));
                     startActivity(sendIntent);
 
                 } else {
@@ -1275,10 +1285,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         } else {
 //            AppUtils.hideProgressDialog();
+            Utils.hideProgressDialog();
             Utils.showErrorSnackBar(this, relativeRootProfileDetail, "" + error
                     .getLocalizedMessage());
         }
-
     }
 
     @Override
@@ -1303,18 +1313,17 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
 
-            TextView textDialogTitle = (TextView) dialog.findViewById(R.id.text_dialog_title);
-            relativeRootRatingDialog = (RelativeLayout) dialog.findViewById(R.id
-                    .relative_root_rating_dialog);
-            final RatingBar ratingUser = (RatingBar) dialog.findViewById(R.id.rating_user);
-            TextView textComment = (TextView) dialog.findViewById(R.id.text_comment);
-            final TextView textRemainingCharacters = (TextView) dialog.findViewById(R.id
+            TextView textDialogTitle = dialog.findViewById(R.id.text_dialog_title);
+            relativeRootRatingDialog = dialog.findViewById(R.id.relative_root_rating_dialog);
+            final RatingBar ratingUser = dialog.findViewById(R.id.rating_user);
+            TextView textComment = dialog.findViewById(R.id.text_comment);
+            final TextView textRemainingCharacters = dialog.findViewById(R.id
                     .text_remaining_characters);
-            final EditText inputComment = (EditText) dialog.findViewById(R.id.input_comment);
-            RippleView rippleLeft = (RippleView) dialog.findViewById(R.id.ripple_left);
-            Button buttonLeft = (Button) dialog.findViewById(R.id.button_left);
-            RippleView rippleRight = (RippleView) dialog.findViewById(R.id.ripple_right);
-            Button buttonRight = (Button) dialog.findViewById(R.id.button_right);
+            final EditText inputComment = dialog.findViewById(R.id.input_comment);
+            RippleView rippleLeft = dialog.findViewById(R.id.ripple_left);
+            Button buttonLeft = dialog.findViewById(R.id.button_left);
+            RippleView rippleRight = dialog.findViewById(R.id.ripple_right);
+            Button buttonRight = dialog.findViewById(R.id.button_right);
 
             textDialogTitle.setTypeface(Utils.typefaceSemiBold(this));
             textComment.setTypeface(Utils.typefaceRegular(this));
@@ -1576,7 +1585,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     private void layoutVisibility() {
         if (profileActivityCallInstance) {
 
-            new GetRCPNameAndProfileImage().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+//            new GetRCPNameAndProfileImage().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
             relativeContactDetails.setVisibility(View.GONE);
             relativeCallHistory.setVisibility(View.VISIBLE);
@@ -3344,9 +3353,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 public void run() {
 //                    Utils.hideProgressDialog();
                     setHistoryAdapter();
-
                 }
             });
+
         }
     }
 
@@ -3568,15 +3577,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     private void openCallLogHistoryDetailsActivity() {
         Intent intent = new Intent(ProfileDetailActivity.this, CallHistoryDetailsActivity.class);
-        if (!StringUtils.isEmpty(historyNumber))
+        if (!StringUtils.isEmpty(historyNumber)) {
+            historyNumber = historyNumber.replace(" ", "").replace("-", "");
             intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, historyNumber);
-        else {
+        } else {
             if (intent.hasExtra(AppConstants.EXTRA_FROM_NOTI_PROFILE)) {
                 if (intent.getBooleanExtra(AppConstants.EXTRA_FROM_NOTI_PROFILE, false)) {
                     if (tempPhoneNumber != null) {
                         ProfileDataOperationPhoneNumber phoneNumber =
-                                (ProfileDataOperationPhoneNumber) tempPhoneNumber.get
-                                        (0);
+                                (ProfileDataOperationPhoneNumber) tempPhoneNumber.get(0);
                         String profilePrimaryNumber = "";
                         if (phoneNumber != null) {
                             profilePrimaryNumber = phoneNumber.getPhoneNumber();
@@ -3851,6 +3860,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         userProfile.setTotalProfileRateUser(profileDetail.getTotalProfileRateUser());
         userProfile.setPmProfileImage(profileDetail.getPbProfilePhoto());
         userProfile.setPmGender(profileDetail.getPbGender());
+        userProfile.setPmBadge(profileDetail.getPmBadge());
 
         tableProfileMaster.addProfile(userProfile);
         //</editor-fold>
