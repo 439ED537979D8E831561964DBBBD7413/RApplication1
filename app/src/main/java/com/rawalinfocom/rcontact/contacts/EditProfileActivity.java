@@ -3408,9 +3408,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
         UserProfile userProfile = new UserProfile();
         userProfile.setPmRcpId(getUserPmId());
-//        userProfile.setPmPrefix(profileDetail.getPbNamePrefix());
         userProfile.setPmFirstName(profileDetail.getPbNameFirst());
-//        userProfile.setPmMiddleName(profileDetail.getPbNameMiddle());
         userProfile.setPmLastName(profileDetail.getPbNameLast());
 //        userProfile.setPmSuffix(profileDetail.getPbNameSuffix());
 //        userProfile.setPmNickName(profileDetail.getPbNickname());
@@ -3422,8 +3420,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         userProfile.setTotalProfileRateUser(profileDetail.getTotalProfileRateUser());
         userProfile.setPmIsFavourite(profileDetail.getIsFavourite());
         userProfile.setPmNosqlMasterId(profileDetail.getNoSqlMasterId());
-//        userProfile.setPmJoiningDate(profileDetail.getJoiningDate());
         userProfile.setPmGender(profileDetail.getPbGender());
+        userProfile.setPmBadge(profileDetail.getPmBadge());
         userProfile.setPmProfileImage(profileDetail.getPbProfilePhoto());
 
         tableProfileMaster.updateUserProfile(userProfile);

@@ -122,7 +122,7 @@ public class TableProfileMaster {
         values.put(COLUMN_PM_PROFILE_RATE_USER, userProfile.getTotalProfileRateUser());
         values.put(COLUMN_PM_IS_FAVOURITE, userProfile.getPmIsFavourite());
         values.put(COLUMN_PM_NOSQL_MASTER_ID, userProfile.getPmNosqlMasterId());
-        values.put(COLUMN_PM_BADGE, userProfile.getPmNosqlMasterId());
+        values.put(COLUMN_PM_BADGE, userProfile.getPmBadge());
         values.put(COLUMN_PM_JOINING_DATE, userProfile.getPmJoiningDate());
 
         int count = 0;
@@ -272,15 +272,12 @@ public class TableProfileMaster {
             SQLiteDatabase db = databaseHandler.getReadableDatabase();
 
             Cursor cursor = db.query(TABLE_RC_PROFILE_MASTER, new String[]{COLUMN_PM_RAW_ID,
-                    COLUMN_PM_FIRST_NAME,
-                    COLUMN_PM_LAST_NAME,
-                    COLUMN_PM_PROFILE_IMAGE, COLUMN_PM_RCP_ID,
-                    COLUMN_PM_GENDER, COLUMN_PM_GENDER_PRIVACY, COLUMN_PM_PROFILE_RATING,
-                    COLUMN_PM_PROFILE_RATE_USER, COLUMN_PM_IS_FAVOURITE,
-                    COLUMN_PM_NOSQL_MASTER_ID,
-                    COLUMN_PM_BADGE,
-                    COLUMN_PM_JOINING_DATE}, COLUMN_PM_RCP_ID
-                    + "=?", new String[]{String.valueOf(cloudPmd)}, null, null, null, null);
+                    COLUMN_PM_FIRST_NAME, COLUMN_PM_LAST_NAME, COLUMN_PM_PROFILE_IMAGE,
+                    COLUMN_PM_RCP_ID, COLUMN_PM_GENDER, COLUMN_PM_GENDER_PRIVACY,
+                    COLUMN_PM_PROFILE_RATING, COLUMN_PM_PROFILE_RATE_USER,
+                    COLUMN_PM_IS_FAVOURITE, COLUMN_PM_NOSQL_MASTER_ID, COLUMN_PM_BADGE,
+                    COLUMN_PM_JOINING_DATE}, COLUMN_PM_RCP_ID + "=?", new String[]{String.valueOf
+                    (cloudPmd)}, null, null, null, null);
             if (cursor != null)
                 cursor.moveToFirst();
 
@@ -306,6 +303,7 @@ public class TableProfileMaster {
                         (COLUMN_PM_IS_FAVOURITE)));
                 userProfile.setPmNosqlMasterId(cursor.getString(cursor.getColumnIndex
                         (COLUMN_PM_NOSQL_MASTER_ID)));
+                userProfile.setPmBadge(cursor.getString(cursor.getColumnIndex(COLUMN_PM_BADGE)));
                 userProfile.setPmJoiningDate(cursor.getString(cursor.getColumnIndex
                         (COLUMN_PM_JOINING_DATE)));
 

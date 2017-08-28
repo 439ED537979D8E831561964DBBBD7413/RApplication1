@@ -117,6 +117,7 @@ public class NotificationFCMService extends FirebaseMessagingService {
                 String last_name = m.get("last_name");
                 String mobile_num = "+" + m.get("mobile_number");
                 String rcp_pm_id = m.get("rcp_pm_id");
+                String pm_badge = m.get("pm_badge");
                 String mnm_id = m.get("mnm_id");
                 String pb_profile_photo = m.get("pb_profile_photo");
                 String total_profile_rate_user = m.get("total_profile_rate_user");
@@ -147,6 +148,7 @@ public class NotificationFCMService extends FirebaseMessagingService {
                 userProfile.setPmFirstName(first_name);
                 userProfile.setPmLastName(last_name);
                 userProfile.setPmRcpId(rcp_pm_id);
+                userProfile.setPmBadge(pm_badge);
                 userProfile.setPmProfileImage(pb_profile_photo);
                 userProfile.setTotalProfileRateUser(total_profile_rate_user);
                 if (mapLocalRcpId.containsKey(rcp_pm_id)) {

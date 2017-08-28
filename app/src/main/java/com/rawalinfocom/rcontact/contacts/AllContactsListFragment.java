@@ -743,23 +743,15 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
             //<editor-fold desc="Profile Master">
             UserProfile userProfile = new UserProfile();
-//            userProfile.setPmSuffix(profileData.get(i).getPbNameSuffix());
-//            userProfile.setPmPrefix(profileData.get(i).getPbNamePrefix());
             userProfile.setPmFirstName(profileData.get(i).getPbNameFirst());
-//            userProfile.setPmMiddleName(profileData.get(i).getPbNameMiddle());
             userProfile.setPmLastName(profileData.get(i).getPbNameLast());
-//            userProfile.setPmPhoneticFirstName(profileData.get(i).getPbPhoneticNameFirst());
-//            userProfile.setPmPhoneticMiddleName(profileData.get(i).getPbPhoneticNameMiddle());
-//            userProfile.setPmPhoneticLastName(profileData.get(i).getPbPhoneticNameLast());
             userProfile.setPmIsFavourite(profileData.get(i).getIsFavourite());
-//            userProfile.setPmNotes(profileData.get(i).getPbNote());
-//            userProfile.setPmNickName(profileData.get(i).getPbNickname());
             userProfile.setPmRcpId(profileData.get(i).getRcpPmId());
             userProfile.setPmNosqlMasterId(profileData.get(i).getNoSqlMasterId());
+            userProfile.setPmBadge(profileData.get(i).getPmBadge());
             userProfile.setProfileRating(profileData.get(i).getProfileRating());
             userProfile.setPmProfileImage(profileData.get(i).getPbProfilePhoto());
             userProfile.setTotalProfileRateUser(profileData.get(i).getTotalProfileRateUser());
-
 
             if (mapLocalRcpId.containsKey(profileData.get(i).getRcpPmId())) {
                 userProfile.setPmRawId(mapLocalRcpId.get(profileData.get(i).getRcpPmId()));
