@@ -21,6 +21,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="@dimen/padding_between_title_body"
             android:textAppearance="?android:textAppearanceLarge"
+            android:textColor="@color/regularFontColor"
             tools:text="Rate Monal"/>
 
         <RatingBar
@@ -36,7 +37,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_small"
-            android:text="@string/str_comment"/>
+            android:text="@string/str_comment"
+            android:textColor="@color/colorTextHeader"/>
 
         <EditText
             android:id="@+id/input_comment"

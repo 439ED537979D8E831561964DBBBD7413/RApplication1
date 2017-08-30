@@ -745,7 +745,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         sharingIntent.setType("text/plain");
                         String shareBody;
                         if (StringUtils.isBlank(userProfile.getPmBadge())) {
-                            shareBody = WsConstants.WS_PROFILE_VIEW_ROOT + number;
+                            shareBody = WsConstants.WS_PROFILE_VIEW_BADGE_ROOT + number;
                         } else {
                             shareBody = WsConstants.WS_PROFILE_VIEW_BADGE_ROOT + userProfile
                                     .getPmBadge();
@@ -1329,11 +1329,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             textComment.setTypeface(Utils.typefaceRegular(this));
             textRemainingCharacters.setTypeface(Utils.typefaceLight(this));
             inputComment.setTypeface(Utils.typefaceRegular(this));
-            buttonLeft.setTypeface(Utils.typefaceSemiBold(this));
-            buttonRight.setTypeface(Utils.typefaceSemiBold(this));
+            buttonLeft.setTypeface(Utils.typefaceRegular(this));
+            buttonRight.setTypeface(Utils.typefaceRegular(this));
 
-            textDialogTitle.setText(String.format("%s %s", getString(R.string.text_rate),
-                    contactName));
+            Utils.setRatingColor(ProfileDetailActivity.this, ratingUser);
+
+            textDialogTitle.setText(String.format("%s %s", StringUtils.upperCase(getString(R
+                    .string.text_rate)), StringUtils.upperCase(contactName)));
             textRemainingCharacters.setText(String.format(Locale.ENGLISH, "%d %s", getResources()
                     .getInteger(R.integer.max_comment_length), getString(R.string
                     .characters_left)));
@@ -4118,10 +4120,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     private void getProfileDetails() {
         if (Utils.isNetworkAvailable(this)) {
-            asyncGetProfileDetails = new AsyncWebServiceCall(this,
-                    WSRequestType.REQUEST_TYPE_JSON.getValue(), null, null, WsResponseObject
-                    .class, WsConstants.REQ_GET_PROFILE_DETAILS, getResources().getString(R
-                    .string.msg_please_wait), true);
+            asyncGetProfileDetails = new AsyncWebServiceCall(this, WSRequestType
+                    .REQUEST_TYPE_JSON.getValue(), null, null, WsResponseObject.class, WsConstants
+                    .REQ_GET_PROFILE_DETAILS, getResources().getString(R.string.msg_please_wait), true);
             asyncGetProfileDetails.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants
                     .WS_ROOT + WsConstants.REQ_GET_PROFILE_DETAILS + "/" + pmId);
         } else {
