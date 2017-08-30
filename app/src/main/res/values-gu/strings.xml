@@ -18,7 +18,8 @@
     <string name="msg_unsaved_details">કેટલીક વિગતો સંગ્રહિત કરવાની બાકી છે. શું તમે ખરેખર આગળ વધવા માંગો છો?</string>
     <string name="msg_please_wait">મહેરબાની કરી રાહ જુવો…</string>
     <string name="msg_in_progress">પ્રગિતમાં…</string>
-    <string name="msg_no_network">નેટવર્ક ઉપલબ્ધ નથી</string>
+    <!--<string name="msg_no_network">નેટવર્ક ઉપલબ્ધ નથી</string>-->
+    <string name="msg_no_network">કૃપા કરીને તમારું નેટવર્ક કનેક્શન તપાસો</string>
     <string name="action_cancel">રદ કરો</string>
     <string name="action_call">કૉલ કરો</string>
     <string name="action_delete">કાઢી નાખો</string>

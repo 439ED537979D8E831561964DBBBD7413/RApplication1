@@ -2081,7 +2081,9 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         }
     }
 
-    private void fetchCallLogsFromIds(ArrayList<String> listOfRowIds) {
+    private void
+
+    fetchCallLogsFromIds(ArrayList<String> listOfRowIds) {
 
         ArrayList<CallLogType> tempCallLogTypeArrayList = new ArrayList<>();
 

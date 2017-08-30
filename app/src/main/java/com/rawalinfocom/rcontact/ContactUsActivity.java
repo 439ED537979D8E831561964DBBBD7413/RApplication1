@@ -1,6 +1,7 @@
 package com.rawalinfocom.rcontact;
 
 import android.*;
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
@@ -11,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -38,6 +40,8 @@ import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
+import com.rawalinfocom.rcontact.helper.imgcrop.CropImage;
+import com.rawalinfocom.rcontact.helper.imgcrop.CropImageView;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
 import com.rawalinfocom.rcontact.model.ReverseGeocodingAddress;
@@ -56,7 +60,10 @@ import java.lang.annotation.Annotation;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -305,7 +312,7 @@ public class ContactUsActivity extends BaseActivity implements RippleView
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                if (ContextCompat.checkSelfPermission(activity, android.Manifest
+                /*if (ContextCompat.checkSelfPermission(activity, android.Manifest
                         .permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
 
                     ActivityCompat.requestPermissions(activity, new
@@ -313,6 +320,9 @@ public class ContactUsActivity extends BaseActivity implements RippleView
                             .MY_PERMISSIONS_REQUEST_CAMERA);
 
                 } else {
+                    selectImageFromCamera();
+                }*/
+                if (checkPermission()) {
                     selectImageFromCamera();
                 }
             }
@@ -345,6 +355,89 @@ public class ContactUsActivity extends BaseActivity implements RippleView
         });
 
         dialog.show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 1:
+
+                Map<String, Integer> perms = new HashMap<String, Integer>();
+                // Initial
+                perms.put(Manifest.permission.CAMERA, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.READ_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+
+                // Fill with results
+                for (int i = 0; i < permissions.length; i++)
+                    perms.put(permissions[i], grantResults[i]);
+
+                boolean isCamera = perms.get(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+                boolean isStorage = perms.get(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+                boolean isStorageWrite = perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+
+                if (isCamera && isStorage && isStorageWrite)
+                    selectImageFromCamera();
+                else
+                    Utils.showErrorSnackBar(ContactUsActivity.this, activityContactUs, getString(R.string.camera_permission));
+                break;
+
+            case 2:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED)
+                    selectImageFromGallery();
+                else
+                    Utils.showErrorSnackBar(ContactUsActivity.this, activityContactUs, getString(R.string.storage_permission));
+                break;
+
+            case 3:
+
+                if (fileUri != null && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // required permissions granted, start crop image activity
+                    startCropImageActivity(fileUri);
+                }
+
+                break;
+        }
+    }
+    /**
+     * Start crop image activity for the given image.
+     */
+    private void startCropImageActivity(Uri imageUri) {
+        CropImage.activity(imageUri)
+                .setGuidelines(CropImageView.Guidelines.ON)
+                .setMultiTouchEnabled(true)
+                .start(ContactUsActivity.this);
+    }
+
+    private boolean checkPermission() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int permissionCamera = ContextCompat.checkSelfPermission(this,
+                    android.Manifest.permission.CAMERA);
+            int readPermission = ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE);
+            int writePermission = ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+            List<String> listPermissionsNeeded = new ArrayList<>();
+            if (permissionCamera != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(android.Manifest.permission.CAMERA);
+            }
+            if (readPermission != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(android.Manifest.permission.READ_EXTERNAL_STORAGE);
+            }
+            if (writePermission != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            }
+
+            if (!listPermissionsNeeded.isEmpty()) {
+                ActivityCompat.requestPermissions(this,
+                        listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),
+                        1);
+                return false;
+            } else {
+                return true;
+            }
+        }
+        return true;
     }
 
     private File mFileTemp;
