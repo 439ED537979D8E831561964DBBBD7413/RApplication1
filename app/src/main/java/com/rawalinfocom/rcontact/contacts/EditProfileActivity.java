@@ -2,22 +2,22 @@ package com.rawalinfocom.rcontact.contacts;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.LabeledIntent;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -28,6 +28,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -47,9 +48,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareDialog;
 import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.BaseActivity;
-import com.rawalinfocom.rcontact.BuildConfig;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
@@ -95,7 +97,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -326,6 +327,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     boolean isStorageFromSettings = false, isCameraFromSettings = false;
 
     Bitmap selectedBitmap = null;
+    /*@BindView(R.id.btn_share)
+    Button btnShare;*/
 
     private File mFileTemp;
     private Uri fileUri;
@@ -356,7 +359,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     ColorStateList defaultMarkerColor;
 
     //<editor-fold desc="Override Methods">
-
+//    String imageurl =  "https://static.pexels.com/photos/87452/flowers-background-butterflies-beautiful-87452.jpeg";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -364,7 +367,65 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         ButterKnife.bind(this);
         arrayListProfile = new ArrayList<>();
         init();
+
+        /*btnShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onShareClick();
+            }
+        });*/
     }
+
+
+////    private void onShareClick() {
+//
+//        PackageManager pm = getPackageManager();
+//        Intent intent = new Intent();
+//        intent.setAction(Intent.ACTION_SEND);
+//        intent.setType("text/*");
+//
+//        List<ResolveInfo> resInfo = pm.queryIntentActivities(intent, 0);
+//        List<LabeledIntent> intentList = new ArrayList<LabeledIntent>();
+//        for (int i = 0; i < resInfo.size(); i++) {
+//            // Extract the label, append it, and repackage it in a LabeledIntent
+//            ResolveInfo ri = resInfo.get(i);
+//            String packageName = ri.activityInfo.packageName;
+//            if (packageName.contains("com.twitter.android") || packageName.contains("com.facebook.katana")
+//                    || packageName.contains("com.linkedin.android")) {
+//                intent.setComponent(new ComponentName(packageName, ri.activityInfo.name));
+//                if (packageName.contains("com.twitter.android")) {
+//                    intent.putExtra(Intent.EXTRA_TEXT, imageurl);
+//                } else if (packageName.contains("com.facebook.katana")) {
+//                    // Warning: Facebook IGNORES our text. They say "These fields are intended for users to express themselves. Pre-filling these fields erodes the authenticity of the user voice."
+//                    // One workaround is to use the Facebook SDK to post, but that doesn't allow the user to choose how they want to share. We can also make a custom landing page, and the link
+//                    // will show the <meta content ="..."> text from that page with our link in Facebook.
+////                    intent.putExtra(Intent.EXTRA_TEXT, imageurl);
+//                    ShareDialog shareDialog = new ShareDialog(this);
+//                    ShareLinkContent linkContent = new ShareLinkContent.Builder()
+//                            .setContentTitle("How to integrate Facebook from your app")
+//                            .setImageUrl(Uri.parse(imageurl))
+//                            .setContentDescription(
+//                                    "simple Fb Image share integration")
+//                            .setContentUrl(Uri.parse(imageurl))
+//                            .build();
+//
+//                    shareDialog.show(linkContent);  // Show facebook ShareDialog
+//
+//                } else if (packageName.contains("com.linkedin.android")) {
+//                    // If Gmail shows up twice, try removing this else-if clause and the reference to "android.gm" above
+//                    intent.putExtra(android.content.Intent.EXTRA_TEXT, imageurl);
+//                }
+//                intentList.add(new LabeledIntent(intent, packageName, ri.loadLabel(pm), ri.icon));
+//            }
+//
+//        }
+//
+//        // convert intentList to array
+//        LabeledIntent[] extraIntents = intentList.toArray(new LabeledIntent[intentList.size()]);
+//        Intent openInChooser = Intent.createChooser(intent, "Share rating via Social Media");
+//        openInChooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, extraIntents);
+//        startActivity(openInChooser);
+//    }
 
     @Override
     @SuppressLint("NewApi")
@@ -813,7 +874,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     }
 
                     if (!StringUtils.isBlank(email.getEmEmailId())) {
-                        if (android.util.Patterns.EMAIL_ADDRESS.matcher(email.getEmEmailId())
+                        if (Patterns.EMAIL_ADDRESS.matcher(email.getEmEmailId())
                                 .matches()) {
                             arrayListNewEmail.add(email);
                         } else if (!emailId.isEnabled()) {
@@ -3198,7 +3259,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             if (!listPermissionsNeeded.isEmpty()) {
                 ActivityCompat.requestPermissions(this,
                         listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),
-                        AppConstants.MY_PERMISSIONS_REQUEST_CAMERA);
+                        1);
                 return false;
             } else {
                 return true;

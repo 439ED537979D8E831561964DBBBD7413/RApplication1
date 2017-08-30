@@ -1223,8 +1223,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 for (int i = 0; i < callLogTypeArrayList.size(); i++) {
                     if (nameAndProfileImage != null && nameAndProfileImage.isCancelled())
                         return;
-                    if (updateOldLogWithUpdatedDetails != null && updateOldLogWithUpdatedDetails
-                            .isCancelled())
+                    if (updateOldLogWithUpdatedDetails != null && updateOldLogWithUpdatedDetails.isCancelled())
                         return;
                     CallLogType callLogType = callLogTypeArrayList.get(i);
 
