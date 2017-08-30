@@ -1,11 +1,13 @@
 package com.rawalinfocom.rcontact.adapters;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.RecyclerView;
@@ -136,6 +138,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
         holder.imgActionType.setImageResource(R.drawable.ico_phone_alt_svg);
         holder.imgActionType.setOnClickListener(new View.OnClickListener() {
+            @TargetApi(Build.VERSION_CODES.M)
             @Override
             public void onClick(View view) {
 
@@ -157,6 +160,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         });
 
         holder.llProfileData.setOnClickListener(new View.OnClickListener() {
+            @TargetApi(Build.VERSION_CODES.M)
             @Override
             public void onClick(View v) {
 
@@ -190,7 +194,6 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         });
 
         int pbRcpType = phoneNumber.getPbRcpType();
-        final ProfileDetailViewHolder viewHodler = holder;
         if (pbRcpType == IntegerConstants.RCP_TYPE_PRIMARY) {
             holder.textMain.setText(Utils.setMultipleTypeface(activity, number + " " + activity
                     .getString(R.string.im_icon_verify), 0, (StringUtils.length(number) + 1), (
@@ -234,7 +237,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 @Override
                 public void onClick(View v) {
                     PrivacySettingPopupDialog privacySettingPopupDialog = new
-                            PrivacySettingPopupDialog(viewHodler, activity, listner, AppConstants
+                            PrivacySettingPopupDialog(holder, activity, listner, AppConstants
                             .PHONE_NUMBER,
                             position, phoneNumber.getPhonePublic(), phoneNumber.getPhoneId());
                     privacySettingPopupDialog.setDialogTitle(activity.getResources().getString(R
