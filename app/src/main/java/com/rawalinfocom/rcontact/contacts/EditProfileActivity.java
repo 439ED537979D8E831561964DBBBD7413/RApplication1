@@ -357,9 +357,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     ColorStateList defaultMarkerColor;
 
     //<editor-fold desc="Override Methods">
-    String imageurl = "https://static.pexels.com/photos/87452/flowers-background-butterflies-beautiful-87452.jpeg";
+    /*String imageurl = "https://static.pexels.com/photos/87452/flowers-background-butterflies-beautiful-87452.jpeg";
     @BindView(R.id.btn_share)
-    Button btnShare;
+    Button btnShare;*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -369,21 +369,21 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         arrayListProfile = new ArrayList<>();
         init();
 
-        btnShare.setOnClickListener(new View.OnClickListener() {
+        /*btnShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 onShareClick();
             }
-        });
+        });*/
     }
 
 
-    private void onShareClick() {
+    /*private void onShareClick() {
 
         PackageManager pm = getPackageManager();
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_SEND);
-        intent.setType("text/*");
+        intent.setType("text*//*");
 
         List<ResolveInfo> resInfo = pm.queryIntentActivities(intent, 0);
         List<LabeledIntent> intentList = new ArrayList<LabeledIntent>();
@@ -426,7 +426,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         Intent openInChooser = Intent.createChooser(intent, "Share rating via Social Media");
         openInChooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, extraIntents);
         startActivity(openInChooser);
-    }
+    }*/
 
     @Override
     @SuppressLint("NewApi")
