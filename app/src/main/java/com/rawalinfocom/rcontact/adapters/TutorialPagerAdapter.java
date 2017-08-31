@@ -40,7 +40,7 @@ public class TutorialPagerAdapter extends PagerAdapter {
     public Object instantiateItem(ViewGroup container, final int position) {
         View itemView = layoutInflater.inflate(R.layout.list_item_tutorial, container, false);
 
-        ImageView imageView = (ImageView) itemView.findViewById(R.id.image_tutorial);
+        ImageView imageView = itemView.findViewById(R.id.image_tutorial);
         imageView.setImageResource(images[position]);
 
         container.addView(itemView);
