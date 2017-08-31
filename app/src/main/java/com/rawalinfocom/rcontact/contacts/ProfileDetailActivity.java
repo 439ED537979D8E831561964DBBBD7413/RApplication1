@@ -3666,7 +3666,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         }
     }
 
-
     @SuppressWarnings("unused")
     private ArrayList<CallLogType> getNumbersFromName(String number) {
         Cursor cursor;
