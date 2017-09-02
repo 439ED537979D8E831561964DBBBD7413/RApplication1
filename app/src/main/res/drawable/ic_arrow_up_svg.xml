@@ -5,5 +5,5 @@
         android:viewportWidth="44.0">
     <path
         android:fillColor="@color/dialogButtonTextColor"
-        android:pathData="M3.5,11l18.4,14.7l17.3,-14.7l4.7,3.7l-22,18.3l-22,-18.3z"/>
+        android:pathData="M3.5,33l18.4,-14.6l17.3,14.6l4.7,-3.6l-22,-18.4l-22,18.4z"/>
 </vector>
