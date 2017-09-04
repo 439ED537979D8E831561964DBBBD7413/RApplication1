@@ -358,24 +358,14 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                         (getUserPmId());
                 String number = StringUtils.trimToEmpty(profileDataArrayList.get(0).getTempNumber
                         ());*/
-                TableProfileMaster tableProfileMaster = new TableProfileMaster
-                        (databaseHandler);
-                UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId
-                        (Integer.parseInt(getUserPmId()));
                 TableMobileMaster tableMobileMaster = new TableMobileMaster
                         (databaseHandler);
                 String number = tableMobileMaster.getUserMobileNumber(getUserPmId());
                 if (StringUtils.startsWith(number, "+")) {
                     number = StringUtils.substring(number, 1);
                 }
-                String shareBody;
-                if (StringUtils.isBlank(userProfile.getPmBadge())) {
-                    shareBody = AppConstants.PLAY_STORE_LINK + getPackageName() +
-                            "&utm_source=" + number + "&utm_medium=" + number;
-                } else {
-                    shareBody = WsConstants.WS_APP_SHARE_BADGE_ROOT + userProfile
-                            .getPmBadge();
-                }
+                String shareBody = AppConstants.PLAY_STORE_LINK + getPackageName() +
+                        "&utm_source" + "=" + number + "&utm_medium=" + number;
 
                 sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
                 startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_via)));
@@ -2091,7 +2081,9 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         }
     }
 
-    private void fetchCallLogsFromIds(ArrayList<String> listOfRowIds) {
+    private void
+
+    fetchCallLogsFromIds(ArrayList<String> listOfRowIds) {
 
         ArrayList<CallLogType> tempCallLogTypeArrayList = new ArrayList<>();
 

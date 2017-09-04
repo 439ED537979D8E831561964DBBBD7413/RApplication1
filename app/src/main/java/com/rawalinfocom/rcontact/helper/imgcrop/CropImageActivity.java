@@ -134,9 +134,9 @@ public class CropImageActivity extends AppCompatActivity implements CropImageVie
         Drawable cropIcon = null;
         try {
             TypedValue typedValue = new TypedValue();
-            getResources().getValue(R.drawable.ico_crop_svg, typedValue, false);
+            getResources().getValue(R.drawable.ico_check, typedValue, false);
             if (typedValue.data != R.drawable.crop_image_menu_crop_stub) {
-                cropIcon = ContextCompat.getDrawable(this, R.drawable.ico_crop_svg);
+                cropIcon = ContextCompat.getDrawable(this, R.drawable.ico_check);
                 menu.findItem(R.id.crop_image_menu_crop).setIcon(cropIcon);
             }
         } catch (Exception e) {

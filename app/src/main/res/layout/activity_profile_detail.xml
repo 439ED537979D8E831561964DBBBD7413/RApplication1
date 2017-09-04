@@ -385,7 +385,7 @@
                                 android:layout_margin="@dimen/margin_tiny"
                                 android:contentDescription="@string/str_content_description"
                                 android:src="@drawable/ico_call_svg"
-                                android:tint="@color/colorVeryDarkGrayishBlue2"/>
+                                android:tint="@color/iconColor"/>
 
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -399,7 +399,7 @@
                                     android:layout_marginStart="@dimen/margin_tiny"
                                     android:layout_marginTop="@dimen/margin_small_tiny"
                                     android:text="@string/str_phone"
-                                    android:textColor="@color/colorBlack"/>
+                                    android:textColor="@color/colorTextHeader"/>
 
                                 <android.support.v7.widget.RecyclerView
                                     android:id="@+id/recycler_view_contact_number"
@@ -428,7 +428,7 @@
                                 android:layout_margin="@dimen/margin_tiny"
                                 android:contentDescription="@string/str_content_description"
                                 android:src="@drawable/ico_envelop_svg"
-                                android:tint="@color/colorVeryDarkGrayishBlue2"/>
+                                android:tint="@color/iconColor"/>
 
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -442,7 +442,7 @@
                                     android:layout_marginStart="@dimen/margin_tiny"
                                     android:layout_marginTop="@dimen/margin_small_tiny"
                                     android:text="@string/str_email"
-                                    android:textColor="@color/colorBlack"/>
+                                    android:textColor="@color/colorTextHeader"/>
 
                                 <android.support.v7.widget.RecyclerView
                                     android:id="@+id/recycler_view_email"
@@ -476,7 +476,7 @@
                                     android:layout_margin="@dimen/margin_tiny"
                                     android:contentDescription="@string/str_content_description"
                                     android:src="@drawable/ico_website_svg"
-                                    android:tint="@color/colorVeryDarkGrayishBlue2"/>
+                                    android:tint="@color/iconColor"/>
 
                                 <LinearLayout
                                     android:layout_width="match_parent"
@@ -490,7 +490,7 @@
                                         android:layout_marginStart="@dimen/margin_tiny"
                                         android:layout_marginTop="@dimen/margin_small_tiny"
                                         android:text="@string/str_website"
-                                        android:textColor="@color/colorBlack"/>
+                                        android:textColor="@color/colorTextHeader"/>
 
                                     <android.support.v7.widget.RecyclerView
                                         android:id="@+id/recycler_view_website"
@@ -518,7 +518,7 @@
                                     android:layout_margin="@dimen/margin_tiny"
                                     android:contentDescription="@string/str_content_description"
                                     android:src="@drawable/ico_address_svg"
-                                    android:tint="@color/colorVeryDarkGrayishBlue2"/>
+                                    android:tint="@color/iconColor"/>
 
                                 <LinearLayout
                                     android:layout_width="match_parent"
@@ -532,7 +532,7 @@
                                         android:layout_marginStart="@dimen/margin_tiny"
                                         android:layout_marginTop="@dimen/margin_small_tiny"
                                         android:text="@string/str_address"
-                                        android:textColor="@color/colorBlack"/>
+                                        android:textColor="@color/colorTextHeader"/>
 
                                     <android.support.v7.widget.RecyclerView
                                         android:id="@+id/recycler_view_address"
@@ -560,7 +560,7 @@
                                     android:layout_margin="@dimen/margin_tiny"
                                     android:contentDescription="@string/str_content_description"
                                     android:src="@drawable/ico_social_svg"
-                                    android:tint="@color/colorVeryDarkGrayishBlue2"/>
+                                    android:tint="@color/iconColor"/>
 
                                 <LinearLayout
                                     android:layout_width="match_parent"
@@ -574,7 +574,7 @@
                                         android:layout_marginStart="@dimen/margin_tiny"
                                         android:layout_marginTop="@dimen/margin_small_tiny"
                                         android:text="@string/str_social_contact"
-                                        android:textColor="@color/colorBlack"/>
+                                        android:textColor="@color/colorTextHeader"/>
 
                                     <android.support.v7.widget.RecyclerView
                                         android:id="@+id/recycler_view_social_contact"
@@ -644,7 +644,7 @@
                                 android:layout_margin="@dimen/margin_tiny"
                                 android:contentDescription="@string/str_content_description"
                                 android:src="@drawable/ico_events_svg"
-                                android:tint="@color/colorVeryDarkGrayishBlue2"/>
+                                android:tint="@color/iconColor"/>
 
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -658,7 +658,7 @@
                                     android:layout_marginStart="@dimen/margin_tiny"
                                     android:layout_marginTop="@dimen/margin_small_tiny"
                                     android:text="@string/str_event"
-                                    android:textColor="@color/colorBlack"/>
+                                    android:textColor="@color/colorTextHeader"/>
 
                                 <android.support.v7.widget.RecyclerView
                                     android:id="@+id/recycler_view_event"
@@ -686,7 +686,7 @@
                                 android:layout_margin="@dimen/margin_tiny"
                                 android:contentDescription="@string/str_content_description"
                                 android:src="@drawable/ico_gender_svg"
-                                android:tint="@color/colorVeryDarkGrayishBlue2"/>
+                                android:tint="@color/iconColor"/>
 
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -700,7 +700,7 @@
                                     android:layout_marginStart="@dimen/margin_tiny"
                                     android:layout_marginTop="@dimen/margin_small_tiny"
                                     android:text="@string/str_gender"
-                                    android:textColor="@color/colorBlack"/>
+                                    android:textColor="@color/colorTextHeader"/>
 
                                 <RelativeLayout
                                     android:layout_width="match_parent"
