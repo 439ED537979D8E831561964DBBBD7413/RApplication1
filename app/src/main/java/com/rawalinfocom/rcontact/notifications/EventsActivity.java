@@ -12,7 +12,6 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.BaseActivity;
@@ -83,6 +82,8 @@ public class EventsActivity extends BaseActivity implements RippleView
     RecyclerView recyclerViewUpcoming;
     @BindView(R.id.view_more)
     TextView viewMore;
+    @BindView(R.id.layout_root)
+    RelativeLayout layoutRoot;
 
     private EventAdapter todayEventAdapter;
     private EventAdapter recentEventAdapter;
@@ -442,14 +443,15 @@ public class EventsActivity extends BaseActivity implements RippleView
                                 break;
                         }
                         Utils.hideProgressDialog();
+                        Utils.showSuccessSnackBar(EventsActivity.this, layoutRoot, getString(R.string.str_comment_reply));
                     }
                 } else {
-                    Toast.makeText(EventsActivity.this, getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
+                    Utils.showErrorSnackBar(EventsActivity.this, layoutRoot, getString(R.string.msg_try_later));
                     Utils.hideProgressDialog();
                 }
             }
         } else {
-            Toast.makeText(EventsActivity.this, getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
+            Utils.showErrorSnackBar(EventsActivity.this, layoutRoot, getString(R.string.msg_try_later));
             Utils.hideProgressDialog();
         }
     }

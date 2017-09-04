@@ -353,16 +353,20 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
                 Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                 sharingIntent.setType("text/plain");
-                QueryManager queryManager = new QueryManager(databaseHandler);
+               /* QueryManager queryManager = new QueryManager(databaseHandler);
                 ArrayList<ProfileData> profileDataArrayList = queryManager.getRcpNumberName
                         (getUserPmId());
                 String number = StringUtils.trimToEmpty(profileDataArrayList.get(0).getTempNumber
-                        ());
+                        ());*/
+                TableMobileMaster tableMobileMaster = new TableMobileMaster
+                        (databaseHandler);
+                String number = tableMobileMaster.getUserMobileNumber(getUserPmId());
                 if (StringUtils.startsWith(number, "+")) {
                     number = StringUtils.substring(number, 1);
                 }
                 String shareBody = AppConstants.PLAY_STORE_LINK + getPackageName() +
-                        "&utm_source=" + number + "&utm_medium=" + number;
+                        "&utm_source" + "=" + number + "&utm_medium=" + number;
+
                 sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
                 startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_via)));
 
@@ -1451,19 +1455,12 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
                 //<editor-fold desc="Profile Master">
                 UserProfile userProfile = new UserProfile();
-//            userProfile.setPmSuffix(profileData.get(i).getPbNameSuffix());
-//            userProfile.setPmPrefix(profileData.get(i).getPbNamePrefix());
                 userProfile.setPmFirstName(profileData.get(i).getPbNameFirst());
-//            userProfile.setPmMiddleName(profileData.get(i).getPbNameMiddle());
                 userProfile.setPmLastName(profileData.get(i).getPbNameLast());
-//            userProfile.setPmPhoneticFirstName(profileData.get(i).getPbPhoneticNameFirst());
-//            userProfile.setPmPhoneticMiddleName(profileData.get(i).getPbPhoneticNameMiddle());
-//            userProfile.setPmPhoneticLastName(profileData.get(i).getPbPhoneticNameLast());
                 userProfile.setPmIsFavourite(profileData.get(i).getIsFavourite());
-//            userProfile.setPmNotes(profileData.get(i).getPbNote());
-//            userProfile.setPmNickName(profileData.get(i).getPbNickname());
                 userProfile.setPmRcpId(profileData.get(i).getRcpPmId());
                 userProfile.setPmNosqlMasterId(profileData.get(i).getNoSqlMasterId());
+                userProfile.setPmBadge(profileData.get(i).getPmBadge());
                 userProfile.setProfileRating(profileData.get(i).getProfileRating());
                 userProfile.setPmProfileImage(profileData.get(i).getPbProfilePhoto());
                 userProfile.setTotalProfileRateUser(profileData.get(i).getTotalProfileRateUser());
@@ -2084,7 +2081,9 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         }
     }
 
-    private void fetchCallLogsFromIds(ArrayList<String> listOfRowIds) {
+    private void
+
+    fetchCallLogsFromIds(ArrayList<String> listOfRowIds) {
 
         ArrayList<CallLogType> tempCallLogTypeArrayList = new ArrayList<>();
 
@@ -2452,7 +2451,6 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         }
 
     }
-
 
 
     private void backgroundSync(final boolean addToDatabase, final WsResponseObject

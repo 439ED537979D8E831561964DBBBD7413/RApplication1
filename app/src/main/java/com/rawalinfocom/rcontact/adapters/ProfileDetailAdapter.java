@@ -1,11 +1,13 @@
 package com.rawalinfocom.rcontact.adapters;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.RecyclerView;
@@ -136,6 +138,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
         holder.imgActionType.setImageResource(R.drawable.ico_phone_alt_svg);
         holder.imgActionType.setOnClickListener(new View.OnClickListener() {
+            @TargetApi(Build.VERSION_CODES.M)
             @Override
             public void onClick(View view) {
 
@@ -157,6 +160,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         });
 
         holder.llProfileData.setOnClickListener(new View.OnClickListener() {
+            @TargetApi(Build.VERSION_CODES.M)
             @Override
             public void onClick(View v) {
 
@@ -181,8 +185,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             @Override
             public boolean onLongClick(View view) {
                 Utils.copyToClipboard(activity, activity.getString(R.string.str_copy_number), (
-                        (TextView) view).getText()
-                        .toString());
+                        (TextView) view).getText().toString());
                 Utils.showSuccessSnackBar(activity, ((ProfileDetailActivity) activity)
                         .getRelativeRootProfileDetail(), activity.getString(R.string
                         .str_copy_number_clip_board));
@@ -191,11 +194,10 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         });
 
         int pbRcpType = phoneNumber.getPbRcpType();
-        final ProfileDetailViewHolder viewHodler = holder;
         if (pbRcpType == IntegerConstants.RCP_TYPE_PRIMARY) {
-            holder.textMain.setTypeface(Utils.typefaceIcons(activity));
-            holder.textMain.setText(String.format("%s %s", number, activity.getString(R.string
-                    .im_icon_verify)));
+            holder.textMain.setText(Utils.setMultipleTypeface(activity, number + " " + activity
+                    .getString(R.string.im_icon_verify), 0, (StringUtils.length(number) + 1), (
+                    (StringUtils.length(number) + 1) + 1)));
             holder.textMain.setTextColor(colorPineGreen);
             if (isOwnProfile)
                 holder.llPrivacy.setVisibility(View.GONE);
@@ -235,7 +237,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 @Override
                 public void onClick(View v) {
                     PrivacySettingPopupDialog privacySettingPopupDialog = new
-                            PrivacySettingPopupDialog(viewHodler, activity, listner, AppConstants
+                            PrivacySettingPopupDialog(holder, activity, listner, AppConstants
                             .PHONE_NUMBER,
                             position, phoneNumber.getPhonePublic(), phoneNumber.getPhoneId());
                     privacySettingPopupDialog.setDialogTitle(activity.getResources().getString(R
@@ -309,9 +311,9 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         int emRcpType = email.getEmRcpType();
         final ProfileDetailViewHolder viewHodler = holder;
         if (emRcpType == IntegerConstants.RCP_TYPE_PRIMARY) {
-            holder.textMain.setTypeface(Utils.typefaceIcons(activity));
-            holder.textMain.setText(String.format("%s %s", emailId, activity.getString(R.string
-                    .im_icon_verify)));
+            holder.textMain.setText(Utils.setMultipleTypeface(activity, emailId + " " + activity
+                    .getString(R.string.im_icon_verify), 0, (StringUtils.length(emailId) + 1), (
+                    (StringUtils.length(emailId) + 1) + 1)));
             holder.textMain.setTextColor(colorPineGreen);
             if (isOwnProfile)
                 holder.llPrivacy.setVisibility(View.INVISIBLE);
@@ -757,10 +759,12 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 //                convertedDate = Utils.convertDateFormat(event.getEventDateTime(), "dd-MM",
 //                        "dd'th' " +
 //                                "MMM");
-                convertedDate = Utils.convertDateFormat(event.getEventDateTime(), "dd-MM", getEventDateFormat(event.getEventDateTime()));
+                convertedDate = Utils.convertDateFormat(event.getEventDateTime(), "dd-MM",
+                        getEventDateFormat(event.getEventDateTime()));
 
             } else {
-                convertedDate = Utils.convertDateFormat(event.getEventDateTime(), "yyyy-MM-dd", getEventDateFormat(event.getEventDateTime()));
+                convertedDate = Utils.convertDateFormat(event.getEventDateTime(), "yyyy-MM-dd",
+                        getEventDateFormat(event.getEventDateTime()));
 //                convertedDate = Utils.convertDateFormat(event.getEventDateTime(), "yyyy-MM-dd",
 //                        "d'th' " +
 //                                "MMM, yyyy");
@@ -769,7 +773,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         if (!isOwnProfile) {
             if (MoreObjects.firstNonNull(event.getIsYearHidden(), 0) == IntegerConstants
                     .IS_YEAR_HIDDEN) {
-                convertedDate = Utils.convertDateFormat(event.getEventDateTime(), "dd-MM", getEventDateFormat(event.getEventDateTime()));
+                convertedDate = Utils.convertDateFormat(event.getEventDateTime(), "dd-MM",
+                        getEventDateFormat(event.getEventDateTime()));
 //                convertedDate = Utils.convertDateFormat(event.getEventDateTime(), "dd-MM",
 //                        "dd'th' " +
 //                                "MMM");

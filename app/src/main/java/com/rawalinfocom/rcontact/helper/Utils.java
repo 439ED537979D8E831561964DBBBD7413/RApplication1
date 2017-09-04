@@ -35,6 +35,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -60,6 +62,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -247,6 +250,13 @@ public class Utils {
 
     //<editor-fold desc="Shared Preferences">
 
+    public static void clearData(Context context) {
+        SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
+                .KEY_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+        editor.clear().commit();
+    }
+
     public static void setStringPreference(Context context, String key, @Nullable String value) {
         SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
                 .KEY_PREFERENCES, Context.MODE_PRIVATE);
@@ -406,6 +416,7 @@ public class Utils {
         try {
             if (progressDialog != null && progressDialog.isShowing())
                 progressDialog.dismiss();
+
         } catch (Exception e) {
             e.printStackTrace();
             Log.d(LOG_TAG, "method : hideProgressDialog()");
@@ -468,6 +479,16 @@ public class Utils {
             Log.e(LOG_TAG, "method : typefaceSemiBold() , Null context");
             return null;
         }
+    }
+
+    public static SpannableStringBuilder setMultipleTypeface(Context context, CharSequence
+            charSequence, int startPosition, int midPosition, int endPosition) {
+        SpannableStringBuilder builder = new SpannableStringBuilder(charSequence);
+        builder.setSpan(new CustomTypefaceSpan("", typefaceRegular(context)), startPosition,
+                midPosition, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+        builder.setSpan(new CustomTypefaceSpan("", typefaceIcons(context)), midPosition,
+                endPosition, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+        return builder;
     }
 
     //</editor-fold>
@@ -796,7 +817,6 @@ public class Utils {
     }
 
 
-
     public static boolean isLastItemDisplaying(RecyclerView recyclerView) {
         if (recyclerView.getAdapter().getItemCount() != 0) {
             int lastVisibleItemPosition = ((LinearLayoutManager) recyclerView.getLayoutManager())
@@ -904,5 +924,29 @@ public class Utils {
                 .WS_WEBSITE_URL));
         browserIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(browserIntent);
+    }
+
+    public static Bitmap decodeFile(File f, int WIDTH, int HIGHT) {
+        try {
+            //Decode image size
+            BitmapFactory.Options o = new BitmapFactory.Options();
+            o.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(new FileInputStream(f), null, o);
+
+            //The new size we want to scale to
+            final int REQUIRED_WIDTH = WIDTH;
+            final int REQUIRED_HIGHT = HIGHT;
+            //Find the correct scale value. It should be the power of 2.
+            int scale = 1;
+            while (o.outWidth / scale / 2 >= REQUIRED_WIDTH && o.outHeight / scale / 2 >= REQUIRED_HIGHT)
+                scale *= 2;
+
+            //Decode with inSampleSize
+            BitmapFactory.Options o2 = new BitmapFactory.Options();
+            o2.inSampleSize = scale;
+            return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
+        } catch (FileNotFoundException e) {
+        }
+        return null;
     }
 }

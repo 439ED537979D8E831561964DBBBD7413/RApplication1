@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/relative_root_rating_dialog"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/relative_root_rating_dialog"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/llDialogContentArea"
@@ -21,7 +21,8 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="@dimen/padding_between_title_body"
             android:textAppearance="?android:textAppearanceLarge"
-            tools:text="Rate Monal" />
+            android:textColor="@color/regularFontColor"
+            tools:text="Rate Monal"/>
 
         <RatingBar
             android:id="@+id/rating_user"
@@ -29,30 +30,31 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:numStars="5"
-            android:stepSize="1" />
+            android:stepSize="1"/>
 
         <TextView
             android:id="@+id/text_comment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_small"
-            android:text="@string/str_comment" />
+            android:text="@string/str_comment"
+            android:textColor="@color/colorTextHeader"/>
 
         <EditText
             android:id="@+id/input_comment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/str_comment"
+            android:hint="@string/hint_comment"
             android:inputType="textMultiLine|textCapSentences"
             android:maxLength="@integer/max_comment_length"
-            android:maxLines="5" />
+            android:maxLines="5"/>
 
         <TextView
             android:id="@+id/text_remaining_characters"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
-            tools:text="200 Characters Remaining" />
+            tools:text="200 Characters Remaining"/>
     </LinearLayout>
 
     <LinearLayout
@@ -80,7 +82,7 @@
                 android:background="@null"
                 android:minWidth="@dimen/min_width_button"
                 android:textColor="@color/colorAccent"
-                tools:text="@string/action_cancel" />
+                tools:text="@string/action_cancel"/>
 
         </com.rawalinfocom.rcontact.helper.RippleView>
 
@@ -102,7 +104,7 @@
                 android:background="@null"
                 android:minWidth="@dimen/min_width_button"
                 android:textColor="@color/colorAccent"
-                tools:text="@string/action_submit" />
+                tools:text="@string/action_submit"/>
 
         </com.rawalinfocom.rcontact.helper.RippleView>
 

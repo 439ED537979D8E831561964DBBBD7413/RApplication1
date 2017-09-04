@@ -18,11 +18,13 @@
     <string name="msg_unsaved_details">કેટલીક વિગતો સંગ્રહિત કરવાની બાકી છે. શું તમે ખરેખર આગળ વધવા માંગો છો?</string>
     <string name="msg_please_wait">મહેરબાની કરી રાહ જુવો…</string>
     <string name="msg_in_progress">પ્રગિતમાં…</string>
-    <string name="msg_no_network">નેટવર્ક ઉપલબ્ધ નથી</string>
+    <!--<string name="msg_no_network">નેટવર્ક ઉપલબ્ધ નથી</string>-->
+    <string name="msg_no_network">કૃપા કરીને તમારું નેટવર્ક કનેક્શન તપાસો</string>
     <string name="action_cancel">રદ કરો</string>
     <string name="action_call">કૉલ કરો</string>
     <string name="action_delete">કાઢી નાખો</string>
     <string name="str_comment">ટિપ્પણી કરો</string>
+    <string name="hint_comment">કંઈક કહેવા માગો છો?</string>
     <string name="str_choose_from_contacts">સંપર્કોમાંથી પસંદ કરો</string>
     <string name="str_select_social_media">સોશિઅલ મીડિયા પસંદ કરો</string>
     <string name="str_select_all">બધા પસંદ કરો</string>
@@ -224,7 +226,7 @@
     <string name="add_field">ક્ષેત્ર ઉમેરો</string>
     <string name="update">અપડેટ કરો</string>
     <string name="cancel">રદ કરો</string>
-    <string name="hint_organization_name">સંસ્થા નુ નામ</string>
+    <string name="hint_organization_name">નામ</string>
     <string name="hint_organization_designation">પદ</string>
     <string name="check_text_current_organization">હું હાલમાં અહીં કામ કરું છું</string>
     <string name="hint_registered_number">રજિસ્ટર્ડ નંબર</string>
@@ -406,6 +408,7 @@
     <string name="str_unread_notification_hint_1">તમારી પાસે</string>
     <string name="str_unread_notification_hint_2">વાંચ્યા વગરની સૂચના(ઓ) છે.</string>
     <string name="str_unread_notification_hint_3">તમારી પાસે કોઈ વાંચ્યા વગરની સૂચના(ઓ) નથી.</string>
+    <string name="str_comment_reply">તમારી ટિપ્પણી સફળતાપૂર્વક મોકલવામાં આવી છે</string>
     <string name="str_rating_comment_hint_1">%1$s એ તમારા રેટિંગ અને ટિપ્પણી નો જવાબ આપ્યો</string>
     <string name="str_rating_comment_hint_2">%1$s ને તમે રેટ કર્યું અને એમના માટે ટિપ્પણી કરી</string>
     <string name="str_rating_comment_hint_3">%1$s થી તમને રેટિંગ મળી</string>
@@ -553,13 +556,13 @@
     <string name="tutorial_header_3">વૈશ્વિક પહોંચ</string>
     <string name="tutorial_header_4">સ્પામર્સ પ્રતિબંધિત</string>
     <string name="tutorial_header_5">રેટિંગ પ્રાપ્ત કરો</string>
-    <string name="tutorial_content_1"><![CDATA[સંપર્ક માત્ર એક નંબર નથી પરંતુ ઓટો સિંક કરેલો ડેટા અને સોશિઅલ માહિતીવાળી એક પ્રોફાઇલ છે!]]>	</string>
+    <string name="tutorial_content_1"><![CDATA[સંપર્ક માત્ર એક નંબર નથી પરંતુ બાય-કલર ઓટો સિંક ડેટાની પ્રોફાઇલ છે!]]>	</string>
     <string name="tutorial_content_2">RContacts દ્વારા સંપર્કો અને કૉલ લોગ્સ ને માત્ર એક આયકન થી પ્રબંધિત કરો! </string>
     <string name="tutorial_content_3">ફક્ત તમારા હોમસ્ક્રીન પર આ પૃથ્વી મૂકો અને તેના થી સંબંધિત કોઈપણ નંબર ના વિગતો ની શોધ કરો</string>
     <string name="tutorial_content_4">RContacts સ્પેશિયલ એજન્ટ ની જેમ તમને સ્પામ તરીકે ચિહ્નિત કરેલા નંબરો થી તમારું બચાવ કરશે</string>
     <string name="tutorial_content_5">પ્રતિષ્ઠા સિતારા કમાવો અને પોતાને સંપર્કોની દુનિયામાં પ્રમાણિત કરો</string>
     <string name="tutorial_and">અને?</string>
-    <string name="tutorial_skip">Skip>></string>
+    <string name="tutorial_skip">સ્કિપ>></string>
     <string name="tutorial_lets_go">ચાલો જઇએ!</string>
     <string name="get_started">શરૂ કરો</string>
     <string name="str_welcome">સ્વાગત છે</string>
@@ -680,5 +683,17 @@
     <string name="error_call_permission">કૉલ પરવાનગી આવશ્યક છે!</string>
     <string name="error_camera_permission">કૅમેરા પરવાનગી આવશ્યક છે!</string>
     <string name="error_storage_permission">સંગ્રહ પરવાનગી જરૂરી!</string>
+
+    <!-- Crop Image -->
+    <string name="crop_image_activity_title"></string>
+    <string name="crop_image_menu_rotate_left">Rotate counter clockwise</string>
+    <string name="crop_image_menu_rotate_right">Rotate</string>
+    <string name="crop_image_menu_crop">Crop</string>
+    <string name="crop_image_menu_flip">Flip</string>
+    <string name="crop_image_menu_flip_horizontally">Flip horizontally</string>
+    <string name="crop_image_menu_flip_vertically">Flip vertically</string>
+
+    <string name="pick_image_intent_chooser_title">Select source</string>
+    <string name="crop_failed">કાપવું નિષ્ફળ</string>
 
 </resources>

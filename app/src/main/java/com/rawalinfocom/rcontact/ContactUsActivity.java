@@ -1,6 +1,7 @@
 package com.rawalinfocom.rcontact;
 
 import android.*;
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
@@ -11,12 +12,15 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -28,17 +32,18 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
-import com.rawalinfocom.rcontact.contacts.EditProfileActivity;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
-import com.rawalinfocom.rcontact.helper.finestwebview.FinestWebView;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
+import com.rawalinfocom.rcontact.helper.imgcrop.CropImage;
+import com.rawalinfocom.rcontact.helper.imgcrop.CropImageView;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
 import com.rawalinfocom.rcontact.model.ReverseGeocodingAddress;
@@ -47,6 +52,7 @@ import com.rawalinfocom.rcontact.model.WsResponseObject;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -57,7 +63,10 @@ import java.lang.annotation.Annotation;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -179,7 +188,6 @@ public class ContactUsActivity extends BaseActivity implements RippleView
                 Intent i = new Intent(Intent.ACTION_VIEW);
                 i.setData(Uri.parse(WsConstants.URL_FAQ));
                 startActivity(i);
-//                showWebView(getString(R.string.str_faq), WsConstants.URL_FAQ);
                 break;
             case R.id.frameImageView1:
                 selectedImageNumber = "1";
@@ -196,29 +204,96 @@ public class ContactUsActivity extends BaseActivity implements RippleView
         }
     }
 
-//    private void showWebView(String title, String url) {
-//
-//        new FinestWebView.Builder(this).theme(R.style.FinestWebViewTheme)
-//                .titleDefault(title).showUrl(false)
-//                .statusBarColorRes(R.color.colorPrimaryDark)
-//                .toolbarColorRes(R.color.colorPrimary)
-//                .titleColorRes(R.color.finestWhite)
-//                .urlColorRes(R.color.colorPrimary)
-//                .iconDefaultColorRes(R.color.finestWhite)
-//                .progressBarColorRes(R.color.finestWhite)
-//                .stringResCopiedToClipboard(R.string.copied_to_clipboard)
-//                .stringResCopiedToClipboard(R.string.copied_to_clipboard)
-//                .stringResCopiedToClipboard(R.string.copied_to_clipboard)
-//                .showSwipeRefreshLayout(true)
-//                .swipeRefreshColorRes(R.color.colorPrimaryDark)
-//                .menuSelector(R.drawable.selector_light_theme)
-//                .menuTextGravity(Gravity.CENTER)
-//                .menuTextPaddingRightRes(R.dimen.defaultMenuTextPaddingLeft)
-//                .dividerHeight(0)
-//                .gradientDivider(false)
-//                .setCustomAnimations(R.anim.slide_up, R.anim.hold, R.anim.hold, R.anim.slide_down)
-//                .show(url);
-//    }
+    @Override
+    @SuppressLint("NewApi")
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        // handle result of pick image chooser
+        if (requestCode == CAMERA_CAPTURE_IMAGE_REQUEST_CODE && resultCode == RESULT_OK) {
+
+            // For API >= 23 we need to check specifically that we have permissions to read external storage.
+            if (CropImage.isReadExternalStoragePermissionsRequired(ContactUsActivity.this, fileUri)) {
+                // request permissions and handle the result in onRequestPermissionsResult()
+                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 3);
+            } else {
+                // no permissions required or already grunted, can start crop image activity
+                startCropImageActivity(fileUri);
+            }
+        }
+
+        if (requestCode == GALLERY_IMAGE_REQUEST_CODE && resultCode == RESULT_OK) {
+
+            fileUri = data.getData();
+
+            // For API >= 23 we need to check specifically that we have permissions to read external storage.
+            if (CropImage.isReadExternalStoragePermissionsRequired(ContactUsActivity.this, fileUri)) {
+                // request permissions and handle the result in onRequestPermissionsResult()
+                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 3);
+            } else {
+                // no permissions required or already grunted, can start crop image activity
+                startCropImageActivity(fileUri);
+            }
+        }
+
+        // handle result of CropImageActivity
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+
+                File file = new File(getRealPathFromURI(result.getUri()));
+                Bitmap bitmap = Utils.decodeFile(file, 512, 512);
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+                if (bitmap != null) {
+
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream);
+
+                    String bitmapString = Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT);
+
+                    switch (selectedImageNumber) {
+                        case "1":
+
+                            imgScreenshot1.setVisibility(View.VISIBLE);
+                            img1.setVisibility(View.GONE);
+                            strImage1 = bitmapString;
+
+                            Glide.with(this)
+                                    .load(Uri.fromFile(file))
+                                    .into(imgScreenshot1);
+
+                            break;
+                        case "2":
+
+                            imgScreenshot2.setVisibility(View.VISIBLE);
+                            img2.setVisibility(View.GONE);
+                            strImage2 = bitmapString;
+
+                            Glide.with(this)
+                                    .load(Uri.fromFile(file))
+                                    .into(imgScreenshot2);
+
+                            break;
+                        case "3":
+
+                            imgScreenshot3.setVisibility(View.VISIBLE);
+                            img3.setVisibility(View.GONE);
+                            strImage3 = bitmapString;
+
+                            Glide.with(this)
+                                    .load(Uri.fromFile(file))
+                                    .into(imgScreenshot3);
+
+                            break;
+                    }
+                }
+
+
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Toast.makeText(ContactUsActivity.this, " " + getString(R.string.crop_failed) +
+                        result.getError(), Toast.LENGTH_LONG).show();
+            }
+        }
+    }
 
     private void showChooseImageIntent() {
         final Dialog dialog = new Dialog(this);
@@ -306,14 +381,7 @@ public class ContactUsActivity extends BaseActivity implements RippleView
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                if (ContextCompat.checkSelfPermission(activity, android.Manifest
-                        .permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-
-                    ActivityCompat.requestPermissions(activity, new
-                            String[]{android.Manifest.permission.CAMERA}, AppConstants
-                            .MY_PERMISSIONS_REQUEST_CAMERA);
-
-                } else {
+                if (checkPermission()) {
                     selectImageFromCamera();
                 }
             }
@@ -348,7 +416,90 @@ public class ContactUsActivity extends BaseActivity implements RippleView
         dialog.show();
     }
 
-    private File mFileTemp;
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 1:
+
+                Map<String, Integer> perms = new HashMap<String, Integer>();
+                // Initial
+                perms.put(Manifest.permission.CAMERA, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.READ_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+
+                // Fill with results
+                for (int i = 0; i < permissions.length; i++)
+                    perms.put(permissions[i], grantResults[i]);
+
+                boolean isCamera = perms.get(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+                boolean isStorage = perms.get(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+                boolean isStorageWrite = perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+
+                if (isCamera && isStorage && isStorageWrite)
+                    selectImageFromCamera();
+                else
+                    Utils.showErrorSnackBar(ContactUsActivity.this, activityContactUs, getString(R.string.camera_permission));
+                break;
+
+            case 2:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED)
+                    selectImageFromGallery();
+                else
+                    Utils.showErrorSnackBar(ContactUsActivity.this, activityContactUs, getString(R.string.storage_permission));
+                break;
+
+            case 3:
+
+                if (fileUri != null && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // required permissions granted, start crop image activity
+                    startCropImageActivity(fileUri);
+                }
+
+                break;
+        }
+    }
+    /**
+     * Start crop image activity for the given image.
+     */
+    private void startCropImageActivity(Uri imageUri) {
+        CropImage.activity(imageUri)
+                .setGuidelines(CropImageView.Guidelines.ON)
+                .setMultiTouchEnabled(true)
+                .start(ContactUsActivity.this);
+    }
+
+    private boolean checkPermission() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int permissionCamera = ContextCompat.checkSelfPermission(this,
+                    android.Manifest.permission.CAMERA);
+            int readPermission = ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE);
+            int writePermission = ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+            List<String> listPermissionsNeeded = new ArrayList<>();
+            if (permissionCamera != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(android.Manifest.permission.CAMERA);
+            }
+            if (readPermission != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(android.Manifest.permission.READ_EXTERNAL_STORAGE);
+            }
+            if (writePermission != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            }
+
+            if (!listPermissionsNeeded.isEmpty()) {
+                ActivityCompat.requestPermissions(this,
+                        listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),
+                        1);
+                return false;
+            } else {
+                return true;
+            }
+        }
+        return true;
+    }
+
+//    private File mFileTemp;
     private Uri fileUri;
     public static final int MEDIA_TYPE_IMAGE = 1;
     private static final int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 100;
@@ -357,24 +508,31 @@ public class ContactUsActivity extends BaseActivity implements RippleView
     public static String TEMP_PHOTO_FILE_NAME = "";
 
     private void selectImageFromGallery() {
-        mFileTemp = getOutputMediaFile(MEDIA_TYPE_IMAGE);
 
         Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(i, GALLERY_IMAGE_REQUEST_CODE);
     }
 
     private void selectImageFromCamera() {
-        mFileTemp = getOutputMediaFile(MEDIA_TYPE_IMAGE);
+
+        File photoFile = getOutputMediaFile();
+
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
+        if (photoFile != null) {
 
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
-
-        // start the image capture Intent
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+                fileUri = Uri.fromFile(photoFile);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+            } else {
+                fileUri = FileProvider.getUriForFile(getApplicationContext(),
+                        getApplicationContext().getPackageName() + ".provider", photoFile);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+            }
+        }
         startActivityForResult(intent, CAMERA_CAPTURE_IMAGE_REQUEST_CODE);
     }
 
-    private File getOutputMediaFile(int type) {
+    private File getOutputMediaFile() {
 
         // External sdcard location
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment
@@ -393,20 +551,11 @@ public class ContactUsActivity extends BaseActivity implements RippleView
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format
                 (new Date());
         File mediaFile;
-        if (type == MEDIA_TYPE_IMAGE) {
 
-            TEMP_PHOTO_FILE_NAME = "IMG_" + timeStamp + ".jpg";
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator + TEMP_PHOTO_FILE_NAME);
-
-        } else {
-            return null;
-        }
+        TEMP_PHOTO_FILE_NAME = "IMG_" + timeStamp + ".jpg";
+        mediaFile = new File(mediaStorageDir.getPath() + File.separator + TEMP_PHOTO_FILE_NAME);
 
         return mediaFile;
-    }
-
-    private Uri getOutputMediaFileUri(int type) {
-        return Uri.fromFile(getOutputMediaFile(type));
     }
 
     private void copyStream(InputStream inputStream, FileOutputStream fileOutputStream) throws
@@ -418,146 +567,19 @@ public class ContactUsActivity extends BaseActivity implements RippleView
         }
     }
 
-    @SuppressLint("SetTextI18n")
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Bitmap selectedBitmap;
-        if (requestCode == CAMERA_CAPTURE_IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
 
-            selectedBitmap = BitmapFactory.decodeFile(fileUri.getPath());
-
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inSampleSize = 2; //4, 8, etc. the more value, the worst quality of image
-            try {
-                selectedBitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream
-                        (fileUri), null, options);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-
-            if (selectedBitmap != null) {
-                String bitmapString = Utils.convertBitmapToBase64(selectedBitmap, fileUri.getPath
-                        ());
-                switch (selectedImageNumber) {
-                    case "1":
-
-                        imgScreenshot1.setVisibility(View.VISIBLE);
-                        img1.setVisibility(View.GONE);
-                        strImage1 = bitmapString;
-
-                        Glide.with(this)
-                                .load(mFileTemp)
-                                .into(imgScreenshot1);
-
-                        break;
-                    case "2":
-
-                        imgScreenshot2.setVisibility(View.VISIBLE);
-                        img2.setVisibility(View.GONE);
-                        strImage2 = bitmapString;
-
-                        Glide.with(this)
-                                .load(mFileTemp)
-                                .into(imgScreenshot2);
-
-                        break;
-                    case "3":
-
-                        imgScreenshot3.setVisibility(View.VISIBLE);
-                        img3.setVisibility(View.GONE);
-                        strImage3 = bitmapString;
-
-                        Glide.with(this)
-                                .load(mFileTemp)
-                                .into(imgScreenshot3);
-
-                        break;
-                }
-            }
-
-
-        } else if (requestCode == GALLERY_IMAGE_REQUEST_CODE) {
-            if (resultCode != Activity.RESULT_OK)
-                return;
-
-            if (null == data)
-                return;
-            Uri selectedImage = data.getData();
-            String[] filePath = {MediaStore.Images.Media.DATA};
-            Cursor c = getContentResolver().query(selectedImage, filePath, null, null, null);
-            String picturePath = "";
-            if (c != null) {
-                c.moveToFirst();
-                int columnIndex = c.getColumnIndex(filePath[0]);
-                picturePath = c.getString(columnIndex);
-                c.close();
-            }
-
-            try {
-                InputStream inputStream = getContentResolver().openInputStream(data.getData());
-                FileOutputStream fileOutputStream = new FileOutputStream(mFileTemp);
-                if (inputStream != null) {
-                    copyStream(inputStream, fileOutputStream);
-                    inputStream.close();
-                }
-                fileOutputStream.close();
-
-                selectedBitmap = BitmapFactory.decodeFile(picturePath);
-
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inSampleSize = 2; //4, 8, etc. the more value, the worst quality of image
-                try {
-                    selectedBitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream
-                            (selectedImage), null, options);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-
-                if (selectedBitmap != null) {
-                    String bitmapString = Utils.convertBitmapToBase64(selectedBitmap, picturePath);
-
-                    switch (selectedImageNumber) {
-                        case "1":
-
-                            imgScreenshot1.setVisibility(View.VISIBLE);
-                            img1.setVisibility(View.GONE);
-                            strImage1 = bitmapString;
-
-                            Glide.with(this)
-                                    .load(mFileTemp)
-                                    .into(imgScreenshot1);
-
-                            break;
-                        case "2":
-
-                            imgScreenshot2.setVisibility(View.VISIBLE);
-                            img2.setVisibility(View.GONE);
-                            strImage2 = bitmapString;
-
-                            Glide.with(this)
-                                    .load(mFileTemp)
-                                    .into(imgScreenshot2);
-
-                            break;
-                        case "3":
-
-                            imgScreenshot3.setVisibility(View.VISIBLE);
-                            img3.setVisibility(View.GONE);
-                            strImage3 = bitmapString;
-
-                            Glide.with(this)
-                                    .load(mFileTemp)
-                                    .into(imgScreenshot3);
-
-                            break;
-                    }
-                }
-
-            } catch (Exception e) {
-                Log.e("TAG", "Error while creating temp file", e);
-            }
+    private String getRealPathFromURI(Uri contentURI) {
+        String result;
+        Cursor cursor = ContactUsActivity.this.getContentResolver().query(contentURI, null, null, null, null);
+        if (cursor == null) { // Source is Dropbox or other similar local file path
+            result = contentURI.getPath();
+        } else {
+            cursor.moveToFirst();
+            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+            result = cursor.getString(idx);
+            cursor.close();
         }
+        return result;
     }
 
     private void contactUs(ArrayList<String> arrayListScreenShot) {

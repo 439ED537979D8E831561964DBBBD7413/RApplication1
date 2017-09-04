@@ -213,10 +213,10 @@ public class DialerActivity extends BaseActivity {
         ButterKnife.bind(this);
 
         objectArrayListContact = new ArrayList<>();
-        secondaryContactList =  new ArrayList<>();
+        secondaryContactList = new ArrayList<>();
         tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
         tableProfileMobileMapping = new TableProfileMobileMapping(getDatabaseHandler());
-        syncGetContactNumber =  new SyncGetContactNumber();
+        syncGetContactNumber = new SyncGetContactNumber();
         syncGetContactNumber.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         rContactApplication = (RContactApplication) getApplicationContext();
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -365,7 +365,7 @@ public class DialerActivity extends BaseActivity {
         return decor.findViewById(actionBarId);
     }
 
-    private class SyncGetContactNumber extends AsyncTask<Void, Void, Void>{
+    private class SyncGetContactNumber extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected Void doInBackground(Void... voids) {
@@ -373,6 +373,7 @@ public class DialerActivity extends BaseActivity {
             return null;
         }
     }
+
     private void initandClickEvents() {
 
         textAddToContact.setTypeface(Utils.typefaceRegular(DialerActivity.this));
@@ -441,9 +442,9 @@ public class DialerActivity extends BaseActivity {
                     editTextNumber.setCursorVisible(false);
                 }
 
-                if(length == 1 && StringUtils.isEmpty(editTextNumber.getText().toString())){
+                if (length == 1 && StringUtils.isEmpty(editTextNumber.getText().toString())) {
                     editTextNumber.getText().clear();
-                    length =  editTextNumber.getText().length();
+                    length = editTextNumber.getText().length();
                 }
 
                 if (length == 0) {
@@ -744,7 +745,7 @@ public class DialerActivity extends BaseActivity {
         }
     }
 
-    private void populateDataToFilter(){
+    private void populateDataToFilter() {
         if (rContactApplication.getArrayListAllPhoneBookContacts() != null)
             objectArrayListContact.addAll(rContactApplication.getArrayListAllPhoneBookContacts());
 
@@ -764,31 +765,31 @@ public class DialerActivity extends BaseActivity {
                     ContactsContract.RawContacts.ACCOUNT_TYPE,
                     ContactsContract.CommonDataKinds.Phone.PHOTO_THUMBNAIL_URI
             };
-            String selection =  ContactsContract.CommonDataKinds.Phone.NUMBER /*+ " LIKE '%"+number+"%' "*/
+            String selection = ContactsContract.CommonDataKinds.Phone.NUMBER /*+ " LIKE '%"+number+"%' "*/
                     + " and " + ContactsContract.RawContacts.ACCOUNT_TYPE
                     + " in (" + ContactStorageConstants.CONTACT_STORAGE + ")";
             String sortOrder = "upper(" + ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + ") ASC";
 //            String[] selectionArg =  {number};
-            Cursor cursor = getContentResolver().query(uri,projection,selection,null,sortOrder);
+            Cursor cursor = getContentResolver().query(uri, projection, selection, null, sortOrder);
             if (cursor != null) {
                 while (cursor.moveToNext()) {
                     if (syncGetContactNumber != null && syncGetContactNumber.isCancelled())
-                        return ;
+                        return;
 
                     ProfileData profileData = new ProfileData();
-                    String contactNumber =  cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                    String contactName =  cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-                    String contactThumbnail =  cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.PHOTO_THUMBNAIL_URI));
+                    String contactNumber = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                    String contactName = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+                    String contactThumbnail = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.PHOTO_THUMBNAIL_URI));
 
-                    if(!StringUtils.isEmpty(contactNumber))
+                    if (!StringUtils.isEmpty(contactNumber))
                         profileData.setTempNumber(contactNumber);
-                    if(!StringUtils.isEmpty(contactName))
+                    if (!StringUtils.isEmpty(contactName))
                         profileData.setName(contactName);
-                    if(!StringUtils.isEmpty(contactThumbnail))
+                    if (!StringUtils.isEmpty(contactThumbnail))
                         profileData.setProfileUrl(contactThumbnail);
 
-                    String newNumber =  contactNumber.replace(" ", "").replace("-", "");
-                    String formattedNumber =  Utils.getFormattedNumber(this,newNumber);
+                    String newNumber = contactNumber.replace(" ", "").replace("-", "");
+                    String formattedNumber = Utils.getFormattedNumber(this, newNumber);
                     ProfileMobileMapping profileMobileMapping =
                             tableProfileMobileMapping
                                     .getCloudPmIdFromProfileMappingFromNumber(formattedNumber);
@@ -798,20 +799,20 @@ public class DialerActivity extends BaseActivity {
                             UserProfile userProfile = tableProfileMaster
                                     .getRCPProfileFromPmId(Integer.parseInt(cloudPmId));
 
-                            String firstName =  userProfile.getPmFirstName();
-                            String lastName =  userProfile.getPmLastName();
-                            String rcpId =  userProfile.getPmRcpId();
-                            String profileImage =  userProfile.getPmProfileImage();
+                            String firstName = userProfile.getPmFirstName();
+                            String lastName = userProfile.getPmLastName();
+                            String rcpId = userProfile.getPmRcpId();
+                            String profileImage = userProfile.getPmProfileImage();
 
-                            if(!StringUtils.isEmpty(firstName))
-                                profileData.setTempRcpName(firstName + " " +  lastName);
-                            if(!StringUtils.isEmpty(rcpId)){
+                            if (!StringUtils.isEmpty(firstName))
+                                profileData.setTempRcpName(firstName + " " + lastName);
+                            if (!StringUtils.isEmpty(rcpId)) {
                                 profileData.setTempRcpId(rcpId);
                                 profileData.setTempIsRcp(true);
                             }
-                            if(!StringUtils.isEmpty(profileImage))
+                            if (!StringUtils.isEmpty(profileImage))
                                 profileData.setTempRcpImageURL(profileImage);
-                        }else{
+                        } else {
                             profileData.setTempIsRcp(false);
                         }
                     }
@@ -835,16 +836,16 @@ public class DialerActivity extends BaseActivity {
                     linearAddToContact.setVisibility(View.GONE);
                     recycleViewPbContact.setAdapter(allContactAdapter);
                 } else {
-                    if(secondaryContactList.size()>0){
+                    if (secondaryContactList.size() > 0) {
                         ArrayList<Object> newObjectArrayListContact = new ArrayList<>();
                         newObjectArrayListContact.addAll(secondaryContactList);
-                        allContactAdapter =  new AllContactAdapter(this,newObjectArrayListContact);
+                        allContactAdapter = new AllContactAdapter(this, newObjectArrayListContact);
                         allContactAdapter.filter(number);
                         if (allContactAdapter.getSearchCount() > 0) {
                             relativeContact.setVisibility(View.VISIBLE);
                             linearAddToContact.setVisibility(View.GONE);
                             recycleViewPbContact.setAdapter(allContactAdapter);
-                        }else{
+                        } else {
                             relativeContact.setVisibility(View.GONE);
                             linearAddToContact.setVisibility(View.VISIBLE);
                         }
@@ -1146,7 +1147,8 @@ public class DialerActivity extends BaseActivity {
         return contactName;
     }
 
-    private void initSwipe() {
+    private void
+    initSwipe() {
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper
                 .SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
 
@@ -1198,6 +1200,19 @@ public class DialerActivity extends BaseActivity {
             @Override
             public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
                 /* Disable swiping in headers */
+                if (viewHolder instanceof AllContactAdapter.AllContactViewHolder) {
+                    /* Disable swiping in multiple RC case */
+                    if (((AllContactAdapter.AllContactViewHolder) viewHolder)
+                            .recyclerViewMultipleRc.getVisibility() == View.VISIBLE) {
+                        return 0;
+                    }
+                    /* Disable swiping for No number */
+                    if (StringUtils.length(((AllContactAdapter.AllContactViewHolder) viewHolder)
+                            .textContactNumber.getText().toString()) <= 0) {
+                        return 0;
+                    }
+                }
+
                 return super.getSwipeDirs(recyclerView, viewHolder);
             }
 

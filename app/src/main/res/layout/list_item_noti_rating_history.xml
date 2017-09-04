@@ -38,8 +38,8 @@
                 <TextView
                     android:id="@+id/text_rater_name"
                     android:layout_width="0dp"
-                    android:layout_weight=".6"
                     android:layout_height="wrap_content"
+                    android:layout_weight=".5"
                     android:ellipsize="end"
                     android:textColor="@color/colorPrimary"
                     tools:text="Aakar Jain" />
@@ -47,11 +47,11 @@
                 <TextView
                     android:id="@+id/text_rating_noti_time"
                     android:layout_width="0dp"
-                    android:layout_weight=".4"
                     android:layout_height="wrap_content"
+                    android:layout_weight=".5"
                     android:ellipsize="end"
                     android:gravity="end"
-                    android:paddingRight="@dimen/activity_horizontal_margin"
+                    android:paddingRight="@dimen/activity_half_horizontal_margin"
                     android:textAppearance="?android:textAppearanceSmall"
                     tools:text="11:15 PM" />
 

@@ -21,7 +21,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.constants.WsConstants;
-import com.rawalinfocom.rcontact.helper.finestwebview.FinestWebView;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
@@ -229,7 +228,7 @@ public class AboutHelpActivity extends BaseActivity implements RippleView
                 @Override
                 public void onClick(View v) {
                     count++;
-                    if(count == 5){
+                    if (count == 5) {
                         count = 0;
                         String exportedFileName = Utils.exportDB(getActivity());
                         if (exportedFileName != null) {

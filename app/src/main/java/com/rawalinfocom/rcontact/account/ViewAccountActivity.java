@@ -20,7 +20,6 @@ import org.apache.commons.lang3.StringUtils;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 
 import butterknife.BindView;
@@ -65,8 +64,7 @@ public class ViewAccountActivity extends BaseActivity implements RippleView
     String phoneNumber;
     ArrayList<String> emailIdList;
     String joiningDate;
-    @BindView(R.id.text_phone_verified)
-    TextView textPhoneVerified;
+
     @BindView(R.id.ll_email_vertical)
     LinearLayout llEmailVertical;
     TextView textEmail;
@@ -93,6 +91,15 @@ public class ViewAccountActivity extends BaseActivity implements RippleView
         textToolbarTitle.setTypeface(Utils.typefaceRegular(this));
         textToolbarTitle.setText(getString(R.string.view_account));
 
+        textLableFirstName.setTypeface(Utils.typefaceSemiBold(ViewAccountActivity.this));
+        textFirstName.setTypeface(Utils.typefaceRegular(ViewAccountActivity.this));
+        textLableLastName.setTypeface(Utils.typefaceSemiBold(ViewAccountActivity.this));
+        textLastName.setTypeface(Utils.typefaceRegular(ViewAccountActivity.this));
+        textLablePhone.setTypeface(Utils.typefaceSemiBold(ViewAccountActivity.this));
+        textLableEmail.setTypeface(Utils.typefaceSemiBold(ViewAccountActivity.this));
+        textLableJoiningDate.setTypeface(Utils.typefaceSemiBold(ViewAccountActivity.this));
+        textJoiningDate.setTypeface(Utils.typefaceRegular(ViewAccountActivity.this));
+
         getPreference();
     }
 
@@ -101,7 +108,7 @@ public class ViewAccountActivity extends BaseActivity implements RippleView
         lastName = Utils.getStringPreference(this, AppConstants.PREF_USER_LAST_NAME, "");
         phoneNumber = Utils.getStringPreference(this, AppConstants.PREF_USER_NUMBER, "");
         emailIdList = Utils.getArrayListPreference(this, AppConstants.PREF_USER_VERIFIED_EMAIL);
-        if(emailIdList == null){
+        if (emailIdList == null) {
             emailIdList = new ArrayList<>();
         }
         joiningDate = Utils.getStringPreference(this, AppConstants.PREF_USER_JOINING_DATE, "");
@@ -110,10 +117,7 @@ public class ViewAccountActivity extends BaseActivity implements RippleView
     }
 
     private void populateView() {
-        textFirstName.setTypeface(Utils.typefaceRegular(this));
-        textLastName.setTypeface(Utils.typefaceRegular(this));
-        textPhoneNumber.setTypeface(Utils.typefaceRegular(this));
-        textJoiningDate.setTypeface(Utils.typefaceRegular(this));
+
 
         if (!StringUtils.isEmpty(firstName))
             textFirstName.setText(firstName);
@@ -134,15 +138,14 @@ public class ViewAccountActivity extends BaseActivity implements RippleView
                 String firstPath = phoneNumber.substring(0, 2);
                 String lastPath = phoneNumber.substring(2, phoneNumber.length());
                 String newString = "+" + firstPath + " " + lastPath;
-                textPhoneNumber.setText(newString);
-                textPhoneVerified.setText(this.getString(R.string
-                        .im_icon_verify));
-                textPhoneVerified.setTypeface(Utils.typefaceIcons(this));
+                textPhoneNumber.setText(Utils.setMultipleTypeface(ViewAccountActivity.this,
+                        newString + " " + getString(R.string.im_icon_verify), 0, (StringUtils
+                                .length(newString) + 1), ((StringUtils.length(newString) + 1) +
+                                1)));
             }
         } else {
             textPhoneNumber.setVisibility(View.GONE);
             textLablePhone.setVisibility(View.GONE);
-            textPhoneVerified.setVisibility(View.GONE);
         }
 
         if (emailIdList.size() > 0) {
@@ -150,17 +153,19 @@ public class ViewAccountActivity extends BaseActivity implements RippleView
             for (int i = 0; i < emailIdList.size(); i++) {
                 String emailId = emailIdList.get(i);
                 textEmail = new TextView(this);
-                textEmail.setTypeface(Utils.typefaceIcons(this));
-                textEmail.setText(emailId + " " + this.getString(R.string.im_icon_verify));
-                textEmail.setTextColor(ContextCompat.getColor(this,R.color.colorAccent));
+                textEmail.setText(Utils.setMultipleTypeface(ViewAccountActivity.this, emailId +
+                        "" + " " + getString(R.string.im_icon_verify), 0, (StringUtils.length
+                        (emailId) + 1), ((StringUtils.length(emailId) + 1) + 1)));
+                textEmail.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
                 textEmail.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                         getResources().getDimension(R.dimen.text_size_16sp));
-                textEmail.setPadding(8,8,8,8);
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                textEmail.setPadding(8, 8, 8, 8);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout
+                        .LayoutParams.WRAP_CONTENT,
                         LinearLayout.LayoutParams.WRAP_CONTENT);
                 float pixels = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15,
                         getResources().getDisplayMetrics());
-                params.setMargins((int) pixels,0,0,0);
+                params.setMargins((int) pixels, 0, 0, 0);
                 textEmail.setLayoutParams(params);
                 llEmailVertical.addView(textEmail);
             }
