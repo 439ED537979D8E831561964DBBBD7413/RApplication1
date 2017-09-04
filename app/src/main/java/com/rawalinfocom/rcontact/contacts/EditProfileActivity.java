@@ -327,8 +327,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     boolean isStorageFromSettings = false, isCameraFromSettings = false;
 
     Bitmap selectedBitmap = null;
-    /*@BindView(R.id.btn_share)
-    Button btnShare;*/
 
     private File mFileTemp;
     private Uri fileUri;
@@ -359,7 +357,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     ColorStateList defaultMarkerColor;
 
     //<editor-fold desc="Override Methods">
-//    String imageurl =  "https://static.pexels.com/photos/87452/flowers-background-butterflies-beautiful-87452.jpeg";
+    /*String imageurl = "https://static.pexels.com/photos/87452/flowers-background-butterflies-beautiful-87452.jpeg";
+    @BindView(R.id.btn_share)
+    Button btnShare;*/
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -377,55 +378,55 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     }
 
 
-////    private void onShareClick() {
-//
-//        PackageManager pm = getPackageManager();
-//        Intent intent = new Intent();
-//        intent.setAction(Intent.ACTION_SEND);
-//        intent.setType("text/*");
-//
-//        List<ResolveInfo> resInfo = pm.queryIntentActivities(intent, 0);
-//        List<LabeledIntent> intentList = new ArrayList<LabeledIntent>();
-//        for (int i = 0; i < resInfo.size(); i++) {
-//            // Extract the label, append it, and repackage it in a LabeledIntent
-//            ResolveInfo ri = resInfo.get(i);
-//            String packageName = ri.activityInfo.packageName;
-//            if (packageName.contains("com.twitter.android") || packageName.contains("com.facebook.katana")
-//                    || packageName.contains("com.linkedin.android")) {
-//                intent.setComponent(new ComponentName(packageName, ri.activityInfo.name));
-//                if (packageName.contains("com.twitter.android")) {
+    /*private void onShareClick() {
+
+        PackageManager pm = getPackageManager();
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_SEND);
+        intent.setType("text*//*");
+
+        List<ResolveInfo> resInfo = pm.queryIntentActivities(intent, 0);
+        List<LabeledIntent> intentList = new ArrayList<LabeledIntent>();
+        for (int i = 0; i < resInfo.size(); i++) {
+            // Extract the label, append it, and repackage it in a LabeledIntent
+            ResolveInfo ri = resInfo.get(i);
+            String packageName = ri.activityInfo.packageName;
+            if (packageName.contains("com.twitter.android") || packageName.contains("com.facebook.katana")
+                    || packageName.contains("com.linkedin.android")) {
+                intent.setComponent(new ComponentName(packageName, ri.activityInfo.name));
+                if (packageName.contains("com.twitter.android")) {
+                    intent.putExtra(Intent.EXTRA_TEXT, imageurl);
+                } else if (packageName.contains("com.facebook.katana")) {
+                    // Warning: Facebook IGNORES our text. They say "These fields are intended for users to express themselves. Pre-filling these fields erodes the authenticity of the user voice."
+                    // One workaround is to use the Facebook SDK to post, but that doesn't allow the user to choose how they want to share. We can also make a custom landing page, and the link
+                    // will show the <meta content ="..."> text from that page with our link in Facebook.
 //                    intent.putExtra(Intent.EXTRA_TEXT, imageurl);
-//                } else if (packageName.contains("com.facebook.katana")) {
-//                    // Warning: Facebook IGNORES our text. They say "These fields are intended for users to express themselves. Pre-filling these fields erodes the authenticity of the user voice."
-//                    // One workaround is to use the Facebook SDK to post, but that doesn't allow the user to choose how they want to share. We can also make a custom landing page, and the link
-//                    // will show the <meta content ="..."> text from that page with our link in Facebook.
-////                    intent.putExtra(Intent.EXTRA_TEXT, imageurl);
-//                    ShareDialog shareDialog = new ShareDialog(this);
-//                    ShareLinkContent linkContent = new ShareLinkContent.Builder()
-//                            .setContentTitle("How to integrate Facebook from your app")
-//                            .setImageUrl(Uri.parse(imageurl))
-//                            .setContentDescription(
-//                                    "simple Fb Image share integration")
-//                            .setContentUrl(Uri.parse(imageurl))
-//                            .build();
-//
-//                    shareDialog.show(linkContent);  // Show facebook ShareDialog
-//
-//                } else if (packageName.contains("com.linkedin.android")) {
-//                    // If Gmail shows up twice, try removing this else-if clause and the reference to "android.gm" above
-//                    intent.putExtra(android.content.Intent.EXTRA_TEXT, imageurl);
-//                }
-//                intentList.add(new LabeledIntent(intent, packageName, ri.loadLabel(pm), ri.icon));
-//            }
-//
-//        }
-//
-//        // convert intentList to array
-//        LabeledIntent[] extraIntents = intentList.toArray(new LabeledIntent[intentList.size()]);
-//        Intent openInChooser = Intent.createChooser(intent, "Share rating via Social Media");
-//        openInChooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, extraIntents);
-//        startActivity(openInChooser);
-//    }
+                    ShareDialog shareDialog = new ShareDialog(this);
+                    ShareLinkContent linkContent = new ShareLinkContent.Builder()
+                            .setContentTitle("How to integrate Facebook from your app")
+                            .setImageUrl(Uri.parse(imageurl))
+                            .setContentDescription(
+                                    "simple Fb Image share integration")
+                            .setContentUrl(Uri.parse(imageurl))
+                            .build();
+
+                    shareDialog.show(linkContent);  // Show facebook ShareDialog
+
+                } else if (packageName.contains("com.linkedin.android")) {
+                    // If Gmail shows up twice, try removing this else-if clause and the reference to "android.gm" above
+                    intent.putExtra(android.content.Intent.EXTRA_TEXT, imageurl);
+                }
+                intentList.add(new LabeledIntent(intent, packageName, ri.loadLabel(pm), ri.icon));
+            }
+
+        }
+
+        // convert intentList to array
+        LabeledIntent[] extraIntents = intentList.toArray(new LabeledIntent[intentList.size()]);
+        Intent openInChooser = Intent.createChooser(intent, "Share rating via Social Media");
+        openInChooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, extraIntents);
+        startActivity(openInChooser);
+    }*/
 
     @Override
     @SuppressLint("NewApi")
