@@ -18,7 +18,8 @@
     <string name="msg_unsaved_details">कुछ विवरण सहेजे नहीं गए हैं। क्या आप सुनिश्चित रूप से आगे बढ़ना चाहते हैं?</string>
     <string name="msg_please_wait">कृपया प्रतीक्षा करें…</string>
     <string name="msg_in_progress">प्रगति में…</string>
-    <string name="msg_no_network">नेटवर्क उपलब्ध नहीं है</string>
+    <!--<string name="msg_no_network">नेटवर्क उपलब्ध नहीं है</string>-->
+    <string name="msg_no_network">कृपया अपने नेटवर्क कनेक्शन की जांच करें</string>
     <string name="action_cancel">रद्द करें</string>
     <string name="action_call">कॉल करें</string>
     <string name="action_delete">मिटा दे</string>

@@ -18,7 +18,8 @@
     <string name="msg_unsaved_details">Some details are left unsaved. Are you sure you want to proceed?</string>
     <string name="msg_please_wait">Please Wait&#8230;</string>
     <string name="msg_in_progress">In Progress&#8230;</string>
-    <string name="msg_no_network">Network Not Available.</string>
+    <!--<string name="msg_no_network">Network Not Available.</string>-->
+    <string name="msg_no_network">Please check your network connection.</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_call">Call</string>
     <string name="action_delete">Delete</string>

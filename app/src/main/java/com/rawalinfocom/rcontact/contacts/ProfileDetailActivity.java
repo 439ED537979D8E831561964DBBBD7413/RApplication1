@@ -503,10 +503,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             .READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
                         requestPermissions(new String[]{Manifest.permission.READ_CALL_LOG},
                                 AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS);
-
                     } else {
                         openCallLogHistoryDetailsActivity();
-
                     }
                 } else {
                     openCallLogHistoryDetailsActivity();
@@ -1818,35 +1816,36 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 //        Utils.setRatingStarColor(stars.getDrawable(0), ContextCompat.getColor(this, android.R
 //                .color.darker_gray));
 
-        if (!displayOwnProfile)
-            if (!StringUtils.equalsIgnoreCase(pmId, "-1")) {
-                // RC Profile
+        if (!displayOwnProfile) {
+        if (!StringUtils.equalsIgnoreCase(pmId, "-1")) {
+            // RC Profile
 //                getDataFromDB();
-                if (Utils.isNetworkAvailable(ProfileDetailActivity.this)) {
-                    //call service
-                    cardContactDetails.setVisibility(View.GONE);
-                    cardOtherDetails.setVisibility(View.GONE);
-                    getProfileDetails();
+            if (Utils.isNetworkAvailable(ProfileDetailActivity.this) && !profileActivityCallInstance) {
+                //call service
+                cardContactDetails.setVisibility(View.GONE);
+                cardOtherDetails.setVisibility(View.GONE);
+                getProfileDetails();
 
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            Utils.hideProgressDialog();
-                            if (asyncGetProfileDetails != null) {
-                                asyncGetProfileDetails.cancel(true);
-                            }
-                            getDataFromDB();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Utils.hideProgressDialog();
+                        if (asyncGetProfileDetails != null) {
+                            asyncGetProfileDetails.cancel(true);
                         }
-                    }, 4000);
+                        getDataFromDB();
+                    }
+                }, 4000);
 
-                } else {
-                    getDataFromDB();
-                }
-//            }
             } else {
-                // Non-RC Profile
-                setUpView(null);
+                getDataFromDB();
             }
+//            }
+        } else {
+            // Non-RC Profile
+            setUpView(null);
+        }
+    }
 
         layoutVisibility();
 
@@ -2035,7 +2034,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     private void setUpView(final ProfileDataOperation profileDetail) {
 
         try {
-
+            Utils.hideProgressDialog();
             cardContactDetails.setVisibility(View.VISIBLE);
             cardOtherDetails.setVisibility(View.VISIBLE);
 
@@ -3328,7 +3327,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-//            Utils.showProgressDialog(ProfileDetailActivity.this, "Please wait...", false);
+            Utils.showProgressDialog(ProfileDetailActivity.this, getString(R.string.msg_please_wait), false);
             rippleViewOldRecords.setVisibility(View.GONE);
         }
 
@@ -3354,14 +3353,14 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         protected void onPostExecute(Void result) {
 
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-//                    Utils.hideProgressDialog();
-                    setHistoryAdapter();
-                }
-            });
+           new Handler().postDelayed(new Runnable() {
+               @Override
+               public void run() {
+                   Utils.hideProgressDialog();
+               }
+           },1500);
 
+            setHistoryAdapter();
         }
     }
 
@@ -3669,7 +3668,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             rippleViewOldRecords.setVisibility(View.GONE);
         }
     }
-
 
     @SuppressWarnings("unused")
     private ArrayList<CallLogType> getNumbersFromName(String number) {
