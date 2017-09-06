@@ -2,6 +2,8 @@ package com.rawalinfocom.rcontact.contacts;
 
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -256,6 +258,15 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         Utils.setIntegerPreference(getActivity(), AppConstants.PREF_SYNCED_CONTACTS,
                                 lastSyncedData);
 
+                        int percentage = (100 * lastSyncedData) / (arrayListSyncUserContact
+                                .size() + CONTACT_CHUNK);
+
+                        /*((ContactsFragment) getParentFragment()).textSyncProgress.setText
+                                (percentage + "% data synced!");*/
+                        ((ContactsFragment) getParentFragment()).progressContacts
+                                .setProgressWithAnim(percentage);
+
+
                         if (lastSyncedData < (arrayListSyncUserContact.size() + CONTACT_CHUNK)) {
                             backgroundSync(true, uploadContactResponse);
                         } else {
@@ -321,8 +332,27 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     if (savePackageResponse != null && StringUtils.equalsIgnoreCase
                             (savePackageResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                        Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts,
-                                getActivity().getString(R.string.str_all_contact_sync));
+                        /*Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts,
+                                getActivity().getString(R.string.str_all_contact_sync));*/
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                final View view = ((ContactsFragment) getParentFragment())
+                                        .relativeSyncProgress;
+                                view.animate()
+                                        .translationY(view.getHeight())
+                                        .alpha(0.0f)
+                                        .setDuration(300)
+                                        .setListener(new AnimatorListenerAdapter() {
+                                            @Override
+                                            public void onAnimationEnd(Animator animation) {
+                                                super.onAnimationEnd(animation);
+                                                view.setVisibility(View.GONE);
+                                            }
+                                        });
+                            }
+                        }, 1200);
+
                         Utils.setBooleanPreference(getActivity(), AppConstants
                                 .PREF_CONTACT_SYNCED, true);
                         Intent localBroadcastIntent = new Intent(AppConstants
@@ -565,24 +595,26 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         userProfiles.addAll(tableProfileMaster.getProfileDetailsFromRawId((
                                 (ProfileData) arrayListPhoneBookContacts.get(i))
                                 .getRawContactId()));
-                        String name = "0";
+                        StringBuilder name = new StringBuilder("0");
                         String rcpID = "0";
                         String rcpProfileImage = "";
                         if (userProfiles.size() > 1) {
                             for (int j = 0; j < userProfiles.size(); j++) {
-                                if (name.equalsIgnoreCase("0")) {
-                                    name = userProfiles.get(j).getPmRcpId();
+                                if (name.toString().equalsIgnoreCase("0")) {
+                                    name = new StringBuilder(userProfiles.get(j).getPmRcpId());
                                 } else {
-                                    name = name + "," + userProfiles.get(j).getPmRcpId();
+                                    name.append(",").append(userProfiles.get(j).getPmRcpId());
                                 }
                             }
                         } else if (userProfiles.size() == 1) {
-                            name = userProfiles.get(0).getPmFirstName() + " " + userProfiles.get
-                                    (0).getPmLastName();
+                            name = new StringBuilder(userProfiles.get(0).getPmFirstName() + " " +
+                                    userProfiles.get
+                                            (0).getPmLastName());
                             rcpID = userProfiles.get(0).getPmRcpId();
                             rcpProfileImage = userProfiles.get(0).getPmProfileImage();
                         }
-                        ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpName(name);
+                        ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpName(name
+                                .toString());
                         ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpId(rcpID);
                         ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpImageURL
                                 (rcpProfileImage);

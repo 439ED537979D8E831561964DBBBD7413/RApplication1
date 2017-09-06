@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -40,8 +41,10 @@ import android.text.Spanned;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.RatingBar;
@@ -132,25 +135,21 @@ public class Utils {
     //<editor-fold desc="SnackBar">
 
     public static void showErrorSnackBar(@NonNull Context context, View view, String message) {
-        Snackbar snackbar = Snackbar
-                .make(view, message, Snackbar.LENGTH_LONG);
+        Snackbar snackbar = Snackbar.make(view, message, Snackbar.LENGTH_LONG);
         View snackBarView = snackbar.getView();
         snackBarView.setBackgroundColor(ContextCompat.getColor(context, R.color
                 .colorSnackBarNegative));
-        TextView textView = (TextView) snackBarView.findViewById(android.support.design.R.id
-                .snackbar_text);
+        TextView textView = snackBarView.findViewById(android.support.design.R.id.snackbar_text);
         textView.setTextColor(Color.WHITE);
         snackbar.show();
     }
 
     public static void showSuccessSnackBar(@NonNull Context context, View view, String message) {
-        Snackbar snackbar = Snackbar
-                .make(view, message, Snackbar.LENGTH_LONG);
+        Snackbar snackbar = Snackbar.make(view, message, Snackbar.LENGTH_LONG);
         View snackBarView = snackbar.getView();
         snackBarView.setBackgroundColor(ContextCompat.getColor(context, R.color
                 .colorSnackBarPositive));
-        TextView textView = (TextView) snackBarView.findViewById(android.support.design.R.id
-                .snackbar_text);
+        TextView textView = snackBarView.findViewById(android.support.design.R.id.snackbar_text);
         textView.setTextColor(Color.WHITE);
         snackbar.show();
     }
@@ -166,6 +165,44 @@ public class Utils {
     public static int getDeviceWidth(Context context) {
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         return displayMetrics.widthPixels;
+    }
+
+    public static Point getNavigationBarSize(Context context) {
+        Point appUsableSize = getAppUsableScreenSize(context);
+        Point realScreenSize = getRealScreenSize(context);
+
+        // navigation bar on the right
+        if (appUsableSize.x < realScreenSize.x) {
+            return new Point(realScreenSize.x - appUsableSize.x, appUsableSize.y);
+        }
+
+        // navigation bar at the bottom
+        if (appUsableSize.y < realScreenSize.y) {
+            return new Point(appUsableSize.x, realScreenSize.y - appUsableSize.y);
+        }
+
+        // navigation bar is not present
+        return new Point();
+    }
+
+    private static Point getAppUsableScreenSize(Context context) {
+        WindowManager windowManager = (WindowManager) context.getSystemService(Context
+                .WINDOW_SERVICE);
+        Display display = windowManager.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        return size;
+    }
+
+    private static Point getRealScreenSize(Context context) {
+        WindowManager windowManager = (WindowManager) context.getSystemService(Context
+                .WINDOW_SERVICE);
+        Display display = windowManager.getDefaultDisplay();
+        Point size = new Point();
+
+        display.getRealSize(size);
+
+        return size;
     }
     //</editor-fold>
 
@@ -937,7 +974,8 @@ public class Utils {
             final int REQUIRED_HIGHT = HIGHT;
             //Find the correct scale value. It should be the power of 2.
             int scale = 1;
-            while (o.outWidth / scale / 2 >= REQUIRED_WIDTH && o.outHeight / scale / 2 >= REQUIRED_HIGHT)
+            while (o.outWidth / scale / 2 >= REQUIRED_WIDTH && o.outHeight / scale / 2 >=
+                    REQUIRED_HIGHT)
                 scale *= 2;
 
             //Decode with inSampleSize
