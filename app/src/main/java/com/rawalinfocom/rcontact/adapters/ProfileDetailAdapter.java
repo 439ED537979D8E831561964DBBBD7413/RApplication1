@@ -135,6 +135,9 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         final String number = phoneNumber.getPhoneNumber();
         holder.textSub.setText(phoneNumber.getPhoneType());
         holder.textSub.setVisibility(View.VISIBLE);
+        if (Utils.isAppInstalled(activity, "com.whatsapp")) {
+            holder.imgActionWhatsapp.setVisibility(View.VISIBLE);
+        }
 
         holder.imgActionType.setImageResource(R.drawable.ico_phone_alt_svg);
         holder.imgActionType.setOnClickListener(new View.OnClickListener() {
@@ -159,7 +162,17 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             }
         });
 
-        holder.llProfileData.setOnClickListener(new View.OnClickListener() {
+        holder.imgActionWhatsapp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Uri uri = Uri.parse("smsto:" + number);
+                Intent sendIntent = new Intent(Intent.ACTION_SENDTO, uri);
+                sendIntent.setPackage("com.whatsapp");
+                activity.startActivity(sendIntent);
+            }
+        });
+
+      /*  holder.llProfileData.setOnClickListener(new View.OnClickListener() {
             @TargetApi(Build.VERSION_CODES.M)
             @Override
             public void onClick(View v) {
@@ -178,7 +191,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                     }
                 }
             }
-        });
+        });*/
 
 
         holder.textMain.setOnLongClickListener(new View.OnLongClickListener() {
@@ -231,6 +244,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 //                    holder.imageView2.setVisibility(View.GONE);
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                     holder.imgActionType.setVisibility(View.GONE);
+                    holder.imgActionWhatsapp.setVisibility(View.GONE);
                 }
             }
             holder.llPrivacy.setOnClickListener(new View.OnClickListener() {
@@ -974,6 +988,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
         @BindView(R.id.img_action_type)
         ImageView imgActionType;
+        @BindView(R.id.img_action_whatsapp)
+        ImageView imgActionWhatsapp;
         @BindView(R.id.text_main)
         public TextView textMain;
         @BindView(R.id.text_sub)
@@ -993,6 +1009,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
             textMain.setTypeface(Utils.typefaceRegular(activity));
             textSub.setTypeface(Utils.typefaceRegular(activity));
+            imgActionWhatsapp.setVisibility(View.GONE);
         }
     }
 }

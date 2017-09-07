@@ -7,6 +7,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -649,6 +650,18 @@ public class Utils {
     public static boolean isLocationEnabled(Context context) {
         return Settings.Secure.isLocationProviderEnabled(context.getContentResolver(),
                 LocationManager.GPS_PROVIDER);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Check App Installation">
+    public static boolean isAppInstalled(Context context, String packageName) {
+        PackageManager pm = context.getPackageManager();
+        try {
+            pm.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES);
+            return true;
+        } catch (PackageManager.NameNotFoundException ignored) {
+        }
+        return false;
     }
     //</editor-fold>
 
