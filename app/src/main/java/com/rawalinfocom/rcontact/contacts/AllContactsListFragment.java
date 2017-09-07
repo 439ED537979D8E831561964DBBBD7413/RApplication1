@@ -1601,6 +1601,15 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         }
         //</editor-fold>
 
+        int percentage = (100 * lastSyncedData) / (arrayListSyncUserContact
+                .size() + CONTACT_CHUNK);
+
+        if (percentage >= 100) {
+            ((ContactsFragment) getParentFragment()).relativeSyncProgress.setVisibility(View.GONE);
+        } else {
+            ((ContactsFragment) getParentFragment()).progressContacts.setProgress(percentage);
+        }
+
         if (lastSyncedData < arrayListSyncUserContact.size()) {
             if (syncingTask != null && syncingTask.isCancelled()) {
                 return;
