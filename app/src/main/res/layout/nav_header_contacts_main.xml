@@ -22,7 +22,7 @@
             android:layout_height="60dp"
             android:layout_gravity="center"
             android:contentDescription="@string/app_name"
-            android:src="@drawable/ic_launcher"/>
+            android:src="@mipmap/ic_launcher"/>
 
         <LinearLayout
             android:id="@+id/userInfo"

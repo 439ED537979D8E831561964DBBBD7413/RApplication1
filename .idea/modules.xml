@@ -5,7 +5,6 @@
       <module fileurl="file://$PROJECT_DIR$/RContactAndroid.iml" filepath="$PROJECT_DIR$/RContactAndroid.iml" />
       <module fileurl="file://$PROJECT_DIR$/android_dev.iml" filepath="$PROJECT_DIR$/android_dev.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/linkedin-sdk/linkedin-sdk.iml" filepath="$PROJECT_DIR$/linkedin-sdk/linkedin-sdk.iml" />
     </modules>
   </component>
 </project>
