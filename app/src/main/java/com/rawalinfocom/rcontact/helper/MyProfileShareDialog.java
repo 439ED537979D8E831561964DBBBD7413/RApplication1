@@ -20,6 +20,7 @@ import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.adapters.CallConfirmationListAdapter;
 import com.rawalinfocom.rcontact.adapters.MyProfileShareListAdapter;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.model.ProfileDataOperation;
 
 import java.util.ArrayList;
 
@@ -36,8 +37,12 @@ public class MyProfileShareDialog {
     private ArrayList<String> stringArrayList;
     String dialogTitle;
     LinearLayout llDialogContentArea;
+    String pmId = "";
+    ProfileDataOperation profileDataOperationVcard;
+    String contactName;
 
-    public MyProfileShareDialog(Context context, ArrayList<String> arrayList) {
+    public MyProfileShareDialog(Context context, ArrayList<String> arrayList,String pmID,
+                                ProfileDataOperation profileDataOperationVcard,String contactName) {
         this.context = context;
         dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -58,6 +63,9 @@ public class MyProfileShareDialog {
 
 
         stringArrayList = arrayList;
+        this.pmId =  pmID;
+        this.profileDataOperationVcard =  profileDataOperationVcard;
+        this.contactName =  contactName;
         dialogTitle = getDialogTitle();
         if (!TextUtils.isEmpty(dialogTitle))
             tvDialogTitle.setText(dialogTitle);
@@ -72,7 +80,8 @@ public class MyProfileShareDialog {
 
 
     private void setAdapter() {
-        MyProfileShareListAdapter materialListAdapter = new MyProfileShareListAdapter(context, stringArrayList);
+        MyProfileShareListAdapter materialListAdapter = new MyProfileShareListAdapter(context, stringArrayList,pmId,
+                profileDataOperationVcard,contactName);
         recycleViewDialog.setAdapter(materialListAdapter);
         setRecyclerViewLayoutManager(recycleViewDialog);
 
