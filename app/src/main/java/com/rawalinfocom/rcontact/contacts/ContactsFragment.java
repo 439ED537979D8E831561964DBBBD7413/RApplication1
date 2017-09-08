@@ -10,11 +10,17 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.helper.AnimateHorizontalProgressBar;
 import com.rawalinfocom.rcontact.helper.Utils;
 
 import butterknife.BindView;
@@ -30,15 +36,22 @@ public class ContactsFragment extends BaseFragment {
     FrameLayout frameContainerCallTab;
     @BindView(R.id.tab_contact)
     TabLayout tabContact;
+    @BindView(R.id.relative_root_contacts)
+    RelativeLayout relativeRootContacts;
+    @BindView(R.id.image_sync)
+    ImageView imageSync;
+    @BindView(R.id.text_sync_progress)
+    TextView textSyncProgress;
+    @BindView(R.id.relative_sync_progress)
+    RelativeLayout relativeSyncProgress;
+    @BindView(R.id.progress_contacts)
+    AnimateHorizontalProgressBar progressContacts;
 
-    //    AllContactsFragment allContactsFragment;
     AllContactsListFragment allContactsFragment;
     RContactsFragment rContactsFragment;
     FavoritesFragment favoritesFragment;
 
     int currentTabPosition = -1;
-
-    private int defaultButtonTextColor;
 
     public ContactsFragment() {
         // Required empty public constructor
@@ -55,24 +68,6 @@ public class ContactsFragment extends BaseFragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        /*if (currentTabPosition == FAVOURITE_FRAGMENT && favoritesFragment != null) {
-            if (favoritesFragment.getAllContactListAdapter() != null) {
-//                favoritesFragment.getFavouriteContacts();
-                getLoaderManager().initLoader(0, null, favoritesFragment);
-             *//*   int clickedPosition = favoritesFragment.getAllContactListAdapter()
-                        .getListClickedPosition();
-                Log.i("onResume", String.valueOf(favoritesFragment.getAllContactListAdapter()
-                        .getListClickedPosition()));
-                favoritesFragment.getArrayListPhoneBookContacts().remove(clickedPosition);
-                 favoritesFragment.getAllContactListAdapter().notifyItemRemoved(clickedPosition);
-                 *//*
-            }
-        }*/
-    }
-
-    @Override
     public void getFragmentArguments() {
 
     }
@@ -80,8 +75,7 @@ public class ContactsFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_contacts, container, false);
-        return view;
+        return inflater.inflate(R.layout.fragment_contacts, container, false);
     }
 
     @Override
@@ -95,16 +89,32 @@ public class ContactsFragment extends BaseFragment {
     @Override
     public void onDetach() {
         super.onDetach();
-//        RContactsFragment.arrayListRContact = null;
         AllContactsListFragment.arrayListPhoneBookContacts = null;
     }
 
     private void init() {
 
-//        allContactsFragment = AllContactsFragment.newInstance();
         allContactsFragment = AllContactsListFragment.newInstance();
         rContactsFragment = RContactsFragment.newInstance();
         favoritesFragment = FavoritesFragment.newInstance();
+
+        if (!(Utils.getBooleanPreference(getActivity(), AppConstants
+                .PREF_CONTACT_SYNCED, false))) {
+            relativeSyncProgress.setVisibility(View.VISIBLE);
+            progressContacts.setMax(100);
+
+            Animation sampleFadeAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim
+                    .rotate);
+            imageSync.startAnimation(sampleFadeAnimation);
+
+        /*GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget
+        (imageSync);
+        Glide.with(this).load(R.drawable.image_sync).into(imageViewTarget);*/
+
+            textSyncProgress.setTypeface(Utils.typefaceRegular(getActivity()));
+            textSyncProgress.setText("Contacts Sync in progress!");
+
+        }
 
         bindWidgetsWithAnEvent();
         setupTabLayout();

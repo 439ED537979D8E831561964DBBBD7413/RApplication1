@@ -53,7 +53,6 @@ public class WsConstants {
 
     /**
      * QA
-     *
      */
     //<editor-fold desc="QA">
 
