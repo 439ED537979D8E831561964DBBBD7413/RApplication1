@@ -237,6 +237,8 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
                     Utils.setBooleanPreference(this, AppConstants.KEY_IS_FIRST_TIME, true);
                     Utils.setBooleanPreference(this, AppConstants.KEY_IS_RESTORE_DONE, true);
 
+                    Utils.setBooleanPreference(this, AppConstants.PREF_IS_LOGIN, true);
+
                     // Redirect to MainActivity
                     Intent intent = new Intent(this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

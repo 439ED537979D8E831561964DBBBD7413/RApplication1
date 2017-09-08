@@ -114,7 +114,7 @@ class WebServicePost {
 
                     // Json string passed as request
                     jsonObject = writer.writeValueAsString(request);
-//                    System.out.println("RContact param -->  " + jsonObject);
+                    System.out.println("RContact param -->  " + jsonObject);
 //					 FileUtilities utilities = new FileUtilities();
 //					 utilities.write("Filter file", jsonObject);
                 }
@@ -179,6 +179,7 @@ class WebServicePost {
                             IntegerConstants
                                     .LAUNCH_RE_LOGIN_PASSWORD);
                     Utils.setBooleanPreference(activity, AppConstants.PREF_TEMP_LOGOUT, true);
+                    Utils.setBooleanPreference(activity, AppConstants.PREF_IS_LOGIN, false);
 
                     // Redirect to MobileNumberRegistrationActivity
                     Intent intent = new Intent(activity, ReLoginEnterPasswordActivity.class);

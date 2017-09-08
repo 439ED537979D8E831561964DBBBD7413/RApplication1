@@ -13,7 +13,7 @@ public class WsConstants {
      */
     //<editor-fold desc="Production">
 
-    // API ROOT
+    /*// API ROOT
     public static final String WS_ROOT = "https://api.rcontacts.in/api/v1/";
     // TERMS-CONDITIONS URL
     public static final String URL_TERMS_CONDITIONS = "https://www.rcontacts.in/global/terms";
@@ -23,7 +23,7 @@ public class WsConstants {
     public static final String WS_PROFILE_VIEW_ROOT = "https://www.rcontacts.in/global/public/";
     public static final String WS_PROFILE_VIEW_BADGE_ROOT = "https://rcrc.ac/p/";
     // WEBSITE URL
-    public static final String WS_WEBSITE_URL = "https://www.rcontacts.in";
+    public static final String WS_WEBSITE_URL = "https://www.rcontacts.in";*/
 
     //</editor-fold>
 
@@ -52,7 +52,7 @@ public class WsConstants {
      */
     //<editor-fold desc="QA">
 
-    /*// API ROOT
+    // API ROOT
     public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
     // TERMS-CONDITIONS URL
     public static final String URL_TERMS_CONDITIONS = "http://webqa.rcontacts.in/global/terms";
@@ -62,7 +62,7 @@ public class WsConstants {
     public static final String WS_PROFILE_VIEW_ROOT = "http://webqa.rcontacts.in/global/public/";
     public static final String WS_PROFILE_VIEW_BADGE_ROOT = "http://qa.rcrc.ac/p/";
     // WEBSITE URL
-    public static final String WS_WEBSITE_URL = "http://webqa.rcontacts.in";*/
+    public static final String WS_WEBSITE_URL = "http://webqa.rcontacts.in";
 
     //</editor-fold>
 
