@@ -217,6 +217,7 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
     private void redirectToMainActivity() {
 
         Utils.setBooleanPreference(this, AppConstants.KEY_IS_RESTORE_DONE, true);
+        Utils.setBooleanPreference(this, AppConstants.PREF_IS_LOGIN, true);
 
         // Redirect to MainActivity
         Intent intent = new Intent(this, MainActivity.class);

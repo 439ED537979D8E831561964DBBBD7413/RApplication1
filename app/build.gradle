@@ -70,6 +70,10 @@ dependencies {
     compile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
         transitive = true;
     }
+
+    // LinkedIn jar
+    compile files('libs/classes.jar')
+    compile files('libs/volley.jar')
     compile "com.android.support:appcompat-v7:$SUPPORT_LIBRARY_VERSION"
     compile "com.android.support:support-v4:$SUPPORT_LIBRARY_VERSION"
     compile "com.android.support:design:$SUPPORT_LIBRARY_VERSION"
@@ -90,10 +94,7 @@ dependencies {
 
     compile "com.jakewharton:butterknife:$BUTTER_KNIFE_VERSION"
     apt "com.jakewharton:butterknife-compiler:$BUTTER_KNIFE_VERSION"
-    compile project(path: ':linkedin-sdk')
-
     //    compile 'com.android.support.test.espresso:espresso-core:2.2.2'
-
     //    compile 'com.android.support.constraint:constraint-layout:1.0.0'
 
     /* Web View */
