@@ -138,7 +138,7 @@ public class CallHistoryListAdapter extends RecyclerView.Adapter<CallHistoryList
             holder.textHistoryDurationValue.setText(duration);
         }
 
-        Date historyDate = new Date(callLogType.getHistoryDate() - (19080000));
+        Date historyDate = new Date(callLogType.getHistoryDate() - (19800*1000));
         String callTime = new SimpleDateFormat("hh:mm a").format(historyDate);
         holder.textHistoryCallTime.setText(callTime);
 

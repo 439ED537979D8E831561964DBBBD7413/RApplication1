@@ -249,8 +249,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 isCallLogRcpUser = intent.getBooleanExtra(AppConstants.EXTRA_IS_RCP_USER, false);
             }
 
-            if (isRcpVerifiedUser.equalsIgnoreCase("0") || isRcpVerifiedUser.equalsIgnoreCase
-                    ("1")) {
+            if (StringUtils.equalsIgnoreCase(isRcpVerifiedUser, "0")
+                    || StringUtils.equalsIgnoreCase(isRcpVerifiedUser, "1")) {
                 rippleInvite.setVisibility(View.GONE);
                 linearBasicDetailRating.setVisibility(View.GONE);
             } else {
@@ -260,9 +260,9 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 } else {
 
                     Utils.setRoundedCornerBackground(buttonInvite, ContextCompat.getColor
-                            (CallHistoryDetailsActivity.this, R.color.colorAccent), 5, 0,
+                                    (CallHistoryDetailsActivity.this, R.color.colorAccent), 5, 0,
                             ContextCompat.getColor
-                            (CallHistoryDetailsActivity.this, R.color.colorAccent));
+                                    (CallHistoryDetailsActivity.this, R.color.colorAccent));
 
                     rippleInvite.setVisibility(View.VISIBLE);
                     linearBasicDetailRating.setVisibility(View.GONE);
@@ -2297,8 +2297,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         Matcher matcher1 = numberPat.matcher(number);
         if (matcher1.find()) {
             cursor = getCallHistoryDataByNumber(number);
-            if(cursor !=null && cursor.getCount() == 0){
-                cursor =  getCallHistoryDataByNumber(Utils.getFormattedNumber(this,number));
+            if (cursor != null && cursor.getCount() == 0) {
+                cursor = getCallHistoryDataByNumber(Utils.getFormattedNumber(this, number));
             }
         } else {
             cursor = getCallHistoryDataByName(number);
