@@ -80,6 +80,7 @@ import com.rawalinfocom.rcontact.database.TableWebsiteMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.CallConfirmationListDialog;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
+import com.rawalinfocom.rcontact.helper.MyProfileShareDialog;
 import com.rawalinfocom.rcontact.helper.ProfileMenuOptionDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
@@ -120,6 +121,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -724,40 +726,49 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         showChooseShareOption(null, null);
                     }*/
 
-                    if (!StringUtils.equalsAnyIgnoreCase(pmId, "-1")) {
-                        TableProfileMaster tableProfileMaster = new TableProfileMaster
-                                (databaseHandler);
-                        UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId
-                                (Integer.parseInt(pmId));
-                        TableMobileMaster tableMobileMaster = new TableMobileMaster
-                                (databaseHandler);
-                        String number = tableMobileMaster.getUserMobileNumber(pmId);
+                    if(displayOwnProfile){
+                        // TODO: 08/09/17 Show share dialog with two option
+                        ArrayList arrayList = new ArrayList(Arrays.asList("Share Average Rating" ,"Share Profile"));
+                        MyProfileShareDialog myProfileShareDialog = new
+                                MyProfileShareDialog(this, arrayList);
+                        myProfileShareDialog.showDialog();
 
-                        if (StringUtils.startsWith(number, "+")) {
-                            number = StringUtils.substring(number, 1);
-                        }
+                    }else{
+                        if (!StringUtils.equalsAnyIgnoreCase(pmId, "-1")) {
+                            TableProfileMaster tableProfileMaster = new TableProfileMaster
+                                    (databaseHandler);
+                            UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId
+                                    (Integer.parseInt(pmId));
+                            TableMobileMaster tableMobileMaster = new TableMobileMaster
+                                    (databaseHandler);
+                            String number = tableMobileMaster.getUserMobileNumber(pmId);
+
+                            if (StringUtils.startsWith(number, "+")) {
+                                number = StringUtils.substring(number, 1);
+                            }
 
 //                        if (!StringUtils.equalsAnyIgnoreCase(pmId, "-1")) {
-                        // RCP profile or Own Profile
-                        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-                        sharingIntent.setType("text/plain");
-                        String shareBody;
-                        if (StringUtils.isBlank(userProfile.getPmBadge())) {
-                            shareBody = WsConstants.WS_PROFILE_VIEW_BADGE_ROOT + number;
-                        } else {
-                            shareBody = WsConstants.WS_PROFILE_VIEW_BADGE_ROOT + userProfile
-                                    .getPmBadge();
-                        }
-                        sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
-                        startActivity(Intent.createChooser(sharingIntent, getString(R.string
-                                .str_share_contact_via)));
+                            // RCP profile or Own Profile
+                            Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+                            sharingIntent.setType("text/plain");
+                            String shareBody;
+                            if (StringUtils.isBlank(userProfile.getPmBadge())) {
+                                shareBody = WsConstants.WS_PROFILE_VIEW_BADGE_ROOT + number;
+                            } else {
+                                shareBody = WsConstants.WS_PROFILE_VIEW_BADGE_ROOT + userProfile
+                                        .getPmBadge();
+                            }
+                            sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
+                            startActivity(Intent.createChooser(sharingIntent, getString(R.string
+                                    .str_share_contact_via)));
 //                        } else {
 //                            // Non-Rcp profile
 //                            shareContact();
 //
 //                        }
-                    } else {
-                        shareContact();
+                        } else {
+                            shareContact();
+                        }
                     }
                 }
                 break;
