@@ -69,6 +69,9 @@ dependencies {
     compile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
         transitive = true;
     }
+    // Linked-IN jar
+    compile files('libs/classes.jar')
+
     compile "com.android.support:appcompat-v7:$SUPPORT_LIBRARY_VERSION"
     compile "com.android.support:support-v4:$SUPPORT_LIBRARY_VERSION"
     compile "com.android.support:design:$SUPPORT_LIBRARY_VERSION"
@@ -86,8 +89,6 @@ dependencies {
     compile "com.fasterxml.jackson.core:jackson-annotations:$JACKSON_CORE_VERSION"
     compile "com.jakewharton:butterknife:$BUTTER_KNIFE_VERSION"
     apt "com.jakewharton:butterknife-compiler:$BUTTER_KNIFE_VERSION"
-    //    compile project(path: ':linkedin-sdk')
-
     //    compile 'com.android.support.test.espresso:espresso-core:2.2.2'
 
     //    compile 'com.android.support.constraint:constraint-layout:1.0.0'
@@ -107,7 +108,7 @@ dependencies {
     apt 'com.thefinestartist:compilers:0.9.0'
     debugCompile 'com.amitshekhar.android:debug-db:0.4.0'
     compile "com.android.support:exifinterface:$SUPPORT_LIBRARY_VERSION"
-    compile files('libs/classes.jar')
+
 }
 
 apply plugin: 'com.google.gms.google-services'
