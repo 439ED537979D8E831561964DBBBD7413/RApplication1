@@ -972,37 +972,30 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
         protected void onPostExecute(Void result) {
 
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
+            try {
+                simpleCallLogListAdapter.notifyDataSetChanged();
+                //Aniruddh -- TO do save 0th record dateTime and rawId in preference;
+                if (callLogTypeArrayList.size() > 0) {
+                    rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
+                    Long dateTime = callLogTypeArrayList.get(0).getDate();
+                    DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale
+                            .getDefault());
 
-                    try {
-                        simpleCallLogListAdapter.notifyDataSetChanged();
-                        //Aniruddh -- TO do save 0th record dateTime and rawId in preference;
-                        if (callLogTypeArrayList.size() > 0) {
-                            rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
-                            Long dateTime = callLogTypeArrayList.get(0).getDate();
-                            DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale
-                                    .getDefault());
+                    Date cursorDate = new Date(dateTime);
+                    String latestCallDate = sdf.format(cursorDate);
+                    String rawId = callLogTypeArrayList.get(0).getUniqueContactId();
 
-                            Date cursorDate = new Date(dateTime);
-                            String latestCallDate = sdf.format(cursorDate);
-                            String rawId = callLogTypeArrayList.get(0).getUniqueContactId();
-
-                            Utils.setStringPreference(getActivity(), AppConstants
-                                    .PREF_LATEST_CALL_DATE_TIME, latestCallDate);
-                            Utils.setStringPreference(getActivity(), AppConstants
-                                    .PREF_LATEST_CALL_RAW_ID, rawId);
-                        } else {
-                            textNoCallsFound.setVisibility(View.VISIBLE);
-                        }
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
+                    Utils.setStringPreference(getActivity(), AppConstants
+                            .PREF_LATEST_CALL_DATE_TIME, latestCallDate);
+                    Utils.setStringPreference(getActivity(), AppConstants
+                            .PREF_LATEST_CALL_RAW_ID, rawId);
+                } else {
+                    textNoCallsFound.setVisibility(View.VISIBLE);
                 }
-            });
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -1658,6 +1651,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     private Cursor getCallHistoryDataByNumber(String number) {
         Cursor cursor = null;
         String order = CallLog.Calls.DATE + " DESC";
+        if (getActivity() == null)
+            return null;
         try {
             cursor = getActivity().getContentResolver().query(CallLog.Calls.CONTENT_URI, null,
                     CallLog.Calls.NUMBER + " =?", new String[]{number}, order);
@@ -1673,6 +1668,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     private Cursor getCallHistoryDataByName(String name) {
         Cursor cursor = null;
         String order = CallLog.Calls.DATE + " DESC";
+        if (getActivity() == null)
+            return null;
         try {
             cursor = getActivity().getContentResolver().query(CallLog.Calls.CONTENT_URI, null,
                     CallLog.Calls.CACHED_NAME + " =?", new String[]{name}, order);

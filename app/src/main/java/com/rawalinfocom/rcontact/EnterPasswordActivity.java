@@ -273,6 +273,7 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
                     Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME, String
                             .valueOf(System.currentTimeMillis()));
                     Utils.setBooleanPreference(this, AppConstants.KEY_IS_FIRST_TIME, true);
+                    Utils.setBooleanPreference(this, AppConstants.PREF_IS_LOGIN, true);
 
                     if (Utils.getBooleanPreference(this, AppConstants.KEY_IS_RESTORE_DONE, false)) {
                         // Redirect to MainActivity

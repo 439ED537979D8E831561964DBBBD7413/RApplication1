@@ -179,6 +179,7 @@ class WebServicePost {
                             IntegerConstants
                                     .LAUNCH_RE_LOGIN_PASSWORD);
                     Utils.setBooleanPreference(activity, AppConstants.PREF_TEMP_LOGOUT, true);
+                    Utils.setBooleanPreference(activity, AppConstants.PREF_IS_LOGIN, false);
 
                     // Redirect to MobileNumberRegistrationActivity
                     Intent intent = new Intent(activity, ReLoginEnterPasswordActivity.class);
