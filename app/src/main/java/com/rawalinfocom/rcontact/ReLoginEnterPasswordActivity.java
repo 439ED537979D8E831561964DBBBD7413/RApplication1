@@ -286,6 +286,7 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
                             // Redirect to MainActivity
                             Utils.setBooleanPreference(this, AppConstants.KEY_IS_RESTORE_DONE,
                                     true);
+                            Utils.setBooleanPreference(this, AppConstants.PREF_IS_LOGIN, true);
                             Intent intent = new Intent(this, MainActivity.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -364,7 +365,9 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
     private void sendOtp() {
 
         WsRequestObject otpObject = new WsRequestObject();
-        otpObject.setCountryCode(selectedCountry.getCountryCodeNumber());
+        if (selectedCountry != null)
+            otpObject.setCountryCode(selectedCountry.getCountryCodeNumber());
+        else otpObject.setCountryCode("+91");
         otpObject.setMobileNumber(mobileNumber.replace("+91", ""));
         otpObject.setForgotPassword(1);
         otpObject.setDeviceId(getDeviceId());

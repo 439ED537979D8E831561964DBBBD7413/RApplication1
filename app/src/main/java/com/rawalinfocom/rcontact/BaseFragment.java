@@ -25,6 +25,7 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        databaseHandler = new DatabaseHandler(getActivity());
         getFragmentArguments();
     }
 
@@ -67,7 +68,7 @@ public abstract class BaseFragment extends Fragment {
     }
 
     public DatabaseHandler getDatabaseHandler() {
-        return  databaseHandler = ((BaseActivity) getActivity()).databaseHandler;
+        return databaseHandler;
     }
 
     public String getUserPmId() {

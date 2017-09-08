@@ -214,6 +214,7 @@ public class AppConstants {
     public static String PREF_DISABLE_EVENT_PUSH = "pref_disable_event_push";
 
     public static String PREF_LOGIN_TYPE = "pref_login_type";
+    public static String PREF_IS_LOGIN = "pref_is_login";
 
     public static String PREF_RE_LOGIN = "pref_re_login";
     public static String PREF_FORGOT_PASSWORD = "pref_forgot_password";

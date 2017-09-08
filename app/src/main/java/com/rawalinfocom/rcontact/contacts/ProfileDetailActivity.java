@@ -3353,7 +3353,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                @Override
                public void run() {
                    Utils.hideProgressDialog();
-
                }
            },1500);
 
