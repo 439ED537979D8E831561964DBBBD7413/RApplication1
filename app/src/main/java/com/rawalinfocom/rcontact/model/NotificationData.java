@@ -18,6 +18,8 @@ public class NotificationData {
     private String id;
     @JsonProperty("title")
     private String title;
+    @JsonProperty("type")
+    private String type;
     @JsonProperty("isNotification")
     private Integer isNotification;
     @JsonProperty("status")
@@ -26,6 +28,7 @@ public class NotificationData {
     private String createdAt;
     @JsonProperty("updated_at")
     private String updatedAt;
+
     public String getSubject() {
         return subject;
     }
@@ -66,6 +69,14 @@ public class NotificationData {
         this.title = title;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public Integer getIsNotification() {
         return isNotification;
     }
@@ -89,6 +100,7 @@ public class NotificationData {
     public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
     }
+
     public String getUpdatedAt() {
         return updatedAt;
     }

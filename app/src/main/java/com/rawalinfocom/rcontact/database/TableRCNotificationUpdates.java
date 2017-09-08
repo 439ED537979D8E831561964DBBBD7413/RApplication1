@@ -30,6 +30,7 @@ public class TableRCNotificationUpdates {
     private static final String COLUMN_NU_ID = "nu_id";
     private static final String COLUMN_NU_CLOUD_ID = "nu_cloud_rupdate_id";
     private static final String COLUMN_NU_TITLE = "nu_title";
+    private static final String COLUMN_NU_TYPE = "nu_type";
     private static final String COLUMN_NU_DETAILS = "nu_details";
     private static final String COLUMN_CREATED_AT = "created_at";
 
@@ -38,6 +39,7 @@ public class TableRCNotificationUpdates {
             " (" +
             " " + COLUMN_NU_ID + " integer NOT NULL CONSTRAINT rc_notification_updates_pk PRIMARY KEY AUTOINCREMENT," +
             " " + COLUMN_NU_TITLE + " text," +
+            " " + COLUMN_NU_TYPE + " text," +
             " " + COLUMN_NU_DETAILS + " text," +
             " " + COLUMN_NU_CLOUD_ID + " text," +
             " " + COLUMN_CREATED_AT + " datetime" +
@@ -48,6 +50,7 @@ public class TableRCNotificationUpdates {
 
         ContentValues values = new ContentValues();
         values.put(COLUMN_NU_TITLE, rconUpdate.getTitle());
+        values.put(COLUMN_NU_TYPE, rconUpdate.getType());
         values.put(COLUMN_NU_DETAILS, rconUpdate.getDetails());
         values.put(COLUMN_NU_CLOUD_ID, rconUpdate.getId());
         values.put(COLUMN_CREATED_AT, Utils.getLocalTimeFromUTCTime(rconUpdate.getCreatedAt()));
@@ -80,6 +83,8 @@ public class TableRCNotificationUpdates {
                 item.setNotiId(cursor.getString(cursor.getColumnIndex(COLUMN_NU_CLOUD_ID)));
                 item.setNotiTitle(cursor.getString(cursor.getColumnIndex
                         (COLUMN_NU_TITLE)));
+                item.setNotiType(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_NU_TYPE)));
                 item.setNotiDetails(cursor.getString(cursor.getColumnIndex
                         (COLUMN_NU_DETAILS)));
                 item.setNotiTime(cursor.getString(cursor.getColumnIndex
