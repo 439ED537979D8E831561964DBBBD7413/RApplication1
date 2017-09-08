@@ -401,7 +401,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     // One workaround is to use the Facebook SDK to post, but that doesn't allow the user to choose how they want to share. We can also make a custom landing page, and the link
                     // will show the <meta content ="..."> text from that page with our link in Facebook.
 //                    intent.putExtra(Intent.EXTRA_TEXT, imageurl);
-                    ShareDialog shareDialog = new ShareDialog(this);
+                    *//*ShareDialog shareDialog = new ShareDialog(this);
                     ShareLinkContent linkContent = new ShareLinkContent.Builder()
                             .setContentTitle("How to integrate Facebook from your app")
                             .setImageUrl(Uri.parse(imageurl))
@@ -410,7 +410,26 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             .setContentUrl(Uri.parse(imageurl))
                             .build();
 
-                    shareDialog.show(linkContent);  // Show facebook ShareDialog
+                    shareDialog.show(linkContent);  // Show facebook ShareDialog*//*
+
+                    *//*try {
+                        Intent mIntentFacebook = new Intent();
+                        mIntentFacebook.setClassName("com.facebook.katana", "com.facebook.composer.shareintent.ImplicitShareIntentHandlerDefaultAlias");
+                        mIntentFacebook.setAction("android.intent.action.SEND");
+                        mIntentFacebook.setType("text/plain");
+                        mIntentFacebook.putExtra("android.intent.extra.TEXT", imageurl);
+                        startActivity(mIntentFacebook);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Intent mIntentFacebookBrowser = new Intent(Intent.ACTION_SEND);
+                        String mStringURL = "https://www.facebook.com/sharer/sharer.php?u=" + imageurl;
+                        mIntentFacebookBrowser = new Intent(Intent.ACTION_VIEW, Uri.parse(mStringURL));
+                        startActivity(mIntentFacebookBrowser);
+                    }*//*
+
+                    intent.setType("text/plain");
+                    intent.putExtra("android.intent.extra.TEXT", imageurl);
+
 
                 } else if (packageName.contains("com.linkedin.android")) {
                     // If Gmail shows up twice, try removing this else-if clause and the reference to "android.gm" above

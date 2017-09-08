@@ -725,7 +725,6 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                             allContactAdapter.filter(text);
                             if (allContactAdapter.getSearchCount() == 0) {
                                 // TODO: 21/08/17 check for Rcontacts
-
                                 if (callLogTypeArrayListMain != null && callLogTypeArrayListMain
                                         .size() > 0) {
                                     textNoRecordsLocal.setVisibility(View.GONE);
