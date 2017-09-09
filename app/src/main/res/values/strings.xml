@@ -695,4 +695,9 @@
     <string name="pick_image_intent_chooser_title">Select source</string>
     <string name="crop_failed">cropping failed:</string>
 
+    <!--MyProfile Sharing-->
+    <string name="average_rate_sharing">Share Average Rating</string>
+    <string name="my_profile_share">Share Profile</string>
+    <string name="share_rating_via_social_media">Share rating via Social Media</string>
+
 </resources>

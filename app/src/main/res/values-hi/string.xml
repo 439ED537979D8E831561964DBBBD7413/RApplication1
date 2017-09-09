@@ -696,5 +696,10 @@
     <string name="pick_image_intent_chooser_title">Select source</string>
     <string name="crop_failed">काटना असफल रहा</string>
 
+    <!--MyProfile Sharing-->
+    <string name="average_rate_sharing">एवरेज रेटिंग शेयर करें</string>
+    <string name="my_profile_share">प्रोफ़ाइल शेयर करें</string>
+    <string name="share_rating_via_social_media">सोशल मीडिया द्वारा रेटिंग शेयर  करें</string>
+
 
 </resources>
