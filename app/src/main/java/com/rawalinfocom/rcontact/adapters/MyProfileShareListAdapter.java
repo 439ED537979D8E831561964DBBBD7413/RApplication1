@@ -292,11 +292,16 @@ public class MyProfileShareListAdapter extends RecyclerView.Adapter<MyProfileSha
 
         }
 
-        // convert intentList to array
-        LabeledIntent[] extraIntents = intentList.toArray(new LabeledIntent[intentList.size()]);
-        Intent openInChooser = Intent.createChooser(intent, context.getString(R.string.share_rating_via_social_media));
-        openInChooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, extraIntents);
-        context.startActivity(openInChooser);
+        if(resInfo.size()>0){
+            // convert intentList to array
+            LabeledIntent[] extraIntents = intentList.toArray(new LabeledIntent[intentList.size()]);
+            Intent openInChooser = Intent.createChooser(intent, context.getString(R.string.share_rating_via_social_media));
+            openInChooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, extraIntents);
+            context.startActivity(openInChooser);
+        }else{
+            // NO App Found
+        }
+
     }
 
 }
