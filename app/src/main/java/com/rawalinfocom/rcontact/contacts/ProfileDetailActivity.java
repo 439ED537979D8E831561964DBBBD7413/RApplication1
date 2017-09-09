@@ -730,7 +730,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         ArrayList arrayList = new ArrayList(Arrays.asList(getString(R.string.average_rate_sharing)
                                 ,getString(R.string.my_profile_share)));
                         MyProfileShareDialog myProfileShareDialog = new
-                                MyProfileShareDialog(this, arrayList,pmId,profileDataOperationVcard,contactName);
+                                MyProfileShareDialog(this, arrayList,pmId,profileDataOperationVcard,contactName,
+                                ProfileDetailActivity.this);
                         myProfileShareDialog.showDialog();
 
                     }else{

@@ -1,5 +1,6 @@
 package com.rawalinfocom.rcontact.helper;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -40,9 +41,11 @@ public class MyProfileShareDialog {
     String pmId = "";
     ProfileDataOperation profileDataOperationVcard;
     String contactName;
+    Activity activity;
 
-    public MyProfileShareDialog(Context context, ArrayList<String> arrayList,String pmID,
-                                ProfileDataOperation profileDataOperationVcard,String contactName) {
+    public MyProfileShareDialog(Context context, ArrayList<String> arrayList, String pmID,
+                                ProfileDataOperation profileDataOperationVcard, String contactName,
+                                Activity activity) {
         this.context = context;
         dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -66,6 +69,7 @@ public class MyProfileShareDialog {
         this.pmId =  pmID;
         this.profileDataOperationVcard =  profileDataOperationVcard;
         this.contactName =  contactName;
+        this.activity =  activity;
         dialogTitle = getDialogTitle();
         if (!TextUtils.isEmpty(dialogTitle))
             tvDialogTitle.setText(dialogTitle);
@@ -81,7 +85,7 @@ public class MyProfileShareDialog {
 
     private void setAdapter() {
         MyProfileShareListAdapter materialListAdapter = new MyProfileShareListAdapter(context, stringArrayList,pmId,
-                profileDataOperationVcard,contactName);
+                profileDataOperationVcard,contactName,activity);
         recycleViewDialog.setAdapter(materialListAdapter);
         setRecyclerViewLayoutManager(recycleViewDialog);
 

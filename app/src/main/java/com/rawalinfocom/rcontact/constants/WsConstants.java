@@ -47,7 +47,7 @@ public class WsConstants {
     // WEBSITE URL
     public static final String WS_WEBSITE_URL = "http://webstaging.rcontacts.in";
     // AVERAGE RATING SHARE
-    public static final String WS_AVG_RATING_SHARE_BADGE_ROOT = "http://rcrc.ac/r/";*/
+    public static final String WS_AVG_RATING_SHARE_BADGE_ROOT = "http://staging.rcrc.ac/r/";*/
 
     //</editor-fold>
 
@@ -68,7 +68,7 @@ public class WsConstants {
     // WEBSITE URL
     public static final String WS_WEBSITE_URL = "http://webqa.rcontacts.in";
     // AVERAGE RATING SHARE
-    public static final String WS_AVG_RATING_SHARE_BADGE_ROOT = "http://rcrc.ac/r/";
+    public static final String WS_AVG_RATING_SHARE_BADGE_ROOT = "http://qa.rcrc.ac/r/";
 
     //</editor-fold>
 

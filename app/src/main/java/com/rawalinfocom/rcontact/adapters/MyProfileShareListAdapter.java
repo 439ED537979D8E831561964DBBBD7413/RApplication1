@@ -1,5 +1,6 @@
 package com.rawalinfocom.rcontact.adapters;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -66,9 +67,11 @@ public class MyProfileShareListAdapter extends RecyclerView.Adapter<MyProfileSha
     ProfileDataOperation profileDataOperationVcard;
     String contactName;
     UserProfile userProfile;
+    Activity mActivity;
 
     public MyProfileShareListAdapter(Context context, ArrayList<String> arrayList, String pmId,
-                                     ProfileDataOperation profileDataOperationVcard,String contactName) {
+                                     ProfileDataOperation profileDataOperationVcard,String contactName,
+                                     Activity activity) {
         this.context = context;
         this.arrayListString = arrayList;
         this.pmID = pmId;
@@ -76,6 +79,7 @@ public class MyProfileShareListAdapter extends RecyclerView.Adapter<MyProfileSha
         this.profileDataOperationVcard = profileDataOperationVcard;
         if(!StringUtils.isEmpty(contactName))
             this.contactName =  contactName;
+        this.mActivity = activity;
     }
 
     @Override
@@ -255,10 +259,10 @@ public class MyProfileShareListAdapter extends RecyclerView.Adapter<MyProfileSha
 
     private void shareAverageRating(String url) {
 
-        PackageManager pm = context.getPackageManager();
+        PackageManager pm = mActivity.getPackageManager();
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_SEND);
-        intent.setType("text");
+        intent.setType("text/*");
 
         List<ResolveInfo> resInfo = pm.queryIntentActivities(intent, 0);
         List<LabeledIntent> intentList = new ArrayList<LabeledIntent>();
