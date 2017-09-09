@@ -116,27 +116,38 @@ public class MyProfileShareListAdapter extends RecyclerView.Adapter<MyProfileSha
                     if (!StringUtils.equalsAnyIgnoreCase(pmID, "-1")){
                         String sharingUrl = "Click link to see " + contactName + " 's average rating." + "\n"
                                 + WsConstants.WS_AVG_RATING_SHARE_BADGE_ROOT + userProfile.getPmBadge();
-                        onShareClick(sharingUrl);
+                        if(Utils.isNetworkAvailable(context))
+                            shareAverageRating(sharingUrl);
+                        else{
+                            Utils.showErrorSnackBar(context, llRoot, context.getResources()
+                                    .getString(R.string.msg_no_network));
+                        }
                     }
 
                 }else if(value.equalsIgnoreCase(context.getString(R.string.my_profile_share))){
                     if (!StringUtils.equalsAnyIgnoreCase(pmID, "-1")){
                         // RCP profile or Own Profile
-                        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-                        sharingIntent.setType("text/plain");
-                        String shareBody;
-                        if (StringUtils.isBlank(userProfile.getPmBadge())) {
-                            shareBody = WsConstants.WS_PROFILE_VIEW_BADGE_ROOT + number;
-                        } else {
-                            shareBody = WsConstants.WS_PROFILE_VIEW_BADGE_ROOT + userProfile
-                                    .getPmBadge();
+                        if(Utils.isNetworkAvailable(context))
+                        {
+                            Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+                            sharingIntent.setType("text/plain");
+                            String shareBody;
+                            if (StringUtils.isBlank(userProfile.getPmBadge())) {
+                                shareBody = WsConstants.WS_PROFILE_VIEW_BADGE_ROOT + number;
+                            } else {
+                                shareBody = WsConstants.WS_PROFILE_VIEW_BADGE_ROOT + userProfile
+                                        .getPmBadge();
+                            }
+                            sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
+                            context.startActivity(Intent.createChooser(sharingIntent, context.getString(R.string
+                                    .str_share_contact_via)));
+
+                        }else{
+                            Utils.showErrorSnackBar(context, llRoot, context.getResources()
+                                    .getString(R.string.msg_no_network));
                         }
-                        sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
-                        context.startActivity(Intent.createChooser(sharingIntent, context.getString(R.string
-                                .str_share_contact_via)));
                     }else{
                         shareContact();
-
                     }
 
                 }
@@ -242,7 +253,7 @@ public class MyProfileShareListAdapter extends RecyclerView.Adapter<MyProfileSha
         }
     }
 
-    private void onShareClick(String url) {
+    private void shareAverageRating(String url) {
 
         PackageManager pm = context.getPackageManager();
         Intent intent = new Intent();
