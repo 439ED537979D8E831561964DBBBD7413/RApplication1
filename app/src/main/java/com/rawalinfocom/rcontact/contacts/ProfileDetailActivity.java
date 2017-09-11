@@ -377,6 +377,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         IntentFilter intentFilter = new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_PROFILE);
         localBroadcastManager.registerReceiver(localBroadcastReceiver, intentFilter);
 
+        LocalBroadcastManager localBroadcastManager1 =  LocalBroadcastManager.getInstance(this);
+        IntentFilter intentFilter1 = new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_DIALOG);
+        localBroadcastManager1.registerReceiver(localBroadcastReceiverDialog,intentFilter1);
+
         if (profileActivityCallInstance) {
 //            fetchCallLogHistoryDateWise(historyNumber);
 //            fetchAllCallLogHistory(historyNumber);
@@ -418,6 +422,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         super.onPause();
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
         localBroadcastManager.unregisterReceiver(localBroadcastReceiver);
+
+        LocalBroadcastManager localBroadcastManager1 = LocalBroadcastManager.getInstance(this);
+        localBroadcastManager1.unregisterReceiver(localBroadcastReceiverDialog);
     }
 
     @Override
@@ -4196,4 +4203,41 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     }
 
     //</editor-fold>
+
+
+    private BroadcastReceiver localBroadcastReceiverDialog = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.hasExtra("networkIssue")){
+                String intentNetworkIssue =  intent.getStringExtra("networkIssue");
+                if(StringUtils.equalsIgnoreCase(intentNetworkIssue,"true")){
+                    Utils.showErrorSnackBar(ProfileDetailActivity.this, relativeRootProfileDetail, getResources()
+                            .getString(R.string.msg_no_network));
+                }
+            }else if(intent.hasExtra("responseError")) {
+                String responseError =  intent.getStringExtra("responseError");
+                if(StringUtils.equalsIgnoreCase(responseError,"true")){
+                    if(intent.hasExtra("responseMessage")){
+                        String responseMessage =  intent.getStringExtra("responseMessage");
+                        if(!StringUtils.isEmpty(responseMessage)){
+                            Utils.showErrorSnackBar(ProfileDetailActivity.this, relativeRootProfileDetail,responseMessage);
+                        }
+                    }
+                }
+            }else if(intent.hasExtra("serverError")){
+                String serverError =  intent.getStringExtra("serverError");
+                if(StringUtils.equalsIgnoreCase(serverError,"true")){
+                    Utils.showErrorSnackBar(ProfileDetailActivity.this, relativeRootProfileDetail, getResources()
+                            .getString(R.string.msg_try_later));
+                }
+            }else if(intent.hasExtra("noApps")){
+                String noAppFound =  intent.getStringExtra("noApps");
+                if(StringUtils.equalsIgnoreCase(noAppFound,"true")){
+                    Utils.showErrorSnackBar(ProfileDetailActivity.this, relativeRootProfileDetail, getResources()
+                            .getString(R.string.error_no_social_app_found));
+                }
+            }
+
+        }
+    };
 }

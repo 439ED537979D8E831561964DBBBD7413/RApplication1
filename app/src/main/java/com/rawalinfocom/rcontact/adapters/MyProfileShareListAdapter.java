@@ -62,8 +62,6 @@ public class MyProfileShareListAdapter extends RecyclerView.Adapter<MyProfileSha
     private ArrayList<String> arrayListString;
     String pmID;
     private DatabaseHandler databaseHandler;
-    @BindView(R.id.llRoot)
-    LinearLayout llRoot;
     ProfileDataOperation profileDataOperationVcard;
     String contactName;
     UserProfile userProfile;
@@ -80,6 +78,7 @@ public class MyProfileShareListAdapter extends RecyclerView.Adapter<MyProfileSha
         if(!StringUtils.isEmpty(contactName))
             this.contactName =  contactName;
         this.mActivity = activity;
+
     }
 
     @Override
@@ -123,8 +122,15 @@ public class MyProfileShareListAdapter extends RecyclerView.Adapter<MyProfileSha
                         if(Utils.isNetworkAvailable(context))
                             shareAverageRating(sharingUrl);
                         else{
-                            Utils.showErrorSnackBar(context, llRoot, context.getResources()
-                                    .getString(R.string.msg_no_network));
+//                            Utils.showErrorSnackBar(context, llRoot, context.getResources()
+//                                    .getString(R.string.msg_no_network));
+                            Intent localBroadcastIntent = new Intent(AppConstants
+                                    .ACTION_LOCAL_BROADCAST_DIALOG);
+                            LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance
+                                    (context);
+                            localBroadcastIntent.putExtra("networkIssue","true");
+                            myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+
                         }
                     }
 
@@ -147,15 +153,17 @@ public class MyProfileShareListAdapter extends RecyclerView.Adapter<MyProfileSha
                                     .str_share_contact_via)));
 
                         }else{
-                            Utils.showErrorSnackBar(context, llRoot, context.getResources()
-                                    .getString(R.string.msg_no_network));
-                        }
+                            Intent localBroadcastIntent = new Intent(AppConstants
+                                    .ACTION_LOCAL_BROADCAST_DIALOG);
+                            LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance
+                                    (context);
+                            localBroadcastIntent.putExtra("networkIssue","true");
+                            myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);                        }
                     }else{
                         shareContact();
                     }
 
                 }
-
                 Intent localBroadcastIntent = new Intent(AppConstants
                         .ACTION_LOCAL_BROADCAST_DIALOG);
                 LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance
@@ -236,12 +244,25 @@ public class MyProfileShareListAdapter extends RecyclerView.Adapter<MyProfileSha
                         } else {
                             if (profileSharingResponse != null) {
                                 Log.e("error response", profileSharingResponse.getMessage());
-                                Utils.showErrorSnackBar(context, llRoot,
-                                        profileSharingResponse.getMessage());
+//                                Utils.showErrorSnackBar(context, llRoot,
+//                                        profileSharingResponse.getMessage());
+                                Intent localBroadcastIntent = new Intent(AppConstants
+                                        .ACTION_LOCAL_BROADCAST_DIALOG);
+                                LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance
+                                        (context);
+                                localBroadcastIntent.putExtra("responseError","true");
+                                localBroadcastIntent.putExtra("responseMessage",profileSharingResponse.getMessage());
+                                myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
                             } else {
                                 Log.e("onDeliveryResponse: ", "otpDetailResponse null");
-                                Utils.showErrorSnackBar(context, llRoot, context.getString(R
-                                        .string.msg_try_later));
+//                                Utils.showErrorSnackBar(context, llRoot, context.getString(R
+//                                        .string.msg_try_later));
+                                Intent localBroadcastIntent = new Intent(AppConstants
+                                        .ACTION_LOCAL_BROADCAST_DIALOG);
+                                LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance
+                                        (context);
+                                localBroadcastIntent.putExtra("serverError","true");
+                                myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
                             }
                         }
 
@@ -252,8 +273,15 @@ public class MyProfileShareListAdapter extends RecyclerView.Adapter<MyProfileSha
                     WsConstants.WS_ROOT + WsConstants.REQ_RCP_PROFILE_SHARING);
 
         } else {
-            Utils.showErrorSnackBar(context, llRoot, context.getResources()
-                    .getString(R.string.msg_no_network));
+//            Utils.showErrorSnackBar(context, llRoot, context.getResources()
+//                    .getString(R.string.msg_no_network));
+            Intent localBroadcastIntent = new Intent(AppConstants
+                    .ACTION_LOCAL_BROADCAST_DIALOG);
+            LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance
+                    (context);
+            localBroadcastIntent.putExtra("networkIssue","true");
+            myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+
         }
     }
 
@@ -300,6 +328,13 @@ public class MyProfileShareListAdapter extends RecyclerView.Adapter<MyProfileSha
             context.startActivity(openInChooser);
         }else{
             // NO App Found
+            Intent localBroadcastIntent = new Intent(AppConstants
+                    .ACTION_LOCAL_BROADCAST_DIALOG);
+            LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance
+                    (context);
+            localBroadcastIntent.putExtra("noApps","true");
+            myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+
         }
 
     }
