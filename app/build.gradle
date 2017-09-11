@@ -42,7 +42,7 @@ android {
         }
     }
     lintOptions {
-        checkAllWarnings false
+        abortOnError false
     }
 
     packagingOptions {
