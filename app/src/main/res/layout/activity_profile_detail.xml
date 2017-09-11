@@ -75,7 +75,6 @@
                                 android:id="@+id/text_name"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:padding="2dp"
                                 android:scrollHorizontally="true"
                                 android:singleLine="true"
                                 android:textAppearance="?android:textAppearanceMedium"
@@ -101,7 +100,6 @@
                                     android:id="@+id/text_designation"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:padding="2dp"
                                     android:singleLine="true"
                                     android:textColor="@color/colorAccent"
                                     tools:text="Managing Director"/>
@@ -110,7 +108,6 @@
                                     android:id="@+id/text_organization"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:padding="2dp"
                                     android:singleLine="true"
                                     android:textColor="@color/colorAccent"
                                     tools:text="Blazze Apps"/>
@@ -119,7 +116,6 @@
                                     android:id="@+id/text_view_all_organization"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:padding="2dp"
                                     android:text="@string/str_view_all_organizations"
                                     android:textColor="@color/colorTextHeader"
                                     android:visibility="gone"
@@ -178,16 +174,16 @@
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
                                             android:layout_margin="@dimen/margin_tiny"
-                                            android:gravity="center"
-                                            android:text=""
+                                            android:gravity="center_vertical"
                                             android:textColor="@color/colorAccent"
-                                            android:textSize="@dimen/text_size_14sp"/>
+                                            android:textSize="@dimen/text_size_14sp"
+                                            tools:text="225"/>
 
                                         <ImageView
                                             android:id="@+id/img_user_rating"
                                             android:layout_width="13dp"
                                             android:layout_height="11.5dp"
-                                            android:layout_gravity="center"
+                                            android:layout_gravity="center_vertical"
                                             android:layout_marginBottom="@dimen/margin_tiny"
                                             android:layout_marginTop="@dimen/margin_tiny"
                                             android:contentDescription="@string/app_name"
@@ -241,7 +237,8 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/rounded_cornor_green_background"
                         android:text="@string/call_history"
-                        android:textColor="@color/colorWhite"/>
+                        android:textColor="@color/colorWhite"
+                        android:textSize="@dimen/text_size_12sp"/>
 
                 </com.rawalinfocom.rcontact.helper.RippleView>
 
@@ -256,14 +253,14 @@
                     app:rv_color="@color/colorWhite"
                     app:rv_rippleDuration="@integer/duration_ripple">
 
-
                     <Button
                         android:id="@+id/button_sms"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/rounded_cornor_green_background"
                         android:text="@string/tab_sms"
-                        android:textColor="@color/colorWhite"/>
+                        android:textColor="@color/colorWhite"
+                        android:textSize="@dimen/text_size_12sp"/>
 
                 </com.rawalinfocom.rcontact.helper.RippleView>
 
@@ -399,7 +396,7 @@
                                     android:layout_marginStart="@dimen/margin_tiny"
                                     android:layout_marginTop="@dimen/margin_small_tiny"
                                     android:text="@string/str_phone"
-                                    android:textColor="@color/colorTextHeader"/>
+                                    android:textColor="@color/dialogButtonTextColor"/>
 
                                 <android.support.v7.widget.RecyclerView
                                     android:id="@+id/recycler_view_contact_number"
@@ -442,7 +439,7 @@
                                     android:layout_marginStart="@dimen/margin_tiny"
                                     android:layout_marginTop="@dimen/margin_small_tiny"
                                     android:text="@string/str_email"
-                                    android:textColor="@color/colorTextHeader"/>
+                                    android:textColor="@color/dialogButtonTextColor"/>
 
                                 <android.support.v7.widget.RecyclerView
                                     android:id="@+id/recycler_view_email"
@@ -490,7 +487,7 @@
                                         android:layout_marginStart="@dimen/margin_tiny"
                                         android:layout_marginTop="@dimen/margin_small_tiny"
                                         android:text="@string/str_website"
-                                        android:textColor="@color/colorTextHeader"/>
+                                        android:textColor="@color/dialogButtonTextColor"/>
 
                                     <android.support.v7.widget.RecyclerView
                                         android:id="@+id/recycler_view_website"
@@ -532,7 +529,7 @@
                                         android:layout_marginStart="@dimen/margin_tiny"
                                         android:layout_marginTop="@dimen/margin_small_tiny"
                                         android:text="@string/str_address"
-                                        android:textColor="@color/colorTextHeader"/>
+                                        android:textColor="@color/dialogButtonTextColor"/>
 
                                     <android.support.v7.widget.RecyclerView
                                         android:id="@+id/recycler_view_address"
@@ -574,7 +571,7 @@
                                         android:layout_marginStart="@dimen/margin_tiny"
                                         android:layout_marginTop="@dimen/margin_small_tiny"
                                         android:text="@string/str_social_contact"
-                                        android:textColor="@color/colorTextHeader"/>
+                                        android:textColor="@color/dialogButtonTextColor"/>
 
                                     <android.support.v7.widget.RecyclerView
                                         android:id="@+id/recycler_view_social_contact"
@@ -590,6 +587,7 @@
 
                         </RelativeLayout>
 
+
                         <com.rawalinfocom.rcontact.helper.RippleView
                             android:id="@+id/ripple_view_more"
                             android:layout_width="match_parent"
@@ -597,20 +595,43 @@
                             android:layout_below="@id/relative_section_view_more"
                             app:rv_alpha="@integer/alpha_ripple"
                             app:rv_centered="true"
-                            app:rv_color="@color/colorAccent"
+                            app:rv_color="@color/grayishMagenta"
                             app:rv_rippleDuration="@integer/duration_ripple">
 
-                            <Button
-                                android:id="@+id/button_view_more"
+                            <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:background="@null"
-                                android:gravity="left|center_vertical"
-                                android:padding="@dimen/activity_half_horizontal_margin"
-                                android:text="@string/str_view_more"
-                                android:textAllCaps="false"/>
+                                android:background="@drawable/background_shadow"
+                                android:gravity="center">
+
+                                <ImageView
+                                    android:id="@+id/image_expand_collapse"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:contentDescription="@string/str_content_description"
+                                    android:padding="0dp"
+                                    android:src="@drawable/ico_arrow_down_svg"/>
+
+                                <Button
+                                    android:id="@+id/button_view_more"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="45dp"
+                                    android:background="@null"
+                                    android:gravity="center"
+                                    android:text="@string/str_view_more"
+                                    android:textColor="@color/dialogButtonTextColor"/>
+
+                            </LinearLayout>
 
                         </com.rawalinfocom.rcontact.helper.RippleView>
+
+                        <!--<TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/relative_section_view_more"
+                            android:background="@drawable/background_shadow"
+                            android:padding="@dimen/activity_horizontal_margin"
+                            android:text="@string/str_view_more"/>-->
 
                     </RelativeLayout>
 
@@ -658,7 +679,7 @@
                                     android:layout_marginStart="@dimen/margin_tiny"
                                     android:layout_marginTop="@dimen/margin_small_tiny"
                                     android:text="@string/str_event"
-                                    android:textColor="@color/colorTextHeader"/>
+                                    android:textColor="@color/dialogButtonTextColor"/>
 
                                 <android.support.v7.widget.RecyclerView
                                     android:id="@+id/recycler_view_event"
@@ -700,7 +721,7 @@
                                     android:layout_marginStart="@dimen/margin_tiny"
                                     android:layout_marginTop="@dimen/margin_small_tiny"
                                     android:text="@string/str_gender"
-                                    android:textColor="@color/colorTextHeader"/>
+                                    android:textColor="@color/dialogButtonTextColor"/>
 
                                 <RelativeLayout
                                     android:layout_width="match_parent"
