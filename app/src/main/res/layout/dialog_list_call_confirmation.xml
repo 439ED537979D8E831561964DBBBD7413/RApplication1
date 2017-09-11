@@ -11,7 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="@dimen/padding_5dp">
+        android:padding="@dimen/padding_5dp"
+        android:visibility="visible">
 
         <TextView
             android:id="@+id/tvDialogTitle"

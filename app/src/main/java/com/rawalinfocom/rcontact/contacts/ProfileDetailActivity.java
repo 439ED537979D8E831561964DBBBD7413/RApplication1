@@ -80,6 +80,7 @@ import com.rawalinfocom.rcontact.database.TableWebsiteMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.CallConfirmationListDialog;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
+import com.rawalinfocom.rcontact.helper.MyProfileShareDialog;
 import com.rawalinfocom.rcontact.helper.ProfileMenuOptionDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
@@ -120,6 +121,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -378,6 +380,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         IntentFilter intentFilter = new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_PROFILE);
         localBroadcastManager.registerReceiver(localBroadcastReceiver, intentFilter);
 
+        LocalBroadcastManager localBroadcastManager1 =  LocalBroadcastManager.getInstance(this);
+        IntentFilter intentFilter1 = new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_DIALOG);
+        localBroadcastManager1.registerReceiver(localBroadcastReceiverDialog,intentFilter1);
+
         if (profileActivityCallInstance) {
 //            fetchCallLogHistoryDateWise(historyNumber);
 //            fetchAllCallLogHistory(historyNumber);
@@ -419,6 +425,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         super.onPause();
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
         localBroadcastManager.unregisterReceiver(localBroadcastReceiver);
+
+        LocalBroadcastManager localBroadcastManager1 = LocalBroadcastManager.getInstance(this);
+        localBroadcastManager1.unregisterReceiver(localBroadcastReceiverDialog);
     }
 
     @Override
@@ -729,40 +738,50 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         showChooseShareOption(null, null);
                     }*/
 
-                    if (!StringUtils.equalsAnyIgnoreCase(pmId, "-1")) {
-                        TableProfileMaster tableProfileMaster = new TableProfileMaster
-                                (databaseHandler);
-                        UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId
-                                (Integer.parseInt(pmId));
-                        TableMobileMaster tableMobileMaster = new TableMobileMaster
-                                (databaseHandler);
-                        String number = tableMobileMaster.getUserMobileNumber(pmId);
+                    if(displayOwnProfile){
+                        ArrayList arrayList = new ArrayList(Arrays.asList(getString(R.string.average_rate_sharing)
+                                ,getString(R.string.my_profile_share)));
+                        MyProfileShareDialog myProfileShareDialog = new
+                                MyProfileShareDialog(this, arrayList,pmId,profileDataOperationVcard,contactName,
+                                ProfileDetailActivity.this);
+                        myProfileShareDialog.showDialog();
 
-                        if (StringUtils.startsWith(number, "+")) {
-                            number = StringUtils.substring(number, 1);
-                        }
+                    }else{
+                        if (!StringUtils.equalsAnyIgnoreCase(pmId, "-1")) {
+                            TableProfileMaster tableProfileMaster = new TableProfileMaster
+                                    (databaseHandler);
+                            UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId
+                                    (Integer.parseInt(pmId));
+                            TableMobileMaster tableMobileMaster = new TableMobileMaster
+                                    (databaseHandler);
+                            String number = tableMobileMaster.getUserMobileNumber(pmId);
+
+                            if (StringUtils.startsWith(number, "+")) {
+                                number = StringUtils.substring(number, 1);
+                            }
 
 //                        if (!StringUtils.equalsAnyIgnoreCase(pmId, "-1")) {
-                        // RCP profile or Own Profile
-                        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-                        sharingIntent.setType("text/plain");
-                        String shareBody;
-                        if (StringUtils.isBlank(userProfile.getPmBadge())) {
-                            shareBody = WsConstants.WS_PROFILE_VIEW_BADGE_ROOT + number;
-                        } else {
-                            shareBody = WsConstants.WS_PROFILE_VIEW_BADGE_ROOT + userProfile
-                                    .getPmBadge();
-                        }
-                        sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
-                        startActivity(Intent.createChooser(sharingIntent, getString(R.string
-                                .str_share_contact_via)));
+                            // RCP profile or Own Profile
+                            Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+                            sharingIntent.setType("text/plain");
+                            String shareBody;
+                            if (StringUtils.isBlank(userProfile.getPmBadge())) {
+                                shareBody = WsConstants.WS_PROFILE_VIEW_BADGE_ROOT + number;
+                            } else {
+                                shareBody = WsConstants.WS_PROFILE_VIEW_BADGE_ROOT + userProfile
+                                        .getPmBadge();
+                            }
+                            sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
+                            startActivity(Intent.createChooser(sharingIntent, getString(R.string
+                                    .str_share_contact_via)));
 //                        } else {
 //                            // Non-Rcp profile
 //                            shareContact();
 //
 //                        }
-                    } else {
-                        shareContact();
+                        } else {
+                            shareContact();
+                        }
                     }
                 }
                 break;
@@ -4193,4 +4212,41 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     }
 
     //</editor-fold>
+
+
+    private BroadcastReceiver localBroadcastReceiverDialog = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.hasExtra("networkIssue")){
+                String intentNetworkIssue =  intent.getStringExtra("networkIssue");
+                if(StringUtils.equalsIgnoreCase(intentNetworkIssue,"true")){
+                    Utils.showErrorSnackBar(ProfileDetailActivity.this, relativeRootProfileDetail, getResources()
+                            .getString(R.string.msg_no_network));
+                }
+            }else if(intent.hasExtra("responseError")) {
+                String responseError =  intent.getStringExtra("responseError");
+                if(StringUtils.equalsIgnoreCase(responseError,"true")){
+                    if(intent.hasExtra("responseMessage")){
+                        String responseMessage =  intent.getStringExtra("responseMessage");
+                        if(!StringUtils.isEmpty(responseMessage)){
+                            Utils.showErrorSnackBar(ProfileDetailActivity.this, relativeRootProfileDetail,responseMessage);
+                        }
+                    }
+                }
+            }else if(intent.hasExtra("serverError")){
+                String serverError =  intent.getStringExtra("serverError");
+                if(StringUtils.equalsIgnoreCase(serverError,"true")){
+                    Utils.showErrorSnackBar(ProfileDetailActivity.this, relativeRootProfileDetail, getResources()
+                            .getString(R.string.msg_try_later));
+                }
+            }else if(intent.hasExtra("noApps")){
+                String noAppFound =  intent.getStringExtra("noApps");
+                if(StringUtils.equalsIgnoreCase(noAppFound,"true")){
+                    Utils.showErrorSnackBar(ProfileDetailActivity.this, relativeRootProfileDetail, getResources()
+                            .getString(R.string.error_no_social_app_found));
+                }
+            }
+
+        }
+    };
 }

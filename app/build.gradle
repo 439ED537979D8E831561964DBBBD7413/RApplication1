@@ -32,12 +32,26 @@ android {
         multiDexEnabled true
     }
 
+    signingConfigs {
+        release {
+            storeFile file("/Users/user/Desktop/rcontacts.jks") // My Local path
+            storePassword "rcontacts"
+            keyAlias "rcontacts"
+            keyPassword "rcontacts"
+        }
+    }
+
     buildTypes {
         release {
+//            zipAlign true
+            signingConfig signingConfigs.release
+
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
+//            zipAlign true
+
             minifyEnabled false
         }
     }
