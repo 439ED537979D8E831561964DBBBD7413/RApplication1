@@ -34,7 +34,7 @@ android {
 
     signingConfigs {
         release {
-            storeFile file("/Users/user/Desktop/rcontacts.jks") // My Local path
+            storeFile file("/Users/operative/rcontacts.jks") // My Local path
             storePassword "rcontacts"
             keyAlias "rcontacts"
             keyPassword "rcontacts"
