@@ -76,37 +76,38 @@ public class NotificationFCMService extends FirebaseMessagingService {
                 DatabaseHandler databaseHandler = new DatabaseHandler(this);
                 String notiData = m.get("default");
                 if (notiData != null) {
-                    try {
-                        ObjectMapper mapper = new ObjectMapper();
-                        NotificationData obj = mapper.readValue(notiData, NotificationData.class);
-                        TableRCNotificationUpdates tableRCNotificationUpdates = new
-                                TableRCNotificationUpdates(databaseHandler);
-                        int id = tableRCNotificationUpdates.addUpdate(obj);
-                        if (id != -1) {
-                            TableNotificationStateMaster notificationStateMaster = new
-                                    TableNotificationStateMaster(databaseHandler);
-                            NotificationStateData notificationStateData = new NotificationStateData();
-                            notificationStateData.setNotificationState(1);
-                            notificationStateData.setCloudNotificationId(obj.getId());
-                            notificationStateData.setCreatedAt(obj.getCreatedAt());
-                            notificationStateData.setUpdatedAt(obj.getUpdatedAt());
-                            notificationStateData.setNotificationType(AppConstants
-                                    .NOTIFICATION_TYPE_RUPDATE);
-                            notificationStateData.setNotificationMasterId(obj.getId());
-                            notificationStateMaster.addNotificationState(notificationStateData);
-                            if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_PUSH, false))
-                                sendNotification(obj.getDetails(), AppConstants.NOTIFICATION_TYPE_RUPDATE);
-                            else
-                                sendBroadcastForCountupdate();
+                    if (m.get("API").equalsIgnoreCase("rcontactUpdate")) {
+                        try {
+                            ObjectMapper mapper = new ObjectMapper();
+                            NotificationData obj = mapper.readValue(notiData, NotificationData.class);
+                            TableRCNotificationUpdates tableRCNotificationUpdates = new
+                                    TableRCNotificationUpdates(databaseHandler);
+                            int id = tableRCNotificationUpdates.addUpdate(obj);
+                            if (id != -1) {
+                                TableNotificationStateMaster notificationStateMaster = new
+                                        TableNotificationStateMaster(databaseHandler);
+                                NotificationStateData notificationStateData = new NotificationStateData();
+                                notificationStateData.setNotificationState(1);
+                                notificationStateData.setCloudNotificationId(obj.getId());
+                                notificationStateData.setCreatedAt(obj.getCreatedAt());
+                                notificationStateData.setUpdatedAt(obj.getUpdatedAt());
+                                notificationStateData.setNotificationType(AppConstants
+                                        .NOTIFICATION_TYPE_RUPDATE);
+                                notificationStateData.setNotificationMasterId(obj.getId());
+                                notificationStateMaster.addNotificationState(notificationStateData);
+                                if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_PUSH, false))
+                                    sendNotification(obj.getDetails(), AppConstants.NOTIFICATION_TYPE_RUPDATE);
+                                else
+                                    sendBroadcastForCountupdate();
 
-                            updateNotificationCount(databaseHandler);
+                                updateNotificationCount(databaseHandler);
+                                return;
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
                             return;
                         }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        return;
                     }
-
                 }
                 String api = m.get("API");
                 if (api == null) {

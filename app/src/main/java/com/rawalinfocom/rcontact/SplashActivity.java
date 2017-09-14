@@ -89,6 +89,7 @@ public class SplashActivity extends BaseActivity {
                 } else if (Utils.getIntegerPreference(SplashActivity.this, AppConstants
                         .PREF_LAUNCH_SCREEN_INT, IntegerConstants.LAUNCH_TUTORIAL_ACTIVITY) ==
                         IntegerConstants.LAUNCH_RE_LOGIN_PASSWORD) {
+
                     Intent intent = new Intent(SplashActivity.this, ReLoginEnterPasswordActivity
                             .class);
                     intent.putExtra(AppConstants.PREF_IS_FROM, AppConstants.PREF_FORGOT_PASSWORD);

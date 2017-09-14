@@ -206,6 +206,7 @@ public class AppConstants {
 
     public static String KEY_API_CALL_TIME = "key_api_call_time";
     public static String KEY_API_CALL_TIME_STAMP = "key_api_call_time_stamp";
+    public static String KEY_RCONTACTS_API_CALL_TIME_STAMP = "key_rcontacts_api_call_time_stamp";
     public static String KEY_IS_FIRST_TIME = "key_is_first_time";
     public static String KEY_IS_RESTORE_DONE = "key_is_restore_done";
 

@@ -1,10 +1,15 @@
 package com.rawalinfocom.rcontact;
 
+import android.*;
+import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -13,52 +18,56 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.google.android.gms.auth.GoogleAuthException;
+import com.google.android.gms.auth.GoogleAuthUtil;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.linkedin.platform.APIHelper;
+import com.linkedin.platform.LISessionManager;
+import com.linkedin.platform.errors.LIApiError;
+import com.linkedin.platform.errors.LIAuthError;
+import com.linkedin.platform.listeners.ApiListener;
+import com.linkedin.platform.listeners.ApiResponse;
+import com.linkedin.platform.listeners.AuthListener;
+import com.linkedin.platform.utils.Scope;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
-import com.rawalinfocom.rcontact.database.TableAddressMaster;
-import com.rawalinfocom.rcontact.database.TableEmailMaster;
-import com.rawalinfocom.rcontact.database.TableEventMaster;
-import com.rawalinfocom.rcontact.database.TableImMaster;
-import com.rawalinfocom.rcontact.database.TableMobileMaster;
-import com.rawalinfocom.rcontact.database.TableOrganizationMaster;
-import com.rawalinfocom.rcontact.database.TableProfileMaster;
-import com.rawalinfocom.rcontact.database.TableWebsiteMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
-import com.rawalinfocom.rcontact.model.Address;
 import com.rawalinfocom.rcontact.model.Country;
-import com.rawalinfocom.rcontact.model.Email;
-import com.rawalinfocom.rcontact.model.Event;
-import com.rawalinfocom.rcontact.model.ImAccount;
-import com.rawalinfocom.rcontact.model.MobileNumber;
-import com.rawalinfocom.rcontact.model.Organization;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
-import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
-import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
-import com.rawalinfocom.rcontact.model.ProfileDataOperationEvent;
-import com.rawalinfocom.rcontact.model.ProfileDataOperationImAccount;
-import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
-import com.rawalinfocom.rcontact.model.ProfileDataOperationPhoneNumber;
-import com.rawalinfocom.rcontact.model.ProfileDataOperationWebAddress;
-import com.rawalinfocom.rcontact.model.UserProfile;
-import com.rawalinfocom.rcontact.model.Website;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONObject;
 
-import java.util.ArrayList;
+import java.io.IOException;
+import java.util.Arrays;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class EnterPasswordActivity extends BaseActivity implements RippleView
-        .OnRippleCompleteListener, WsResponseListener {
+        .OnRippleCompleteListener, WsResponseListener, GoogleApiClient.OnConnectionFailedListener {
 
     @BindView(R.id.image_action_back)
     ImageView imageActionBack;
@@ -90,6 +99,36 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
     RelativeLayout relativeRootEnterPassword;
     @BindView(R.id.text_sign_in_up_diff_account)
     TextView textSignInUpDiffAccount;
+
+    // Social Login
+    @BindView(R.id.linear_layout_login)
+    LinearLayout linearLayoutLogin;
+    @BindView(R.id.button_facebook)
+    Button buttonFacebook;
+    @BindView(R.id.ripple_facebook)
+    RippleView rippleFacebook;
+    @BindView(R.id.button_google)
+    Button buttonGoogle;
+    @BindView(R.id.ripple_google)
+    RippleView rippleGoogle;
+    @BindView(R.id.button_linked_in)
+    Button buttonLinkedIn;
+    @BindView(R.id.ripple_linked_in)
+    RippleView rippleLinkedIn;
+    @BindView(R.id.linear_layout_social_login)
+    LinearLayout linearLayoutSocialLogin;
+    CallbackManager callbackManager;
+    // Google API Client
+    private GoogleApiClient googleApiClient;
+
+    private static final int FACEBOOK_LOGIN_PERMISSION = 21;
+    private static final int GOOGLE_LOGIN_PERMISSION = 22;
+    private static final int LINKEDIN_LOGIN_PERMISSION = 23;
+    private final int RC_SIGN_IN = 7;
+
+    private String[] requiredPermissions = {android.Manifest.permission.READ_EXTERNAL_STORAGE, android.Manifest
+            .permission.WRITE_EXTERNAL_STORAGE};
+
     private String mobileNumber;
     private Country selectedCountry;
 
@@ -98,34 +137,64 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enter_password);
         ButterKnife.bind(this);
+
+        FacebookSdk.sdkInitialize(getApplicationContext());
+
+        // Google+ Registration
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions
+                .DEFAULT_SIGN_IN).requestEmail().build();
+        googleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this, this).addApi
+                (Auth.GOOGLE_SIGN_IN_API, gso).build();
+
         init();
     }
 
     private void init() {
+
         rippleActionBack.setOnRippleCompleteListener(this);
         rippleForgetPassword.setOnRippleCompleteListener(this);
         rippleLogin.setOnRippleCompleteListener(this);
+        rippleFacebook.setOnRippleCompleteListener(this);
+        rippleGoogle.setOnRippleCompleteListener(this);
+        rippleLinkedIn.setOnRippleCompleteListener(this);
 
-        textSignInUpDiffAccount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        buttonFacebook.setTypeface(Utils.typefaceSemiBold(this));
+        buttonGoogle.setTypeface(Utils.typefaceSemiBold(this));
+        buttonLinkedIn.setTypeface(Utils.typefaceSemiBold(this));
 
-                Utils.clearData(EnterPasswordActivity.this);
-                getDatabaseHandler().clearAllData();
+        Utils.setRoundedCornerBackground(buttonFacebook, ContextCompat.getColor
+                (this, R.color.colorFacebookBlue), 5, 0, ContextCompat
+                .getColor(this, R.color.colorFacebookBlue));
 
-                Utils.setIntegerPreference(EnterPasswordActivity.this, AppConstants
-                        .PREF_LAUNCH_SCREEN_INT, IntegerConstants.LAUNCH_MOBILE_REGISTRATION);
+        Utils.setRoundedCornerBackground(buttonGoogle, ContextCompat.getColor
+                (this, R.color.colorGoogleRed), 5, 0, ContextCompat
+                .getColor(this, R.color.colorGoogleRed));
 
-                Intent intent = new Intent(EnterPasswordActivity.this,
-                        MobileNumberRegistrationActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                startActivity(intent);
-                overridePendingTransition(R.anim.enter, R.anim.exit);
-                finish();
-            }
-        });
+        Utils.setRoundedCornerBackground(buttonLinkedIn, ContextCompat.getColor
+                (this, R.color.colorLinkedInBlue), 5, 0, ContextCompat
+                .getColor(this, R.color.colorLinkedInBlue));
+
+        textSignInUpDiffAccount.setVisibility(View.GONE);
+//        textSignInUpDiffAccount.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                Utils.clearData(EnterPasswordActivity.this);
+//                getDatabaseHandler().clearAllData();
+//
+//                Utils.setIntegerPreference(EnterPasswordActivity.this, AppConstants
+//                        .PREF_LAUNCH_SCREEN_INT, IntegerConstants.LAUNCH_MOBILE_REGISTRATION);
+//
+//                Intent intent = new Intent(EnterPasswordActivity.this,
+//                        MobileNumberRegistrationActivity.class);
+//                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+//                startActivity(intent);
+//                overridePendingTransition(R.anim.enter, R.anim.exit);
+//                finish();
+//            }
+//        });
 
         textToolbarTitle.setText(getResources().getString(R.string.str_enter_password));
         textToolbarTitle.setTypeface(Utils.typefaceRegular(this));
@@ -232,7 +301,7 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
                     Utils.setBooleanPreference(EnterPasswordActivity.this, AppConstants
                             .PREF_DISABLE_POPUP, false);
 
-                    storeProfileDataToDb(profileDetail);
+                    Utils.storeProfileDataToDb(EnterPasswordActivity.this, profileDetail, databaseHandler);
 
 //                    if (MoreObjects.firstNonNull(enterPassWordResponse.getReSync(), 0).equals
 // (1)) {
@@ -263,11 +332,11 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
 
             // <editor-fold desc="REQ_STORE_DEVICE_DETAILS">
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_STORE_DEVICE_DETAILS)) {
-                WsResponseObject enterPassWordResponse = (WsResponseObject) data;
+                WsResponseObject storeDeviceDetailsResponse = (WsResponseObject) data;
                 Utils.hideProgressDialog();
 
-                if (enterPassWordResponse != null && StringUtils.equalsIgnoreCase
-                        (enterPassWordResponse
+                if (storeDeviceDetailsResponse != null && StringUtils.equalsIgnoreCase
+                        (storeDeviceDetailsResponse
                                 .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
                     Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME, String
@@ -296,12 +365,12 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
                     }
 
                 } else {
-                    if (enterPassWordResponse != null) {
-                        Log.e("error response", enterPassWordResponse.getMessage());
+                    if (storeDeviceDetailsResponse != null) {
+                        Log.e("error response", storeDeviceDetailsResponse.getMessage());
                         Utils.showErrorSnackBar(this, relativeRootEnterPassword,
-                                enterPassWordResponse.getMessage());
+                                storeDeviceDetailsResponse.getMessage());
                     } else {
-                        Log.e("onDeliveryResponse: ", "enterPassWordResponse null");
+                        Log.e("onDeliveryResponse: ", "storeDeviceDetailsResponse null");
                         Utils.showErrorSnackBar(this, relativeRootEnterPassword, getString(R
                                 .string.msg_try_later));
                     }
@@ -309,12 +378,102 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
             }
             //</editor-fold>
 
+            //<editor-fold desc="REQ_REGISTER_WITH_SOCIAL_MEDIA">
+            if (serviceType.equalsIgnoreCase(WsConstants.REQ_LOGIN_WITH_SOCIAL_MEDIA)) {
+                WsResponseObject userProfileResponse = (WsResponseObject) data;
+
+                if (userProfileResponse != null && StringUtils.equalsIgnoreCase(userProfileResponse
+                        .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+
+                    if (IntegerConstants.REGISTRATION_VIA == IntegerConstants.REGISTRATION_VIA_FACEBOOK)
+                        LoginManager.getInstance().logOut();
+
+                    // set launch screen as MainActivity
+                    Utils.setIntegerPreference(this,
+                            AppConstants.PREF_LAUNCH_SCREEN_INT, IntegerConstants
+                                    .LAUNCH_MAIN_ACTIVITY);
+
+                    ProfileDataOperation profileDetail = userProfileResponse.getProfileDetail();
+                    Utils.setObjectPreference(this, AppConstants
+                            .PREF_REGS_USER_OBJECT, profileDetail);
+
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_PM_ID,
+                            profileDetail.getRcpPmId());
+
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_NAME,
+                            profileDetail.getPbNameFirst() + " " + profileDetail
+                                    .getPbNameLast());
+
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_FIRST_NAME,
+                            profileDetail.getPbNameFirst());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_LAST_NAME,
+                            profileDetail.getPbNameLast());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_JOINING_DATE,
+                            profileDetail.getJoiningDate());
+
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_NUMBER,
+                            profileDetail.getVerifiedMobileNumber());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING,
+                            profileDetail.getTotalProfileRateUser());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_RATING,
+                            profileDetail.getProfileRating());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_PHOTO,
+                            profileDetail.getPbProfilePhoto());
+
+                    Utils.setBooleanPreference(this, AppConstants
+                            .PREF_DISABLE_PUSH, false);
+                    Utils.setBooleanPreference(this, AppConstants
+                            .PREF_DISABLE_EVENT_PUSH, false);
+                    Utils.setBooleanPreference(this, AppConstants
+                            .PREF_DISABLE_POPUP, false);
+
+                    Utils.storeProfileDataToDb(this, profileDetail, databaseHandler);
+
+                    deviceDetail();
+
+                } else {
+
+                    Utils.hideProgressDialog();
+
+                    if (userProfileResponse != null) {
+                        Log.e("error response", userProfileResponse.getMessage());
+                        Utils.showErrorSnackBar(this, relativeRootEnterPassword,
+                                userProfileResponse.getMessage());
+                    } else {
+                        Log.e("onDeliveryResponse: ", "userProfileResponse null");
+                        Utils.showErrorSnackBar(this, relativeRootEnterPassword, getString(R
+                                .string.msg_try_later));
+                    }
+                }
+            }
         } else {
 //            AppUtils.hideProgressDialog();
             Utils.showErrorSnackBar(this, relativeRootEnterPassword, "" + error
                     .getLocalizedMessage());
         }
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (IntegerConstants.REGISTRATION_VIA == IntegerConstants.REGISTRATION_VIA_FACEBOOK) {
+            // Facebook Callback
+            callbackManager.onActivityResult(requestCode, resultCode, data);
+        } else if (IntegerConstants.REGISTRATION_VIA == IntegerConstants
+                .REGISTRATION_VIA_LINED_IN) {
+            // LinkedIn Callback
+            LISessionManager.getInstance(getApplicationContext()).onActivityResult(this,
+                    requestCode, resultCode, data);
+        }
+
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+//            handleSignInResult(result);
+            new RetrieveTokenTask().execute(result);
+        }
     }
 
     @Override
@@ -339,7 +498,227 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
             case R.id.ripple_forget_password:
                 sendOtp();
                 break;
+
+            //<editor-fold desc="ripple_facebook">
+            case R.id.ripple_facebook:
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    checkPermissionToExecute(requiredPermissions, FACEBOOK_LOGIN_PERMISSION);
+                } else {
+                    // Facebook Initialization
+                    FacebookSdk.sdkInitialize(getApplicationContext());
+                    callbackManager = CallbackManager.Factory.create();
+
+                    // Callback registration
+                    registerFacebookCallback();
+
+                    LoginManager.getInstance().logInWithReadPermissions(EnterPasswordActivity
+                            .this, Arrays.asList(getString(R.string.str_public_profile),
+                            getString(R.string.str_small_cap_email)));
+
+                }
+                break;
+            //</editor-fold>
+
+            //<editor-fold desc="ripple_google">
+            case R.id.ripple_google:
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    checkPermissionToExecute(requiredPermissions, GOOGLE_LOGIN_PERMISSION);
+                } else {
+                    googleSignIn();
+                }
+                break;
+            //</editor-fold>
+
+            // <editor-fold desc="ripple_linked_in">
+            case R.id.ripple_linked_in:
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    checkPermissionToExecute(requiredPermissions, LINKEDIN_LOGIN_PERMISSION);
+                } else {
+                    linkedInSignIn();
+                }
+                break;
+            //</editor-fold>
         }
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private void checkPermissionToExecute(String[] permissions, int requestCode) {
+        boolean READ_EXTERNAL_STORAGE = ContextCompat.checkSelfPermission
+                (EnterPasswordActivity.this, permissions[0]) !=
+                PackageManager.PERMISSION_GRANTED;
+        boolean WRITE_EXTERNAL_STORAGE = ContextCompat.checkSelfPermission
+                (EnterPasswordActivity.this, permissions[1]) !=
+                PackageManager.PERMISSION_GRANTED;
+        if (READ_EXTERNAL_STORAGE || WRITE_EXTERNAL_STORAGE) {
+            requestPermissions(permissions, requestCode);
+        } else {
+            prepareToLoginUsingSocialMedia(requestCode);
+        }
+    }
+
+    private void prepareToLoginUsingSocialMedia(int requestCode) {
+        switch (requestCode) {
+            case FACEBOOK_LOGIN_PERMISSION:
+
+                // Facebook Initialization
+                FacebookSdk.sdkInitialize(getApplicationContext());
+                callbackManager = CallbackManager.Factory.create();
+
+                // Callback registration
+                registerFacebookCallback();
+
+                LoginManager.getInstance().logInWithReadPermissions(EnterPasswordActivity.this,
+                        Arrays.asList(getString(R.string.str_public_profile),
+                                getString(R.string.str_small_cap_email)));
+                break;
+            case GOOGLE_LOGIN_PERMISSION:
+                googleSignIn();
+                break;
+            case LINKEDIN_LOGIN_PERMISSION:
+                linkedInSignIn();
+                break;
+        }
+    }
+
+    private void registerFacebookCallback() {
+        LoginManager.getInstance().registerCallback(callbackManager,
+                new FacebookCallback<LoginResult>() {
+                    @Override
+                    public void onSuccess(final LoginResult loginResult) {
+
+                        GraphRequest graphRequest = GraphRequest.newMeRequest(loginResult
+                                .getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
+
+                            @Override
+                            public void onCompleted(JSONObject jsonObject, GraphResponse
+                                    graphResponse) {
+                                profileLoginViaSocial(loginResult.getAccessToken().getToken(), "facebook");
+                            }
+                        });
+
+                        Bundle parameters = new Bundle();
+                        parameters.putString("fields", "id, first_name, last_name, email,gender, " +
+                                "birthday, location");
+                        graphRequest.setParameters(parameters);
+                        graphRequest.executeAsync();
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        Utils.showErrorSnackBar(EnterPasswordActivity.this,
+                                relativeRootEnterPassword, getString(R.string
+                                        .error_facebook_login_cancelled));
+                    }
+
+                    @Override
+                    public void onError(FacebookException exception) {
+                        Utils.showErrorSnackBar(EnterPasswordActivity.this,
+                                relativeRootEnterPassword, exception.getMessage());
+                    }
+                });
+    }
+
+    private void googleSignIn() {
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    private class RetrieveTokenTask extends AsyncTask<GoogleSignInResult, Void, String> {
+
+        String token;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Utils.showProgressDialog(EnterPasswordActivity.this, "Please wait...", true);
+        }
+
+        @Override
+        protected String doInBackground(GoogleSignInResult... params) {
+
+            if (params[0].isSuccess()) {
+                // Signed in successfully.
+                GoogleSignInAccount acct = params[0].getSignInAccount();
+
+                if (acct != null) {
+
+
+                    String scopes = "oauth2:profile email";
+                    try {
+                        token = GoogleAuthUtil.getToken(getApplicationContext(), acct.getEmail(), scopes);
+                    } catch (IOException | GoogleAuthException e) {
+                        System.out.println("RContacts token error --> " + e.getMessage());
+                    }
+                }
+
+            } else {
+                // Signed out.
+                Utils.showErrorSnackBar(EnterPasswordActivity.this,
+                        relativeRootEnterPassword, getString(R.string.error_retrieving_details));
+            }
+
+            return "";
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            Utils.hideProgressDialog();
+
+            profileLoginViaSocial(token, "google");
+        }
+    }
+
+    /**
+     * This method is used to make permissions to retrieve data from linkedin
+     */
+    private static Scope buildScope() {
+        return Scope.build(Scope.R_BASICPROFILE, Scope.R_EMAILADDRESS);
+    }
+
+    public void linkedInSignIn() {
+        LISessionManager.getInstance(getApplicationContext()).init(this, buildScope(), new
+                AuthListener() {
+                    @Override
+                    public void onAuthSuccess() {
+                        getUserData();
+                    }
+
+                    @Override
+                    public void onAuthError(LIAuthError error) {
+                        Toast.makeText(getApplicationContext(), "failed " + error.toString(), Toast
+                                .LENGTH_LONG).show();
+                    }
+                }, true);
+    }
+
+    public void getUserData() {
+        APIHelper apiHelper = APIHelper.getInstance(getApplicationContext());
+        String host = "api.linkedin.com";
+        String topCardUrl = "https://" + host + "/v1/people/~:(id,email-address," +
+                "first-name,last-name,phone-numbers,picture-url,picture-urls::(original))";
+        apiHelper.getRequest(EnterPasswordActivity.this, topCardUrl, new ApiListener() {
+            @Override
+            public void onApiSuccess(ApiResponse result) {
+                try {
+
+                    profileLoginViaSocial(LISessionManager.getInstance(getApplicationContext()).getSession()
+                            .getAccessToken().getValue(), "linkedin");
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onApiError(LIApiError error) {
+                Log.e("onApiError: ", error.toString());
+            }
+        });
     }
 
     private void sendOtp() {
@@ -384,195 +763,217 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
         }
     }
 
-    private void storeProfileDataToDb(ProfileDataOperation profileDetail) {
+    //<editor-fold desc="Web Service Call">
+    private void profileLoginViaSocial(String accessToken, String socialMedia) {
 
-        //<editor-fold desc="Basic Details">
-        TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
+        WsRequestObject profileLoginObject = new WsRequestObject();
+        profileLoginObject.setMobileNumber(mobileNumber.replace("+", ""));
+        profileLoginObject.setAccessToken(StringUtils.trimToEmpty(accessToken));
+        profileLoginObject.setSocialMedia(socialMedia);
+        profileLoginObject.setCreatedBy("2"); // For Android Devices
+        profileLoginObject.setGcmToken(getDeviceTokenId());
 
-        UserProfile userProfile = new UserProfile();
-        userProfile.setPmRcpId(profileDetail.getRcpPmId());
-        userProfile.setPmFirstName(profileDetail.getPbNameFirst());
-        userProfile.setPmLastName(profileDetail.getPbNameLast());
-        userProfile.setProfileRating(profileDetail.getProfileRating());
-        userProfile.setTotalProfileRateUser(profileDetail.getTotalProfileRateUser());
-        userProfile.setPmProfileImage(profileDetail.getPbProfilePhoto());
-        userProfile.setPmGender(profileDetail.getPbGender());
-        userProfile.setPmBadge(profileDetail.getPmBadge());
-
-        tableProfileMaster.addProfile(userProfile);
-        //</editor-fold>
-
-        //<editor-fold desc="Mobile Number">
-        TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
-
-        ArrayList<MobileNumber> arrayListMobileNumber = new ArrayList<>();
-        ArrayList<ProfileDataOperationPhoneNumber> arrayListPhoneNumber =
-                profileDetail.getPbPhoneNumber();
-        if (!Utils.isArraylistNullOrEmpty(arrayListPhoneNumber)) {
-            for (int i = 0; i < arrayListPhoneNumber.size(); i++) {
-                MobileNumber mobileNumber = new MobileNumber();
-                mobileNumber.setMnmRecordIndexId(arrayListPhoneNumber.get(i)
-                        .getPhoneId());
-                mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(i)
-                        .getPhoneType());
-                mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(i)
-                        .getPhoneNumber());
-                mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber
-                        .get(i).getPhonePublic()));
-                mobileNumber.setMnmIsPrimary(String.valueOf(arrayListPhoneNumber.get(i)
-                        .getPbRcpType()));
-                mobileNumber.setRcProfileMasterPmId(profileDetail.getRcpPmId());
-                arrayListMobileNumber.add(mobileNumber);
-            }
-            tableMobileMaster.addArrayMobileNumber(arrayListMobileNumber);
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    profileLoginObject, null, WsResponseObject.class, WsConstants
+                    .REQ_LOGIN_WITH_SOCIAL_MEDIA, getString(R.string.msg_please_wait), true)
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                            WsConstants.WS_ROOT_V2 + WsConstants.REQ_LOGIN_WITH_SOCIAL_MEDIA);
+        } else {
+            Utils.showErrorSnackBar(this, relativeRootEnterPassword, getResources()
+                    .getString(R.string.msg_no_network));
         }
-        //</editor-fold>
-
-        //<editor-fold desc="Email Master">
-        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEmailId())) {
-            ArrayList<ProfileDataOperationEmail> arrayListEmailId = profileDetail.getPbEmailId();
-            ArrayList<Email> arrayListEmail = new ArrayList<>();
-            ArrayList<String> listOfVerifiedEmailIds = new ArrayList<>();
-            for (int i = 0; i < arrayListEmailId.size(); i++) {
-                Email email = new Email();
-                email.setEmRecordIndexId(arrayListEmailId.get(i).getEmId());
-                email.setEmEmailAddress(arrayListEmailId.get(i).getEmEmailId());
-                email.setEmEmailType(arrayListEmailId.get(i).getEmType());
-                email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(i).getEmPublic()));
-                email.setEmIsVerified(String.valueOf(arrayListEmailId.get(i).getEmRcpType()));
-                if (String.valueOf(arrayListEmailId.get(i).getEmRcpType()).equalsIgnoreCase("1")) {
-                    listOfVerifiedEmailIds.add(arrayListEmailId.get(i).getEmEmailId());
-                    Utils.setArrayListPreference(this, AppConstants.PREF_USER_VERIFIED_EMAIL,
-                            listOfVerifiedEmailIds);
-                }
-//                email.setEmIsPrimary(String.valueOf(arrayListEmailId.get(i).getEmRcpType()));
-                email.setRcProfileMasterPmId(profileDetail.getRcpPmId());
-                arrayListEmail.add(email);
-            }
-
-            TableEmailMaster tableEmailMaster = new TableEmailMaster(databaseHandler);
-            tableEmailMaster.addArrayEmail(arrayListEmail);
-        }
-        //</editor-fold>
-
-        //<editor-fold desc="Organization Master">
-        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbOrganization())) {
-            ArrayList<ProfileDataOperationOrganization> arrayListOrganization = profileDetail
-                    .getPbOrganization();
-            ArrayList<Organization> organizationList = new ArrayList<>();
-            for (int i = 0; i < arrayListOrganization.size(); i++) {
-                Organization organization = new Organization();
-                organization.setOmRecordIndexId(arrayListOrganization.get(i).getOrgId());
-                organization.setOmOrganizationCompany(arrayListOrganization.get(i).getOrgName
-                        ());
-                organization.setOmOrganizationDesignation(arrayListOrganization.get(i)
-                        .getOrgJobTitle());
-                organization.setOmIsCurrent(String.valueOf(arrayListOrganization.get(i)
-                        .getIsCurrent()));
-                organization.setRcProfileMasterPmId(profileDetail.getRcpPmId());
-                organizationList.add(organization);
-            }
-
-            TableOrganizationMaster tableOrganizationMaster = new TableOrganizationMaster
-                    (databaseHandler);
-            tableOrganizationMaster.addArrayOrganization(organizationList);
-        }
-        //</editor-fold>
-
-        // <editor-fold desc="Website Master">
-        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbWebAddress())) {
-//            ArrayList<String> arrayListWebsite = profileDetail.getPbWebAddress();
-            ArrayList<ProfileDataOperationWebAddress> arrayListWebsite = profileDetail
-                    .getPbWebAddress();
-            ArrayList<Website> websiteList = new ArrayList<>();
-            for (int j = 0; j < arrayListWebsite.size(); j++) {
-                Website website = new Website();
-                website.setWmRecordIndexId(arrayListWebsite.get(j).getWebId());
-                website.setWmWebsiteUrl(arrayListWebsite.get(j).getWebAddress());
-                website.setWmWebsiteType(arrayListWebsite.get(j).getWebType());
-                website.setRcProfileMasterPmId(profileDetail.getRcpPmId());
-                websiteList.add(website);
-            }
-
-            TableWebsiteMaster tableWebsiteMaster = new TableWebsiteMaster(databaseHandler);
-            tableWebsiteMaster.addArrayWebsite(websiteList);
-        }
-        //</editor-fold>
-
-        //<editor-fold desc="Address Master">
-        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbAddress())) {
-            ArrayList<ProfileDataOperationAddress> arrayListAddress = profileDetail.getPbAddress();
-            ArrayList<Address> addressList = new ArrayList<>();
-            for (int j = 0; j < arrayListAddress.size(); j++) {
-                Address address = new Address();
-                address.setAmRecordIndexId(arrayListAddress.get(j).getAddId());
-                address.setAmCity(arrayListAddress.get(j).getCity());
-                address.setAmState(arrayListAddress.get(j).getState());
-                address.setAmCountry(arrayListAddress.get(j).getCountry());
-                address.setAmFormattedAddress(arrayListAddress.get(j).getFormattedAddress());
-                address.setAmNeighborhood(arrayListAddress.get(j).getNeighborhood());
-                address.setAmPostCode(arrayListAddress.get(j).getPostCode());
-                address.setAmPoBox(arrayListAddress.get(j).getPoBox());
-                address.setAmStreet(arrayListAddress.get(j).getStreet());
-                address.setAmAddressType(arrayListAddress.get(j).getAddressType());
-                if (arrayListAddress.get(j).getGoogleLatLong() != null && arrayListAddress.get(j)
-                        .getGoogleLatLong().size() == 2) {
-                    address.setAmGoogleLatitude(arrayListAddress.get(j).getGoogleLatLong().get(1));
-                    address.setAmGoogleLongitude(arrayListAddress.get(j).getGoogleLatLong().get(0));
-                }
-                address.setAmAddressPrivacy(String.valueOf(arrayListAddress.get(j).getAddPublic()));
-                address.setAmGoogleAddress(arrayListAddress.get(j).getGoogleAddress());
-                address.setRcProfileMasterPmId(profileDetail.getRcpPmId());
-                addressList.add(address);
-            }
-
-            TableAddressMaster tableAddressMaster = new TableAddressMaster(databaseHandler);
-            tableAddressMaster.addArrayAddress(addressList);
-        }
-        //</editor-fold>
-
-        // <editor-fold desc="Im Account Master">
-        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbIMAccounts())) {
-            ArrayList<ProfileDataOperationImAccount> arrayListImAccount = profileDetail
-                    .getPbIMAccounts();
-            ArrayList<ImAccount> imAccountsList = new ArrayList<>();
-            for (int j = 0; j < arrayListImAccount.size(); j++) {
-                ImAccount imAccount = new ImAccount();
-                imAccount.setImRecordIndexId(arrayListImAccount.get(j).getIMId());
-                imAccount.setImImProtocol(arrayListImAccount.get(j).getIMAccountProtocol());
-                imAccount.setImImPrivacy(String.valueOf(arrayListImAccount.get(j)
-                        .getIMAccountPublic()));
-                imAccount.setImImDetail(arrayListImAccount.get(j).getIMAccountDetails());
-//                imAccount.setRcProfileMasterPmId(profileDetail.getRcpPmId());
-                imAccount.setRcProfileMasterPmId(profileDetail.getRcpPmId());
-                imAccountsList.add(imAccount);
-            }
-
-            TableImMaster tableImMaster = new TableImMaster(databaseHandler);
-            tableImMaster.addArrayImAccount(imAccountsList);
-        }
-        //</editor-fold>
-
-        // <editor-fold desc="Event Master">
-        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEvent())) {
-            ArrayList<ProfileDataOperationEvent> arrayListEvent = profileDetail.getPbEvent();
-            ArrayList<Event> eventList = new ArrayList<>();
-            for (int j = 0; j < arrayListEvent.size(); j++) {
-                Event event = new Event();
-                event.setEvmRecordIndexId(arrayListEvent.get(j).getEventId());
-                event.setEvmStartDate(arrayListEvent.get(j).getEventDateTime());
-                event.setEvmEventType(arrayListEvent.get(j).getEventType());
-                event.setEvmEventPrivacy(String.valueOf(arrayListEvent.get(j).getEventPublic()));
-//                event.setRcProfileMasterPmId(profileDetail.getRcpPmId());
-                event.setRcProfileMasterPmId(profileDetail.getRcpPmId());
-                eventList.add(event);
-            }
-
-            TableEventMaster tableEventMaster = new TableEventMaster(databaseHandler);
-            tableEventMaster.addArrayEvent(eventList);
-        }
-        //</editor-fold>
     }
+
+//    private void storeProfileDataToDb(ProfileDataOperation profileDetail) {
+//
+//        //<editor-fold desc="Basic Details">
+//        TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
+//
+//        UserProfile userProfile = new UserProfile();
+//        userProfile.setPmRcpId(profileDetail.getRcpPmId());
+//        userProfile.setPmFirstName(profileDetail.getPbNameFirst());
+//        userProfile.setPmLastName(profileDetail.getPbNameLast());
+//        userProfile.setProfileRating(profileDetail.getProfileRating());
+//        userProfile.setTotalProfileRateUser(profileDetail.getTotalProfileRateUser());
+//        userProfile.setPmProfileImage(profileDetail.getPbProfilePhoto());
+//        userProfile.setPmGender(profileDetail.getPbGender());
+//        userProfile.setPmBadge(profileDetail.getPmBadge());
+//
+//        tableProfileMaster.addProfile(userProfile);
+//        //</editor-fold>
+//
+//        //<editor-fold desc="Mobile Number">
+//        TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
+//
+//        ArrayList<MobileNumber> arrayListMobileNumber = new ArrayList<>();
+//        ArrayList<ProfileDataOperationPhoneNumber> arrayListPhoneNumber =
+//                profileDetail.getPbPhoneNumber();
+//        if (!Utils.isArraylistNullOrEmpty(arrayListPhoneNumber)) {
+//            for (int i = 0; i < arrayListPhoneNumber.size(); i++) {
+//                MobileNumber mobileNumber = new MobileNumber();
+//                mobileNumber.setMnmRecordIndexId(arrayListPhoneNumber.get(i)
+//                        .getPhoneId());
+//                mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(i)
+//                        .getPhoneType());
+//                mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(i)
+//                        .getPhoneNumber());
+//                mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber
+//                        .get(i).getPhonePublic()));
+//                mobileNumber.setMnmIsPrimary(String.valueOf(arrayListPhoneNumber.get(i)
+//                        .getPbRcpType()));
+//                mobileNumber.setRcProfileMasterPmId(profileDetail.getRcpPmId());
+//                arrayListMobileNumber.add(mobileNumber);
+//            }
+//            tableMobileMaster.addArrayMobileNumber(arrayListMobileNumber);
+//        }
+//        //</editor-fold>
+//
+//        //<editor-fold desc="Email Master">
+//        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEmailId())) {
+//            ArrayList<ProfileDataOperationEmail> arrayListEmailId = profileDetail.getPbEmailId();
+//            ArrayList<Email> arrayListEmail = new ArrayList<>();
+//            ArrayList<String> listOfVerifiedEmailIds = new ArrayList<>();
+//            for (int i = 0; i < arrayListEmailId.size(); i++) {
+//                Email email = new Email();
+//                email.setEmRecordIndexId(arrayListEmailId.get(i).getEmId());
+//                email.setEmEmailAddress(arrayListEmailId.get(i).getEmEmailId());
+//                email.setEmEmailType(arrayListEmailId.get(i).getEmType());
+//                email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(i).getEmPublic()));
+//                email.setEmIsVerified(String.valueOf(arrayListEmailId.get(i).getEmRcpType()));
+//                if (String.valueOf(arrayListEmailId.get(i).getEmRcpType()).equalsIgnoreCase("1")) {
+//                    listOfVerifiedEmailIds.add(arrayListEmailId.get(i).getEmEmailId());
+//                    Utils.setArrayListPreference(this, AppConstants.PREF_USER_VERIFIED_EMAIL,
+//                            listOfVerifiedEmailIds);
+//                }
+////                email.setEmIsPrimary(String.valueOf(arrayListEmailId.get(i).getEmRcpType()));
+//                email.setRcProfileMasterPmId(profileDetail.getRcpPmId());
+//                arrayListEmail.add(email);
+//            }
+//
+//            TableEmailMaster tableEmailMaster = new TableEmailMaster(databaseHandler);
+//            tableEmailMaster.addArrayEmail(arrayListEmail);
+//        }
+//        //</editor-fold>
+//
+//        //<editor-fold desc="Organization Master">
+//        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbOrganization())) {
+//            ArrayList<ProfileDataOperationOrganization> arrayListOrganization = profileDetail
+//                    .getPbOrganization();
+//            ArrayList<Organization> organizationList = new ArrayList<>();
+//            for (int i = 0; i < arrayListOrganization.size(); i++) {
+//                Organization organization = new Organization();
+//                organization.setOmRecordIndexId(arrayListOrganization.get(i).getOrgId());
+//                organization.setOmOrganizationCompany(arrayListOrganization.get(i).getOrgName
+//                        ());
+//                organization.setOmOrganizationDesignation(arrayListOrganization.get(i)
+//                        .getOrgJobTitle());
+//                organization.setOmIsCurrent(String.valueOf(arrayListOrganization.get(i)
+//                        .getIsCurrent()));
+//                organization.setRcProfileMasterPmId(profileDetail.getRcpPmId());
+//                organizationList.add(organization);
+//            }
+//
+//            TableOrganizationMaster tableOrganizationMaster = new TableOrganizationMaster
+//                    (databaseHandler);
+//            tableOrganizationMaster.addArrayOrganization(organizationList);
+//        }
+//        //</editor-fold>
+//
+//        // <editor-fold desc="Website Master">
+//        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbWebAddress())) {
+////            ArrayList<String> arrayListWebsite = profileDetail.getPbWebAddress();
+//            ArrayList<ProfileDataOperationWebAddress> arrayListWebsite = profileDetail
+//                    .getPbWebAddress();
+//            ArrayList<Website> websiteList = new ArrayList<>();
+//            for (int j = 0; j < arrayListWebsite.size(); j++) {
+//                Website website = new Website();
+//                website.setWmRecordIndexId(arrayListWebsite.get(j).getWebId());
+//                website.setWmWebsiteUrl(arrayListWebsite.get(j).getWebAddress());
+//                website.setWmWebsiteType(arrayListWebsite.get(j).getWebType());
+//                website.setRcProfileMasterPmId(profileDetail.getRcpPmId());
+//                websiteList.add(website);
+//            }
+//
+//            TableWebsiteMaster tableWebsiteMaster = new TableWebsiteMaster(databaseHandler);
+//            tableWebsiteMaster.addArrayWebsite(websiteList);
+//        }
+//        //</editor-fold>
+//
+//        //<editor-fold desc="Address Master">
+//        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbAddress())) {
+//            ArrayList<ProfileDataOperationAddress> arrayListAddress = profileDetail.getPbAddress();
+//            ArrayList<Address> addressList = new ArrayList<>();
+//            for (int j = 0; j < arrayListAddress.size(); j++) {
+//                Address address = new Address();
+//                address.setAmRecordIndexId(arrayListAddress.get(j).getAddId());
+//                address.setAmCity(arrayListAddress.get(j).getCity());
+//                address.setAmState(arrayListAddress.get(j).getState());
+//                address.setAmCountry(arrayListAddress.get(j).getCountry());
+//                address.setAmFormattedAddress(arrayListAddress.get(j).getFormattedAddress());
+//                address.setAmNeighborhood(arrayListAddress.get(j).getNeighborhood());
+//                address.setAmPostCode(arrayListAddress.get(j).getPostCode());
+//                address.setAmPoBox(arrayListAddress.get(j).getPoBox());
+//                address.setAmStreet(arrayListAddress.get(j).getStreet());
+//                address.setAmAddressType(arrayListAddress.get(j).getAddressType());
+//                if (arrayListAddress.get(j).getGoogleLatLong() != null && arrayListAddress.get(j)
+//                        .getGoogleLatLong().size() == 2) {
+//                    address.setAmGoogleLatitude(arrayListAddress.get(j).getGoogleLatLong().get(1));
+//                    address.setAmGoogleLongitude(arrayListAddress.get(j).getGoogleLatLong().get(0));
+//                }
+//                address.setAmAddressPrivacy(String.valueOf(arrayListAddress.get(j).getAddPublic()));
+//                address.setAmGoogleAddress(arrayListAddress.get(j).getGoogleAddress());
+//                address.setRcProfileMasterPmId(profileDetail.getRcpPmId());
+//                addressList.add(address);
+//            }
+//
+//            TableAddressMaster tableAddressMaster = new TableAddressMaster(databaseHandler);
+//            tableAddressMaster.addArrayAddress(addressList);
+//        }
+//        //</editor-fold>
+//
+//        // <editor-fold desc="Im Account Master">
+//        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbIMAccounts())) {
+//            ArrayList<ProfileDataOperationImAccount> arrayListImAccount = profileDetail
+//                    .getPbIMAccounts();
+//            ArrayList<ImAccount> imAccountsList = new ArrayList<>();
+//            for (int j = 0; j < arrayListImAccount.size(); j++) {
+//                ImAccount imAccount = new ImAccount();
+//                imAccount.setImRecordIndexId(arrayListImAccount.get(j).getIMId());
+//                imAccount.setImImProtocol(arrayListImAccount.get(j).getIMAccountProtocol());
+//                imAccount.setImImPrivacy(String.valueOf(arrayListImAccount.get(j)
+//                        .getIMAccountPublic()));
+//                imAccount.setImImDetail(arrayListImAccount.get(j).getIMAccountDetails());
+////                imAccount.setRcProfileMasterPmId(profileDetail.getRcpPmId());
+//                imAccount.setRcProfileMasterPmId(profileDetail.getRcpPmId());
+//                imAccountsList.add(imAccount);
+//            }
+//
+//            TableImMaster tableImMaster = new TableImMaster(databaseHandler);
+//            tableImMaster.addArrayImAccount(imAccountsList);
+//        }
+//        //</editor-fold>
+//
+//        // <editor-fold desc="Event Master">
+//        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEvent())) {
+//            ArrayList<ProfileDataOperationEvent> arrayListEvent = profileDetail.getPbEvent();
+//            ArrayList<Event> eventList = new ArrayList<>();
+//            for (int j = 0; j < arrayListEvent.size(); j++) {
+//                Event event = new Event();
+//                event.setEvmRecordIndexId(arrayListEvent.get(j).getEventId());
+//                event.setEvmStartDate(arrayListEvent.get(j).getEventDateTime());
+//                event.setEvmEventType(arrayListEvent.get(j).getEventType());
+//                event.setEvmEventPrivacy(String.valueOf(arrayListEvent.get(j).getEventPublic()));
+////                event.setRcProfileMasterPmId(profileDetail.getRcpPmId());
+//                event.setRcProfileMasterPmId(profileDetail.getRcpPmId());
+//                eventList.add(event);
+//            }
+//
+//            TableEventMaster tableEventMaster = new TableEventMaster(databaseHandler);
+//            tableEventMaster.addArrayEvent(eventList);
+//        }
+//        //</editor-fold>
+//    }
 
     private void deviceDetail() {
 
@@ -599,8 +1000,13 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
                     WsConstants.WS_ROOT + WsConstants.REQ_STORE_DEVICE_DETAILS);
         }
         /*else {
-            Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getResources()
+            Utils.showErrorSnackBar(this, relativeRootEnterPassword, getResources()
                     .getString(R.string.msg_no_network));
         }*/
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
     }
 }

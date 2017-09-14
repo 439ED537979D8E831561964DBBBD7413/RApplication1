@@ -218,8 +218,9 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         int pbRcpType = phoneNumber.getPbRcpType();
         if (pbRcpType == IntegerConstants.RCP_TYPE_PRIMARY) {
             holder.textMain.setText(Utils.setMultipleTypeface(activity, number + " " + activity
-                    .getString(R.string.im_icon_verify), 0, (StringUtils.length(number) + 1), (
-                    (StringUtils.length(number) + 1) + 1)));
+                            .getString(R.string.im_icon_verify), 0,
+                    (StringUtils.length(number) + 1), (
+                            (StringUtils.length(number) + 1) + 1)));
             holder.textMain.setTextColor(colorPineGreen);
             if (isOwnProfile)
                 holder.llPrivacy.setVisibility(View.GONE);
@@ -335,11 +336,13 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         final ProfileDetailViewHolder viewHodler = holder;
         if (emRcpType == IntegerConstants.RCP_TYPE_PRIMARY) {
             holder.textMain.setText(Utils.setMultipleTypeface(activity, emailId + " " + activity
-                    .getString(R.string.im_icon_verify), 0, (StringUtils.length(emailId) + 1), (
-                    (StringUtils.length(emailId) + 1) + 1)));
+                            .getString(R.string.im_icon_verify), 0,
+                    (StringUtils.length(emailId) + 1), (
+                            (StringUtils.length(emailId) + 1) + 1)));
             holder.textMain.setTextColor(colorPineGreen);
             if (isOwnProfile)
-                holder.llPrivacy.setVisibility(View.INVISIBLE);
+//                holder.llPrivacy.setVisibility(View.INVISIBLE);
+                holder.llPrivacy.setVisibility(View.GONE);
             else
                 holder.llPrivacy.setVisibility(View.GONE);
         } else if (emRcpType == IntegerConstants.RCP_TYPE_SECONDARY) {
