@@ -465,7 +465,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                 syncCallLogAsyncTask = new SyncCallLogAsyncTask();
                 syncCallLogAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
-        }else{
+        } else {
             if (rContactApplication.getArrayListCallLogType() != null && rContactApplication
                     .getArrayListCallLogType().size() > 0) {
                 callLogTypeArrayListMain.addAll(rContactApplication.getArrayListCallLogType());
@@ -651,7 +651,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                         rippleViewSearchOnGlobal.setVisibility(View.GONE);
                         textGlobalText.setVisibility(View.GONE);
                         progressBar.setVisibility(View.VISIBLE);
-                    }else{
+                    } else {
                         Utils.showErrorSnackBar(this, rlSearchRoot, getResources()
                                 .getString(R.string.msg_no_network));
                     }
@@ -876,9 +876,12 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                             } else {
                                 if (allContactAdapter.getSearchCount() == 0) {
                                     // TODO: 21/08/17 check for Rcontacts
-                                    if (rContactListAdapter.getSearchCount() > 0) {
+                                    if (rContactListAdapter != null && rContactListAdapter.getSearchCount() > 0) {
                                         rlTitle.setVisibility(View.VISIBLE);
-                                        textSearchCount.setText(rContactListAdapter.getSearchCount() + "");
+                                        textSearchCount.setVisibility(View.VISIBLE);
+                                        int rCount = rContactListAdapter.getSearchCount();
+                                        if (rCount > 0)
+                                            textSearchCount.setText(rCount + "");
                                         textNoRecordsLocal.setVisibility(View.GONE);
                                     } else {
                                         recycleViewPbContact.setAdapter(null);

@@ -30,11 +30,15 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.content.PermissionChecker;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -139,10 +143,13 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     private GetRCPNameAndProfileImage nameAndProfileImage;
     boolean isFromDeleteBroadcast = false;
     private UpdateOldLogWithUpdatedDetails updateOldLogWithUpdatedDetails;
-
+    Toolbar toolbar;
+    private ActionModeCallback actionModeCallback;
+    private ActionMode actionMode;
 
     public CallLogFragment() {
         // Required empty public constructor
+
     }
 
     public static CallLogFragment newInstance() {
@@ -175,7 +182,64 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 .PREF_RECENT_CALLS_BROADCAST_RECEIVER_CALL_LOG_TAB, true);
 
         isCallLogFragment = true;
+        toolbar =  getMainActivity().getToolbar();
+
     }
+
+
+    /*private class ActionModeCallback implements ActionMode.Callback {
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            mode.getMenuInflater().inflate(R.menu.menu_action_mode, menu);
+            // disable swipe refresh if action mode is enabled
+//            swipeRefreshLayout.setEnabled(false);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.action_delete:
+                    // delete all the selected messages
+                    deleteMessages();
+                    mode.finish();
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            simpleCallLogListAdapter.clearSelections();
+//            swipeRefreshLayout.setEnabled(true);
+            actionMode = null;
+            recyclerCallLogs.post(new Runnable() {
+                @Override
+                public void run() {
+                    simpleCallLogListAdapter.resetAnimationIndex();
+                    // mAdapter.notifyDataSetChanged();
+                }
+            });
+        }
+    }
+
+    // deleting the messages from recycler view
+    private void deleteMessages() {
+        simpleCallLogListAdapter.resetAnimationIndex();
+        List<Integer> selectedItemPositions =
+                simpleCallLogListAdapter.getSelectedItems();
+        for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
+            simpleCallLogListAdapter.removeData(selectedItemPositions.get(i));
+        }
+        simpleCallLogListAdapter.notifyDataSetChanged();
+    }*/
 
     @Override
     public void getFragmentArguments() {
@@ -593,35 +657,38 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
         protected void onPostExecute(Void result) {
 
-            getActivity().runOnUiThread(new Runnable() {
+           /* getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    try {
-                        simpleCallLogListAdapter.notifyDataSetChanged();
-                        //Aniruddh -- TO do save 0th record dateTime and rawId in preference;
-                        if (callLogTypeArrayList.size() > 0) {
-                            rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
-                            Long dateTime = callLogTypeArrayList.get(0).getDate();
-                            DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale
-                                    .getDefault());
 
-                            Date cursorDate = new Date(dateTime);
-                            String latestCallDate = sdf.format(cursorDate);
-                            String rawId = callLogTypeArrayList.get(0).getUniqueContactId();
-
-                            Utils.setStringPreference(getActivity(), AppConstants
-                                    .PREF_LATEST_CALL_DATE_TIME, latestCallDate);
-                            Utils.setStringPreference(getActivity(), AppConstants
-                                    .PREF_LATEST_CALL_RAW_ID, rawId);
-                        } else {
-                            textNoCallsFound.setVisibility(View.VISIBLE);
-                        }
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
                 }
-            });
+            });*/
+
+            try {
+                simpleCallLogListAdapter.notifyDataSetChanged();
+                //Aniruddh -- TO do save 0th record dateTime and rawId in preference;
+                if (callLogTypeArrayList.size() > 0) {
+                    rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
+                    Long dateTime = callLogTypeArrayList.get(0).getDate();
+                    DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale
+                            .getDefault());
+
+                    Date cursorDate = new Date(dateTime);
+                    String latestCallDate = sdf.format(cursorDate);
+                    String rawId = callLogTypeArrayList.get(0).getUniqueContactId();
+
+                    Utils.setStringPreference(getActivity(), AppConstants
+                            .PREF_LATEST_CALL_DATE_TIME, latestCallDate);
+                    Utils.setStringPreference(getActivity(), AppConstants
+                            .PREF_LATEST_CALL_RAW_ID, rawId);
+                } else {
+                    textNoCallsFound.setVisibility(View.VISIBLE);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         }
 
     }
@@ -841,8 +908,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             }
 
             Cursor cursor = getActivity().getContentResolver().query(CallLog.Calls.CONTENT_URI,
-                    null,
-                    CallLog.Calls.DATE + " BETWEEN ? AND ?"
+                    null, CallLog.Calls.DATE + " BETWEEN ? AND ?"
                     , new String[]{dateToCompare, currentDate}, order);
 
             if (cursor != null) {

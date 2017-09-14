@@ -61,6 +61,10 @@ public class BaseActivity extends AppCompatActivity {
         return Utils.getStringPreference(this, AppConstants.PREF_USER_PM_ID, "0");
     }
 
+    public String getPmBadge(){
+        return Utils.getStringPreference(this, AppConstants.PREF_USER_PM_BADGE, "0");
+    }
+
     public UserProfile getUserProfile() {
         return (UserProfile) Utils.getObjectPreference(this, AppConstants.PREF_REGS_USER_OBJECT,
                 UserProfile.class);
