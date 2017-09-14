@@ -206,6 +206,10 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
 
                     Utils.setStringPreference(this, AppConstants.PREF_USER_PM_ID, profileDetail
                             .getRcpPmId());
+
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_PM_BADGE,
+                            profileDetail.getPmBadge());
+
                     storeProfileDataToDb(profileDetail);
 
                     Utils.setStringPreference(this, AppConstants.PREF_CALL_LOG_SYNC_TIME,
