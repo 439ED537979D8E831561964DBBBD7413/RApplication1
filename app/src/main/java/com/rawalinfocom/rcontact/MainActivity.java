@@ -3776,8 +3776,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     private void RCPContactServiceCall(String timestamp, String url) {
 
         if (Utils.isNetworkAvailable(MainActivity.this)) {
-            WsRequestObject deviceDetailObject = new WsRequestObject();
 
+            WsRequestObject deviceDetailObject = new WsRequestObject();
             deviceDetailObject.setTimeStamp(timestamp);
 
             if (Utils.isNetworkAvailable(this)) {

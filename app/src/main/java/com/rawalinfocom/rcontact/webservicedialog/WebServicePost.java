@@ -97,7 +97,7 @@ class WebServicePost {
                     // Json string passed as request
 
                     jsonObject = writer.writeValueAsString(request);
-                    System.out.println("RContact param -->  " + jsonObject);
+                    System.out.println("RContacts param -->  " + jsonObject);
 //					 FileUtilities utilities = new FileUtilities();
 //					 utilities.write("Filter file", jsonObject);
                 }

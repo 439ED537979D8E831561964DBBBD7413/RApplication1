@@ -8,6 +8,8 @@ public class NotiRContactsItem {
 
     private String notiTitle;
     private String notiType;
+    private String notiUrl;
+    private String notiImage;
     private String notiTime;
     private String notiDetails;
     private String notiId;
@@ -28,6 +30,14 @@ public class NotiRContactsItem {
         return notiType;
     }
 
+    public String getNotiUrl() {
+        return notiUrl;
+    }
+
+    public String getNotiImage() {
+        return notiImage;
+    }
+
     public String getNotiTime() {
         return notiTime;
     }
@@ -42,6 +52,14 @@ public class NotiRContactsItem {
 
     public void setNotiType(String notiType) {
         this.notiType = notiType;
+    }
+
+    public void setNotiUrl(String notiUrl) {
+        this.notiUrl = notiUrl;
+    }
+
+    public void setNotiImage(String notiImage) {
+        this.notiImage = notiImage;
     }
 
     public void setNotiTime(String notiTime) {

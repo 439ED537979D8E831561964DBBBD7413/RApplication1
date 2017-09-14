@@ -81,7 +81,7 @@ public class WsRequestObject {
     private String type;
     private String description;
     private String deviceId;
-    private String socialMediaTokenId;
+    private String socialMedia;
     private String createdBy;
     private String gcmToken;
     private Integer reAuthenticate;
@@ -363,13 +363,13 @@ public class WsRequestObject {
         this.password_confirmation = password_confirmation;
     }
 
-    @JsonProperty("social_media_token_id")
-    public String getSocialMediaTokenId() {
-        return socialMediaTokenId;
+    @JsonProperty("social_media")
+    public String getSocialMedia() {
+        return socialMedia;
     }
 
-    public void setSocialMediaTokenId(String socialMediaTokenId) {
-        this.socialMediaTokenId = socialMediaTokenId;
+    public void setSocialMedia(String socialMedia) {
+        this.socialMedia = socialMedia;
     }
 
     @JsonProperty("type")

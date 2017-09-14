@@ -4,24 +4,28 @@ package com.rawalinfocom.rcontact.model;
  * Created by Maulik on 13/5/17.
  */
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class NotificationData {
-    @JsonProperty("subject")
-    private String subject;
+
+    @JsonProperty("id")
+    private String id;
+    @JsonProperty("type")
+    private String type;
+    @JsonProperty("type_text")
+    private String type_text;
+    @JsonProperty("url")
+    private String url;
+    @JsonProperty("title")
+    private String title;
     @JsonProperty("details")
     private String details;
     @JsonProperty("API")
     private String aPI;
-    @JsonProperty("id")
-    private String id;
-    @JsonProperty("title")
-    private String title;
-    @JsonProperty("type")
-    private String type;
-    @JsonProperty("isNotification")
-    private Integer isNotification;
     @JsonProperty("status")
     private Integer status;
     @JsonProperty("created_at")
@@ -29,13 +33,18 @@ public class NotificationData {
     @JsonProperty("updated_at")
     private String updatedAt;
 
-    public String getSubject() {
-        return subject;
-    }
+//    @JsonProperty("subject")
+//    private String subject;
+//    @JsonProperty("isNotification")
+//    private Integer isNotification;
 
-    public void setSubject(String subject) {
-        this.subject = subject;
-    }
+//    public String getSubject() {
+//        return subject;
+//    }
+
+//    public void setSubject(String subject) {
+//        this.subject = subject;
+//    }
 
     public String getDetails() {
         return details;
@@ -69,21 +78,37 @@ public class NotificationData {
         this.title = title;
     }
 
+    public String getTypeText() {
+        return type_text;
+    }
+
     public String getType() {
         return type;
+    }
+
+    public void setTypeText(String type_text) {
+        this.type_text = type_text;
     }
 
     public void setType(String type) {
         this.type = type;
     }
 
-    public Integer getIsNotification() {
-        return isNotification;
+    public String getUrl() {
+        return url;
     }
 
-    public void setIsNotification(Integer isNotification) {
-        this.isNotification = isNotification;
+    public void setUrl(String url) {
+        this.url = url;
     }
+
+//    public Integer getIsNotification() {
+//        return isNotification;
+//    }
+
+//    public void setIsNotification(Integer isNotification) {
+//        this.isNotification = isNotification;
+//    }
 
     public Integer getStatus() {
         return status;

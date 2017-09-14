@@ -2,8 +2,13 @@ package com.rawalinfocom.rcontact;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.content.res.Configuration;
 import android.support.multidex.MultiDex;
+import android.util.Base64;
+import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.rawalinfocom.rcontact.constants.AppConstants;
@@ -12,6 +17,8 @@ import com.rawalinfocom.rcontact.model.CallLogType;
 import com.rawalinfocom.rcontact.model.SmsDataType;
 import com.rawalinfocom.rcontact.model.SpamDataType;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -56,6 +63,7 @@ public class RContactApplication extends Application {
         super.onCreate();
 
         mInstance = this;
+        hashKey();
 
 //         Fabric Initialization
 //        Fabric.with(this, new Crashlytics());
@@ -72,6 +80,24 @@ public class RContactApplication extends Application {
         arrayListSpamDataType = new ArrayList<>();
 //        arrayListSmsLogsHeaders = new ArrayList<>();
 
+    }
+
+    private void hashKey() {
+
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo("com.rawalinfocom.rcontact",
+                    PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                System.out.println("RContacts KEY HASH --> " + Base64.encodeToString(md.digest(), Base64.DEFAULT));
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.d("Name not found", e.getMessage(), e);
+
+        } catch (NoSuchAlgorithmException e) {
+            Log.d("Error", e.getMessage(), e);
+        }
     }
 
     public static synchronized RContactApplication getInstance() {
