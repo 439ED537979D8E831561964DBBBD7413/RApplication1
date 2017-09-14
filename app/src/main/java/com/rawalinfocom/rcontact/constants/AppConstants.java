@@ -228,6 +228,7 @@ public class AppConstants {
     //    public static String PREF_CONTACT_ID_SET = "pref_contact_id_set";
     public static String PREF_SYNCED_CONTACTS = "pref_synced_contacts";
     public static String PREF_USER_PM_ID = "pref_user_pm_id";
+    public static String PREF_USER_PM_BADGE = "pref_user_pm_badge";
     public static String PREF_ACCESS_TOKEN = "pref_access_token";
     public static String PREF_FAVOURITE_CONTACT_NUMBER_EMAIL =
             "pref_favourite_contact_number_email";

@@ -51,7 +51,6 @@ android {
         }
         debug {
 //            zipAlign true
-
             minifyEnabled false
         }
     }

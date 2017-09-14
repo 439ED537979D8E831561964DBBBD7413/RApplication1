@@ -18,6 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/height_pb_contact_search"
         android:layout_below="@+id/include_toolbar">
+        <!--android:layout_height="@dimen/height_pb_contact_search"-->
 
         <RelativeLayout
             android:id="@+id/rl_title"
@@ -106,13 +107,13 @@
         <RelativeLayout
             android:id="@+id/rl_global_content"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/rl_global_title"
             android:layout_marginBottom="@dimen/margin_10dp">
 
             <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_centerVertical="true">
 
                 <TextView
