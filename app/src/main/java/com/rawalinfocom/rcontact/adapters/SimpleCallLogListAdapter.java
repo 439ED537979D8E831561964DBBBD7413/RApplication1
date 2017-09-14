@@ -770,7 +770,7 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
         @BindView(R.id.linear_content_main)
         LinearLayout linearContentMain;
         @BindView(R.id.relative_row_main)
-        RelativeLayout relativeRowMain;
+        public RelativeLayout relativeRowMain;
         @BindView(R.id.textCount)
         TextView textCount;
         @BindView(R.id.text_temp_number)

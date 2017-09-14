@@ -3,6 +3,7 @@ package com.rawalinfocom.rcontact.calllog;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -56,13 +57,16 @@ import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
+import com.rawalinfocom.rcontact.SearchActivity;
 import com.rawalinfocom.rcontact.adapters.SimpleCallLogListAdapter;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.database.PhoneBookCallLogs;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
 import com.rawalinfocom.rcontact.database.TableSpamDetailMaster;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
+import com.rawalinfocom.rcontact.helper.RecyclerItemClickListener;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.WrapContentLinearLayoutManager;
@@ -201,6 +205,89 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         // if enabled, change the row state to activated
         if (simpleCallLogListAdapter.getSelectedItemCount() > 0) {
             enableActionMode(position);
+        }else{
+
+            CallLogType selectedCallLogData = callLogTypeArrayList.get(position);
+            String key = "";
+            key = selectedCallLogData.getLocalPbRowId();
+            if (key.equalsIgnoreCase(" ")) {
+                key = selectedCallLogData.getUniqueContactId();
+            }
+
+            Boolean isRcpUser = selectedCallLogData.isRcpUser();
+            String firstName = selectedCallLogData.getRcpFirstName();
+            String lastName = selectedCallLogData.getRcpLastName();
+            String name = selectedCallLogData.getName();
+            String cloudName = "";
+            String contactDisplayName = "";
+            String contactNameToDisplay = "";
+            String prefix = selectedCallLogData.getPrefix();
+            String suffix = selectedCallLogData.getSuffix();
+            String middleName = selectedCallLogData.getMiddleName();
+
+            if (StringUtils.length(prefix) > 0)
+                contactNameToDisplay = contactNameToDisplay + prefix + " ";
+            if (StringUtils.length(suffix) > 0)
+                contactNameToDisplay = contactNameToDisplay + suffix + " ";
+            if (StringUtils.length(firstName) > 0)
+                contactNameToDisplay = contactNameToDisplay + firstName + " ";
+            if (StringUtils.length(middleName) > 0)
+                contactNameToDisplay = contactNameToDisplay + middleName + " ";
+            if (StringUtils.length(lastName) > 0)
+                contactNameToDisplay = contactNameToDisplay + lastName + "";
+
+
+            if (MoreObjects.firstNonNull(isRcpUser, false)) {
+                if (StringUtils.length(firstName) > 0) {
+                    contactDisplayName = contactDisplayName + firstName + " ";
+                }
+                if (StringUtils.length(lastName) > 0) {
+                    contactDisplayName = contactDisplayName + lastName + "";
+                }
+                if (!StringUtils.equalsIgnoreCase(name, contactDisplayName)) {
+                    cloudName = contactDisplayName;
+                }
+            }
+            long date =  selectedCallLogData.getDate();
+            long selectedLogDate, dateFromReceiver = 0;
+            Date dateFromReceiver1 = selectedCallLogData.getCallReceiverDate();
+            if (dateFromReceiver1 != null) {
+                dateFromReceiver = dateFromReceiver1.getTime();
+            }
+            if (date == 0) {
+                selectedLogDate = dateFromReceiver;
+            } else {
+                selectedLogDate = date;
+            }
+            AppConstants.isFromReceiver = false;
+//                String formatedNumber = Utils.getFormattedNumber(mActivity, number);
+            Intent intent = new Intent(getActivity(), ProfileDetailActivity.class);
+            intent.putExtra(AppConstants.EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE, true);
+            intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, selectedCallLogData.getNumber());
+
+            if (selectedCallLogData.getRcpId() == null)
+                intent.putExtra(AppConstants.EXTRA_PM_ID, "-1");
+            else
+                intent.putExtra(AppConstants.EXTRA_PM_ID, selectedCallLogData.getRcpId());
+
+            intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NAME, name);
+            if (date == 0) {
+                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_DATE, dateFromReceiver);
+            } else {
+                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_DATE, date);
+            }
+            intent.putExtra(AppConstants.EXTRA_RCP_VERIFIED_ID, selectedCallLogData.getIsRcpVerfied());
+            intent.putExtra(AppConstants.EXTRA_CALL_UNIQUE_ID, key);
+            intent.putExtra(AppConstants.EXTRA_UNIQUE_CONTACT_ID, selectedCallLogData.getUniqueContactId());
+            intent.putExtra(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE, selectedCallLogData.getProfileImage());
+            intent.putExtra(AppConstants.EXTRA_IS_RCP_USER, isRcpUser);
+            if (!StringUtils.isEmpty(cloudName))
+                intent.putExtra(AppConstants.EXTRA_CALL_LOG_CLOUD_NAME, cloudName);
+            else
+                intent.putExtra(AppConstants.EXTRA_CALL_LOG_CLOUD_NAME, contactNameToDisplay);
+            getActivity().startActivity(intent);
+            (getActivity()).overridePendingTransition(R.anim.enter, R.anim.exit);
+
         }
 
     }
