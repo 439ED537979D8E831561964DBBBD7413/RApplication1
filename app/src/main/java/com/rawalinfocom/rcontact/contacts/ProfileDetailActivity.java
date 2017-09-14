@@ -20,12 +20,12 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.StrictMode;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.provider.Telephony;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v4.content.LocalBroadcastManager;
@@ -127,6 +127,7 @@ import java.util.regex.Pattern;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Optional;
 
 public class ProfileDetailActivity extends BaseActivity implements RippleView
         .OnRippleCompleteListener, WsResponseListener {
@@ -238,6 +239,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     CardView cardOtherDetails;
     @BindView(R.id.button_view_more)
     Button buttonViewMore;
+    @Nullable @BindView(R.id.image_expand_collapse)
+    ImageView imageExpandCollapse;
     @BindView(R.id.ripple_view_more)
     RippleView rippleViewMore;
     @BindView(R.id.relative_section_view_more)
@@ -427,9 +430,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 if (relativeSectionViewMore.getVisibility() == View.VISIBLE) {
                     relativeSectionViewMore.setVisibility(View.GONE);
                     buttonViewMore.setText(getString(R.string.str_view_more));
+                    imageExpandCollapse.setImageResource(R.drawable.ico_arrow_down_svg);
                 } else {
                     relativeSectionViewMore.setVisibility(View.VISIBLE);
                     buttonViewMore.setText(getString(R.string.str_view_less));
+                    imageExpandCollapse.setImageResource(R.drawable.ic_arrow_up_svg);
                 }
                 break;
             //</editor-fold>
@@ -1088,9 +1093,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     Intent sendIntent = new Intent();
                     sendIntent.setAction(Intent.ACTION_SEND);
                     sendIntent.setType("text/x-vcard");
-                    sendIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(ProfileDetailActivity.this,
-                            BuildConfig.APPLICATION_ID + ".provider",
-                            vcfFile));
+                    sendIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile
+                            (ProfileDetailActivity.this,
+                                    BuildConfig.APPLICATION_ID + ".provider",
+                                    vcfFile));
                     startActivity(sendIntent);
 
                 } else {
@@ -1813,35 +1819,36 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 //                .color.darker_gray));
 
         if (!displayOwnProfile) {
-        if (!StringUtils.equalsIgnoreCase(pmId, "-1")) {
-            // RC Profile
+            if (!StringUtils.equalsIgnoreCase(pmId, "-1")) {
+                // RC Profile
 //                getDataFromDB();
-            if (Utils.isNetworkAvailable(ProfileDetailActivity.this) && !profileActivityCallInstance) {
-                //call service
-                cardContactDetails.setVisibility(View.GONE);
-                cardOtherDetails.setVisibility(View.GONE);
-                getProfileDetails();
+                if (Utils.isNetworkAvailable(ProfileDetailActivity.this) &&
+                        !profileActivityCallInstance) {
+                    //call service
+                    cardContactDetails.setVisibility(View.GONE);
+                    cardOtherDetails.setVisibility(View.GONE);
+                    getProfileDetails();
 
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        Utils.hideProgressDialog();
-                        if (asyncGetProfileDetails != null) {
-                            asyncGetProfileDetails.cancel(true);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Utils.hideProgressDialog();
+                            if (asyncGetProfileDetails != null) {
+                                asyncGetProfileDetails.cancel(true);
+                            }
+                            getDataFromDB();
                         }
-                        getDataFromDB();
-                    }
-                }, 4000);
+                    }, 4000);
 
-            } else {
-                getDataFromDB();
-            }
+                } else {
+                    getDataFromDB();
+                }
 //            }
-        } else {
-            // Non-RC Profile
-            setUpView(null);
+            } else {
+                // Non-RC Profile
+                setUpView(null);
+            }
         }
-    }
 
         layoutVisibility();
 
@@ -3323,7 +3330,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            Utils.showProgressDialog(ProfileDetailActivity.this, getString(R.string.msg_please_wait), false);
+            Utils.showProgressDialog(ProfileDetailActivity.this, getString(R.string
+                    .msg_please_wait), false);
             rippleViewOldRecords.setVisibility(View.GONE);
         }
 
@@ -3349,12 +3357,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         protected void onPostExecute(Void result) {
 
-           new Handler().postDelayed(new Runnable() {
-               @Override
-               public void run() {
-                   Utils.hideProgressDialog();
-               }
-           },1500);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Utils.hideProgressDialog();
+                }
+            }, 1500);
 
             setHistoryAdapter();
         }
@@ -4120,7 +4128,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         if (Utils.isNetworkAvailable(this)) {
             asyncGetProfileDetails = new AsyncWebServiceCall(this, WSRequestType
                     .REQUEST_TYPE_JSON.getValue(), null, null, WsResponseObject.class, WsConstants
-                    .REQ_GET_PROFILE_DETAILS, getResources().getString(R.string.msg_please_wait), true);
+                    .REQ_GET_PROFILE_DETAILS, getResources().getString(R.string.msg_please_wait),
+                    true);
             asyncGetProfileDetails.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants
                     .WS_ROOT + WsConstants.REQ_GET_PROFILE_DETAILS + "/" + pmId);
         } else {
