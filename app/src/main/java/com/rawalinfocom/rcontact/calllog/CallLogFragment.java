@@ -50,6 +50,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.BaseFragment;
@@ -86,7 +87,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class CallLogFragment extends BaseFragment implements WsResponseListener, RippleView
-        .OnRippleCompleteListener/*, LoaderManager.LoaderCallbacks<Cursor>*/ {
+        .OnRippleCompleteListener/*, LoaderManager.LoaderCallbacks<Cursor>*/, SimpleCallLogListAdapter.SimpleCallLogListAdapterListener {
 
     public String CALL_LOG_ALL_CALLS = "All";
     public String CALL_LOG_INCOMING_CALLS = "Incoming";
@@ -186,11 +187,54 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
     }
 
+    @Override
+    public void onIconClicked(int position) {
+        if (actionMode == null) {
+            actionMode = getMainActivity().startSupportActionMode(actionModeCallback);
+        }
+        toggleSelection(position);
+    }
 
-    /*private class ActionModeCallback implements ActionMode.Callback {
+    @Override
+    public void onMessageRowClicked(int position) {
+        // verify whether action mode is enabled or not
+        // if enabled, change the row state to activated
+        if (simpleCallLogListAdapter.getSelectedItemCount() > 0) {
+            enableActionMode(position);
+        }
+
+    }
+
+    @Override
+    public void onRowLongClicked(int position) {
+        enableActionMode(position);
+    }
+
+
+    private void enableActionMode(int position) {
+        if (actionMode == null) {
+            actionMode = getMainActivity().startSupportActionMode(actionModeCallback);
+        }
+        toggleSelection(position);
+    }
+
+    private void toggleSelection(int position) {
+        simpleCallLogListAdapter.toggleSelection(position);
+        int count = simpleCallLogListAdapter.getSelectedItemCount();
+        if (count == 0) {
+            actionMode.finish();
+        } else {
+            actionMode.setTitle(String.valueOf(count) + " selected");
+            actionMode.invalidate();
+        }
+    }
+
+
+    private class ActionModeCallback implements ActionMode.Callback {
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            mode.getMenuInflater().inflate(R.menu.menu_action_mode, menu);
+            toolbar.setVisibility(View.GONE);
+            mode.getMenuInflater().inflate(R.menu.menu_action_mode_call_log, menu);
             // disable swipe refresh if action mode is enabled
 //            swipeRefreshLayout.setEnabled(false);
             return true;
@@ -204,7 +248,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.action_delete:
+                case R.id.delete:
                     // delete all the selected messages
                     deleteMessages();
                     mode.finish();
@@ -217,6 +261,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
+            toolbar.setVisibility(View.VISIBLE);
             simpleCallLogListAdapter.clearSelections();
 //            swipeRefreshLayout.setEnabled(true);
             actionMode = null;
@@ -235,11 +280,38 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         simpleCallLogListAdapter.resetAnimationIndex();
         List<Integer> selectedItemPositions =
                 simpleCallLogListAdapter.getSelectedItems();
-        for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
-            simpleCallLogListAdapter.removeData(selectedItemPositions.get(i));
+        /*for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
+//            simpleCallLogListAdapter.removeData(selectedItemPositions.get(i));
+            int itemIndexToRemove =  selectedItemPositions.get(i);
+            callLogTypeArrayList.remove(itemIndexToRemove);
+            rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
+            simpleCallLogListAdapter.resetCurrentIndex();
+            simpleCallLogListAdapter.notifyItemRemoved(itemIndexToRemove);
+            simpleCallLogListAdapter.notifyItemRangeChanged(itemIndexToRemove,
+                    simpleCallLogListAdapter.getItemCount());
+        }*/
+
+        ArrayList<CallLogType> listToDelete = simpleCallLogListAdapter.getArrayListToDelete();
+        if (listToDelete.size() > 0) {
+            for (int j = 0; j < listToDelete.size(); j++) {
+                CallLogType callLogType = listToDelete.get(j);
+                String number = callLogType.getNumber();
+                long dateAndTime = callLogType.getDate();
+                // delete operation
+                String where = CallLog.Calls.NUMBER + " =?" + " AND " + CallLog.Calls.DATE + " =?";
+                String[] selectionArguments = new String[]{number, String.valueOf(dateAndTime)};
+                int value = getActivity().getContentResolver().delete(CallLog.Calls.CONTENT_URI, where,
+                        selectionArguments);
+                if (value > 0) {
+                    callLogTypeArrayList.remove(callLogType);
+                    rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
+                    simpleCallLogListAdapter.resetCurrentIndex();
+                }
+            }
+            simpleCallLogListAdapter.notifyDataSetChanged();
         }
-        simpleCallLogListAdapter.notifyDataSetChanged();
-    }*/
+//        simpleCallLogListAdapter.notifyDataSetChanged();
+    }
 
     @Override
     public void getFragmentArguments() {
@@ -287,7 +359,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
         rContactApplication = (RContactApplication) getActivity().getApplicationContext();
 //        makeBlockedNumberList();
-
+        actionModeCallback = new ActionModeCallback();
         // Checking for permissions
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkPermissionToExecute(requiredPermissions, AppConstants.READ_LOGS);
@@ -827,7 +899,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
         callLogTypeArrayList.clear();
         simpleCallLogListAdapter = new SimpleCallLogListAdapter(getActivity(),
-                callLogTypeArrayList);
+                callLogTypeArrayList,this);
         recyclerCallLogs.setAdapter(simpleCallLogListAdapter);
 
         try {
@@ -1010,11 +1082,11 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     }
 
                     simpleCallLogListAdapter = new SimpleCallLogListAdapter(getActivity(),
-                            filteredList);
+                            filteredList,this);
 
                 } else {
                     simpleCallLogListAdapter = new SimpleCallLogListAdapter(getActivity(),
-                            callLogTypeArrayList);
+                            callLogTypeArrayList,this);
                 }
 
                 recyclerCallLogs.setAdapter(simpleCallLogListAdapter);

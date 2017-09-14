@@ -1,12 +1,12 @@
 package com.rawalinfocom.rcontact.adapters;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.view.ActionMode;
+import android.util.SparseBooleanArray;
+import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +21,7 @@ import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
+import com.rawalinfocom.rcontact.helper.FlipAnimator;
 import com.rawalinfocom.rcontact.helper.MaterialListDialog;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
@@ -34,6 +35,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -47,8 +49,9 @@ import butterknife.ButterKnife;
 
 public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private ArrayList<CallLogType> arrayListCallLogs;
 
+
+    private ArrayList<CallLogType> arrayListCallLogs;
     private ArrayList<String> arrayListForKnownContact;
     private ArrayList<String> arrayListForUnknownContact;
     private MaterialListDialog materialListDialog;
@@ -60,6 +63,27 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
     private String formattedNumber = "";
     ArrayList<CallLogType> arrayList;
     private int searchCount;
+
+    private SimpleCallLogListAdapterListener listener;
+    private SparseBooleanArray selectedItems;
+
+    // array used to perform multiple animation at once
+    private SparseBooleanArray animationItemsIndex;
+    private boolean reverseAllAnimations = false;
+
+    // index is used to animate only the selected row
+    // dirty fix, find a better solution
+    private static int currentSelectedIndex = -1;
+
+    private ArrayList<CallLogType> arrayListToDelete;
+
+    public ArrayList<CallLogType> getArrayListToDelete() {
+        return arrayListToDelete;
+    }
+
+    public void setArrayListToDelete(ArrayList<CallLogType> arrayListToDelete) {
+        this.arrayListToDelete = arrayListToDelete;
+    }
 
     public int getSelectedPosition() {
         return selectedPosition;
@@ -110,6 +134,24 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
         this.arrayList.addAll(arrayListCallLogs);
     }
 
+    public SimpleCallLogListAdapter(Activity activity, ArrayList<CallLogType> callLogTypes,
+                                    SimpleCallLogListAdapterListener listener) {
+        this.mActivity = activity;
+//        this.arrayListCallLogs = arraylistCallLogs;
+        if (AppConstants.isFromSearchActivity) {
+            this.arrayListCallLogs = new ArrayList<>();
+            this.arrayListCallLogs.addAll(callLogTypes);
+        } else {
+            this.arrayListCallLogs = callLogTypes;
+        }
+        this.arrayList = new ArrayList<>();
+        this.arrayList.addAll(arrayListCallLogs);
+        this.listener = listener;
+        selectedItems = new SparseBooleanArray();
+        animationItemsIndex = new SparseBooleanArray();
+        arrayListToDelete = new ArrayList<>();
+    }
+
     @Override
     public CallLogViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_call_log_list,
@@ -119,10 +161,14 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder contactViewHolder, final int position) {
-        SimpleCallLogListAdapter.CallLogViewHolder holder = (SimpleCallLogListAdapter.CallLogViewHolder) contactViewHolder;
+        CallLogViewHolder holder = (CallLogViewHolder) contactViewHolder;
         final CallLogType callLogType = arrayListCallLogs.get(position);
         final String name = callLogType.getName();
         final String number = callLogType.getNumber();
+
+        // change the row state to activated
+        holder.itemView.setActivated(selectedItems.get(position, false));
+
         if (!StringUtils.isEmpty(number)) {
             formattedNumber = Utils.getFormattedNumber(mActivity, number);
         }
@@ -175,7 +221,7 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
                     holder.textCloudContactName.setTextColor(ContextCompat.getColor(mActivity, R.color
                             .colorAccent));
                     holder.textContactName.setText(String.format("%s ", name));
-                    if(!StringUtils.isEmpty(contactDisplayName))
+                    if (!StringUtils.isEmpty(contactDisplayName))
                         holder.textCloudContactName.setText("(" + contactDisplayName + ")");
                     else
                         holder.textCloudContactName.setText("");
@@ -684,15 +730,20 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
                 ((Activity) mActivity).overridePendingTransition(R.anim.enter, R.anim.exit);
             }
         });
-    }
 
+        // handle icon animation
+        applyIconAnimation(holder, position);
+
+        // apply click events
+        applyClickEvents(holder, position);
+    }
 
     @Override
     public int getItemCount() {
         return arrayListCallLogs.size();
     }
 
-    public class CallLogViewHolder extends RecyclerView.ViewHolder {
+    public class CallLogViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
 
         @BindView(R.id.image_profile)
         ImageView imageProfile;
@@ -730,12 +781,23 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
         ImageView imageViewSpam;
         @BindView(R.id.text_spam_count)
         TextView textSpamCount;
+        @BindView(R.id.icon_back)
+        RelativeLayout iconBack;
+        @BindView(R.id.rl_imageProfile)
+        RelativeLayout rlImageProfile;
 
         CallLogViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
             textSimType.setVisibility(View.GONE);
             image3dotsCallLog.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        public boolean onLongClick(View view) {
+            listener.onRowLongClicked(getAdapterPosition());
+            view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+            return true;
         }
     }
 
@@ -770,4 +832,122 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
 
         notifyDataSetChanged();
     }
+
+
+    public interface SimpleCallLogListAdapterListener {
+        void onIconClicked(int position);
+
+        void onMessageRowClicked(int position);
+
+        void onRowLongClicked(int position);
+    }
+
+
+    private void applyClickEvents(CallLogViewHolder holder, final int position) {
+        holder.rlImageProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.onIconClicked(position);
+            }
+        });
+
+
+        holder.relativeRowMain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.onMessageRowClicked(position);
+            }
+        });
+
+        holder.relativeRowMain.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                listener.onRowLongClicked(position);
+                view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+                return true;
+            }
+        });
+    }
+
+
+    private void applyIconAnimation(CallLogViewHolder holder, int position) {
+        if (selectedItems.get(position, false)) {
+            holder.rlImageProfile.setVisibility(View.INVISIBLE);
+            resetIconYAxis(holder.iconBack);
+            holder.iconBack.setVisibility(View.VISIBLE);
+            holder.iconBack.setAlpha(1);
+            if (currentSelectedIndex == position) {
+                FlipAnimator.flipView(mActivity, holder.iconBack, holder.rlImageProfile, true);
+                resetCurrentIndex();
+            }
+        } else {
+            holder.iconBack.setVisibility(View.GONE);
+            resetIconYAxis(holder.rlImageProfile);
+            holder.rlImageProfile.setVisibility(View.VISIBLE);
+            holder.rlImageProfile.setAlpha(1);
+            if ((reverseAllAnimations && animationItemsIndex.get(position, false)) || currentSelectedIndex == position) {
+                FlipAnimator.flipView(mActivity, holder.iconBack, holder.rlImageProfile, false);
+                resetCurrentIndex();
+            }
+        }
+    }
+
+    // As the views will be reused, sometimes the icon appears as
+    // flipped because older view is reused. Reset the Y-axis to 0
+    private void resetIconYAxis(View view) {
+        if (view.getRotationY() != 0) {
+            view.setRotationY(0);
+        }
+    }
+
+    public void resetAnimationIndex() {
+        reverseAllAnimations = false;
+        animationItemsIndex.clear();
+    }
+
+
+    public void toggleSelection(int pos) {
+        currentSelectedIndex = pos;
+        if (selectedItems.get(pos, false)) {
+            selectedItems.delete(pos);
+            animationItemsIndex.delete(pos);
+            arrayListToDelete.remove(arrayListCallLogs.get(pos));
+            setArrayListToDelete(arrayListToDelete);
+        } else {
+            selectedItems.put(pos, true);
+            animationItemsIndex.put(pos, true);
+            arrayListToDelete.add(arrayListCallLogs.get(pos));
+            setArrayListToDelete(arrayListToDelete);
+        }
+        notifyItemChanged(pos);
+    }
+
+    public void clearSelections() {
+        reverseAllAnimations = true;
+        selectedItems.clear();
+        notifyDataSetChanged();
+    }
+
+    public int getSelectedItemCount() {
+        return selectedItems.size();
+    }
+
+    public List<Integer> getSelectedItems() {
+        List<Integer> items =
+                new ArrayList<>(selectedItems.size());
+        for (int i = 0; i < selectedItems.size(); i++) {
+            items.add(selectedItems.keyAt(i));
+        }
+        return items;
+    }
+
+    public void removeData(int position) {
+        arrayListCallLogs.remove(position);
+        resetCurrentIndex();
+    }
+
+    public void resetCurrentIndex() {
+        currentSelectedIndex = -1;
+    }
+
 }
