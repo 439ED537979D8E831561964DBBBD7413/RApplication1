@@ -167,21 +167,21 @@ class WebServicePost {
 //                            "token or expired token");
                     response = null;
 
-//                    Utils.setIntegerPreference(activity, AppConstants.PREF_LAUNCH_SCREEN_INT,
-//                            IntegerConstants
-//                                    .LAUNCH_RE_LOGIN_PASSWORD);
-//                    Utils.setBooleanPreference(activity, AppConstants.PREF_TEMP_LOGOUT, true);
-//                    Utils.setBooleanPreference(activity, AppConstants.PREF_IS_LOGIN, false);
+                    Utils.setIntegerPreference(activity, AppConstants.PREF_LAUNCH_SCREEN_INT,
+                            IntegerConstants
+                                    .LAUNCH_RE_LOGIN_PASSWORD);
+                    Utils.setBooleanPreference(activity, AppConstants.PREF_TEMP_LOGOUT, true);
+                    Utils.setBooleanPreference(activity, AppConstants.PREF_IS_LOGIN, false);
 
                     // Redirect to MobileNumberRegistrationActivity
-//                    Intent intent = new Intent(activity, ReLoginEnterPasswordActivity.class);
-//                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-//                    intent.putExtra(AppConstants.PREF_IS_FROM, AppConstants.PREF_RE_LOGIN);
-//                    activity.startActivity(intent);
-//                    activity.overridePendingTransition(R.anim.enter, R.anim.exit);
-//                    activity.finish();
+                    Intent intent = new Intent(activity, ReLoginEnterPasswordActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                    intent.putExtra(AppConstants.EXTRA_IS_FROM, AppConstants.EXTRA_IS_FROM_RE_LOGIN);
+                    activity.startActivity(intent);
+                    activity.overridePendingTransition(R.anim.enter, R.anim.exit);
+                    activity.finish();
 
                 } else {
                     response = null;

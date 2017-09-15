@@ -3,10 +3,16 @@ package com.rawalinfocom.rcontact;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.net.ParseException;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,7 +21,11 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -33,18 +43,15 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
-import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.linkedin.platform.APIHelper;
-import com.linkedin.platform.AccessToken;
 import com.linkedin.platform.LISessionManager;
 import com.linkedin.platform.errors.LIApiError;
 import com.linkedin.platform.errors.LIAuthError;
@@ -66,6 +73,12 @@ import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -77,11 +90,13 @@ import java.util.Arrays;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 public class ProfileRegistrationActivity extends BaseActivity implements RippleView
         .OnRippleCompleteListener, WsResponseListener, GoogleApiClient.OnConnectionFailedListener {
 
     private final int RC_SIGN_IN = 7;
+    private final int RC_LINKEDIN_SIGN_IN = 8;
 
     final String FIRST_NAME = "first_name";
     final String LAST_NAME = "last_name";
@@ -130,6 +145,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
     private String firstName, lastName, email;
 
     public static boolean isFromSettings;
+    private boolean isLikedinSuccess = false;
 
 //    GPSTracker gpsTracker;
 
@@ -235,6 +251,20 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
 //            handleSignInResult(result);
             new RetrieveTokenTask().execute(result);
+        }
+
+        if (resultCode == RESULT_OK && requestCode == RC_LINKEDIN_SIGN_IN) {
+
+            if (data != null) {
+                if (data.getStringExtra("isBack").equalsIgnoreCase("0")) {
+                    //If everything went Ok, change to another activity.
+                    profileRegistrationViaSocial(data.getStringExtra("accessToken"), "linkedin");
+                } else {
+                    Utils.showErrorSnackBar(this, relativeRootProfileRegistration, "Login cancelled!");
+                }
+            } else {
+                Utils.showErrorSnackBar(this, relativeRootProfileRegistration, "Login cancelled!");
+            }
         }
     }
 
@@ -530,6 +560,8 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                             .PREF_DISABLE_POPUP, false);
 
                     Utils.storeProfileDataToDb(ProfileRegistrationActivity.this, profileDetail, databaseHandler);
+
+                    Utils.setStringPreference(this, AppConstants.EXTRA_LOGIN_TYPE, "social");
 
                     deviceDetail();
 
@@ -1144,19 +1176,23 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
     }
 
     public void linkedInSignIn() {
-        LISessionManager.getInstance(getApplicationContext()).init(this, buildScope(), new
-                AuthListener() {
-                    @Override
-                    public void onAuthSuccess() {
-                        getUserData();
-                    }
 
-                    @Override
-                    public void onAuthError(LIAuthError error) {
-                        Toast.makeText(getApplicationContext(), "failed " + error.toString(), Toast
-                                .LENGTH_LONG).show();
-                    }
-                }, true);
+        Intent intent = new Intent(ProfileRegistrationActivity.this, LinkedinLoginActivity.class);
+        startActivityForResult(intent, RC_LINKEDIN_SIGN_IN);// Activity is started with requestCode
+
+//        LISessionManager.getInstance(getApplicationContext()).init(this, buildScope(), new
+//                AuthListener() {
+//                    @Override
+//                    public void onAuthSuccess() {
+//                        getUserData();
+//                    }
+//
+//                    @Override
+//                    public void onAuthError(LIAuthError error) {
+//                        Toast.makeText(getApplicationContext(), "failed " + error.toString(), Toast
+//                                .LENGTH_LONG).show();
+//                    }
+//                }, true);
     }
 
     @Override

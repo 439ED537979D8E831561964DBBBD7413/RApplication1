@@ -125,6 +125,7 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
     private static final int GOOGLE_LOGIN_PERMISSION = 22;
     private static final int LINKEDIN_LOGIN_PERMISSION = 23;
     private final int RC_SIGN_IN = 7;
+    private final int RC_LINKEDIN_SIGN_IN = 8;
 
     private String[] requiredPermissions = {android.Manifest.permission.READ_EXTERNAL_STORAGE, android.Manifest
             .permission.WRITE_EXTERNAL_STORAGE};
@@ -230,7 +231,7 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
 
                     // Redirect to OtpVerificationActivity
                     Bundle bundle = new Bundle();
-                    bundle.putString(AppConstants.EXTRA_IS_FROM, AppConstants.PREF_FORGOT_PASSWORD);
+                    bundle.putString(AppConstants.EXTRA_IS_FROM, AppConstants.EXTRA_IS_FROM_FORGOT_PASSWORD);
                     startActivityIntent(EnterPasswordActivity.this,
                             OtpVerificationActivity.class, bundle);
                     overridePendingTransition(R.anim.enter, R.anim.exit);
@@ -264,52 +265,11 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
                                     .LAUNCH_MAIN_ACTIVITY);
 
                     ProfileDataOperation profileDetail = enterPassWordResponse.getProfileDetail();
-                    Utils.setObjectPreference(this, AppConstants
-                            .PREF_REGS_USER_OBJECT, profileDetail);
 
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_PM_ID,
-                            profileDetail.getRcpPmId());
-
-                    Utils.setStringPreference(this, AppConstants.PREF_CALL_LOG_SYNC_TIME,
-                            profileDetail.getCallLogTimestamp());
-                    Utils.setStringPreference(this, AppConstants.PREF_CALL_LOG_ROW_ID,
-                            profileDetail.getCallLogId());
-                    Utils.setStringPreference(this, AppConstants.PREF_SMS_SYNC_TIME,
-                            profileDetail.getSmsLogTimestamp());
-
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_NAME,
-                            profileDetail.getPbNameFirst() + " " + profileDetail.getPbNameLast());
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_FIRST_NAME,
-                            profileDetail.getPbNameFirst());
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_LAST_NAME,
-                            profileDetail.getPbNameLast());
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_JOINING_DATE,
-                            profileDetail.getJoiningDate());
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_NUMBER,
-                            profileDetail.getVerifiedMobileNumber());
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING,
-                            profileDetail.getTotalProfileRateUser());
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_RATING,
-                            profileDetail.getProfileRating());
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_PHOTO,
-                            profileDetail.getPbProfilePhoto());
-
-                    Utils.setBooleanPreference(EnterPasswordActivity.this, AppConstants
-                            .PREF_DISABLE_PUSH, false);
-                    Utils.setBooleanPreference(EnterPasswordActivity.this, AppConstants
-                            .PREF_DISABLE_EVENT_PUSH, false);
-                    Utils.setBooleanPreference(EnterPasswordActivity.this, AppConstants
-                            .PREF_DISABLE_POPUP, false);
-
+                    setProfileData(profileDetail);
                     Utils.storeProfileDataToDb(EnterPasswordActivity.this, profileDetail, databaseHandler);
 
-//                    if (MoreObjects.firstNonNull(enterPassWordResponse.getReSync(), 0).equals
-// (1)) {
-//                        Utils.setBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false);
-//                        Utils.setBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED,
-// false);
-//                        Utils.setBooleanPreference(this, AppConstants.PREF_SMS_SYNCED, false);
-//                    }
+                    Utils.setStringPreference(this, AppConstants.EXTRA_LOGIN_TYPE, "password");
 
                     deviceDetail();
 
@@ -394,40 +354,11 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
                                     .LAUNCH_MAIN_ACTIVITY);
 
                     ProfileDataOperation profileDetail = userProfileResponse.getProfileDetail();
-                    Utils.setObjectPreference(this, AppConstants
-                            .PREF_REGS_USER_OBJECT, profileDetail);
 
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_PM_ID,
-                            profileDetail.getRcpPmId());
-
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_NAME,
-                            profileDetail.getPbNameFirst() + " " + profileDetail
-                                    .getPbNameLast());
-
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_FIRST_NAME,
-                            profileDetail.getPbNameFirst());
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_LAST_NAME,
-                            profileDetail.getPbNameLast());
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_JOINING_DATE,
-                            profileDetail.getJoiningDate());
-
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_NUMBER,
-                            profileDetail.getVerifiedMobileNumber());
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING,
-                            profileDetail.getTotalProfileRateUser());
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_RATING,
-                            profileDetail.getProfileRating());
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_PHOTO,
-                            profileDetail.getPbProfilePhoto());
-
-                    Utils.setBooleanPreference(this, AppConstants
-                            .PREF_DISABLE_PUSH, false);
-                    Utils.setBooleanPreference(this, AppConstants
-                            .PREF_DISABLE_EVENT_PUSH, false);
-                    Utils.setBooleanPreference(this, AppConstants
-                            .PREF_DISABLE_POPUP, false);
-
+                    setProfileData(profileDetail);
                     Utils.storeProfileDataToDb(this, profileDetail, databaseHandler);
+
+                    Utils.setStringPreference(this, AppConstants.EXTRA_LOGIN_TYPE, "social");
 
                     deviceDetail();
 
@@ -454,6 +385,49 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
 
     }
 
+    private void setProfileData(ProfileDataOperation profileDetail) {
+
+        Utils.setObjectPreference(this, AppConstants
+                .PREF_REGS_USER_OBJECT, profileDetail);
+
+        Utils.setStringPreference(this, AppConstants.PREF_USER_PM_ID,
+                profileDetail.getRcpPmId());
+
+        Utils.setStringPreference(this, AppConstants.PREF_USER_NAME,
+                profileDetail.getPbNameFirst() + " " + profileDetail
+                        .getPbNameLast());
+
+        Utils.setStringPreference(this, AppConstants.PREF_CALL_LOG_SYNC_TIME,
+                profileDetail.getCallLogTimestamp());
+        Utils.setStringPreference(this, AppConstants.PREF_CALL_LOG_ROW_ID,
+                profileDetail.getCallLogId());
+        Utils.setStringPreference(this, AppConstants.PREF_SMS_SYNC_TIME,
+                profileDetail.getSmsLogTimestamp());
+
+        Utils.setStringPreference(this, AppConstants.PREF_USER_FIRST_NAME,
+                profileDetail.getPbNameFirst());
+        Utils.setStringPreference(this, AppConstants.PREF_USER_LAST_NAME,
+                profileDetail.getPbNameLast());
+        Utils.setStringPreference(this, AppConstants.PREF_USER_JOINING_DATE,
+                profileDetail.getJoiningDate());
+
+        Utils.setStringPreference(this, AppConstants.PREF_USER_NUMBER,
+                profileDetail.getVerifiedMobileNumber());
+        Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING,
+                profileDetail.getTotalProfileRateUser());
+        Utils.setStringPreference(this, AppConstants.PREF_USER_RATING,
+                profileDetail.getProfileRating());
+        Utils.setStringPreference(this, AppConstants.PREF_USER_PHOTO,
+                profileDetail.getPbProfilePhoto());
+
+        Utils.setBooleanPreference(this, AppConstants
+                .PREF_DISABLE_PUSH, false);
+        Utils.setBooleanPreference(this, AppConstants
+                .PREF_DISABLE_EVENT_PUSH, false);
+        Utils.setBooleanPreference(this, AppConstants
+                .PREF_DISABLE_POPUP, false);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -473,6 +447,20 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
 //            handleSignInResult(result);
             new RetrieveTokenTask().execute(result);
+        }
+
+        if (resultCode == RESULT_OK && requestCode == RC_LINKEDIN_SIGN_IN) {
+
+            if (data != null) {
+                if (data.getStringExtra("isBack").equalsIgnoreCase("0")) {
+                    //If everything went Ok, change to another activity.
+                    profileLoginViaSocial(data.getStringExtra("accessToken"), "linkedin");
+                } else {
+                    Utils.showErrorSnackBar(this, relativeRootEnterPassword, "Login cancelled!");
+                }
+            } else {
+                Utils.showErrorSnackBar(this, relativeRootEnterPassword, "Login cancelled!");
+            }
         }
     }
 
@@ -502,6 +490,8 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
             //<editor-fold desc="ripple_facebook">
             case R.id.ripple_facebook:
 
+                IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_FACEBOOK;
+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     checkPermissionToExecute(requiredPermissions, FACEBOOK_LOGIN_PERMISSION);
                 } else {
@@ -523,6 +513,8 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
             //<editor-fold desc="ripple_google">
             case R.id.ripple_google:
 
+                IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_GOOGLE;
+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     checkPermissionToExecute(requiredPermissions, GOOGLE_LOGIN_PERMISSION);
                 } else {
@@ -533,6 +525,8 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
 
             // <editor-fold desc="ripple_linked_in">
             case R.id.ripple_linked_in:
+
+                IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_LINED_IN;
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     checkPermissionToExecute(requiredPermissions, LINKEDIN_LOGIN_PERMISSION);
@@ -681,19 +675,23 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
     }
 
     public void linkedInSignIn() {
-        LISessionManager.getInstance(getApplicationContext()).init(this, buildScope(), new
-                AuthListener() {
-                    @Override
-                    public void onAuthSuccess() {
-                        getUserData();
-                    }
 
-                    @Override
-                    public void onAuthError(LIAuthError error) {
-                        Toast.makeText(getApplicationContext(), "failed " + error.toString(), Toast
-                                .LENGTH_LONG).show();
-                    }
-                }, true);
+        Intent intent = new Intent(EnterPasswordActivity.this, LinkedinLoginActivity.class);
+        startActivityForResult(intent, RC_LINKEDIN_SIGN_IN);// Activity is started with requestCode
+
+//        LISessionManager.getInstance(getApplicationContext()).init(this, buildScope(), new
+//                AuthListener() {
+//                    @Override
+//                    public void onAuthSuccess() {
+//                        getUserData();
+//                    }
+//
+//                    @Override
+//                    public void onAuthError(LIAuthError error) {
+//                        Toast.makeText(getApplicationContext(), "failed " + error.toString(), Toast
+//                                .LENGTH_LONG).show();
+//                    }
+//                }, true);
     }
 
     public void getUserData() {

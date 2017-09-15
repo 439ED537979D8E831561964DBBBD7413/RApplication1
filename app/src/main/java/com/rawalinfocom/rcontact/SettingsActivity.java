@@ -195,7 +195,6 @@ public class SettingsActivity extends BaseActivity implements RippleView
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    intent.putExtra(AppConstants.PREF_IS_FROM, AppConstants.PREF_RE_LOGIN);
                     startActivity(intent);
                     overridePendingTransition(R.anim.enter, R.anim.exit);
                     finish();

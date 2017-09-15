@@ -14,27 +14,21 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.BaseFragment;
-import com.rawalinfocom.rcontact.MainActivity;
 import com.rawalinfocom.rcontact.R;
-import com.rawalinfocom.rcontact.constants.AppConstants;
-import com.rawalinfocom.rcontact.model.NotificationData;
-import com.rawalinfocom.rcontact.model.RcontactUpdatesData;
 import com.rawalinfocom.rcontact.adapters.NotiRContactsAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
+import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.TableRCNotificationUpdates;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.NotiRContactsItem;
+import com.rawalinfocom.rcontact.model.NotificationData;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -100,15 +94,11 @@ public class NotiRContactsFragment extends BaseFragment implements WsResponseLis
 
         try {
 
-            System.out.println("RContacts size --> " + updates.size());
-
             for (int i = 0; i < updates.size(); i++) {
                 if (updates.get(i).getNotiType().equalsIgnoreCase("video")) {
                     String img_url = "http://img.youtube.com/vi/" +
                             updates.get(i).getNotiUrl().substring(updates.get(i).getNotiUrl().lastIndexOf("/") + 1)
                         /*Utils.extractYoutubeId(updates.get(i).getNotiUrl()) */ + "/0.jpg";
-
-                    System.out.println("RContacts img_url --> " + img_url);
 
                     NotiRContactsItem notiRContactsItem = new NotiRContactsItem();
                     notiRContactsItem.setNotiId(updates.get(i).getNotiId());
@@ -122,7 +112,8 @@ public class NotiRContactsFragment extends BaseFragment implements WsResponseLis
                 }
             }
 
-            updtaesAdapter.notifyDataSetChanged();
+            if (updates.size() > 0)
+                updtaesAdapter.notifyDataSetChanged();
 
         } catch (Exception e) {
             System.out.println("RContacts error get image from video");
@@ -178,8 +169,8 @@ public class NotiRContactsFragment extends BaseFragment implements WsResponseLis
             tableRCNotificationUpdates.addUpdate(rconUpdate);
         }
 
-//        if (updatesData.size() > 0)
-        refreshAllList();
+        if (updatesData.size() > 0)
+            refreshAllList();
     }
 
     private void refreshAllList() {

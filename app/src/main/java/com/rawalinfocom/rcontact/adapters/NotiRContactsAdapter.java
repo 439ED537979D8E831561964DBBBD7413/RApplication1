@@ -55,7 +55,8 @@ import butterknife.Unbinder;
  * Created by maulik on 15/03/17.
  */
 
-public class NotiRContactsAdapter extends RecyclerView.Adapter<NotiRContactsAdapter.MyViewHolder> implements View.OnClickListener {
+public class NotiRContactsAdapter extends RecyclerView.Adapter<NotiRContactsAdapter.MyViewHolder>
+        implements View.OnClickListener {
 
     private List<NotiRContactsItem> list;
     private Activity activity;
@@ -137,7 +138,7 @@ public class NotiRContactsAdapter extends RecyclerView.Adapter<NotiRContactsAdap
 
         if (item.getNotiType().equalsIgnoreCase("video")) {
 
-            System.out.println("RContacts video image --> " + item.getNotiImage());
+//            System.out.println("RContacts video image --> " + item.getNotiImage());
 
             holder.imageRcontactsIcon.setVisibility(View.VISIBLE);
             holder.imgBanner.setVisibility(View.GONE);
@@ -302,7 +303,7 @@ public class NotiRContactsAdapter extends RecyclerView.Adapter<NotiRContactsAdap
             String path = SaveImage(result,
                     list.get(pos).getNotiUrl().substring(list.get(pos).getNotiUrl().lastIndexOf("/") + 1));
 
-            System.out.println("RContacts path --> " + path);
+//            System.out.println("RContacts path --> " + path);
 
             Intent sharingIntent = new Intent(Intent.ACTION_SEND);
             sharingIntent.setType("image/*");
@@ -339,7 +340,7 @@ public class NotiRContactsAdapter extends RecyclerView.Adapter<NotiRContactsAdap
         activity.getContentResolver().insert(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI, image);
 
-        System.out.println("RContacts file path --> " + file.getAbsolutePath());
+//        System.out.println("RContacts file path --> " + file.getAbsolutePath());
 
         return file.getAbsolutePath();
     }

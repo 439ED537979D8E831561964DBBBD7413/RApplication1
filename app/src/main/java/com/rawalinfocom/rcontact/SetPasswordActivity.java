@@ -122,7 +122,7 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
             isFrom = bundle.getString(AppConstants.EXTRA_IS_FROM);
         }
 
-        if (isFrom.equals(AppConstants.PREF_FORGOT_PASSWORD)) {
+        if (isFrom.equals(AppConstants.EXTRA_IS_FROM_FORGOT_PASSWORD)) {
             textToolbarTitle.setGravity(Gravity.CENTER);
             rippleActionBack.setVisibility(View.GONE);
             buttonSubmit.setText(getString(R.string.action_submit));
@@ -152,15 +152,15 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
                 if (setPasswordResponse != null && StringUtils.equalsIgnoreCase(setPasswordResponse
                         .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                    if (isFrom.equals(AppConstants.PREF_FORGOT_PASSWORD)) {
+                    if (isFrom.equals(AppConstants.EXTRA_IS_FROM_FORGOT_PASSWORD)) {
                         Utils.hideProgressDialog();
                         // Redirect to MobileNumberRegistrationActivity
                         Intent intent = new Intent(this, ReLoginEnterPasswordActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                        intent.putExtra(AppConstants.PREF_IS_FROM, AppConstants
-                                .PREF_FORGOT_PASSWORD);
+                        intent.putExtra(AppConstants.EXTRA_IS_FROM, AppConstants
+                                .EXTRA_IS_FROM_FORGOT_PASSWORD);
                         startActivity(intent);
                         overridePendingTransition(R.anim.enter, R.anim.exit);
                         finish();
@@ -233,6 +233,8 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
                 if (setPasswordResponse != null && StringUtils.equalsIgnoreCase(setPasswordResponse
                         .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
+                    Utils.setStringPreference(this, AppConstants.EXTRA_LOGIN_TYPE, "password");
+
                     Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME, String
                             .valueOf(System.currentTimeMillis()));
                     Utils.setBooleanPreference(this, AppConstants.KEY_IS_FIRST_TIME, true);
@@ -272,7 +274,7 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
         switch (rippleView.getId()) {
             case R.id.ripple_action_back:
 
-                if (isFrom.equals(AppConstants.PREF_FORGOT_PASSWORD)) {
+                if (isFrom.equals(AppConstants.EXTRA_IS_FROM_FORGOT_PASSWORD)) {
                     startActivity(new Intent(SetPasswordActivity.this, OtpVerificationActivity
                             .class));
                     finish();
@@ -291,7 +293,7 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        if (isFrom.equals(AppConstants.PREF_FORGOT_PASSWORD)) {
+        if (isFrom.equals(AppConstants.EXTRA_IS_FROM_FORGOT_PASSWORD)) {
             startActivity(new Intent(SetPasswordActivity.this, OtpVerificationActivity
                     .class));
             finish();

@@ -92,7 +92,7 @@ public class SplashActivity extends BaseActivity {
 
                     Intent intent = new Intent(SplashActivity.this, ReLoginEnterPasswordActivity
                             .class);
-                    intent.putExtra(AppConstants.PREF_IS_FROM, AppConstants.PREF_FORGOT_PASSWORD);
+                    intent.putExtra(AppConstants.EXTRA_IS_FROM, AppConstants.EXTRA_IS_FROM_RE_LOGIN);
                     startActivity(intent);
                     finish();
 

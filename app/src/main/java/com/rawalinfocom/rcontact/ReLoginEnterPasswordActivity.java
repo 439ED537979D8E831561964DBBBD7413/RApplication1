@@ -121,6 +121,7 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
     private static final int GOOGLE_LOGIN_PERMISSION = 22;
     private static final int LINKEDIN_LOGIN_PERMISSION = 23;
     private final int RC_SIGN_IN = 7;
+    private final int RC_LINKEDIN_SIGN_IN = 8;
 
     private String[] requiredPermissions = {android.Manifest.permission.READ_EXTERNAL_STORAGE, android.Manifest
             .permission.WRITE_EXTERNAL_STORAGE};
@@ -150,6 +151,11 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
 
         rippleForgetPassword.setOnRippleCompleteListener(this);
         rippleLogin.setOnRippleCompleteListener(this);
+
+        if (Utils.getStringPreference(this, AppConstants.EXTRA_LOGIN_TYPE, "").equalsIgnoreCase("password"))
+            rippleForgetPassword.setVisibility(View.VISIBLE);
+        else
+            rippleForgetPassword.setVisibility(View.GONE);
 
         rippleFacebook.setOnRippleCompleteListener(this);
         rippleGoogle.setOnRippleCompleteListener(this);
@@ -209,10 +215,10 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
             textNumber.setText(mobileNumber);
         }
 
-        isFrom = getIntent().getStringExtra(AppConstants.PREF_IS_FROM);
+        isFrom = getIntent().getStringExtra(AppConstants.EXTRA_IS_FROM);
 
-        if (isFrom.equals(AppConstants.PREF_FORGOT_PASSWORD) || isFrom.equals(AppConstants
-                .PREF_RE_LOGIN)) {
+        if (isFrom.equals(AppConstants.EXTRA_IS_FROM_FORGOT_PASSWORD) || isFrom.equals(AppConstants
+                .EXTRA_IS_FROM_RE_LOGIN)) {
             textToolbarTitle.setText(getResources().getString(R.string.password_verification));
         } else {
             textToolbarTitle.setText(getResources().getString(R.string.str_enter_password));
@@ -238,7 +244,7 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
 
                     // Redirect to OtpVerificationActivity
                     Bundle bundle = new Bundle();
-                    bundle.putString(AppConstants.EXTRA_IS_FROM, AppConstants.PREF_FORGOT_PASSWORD);
+                    bundle.putString(AppConstants.EXTRA_IS_FROM, AppConstants.EXTRA_IS_FROM_FORGOT_PASSWORD);
                     startActivityIntent(ReLoginEnterPasswordActivity.this,
                             OtpVerificationActivity.class, bundle);
                     overridePendingTransition(R.anim.enter, R.anim.exit);
@@ -270,36 +276,9 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
                                     .LAUNCH_MAIN_ACTIVITY);
 
                     ProfileDataOperation profileDetail = enterPassWordResponse.getProfileDetail();
-                    Utils.setObjectPreference(this, AppConstants
-                            .PREF_REGS_USER_OBJECT, profileDetail);
 
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_PM_ID, profileDetail
-                            .getRcpPmId());
+                    setProfileData(profileDetail);
                     Utils.storeProfileDataToDb(ReLoginEnterPasswordActivity.this, profileDetail, databaseHandler);
-
-                    Utils.setStringPreference(this, AppConstants.PREF_CALL_LOG_SYNC_TIME,
-                            profileDetail.getCallLogTimestamp());
-                    Utils.setStringPreference(this, AppConstants.PREF_SMS_SYNC_TIME,
-                            profileDetail.getSmsLogTimestamp());
-                    Utils.setStringPreference(this, AppConstants.PREF_CALL_LOG_ROW_ID,
-                            profileDetail.getCallLogId());
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_NAME, profileDetail
-                            .getPbNameFirst() + " " + profileDetail.getPbNameLast());
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_FIRST_NAME,
-                            profileDetail.getPbNameFirst());
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_LAST_NAME,
-                            profileDetail.getPbNameLast());
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_JOINING_DATE,
-                            profileDetail.getJoiningDate());
-
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_NUMBER, profileDetail
-                            .getVerifiedMobileNumber());
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING,
-                            profileDetail.getTotalProfileRateUser());
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_RATING, profileDetail
-                            .getProfileRating());
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_PHOTO, profileDetail
-                            .getPbProfilePhoto());
 
                     if (MoreObjects.firstNonNull(enterPassWordResponse.getReSync(), 0).equals(1)) {
                         Utils.setBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false);
@@ -307,11 +286,10 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
                         Utils.setBooleanPreference(this, AppConstants.PREF_SMS_SYNCED, false);
                     }
 
-                    Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME, String
-                            .valueOf(System.currentTimeMillis()));
+                    Utils.setStringPreference(this, AppConstants.EXTRA_LOGIN_TYPE, "password");
 
                     // Redirect to MainActivity
-                    if (isFrom.equals(AppConstants.PREF_RE_LOGIN)) {
+                    if (isFrom.equals(AppConstants.EXTRA_IS_FROM_RE_LOGIN)) {
                         Utils.hideProgressDialog();
                         Utils.setBooleanPreference(ReLoginEnterPasswordActivity.this,
                                 AppConstants.PREF_TEMP_LOGOUT, false);
@@ -349,43 +327,55 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
                         (enterPassWordResponse
                                 .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                    if (isFrom.equals(AppConstants.PREF_FORGOT_PASSWORD)) {
-                        if (Utils.getBooleanPreference(this, AppConstants.KEY_IS_RESTORE_DONE,
-                                false)) {
-                            // Redirect to MainActivity
-                            Utils.setBooleanPreference(this, AppConstants.KEY_IS_RESTORE_DONE,
-                                    true);
-                            Utils.setBooleanPreference(this, AppConstants.PREF_IS_LOGIN, true);
-                            Intent intent = new Intent(this, MainActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                            startActivity(intent);
-                            overridePendingTransition(R.anim.enter, R.anim.exit);
-                            finish();
-                        } else {
-                            // Redirect to RestorationActivity
-                            Intent intent = new Intent(this, RestorationActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                            startActivity(intent);
-                            overridePendingTransition(R.anim.enter, R.anim.exit);
-                            finish();
-                        }
-                    } else {
+                    Utils.setBooleanPreference(this, AppConstants.PREF_IS_LOGIN, true);
+                    Utils.setBooleanPreference(this, AppConstants.KEY_IS_RESTORE_DONE, true);
+                    Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME, String
+                            .valueOf(System.currentTimeMillis()));
 
-                        Utils.setBooleanPreference(this, AppConstants.KEY_IS_RESTORE_DONE, true);
+                    Intent intent = new Intent(this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.enter, R.anim.exit);
+                    finish();
 
-                        Intent intent = new Intent(this, MainActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                        startActivity(intent);
-                        overridePendingTransition(R.anim.enter, R.anim.exit);
-                        finish();
-                    }
-
+//                    if (isFrom.equals(AppConstants.EXTRA_IS_FROM_FORGOT_PASSWORD)) {
+//                        if (Utils.getBooleanPreference(this, AppConstants.KEY_IS_RESTORE_DONE,
+//                                false)) {
+//                            // Redirect to MainActivity
+//                            Utils.setBooleanPreference(this, AppConstants.KEY_IS_RESTORE_DONE,
+//                                    true);
+//                            Utils.setBooleanPreference(this, AppConstants.PREF_IS_LOGIN, true);
+//                            Intent intent = new Intent(this, MainActivity.class);
+//                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+//                            startActivity(intent);
+//                            overridePendingTransition(R.anim.enter, R.anim.exit);
+//                            finish();
+//                        } else {
+//                            // Redirect to RestorationActivity
+//                            Intent intent = new Intent(this, RestorationActivity.class);
+//                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+//                            startActivity(intent);
+//                            overridePendingTransition(R.anim.enter, R.anim.exit);
+//                            finish();
+//                        }
+//                    } else {
+//
+//                        Utils.setBooleanPreference(this, AppConstants.KEY_IS_RESTORE_DONE, true);
+//
+//                        Intent intent = new Intent(this, MainActivity.class);
+//                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+//                        startActivity(intent);
+//                        overridePendingTransition(R.anim.enter, R.anim.exit);
+//                        finish();
+//                    }
 
                 } else {
 
@@ -401,12 +391,94 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
                 }
             }
 
+            //<editor-fold desc="REQ_REGISTER_WITH_SOCIAL_MEDIA">
+            if (serviceType.equalsIgnoreCase(WsConstants.REQ_LOGIN_WITH_SOCIAL_MEDIA)) {
+                WsResponseObject userProfileResponse = (WsResponseObject) data;
+
+                if (userProfileResponse != null && StringUtils.equalsIgnoreCase(userProfileResponse
+                        .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+
+                    if (IntegerConstants.REGISTRATION_VIA == IntegerConstants.REGISTRATION_VIA_FACEBOOK)
+                        LoginManager.getInstance().logOut();
+
+                    ProfileDataOperation profileDetail = userProfileResponse.getProfileDetail();
+
+                    setProfileData(profileDetail);
+                    Utils.storeProfileDataToDb(this, profileDetail, databaseHandler);
+
+                    Utils.setStringPreference(this, AppConstants.EXTRA_LOGIN_TYPE, "social");
+
+                    deviceDetail();
+
+                } else {
+
+                    Utils.hideProgressDialog();
+
+                    if (userProfileResponse != null) {
+                        Log.e("error response", userProfileResponse.getMessage());
+                        Utils.showErrorSnackBar(this, relativeRootEnterPassword,
+                                userProfileResponse.getMessage());
+                    } else {
+                        Log.e("onDeliveryResponse: ", "userProfileResponse null");
+                        Utils.showErrorSnackBar(this, relativeRootEnterPassword, getString(R
+                                .string.msg_try_later));
+                    }
+                }
+            }
+
         } else {
 //            AppUtils.hideProgressDialog();
             Utils.showErrorSnackBar(this, relativeRootEnterPassword, "" + error
                     .getLocalizedMessage());
         }
+    }
 
+    private void setProfileData(ProfileDataOperation profileDetail) {
+
+        // set launch screen as MainActivity
+        Utils.setIntegerPreference(this,
+                AppConstants.PREF_LAUNCH_SCREEN_INT, IntegerConstants
+                        .LAUNCH_MAIN_ACTIVITY);
+
+        Utils.setObjectPreference(this, AppConstants
+                .PREF_REGS_USER_OBJECT, profileDetail);
+
+        Utils.setStringPreference(this, AppConstants.PREF_USER_PM_ID,
+                profileDetail.getRcpPmId());
+
+        Utils.setStringPreference(this, AppConstants.PREF_USER_NAME,
+                profileDetail.getPbNameFirst() + " " + profileDetail
+                        .getPbNameLast());
+
+        Utils.setStringPreference(this, AppConstants.PREF_CALL_LOG_SYNC_TIME,
+                profileDetail.getCallLogTimestamp());
+        Utils.setStringPreference(this, AppConstants.PREF_SMS_SYNC_TIME,
+                profileDetail.getSmsLogTimestamp());
+        Utils.setStringPreference(this, AppConstants.PREF_CALL_LOG_ROW_ID,
+                profileDetail.getCallLogId());
+
+        Utils.setStringPreference(this, AppConstants.PREF_USER_FIRST_NAME,
+                profileDetail.getPbNameFirst());
+        Utils.setStringPreference(this, AppConstants.PREF_USER_LAST_NAME,
+                profileDetail.getPbNameLast());
+        Utils.setStringPreference(this, AppConstants.PREF_USER_JOINING_DATE,
+                profileDetail.getJoiningDate());
+
+        Utils.setStringPreference(this, AppConstants.PREF_USER_NUMBER,
+                profileDetail.getVerifiedMobileNumber());
+        Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING,
+                profileDetail.getTotalProfileRateUser());
+        Utils.setStringPreference(this, AppConstants.PREF_USER_RATING,
+                profileDetail.getProfileRating());
+        Utils.setStringPreference(this, AppConstants.PREF_USER_PHOTO,
+                profileDetail.getPbProfilePhoto());
+
+        Utils.setBooleanPreference(this, AppConstants
+                .PREF_DISABLE_PUSH, false);
+        Utils.setBooleanPreference(this, AppConstants
+                .PREF_DISABLE_EVENT_PUSH, false);
+        Utils.setBooleanPreference(this, AppConstants
+                .PREF_DISABLE_POPUP, false);
     }
 
     @Override
@@ -428,6 +500,20 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
 //            handleSignInResult(result);
             new RetrieveTokenTask().execute(result);
+        }
+
+        if (resultCode == RESULT_OK && requestCode == RC_LINKEDIN_SIGN_IN) {
+
+            if (data != null) {
+                if (data.getStringExtra("isBack").equalsIgnoreCase("0")) {
+                    //If everything went Ok, change to another activity.
+                    profileLoginViaSocial(data.getStringExtra("accessToken"), "linkedin");
+                } else {
+                    Utils.showErrorSnackBar(this, relativeRootEnterPassword, "Login cancelled!");
+                }
+            } else {
+                Utils.showErrorSnackBar(this, relativeRootEnterPassword, "Login cancelled!");
+            }
         }
     }
 
@@ -454,6 +540,8 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
             //<editor-fold desc="ripple_facebook">
             case R.id.ripple_facebook:
 
+                IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_FACEBOOK;
+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     checkPermissionToExecute(requiredPermissions, FACEBOOK_LOGIN_PERMISSION);
                 } else {
@@ -475,6 +563,8 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
             //<editor-fold desc="ripple_google">
             case R.id.ripple_google:
 
+                IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_GOOGLE;
+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     checkPermissionToExecute(requiredPermissions, GOOGLE_LOGIN_PERMISSION);
                 } else {
@@ -485,6 +575,8 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
 
             // <editor-fold desc="ripple_linked_in">
             case R.id.ripple_linked_in:
+
+                IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_LINED_IN;
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     checkPermissionToExecute(requiredPermissions, LINKEDIN_LOGIN_PERMISSION);
@@ -524,7 +616,7 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
 
                 LoginManager.getInstance().logInWithReadPermissions(ReLoginEnterPasswordActivity.this,
                         Arrays.asList(getString(R.string.str_public_profile),
-                        getString(R.string.str_small_cap_email)));
+                                getString(R.string.str_small_cap_email)));
                 break;
             case GOOGLE_LOGIN_PERMISSION:
                 googleSignIn();
@@ -633,19 +725,23 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
     }
 
     public void linkedInSignIn() {
-        LISessionManager.getInstance(getApplicationContext()).init(this, buildScope(), new
-                AuthListener() {
-                    @Override
-                    public void onAuthSuccess() {
-                        getUserData();
-                    }
 
-                    @Override
-                    public void onAuthError(LIAuthError error) {
-                        Toast.makeText(getApplicationContext(), "failed " + error.toString(), Toast
-                                .LENGTH_LONG).show();
-                    }
-                }, true);
+        Intent intent = new Intent(ReLoginEnterPasswordActivity.this, LinkedinLoginActivity.class);
+        startActivityForResult(intent, RC_LINKEDIN_SIGN_IN);// Activity is started with requestCode
+
+//        LISessionManager.getInstance(getApplicationContext()).init(this, buildScope(), new
+//                AuthListener() {
+//                    @Override
+//                    public void onAuthSuccess() {
+//                        getUserData();
+//                    }
+//
+//                    @Override
+//                    public void onAuthError(LIAuthError error) {
+//                        Toast.makeText(getApplicationContext(), "failed " + error.toString(), Toast
+//                                .LENGTH_LONG).show();
+//                    }
+//                }, true);
     }
 
     public void getUserData() {
@@ -697,21 +793,21 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
 
     private void checkLogin(String password) {
 
-        WsRequestObject enterPassWordObject = new WsRequestObject();
-        enterPassWordObject.setMobileNumber(mobileNumber.replace("+", ""));
-        enterPassWordObject.setPassword(password);
-        if (isFrom.equals(AppConstants.PREF_RE_LOGIN) || Utils.getBooleanPreference
+        WsRequestObject reLoginObject = new WsRequestObject();
+        reLoginObject.setMobileNumber(mobileNumber.replace("+", ""));
+        reLoginObject.setPassword(password);
+        if (isFrom.equals(AppConstants.EXTRA_IS_FROM_RE_LOGIN) || Utils.getBooleanPreference
                 (ReLoginEnterPasswordActivity.this,
                         AppConstants.PREF_TEMP_LOGOUT, false)) {
-            enterPassWordObject.setReAuthenticate(1);
+            reLoginObject.setReAuthenticate(1);
         }
-        enterPassWordObject.setCreatedBy("2"); // For Android Devices
-        enterPassWordObject.setGcmToken(getDeviceTokenId());
+        reLoginObject.setCreatedBy("2"); // For Android Devices
+        reLoginObject.setGcmToken(getDeviceTokenId());
 //        enterPassWordObject.setDeviceId(getDeviceId());
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
-                    enterPassWordObject,
+                    reLoginObject,
                     null, WsResponseObject.class, WsConstants.REQ_CHECK_LOGIN, getString(R.string
                     .msg_please_wait), false)
                     .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT +
@@ -725,16 +821,21 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
     //<editor-fold desc="Web Service Call">
     private void profileLoginViaSocial(String accessToken, String socialMedia) {
 
-        WsRequestObject profileLoginObject = new WsRequestObject();
-        profileLoginObject.setMobileNumber(mobileNumber.replace("+", ""));
-        profileLoginObject.setAccessToken(StringUtils.trimToEmpty(accessToken));
-        profileLoginObject.setSocialMedia(socialMedia);
-        profileLoginObject.setCreatedBy("2"); // For Android Devices
-        profileLoginObject.setGcmToken(getDeviceTokenId());
+        WsRequestObject reLoginObject = new WsRequestObject();
+        reLoginObject.setMobileNumber(mobileNumber.replace("+", ""));
+        reLoginObject.setAccessToken(StringUtils.trimToEmpty(accessToken));
+        if (isFrom.equals(AppConstants.EXTRA_IS_FROM_RE_LOGIN) || Utils.getBooleanPreference
+                (ReLoginEnterPasswordActivity.this,
+                        AppConstants.PREF_TEMP_LOGOUT, false)) {
+            reLoginObject.setReAuthenticate(1);
+        }
+        reLoginObject.setSocialMedia(socialMedia);
+        reLoginObject.setCreatedBy("2"); // For Android Devices
+        reLoginObject.setGcmToken(getDeviceTokenId());
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
-                    profileLoginObject, null, WsResponseObject.class, WsConstants
+                    reLoginObject, null, WsResponseObject.class, WsConstants
                     .REQ_LOGIN_WITH_SOCIAL_MEDIA, getString(R.string.msg_please_wait), true)
                     .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
                             WsConstants.WS_ROOT_V2 + WsConstants.REQ_LOGIN_WITH_SOCIAL_MEDIA);
