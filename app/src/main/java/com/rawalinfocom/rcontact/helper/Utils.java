@@ -671,6 +671,17 @@ public class Utils {
         context.startActivity(intent);
     }
 
+    public static void callIntentWithSimPreference(Context context, String number,String simPreference) {
+        String unicodeNumber = number.replace("*", Uri.encode("*")).replace("#", Uri.encode("#"));
+        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + unicodeNumber));
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("com.android.phone.force.slot", true);
+        intent.putExtra("com.android.phone.extra.slot", simPreference); //For sim 1
+//        intent.putExtra("Cdma_Supp", true);
+//        intent.putExtra("simSlot", simPreference);
+        context.startActivity(intent);
+    }
+
     public static String setFormattedAddress(String streetName, String neighborhoodName, String
             cityName, String stateName, String countryName, String pinCodeName) {
 

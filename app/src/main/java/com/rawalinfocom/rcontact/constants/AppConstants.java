@@ -131,6 +131,8 @@ public class AppConstants {
     public static String EXTRA_RCP_FROM_NOTI = "extra_rcp_from_noti";
     public static String EXTRA_FROM_NOTI_PROFILE = "extra_from_noti_profile";
     public static String EXTRA_DIALOG_CALL_LOG_INSTANCE = "extra_dialog_call_log_instance";
+    public static String EXTRA_DIALER_SIM_PREFERENCE = "extra_dialer_sim_preference";
+
     //</editor-fold>
 
     //<editor-fold desc="Intent Action">
