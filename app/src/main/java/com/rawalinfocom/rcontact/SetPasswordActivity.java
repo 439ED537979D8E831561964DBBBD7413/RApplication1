@@ -179,6 +179,9 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
                         Utils.setStringPreference(this, AppConstants.PREF_USER_PM_ID,
                                 profileDetail.getRcpPmId());
 
+                        Utils.setStringPreference(this, AppConstants.PREF_USER_PM_BADGE,
+                                profileDetail.getPmBadge());
+
                         Utils.setStringPreference(this, AppConstants.PREF_USER_NAME,
                                 profileDetail.getPbNameFirst() + " " + profileDetail
                                         .getPbNameLast());

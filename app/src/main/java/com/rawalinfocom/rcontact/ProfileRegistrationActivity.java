@@ -272,7 +272,8 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         // An unresolvable error has occurred and Google APIs (including Sign-In) will not
         // be available.
-        Log.d("onConnectionFailed:", connectionResult.getErrorMessage());
+        if (connectionResult != null && !StringUtils.isEmpty(connectionResult.getErrorMessage()))
+            Log.d("onConnectionFailed:", connectionResult.getErrorMessage());
     }
 
     @Override

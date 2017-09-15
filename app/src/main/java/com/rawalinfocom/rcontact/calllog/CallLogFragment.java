@@ -3,6 +3,7 @@ package com.rawalinfocom.rcontact.calllog;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -30,11 +31,15 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.content.PermissionChecker;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -46,18 +51,22 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
+import com.rawalinfocom.rcontact.SearchActivity;
 import com.rawalinfocom.rcontact.adapters.SimpleCallLogListAdapter;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.database.PhoneBookCallLogs;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
 import com.rawalinfocom.rcontact.database.TableSpamDetailMaster;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
+import com.rawalinfocom.rcontact.helper.RecyclerItemClickListener;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.WrapContentLinearLayoutManager;
@@ -82,7 +91,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class CallLogFragment extends BaseFragment implements WsResponseListener, RippleView
-        .OnRippleCompleteListener/*, LoaderManager.LoaderCallbacks<Cursor>*/ {
+        .OnRippleCompleteListener/*, LoaderManager.LoaderCallbacks<Cursor>*/, SimpleCallLogListAdapter.SimpleCallLogListAdapterListener {
 
     public String CALL_LOG_ALL_CALLS = "All";
     public String CALL_LOG_INCOMING_CALLS = "Incoming";
@@ -139,10 +148,13 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     private GetRCPNameAndProfileImage nameAndProfileImage;
     boolean isFromDeleteBroadcast = false;
     private UpdateOldLogWithUpdatedDetails updateOldLogWithUpdatedDetails;
-
+    Toolbar toolbar;
+    private ActionModeCallback actionModeCallback;
+    private ActionMode actionMode;
 
     public CallLogFragment() {
         // Required empty public constructor
+
     }
 
     public static CallLogFragment newInstance() {
@@ -175,6 +187,217 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 .PREF_RECENT_CALLS_BROADCAST_RECEIVER_CALL_LOG_TAB, true);
 
         isCallLogFragment = true;
+        toolbar =  getMainActivity().getToolbar();
+
+    }
+
+    @Override
+    public void onIconClicked(int position) {
+        if (actionMode == null) {
+            actionMode = getMainActivity().startSupportActionMode(actionModeCallback);
+        }
+        toggleSelection(position);
+    }
+
+    @Override
+    public void onMessageRowClicked(int position) {
+        // verify whether action mode is enabled or not
+        // if enabled, change the row state to activated
+        if (simpleCallLogListAdapter.getSelectedItemCount() > 0) {
+            enableActionMode(position);
+        }else{
+
+            CallLogType selectedCallLogData = callLogTypeArrayList.get(position);
+            String key = "";
+            key = selectedCallLogData.getLocalPbRowId();
+            if (key.equalsIgnoreCase(" ")) {
+                key = selectedCallLogData.getUniqueContactId();
+            }
+
+            Boolean isRcpUser = selectedCallLogData.isRcpUser();
+            String firstName = selectedCallLogData.getRcpFirstName();
+            String lastName = selectedCallLogData.getRcpLastName();
+            String name = selectedCallLogData.getName();
+            String cloudName = "";
+            String contactDisplayName = "";
+            String contactNameToDisplay = "";
+            String prefix = selectedCallLogData.getPrefix();
+            String suffix = selectedCallLogData.getSuffix();
+            String middleName = selectedCallLogData.getMiddleName();
+
+            if (StringUtils.length(prefix) > 0)
+                contactNameToDisplay = contactNameToDisplay + prefix + " ";
+            if (StringUtils.length(suffix) > 0)
+                contactNameToDisplay = contactNameToDisplay + suffix + " ";
+            if (StringUtils.length(firstName) > 0)
+                contactNameToDisplay = contactNameToDisplay + firstName + " ";
+            if (StringUtils.length(middleName) > 0)
+                contactNameToDisplay = contactNameToDisplay + middleName + " ";
+            if (StringUtils.length(lastName) > 0)
+                contactNameToDisplay = contactNameToDisplay + lastName + "";
+
+
+            if (MoreObjects.firstNonNull(isRcpUser, false)) {
+                if (StringUtils.length(firstName) > 0) {
+                    contactDisplayName = contactDisplayName + firstName + " ";
+                }
+                if (StringUtils.length(lastName) > 0) {
+                    contactDisplayName = contactDisplayName + lastName + "";
+                }
+                if (!StringUtils.equalsIgnoreCase(name, contactDisplayName)) {
+                    cloudName = contactDisplayName;
+                }
+            }
+            long date =  selectedCallLogData.getDate();
+            long selectedLogDate, dateFromReceiver = 0;
+            Date dateFromReceiver1 = selectedCallLogData.getCallReceiverDate();
+            if (dateFromReceiver1 != null) {
+                dateFromReceiver = dateFromReceiver1.getTime();
+            }
+            if (date == 0) {
+                selectedLogDate = dateFromReceiver;
+            } else {
+                selectedLogDate = date;
+            }
+            AppConstants.isFromReceiver = false;
+//                String formatedNumber = Utils.getFormattedNumber(mActivity, number);
+            Intent intent = new Intent(getActivity(), ProfileDetailActivity.class);
+            intent.putExtra(AppConstants.EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE, true);
+            intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, selectedCallLogData.getNumber());
+
+            if (selectedCallLogData.getRcpId() == null)
+                intent.putExtra(AppConstants.EXTRA_PM_ID, "-1");
+            else
+                intent.putExtra(AppConstants.EXTRA_PM_ID, selectedCallLogData.getRcpId());
+
+            intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NAME, name);
+            if (date == 0) {
+                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_DATE, dateFromReceiver);
+            } else {
+                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_DATE, date);
+            }
+            intent.putExtra(AppConstants.EXTRA_RCP_VERIFIED_ID, selectedCallLogData.getIsRcpVerfied());
+            intent.putExtra(AppConstants.EXTRA_CALL_UNIQUE_ID, key);
+            intent.putExtra(AppConstants.EXTRA_UNIQUE_CONTACT_ID, selectedCallLogData.getUniqueContactId());
+            intent.putExtra(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE, selectedCallLogData.getProfileImage());
+            intent.putExtra(AppConstants.EXTRA_IS_RCP_USER, isRcpUser);
+            if (!StringUtils.isEmpty(cloudName))
+                intent.putExtra(AppConstants.EXTRA_CALL_LOG_CLOUD_NAME, cloudName);
+            else
+                intent.putExtra(AppConstants.EXTRA_CALL_LOG_CLOUD_NAME, contactNameToDisplay);
+            getActivity().startActivity(intent);
+            (getActivity()).overridePendingTransition(R.anim.enter, R.anim.exit);
+
+        }
+
+    }
+
+    @Override
+    public void onRowLongClicked(int position) {
+        enableActionMode(position);
+    }
+
+
+    private void enableActionMode(int position) {
+        if (actionMode == null) {
+            actionMode = getMainActivity().startSupportActionMode(actionModeCallback);
+        }
+        toggleSelection(position);
+    }
+
+    private void toggleSelection(int position) {
+        simpleCallLogListAdapter.toggleSelection(position);
+        int count = simpleCallLogListAdapter.getSelectedItemCount();
+        if (count == 0) {
+            actionMode.finish();
+        } else {
+            actionMode.setTitle(String.valueOf(count) + " selected");
+            actionMode.invalidate();
+        }
+    }
+
+
+    private class ActionModeCallback implements ActionMode.Callback {
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            toolbar.setVisibility(View.GONE);
+            mode.getMenuInflater().inflate(R.menu.menu_action_mode_call_log, menu);
+            // disable swipe refresh if action mode is enabled
+//            swipeRefreshLayout.setEnabled(false);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.delete:
+                    // delete all the selected messages
+                    deleteMessages();
+                    mode.finish();
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            toolbar.setVisibility(View.VISIBLE);
+            simpleCallLogListAdapter.clearSelections();
+//            swipeRefreshLayout.setEnabled(true);
+            actionMode = null;
+            recyclerCallLogs.post(new Runnable() {
+                @Override
+                public void run() {
+                    simpleCallLogListAdapter.resetAnimationIndex();
+                    // mAdapter.notifyDataSetChanged();
+                }
+            });
+        }
+    }
+
+    // deleting the messages from recycler view
+    private void deleteMessages() {
+        simpleCallLogListAdapter.resetAnimationIndex();
+        List<Integer> selectedItemPositions =
+                simpleCallLogListAdapter.getSelectedItems();
+        /*for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
+//            simpleCallLogListAdapter.removeData(selectedItemPositions.get(i));
+            int itemIndexToRemove =  selectedItemPositions.get(i);
+            callLogTypeArrayList.remove(itemIndexToRemove);
+            rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
+            simpleCallLogListAdapter.resetCurrentIndex();
+            simpleCallLogListAdapter.notifyItemRemoved(itemIndexToRemove);
+            simpleCallLogListAdapter.notifyItemRangeChanged(itemIndexToRemove,
+                    simpleCallLogListAdapter.getItemCount());
+        }*/
+
+        ArrayList<CallLogType> listToDelete = simpleCallLogListAdapter.getArrayListToDelete();
+        if (listToDelete.size() > 0) {
+            for (int j = 0; j < listToDelete.size(); j++) {
+                CallLogType callLogType = listToDelete.get(j);
+                String number = callLogType.getNumber();
+                long dateAndTime = callLogType.getDate();
+                // delete operation
+                String where = CallLog.Calls.NUMBER + " =?" + " AND " + CallLog.Calls.DATE + " =?";
+                String[] selectionArguments = new String[]{number, String.valueOf(dateAndTime)};
+                int value = getActivity().getContentResolver().delete(CallLog.Calls.CONTENT_URI, where,
+                        selectionArguments);
+                if (value > 0) {
+                    callLogTypeArrayList.remove(callLogType);
+                    rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
+                    simpleCallLogListAdapter.resetCurrentIndex();
+                }
+            }
+            simpleCallLogListAdapter.notifyDataSetChanged();
+        }
+//        simpleCallLogListAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -223,7 +446,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
         rContactApplication = (RContactApplication) getActivity().getApplicationContext();
 //        makeBlockedNumberList();
-
+        actionModeCallback = new ActionModeCallback();
         // Checking for permissions
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkPermissionToExecute(requiredPermissions, AppConstants.READ_LOGS);
@@ -593,35 +816,38 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
         protected void onPostExecute(Void result) {
 
-            getActivity().runOnUiThread(new Runnable() {
+           /* getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    try {
-                        simpleCallLogListAdapter.notifyDataSetChanged();
-                        //Aniruddh -- TO do save 0th record dateTime and rawId in preference;
-                        if (callLogTypeArrayList.size() > 0) {
-                            rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
-                            Long dateTime = callLogTypeArrayList.get(0).getDate();
-                            DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale
-                                    .getDefault());
 
-                            Date cursorDate = new Date(dateTime);
-                            String latestCallDate = sdf.format(cursorDate);
-                            String rawId = callLogTypeArrayList.get(0).getUniqueContactId();
-
-                            Utils.setStringPreference(getActivity(), AppConstants
-                                    .PREF_LATEST_CALL_DATE_TIME, latestCallDate);
-                            Utils.setStringPreference(getActivity(), AppConstants
-                                    .PREF_LATEST_CALL_RAW_ID, rawId);
-                        } else {
-                            textNoCallsFound.setVisibility(View.VISIBLE);
-                        }
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
                 }
-            });
+            });*/
+
+            try {
+                simpleCallLogListAdapter.notifyDataSetChanged();
+                //Aniruddh -- TO do save 0th record dateTime and rawId in preference;
+                if (callLogTypeArrayList.size() > 0) {
+                    rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
+                    Long dateTime = callLogTypeArrayList.get(0).getDate();
+                    DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale
+                            .getDefault());
+
+                    Date cursorDate = new Date(dateTime);
+                    String latestCallDate = sdf.format(cursorDate);
+                    String rawId = callLogTypeArrayList.get(0).getUniqueContactId();
+
+                    Utils.setStringPreference(getActivity(), AppConstants
+                            .PREF_LATEST_CALL_DATE_TIME, latestCallDate);
+                    Utils.setStringPreference(getActivity(), AppConstants
+                            .PREF_LATEST_CALL_RAW_ID, rawId);
+                } else {
+                    textNoCallsFound.setVisibility(View.VISIBLE);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         }
 
     }
@@ -760,7 +986,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
         callLogTypeArrayList.clear();
         simpleCallLogListAdapter = new SimpleCallLogListAdapter(getActivity(),
-                callLogTypeArrayList);
+                callLogTypeArrayList,this);
         recyclerCallLogs.setAdapter(simpleCallLogListAdapter);
 
         try {
@@ -841,8 +1067,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             }
 
             Cursor cursor = getActivity().getContentResolver().query(CallLog.Calls.CONTENT_URI,
-                    null,
-                    CallLog.Calls.DATE + " BETWEEN ? AND ?"
+                    null, CallLog.Calls.DATE + " BETWEEN ? AND ?"
                     , new String[]{dateToCompare, currentDate}, order);
 
             if (cursor != null) {
@@ -944,11 +1169,11 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     }
 
                     simpleCallLogListAdapter = new SimpleCallLogListAdapter(getActivity(),
-                            filteredList);
+                            filteredList,this);
 
                 } else {
                     simpleCallLogListAdapter = new SimpleCallLogListAdapter(getActivity(),
-                            callLogTypeArrayList);
+                            callLogTypeArrayList,this);
                 }
 
                 recyclerCallLogs.setAdapter(simpleCallLogListAdapter);

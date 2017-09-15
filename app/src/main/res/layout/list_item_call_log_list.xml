@@ -9,16 +9,49 @@
         android:id="@+id/relative_row_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:padding="@dimen/padding_10dp">
 
-        <ImageView
-            android:id="@+id/image_profile"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
+        <RelativeLayout
+            android:id="@+id/icon_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fillAfter="false"
+            android:fillEnabled="false">
+
+            <ImageView
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:src="@drawable/bg_circle" />
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:src="@drawable/ico_check" />
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/rl_imageProfile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
-            android:background="@drawable/home_screen_profile"
-            android:contentDescription="@string/str_content_description"/>
+            android:fillAfter="false"
+            android:fillEnabled="false">
+
+            <ImageView
+                android:id="@+id/image_profile"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:background="@drawable/home_screen_profile"
+                android:contentDescription="@string/str_content_description"
+                android:visibility="visible"/>
+
+        </RelativeLayout>
+
 
         <ImageView
             android:id="@+id/image_3dots_call_log"
@@ -84,8 +117,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toEndOf="@+id/image_profile"
-            android:layout_toRightOf="@+id/image_profile"
+            android:layout_toEndOf="@+id/rl_imageProfile"
+            android:layout_toRightOf="@+id/rl_imageProfile"
             android:layout_toStartOf="@+id/image_3dots_call_log"
             android:orientation="vertical">
 
