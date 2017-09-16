@@ -34,7 +34,7 @@ public class WsResponseObject {
     private ArrayList<PrivacyRequestDataItem> privacyRequestData;
 
     @JsonProperty("rcontact_update")
-    private ArrayList<RcontactUpdatesData> rcontactUpdatesData;
+    private ArrayList<NotificationData> rcontactUpdatesData;
 
     @JsonProperty("receive_comment")
     private ArrayList<EventCommentData> eventReceiveCommentData;
@@ -71,7 +71,7 @@ public class WsResponseObject {
         return privacyRequestData;
     }
 
-    public ArrayList<RcontactUpdatesData> getRcontactUpdate() {
+    public ArrayList<NotificationData> getRcontactUpdate() {
         return rcontactUpdatesData;
     }
 

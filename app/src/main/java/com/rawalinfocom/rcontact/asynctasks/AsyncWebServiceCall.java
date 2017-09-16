@@ -129,7 +129,8 @@ public class AsyncWebServiceCall extends AsyncTask<String, Void, Object> {
             }
 
         } catch (Exception e) {
-            Utils.hideProgressDialog();
+            if (progressDialogMessage != null)
+                Utils.hideProgressDialog();
             this.error = e;
             Log.e(LOG_TAG, e.getMessage() + "");
         }
