@@ -648,7 +648,7 @@
                 android:layout_width="65dp"
                 android:layout_height="65dp"
                 android:layout_gravity="center"
-                android:layout_marginRight="@dimen/margin_25dp"
+                android:layout_marginRight="30dp"
                 app:rv_alpha="@integer/alpha_ripple"
                 app:rv_centered="true"
                 app:rv_color="@color/dialer_green"
@@ -688,6 +688,17 @@
                     android:src="@drawable/ic_dialer_white"/>
             </com.rawalinfocom.rcontact.helper.RippleView>
 
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/image_sim_preference"
+                android:padding="@dimen/margin_5dp"
+                android:src="@drawable/ico_ask_sim_svg"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/margin_10dp"
+                >
+            </ImageView>
 
             <com.rawalinfocom.rcontact.helper.RippleView
                 android:layout_width="65dp"

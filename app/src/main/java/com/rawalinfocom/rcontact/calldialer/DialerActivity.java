@@ -18,7 +18,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.BaseColumns;
 import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -43,6 +42,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -51,7 +51,6 @@ import android.widget.Toast;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
-import com.rawalinfocom.rcontact.SearchActivity;
 import com.rawalinfocom.rcontact.adapters.AllContactAdapter;
 import com.rawalinfocom.rcontact.calldialer.transition.ScaleTransition;
 import com.rawalinfocom.rcontact.calllog.TelephonyInfo;
@@ -195,6 +194,8 @@ public class DialerActivity extends BaseActivity {
     TextView textWxyz;
     @BindView(R.id.text_plus)
     TextView textPlus;
+    @BindView(R.id.image_sim_preference)
+    ImageView imageSimPreference;
     private String[] requiredPermissions = {Manifest.permission.READ_CALL_LOG};
     MaterialDialog permissionConfirmationDialog;
     ArrayList<Object> objectArrayListContact;
@@ -204,7 +205,8 @@ public class DialerActivity extends BaseActivity {
     TableProfileMaster tableProfileMaster;
     TableProfileMobileMapping tableProfileMobileMapping;
     ArrayList<ProfileData> secondaryContactList;
-
+    boolean isDualSim;
+    int simCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -224,6 +226,17 @@ public class DialerActivity extends BaseActivity {
         populateDataToFilter();
         slideDownAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.slide_down_animation);
+
+        TelephonyInfo telephonyInfo = TelephonyInfo.getInstance(DialerActivity
+                .this);
+        if (telephonyInfo != null) {
+            isDualSim = telephonyInfo.isDualSIM();
+            if(isDualSim){
+                imageSimPreference.setVisibility(View.VISIBLE);
+            }else{
+                imageSimPreference.setVisibility(View.GONE);
+            }
+        }
 
         editTextNumber.setCursorVisible(false);
         editTextNumber.addTextChangedListener(new TextWatcher() {
@@ -658,6 +671,33 @@ public class DialerActivity extends BaseActivity {
             }
         });
 
+        if(isDualSim){
+            imageSimPreference.setVisibility(View.VISIBLE);
+            if(simCount == 0){
+                Utils.setStringPreference(DialerActivity.this,AppConstants.EXTRA_DIALER_SIM_PREFERENCE,"0");
+            }
+            imageSimPreference.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(simCount == 0){
+                        imageSimPreference.setImageResource(R.drawable.ico_sim1_svg);
+                        simCount = 1;
+                        Utils.setStringPreference(DialerActivity.this,AppConstants.EXTRA_DIALER_SIM_PREFERENCE,"1");
+                    }else if(simCount == 1){
+                        imageSimPreference.setImageResource(R.drawable.ico_sim2_svg);
+                        simCount = 2;
+                        Utils.setStringPreference(DialerActivity.this,AppConstants.EXTRA_DIALER_SIM_PREFERENCE,"2");
+                    }else if(simCount == 2){
+                        imageSimPreference.setImageResource(R.drawable.ico_ask_sim_svg);
+                        simCount = 0;
+                        Utils.setStringPreference(DialerActivity.this,AppConstants.EXTRA_DIALER_SIM_PREFERENCE,"0");
+                    }
+                }
+            });
+        }else{
+            imageSimPreference.setVisibility(View.GONE);
+        }
+
         callButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -668,16 +708,46 @@ public class DialerActivity extends BaseActivity {
                         TelephonyInfo telephonyInfo = TelephonyInfo.getInstance(DialerActivity
                                 .this);
                         if (telephonyInfo != null) {
-                            String simSerialNumber = telephonyInfo.simSerialNumber;
-                            if (!StringUtils.isEmpty(simSerialNumber)) {
-                                numberToCall = Utils.getFormattedNumber(DialerActivity.this,
-                                        numberToCall);
-                                Utils.callIntent(DialerActivity.this, numberToCall);
+                            boolean isDualSim = telephonyInfo.isDualSIM();
+                            if (!isDualSim) {
+                                imageSimPreference.setVisibility(View.GONE);
+                                String simSerialNumber = telephonyInfo.simSerialNumber;
+                                if (!StringUtils.isEmpty(simSerialNumber)) {
+                                    numberToCall = Utils.getFormattedNumber(DialerActivity.this,
+                                            numberToCall);
+                                    Utils.callIntent(DialerActivity.this, numberToCall);
 //                                showCallConfirmationDialog(numberToCall);
+                                } else {
+                                    Toast.makeText(DialerActivity.this, getString(R.string.str_no_sim),
+                                            Toast.LENGTH_SHORT).show();
+                                }
                             } else {
-                                Toast.makeText(DialerActivity.this, getString(R.string.str_no_sim),
-                                        Toast.LENGTH_SHORT).show();
+                                String callFromSim =  Utils.getStringPreference(DialerActivity.this,
+                                        AppConstants.EXTRA_DIALER_SIM_PREFERENCE,"-1");
+                                if(StringUtils.equalsIgnoreCase(callFromSim,"1")){
+                                    numberToCall = Utils.getFormattedNumber(DialerActivity.this,
+                                            numberToCall);
+                                    Utils.callIntentWithSimPreference(DialerActivity.this, numberToCall,"0");
+
+                                }else if(StringUtils.equalsIgnoreCase(callFromSim,"2")){
+
+                                    numberToCall = Utils.getFormattedNumber(DialerActivity.this,
+                                            numberToCall);
+                                    Utils.callIntentWithSimPreference(DialerActivity.this, numberToCall,"1");
+
+                                }else if(StringUtils.equalsIgnoreCase(callFromSim,"0")){
+                                    String simSerialNumber = telephonyInfo.simSerialNumber;
+                                    if (!StringUtils.isEmpty(simSerialNumber)) {
+                                        numberToCall = Utils.getFormattedNumber(DialerActivity.this,
+                                                numberToCall);
+                                        Utils.callIntent(DialerActivity.this, numberToCall);
+                                    } else {
+                                        Toast.makeText(DialerActivity.this, getString(R.string.str_no_sim),
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+                                }
                             }
+
                         }
                     } else {
                         Toast.makeText(DialerActivity.this, getString(R.string.str_no_number),
