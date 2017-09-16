@@ -1,5 +1,6 @@
 package com.rawalinfocom.rcontact;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,6 +18,7 @@ import com.rawalinfocom.rcontact.database.DatabaseHandler;
 public abstract class BaseFragment extends Fragment {
 
     DatabaseHandler databaseHandler;
+    MainActivity activity;
 
     public BaseFragment() {
         // Required empty public constructor
@@ -25,9 +27,14 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        activity =  (MainActivity) getActivity();
+        databaseHandler = new DatabaseHandler(getActivity());
         getFragmentArguments();
     }
 
+    public MainActivity getMainActivity(){
+        return this.activity;
+    }
     /**
      * Retrieves arguments supplied to setArguments(Bundle), if any.
      */
@@ -67,7 +74,7 @@ public abstract class BaseFragment extends Fragment {
     }
 
     public DatabaseHandler getDatabaseHandler() {
-        return  databaseHandler = ((BaseActivity) getActivity()).databaseHandler;
+        return databaseHandler;
     }
 
     public String getUserPmId() {
@@ -75,5 +82,12 @@ public abstract class BaseFragment extends Fragment {
             return null;
         }
         return ((BaseActivity) getActivity()).getUserPmId();
+    }
+
+    public String getPmBadge() {
+        if (getActivity() == null) {
+            return null;
+        }
+        return ((BaseActivity) getActivity()).getPmBadge();
     }
 }

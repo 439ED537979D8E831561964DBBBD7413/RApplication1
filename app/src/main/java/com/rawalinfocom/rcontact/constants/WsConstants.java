@@ -25,7 +25,9 @@ public class WsConstants {
     // WEBSITE URL
     public static final String WS_WEBSITE_URL = "https://www.rcontacts.in";
     // AVERAGE RATING SHARE
-    public static final String WS_AVG_RATING_SHARE_BADGE_ROOT = "http://rcrc.ac/r/";*/
+    public static final String WS_AVG_RATING_SHARE_BADGE_ROOT = "http://rcrc.ac/r/";
+    //PLAY STORE LINK
+    public static String PLAY_STORE_LINK = "http://rcrc.ac/a/";*/
 
     //</editor-fold>
 
@@ -34,7 +36,7 @@ public class WsConstants {
      */
     //<editor-fold desc="Staging">
 
-   /* // API ROOT
+    /*// API ROOT
     public static final String WS_ROOT = "http://apistaging.rcontacts.in/api/v1/";
     // TERMS-CONDITIONS URL
     public static final String URL_TERMS_CONDITIONS = "http://webstaging.rcontacts.in/global/terms";
@@ -47,18 +49,20 @@ public class WsConstants {
     // WEBSITE URL
     public static final String WS_WEBSITE_URL = "http://webstaging.rcontacts.in";
     // AVERAGE RATING SHARE
-    public static final String WS_AVG_RATING_SHARE_BADGE_ROOT = "http://rcrc.ac/r/";*/
+    public static final String WS_AVG_RATING_SHARE_BADGE_ROOT = "http://staging.rcrc.ac/r/";
+    //PLAY STORE LINK
+    public static String PLAY_STORE_LINK = "http://staging.rcrc.ac/a/";*/
 
     //</editor-fold>
 
     /**
      * QA
-     *
      */
     //<editor-fold desc="QA">
 
     // API ROOT
-    public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
+//    public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
+//    public static final String WS_ROOT_V2 = "http://apiqa.rcontacts.in/api/v2/";
     // TERMS-CONDITIONS URL
     public static final String URL_TERMS_CONDITIONS = "http://webqa.rcontacts.in/global/terms";
     // FAQ URL
@@ -69,7 +73,10 @@ public class WsConstants {
     // WEBSITE URL
     public static final String WS_WEBSITE_URL = "http://webqa.rcontacts.in";
     // AVERAGE RATING SHARE
-    public static final String WS_AVG_RATING_SHARE_BADGE_ROOT = "http://rcrc.ac/r/";
+    public static final String WS_AVG_RATING_SHARE_BADGE_ROOT = "http://qa.rcrc.ac/r/";
+    //PLAY STORE LINK
+    public static String PLAY_STORE_LINK = "http://qa.rcrc.ac/a/";
+
 
     //</editor-fold>
 
@@ -81,7 +88,8 @@ public class WsConstants {
 //    public static final String WS_ROOT = "http://10.0.21.163/api/v1/";
 
     // Aniruddh
-//    public static final String WS_ROOT = "http://10.0.21.122/api/v1/";
+    public static final String WS_ROOT = "http://10.0.21.122/api/v1/";
+    public static final String WS_ROOT_V2 = "http://10.0.21.122/api/v2/";
 
     // Maulik
 //    public static final String WS_ROOT = "http://10.0.51.119/api/v1/";
@@ -94,6 +102,7 @@ public class WsConstants {
 
     // Jignesh
 //    public static final String WS_ROOT = "http://10.0.21.15:8000/api/v1/";
+//    public static final String WS_ROOT_V2 = "http://10.0.21.15:8000/api/v2/";
 
     // Vijay
 //     public static final String WS_ROOT = "http://10.0.21.16/api/v1/";
@@ -132,8 +141,10 @@ public class WsConstants {
     public static final String REQ_CHECK_NUMBER = "check-number";
     public static final String REQ_OTP_CONFIRMED = "confirm-otp";
     public static final String REQ_PROFILE_REGISTRATION = "profile-registration";
+    public static final String REQ_REGISTER_WITH_SOCIAL_MEDIA = "register-with-social-media";
     public static final String REQ_SAVE_PASSWORD = "save-password";
     public static final String REQ_CHECK_LOGIN = "check-login";
+    public static final String REQ_LOGIN_WITH_SOCIAL_MEDIA = "login-with-social-media";
     public static final String REQ_COUNTRY_CODE_DETAIL = "country-code-detail";
     public static final String REQ_MSP_DELIVERY_TIME = "msp-delivery-time";
     public static final String REQ_STORE_DEVICE_DETAILS = "store-device-details";

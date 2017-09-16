@@ -482,7 +482,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
-
                 File file = new File(getRealPathFromURI(result.getUri()));
                 Bitmap bitmap = Utils.decodeFile(file, 512, 512);
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

@@ -64,6 +64,7 @@
     <color name="finestWhite10">#1AFFFFFF</color>
     <color name="finestWhite20">#33FFFFFF</color>
     <color name="finestWhite30">#4DFFFFFF</color>
+    <color name="finestWhite40">#FFFFFF</color>
 
     <color name="finestGray10">#1AD2D2D2</color>
     <color name="finestGray20">#33D2D2D2</color>
@@ -80,5 +81,6 @@
     <color name="finestGray">#E7E7E7</color>
     <color name="colorTextHeader">#222222</color>
     <color name="colorTextSub">#666666</color>
+    <color name="bg_circle_default">#666666</color>
 
 </resources>

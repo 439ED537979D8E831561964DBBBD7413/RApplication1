@@ -2,6 +2,8 @@ package com.rawalinfocom.rcontact.contacts;
 
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -88,8 +90,11 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import butterknife.BindView;
@@ -114,6 +119,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     TextView textTotalContacts;
 
     public static ArrayList<Object> arrayListPhoneBookContacts;
+    public static ArrayList<Object> arrayListPhoneBookContactsTemp;
+    public static ArrayList<ProfileData> arrayListContacts;
     ArrayList<ProfileData> arrayListSyncUserContact = new ArrayList<>();
     ArrayList<String> arrayListFavouriteContacts;
 
@@ -256,6 +263,15 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         Utils.setIntegerPreference(getActivity(), AppConstants.PREF_SYNCED_CONTACTS,
                                 lastSyncedData);
 
+                        int percentage = (100 * lastSyncedData) / (arrayListSyncUserContact
+                                .size() + CONTACT_CHUNK);
+
+                        /*((ContactsFragment) getParentFragment()).textSyncProgress.setText
+                                (percentage + "% data synced!");*/
+                        ((ContactsFragment) getParentFragment()).progressContacts
+                                .setProgressWithAnim(percentage);
+
+
                         if (lastSyncedData < (arrayListSyncUserContact.size() + CONTACT_CHUNK)) {
                             backgroundSync(true, uploadContactResponse);
                         } else {
@@ -321,8 +337,27 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     if (savePackageResponse != null && StringUtils.equalsIgnoreCase
                             (savePackageResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                        Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts,
-                                getActivity().getString(R.string.str_all_contact_sync));
+                        /*Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts,
+                                getActivity().getString(R.string.str_all_contact_sync));*/
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                final View view = ((ContactsFragment) getParentFragment())
+                                        .relativeSyncProgress;
+                                view.animate()
+                                        .translationY(view.getHeight())
+                                        .alpha(0.0f)
+                                        .setDuration(300)
+                                        .setListener(new AnimatorListenerAdapter() {
+                                            @Override
+                                            public void onAnimationEnd(Animator animation) {
+                                                super.onAnimationEnd(animation);
+                                                view.setVisibility(View.GONE);
+                                            }
+                                        });
+                            }
+                        }, 1200);
+
                         Utils.setBooleanPreference(getActivity(), AppConstants
                                 .PREF_CONTACT_SYNCED, true);
                         Intent localBroadcastIntent = new Intent(AppConstants
@@ -464,6 +499,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         if (arrayListPhoneBookContacts == null) {
 
             arrayListPhoneBookContacts = new ArrayList<>();
+            arrayListPhoneBookContactsTemp = new ArrayList<>();
+            arrayListContacts = new ArrayList<>();
             arrayListFavouriteContacts = new ArrayList<>();
 
             phoneBookContacts = new PhoneBookContacts(getActivity());
@@ -546,9 +583,35 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
      */
     public void setRecyclerViewLayoutManager() {
 
+        if (Utils.getStringPreference(getActivity(), AppConstants.PREF_SHORT_BY_CONTACT, "0")
+                .equalsIgnoreCase("0")) {
+
+            if (arrayListPhoneBookContacts.size() == 0) {
+                arrayListPhoneBookContacts.addAll(arrayListPhoneBookContactsTemp);
+            } else {
+                arrayListPhoneBookContactsTemp.addAll(arrayListPhoneBookContacts);
+            }
+        } else {
+            Collections.sort(arrayListContacts, new CustomComparator());
+            arrayListPhoneBookContacts.clear();
+            arrayListPhoneBookContacts.addAll(arrayListContacts);
+        }
+
         allContactListAdapter = new AllContactAdapter(this, arrayListPhoneBookContacts, null);
         recyclerViewContactList.setAdapter(allContactListAdapter);
         rContactApplication.setArrayListAllPhoneBookContacts(arrayListPhoneBookContacts);
+    }
+
+    public class CustomComparator implements Comparator<ProfileData> {
+        @Override
+        public int compare(ProfileData o1, ProfileData o2) {
+            try {
+                return o1.getTempLastName().compareTo(o2.getTempLastName());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return 0;
+        }
     }
 
     private void getRcpDetail() {
@@ -565,24 +628,26 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         userProfiles.addAll(tableProfileMaster.getProfileDetailsFromRawId((
                                 (ProfileData) arrayListPhoneBookContacts.get(i))
                                 .getRawContactId()));
-                        String name = "0";
+                        StringBuilder name = new StringBuilder("0");
                         String rcpID = "0";
                         String rcpProfileImage = "";
                         if (userProfiles.size() > 1) {
                             for (int j = 0; j < userProfiles.size(); j++) {
-                                if (name.equalsIgnoreCase("0")) {
-                                    name = userProfiles.get(j).getPmRcpId();
+                                if (name.toString().equalsIgnoreCase("0")) {
+                                    name = new StringBuilder(userProfiles.get(j).getPmRcpId());
                                 } else {
-                                    name = name + "," + userProfiles.get(j).getPmRcpId();
+                                    name.append(",").append(userProfiles.get(j).getPmRcpId());
                                 }
                             }
                         } else if (userProfiles.size() == 1) {
-                            name = userProfiles.get(0).getPmFirstName() + " " + userProfiles.get
-                                    (0).getPmLastName();
+                            name = new StringBuilder(userProfiles.get(0).getPmFirstName() + " " +
+                                    userProfiles.get
+                                            (0).getPmLastName());
                             rcpID = userProfiles.get(0).getPmRcpId();
                             rcpProfileImage = userProfiles.get(0).getPmProfileImage();
                         }
-                        ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpName(name);
+                        ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpName(name
+                                .toString());
                         ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpId(rcpID);
                         ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpImageURL
                                 (rcpProfileImage);
@@ -633,6 +698,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     profileData = new ProfileData();
                     array.put(id, profileData);
                     arrayListPhoneBookContacts.add(profileData);
+                    arrayListContacts.add(profileData);
                 }
 
                 profileData.setLocalPhoneBookId(data.getString(rawIdIdx));
@@ -657,7 +723,11 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     case ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE:
                         profileData.setName(data.getString(display));
                         profileData.setTempFirstName(data.getString(givenName));
-                        profileData.setTempLastName(data.getString(familyName));
+                        if (data.getString(familyName).equalsIgnoreCase(""))
+                            profileData.setTempLastName("");
+                        else
+                            profileData.setTempLastName(data.getString(familyName));
+
                         break;
                 }
             } catch (Exception E) {
@@ -1568,6 +1638,15 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             arrayListSyncUserContact.add(profileData);
         }
         //</editor-fold>
+
+        int percentage = (100 * lastSyncedData) / (arrayListSyncUserContact
+                .size() + CONTACT_CHUNK);
+
+        if (percentage >= 100) {
+            ((ContactsFragment) getParentFragment()).relativeSyncProgress.setVisibility(View.GONE);
+        } else {
+            ((ContactsFragment) getParentFragment()).progressContacts.setProgress(percentage);
+        }
 
         if (lastSyncedData < arrayListSyncUserContact.size()) {
             if (syncingTask != null && syncingTask.isCancelled()) {

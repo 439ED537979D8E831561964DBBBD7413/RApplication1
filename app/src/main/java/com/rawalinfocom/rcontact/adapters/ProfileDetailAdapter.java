@@ -3,6 +3,7 @@ package com.rawalinfocom.rcontact.adapters;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -11,6 +12,7 @@ import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.RecyclerView;
+import android.telephony.PhoneNumberUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -135,6 +137,9 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         final String number = phoneNumber.getPhoneNumber();
         holder.textSub.setText(phoneNumber.getPhoneType());
         holder.textSub.setVisibility(View.VISIBLE);
+        if (Utils.isAppInstalled(activity, "com.whatsapp")) {
+            holder.imgActionWhatsapp.setVisibility(View.VISIBLE);
+        }
 
         holder.imgActionType.setImageResource(R.drawable.ico_phone_alt_svg);
         holder.imgActionType.setOnClickListener(new View.OnClickListener() {
@@ -159,7 +164,24 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             }
         });
 
-        holder.llProfileData.setOnClickListener(new View.OnClickListener() {
+        holder.imgActionWhatsapp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               /* Uri uri = Uri.parse("smsto:" + number);
+                Intent sendIntent = new Intent(Intent.ACTION_SENDTO, uri);
+                sendIntent.setPackage("com.whatsapp");
+                activity.startActivity(sendIntent);*/
+                Intent sendIntent = new Intent("android.intent.action.MAIN");
+                sendIntent.setComponent(new ComponentName("com.whatsapp", "com.whatsapp" +
+                        ".Conversation"));
+                sendIntent.putExtra("jid", PhoneNumberUtils.stripSeparators(StringUtils.substring
+                        (number, 1)) + "@s" +
+                        ".whatsapp.net");//phone number without "+" prefix
+                activity.startActivity(sendIntent);
+            }
+        });
+
+      /*  holder.llProfileData.setOnClickListener(new View.OnClickListener() {
             @TargetApi(Build.VERSION_CODES.M)
             @Override
             public void onClick(View v) {
@@ -178,7 +200,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                     }
                 }
             }
-        });
+        });*/
 
 
         holder.textMain.setOnLongClickListener(new View.OnLongClickListener() {
@@ -196,8 +218,9 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         int pbRcpType = phoneNumber.getPbRcpType();
         if (pbRcpType == IntegerConstants.RCP_TYPE_PRIMARY) {
             holder.textMain.setText(Utils.setMultipleTypeface(activity, number + " " + activity
-                    .getString(R.string.im_icon_verify), 0, (StringUtils.length(number) + 1), (
-                    (StringUtils.length(number) + 1) + 1)));
+                            .getString(R.string.im_icon_verify), 0,
+                    (StringUtils.length(number) + 1), (
+                            (StringUtils.length(number) + 1) + 1)));
             holder.textMain.setTextColor(colorPineGreen);
             if (isOwnProfile)
                 holder.llPrivacy.setVisibility(View.GONE);
@@ -231,6 +254,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 //                    holder.imageView2.setVisibility(View.GONE);
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                     holder.imgActionType.setVisibility(View.GONE);
+                    holder.imgActionWhatsapp.setVisibility(View.GONE);
                 }
             }
             holder.llPrivacy.setOnClickListener(new View.OnClickListener() {
@@ -312,11 +336,13 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         final ProfileDetailViewHolder viewHodler = holder;
         if (emRcpType == IntegerConstants.RCP_TYPE_PRIMARY) {
             holder.textMain.setText(Utils.setMultipleTypeface(activity, emailId + " " + activity
-                    .getString(R.string.im_icon_verify), 0, (StringUtils.length(emailId) + 1), (
-                    (StringUtils.length(emailId) + 1) + 1)));
+                            .getString(R.string.im_icon_verify), 0,
+                    (StringUtils.length(emailId) + 1), (
+                            (StringUtils.length(emailId) + 1) + 1)));
             holder.textMain.setTextColor(colorPineGreen);
             if (isOwnProfile)
-                holder.llPrivacy.setVisibility(View.INVISIBLE);
+//                holder.llPrivacy.setVisibility(View.INVISIBLE);
+                holder.llPrivacy.setVisibility(View.GONE);
             else
                 holder.llPrivacy.setVisibility(View.GONE);
         } else if (emRcpType == IntegerConstants.RCP_TYPE_SECONDARY) {
@@ -974,6 +1000,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
         @BindView(R.id.img_action_type)
         ImageView imgActionType;
+        @BindView(R.id.img_action_whatsapp)
+        ImageView imgActionWhatsapp;
         @BindView(R.id.text_main)
         public TextView textMain;
         @BindView(R.id.text_sub)
@@ -993,6 +1021,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
             textMain.setTypeface(Utils.typefaceRegular(activity));
             textSub.setTypeface(Utils.typefaceRegular(activity));
+            imgActionWhatsapp.setVisibility(View.GONE);
         }
     }
 }

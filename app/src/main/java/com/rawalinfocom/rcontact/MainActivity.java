@@ -181,6 +181,10 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     private final int CONTACT_CHUNK = 50;
     int lastSyncedData = 0;
 
+    public  Toolbar getToolbar(){
+        return this.toolbar;
+    }
+
     //<editor-fold desc="Override Methods">
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -364,9 +368,10 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 if (StringUtils.startsWith(number, "+")) {
                     number = StringUtils.substring(number, 1);
                 }
-                String shareBody = AppConstants.PLAY_STORE_LINK + getPackageName() +
-                        "&utm_source" + "=" + number + "&utm_medium=" + number;
+//                String shareBody = WsConstants.PLAY_STORE_LINK + getPackageName() +
+//                        "&utm_source" + "=" + number + "&utm_medium=" + number;
 
+                String shareBody = WsConstants.PLAY_STORE_LINK + getPmBadge();
                 sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
                 startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_via)));
 
@@ -3776,8 +3781,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     private void RCPContactServiceCall(String timestamp, String url) {
 
         if (Utils.isNetworkAvailable(MainActivity.this)) {
-            WsRequestObject deviceDetailObject = new WsRequestObject();
 
+            WsRequestObject deviceDetailObject = new WsRequestObject();
             deviceDetailObject.setTimeStamp(timestamp);
 
             if (Utils.isNetworkAvailable(this)) {

@@ -20,12 +20,12 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.StrictMode;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.provider.Telephony;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v4.content.LocalBroadcastManager;
@@ -80,6 +80,7 @@ import com.rawalinfocom.rcontact.database.TableWebsiteMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.CallConfirmationListDialog;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
+import com.rawalinfocom.rcontact.helper.MyProfileShareDialog;
 import com.rawalinfocom.rcontact.helper.ProfileMenuOptionDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
@@ -120,6 +121,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -127,6 +129,7 @@ import java.util.regex.Pattern;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Optional;
 
 public class ProfileDetailActivity extends BaseActivity implements RippleView
         .OnRippleCompleteListener, WsResponseListener {
@@ -238,6 +241,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     CardView cardOtherDetails;
     @BindView(R.id.button_view_more)
     Button buttonViewMore;
+    @Nullable @BindView(R.id.image_expand_collapse)
+    ImageView imageExpandCollapse;
     @BindView(R.id.ripple_view_more)
     RippleView rippleViewMore;
     @BindView(R.id.relative_section_view_more)
@@ -375,6 +380,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         IntentFilter intentFilter = new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_PROFILE);
         localBroadcastManager.registerReceiver(localBroadcastReceiver, intentFilter);
 
+        LocalBroadcastManager localBroadcastManager1 =  LocalBroadcastManager.getInstance(this);
+        IntentFilter intentFilter1 = new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_DIALOG);
+        localBroadcastManager1.registerReceiver(localBroadcastReceiverDialog,intentFilter1);
+
         if (profileActivityCallInstance) {
 //            fetchCallLogHistoryDateWise(historyNumber);
 //            fetchAllCallLogHistory(historyNumber);
@@ -416,6 +425,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         super.onPause();
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
         localBroadcastManager.unregisterReceiver(localBroadcastReceiver);
+
+        LocalBroadcastManager localBroadcastManager1 = LocalBroadcastManager.getInstance(this);
+        localBroadcastManager1.unregisterReceiver(localBroadcastReceiverDialog);
     }
 
     @Override
@@ -427,9 +439,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 if (relativeSectionViewMore.getVisibility() == View.VISIBLE) {
                     relativeSectionViewMore.setVisibility(View.GONE);
                     buttonViewMore.setText(getString(R.string.str_view_more));
+                    imageExpandCollapse.setImageResource(R.drawable.ico_arrow_down_svg);
                 } else {
                     relativeSectionViewMore.setVisibility(View.VISIBLE);
                     buttonViewMore.setText(getString(R.string.str_view_less));
+                    imageExpandCollapse.setImageResource(R.drawable.ic_arrow_up_svg);
                 }
                 break;
             //</editor-fold>
@@ -724,40 +738,50 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         showChooseShareOption(null, null);
                     }*/
 
-                    if (!StringUtils.equalsAnyIgnoreCase(pmId, "-1")) {
-                        TableProfileMaster tableProfileMaster = new TableProfileMaster
-                                (databaseHandler);
-                        UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId
-                                (Integer.parseInt(pmId));
-                        TableMobileMaster tableMobileMaster = new TableMobileMaster
-                                (databaseHandler);
-                        String number = tableMobileMaster.getUserMobileNumber(pmId);
+                    if(displayOwnProfile){
+                        ArrayList arrayList = new ArrayList(Arrays.asList(getString(R.string.my_profile_share),
+                                getString(R.string.average_rate_sharing)));
+                        MyProfileShareDialog myProfileShareDialog = new
+                                MyProfileShareDialog(this, arrayList,pmId,profileDataOperationVcard,contactName,
+                                ProfileDetailActivity.this);
+                        myProfileShareDialog.showDialog();
 
-                        if (StringUtils.startsWith(number, "+")) {
-                            number = StringUtils.substring(number, 1);
-                        }
+                    }else{
+                        if (!StringUtils.equalsAnyIgnoreCase(pmId, "-1")) {
+                            TableProfileMaster tableProfileMaster = new TableProfileMaster
+                                    (databaseHandler);
+                            UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId
+                                    (Integer.parseInt(pmId));
+                            TableMobileMaster tableMobileMaster = new TableMobileMaster
+                                    (databaseHandler);
+                            String number = tableMobileMaster.getUserMobileNumber(pmId);
+
+                            if (StringUtils.startsWith(number, "+")) {
+                                number = StringUtils.substring(number, 1);
+                            }
 
 //                        if (!StringUtils.equalsAnyIgnoreCase(pmId, "-1")) {
-                        // RCP profile or Own Profile
-                        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-                        sharingIntent.setType("text/plain");
-                        String shareBody;
-                        if (StringUtils.isBlank(userProfile.getPmBadge())) {
-                            shareBody = WsConstants.WS_PROFILE_VIEW_BADGE_ROOT + number;
-                        } else {
-                            shareBody = WsConstants.WS_PROFILE_VIEW_BADGE_ROOT + userProfile
-                                    .getPmBadge();
-                        }
-                        sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
-                        startActivity(Intent.createChooser(sharingIntent, getString(R.string
-                                .str_share_contact_via)));
+                            // RCP profile or Own Profile
+                            Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+                            sharingIntent.setType("text/plain");
+                            String shareBody;
+                            if (StringUtils.isBlank(userProfile.getPmBadge())) {
+                                shareBody = WsConstants.WS_PROFILE_VIEW_BADGE_ROOT + number;
+                            } else {
+                                shareBody = WsConstants.WS_PROFILE_VIEW_BADGE_ROOT + userProfile
+                                        .getPmBadge();
+                            }
+                            sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
+                            startActivity(Intent.createChooser(sharingIntent, getString(R.string
+                                    .str_share_contact_via)));
 //                        } else {
 //                            // Non-Rcp profile
 //                            shareContact();
 //
 //                        }
-                    } else {
-                        shareContact();
+                        } else {
+                            shareContact();
+                        }
                     }
                 }
                 break;
@@ -1088,9 +1112,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     Intent sendIntent = new Intent();
                     sendIntent.setAction(Intent.ACTION_SEND);
                     sendIntent.setType("text/x-vcard");
-                    sendIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(ProfileDetailActivity.this,
-                            BuildConfig.APPLICATION_ID + ".provider",
-                            vcfFile));
+                    sendIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile
+                            (ProfileDetailActivity.this,
+                                    BuildConfig.APPLICATION_ID + ".provider",
+                                    vcfFile));
                     startActivity(sendIntent);
 
                 } else {
@@ -1813,35 +1838,36 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 //                .color.darker_gray));
 
         if (!displayOwnProfile) {
-        if (!StringUtils.equalsIgnoreCase(pmId, "-1")) {
-            // RC Profile
+            if (!StringUtils.equalsIgnoreCase(pmId, "-1")) {
+                // RC Profile
 //                getDataFromDB();
-            if (Utils.isNetworkAvailable(ProfileDetailActivity.this) && !profileActivityCallInstance) {
-                //call service
-                cardContactDetails.setVisibility(View.GONE);
-                cardOtherDetails.setVisibility(View.GONE);
-                getProfileDetails();
+                if (Utils.isNetworkAvailable(ProfileDetailActivity.this) &&
+                        !profileActivityCallInstance) {
+                    //call service
+                    cardContactDetails.setVisibility(View.GONE);
+                    cardOtherDetails.setVisibility(View.GONE);
+                    getProfileDetails();
 
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        Utils.hideProgressDialog();
-                        if (asyncGetProfileDetails != null) {
-                            asyncGetProfileDetails.cancel(true);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Utils.hideProgressDialog();
+                            if (asyncGetProfileDetails != null) {
+                                asyncGetProfileDetails.cancel(true);
+                            }
+                            getDataFromDB();
                         }
-                        getDataFromDB();
-                    }
-                }, 4000);
+                    }, 4000);
 
-            } else {
-                getDataFromDB();
-            }
+                } else {
+                    getDataFromDB();
+                }
 //            }
-        } else {
-            // Non-RC Profile
-            setUpView(null);
+            } else {
+                // Non-RC Profile
+                setUpView(null);
+            }
         }
-    }
 
         layoutVisibility();
 
@@ -3323,7 +3349,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            Utils.showProgressDialog(ProfileDetailActivity.this, getString(R.string.msg_please_wait), false);
+            Utils.showProgressDialog(ProfileDetailActivity.this, getString(R.string
+                    .msg_please_wait), false);
             rippleViewOldRecords.setVisibility(View.GONE);
         }
 
@@ -3349,12 +3376,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         protected void onPostExecute(Void result) {
 
-           new Handler().postDelayed(new Runnable() {
-               @Override
-               public void run() {
-                   Utils.hideProgressDialog();
-               }
-           },1500);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Utils.hideProgressDialog();
+                }
+            }, 1500);
 
             setHistoryAdapter();
         }
@@ -4120,7 +4147,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         if (Utils.isNetworkAvailable(this)) {
             asyncGetProfileDetails = new AsyncWebServiceCall(this, WSRequestType
                     .REQUEST_TYPE_JSON.getValue(), null, null, WsResponseObject.class, WsConstants
-                    .REQ_GET_PROFILE_DETAILS, getResources().getString(R.string.msg_please_wait), true);
+                    .REQ_GET_PROFILE_DETAILS, getResources().getString(R.string.msg_please_wait),
+                    true);
             asyncGetProfileDetails.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants
                     .WS_ROOT + WsConstants.REQ_GET_PROFILE_DETAILS + "/" + pmId);
         } else {
@@ -4184,4 +4212,41 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     }
 
     //</editor-fold>
+
+
+    private BroadcastReceiver localBroadcastReceiverDialog = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.hasExtra("networkIssue")){
+                String intentNetworkIssue =  intent.getStringExtra("networkIssue");
+                if(StringUtils.equalsIgnoreCase(intentNetworkIssue,"true")){
+                    Utils.showErrorSnackBar(ProfileDetailActivity.this, relativeRootProfileDetail, getResources()
+                            .getString(R.string.msg_no_network));
+                }
+            }else if(intent.hasExtra("responseError")) {
+                String responseError =  intent.getStringExtra("responseError");
+                if(StringUtils.equalsIgnoreCase(responseError,"true")){
+                    if(intent.hasExtra("responseMessage")){
+                        String responseMessage =  intent.getStringExtra("responseMessage");
+                        if(!StringUtils.isEmpty(responseMessage)){
+                            Utils.showErrorSnackBar(ProfileDetailActivity.this, relativeRootProfileDetail,responseMessage);
+                        }
+                    }
+                }
+            }else if(intent.hasExtra("serverError")){
+                String serverError =  intent.getStringExtra("serverError");
+                if(StringUtils.equalsIgnoreCase(serverError,"true")){
+                    Utils.showErrorSnackBar(ProfileDetailActivity.this, relativeRootProfileDetail, getResources()
+                            .getString(R.string.msg_try_later));
+                }
+            }else if(intent.hasExtra("noApps")){
+                String noAppFound =  intent.getStringExtra("noApps");
+                if(StringUtils.equalsIgnoreCase(noAppFound,"true")){
+                    Utils.showErrorSnackBar(ProfileDetailActivity.this, relativeRootProfileDetail, getResources()
+                            .getString(R.string.error_no_social_app_found));
+                }
+            }
+
+        }
+    };
 }

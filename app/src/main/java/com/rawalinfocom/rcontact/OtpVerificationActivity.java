@@ -118,7 +118,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
             isFrom = bundle.getString(AppConstants.EXTRA_IS_FROM, "");
         }
 
-        if (isFrom.equalsIgnoreCase(AppConstants.PREF_FORGOT_PASSWORD)) {
+        if (isFrom.equalsIgnoreCase(AppConstants.EXTRA_IS_FROM_FORGOT_PASSWORD)) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 checkPermissionToExecute(requiredPermissions, AppConstants.READ_SMS);
             }
@@ -208,7 +208,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
 
                     LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
 
-                    if (isFrom.equals(AppConstants.PREF_FORGOT_PASSWORD)) {
+                    if (isFrom.equals(AppConstants.EXTRA_IS_FROM_FORGOT_PASSWORD)) {
 
                         // set launch screen as OtpVerificationActivity
                         Utils.setIntegerPreference(OtpVerificationActivity.this,
@@ -218,7 +218,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
                         // Redirect to SetPassWordActivity
                         Bundle bundle = new Bundle();
                         bundle.putString(AppConstants.EXTRA_IS_FROM, AppConstants
-                                .PREF_FORGOT_PASSWORD);
+                                .EXTRA_IS_FROM_FORGOT_PASSWORD);
                         Intent intent = new Intent(this, SetPasswordActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -309,7 +309,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
         otpObject.setCountryCode(selectedCountry.getCountryCodeNumber());
         otpObject.setMobileNumber(mobileNumber.replace("+91", ""));
 //        otpObject.setDeviceId(getDeviceId());
-        if (isFrom.equals(AppConstants.PREF_FORGOT_PASSWORD))
+        if (isFrom.equals(AppConstants.EXTRA_IS_FROM_FORGOT_PASSWORD))
             otpObject.setForgotPassword(1);
 
         if (Utils.isNetworkAvailable(this)) {
@@ -332,7 +332,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
         otpObject.setOtp(otp);
 //        otpObject.setDeviceId(getDeviceId());
         otpObject.setMobileNumber(mobileNumber.replace("+", ""));
-        if (isFrom.equals(AppConstants.PREF_FORGOT_PASSWORD))
+        if (isFrom.equals(AppConstants.EXTRA_IS_FROM_FORGOT_PASSWORD))
             otpObject.setForgotPassword(1);
 
         if (Utils.isNetworkAvailable(this)) {

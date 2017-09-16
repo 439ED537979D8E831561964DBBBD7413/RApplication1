@@ -8,12 +8,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -52,6 +54,9 @@ import static com.rawalinfocom.rcontact.ProfileRegistrationActivity.isFromSettin
 public class MapsActivity extends BaseActivity implements OnMapReadyCallback, RippleView
         .OnRippleCompleteListener, WsResponseListener {
 
+    final int MAP_VIEW_NORMAL = 0;
+    final int MAP_VIEW_SATELLITE = 1;
+
     int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
 
     @BindView(R.id.relative_root_map)
@@ -66,6 +71,10 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
     RelativeLayout relativeFetchAddress;
     @BindView(R.id.ripple_fetch_address)
     RippleView rippleFetchAddress;
+    @BindView(R.id.image_map_view)
+    ImageView imageMapView;
+    @BindView(R.id.text_map_view)
+    TextView textMapView;
 
     SupportMapFragment mapFragment;
 
@@ -79,6 +88,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
 
     private String defaultFormattedAddress = "Surat, Gujarat, India";
     private String defaultCity = "Surat";
+
+    private int currentMapView = MAP_VIEW_NORMAL;
 
     //<editor-fold desc="Override Methods">
 
@@ -486,6 +497,41 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                 } catch (GooglePlayServicesRepairableException |
                         GooglePlayServicesNotAvailableException e) {
                     e.printStackTrace();
+                }
+            }
+        });
+
+        textMapView.setTypeface(Utils.typefaceRegular(MapsActivity.this));
+        Utils.setRoundedCornerBackground(textMapView, ContextCompat.getColor(MapsActivity.this, R
+                .color.finestBlack40), 100, 0, ContextCompat.getColor(MapsActivity.this, R.color
+                .finestBlack40));
+
+        imageMapView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                switch (currentMapView) {
+                    case MAP_VIEW_NORMAL:
+                        googleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+                        currentMapView = MAP_VIEW_SATELLITE;
+                        textMapView.animate().alpha(1.0f);
+                        textMapView.setText("Satellite View");
+                        view.postDelayed(new Runnable() {
+                            public void run() {
+                                textMapView.animate().alpha(0.0f);
+                            }
+                        }, 2000);
+                        break;
+                    case MAP_VIEW_SATELLITE:
+                        googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                        currentMapView = MAP_VIEW_NORMAL;
+                        textMapView.animate().alpha(1.0f);
+                        textMapView.setText("Normal View");
+                        view.postDelayed(new Runnable() {
+                            public void run() {
+                                textMapView.animate().alpha(0.0f);
+                            }
+                        }, 2000);
+                        break;
                 }
             }
         });

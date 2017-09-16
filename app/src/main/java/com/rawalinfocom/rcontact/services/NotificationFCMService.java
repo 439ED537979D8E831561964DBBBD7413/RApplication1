@@ -67,312 +67,315 @@ public class NotificationFCMService extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
-        Log.d(TAG, "Message data payload: " + remoteMessage.getData());
+        if (Utils.getBooleanPreference(this, AppConstants.PREF_IS_LOGIN, false)) {
+            Log.d(TAG, "Message data payload: " + remoteMessage.getData());
 
-        if (remoteMessage.getData().size() > 0) {
+            if (remoteMessage.getData().size() > 0) {
 
-            Map<String, String> m = remoteMessage.getData();
-            DatabaseHandler databaseHandler = new DatabaseHandler(this);
-            String notiData = m.get("default");
-            if (notiData != null) {
-                try {
-                    ObjectMapper mapper = new ObjectMapper();
-                    NotificationData obj = mapper.readValue(notiData, NotificationData.class);
-                    TableRCNotificationUpdates tableRCNotificationUpdates = new
-                            TableRCNotificationUpdates(databaseHandler);
-                    int id = tableRCNotificationUpdates.addUpdate(obj);
-                    if (id != -1) {
-                        TableNotificationStateMaster notificationStateMaster = new
-                                TableNotificationStateMaster(databaseHandler);
-                        NotificationStateData notificationStateData = new NotificationStateData();
-                        notificationStateData.setNotificationState(1);
-                        notificationStateData.setCloudNotificationId(obj.getId());
-                        notificationStateData.setCreatedAt(obj.getCreatedAt());
-                        notificationStateData.setUpdatedAt(obj.getUpdatedAt());
-                        notificationStateData.setNotificationType(AppConstants
-                                .NOTIFICATION_TYPE_RUPDATE);
-                        notificationStateData.setNotificationMasterId(obj.getId());
-                        notificationStateMaster.addNotificationState(notificationStateData);
-                        if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_PUSH, false))
-                            sendNotification(obj.getDetails(), AppConstants.NOTIFICATION_TYPE_RUPDATE);
-                        else
-                            sendBroadcastForCountupdate();
-
-                        updateNotificationCount(databaseHandler);
-                        return;
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return;
-                }
-
-            }
-            String api = m.get("API");
-            if (api == null) {
-                return;
-            }
-            String msg = m.get("msg");
-            if (api.equalsIgnoreCase("newUserRegistration")) {
-                String first_name = m.get("first_name");
-                String last_name = m.get("last_name");
-                String mobile_num = "+" + m.get("mobile_number");
-                String rcp_pm_id = m.get("rcp_pm_id");
-                String pm_badge = m.get("pm_badge");
-                String mnm_id = m.get("mnm_id");
-                String pb_profile_photo = m.get("pb_profile_photo");
-                String total_profile_rate_user = m.get("total_profile_rate_user");
-
-                ArrayList<String> rcpIds = getRawIdFromNumber(mobile_num);
-
-                if (!(rcpIds.size() > 0)) {
-                    return;
-                }
-
-                // Hashmap with key as rcpId and value as rawId/s
-                HashMap<String, String> mapLocalRcpId = new HashMap<>();
-                for (int i = 0; i < rcpIds.size(); i++) {
-                    String phonebookRawId;
-                    if (mapLocalRcpId.containsKey(rcp_pm_id)) {
-                        phonebookRawId = mapLocalRcpId.get(rcp_pm_id) +
-                                "," + rcpIds.get(i);
-                    } else {
-                        phonebookRawId = rcpIds.get(i);
-                    }
-                    mapLocalRcpId.put(rcp_pm_id, phonebookRawId);
-                }
-
-                // Basic Profile Data
-                TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
-                ArrayList<UserProfile> arrayListUserProfile = new ArrayList<>();
-                UserProfile userProfile = new UserProfile();
-                userProfile.setPmFirstName(first_name);
-                userProfile.setPmLastName(last_name);
-                userProfile.setPmRcpId(rcp_pm_id);
-                userProfile.setPmBadge(pm_badge);
-                userProfile.setPmProfileImage(pb_profile_photo);
-                userProfile.setTotalProfileRateUser(total_profile_rate_user);
-                if (mapLocalRcpId.containsKey(rcp_pm_id)) {
-                    userProfile.setPmRawId(mapLocalRcpId.get(rcp_pm_id));
-                }
-
-                String existingRawId = tableProfileMaster.getRawIdFromRcpId(Integer.parseInt
-                        (userProfile.getPmRcpId()));
-                if (StringUtils.length(existingRawId) <= 0) {
-                    arrayListUserProfile.add(userProfile);
-                    tableProfileMaster.addArrayProfile(arrayListUserProfile);
-
-                    TableProfileMobileMapping tableProfileMobileMapping = new
-                            TableProfileMobileMapping(databaseHandler);
-                    ArrayList<ProfileMobileMapping> arrayListProfileMobileMapping = new
-                            ArrayList<>();
-                    ProfileMobileMapping profileMobileMapping = new ProfileMobileMapping();
-                    profileMobileMapping.setMpmMobileNumber(mobile_num);
-                    profileMobileMapping.setMpmCloudMnmId(mnm_id);
-                    profileMobileMapping.setMpmCloudPmId(rcp_pm_id);
-                    profileMobileMapping.setMpmIsRcp("1");
-                    arrayListProfileMobileMapping.add(profileMobileMapping);
-                    tableProfileMobileMapping.addArrayProfileMobileMapping
-                            (arrayListProfileMobileMapping);
-
-                    TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
-                    ArrayList<MobileNumber> arrayListMobileNumber = new ArrayList<>();
-                    MobileNumber mobileNumber = new MobileNumber();
-                    mobileNumber.setMnmRecordIndexId(mnm_id);
-                    mobileNumber.setMnmMobileNumber(mobile_num);
-                    mobileNumber.setMnmNumberType(getString(R.string.type_mobile));
-                    mobileNumber.setMnmNumberPrivacy(String.valueOf(1));
-                    mobileNumber.setMnmIsPrivate(0);
-                    mobileNumber.setRcProfileMasterPmId(rcp_pm_id);
-                    mobileNumber.setMnmIsPrimary(String.valueOf(IntegerConstants.RCP_TYPE_PRIMARY));
-                    arrayListMobileNumber.add(mobileNumber);
-                    tableMobileMaster.addArrayMobileNumber(arrayListMobileNumber);
-                    Log.i(TAG, "Name:" + first_name + " " + last_name + " Number: " + mobile_num
-                            + "become RCP");
-                }
-                return;
-            }
-
-            TableNotificationStateMaster notificationStateMaster = new
-                    TableNotificationStateMaster(databaseHandler);
-            NotificationStateData notificationStateData = new NotificationStateData();
-            notificationStateData.setNotificationState(Integer.parseInt(m.get("unm_status")));
-            notificationStateData.setCloudNotificationId(m.get("unm_id"));
-            TableCommentMaster tableCommentMaster = new TableCommentMaster(databaseHandler);
-            Comment comment = new Comment();
-            switch (api) {
-                case "profileRatingComment":
-                    comment.setCrmStatus(AppConstants.COMMENT_STATUS_RECEIVED);
-                    comment.setCrmType("Rating");
-                    comment.setCrmCloudPrId(m.get("pr_id"));
-                    comment.setCrmRating(m.get("pr_rating_stars"));
-                    comment.setRcProfileMasterPmId(Integer.parseInt(m.get("pr_from_pm_id")));
-                    comment.setCrmComment(m.get("pr_comment"));
-                    comment.setCrmProfileDetails(m.get("name"));
-                    comment.setCrmImage(m.get("pm_profile_photo"));
-                    comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(m.get("created_at")));
-                    comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(m.get("updated_at")));
-                    String avgRating = m.get("profile_rating");
-                    String totalUniqueRater = m.get("total_profile_rate_user");
-                    String toPmId = m.get("pr_to_pm_id");
-
-                    TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
-                    tableProfileMaster.updateUserProfileRating(toPmId, avgRating, totalUniqueRater);
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING, totalUniqueRater);
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_RATING, avgRating);
-
-                    notificationStateData.setCreatedAt(comment.getCrmCreatedAt());
-                    notificationStateData.setUpdatedAt(comment.getCrmUpdatedAt());
-                    notificationStateData.setNotificationType(AppConstants
-                            .NOTIFICATION_TYPE_TIMELINE);
-                    int id = tableCommentMaster.addComment(comment);
-                    if (id != -1) {
-                        notificationStateData.setNotificationMasterId(m.get("pr_id"));
-                        notificationStateMaster.addNotificationState(notificationStateData);
-                        if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_PUSH, false))
-                            sendNotification(msg, AppConstants.NOTIFICATION_TYPE_TIMELINE);
-                        else
-                            sendBroadcastForCountupdate();
-                    }
-                    break;
-                case "profileRatingReply":
-                    int isUpdated = tableCommentMaster.addReply(m.get("pr_id"), m.get("pr_reply"),
-                            Utils.getLocalTimeFromUTCTime(m.get("reply_at")), Utils
-                                    .getLocalTimeFromUTCTime(m.get("reply_at")));
-
-                    notificationStateData.setCreatedAt(m.get("reply_at"));
-                    notificationStateData.setUpdatedAt(m.get("reply_at"));
-                    notificationStateData.setNotificationType(AppConstants.NOTIFICATION_TYPE_RATE);
-                    if (isUpdated > 0) {
-                        notificationStateData.setNotificationMasterId(m.get("pr_id"));
-                        notificationStateMaster.addNotificationState(notificationStateData);
-                        if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_PUSH, false))
-                            sendNotification(msg, AppConstants.NOTIFICATION_TYPE_RATE);
-                        else
-                            sendBroadcastForCountupdate();
-                    }
-                    break;
-                case "eventComment":
-                    comment.setCrmStatus(AppConstants.COMMENT_STATUS_RECEIVED);
-                    comment.setCrmType(m.get("type"));
-                    comment.setCrmCloudPrId(m.get("id"));
-                    comment.setCrmProfileDetails(m.get("name"));
-                    comment.setCrmImage(m.get("pm_profile_photo"));
-                    comment.setRcProfileMasterPmId(Integer.parseInt(m.get("from_pm_id")));
-                    comment.setCrmComment(m.get("comment"));
-                    comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(m.get("created_date")));
-                    comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(m.get("updated_at")));
-                    comment.setEvmRecordIndexId(m.get("event_record_index_id"));
-                    int eventId = tableCommentMaster.addComment(comment);
-                    if (eventId != -1) {
-                        notificationStateData.setCreatedAt(m.get("created_date"));
-                        notificationStateData.setUpdatedAt(m.get("updated_at"));
-                        notificationStateData.setNotificationType(AppConstants
-                                .NOTIFICATION_TYPE_TIMELINE);
-                        notificationStateData.setNotificationMasterId(m.get("id"));
-                        notificationStateMaster.addNotificationState(notificationStateData);
-                        if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_PUSH, false)) {
-                            if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_EVENT_PUSH, false))
-                                sendNotification(msg, AppConstants.NOTIFICATION_TYPE_TIMELINE);
-                            else
-                                sendBroadcastForCountupdate();
-                        } else
-                            sendBroadcastForCountupdate();
-
-                    }
-                    break;
-                case "eventReply":
-                    int updatedEvents = tableCommentMaster.addReply(m.get("id"), m.get("reply"),
-                            Utils.getLocalTimeFromUTCTime(m.get("reply_date")), Utils
-                                    .getLocalTimeFromUTCTime(m.get("reply_date")));
-                    if (updatedEvents > 0) {
-                        notificationStateData.setCreatedAt(m.get("reply_date"));
-                        notificationStateData.setUpdatedAt(m.get("reply_date"));
-                        notificationStateData.setNotificationType(AppConstants
-                                .NOTIFICATION_TYPE_COMMENTS);
-                        notificationStateData.setNotificationMasterId(m.get("id"));
-                        notificationStateMaster.addNotificationState(notificationStateData);
-                        if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_PUSH, false)) {
-                            if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_EVENT_PUSH, false))
-                                sendNotification(msg, AppConstants.NOTIFICATION_TYPE_COMMENTS);
-                            else
-                                sendBroadcastForCountupdate();
-                        } else
-                            sendBroadcastForCountupdate();
-                    }
-                    break;
-                case "sendContactRequest":
-                    TableRCContactRequest tableRCContactRequest = new TableRCContactRequest
-                            (databaseHandler);
-                    if (m.get("car_pm_id_to").equals(Utils.getStringPreference(this, AppConstants
-                            .PREF_USER_PM_ID, "0"))
-                            && m.get("car_access_permission_status").equals("0")) {
-                        int requestId = tableRCContactRequest.addRequest(AppConstants
-                                        .COMMENT_STATUS_RECEIVED,
-                                m.get("car_id"),
-                                m.get("car_mongodb_record_index"),
-                                Integer.parseInt(m.get("car_pm_id_from")),
-                                m.get("car_ppm_particular_text"),
-                                Utils.getLocalTimeFromUTCTime(m.get("created_at")),
-                                Utils.getLocalTimeFromUTCTime(m.get("updated_at")),
-                                m.get("name"), m.get("pm_profile_photo"));
-                        if (requestId != -1) {
-                            notificationStateData.setCreatedAt(m.get("created_at"));
-                            notificationStateData.setUpdatedAt(m.get("updated_at"));
-                            notificationStateData.setNotificationType(AppConstants
-                                    .NOTIFICATION_TYPE_PROFILE_REQUEST);
-                            notificationStateData.setNotificationMasterId(m.get("car_id"));
-                            notificationStateMaster.addNotificationState(notificationStateData);
-                            if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_PUSH, false))
-                                sendNotification(msg, AppConstants.NOTIFICATION_TYPE_PROFILE_REQUEST);
-                            else
-                                sendBroadcastForCountupdate();
-                        }
-                    }
-                    break;
-                case "acceptContactRequest":
-                    TableRCContactRequest tableRCContactRequest1 = new TableRCContactRequest
-                            (databaseHandler);
-                    if (m.get("car_pm_id_from").equals(Utils.getStringPreference(this,
-                            AppConstants.PREF_USER_PM_ID, "0"))
-                            && m.get("car_access_permission_status").equals("1")) {
-                        int requestId = tableRCContactRequest1.addRequest(AppConstants
-                                        .COMMENT_STATUS_SENT,
-                                m.get("car_id"),
-                                m.get("car_mongodb_record_index"),
-                                Integer.parseInt(m.get("car_pm_id_to")),
-                                m.get("car_ppm_particular_text"),
-                                Utils.getLocalTimeFromUTCTime(m.get("created_at")),
-                                Utils.getLocalTimeFromUTCTime(m.get("updated_at")),
-                                m.get("name"), m.get("pm_profile_photo"));
-                        if (requestId != -1) {
-                            notificationStateData.setCreatedAt(m.get("created_at"));
-                            notificationStateData.setUpdatedAt(m.get("updated_at"));
-                            notificationStateData.setNotificationType(AppConstants
-                                    .NOTIFICATION_TYPE_PROFILE_RESPONSE);
-                            notificationStateData.setNotificationMasterId(m.get("car_id"));
-                            notificationStateMaster.addNotificationState(notificationStateData);
+                Map<String, String> m = remoteMessage.getData();
+                DatabaseHandler databaseHandler = new DatabaseHandler(this);
+                String notiData = m.get("default");
+                if (notiData != null) {
+                    if (m.get("API").equalsIgnoreCase("rcontactUpdate")) {
+                        try {
                             ObjectMapper mapper = new ObjectMapper();
-                            String data = m.get("car_contact");
-                            try {
-                                ContactRequestData obj = mapper.readValue(data,
-                                        ContactRequestData.class);
-                                updatePrivacySetting(m.get("car_ppm_particular"), m.get
-                                        ("car_mongodb_record_index"), obj, databaseHandler);
+                            NotificationData obj = mapper.readValue(notiData, NotificationData.class);
+                            TableRCNotificationUpdates tableRCNotificationUpdates = new
+                                    TableRCNotificationUpdates(databaseHandler);
+                            int id = tableRCNotificationUpdates.addUpdate(obj);
+                            if (id != -1) {
+                                TableNotificationStateMaster notificationStateMaster = new
+                                        TableNotificationStateMaster(databaseHandler);
+                                NotificationStateData notificationStateData = new NotificationStateData();
+                                notificationStateData.setNotificationState(1);
+                                notificationStateData.setCloudNotificationId(obj.getId());
+                                notificationStateData.setCreatedAt(obj.getCreatedAt());
+                                notificationStateData.setUpdatedAt(obj.getUpdatedAt());
+                                notificationStateData.setNotificationType(AppConstants
+                                        .NOTIFICATION_TYPE_RUPDATE);
+                                notificationStateData.setNotificationMasterId(obj.getId());
+                                notificationStateMaster.addNotificationState(notificationStateData);
                                 if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_PUSH, false))
-                                    sendNotification(msg, AppConstants
-                                            .NOTIFICATION_TYPE_PROFILE_RESPONSE);
+                                    sendNotification(obj.getDetails(), AppConstants.NOTIFICATION_TYPE_RUPDATE);
                                 else
                                     sendBroadcastForCountupdate();
 
-                            } catch (IOException e) {
-                                e.printStackTrace();
+                                updateNotificationCount(databaseHandler);
+                                return;
                             }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            return;
                         }
                     }
-                    break;
-            }
+                }
+                String api = m.get("API");
+                if (api == null) {
+                    return;
+                }
+                String msg = m.get("msg");
+                if (api.equalsIgnoreCase("newUserRegistration")) {
+                    String first_name = m.get("first_name");
+                    String last_name = m.get("last_name");
+                    String mobile_num = "+" + m.get("mobile_number");
+                    String rcp_pm_id = m.get("rcp_pm_id");
+                    String pm_badge = m.get("pm_badge");
+                    String mnm_id = m.get("mnm_id");
+                    String pb_profile_photo = m.get("pb_profile_photo");
+                    String total_profile_rate_user = m.get("total_profile_rate_user");
 
-            updateNotificationCount(databaseHandler);
+                    ArrayList<String> rcpIds = getRawIdFromNumber(mobile_num);
+
+                    if (!(rcpIds.size() > 0)) {
+                        return;
+                    }
+
+                    // Hashmap with key as rcpId and value as rawId/s
+                    HashMap<String, String> mapLocalRcpId = new HashMap<>();
+                    for (int i = 0; i < rcpIds.size(); i++) {
+                        String phonebookRawId;
+                        if (mapLocalRcpId.containsKey(rcp_pm_id)) {
+                            phonebookRawId = mapLocalRcpId.get(rcp_pm_id) +
+                                    "," + rcpIds.get(i);
+                        } else {
+                            phonebookRawId = rcpIds.get(i);
+                        }
+                        mapLocalRcpId.put(rcp_pm_id, phonebookRawId);
+                    }
+
+                    // Basic Profile Data
+                    TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
+                    ArrayList<UserProfile> arrayListUserProfile = new ArrayList<>();
+                    UserProfile userProfile = new UserProfile();
+                    userProfile.setPmFirstName(first_name);
+                    userProfile.setPmLastName(last_name);
+                    userProfile.setPmRcpId(rcp_pm_id);
+                    userProfile.setPmBadge(pm_badge);
+                    userProfile.setPmProfileImage(pb_profile_photo);
+                    userProfile.setTotalProfileRateUser(total_profile_rate_user);
+                    if (mapLocalRcpId.containsKey(rcp_pm_id)) {
+                        userProfile.setPmRawId(mapLocalRcpId.get(rcp_pm_id));
+                    }
+
+                    String existingRawId = tableProfileMaster.getRawIdFromRcpId(Integer.parseInt
+                            (userProfile.getPmRcpId()));
+                    if (StringUtils.length(existingRawId) <= 0) {
+                        arrayListUserProfile.add(userProfile);
+                        tableProfileMaster.addArrayProfile(arrayListUserProfile);
+
+                        TableProfileMobileMapping tableProfileMobileMapping = new
+                                TableProfileMobileMapping(databaseHandler);
+                        ArrayList<ProfileMobileMapping> arrayListProfileMobileMapping = new
+                                ArrayList<>();
+                        ProfileMobileMapping profileMobileMapping = new ProfileMobileMapping();
+                        profileMobileMapping.setMpmMobileNumber(mobile_num);
+                        profileMobileMapping.setMpmCloudMnmId(mnm_id);
+                        profileMobileMapping.setMpmCloudPmId(rcp_pm_id);
+                        profileMobileMapping.setMpmIsRcp("1");
+                        arrayListProfileMobileMapping.add(profileMobileMapping);
+                        tableProfileMobileMapping.addArrayProfileMobileMapping
+                                (arrayListProfileMobileMapping);
+
+                        TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
+                        ArrayList<MobileNumber> arrayListMobileNumber = new ArrayList<>();
+                        MobileNumber mobileNumber = new MobileNumber();
+                        mobileNumber.setMnmRecordIndexId(mnm_id);
+                        mobileNumber.setMnmMobileNumber(mobile_num);
+                        mobileNumber.setMnmNumberType(getString(R.string.type_mobile));
+                        mobileNumber.setMnmNumberPrivacy(String.valueOf(1));
+                        mobileNumber.setMnmIsPrivate(0);
+                        mobileNumber.setRcProfileMasterPmId(rcp_pm_id);
+                        mobileNumber.setMnmIsPrimary(String.valueOf(IntegerConstants.RCP_TYPE_PRIMARY));
+                        arrayListMobileNumber.add(mobileNumber);
+                        tableMobileMaster.addArrayMobileNumber(arrayListMobileNumber);
+                        Log.i(TAG, "Name:" + first_name + " " + last_name + " Number: " + mobile_num
+                                + "become RCP");
+                    }
+                    return;
+                }
+
+                TableNotificationStateMaster notificationStateMaster = new
+                        TableNotificationStateMaster(databaseHandler);
+                NotificationStateData notificationStateData = new NotificationStateData();
+                notificationStateData.setNotificationState(Integer.parseInt(m.get("unm_status")));
+                notificationStateData.setCloudNotificationId(m.get("unm_id"));
+                TableCommentMaster tableCommentMaster = new TableCommentMaster(databaseHandler);
+                Comment comment = new Comment();
+                switch (api) {
+                    case "profileRatingComment":
+                        comment.setCrmStatus(AppConstants.COMMENT_STATUS_RECEIVED);
+                        comment.setCrmType("Rating");
+                        comment.setCrmCloudPrId(m.get("pr_id"));
+                        comment.setCrmRating(m.get("pr_rating_stars"));
+                        comment.setRcProfileMasterPmId(Integer.parseInt(m.get("pr_from_pm_id")));
+                        comment.setCrmComment(m.get("pr_comment"));
+                        comment.setCrmProfileDetails(m.get("name"));
+                        comment.setCrmImage(m.get("pm_profile_photo"));
+                        comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(m.get("created_at")));
+                        comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(m.get("updated_at")));
+                        String avgRating = m.get("profile_rating");
+                        String totalUniqueRater = m.get("total_profile_rate_user");
+                        String toPmId = m.get("pr_to_pm_id");
+
+                        TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
+                        tableProfileMaster.updateUserProfileRating(toPmId, avgRating, totalUniqueRater);
+                        Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING, totalUniqueRater);
+                        Utils.setStringPreference(this, AppConstants.PREF_USER_RATING, avgRating);
+
+                        notificationStateData.setCreatedAt(comment.getCrmCreatedAt());
+                        notificationStateData.setUpdatedAt(comment.getCrmUpdatedAt());
+                        notificationStateData.setNotificationType(AppConstants
+                                .NOTIFICATION_TYPE_TIMELINE);
+                        int id = tableCommentMaster.addComment(comment);
+                        if (id != -1) {
+                            notificationStateData.setNotificationMasterId(m.get("pr_id"));
+                            notificationStateMaster.addNotificationState(notificationStateData);
+                            if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_PUSH, false))
+                                sendNotification(msg, AppConstants.NOTIFICATION_TYPE_TIMELINE);
+                            else
+                                sendBroadcastForCountupdate();
+                        }
+                        break;
+                    case "profileRatingReply":
+                        int isUpdated = tableCommentMaster.addReply(m.get("pr_id"), m.get("pr_reply"),
+                                Utils.getLocalTimeFromUTCTime(m.get("reply_at")), Utils
+                                        .getLocalTimeFromUTCTime(m.get("reply_at")));
+
+                        notificationStateData.setCreatedAt(m.get("reply_at"));
+                        notificationStateData.setUpdatedAt(m.get("reply_at"));
+                        notificationStateData.setNotificationType(AppConstants.NOTIFICATION_TYPE_RATE);
+                        if (isUpdated > 0) {
+                            notificationStateData.setNotificationMasterId(m.get("pr_id"));
+                            notificationStateMaster.addNotificationState(notificationStateData);
+                            if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_PUSH, false))
+                                sendNotification(msg, AppConstants.NOTIFICATION_TYPE_RATE);
+                            else
+                                sendBroadcastForCountupdate();
+                        }
+                        break;
+                    case "eventComment":
+                        comment.setCrmStatus(AppConstants.COMMENT_STATUS_RECEIVED);
+                        comment.setCrmType(m.get("type"));
+                        comment.setCrmCloudPrId(m.get("id"));
+                        comment.setCrmProfileDetails(m.get("name"));
+                        comment.setCrmImage(m.get("pm_profile_photo"));
+                        comment.setRcProfileMasterPmId(Integer.parseInt(m.get("from_pm_id")));
+                        comment.setCrmComment(m.get("comment"));
+                        comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(m.get("created_date")));
+                        comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(m.get("updated_at")));
+                        comment.setEvmRecordIndexId(m.get("event_record_index_id"));
+                        int eventId = tableCommentMaster.addComment(comment);
+                        if (eventId != -1) {
+                            notificationStateData.setCreatedAt(m.get("created_date"));
+                            notificationStateData.setUpdatedAt(m.get("updated_at"));
+                            notificationStateData.setNotificationType(AppConstants
+                                    .NOTIFICATION_TYPE_TIMELINE);
+                            notificationStateData.setNotificationMasterId(m.get("id"));
+                            notificationStateMaster.addNotificationState(notificationStateData);
+                            if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_PUSH, false)) {
+                                if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_EVENT_PUSH, false))
+                                    sendNotification(msg, AppConstants.NOTIFICATION_TYPE_TIMELINE);
+                                else
+                                    sendBroadcastForCountupdate();
+                            } else
+                                sendBroadcastForCountupdate();
+
+                        }
+                        break;
+                    case "eventReply":
+                        int updatedEvents = tableCommentMaster.addReply(m.get("id"), m.get("reply"),
+                                Utils.getLocalTimeFromUTCTime(m.get("reply_date")), Utils
+                                        .getLocalTimeFromUTCTime(m.get("reply_date")));
+                        if (updatedEvents > 0) {
+                            notificationStateData.setCreatedAt(m.get("reply_date"));
+                            notificationStateData.setUpdatedAt(m.get("reply_date"));
+                            notificationStateData.setNotificationType(AppConstants
+                                    .NOTIFICATION_TYPE_COMMENTS);
+                            notificationStateData.setNotificationMasterId(m.get("id"));
+                            notificationStateMaster.addNotificationState(notificationStateData);
+                            if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_PUSH, false)) {
+                                if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_EVENT_PUSH, false))
+                                    sendNotification(msg, AppConstants.NOTIFICATION_TYPE_COMMENTS);
+                                else
+                                    sendBroadcastForCountupdate();
+                            } else
+                                sendBroadcastForCountupdate();
+                        }
+                        break;
+                    case "sendContactRequest":
+                        TableRCContactRequest tableRCContactRequest = new TableRCContactRequest
+                                (databaseHandler);
+                        if (m.get("car_pm_id_to").equals(Utils.getStringPreference(this, AppConstants
+                                .PREF_USER_PM_ID, "0"))
+                                && m.get("car_access_permission_status").equals("0")) {
+                            int requestId = tableRCContactRequest.addRequest(AppConstants
+                                            .COMMENT_STATUS_RECEIVED,
+                                    m.get("car_id"),
+                                    m.get("car_mongodb_record_index"),
+                                    Integer.parseInt(m.get("car_pm_id_from")),
+                                    m.get("car_ppm_particular_text"),
+                                    Utils.getLocalTimeFromUTCTime(m.get("created_at")),
+                                    Utils.getLocalTimeFromUTCTime(m.get("updated_at")),
+                                    m.get("name"), m.get("pm_profile_photo"));
+                            if (requestId != -1) {
+                                notificationStateData.setCreatedAt(m.get("created_at"));
+                                notificationStateData.setUpdatedAt(m.get("updated_at"));
+                                notificationStateData.setNotificationType(AppConstants
+                                        .NOTIFICATION_TYPE_PROFILE_REQUEST);
+                                notificationStateData.setNotificationMasterId(m.get("car_id"));
+                                notificationStateMaster.addNotificationState(notificationStateData);
+                                if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_PUSH, false))
+                                    sendNotification(msg, AppConstants.NOTIFICATION_TYPE_PROFILE_REQUEST);
+                                else
+                                    sendBroadcastForCountupdate();
+                            }
+                        }
+                        break;
+                    case "acceptContactRequest":
+                        TableRCContactRequest tableRCContactRequest1 = new TableRCContactRequest
+                                (databaseHandler);
+                        if (m.get("car_pm_id_from").equals(Utils.getStringPreference(this,
+                                AppConstants.PREF_USER_PM_ID, "0"))
+                                && m.get("car_access_permission_status").equals("1")) {
+                            int requestId = tableRCContactRequest1.addRequest(AppConstants
+                                            .COMMENT_STATUS_SENT,
+                                    m.get("car_id"),
+                                    m.get("car_mongodb_record_index"),
+                                    Integer.parseInt(m.get("car_pm_id_to")),
+                                    m.get("car_ppm_particular_text"),
+                                    Utils.getLocalTimeFromUTCTime(m.get("created_at")),
+                                    Utils.getLocalTimeFromUTCTime(m.get("updated_at")),
+                                    m.get("name"), m.get("pm_profile_photo"));
+                            if (requestId != -1) {
+                                notificationStateData.setCreatedAt(m.get("created_at"));
+                                notificationStateData.setUpdatedAt(m.get("updated_at"));
+                                notificationStateData.setNotificationType(AppConstants
+                                        .NOTIFICATION_TYPE_PROFILE_RESPONSE);
+                                notificationStateData.setNotificationMasterId(m.get("car_id"));
+                                notificationStateMaster.addNotificationState(notificationStateData);
+                                ObjectMapper mapper = new ObjectMapper();
+                                String data = m.get("car_contact");
+                                try {
+                                    ContactRequestData obj = mapper.readValue(data,
+                                            ContactRequestData.class);
+                                    updatePrivacySetting(m.get("car_ppm_particular"), m.get
+                                            ("car_mongodb_record_index"), obj, databaseHandler);
+                                    if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_PUSH, false))
+                                        sendNotification(msg, AppConstants
+                                                .NOTIFICATION_TYPE_PROFILE_RESPONSE);
+                                    else
+                                        sendBroadcastForCountupdate();
+
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                        break;
+                }
+
+                updateNotificationCount(databaseHandler);
+            }
         }
     }
 

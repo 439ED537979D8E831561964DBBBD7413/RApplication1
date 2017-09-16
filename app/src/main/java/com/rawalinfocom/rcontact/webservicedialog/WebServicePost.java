@@ -97,7 +97,7 @@ class WebServicePost {
                     // Json string passed as request
 
                     jsonObject = writer.writeValueAsString(request);
-                    System.out.println("RContact param -->  " + jsonObject);
+                    System.out.println("RContacts param -->  " + jsonObject);
 //					 FileUtilities utilities = new FileUtilities();
 //					 utilities.write("Filter file", jsonObject);
                 }
@@ -152,18 +152,18 @@ class WebServicePost {
                             "token or expired token");
                     response = null;
 
-                    Utils.setIntegerPreference(activity, AppConstants.PREF_LAUNCH_SCREEN_INT,
-                            IntegerConstants
-                                    .LAUNCH_RE_LOGIN_PASSWORD);
-                    Utils.setBooleanPreference(activity, AppConstants.PREF_TEMP_LOGOUT, true);
-
-                    // Redirect to MobileNumberRegistrationActivity
-                    Intent intent = new Intent(activity, ReLoginEnterPasswordActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    intent.putExtra(AppConstants.PREF_IS_FROM, AppConstants.PREF_RE_LOGIN);
-                    activity.startActivity(intent);
+//                    Utils.setIntegerPreference(activity, AppConstants.PREF_LAUNCH_SCREEN_INT,
+//                            IntegerConstants
+//                                    .LAUNCH_RE_LOGIN_PASSWORD);
+//                    Utils.setBooleanPreference(activity, AppConstants.PREF_TEMP_LOGOUT, true);
+//
+//                    // Redirect to MobileNumberRegistrationActivity
+//                    Intent intent = new Intent(activity, ReLoginEnterPasswordActivity.class);
+//                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+//                    intent.putExtra(AppConstants.EXTRA_IS_FROM, AppConstants.EXTRA_IS_FROM_RE_LOGIN);
+//                    activity.startActivity(intent);
                    /* activity.overridePendingTransition(R.anim.enter, R.anim.exit);
                     activity.finish();*/
 
