@@ -90,8 +90,11 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import butterknife.BindView;
@@ -116,6 +119,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     TextView textTotalContacts;
 
     public static ArrayList<Object> arrayListPhoneBookContacts;
+    public static ArrayList<Object> arrayListPhoneBookContactsTemp;
+    public static ArrayList<ProfileData> arrayListContacts;
     ArrayList<ProfileData> arrayListSyncUserContact = new ArrayList<>();
     ArrayList<String> arrayListFavouriteContacts;
 
@@ -494,6 +499,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         if (arrayListPhoneBookContacts == null) {
 
             arrayListPhoneBookContacts = new ArrayList<>();
+            arrayListPhoneBookContactsTemp = new ArrayList<>();
+            arrayListContacts = new ArrayList<>();
             arrayListFavouriteContacts = new ArrayList<>();
 
             phoneBookContacts = new PhoneBookContacts(getActivity());
@@ -576,9 +583,35 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
      */
     public void setRecyclerViewLayoutManager() {
 
+        if (Utils.getStringPreference(getActivity(), AppConstants.PREF_SHORT_BY_CONTACT, "0")
+                .equalsIgnoreCase("0")) {
+
+            if (arrayListPhoneBookContacts.size() == 0) {
+                arrayListPhoneBookContacts.addAll(arrayListPhoneBookContactsTemp);
+            } else {
+                arrayListPhoneBookContactsTemp.addAll(arrayListPhoneBookContacts);
+            }
+        } else {
+            Collections.sort(arrayListContacts, new CustomComparator());
+            arrayListPhoneBookContacts.clear();
+            arrayListPhoneBookContacts.addAll(arrayListContacts);
+        }
+
         allContactListAdapter = new AllContactAdapter(this, arrayListPhoneBookContacts, null);
         recyclerViewContactList.setAdapter(allContactListAdapter);
         rContactApplication.setArrayListAllPhoneBookContacts(arrayListPhoneBookContacts);
+    }
+
+    public class CustomComparator implements Comparator<ProfileData> {
+        @Override
+        public int compare(ProfileData o1, ProfileData o2) {
+            try {
+                return o1.getTempLastName().compareTo(o2.getTempLastName());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return 0;
+        }
     }
 
     private void getRcpDetail() {
@@ -665,6 +698,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     profileData = new ProfileData();
                     array.put(id, profileData);
                     arrayListPhoneBookContacts.add(profileData);
+                    arrayListContacts.add(profileData);
                 }
 
                 profileData.setLocalPhoneBookId(data.getString(rawIdIdx));
@@ -689,7 +723,11 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     case ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE:
                         profileData.setName(data.getString(display));
                         profileData.setTempFirstName(data.getString(givenName));
-                        profileData.setTempLastName(data.getString(familyName));
+                        if (data.getString(familyName).equalsIgnoreCase(""))
+                            profileData.setTempLastName("");
+                        else
+                            profileData.setTempLastName(data.getString(familyName));
+
                         break;
                 }
             } catch (Exception E) {

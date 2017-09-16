@@ -3,18 +3,29 @@ package com.rawalinfocom.rcontact;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.net.ParseException;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -30,6 +41,8 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+import com.google.android.gms.auth.GoogleAuthException;
+import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -54,13 +67,21 @@ import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
+import com.rawalinfocom.rcontact.model.ProfileDataOperation;
 import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.MessageDigest;
@@ -69,11 +90,13 @@ import java.util.Arrays;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 public class ProfileRegistrationActivity extends BaseActivity implements RippleView
         .OnRippleCompleteListener, WsResponseListener, GoogleApiClient.OnConnectionFailedListener {
 
     private final int RC_SIGN_IN = 7;
+    private final int RC_LINKEDIN_SIGN_IN = 8;
 
     final String FIRST_NAME = "first_name";
     final String LAST_NAME = "last_name";
@@ -122,6 +145,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
     private String firstName, lastName, email;
 
     public static boolean isFromSettings;
+    private boolean isLikedinSuccess = false;
 
 //    GPSTracker gpsTracker;
 
@@ -225,7 +249,22 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            handleSignInResult(result);
+//            handleSignInResult(result);
+            new RetrieveTokenTask().execute(result);
+        }
+
+        if (resultCode == RESULT_OK && requestCode == RC_LINKEDIN_SIGN_IN) {
+
+            if (data != null) {
+                if (data.getStringExtra("isBack").equalsIgnoreCase("0")) {
+                    //If everything went Ok, change to another activity.
+                    profileRegistrationViaSocial(data.getStringExtra("accessToken"), "linkedin");
+                } else {
+                    Utils.showErrorSnackBar(this, relativeRootProfileRegistration, "Login cancelled!");
+                }
+            } else {
+                Utils.showErrorSnackBar(this, relativeRootProfileRegistration, "Login cancelled!");
+            }
         }
     }
 
@@ -269,11 +308,12 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
             //<editor-fold desc="ripple_facebook">
             case R.id.ripple_facebook:
+
+                IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_FACEBOOK;
+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     checkPermissionToExecute(requiredPermissions, FACEBOOK_LOGIN_PERMISSION);
                 } else {
-                    IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_FACEBOOK;
-
                     // Facebook Initialization
                     FacebookSdk.sdkInitialize(getApplicationContext());
                     callbackManager = CallbackManager.Factory.create();
@@ -291,10 +331,12 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
             //<editor-fold desc="ripple_google">
             case R.id.ripple_google:
+
+                IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_GOOGLE;
+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     checkPermissionToExecute(requiredPermissions, GOOGLE_LOGIN_PERMISSION);
                 } else {
-                    IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_GOOGLE;
                     googleSignIn();
                 }
                 break;
@@ -302,10 +344,12 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
             // <editor-fold desc="ripple_linked_in">
             case R.id.ripple_linked_in:
+
+                IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_LINED_IN;
+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     checkPermissionToExecute(requiredPermissions, LINKEDIN_LOGIN_PERMISSION);
                 } else {
-                    IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_LINED_IN;
                     linkedInSignIn();
                 }
                 break;
@@ -333,7 +377,6 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
     private void prepareToLoginUsingSocialMedia(int requestCode) {
         switch (requestCode) {
             case FACEBOOK_LOGIN_PERMISSION:
-                IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_FACEBOOK;
 
                 // Facebook Initialization
                 FacebookSdk.sdkInitialize(getApplicationContext());
@@ -347,16 +390,13 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                         getString(R.string.str_small_cap_email)));
                 break;
             case GOOGLE_LOGIN_PERMISSION:
-                IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_GOOGLE;
                 googleSignIn();
                 break;
             case LINKEDIN_LOGIN_PERMISSION:
-                IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_LINED_IN;
                 linkedInSignIn();
                 break;
         }
     }
-
 
     @Override
     public void onDeliveryResponse(String serviceType, Object data, Exception error) {
@@ -389,9 +429,6 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 //                                userProfileRegistered.getPmId());
 //                    }
 
-                    Utils.setIntegerPreference(ProfileRegistrationActivity.this, AppConstants
-                            .PREF_LOGIN_TYPE, IntegerConstants.REGISTRATION_VIA);
-
                     // Redirect to SetPasswordActivity
                     Bundle bundle = new Bundle();
                     bundle.putString(AppConstants.EXTRA_IS_FROM, "profile");
@@ -417,31 +454,40 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
             // <editor-fold desc="REQ_STORE_DEVICE_DETAILS">
 
-//            if (serviceType.equalsIgnoreCase(WsConstants.REQ_STORE_DEVICE_DETAILS)) {
-//                WsResponseObject deviceDetailResponse = (WsResponseObject) data;
-//                Utils.hideProgressDialog();
-//                if (deviceDetailResponse != null && StringUtils.equalsIgnoreCase
-//                        (deviceDetailResponse
-//                                .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
-//
-//                    // Redirect to MainActivity
-//                    Intent intent = new Intent(this, MainActivity.class);
-//                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-//                    startActivity(intent);
-//                    overridePendingTransition(R.anim.enter, R.anim.exit);
-//
-//                } else {
-//                    if (deviceDetailResponse != null) {
-//                        Log.e("error response", deviceDetailResponse.getMessage());
-//                    } else {
-//                        Log.e("onDeliveryResponse: ", "deviceDetailResponse null");
-//                        Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getString(R
-//                                .string.msg_try_later));
-//                    }
-//                }
-//            }
+            if (serviceType.equalsIgnoreCase(WsConstants.REQ_STORE_DEVICE_DETAILS)) {
+                WsResponseObject deviceDetailResponse = (WsResponseObject) data;
+
+                Utils.hideProgressDialog();
+
+                if (deviceDetailResponse != null && StringUtils.equalsIgnoreCase
+                        (deviceDetailResponse
+                                .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+
+                    Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME, String
+                            .valueOf(System.currentTimeMillis()));
+                    Utils.setBooleanPreference(this, AppConstants.KEY_IS_FIRST_TIME, true);
+                    Utils.setBooleanPreference(this, AppConstants.KEY_IS_RESTORE_DONE, true);
+
+                    Utils.setBooleanPreference(this, AppConstants.PREF_IS_LOGIN, true);
+
+                    // Redirect to MainActivity
+                    Intent intent = new Intent(this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.enter, R.anim.exit);
+
+                } else {
+                    if (deviceDetailResponse != null) {
+                        Log.e("error response", deviceDetailResponse.getMessage());
+                    } else {
+                        Log.e("onDeliveryResponse: ", "deviceDetailResponse null");
+                        Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getString(R
+                                .string.msg_try_later));
+                    }
+                }
+            }
             //</editor-fold>
 
             //<editor-fold desc="REQ_REVERSE_GEO_CODING_ADDRESS">
@@ -462,6 +508,79 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                 }
             }*/
             //</editor-fold>
+
+            //<editor-fold desc="REQ_REGISTER_WITH_SOCIAL_MEDIA">
+
+            if (serviceType.equalsIgnoreCase(WsConstants.REQ_REGISTER_WITH_SOCIAL_MEDIA)) {
+                WsResponseObject userProfileResponse = (WsResponseObject) data;
+
+                if (userProfileResponse != null && StringUtils.equalsIgnoreCase(userProfileResponse
+                        .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+
+                    if (IntegerConstants.REGISTRATION_VIA == IntegerConstants.REGISTRATION_VIA_FACEBOOK)
+                        LoginManager.getInstance().logOut();
+
+                    // set launch screen as MainActivity
+                    Utils.setIntegerPreference(this,
+                            AppConstants.PREF_LAUNCH_SCREEN_INT, IntegerConstants
+                                    .LAUNCH_MAIN_ACTIVITY);
+                    Utils.setBooleanPreference(this, AppConstants.KEY_IS_RESTORE_DONE, true);
+
+                    ProfileDataOperation profileDetail = userProfileResponse.getProfileDetail();
+                    Utils.setObjectPreference(this, AppConstants
+                            .PREF_REGS_USER_OBJECT, profileDetail);
+
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_PM_ID,
+                            profileDetail.getRcpPmId());
+
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_NAME,
+                            profileDetail.getPbNameFirst() + " " + profileDetail
+                                    .getPbNameLast());
+
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_FIRST_NAME,
+                            profileDetail.getPbNameFirst());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_LAST_NAME,
+                            profileDetail.getPbNameLast());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_JOINING_DATE,
+                            profileDetail.getJoiningDate());
+
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_NUMBER,
+                            profileDetail.getVerifiedMobileNumber());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING,
+                            profileDetail.getTotalProfileRateUser());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_RATING,
+                            profileDetail.getProfileRating());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_PHOTO,
+                            profileDetail.getPbProfilePhoto());
+
+                    Utils.setBooleanPreference(ProfileRegistrationActivity.this, AppConstants
+                            .PREF_DISABLE_PUSH, false);
+                    Utils.setBooleanPreference(ProfileRegistrationActivity.this, AppConstants
+                            .PREF_DISABLE_EVENT_PUSH, false);
+                    Utils.setBooleanPreference(ProfileRegistrationActivity.this, AppConstants
+                            .PREF_DISABLE_POPUP, false);
+
+                    Utils.storeProfileDataToDb(ProfileRegistrationActivity.this, profileDetail, databaseHandler);
+
+                    Utils.setStringPreference(this, AppConstants.EXTRA_LOGIN_TYPE, "social");
+
+                    deviceDetail();
+
+                } else {
+
+                    Utils.hideProgressDialog();
+
+                    if (userProfileResponse != null) {
+                        Log.e("error response", userProfileResponse.getMessage());
+                        Utils.showErrorSnackBar(this, relativeRootProfileRegistration,
+                                userProfileResponse.getMessage());
+                    } else {
+                        Log.e("onDeliveryResponse: ", "userProfileResponse null");
+                        Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getString(R
+                                .string.msg_try_later));
+                    }
+                }
+            }
 
         } else {
 //            AppUtils.hideProgressDialog();
@@ -731,7 +850,26 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
     //</editor-fold>
 
-    //<editor-fold desc="Web Service Call">w
+    //<editor-fold desc="Web Service Call">
+    private void profileRegistrationViaSocial(String accessToken, String socialMedia) {
+
+        WsRequestObject profileRegistrationObject = new WsRequestObject();
+        profileRegistrationObject.setAccessToken(StringUtils.trimToEmpty(accessToken));
+        profileRegistrationObject.setSocialMedia(socialMedia);
+        profileRegistrationObject.setCreatedBy("2"); // For Android Devices
+        profileRegistrationObject.setGcmToken(getDeviceTokenId());
+
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    profileRegistrationObject, null, WsResponseObject.class, WsConstants
+                    .REQ_REGISTER_WITH_SOCIAL_MEDIA, getString(R.string.msg_please_wait), true)
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                            WsConstants.WS_ROOT_V2 + WsConstants.REQ_REGISTER_WITH_SOCIAL_MEDIA);
+        } else {
+            Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getResources()
+                    .getString(R.string.msg_no_network));
+        }
+    }
 
     private void profileRegistration(String firstName, String lastName, String emailId, int type) {
 
@@ -768,33 +906,35 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         }
     }
 
-//    private void deviceDetail() {
-//
-//        String model = android.os.Build.MODEL;
-//        String androidVersion = android.os.Build.VERSION.RELEASE;
-//        String brand = android.os.Build.BRAND;
-//        String device = android.os.Build.DEVICE;
-//        String secureAndroidId = Settings.Secure.getString(getContentResolver(), Settings.Secure
-//                .ANDROID_ID);
-//
-//        WsRequestObject deviceDetailObject = new WsRequestObject();
-//        deviceDetailObject.setDmModel(StringUtils.defaultString(model));
-//        deviceDetailObject.setDmVersion(StringUtils.defaultString(androidVersion));
-//        deviceDetailObject.setDmBrand(StringUtils.defaultString(brand));
-//        deviceDetailObject.setDmDevice(StringUtils.defaultString(device));
-//        deviceDetailObject.setDmUniqueid(StringUtils.defaultString(secureAndroidId));
+    private void deviceDetail() {
+
+        String model = android.os.Build.MODEL;
+        String androidVersion = android.os.Build.VERSION.RELEASE;
+        String brand = android.os.Build.BRAND;
+        String device = android.os.Build.DEVICE;
+        String secureAndroidId = Settings.Secure.getString(getContentResolver(), Settings.Secure
+                .ANDROID_ID);
+
+        WsRequestObject deviceDetailObject = new WsRequestObject();
+        deviceDetailObject.setDmModel(StringUtils.defaultString(model));
+        deviceDetailObject.setDmVersion(StringUtils.defaultString(androidVersion));
+        deviceDetailObject.setDmBrand(StringUtils.defaultString(brand));
+        deviceDetailObject.setDmDevice(StringUtils.defaultString(device));
+        deviceDetailObject.setDmUniqueid(StringUtils.defaultString(secureAndroidId));
 //        deviceDetailObject.setDmLocation(StringUtils.defaultString(locationString));
-//
-//        if (Utils.isNetworkAvailable(this)) {
-//            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
-//                    deviceDetailObject, null, WsResponseObject.class, WsConstants
-//                    .REQ_STORE_DEVICE_DETAILS, null, true).execute
-//                    (WsConstants.WS_ROOT + WsConstants.REQ_STORE_DEVICE_DETAILS);
-//        } else {
-//            Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getResources()
-//                    .getString(R.string.msg_no_network));
-//        }
-//    }
+
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    deviceDetailObject, null, WsResponseObject.class, WsConstants
+                    .REQ_STORE_DEVICE_DETAILS, null, true).executeOnExecutor(AsyncTask
+                            .THREAD_POOL_EXECUTOR,
+                    WsConstants.WS_ROOT + WsConstants.REQ_STORE_DEVICE_DETAILS);
+        }
+        /*else {
+            Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getResources()
+                    .getString(R.string.msg_no_network));
+        }*/
+    }
 
     //</editor-fold>
 
@@ -816,23 +956,17 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
                                 if (facebookData != null) {
 
-                                    firstName = facebookData.getString(FIRST_NAME);
-                                    lastName = facebookData.getString(LAST_NAME);
-                                    email = facebookData.getString(EMAIL_ID);
+//                                    firstName = facebookData.getString(FIRST_NAME);
+//                                    lastName = facebookData.getString(LAST_NAME);
+//                                    email = facebookData.getString(EMAIL_ID);
 
-                                    inputFirstName.setText(firstName);
-                                    inputLastName.setText(lastName);
-                                    inputEmailId.setText(email);
+//                                    inputFirstName.setText(firstName);
+//                                    inputLastName.setText(lastName);
+//                                    inputEmailId.setText(email);
 
-                                    inputEmailId.setEnabled(false);
+//                                    inputEmailId.setEnabled(false);
 
-//                                    profileRegistration(firstName, lastName, email,
-//                                            IntegerConstants.REGISTRATION_VIA_FACEBOOK);
-
-//                                    if (StringUtils.length(facebookData.getString(PROFILE_IMAGE))
-//                                            > 0) {
-//                                        getFacebookBitmapFromUrl(facebookData, loginResult);
-//                                    } else {}
+                                    profileRegistrationViaSocial(loginResult.getAccessToken().getToken(), "facebook");
                                 }
 
                             }
@@ -933,37 +1067,103 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                 });
     }
 
-    private void handleSignInResult(GoogleSignInResult result) {
-        Log.i("Sign In Result", "handleSignInResult:" + result.isSuccess());
-        if (result.isSuccess()) {
-            // Signed in successfully.
-            GoogleSignInAccount acct = result.getSignInAccount();
+    private class RetrieveTokenTask extends AsyncTask<GoogleSignInResult, Void, String> {
 
-            if (acct != null) {
+        String token;
 
-                firstName = StringUtils.defaultString(acct.getGivenName());
-                lastName = StringUtils.defaultString(acct.getFamilyName());
-                email = StringUtils.defaultString(acct.getEmail());
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Utils.showProgressDialog(ProfileRegistrationActivity.this, "Please wait...", true);
+        }
 
-                inputFirstName.setText(firstName);
-                inputLastName.setText(lastName);
-                inputEmailId.setText(email);
+        @Override
+        protected String doInBackground(GoogleSignInResult... params) {
 
-                inputEmailId.setEnabled(false);
+            if (params[0].isSuccess()) {
+                // Signed in successfully.
+                GoogleSignInAccount acct = params[0].getSignInAccount();
 
-//                profileRegistration(firstName, lastName, email, IntegerConstants
-//                        .REGISTRATION_VIA_GOOGLE);
+                if (acct != null) {
 
-//                getGoogleBitmapFromUrl(acct);
 
+                    String scopes = "oauth2:profile email";
+                    try {
+                        token = GoogleAuthUtil.getToken(getApplicationContext(), acct.getEmail(), scopes);
+                    } catch (IOException | GoogleAuthException e) {
+                        System.out.println("RContacts token error --> " + e.getMessage());
+                    }
+
+//                    firstName = StringUtils.defaultString(acct.getGivenName());
+//                    lastName = StringUtils.defaultString(acct.getFamilyName());
+//                    email = StringUtils.defaultString(acct.getEmail());
+
+                }
+
+            } else {
+                // Signed out.
+                Utils.showErrorSnackBar(ProfileRegistrationActivity.this,
+                        relativeRootProfileRegistration, getString(R.string.error_retrieving_details));
             }
 
-        } else {
-            // Signed out.
-            Utils.showErrorSnackBar(ProfileRegistrationActivity.this,
-                    relativeRootProfileRegistration, getString(R.string.error_retrieving_details));
+            return "";
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            Utils.hideProgressDialog();
+
+//            inputFirstName.setText(firstName);
+//            inputLastName.setText(lastName);
+//            inputEmailId.setText(email);
+
+//            inputEmailId.setEnabled(false);
+
+            profileRegistrationViaSocial(token, "google");
         }
     }
+
+//    private void handleSignInResult(GoogleSignInResult result) {
+//        Log.i("Sign In Result", "handleSignInResult:" + result.isSuccess());
+//        if (result.isSuccess()) {
+//            // Signed in successfully.
+//            GoogleSignInAccount acct = result.getSignInAccount();
+//
+//            if (acct != null) {
+//
+//
+//                String scopes = "oauth2:profile email";
+//                String token = null;
+//                try {
+//                    token = GoogleAuthUtil.getToken(getApplicationContext(), acct.getEmail(), scopes);
+//                } catch (IOException | GoogleAuthException e) {
+//                    System.out.println("RContacts token error --> " + e.getMessage());
+//                }
+//
+//                social_id = token;
+//                social_id = acct.getId();
+//                firstName = StringUtils.defaultString(acct.getGivenName());
+//                lastName = StringUtils.defaultString(acct.getFamilyName());
+//                email = StringUtils.defaultString(acct.getEmail());
+//
+//                inputFirstName.setText(firstName);
+//                inputLastName.setText(lastName);
+//                inputEmailId.setText(email);
+//
+//                inputEmailId.setEnabled(false);
+//
+//                profileRegistrationViaSocial(social_id, "google");
+//
+//            }
+//
+//        } else {
+//            // Signed out.
+//            Utils.showErrorSnackBar(ProfileRegistrationActivity.this,
+//                    relativeRootProfileRegistration, getString(R.string.error_retrieving_details));
+//        }
+//    }
 
     //</editor-fold>
 
@@ -977,19 +1177,23 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
     }
 
     public void linkedInSignIn() {
-        LISessionManager.getInstance(getApplicationContext()).init(this, buildScope(), new
-                AuthListener() {
-                    @Override
-                    public void onAuthSuccess() {
-                        getUserData();
-                    }
 
-                    @Override
-                    public void onAuthError(LIAuthError error) {
-                        Toast.makeText(getApplicationContext(), "failed " + error.toString(), Toast
-                                .LENGTH_LONG).show();
-                    }
-                }, true);
+        Intent intent = new Intent(ProfileRegistrationActivity.this, LinkedinLoginActivity.class);
+        startActivityForResult(intent, RC_LINKEDIN_SIGN_IN);// Activity is started with requestCode
+
+//        LISessionManager.getInstance(getApplicationContext()).init(this, buildScope(), new
+//                AuthListener() {
+//                    @Override
+//                    public void onAuthSuccess() {
+//                        getUserData();
+//                    }
+//
+//                    @Override
+//                    public void onAuthError(LIAuthError error) {
+//                        Toast.makeText(getApplicationContext(), "failed " + error.toString(), Toast
+//                                .LENGTH_LONG).show();
+//                    }
+//                }, true);
     }
 
     @Override
@@ -1009,27 +1213,20 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
             public void onApiSuccess(ApiResponse result) {
                 try {
 
-                    JSONObject response = result.getResponseDataAsJson();
+//                    JSONObject response = result.getResponseDataAsJson();
 
-                    firstName = response.get("firstName").toString();
-                    lastName = response.get("lastName").toString();
-                    email = response.get("emailAddress").toString();
+//                    firstName = response.get("firstName").toString();
+//                    lastName = response.get("lastName").toString();
+//                    email = response.get("emailAddress").toString();
 
-                    inputFirstName.setText(firstName);
-                    inputLastName.setText(lastName);
-                    inputEmailId.setText(email);
+//                    inputFirstName.setText(firstName);
+//                    inputLastName.setText(lastName);
+//                    inputEmailId.setText(email);
+//
+//                    inputEmailId.setEnabled(false);
 
-                    inputEmailId.setEnabled(false);
-
-//                    profileRegistration(firstName, lastName, email, IntegerConstants
-//                            .REGISTRATION_VIA_LINED_IN);
-
-//                    profileRegistration(response.get("firstName").toString(), response.get
-//                                    ("lastName").toString(), response.get("emailAddress")
-//                                    .toString(), null,
-//                            getResources().getInteger(R.integer.registration_via_lined_in));
-
-//                    getLinkedInBitmapFromUrl(response);
+                    profileRegistrationViaSocial(LISessionManager.getInstance(getApplicationContext()).getSession()
+                            .getAccessToken().getValue(), "linkedin");
 
                 } catch (Exception e) {
                     e.printStackTrace();

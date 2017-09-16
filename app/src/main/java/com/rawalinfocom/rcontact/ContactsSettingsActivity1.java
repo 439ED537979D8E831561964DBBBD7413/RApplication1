@@ -58,9 +58,11 @@ import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.AppLanguage;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -118,6 +120,7 @@ public class ContactsSettingsActivity1 extends BaseActivity implements RippleVie
 
     private ArrayList<AppLanguage> shortByContactArrayList;
     private String filePath;
+    private boolean isExport = false;
 
     //<editor-fold desc="Override Methods">
     @Override
@@ -408,7 +411,20 @@ public class ContactsSettingsActivity1 extends BaseActivity implements RippleVie
         protected void onPreExecute() {
             super.onPreExecute();
             Utils.showProgressDialog(activity, "Please wait...", false);
-            vfile = "Contacts" + "_" + new SimpleDateFormat("yyyyMMdd_hhmmss", Locale.getDefault()).format(System.currentTimeMillis()) + ".vcf";
+            vfile = "RContacts" + "_" + new SimpleDateFormat("yyyyMMdd_hhmmss",
+                    Locale.getDefault()).format(System.currentTimeMillis()) + ".vcf";
+
+            File dir = new File(Environment.getExternalStorageDirectory()
+                    .toString() + File.separator + "RContacts");
+
+            try {
+                if (!dir.exists())
+                    dir.mkdir();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            filePath = dir + File.separator + vfile;
         }
 
         protected Void doInBackground(Void... urls) {
@@ -420,15 +436,22 @@ public class ContactsSettingsActivity1 extends BaseActivity implements RippleVie
 
             Utils.hideProgressDialog();
 
-            Utils.showSuccessSnackBar(activity, activityContactSettings, getString(R.string.str_vcf_done));
+            if (isExport) {
 
-            if (selectedType.equals("1")) {
-                Drive.DriveApi.newDriveContents(mGoogleApiClient).setResultCallback(driveContentsCallback);
+                Utils.showSuccessSnackBar(activity, activityContactSettings, getString(R.string.str_vcf_done));
+
+                if (selectedType.equals("1")) {
+                    Drive.DriveApi.newDriveContents(mGoogleApiClient).setResultCallback(driveContentsCallback);
+                }
+            } else {
+                Utils.showErrorSnackBar(activity, activityContactSettings, "Error while generating VCF file");
             }
         }
     }
 
     public void getVCF() {
+
+        String VCard = null;
 
         try {
             Cursor phones = activity.getContentResolver().query(
@@ -456,37 +479,66 @@ public class ContactsSettingsActivity1 extends BaseActivity implements RippleVie
 //                        in.read(buf);
 //                        fd.close();
 
-                        FileInputStream fis = fd.createInputStream();
-                        byte[] buf = new byte[(int) fd.getDeclaredLength()];
-                        fis.read(buf);
-                        String VCard = new String(buf);
+                        FileInputStream inputStream;
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 
-                        File dir = new File(Environment.getExternalStorageDirectory()
-                                .toString() + File.separator + "RContacts");
+                            try {
+                                if (fd != null) {
+                                    inputStream = fd.createInputStream();
+                                    byte[] buf = readBytes(inputStream);
+                                    inputStream.read(buf);
+                                    VCard = new String(buf);
+                                }
+                            } catch (FileNotFoundException e) {
+                                System.out.println("RContacts Vcard for the contact " + lookupKey + " not found " + e);
+                            } catch (IOException e) {
+                                System.out.println("RContacts Problem creating stream from the assetFileDescriptor " + e);
+                            }
 
-                        try {
-                            if (!dir.exists())
-                                dir.mkdir();
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        } else {
+
+                            inputStream = fd.createInputStream();
+                            byte[] buf = new byte[(int) fd.getDeclaredLength()];
+                            inputStream.read(buf);
+                            VCard = new String(buf);
                         }
 
-                        filePath = dir + File.separator + vfile;
                         FileOutputStream mFileOutputStream = new FileOutputStream(filePath,
                                 true);
                         mFileOutputStream.write(VCard.getBytes());
 //                        phones.moveToNext();
-                        Log.d("Vcard", VCard);
+                        System.out.println("RContacts Vcard " + VCard);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+
+                    isExport = true;
                 }
 
                 phones.close();
             }
         } catch (Exception e1) {
             e1.printStackTrace();
+            isExport = false;
         }
+    }
+
+    public byte[] readBytes(InputStream inputStream) throws IOException {
+        // this dynamically extends to take the bytes you read
+        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+
+        // this is storage overwritten on each iteration with bytes
+        int bufferSize = 1024;
+        byte[] buffer = new byte[bufferSize];
+
+        // we need to know how may bytes were read to write them to the byteBuffer
+        int len = 0;
+        while ((len = inputStream.read(buffer)) != -1) {
+            byteBuffer.write(buffer, 0, len);
+        }
+
+        // and then we can return your byte array.
+        return byteBuffer.toByteArray();
     }
 
 //    private void googleSignIn() {

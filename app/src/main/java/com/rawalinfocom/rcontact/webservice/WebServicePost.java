@@ -83,24 +83,15 @@ class WebServicePost {
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("POST");
 
-//            if (url.getProtocol().toLowerCase().equals("https")) {
-//                trustAllHosts();
-//                HttpsURLConnection https = (HttpsURLConnection) url.openConnection();
-//                https.setHostnameVerifier(hostnameVerifier);
-//                urlConnection = https;
-//            } else {
-//                urlConnection = (HttpURLConnection) url.openConnection();
-//            }
-
             if (requestType == WSRequestType.REQUEST_TYPE_JSON.getValue()) {
 
                 urlConnection.setRequestProperty("Content-Type", "application/json");
                 urlConnection.setRequestProperty("Accept", "application/json");
                 if (setHeader) {
 
-                    /*System.out.println("RContact set header token --> " + Utils
+                    System.out.println("RContact set header token --> " + Utils
                             .getStringPreference
-                                    (activity, AppConstants.PREF_ACCESS_TOKEN, ""));*/
+                                    (activity, AppConstants.PREF_ACCESS_TOKEN, ""));
 
                     urlConnection.addRequestProperty(WsConstants.REQ_HEADER, Utils
                             .getStringPreference
@@ -114,7 +105,7 @@ class WebServicePost {
 
                     // Json string passed as request
                     jsonObject = writer.writeValueAsString(request);
-                    System.out.println("RContact param -->  " + jsonObject);
+                    System.out.println("RContacts param -->  " + jsonObject);
 //					 FileUtilities utilities = new FileUtilities();
 //					 utilities.write("Filter file", jsonObject);
                 }
@@ -137,11 +128,12 @@ class WebServicePost {
                     String header = urlConnection.getHeaderField(WsConstants.REQ_HEADER);
 
                     if (url.toString().endsWith(WsConstants.REQ_SAVE_PASSWORD)
+                            || url.toString().endsWith(WsConstants.REQ_REGISTER_WITH_SOCIAL_MEDIA)
+                            || url.toString().endsWith(WsConstants.REQ_LOGIN_WITH_SOCIAL_MEDIA)
                             || url.toString().endsWith(WsConstants.REQ_CHECK_LOGIN)
                             || url.toString().endsWith(WsConstants.REQ_OTP_CONFIRMED)) {
 
-//                        System.out.println("RContact get header token --> " + header);
-
+                        System.out.println("RContact new token --> " + header);
 
                         Utils.setStringPreference(activity, AppConstants.PREF_ACCESS_TOKEN, header);
                     }
@@ -186,7 +178,7 @@ class WebServicePost {
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    intent.putExtra(AppConstants.PREF_IS_FROM, AppConstants.PREF_RE_LOGIN);
+                    intent.putExtra(AppConstants.EXTRA_IS_FROM, AppConstants.EXTRA_IS_FROM_RE_LOGIN);
                     activity.startActivity(intent);
                     activity.overridePendingTransition(R.anim.enter, R.anim.exit);
                     activity.finish();
@@ -233,8 +225,8 @@ class WebServicePost {
             }
 
         } catch (Exception e) {
-//            Log.e(TAG_LOG, "Status code: " + Integer.toString(statusCode)
-//                    + " Exception thrown: " + e.getMessage());
+            System.out.println("RContacts Status code: " + Integer.toString(statusCode)
+                    + " Exception thrown: " + e.getMessage());
             throw e;
         }
 

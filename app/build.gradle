@@ -67,6 +67,9 @@ android {
             jni.srcDirs = ["jniLibs"]
         }
     }
+    android{
+        useLibrary  'org.apache.http.legacy'
+    }
 }
 
 final SUPPORT_LIBRARY_VERSION = '26.0.1'

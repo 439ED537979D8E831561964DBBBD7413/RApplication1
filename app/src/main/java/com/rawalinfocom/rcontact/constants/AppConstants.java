@@ -83,7 +83,10 @@ public class AppConstants {
     public static String EXTRA_OTP_SERVICE_END_TIME = "extra_otp_service_end_time";
     public static String EXTRA_CALL_MSP_SERVER = "extra_call_msp_server";
     //    public static String EXTRA_IS_FROM_MOBILE_REGIS = "extra_is_from_mobile_regis";
+    public static String EXTRA_LOGIN_TYPE = "extra_login_type";
     public static String EXTRA_IS_FROM = "extra_is_from";
+    public static String EXTRA_IS_FROM_FORGOT_PASSWORD = "extra_is_from_forgot_password";
+    public static String EXTRA_IS_FROM_RE_LOGIN = "extra_is_from_re_login";
     public static String EXTRA_LOCAL_BROADCAST_MESSAGE = "message";
     public static String EXTRA_CONTACT_NAME = "contact_name";
     public static String EXTRA_PROFILE_IMAGE_URL = "profile_image_url";
@@ -208,6 +211,7 @@ public class AppConstants {
 
     public static String KEY_API_CALL_TIME = "key_api_call_time";
     public static String KEY_API_CALL_TIME_STAMP = "key_api_call_time_stamp";
+    public static String KEY_RCONTACTS_API_CALL_TIME_STAMP = "key_rcontacts_api_call_time_stamp";
     public static String KEY_IS_FIRST_TIME = "key_is_first_time";
     public static String KEY_IS_RESTORE_DONE = "key_is_restore_done";
 
@@ -218,9 +222,6 @@ public class AppConstants {
     public static String PREF_LOGIN_TYPE = "pref_login_type";
     public static String PREF_IS_LOGIN = "pref_is_login";
 
-    public static String PREF_RE_LOGIN = "pref_re_login";
-    public static String PREF_FORGOT_PASSWORD = "pref_forgot_password";
-    public static String PREF_IS_FROM = "pref_is_from";
     public static String PREF_TEMP_LOGOUT = "pref_temp_logout";
     public static String PREF_SELECTED_COUNTRY_OBJECT = "pref_selected_country_object";
     public static String PREF_DEVICE_TOKEN_ID = "pref_device_token_id";

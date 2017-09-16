@@ -192,6 +192,9 @@
         <activity
             android:name=".RestorationActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".LinkedinLoginActivity"
+            android:screenOrientation="portrait" />
 
         <activity android:name=".helper.imgcrop.CropImageActivity" />
 
