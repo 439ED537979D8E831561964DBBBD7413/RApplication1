@@ -2462,6 +2462,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             position) {
         View view = LayoutInflater.from(this).inflate(R.layout.list_item_edit_profile, null);
         ImageView imageViewDelete = view.findViewById(R.id.image_delete);
+        ImageView imageViewSocial = view.findViewById(R.id.image_social);
         final Spinner spinnerType = view.findViewById(R.id.spinner_type);
 //        final EditText inputValue = (EditText) view.findViewById(R.id.input_value);
         final EditText inputValue = view.findViewById(R.id.input_value);
@@ -2623,6 +2624,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             case AppConstants.IM_ACCOUNT:
                 linerCheckbox.setVisibility(View.GONE);
                 imageViewDelete.setTag(AppConstants.IM_ACCOUNT);
+                imageViewSocial.setVisibility(View.GONE);
                 inputValue.setHint(R.string.hint_account_name);
                 spinnerType.setTag(R.id.spinner_type, AppConstants.IM_ACCOUNT);
                 typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
@@ -2640,6 +2642,29 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     inputValue.setText(imAccount.getIMAccountDetails());
                     textIsPublic.setText(String.valueOf(imAccount.getIMAccountPublic()));
                     int spinnerPosition;
+
+                    if (imAccount.getIMAccountProtocol().equalsIgnoreCase("Facebook")
+                            || imAccount.getIMAccountProtocol().equalsIgnoreCase("GooglePlus")
+                            || imAccount.getIMAccountProtocol().equalsIgnoreCase("LinkedIn")) {
+                        inputValue.setTypeface(Utils.typefaceIcons(EditProfileActivity.this));
+                        inputValue.setEnabled(false);
+                        spinnerType.setVisibility(View.GONE);
+                        imageViewDelete.setVisibility(View.GONE);
+
+                        imageViewSocial.setVisibility(View.VISIBLE);
+
+                    } else {
+                        imageViewSocial.setVisibility(View.GONE);
+                    }
+
+                    if (imAccount.getIMAccountProtocol().equalsIgnoreCase("Facebook")) {
+                        imageViewSocial.setImageResource(R.drawable.ico_social_facebook_svg);
+                    } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("GooglePlus")) {
+                        imageViewSocial.setImageResource(R.drawable.ico_google_plus_color_svg);
+                    } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("LinkedIn")) {
+                        imageViewSocial.setImageResource(R.drawable.ico_socia_linkedin_svg);
+                    }
+
                     if (typeList.contains(StringUtils.defaultString(imAccount
                             .getIMAccountProtocol()))) {
                         spinnerPosition = spinnerImAccountAdapter.getPosition(imAccount

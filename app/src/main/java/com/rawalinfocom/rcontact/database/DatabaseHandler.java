@@ -14,7 +14,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     // All Static variables
     // Database Version
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
 
     // Database Name
     public static final String DATABASE_NAME = "RContact.db";
@@ -82,6 +82,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 // For version 3
                 db.execSQL("ALTER TABLE " + TableProfileMaster.TABLE_RC_PROFILE_MASTER + " ADD "
                         + "COLUMN " + TableProfileMaster.COLUMN_PM_BADGE + " text ");
+            case 3:
+                // For version 4
+                db.execSQL("ALTER TABLE " + TableRCNotificationUpdates.TABLE_RC_NOTIFICATION_UPDATES + " ADD "
+                        + "COLUMN " + TableRCNotificationUpdates.COLUMN_NU_TYPE + " text ");
+                db.execSQL("ALTER TABLE " + TableRCNotificationUpdates.TABLE_RC_NOTIFICATION_UPDATES + " ADD "
+                        + "COLUMN " + TableRCNotificationUpdates.COLUMN_NU_URL + " text ");
         }
 
         // create new tables
