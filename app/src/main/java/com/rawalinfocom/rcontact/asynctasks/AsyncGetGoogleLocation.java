@@ -1,5 +1,6 @@
 package com.rawalinfocom.rcontact.asynctasks;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -19,20 +20,22 @@ public class AsyncGetGoogleLocation extends AsyncTask<String, Void, Object> {
     private final String LOG_TAG = "AsyncGetGoogleLocation";
     private Exception error = null;
 
-    private Context context;
+    private Activity activity;
     private boolean displayProgress;
 
     private WsResponseListener wsResponseListener;
 
     private String serviceType;
+    private String accessToken;
 
-    public AsyncGetGoogleLocation(Context context, boolean displayProgress, String serviceType) {
+    public AsyncGetGoogleLocation(Activity activity, boolean displayProgress, String serviceType, String accessToken) {
 
-        this.context = context;
+        this.activity = activity;
         this.displayProgress = displayProgress;
         this.serviceType = serviceType;
+        this.accessToken = accessToken;
 
-        wsResponseListener = (WsResponseListener) context;
+        wsResponseListener = (WsResponseListener) activity;
 
     }
 
@@ -40,7 +43,7 @@ public class AsyncGetGoogleLocation extends AsyncTask<String, Void, Object> {
     protected void onPreExecute() {
         super.onPreExecute();
         if (displayProgress) {
-            Utils.showProgressDialog(context, context.getString(R.string.str_searching), true);
+            Utils.showProgressDialog(activity, activity.getString(R.string.str_searching), true);
         }
     }
 
@@ -49,8 +52,8 @@ public class AsyncGetGoogleLocation extends AsyncTask<String, Void, Object> {
         try {
             // return new RequestWsForCallPopup().getPostRequest(params[0],
             // GetGoogleLocationResponse.class, addLocationReqObject, null);
-            return new RequestWs().getGetRequest(params[0],
-                    GetGoogleLocationResponse.class);
+            return new RequestWs().getGetRequest(activity, params[0],
+                    GetGoogleLocationResponse.class, accessToken);
         } catch (Exception e) {
             this.error = e;
             Log.e(LOG_TAG, e.getMessage());

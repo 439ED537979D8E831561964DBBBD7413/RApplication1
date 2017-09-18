@@ -1,9 +1,13 @@
 package com.rawalinfocom.rcontact.webservice;
 
+import android.app.Activity;
 import android.util.Log;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.constants.WsConstants;
+import com.rawalinfocom.rcontact.helper.Utils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -27,12 +31,15 @@ public class WebServiceGet {
 
     private static final String TAG_LOG = "WebServiceGetForCallPopup";
     private final Lock lock = new ReentrantLock();
-    private String url;
+    private String url, accessToken;
+    private Activity activity;
     private ObjectMapper mapper = null;
 
-    public WebServiceGet(String url) {
+    public WebServiceGet(Activity activity, String url, String accessToken) {
         url = url.replace(" ", "%20");
         this.url = url;
+        this.activity = activity;
+        this.accessToken = accessToken;
     }
 
     public <CLS> CLS execute(Class<CLS> responseType) throws Exception {
@@ -54,6 +61,8 @@ public class WebServiceGet {
             urlConnection.setRequestProperty("Content-Type", "application/json");
             urlConnection.setRequestProperty("Accept", "application/json");
             urlConnection.setRequestMethod("GET");
+
+            urlConnection.addRequestProperty(WsConstants.REQ_AUTHORIZATION, "Bearer " + accessToken);
 
             urlConnection.connect();
 

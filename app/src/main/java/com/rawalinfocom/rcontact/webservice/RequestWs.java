@@ -14,9 +14,9 @@ public class RequestWs {
     /**
      * Get Request
      **/
-    public <CLS> CLS getGetRequest(String url, Class<CLS> cls) throws Exception {
+    public <CLS> CLS getGetRequest(Activity activity, String url, Class<CLS> cls, String accessToken) throws Exception {
 //        return new WebServiceRequestGet(url).execute(cls);
-        return new WebServiceGet(url).execute(cls);
+        return new WebServiceGet(activity,url,accessToken).execute(cls);
     }
 
 

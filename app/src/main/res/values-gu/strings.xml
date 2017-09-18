@@ -130,11 +130,12 @@
     </string-array>
 
     <string-array name="types_social_media">
-        <item>WhatsApp</item>
         <item>Facebook</item>
         <item>Twitter</item>
         <item>LinkedIn</item>
-        <item>Skype</item>
+        <item>GooglePlus</item>
+        <item>Instagram</item>
+        <item>Pintrest</item>
         <item>અન્ય</item>
         <item>કસ્ટમ</item>
     </string-array>

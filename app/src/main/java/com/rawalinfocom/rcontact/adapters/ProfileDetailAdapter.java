@@ -634,7 +634,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                         } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("twitter")) {
                             url = "https://twitter.com/" + imAccount.getIMAccountDetails();
                         } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("linkedin")) {
-                            url = "https://www.linkedin.com/in/" + imAccount.getIMAccountDetails();
+                            url = imAccount.getIMAccountDetails();
                         } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
                                 ("google")) {
                             url = "https://plus.google.com/" + imAccount.getIMAccountDetails();
@@ -740,7 +740,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                         } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("twitter")) {
                             url = "https://twitter.com/" + imAccount.getIMAccountDetails();
                         } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("linkedin")) {
-                            url = "https://www.linkedin.com/in/" + imAccount.getIMAccountDetails();
+                            url = imAccount.getIMAccountDetails();
                         } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
                                 ("google")) {
                             url = "https://plus.google.com/" + imAccount.getIMAccountDetails();
