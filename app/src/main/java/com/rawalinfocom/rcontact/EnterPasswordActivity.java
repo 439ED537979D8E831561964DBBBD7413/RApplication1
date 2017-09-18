@@ -677,6 +677,7 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
     public void linkedInSignIn() {
 
         Intent intent = new Intent(EnterPasswordActivity.this, LinkedinLoginActivity.class);
+        intent.putExtra("from", "login");
         startActivityForResult(intent, RC_LINKEDIN_SIGN_IN);// Activity is started with requestCode
 
 //        LISessionManager.getInstance(getApplicationContext()).init(this, buildScope(), new

@@ -133,6 +133,7 @@ public class WsConstants {
      * API Headers
      */
     public static final String REQ_HEADER = "rcAuthToken";
+    public static final String REQ_AUTHORIZATION = "Authorization";
     public static final String REQ_THROTTLING_HEADER = "Retry-After";
 
     /**

@@ -2,13 +2,11 @@ package com.rawalinfocom.rcontact.contacts;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.content.ComponentName;
 import android.content.Intent;
-import android.content.pm.LabeledIntent;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -18,9 +16,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputType;
@@ -48,11 +49,27 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.facebook.share.model.ShareLinkContent;
-import com.facebook.share.widget.ShareDialog;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.common.base.MoreObjects;
+import com.linkedin.platform.LISessionManager;
 import com.rawalinfocom.rcontact.BaseActivity;
+import com.rawalinfocom.rcontact.LinkedinLoginActivity;
+import com.rawalinfocom.rcontact.ProfileRegistrationActivity;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.adapters.SocialConnectListAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
@@ -94,6 +111,8 @@ import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -116,7 +135,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class EditProfileActivity extends BaseActivity implements WsResponseListener, RippleView
-        .OnRippleCompleteListener {
+        .OnRippleCompleteListener, GoogleApiClient.OnConnectionFailedListener {
 
     private final String EVENT_GENERAL_DATE_FORMAT = "dd'th' MMMM, yyyy";
     private final String EVENT_ST_DATE_FORMAT = "dd'st' MMMM, yyyy";
@@ -356,6 +375,26 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
     ColorStateList defaultMarkerColor;
 
+    // Social Login
+    private final int RC_SIGN_IN = 7;
+    private final int RC_LINKEDIN_SIGN_IN = 8;
+
+    // Google API Client
+    private GoogleApiClient googleApiClient;
+
+    private static final int FACEBOOK_LOGIN_PERMISSION = 21;
+    private static final int GOOGLE_LOGIN_PERMISSION = 22;
+    private static final int LINKEDIN_LOGIN_PERMISSION = 23;
+    // Facebook Callback Manager
+    CallbackManager callbackManager;
+    // End
+
+    ArrayList<String> socialTypeList;
+    private String socialId = "";
+
+    private String[] requiredPermissions = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest
+            .permission.WRITE_EXTERNAL_STORAGE};
+
     //<editor-fold desc="Override Methods">
     /*String imageurl = "https://static.pexels.com/photos/87452/flowers-background-butterflies-beautiful-87452.jpeg";
     @BindView(R.id.btn_share)
@@ -367,6 +406,15 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         setContentView(R.layout.activity_edit_profile);
         ButterKnife.bind(this);
         arrayListProfile = new ArrayList<>();
+
+        FacebookSdk.sdkInitialize(getApplicationContext());
+
+        // Google+ Registration
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions
+                .DEFAULT_SIGN_IN).requestEmail().build();
+        googleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this, this).addApi
+                (Auth.GOOGLE_SIGN_IN_API, gso).build();
+
         init();
 
         /*btnShare.setOnClickListener(new View.OnClickListener() {
@@ -542,6 +590,181 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
             }
         }
+
+        if (IntegerConstants.REGISTRATION_VIA == IntegerConstants.REGISTRATION_VIA_FACEBOOK) {
+            // Facebook Callback
+            callbackManager.onActivityResult(requestCode, resultCode, data);
+        } else if (IntegerConstants.REGISTRATION_VIA == IntegerConstants
+                .REGISTRATION_VIA_LINED_IN) {
+            // LinkedIn Callback
+            LISessionManager.getInstance(getApplicationContext()).onActivityResult(this,
+                    requestCode, resultCode, data);
+        }
+
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            handleSignInResult(result);
+        }
+
+        if (resultCode == RESULT_OK && requestCode == RC_LINKEDIN_SIGN_IN) {
+
+            if (data != null) {
+                if (data.getStringExtra("isBack").equalsIgnoreCase("0")) {
+                    //If everything went Ok, change to another activity.
+                    socialId = data.getStringExtra("url");
+
+                    ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
+                    imAccount.setIMAccountProtocol("LinkedIn");
+                    imAccount.setIMAccountDetails(socialId);
+                    imAccount.setIMAccountPublic(IntegerConstants.PRIVACY_MY_CONTACT);
+                    arrayListSocialContactObject.add(imAccount);
+
+                    addView(AppConstants.IM_ACCOUNT, linearSocialContactDetails,
+                            arrayListSocialContactObject.get(arrayListSocialContactObject.size() - 1), -1);
+
+                } else {
+                    Utils.showErrorSnackBar(this, relativeRootEditProfile, "Login cancelled!");
+                }
+            } else {
+                Utils.showErrorSnackBar(this, relativeRootEditProfile, "Login cancelled!");
+            }
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private void checkPermissionToExecute(String[] permissions, int requestCode) {
+        boolean READ_EXTERNAL_STORAGE = ContextCompat.checkSelfPermission
+                (EditProfileActivity
+                        .this, permissions[0]) !=
+                PackageManager.PERMISSION_GRANTED;
+        boolean WRITE_EXTERNAL_STORAGE = ContextCompat.checkSelfPermission
+                (EditProfileActivity
+                        .this, permissions[1]) !=
+                PackageManager.PERMISSION_GRANTED;
+        if (READ_EXTERNAL_STORAGE || WRITE_EXTERNAL_STORAGE) {
+            requestPermissions(permissions, requestCode);
+        } else {
+            prepareToLoginUsingSocialMedia(requestCode);
+        }
+    }
+
+    private void prepareToLoginUsingSocialMedia(int requestCode) {
+        switch (requestCode) {
+            case FACEBOOK_LOGIN_PERMISSION:
+
+                // Facebook Initialization
+                FacebookSdk.sdkInitialize(getApplicationContext());
+                callbackManager = CallbackManager.Factory.create();
+
+                // Callback registration
+                registerFacebookCallback();
+
+                LoginManager.getInstance().logInWithReadPermissions(EditProfileActivity
+                        .this, Arrays.asList(getString(R.string.str_public_profile),
+                        getString(R.string.str_small_cap_email)));
+                break;
+            case GOOGLE_LOGIN_PERMISSION:
+                googleSignIn();
+                break;
+            case LINKEDIN_LOGIN_PERMISSION:
+                linkedInSignIn();
+                break;
+        }
+    }
+
+    private void registerFacebookCallback() {
+        LoginManager.getInstance().registerCallback(callbackManager,
+                new FacebookCallback<LoginResult>() {
+                    @Override
+                    public void onSuccess(final LoginResult loginResult) {
+
+                        GraphRequest graphRequest = GraphRequest.newMeRequest(loginResult
+                                .getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
+
+                            @Override
+                            public void onCompleted(JSONObject jsonObject, GraphResponse
+                                    graphResponse) {
+
+                                try {
+
+                                    socialId = jsonObject.getString("id");
+
+                                    ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
+                                    imAccount.setIMAccountProtocol("Facebook");
+                                    imAccount.setIMAccountPublic(IntegerConstants.PRIVACY_MY_CONTACT);
+                                    imAccount.setIMAccountDetails(socialId);
+                                    arrayListSocialContactObject.add(imAccount);
+
+                                    addView(AppConstants.IM_ACCOUNT, linearSocialContactDetails,
+                                            arrayListSocialContactObject.get(arrayListSocialContactObject.size() - 1), -1);
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
+                        });
+
+                        Bundle parameters = new Bundle();
+                        parameters.putString("fields", "id, first_name, last_name, email,gender, " +
+                                "birthday, location");
+                        graphRequest.setParameters(parameters);
+                        graphRequest.executeAsync();
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        Utils.showErrorSnackBar(EditProfileActivity.this,
+                                relativeRootEditProfile, getString(R.string
+                                        .error_facebook_login_cancelled));
+                    }
+
+                    @Override
+                    public void onError(FacebookException exception) {
+                        Utils.showErrorSnackBar(EditProfileActivity.this,
+                                relativeRootEditProfile, exception.getMessage());
+                    }
+                });
+    }
+
+    private void googleSignIn() {
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    private void handleSignInResult(GoogleSignInResult result) {
+        Log.i("Sign In Result", "handleSignInResult:" + result.isSuccess());
+        if (result.isSuccess()) {
+            // Signed in successfully.
+            GoogleSignInAccount acct = result.getSignInAccount();
+
+            if (acct != null) {
+
+                socialId = acct.getId();
+
+                ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
+                imAccount.setIMAccountProtocol("GooglePlus");
+                imAccount.setIMAccountPublic(IntegerConstants.PRIVACY_MY_CONTACT);
+                imAccount.setIMAccountDetails(socialId);
+                arrayListSocialContactObject.add(imAccount);
+
+                addView(AppConstants.IM_ACCOUNT, linearSocialContactDetails,
+                        arrayListSocialContactObject.get(arrayListSocialContactObject.size() - 1), -1);
+            }
+
+        } else {
+            // Signed out.
+            Utils.showErrorSnackBar(EditProfileActivity.this,
+                    relativeRootEditProfile, getString(R.string.error_retrieving_details));
+        }
+    }
+
+    public void linkedInSignIn() {
+
+        Intent intent = new Intent(EditProfileActivity.this, LinkedinLoginActivity.class);
+        intent.putExtra("from", "profile");
+        startActivityForResult(intent, RC_LINKEDIN_SIGN_IN);// Activity is started with requestCode
     }
 
     @Override
@@ -692,9 +915,11 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 break;
             //</editor-fold>
 
+            // TODO : Hardik
             // <editor-fold desc="button_social_contact_add_field">
             case R.id.button_social_contact_add_field:
-                checkBeforeViewAdd(AppConstants.IM_ACCOUNT, linearSocialContactDetails);
+
+                SocialDialog();
                 break;
             //</editor-fold>
 
@@ -741,6 +966,80 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             //</editor-fold>
 
         }
+    }
+
+    // TODO : Hardik - SocialDialog
+    private void SocialDialog() {
+
+        final Dialog dialog = new Dialog(EditProfileActivity.this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(true);
+
+        View dialogView = LayoutInflater.from(EditProfileActivity.this).inflate(R.layout.dialog_social_list, null);
+        dialog.setContentView(dialogView);
+
+        TextView txtTitle = (TextView) dialogView.findViewById(R.id.tvDialogTitle);
+        txtTitle.setText("Social Connect");
+
+        RecyclerView recycleViewSocialList = dialogView.findViewById(R.id.recycle_view_social_list);
+        recycleViewSocialList.setLayoutManager(new LinearLayoutManager(EditProfileActivity.this,
+                LinearLayoutManager.VERTICAL, false));
+
+        SocialConnectListAdapter socialConnectListAdapter = new SocialConnectListAdapter(socialTypeList
+                , new SocialConnectListAdapter.onClickListener() {
+            @Override
+            public void onClick(String socialName) {
+
+                dialog.dismiss();
+
+                if (socialName.equalsIgnoreCase("Facebook")) {
+
+                    IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_FACEBOOK;
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        checkPermissionToExecute(requiredPermissions, FACEBOOK_LOGIN_PERMISSION);
+                    } else {
+                        // Facebook Initialization
+                        FacebookSdk.sdkInitialize(getApplicationContext());
+                        callbackManager = CallbackManager.Factory.create();
+
+                        // Callback registration
+                        registerFacebookCallback();
+
+                        LoginManager.getInstance().logInWithReadPermissions(EditProfileActivity.this,
+                                Arrays.asList(getString(R.string.str_public_profile), getString(R.string.str_small_cap_email)));
+
+                    }
+
+                } else if (socialName.equalsIgnoreCase("GooglePlus")) {
+
+                    IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_GOOGLE;
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        checkPermissionToExecute(requiredPermissions, GOOGLE_LOGIN_PERMISSION);
+                    } else {
+                        googleSignIn();
+                    }
+
+                } else if (socialName.equalsIgnoreCase("Linkedin")) {
+
+
+                    IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_LINED_IN;
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        checkPermissionToExecute(requiredPermissions, LINKEDIN_LOGIN_PERMISSION);
+                    } else {
+                        linkedInSignIn();
+                    }
+
+                } else {
+                    checkBeforeViewAdd(AppConstants.IM_ACCOUNT, linearSocialContactDetails);
+                }
+            }
+        });
+        recycleViewSocialList.setAdapter(socialConnectListAdapter);
+
+        dialog.show();
     }
 
     @OnClick({R.id.button_name_update, R.id.button_phone_update, R.id.button_email_update, R.id
@@ -2225,6 +2524,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     }
 
     private void socialContactDetails() {
+
+        socialTypeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
+                .array.types_social_media)));
+
         TableImMaster tableImMaster = new TableImMaster(databaseHandler);
 
         ArrayList<ImAccount> arrayListImAccount = tableImMaster.getImAccountFromPmId(Integer
@@ -2239,6 +2542,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             imAccount.setIMAccountPublic(Integer.parseInt(arrayListImAccount.get(i)
                     .getImImPrivacy()));
             arrayListSocialContactObject.add(imAccount);
+            socialTypeList.remove(arrayListImAccount.get(i).getImImProtocol());
         }
 
         if (arrayListSocialContactObject.size() > 0) {
@@ -2253,7 +2557,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 socialContact.addTextChangedListener(valueTextWatcher);
             }
         } else {
-            addView(AppConstants.IM_ACCOUNT, linearSocialContactDetails, null, -1);
+//            addView(AppConstants.IM_ACCOUNT, linearSocialContactDetails, null, -1);
         }
     }
 
@@ -2457,11 +2761,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         }
     }
 
+    // TODO : Hardik - addView
     @SuppressLint("InflateParams")
     private void addView(int viewType, final LinearLayout linearLayout, Object detailObject, int
             position) {
         View view = LayoutInflater.from(this).inflate(R.layout.list_item_edit_profile, null);
         ImageView imageViewDelete = view.findViewById(R.id.image_delete);
+        ImageView imageViewSocial = view.findViewById(R.id.image_social);
         final Spinner spinnerType = view.findViewById(R.id.spinner_type);
 //        final EditText inputValue = (EditText) view.findViewById(R.id.input_value);
         final EditText inputValue = view.findViewById(R.id.input_value);
@@ -2619,14 +2925,21 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 break;
             //</editor-fold>
 
+            // Todo : Hardik - IM_ACCOUNT
             //<editor-fold desc="IM_ACCOUNT">
             case AppConstants.IM_ACCOUNT:
                 linerCheckbox.setVisibility(View.GONE);
                 imageViewDelete.setTag(AppConstants.IM_ACCOUNT);
+                imageViewSocial.setVisibility(View.GONE);
                 inputValue.setHint(R.string.hint_account_name);
                 spinnerType.setTag(R.id.spinner_type, AppConstants.IM_ACCOUNT);
                 typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
                         .array.types_social_media)));
+
+                typeList.remove("Facebook");
+                typeList.remove("GooglePlus");
+                typeList.remove("LinkedIn");
+
                 spinnerImAccountAdapter = new ArrayAdapter<>(this, R.layout
                         .list_item_spinner, typeList);
                 spinnerImAccountAdapter.setDropDownViewResource(android.R.layout
@@ -2640,6 +2953,28 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     inputValue.setText(imAccount.getIMAccountDetails());
                     textIsPublic.setText(String.valueOf(imAccount.getIMAccountPublic()));
                     int spinnerPosition;
+
+                    if (imAccount.getIMAccountProtocol().equalsIgnoreCase("Facebook")
+                            || imAccount.getIMAccountProtocol().equalsIgnoreCase("GooglePlus")
+                            || imAccount.getIMAccountProtocol().equalsIgnoreCase("LinkedIn")) {
+                        inputValue.setTypeface(Utils.typefaceIcons(EditProfileActivity.this));
+                        inputValue.setEnabled(false);
+                        spinnerType.setVisibility(View.GONE);
+                        imageViewDelete.setVisibility(View.GONE);
+                        imageViewSocial.setVisibility(View.VISIBLE);
+
+                    } else {
+                        imageViewSocial.setVisibility(View.GONE);
+                    }
+
+                    if (imAccount.getIMAccountProtocol().equalsIgnoreCase("Facebook")) {
+                        imageViewSocial.setImageResource(R.drawable.ico_social_facebook_svg);
+                    } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("GooglePlus")) {
+                        imageViewSocial.setImageResource(R.drawable.ico_google_plus_color_svg);
+                    } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("LinkedIn")) {
+                        imageViewSocial.setImageResource(R.drawable.ico_socia_linkedin_svg);
+                    }
+
                     if (typeList.contains(StringUtils.defaultString(imAccount
                             .getIMAccountProtocol()))) {
                         spinnerPosition = spinnerImAccountAdapter.getPosition(imAccount
@@ -3390,6 +3725,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                     .getText().toString()));
                             spinnerType.setTag(R.id.spinner_position, spinnerPhoneAdapter
                                     .getPosition(inputCustomName.getText().toString()));*/
+
                             tempSpinnerAdapter.add(inputCustomName.getText().toString());
                             tempSpinnerAdapter.notifyDataSetChanged();
                             spinnerType.setSelection(tempSpinnerAdapter.getPosition
@@ -3428,6 +3764,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             break;
 
                         case AppConstants.IM_ACCOUNT:
+                            socialTypeList.add(inputCustomName.getText().toString());
                             tempSpinnerAdapter.add(inputCustomName.getText().toString());
                             tempSpinnerAdapter.notifyDataSetChanged();
                             spinnerType.setSelection(tempSpinnerAdapter.getPosition
@@ -3793,6 +4130,11 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             Utils.showErrorSnackBar(this, relativeRootEditProfile, getResources()
                     .getString(R.string.msg_no_network));
         }
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
     }
 
     //</editor-fold>

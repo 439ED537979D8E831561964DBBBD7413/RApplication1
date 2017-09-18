@@ -30,8 +30,8 @@ public class TableRCNotificationUpdates {
     private static final String COLUMN_NU_ID = "nu_id";
     private static final String COLUMN_NU_CLOUD_ID = "nu_cloud_rupdate_id";
     private static final String COLUMN_NU_TITLE = "nu_title";
-     static final String COLUMN_NU_TYPE = "nu_type";
-     static final String COLUMN_NU_URL = "nu_url";
+    static final String COLUMN_NU_TYPE = "nu_type";
+    static final String COLUMN_NU_URL = "nu_url";
     private static final String COLUMN_NU_DETAILS = "nu_details";
     private static final String COLUMN_CREATED_AT = "created_at";
 
