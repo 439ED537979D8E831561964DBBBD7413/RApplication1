@@ -31,15 +31,14 @@ public class WebServiceGet {
 
     private static final String TAG_LOG = "WebServiceGetForCallPopup";
     private final Lock lock = new ReentrantLock();
-    private String url, accessToken;
+    private String url;
     private Activity activity;
     private ObjectMapper mapper = null;
 
-    public WebServiceGet(Activity activity, String url, String accessToken) {
+    public WebServiceGet(Activity activity, String url) {
         url = url.replace(" ", "%20");
         this.url = url;
         this.activity = activity;
-        this.accessToken = accessToken;
     }
 
     public <CLS> CLS execute(Class<CLS> responseType) throws Exception {
@@ -61,8 +60,6 @@ public class WebServiceGet {
             urlConnection.setRequestProperty("Content-Type", "application/json");
             urlConnection.setRequestProperty("Accept", "application/json");
             urlConnection.setRequestMethod("GET");
-
-            urlConnection.addRequestProperty(WsConstants.REQ_AUTHORIZATION, "Bearer " + accessToken);
 
             urlConnection.connect();
 

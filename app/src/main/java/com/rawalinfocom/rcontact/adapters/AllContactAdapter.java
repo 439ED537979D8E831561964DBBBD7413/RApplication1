@@ -809,40 +809,21 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 for (int i = 0; i < arraylist.size(); i++) {
                     if (arraylist.get(i) instanceof ProfileData) {
                         ProfileData profileData = (ProfileData) arraylist.get(i);
-//                        if (!StringUtils.isEmpty(profileData.getName())) {
-                        if (!StringUtils.isEmpty(profileData.getTempFirstName()) &&
-                                !StringUtils.isEmpty(profileData.getTempLastName())) {
-
-                            System.out.println("RContacts name first last text --> " +
-                                    profileData.getName().toLowerCase(Locale.getDefault()) + " -- " +
-                                    profileData.getTempFirstName().toLowerCase(Locale.getDefault()) + " -- " +
-                                    profileData.getTempLastName().toLowerCase(Locale.getDefault()) + " -- " + charText);
-
-                            System.out.println("RContacts condition 0 -- 1 -- 2 --> " +
-                                    profileData.getName().toLowerCase(Locale.getDefault()).contains(charText) + " -- " +
-                                    profileData.getTempFirstName().toLowerCase(Locale.getDefault()).contains(charText) + " -- " +
-                                    profileData.getTempLastName().toLowerCase(Locale.getDefault()).contains(charText));
-
-                            if (profileData.getName().toLowerCase(Locale.getDefault()).contains(charText)
-                                    || profileData.getTempFirstName().toLowerCase(Locale.getDefault()).contains(charText)
-                                    || profileData.getTempLastName().toLowerCase(Locale.getDefault()).contains(charText)) {
-                                arrayListUserContact.add(profileData);
-                            }
-                        } else {
+                        if (!StringUtils.isEmpty(profileData.getName())) {
                             if (profileData.getName().toLowerCase(Locale.getDefault()).contains
                                     (charText)) {
                                 arrayListUserContact.add(profileData);
                             }
                         }
-//                        }
                     }
                 }
             }
         }
 
         setSearchCount(arrayListUserContact.size());
+
         notifyDataSetChanged();
     }
 
-    //</editor-fold>
+//</editor-fold>
 }

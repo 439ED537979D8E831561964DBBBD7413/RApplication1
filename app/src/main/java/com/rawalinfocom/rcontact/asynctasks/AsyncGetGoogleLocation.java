@@ -26,14 +26,12 @@ public class AsyncGetGoogleLocation extends AsyncTask<String, Void, Object> {
     private WsResponseListener wsResponseListener;
 
     private String serviceType;
-    private String accessToken;
 
-    public AsyncGetGoogleLocation(Activity activity, boolean displayProgress, String serviceType, String accessToken) {
+    public AsyncGetGoogleLocation(Activity activity, boolean displayProgress, String serviceType) {
 
         this.activity = activity;
         this.displayProgress = displayProgress;
         this.serviceType = serviceType;
-        this.accessToken = accessToken;
 
         wsResponseListener = (WsResponseListener) activity;
 
@@ -53,7 +51,7 @@ public class AsyncGetGoogleLocation extends AsyncTask<String, Void, Object> {
             // return new RequestWsForCallPopup().getPostRequest(params[0],
             // GetGoogleLocationResponse.class, addLocationReqObject, null);
             return new RequestWs().getGetRequest(activity, params[0],
-                    GetGoogleLocationResponse.class, accessToken);
+                    GetGoogleLocationResponse.class);
         } catch (Exception e) {
             this.error = e;
             Log.e(LOG_TAG, e.getMessage());

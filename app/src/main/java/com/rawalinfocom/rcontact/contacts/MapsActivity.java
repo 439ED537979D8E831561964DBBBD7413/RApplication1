@@ -638,7 +638,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
     private void searchLocation(Boolean displayProgress, String queryString) {
         if (Utils.isNetworkAvailable(this)) {
             AsyncGetGoogleLocation asyncGetGoogleLocation = new AsyncGetGoogleLocation
-                    (this, displayProgress, WsConstants.REQ_GOOGLE_TEXT_BY_LOCATIONS, "");
+                    (this, displayProgress, WsConstants.REQ_GOOGLE_TEXT_BY_LOCATIONS);
             asyncGetGoogleLocation.execute("https://maps.googleapis" +
                     ".com/maps/api/place/autocomplete/json?key" +
                     "=AIzaSyDHLCyy3FXO9IshxYd2-XAR6uSmVPvnAZQ&input=" + queryString +
