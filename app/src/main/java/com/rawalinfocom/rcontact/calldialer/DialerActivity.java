@@ -229,14 +229,14 @@ public class DialerActivity extends BaseActivity {
 
         TelephonyInfo telephonyInfo = TelephonyInfo.getInstance(DialerActivity
                 .this);
-        if (telephonyInfo != null) {
+        /*if (telephonyInfo != null) {
             isDualSim = telephonyInfo.isDualSIM();
             if(isDualSim){
-                imageSimPreference.setVisibility(View.VISIBLE);
+                imageSimPreference.setVisibility(View.GONE);
             }else{
                 imageSimPreference.setVisibility(View.GONE);
             }
-        }
+        }*/
 
         editTextNumber.setCursorVisible(false);
         editTextNumber.addTextChangedListener(new TextWatcher() {
@@ -671,7 +671,7 @@ public class DialerActivity extends BaseActivity {
             }
         });
 
-        if(isDualSim){
+        /*if(isDualSim){
             imageSimPreference.setVisibility(View.VISIBLE);
             if(simCount == 0){
                 Utils.setStringPreference(DialerActivity.this,AppConstants.EXTRA_DIALER_SIM_PREFERENCE,"0");
@@ -696,7 +696,7 @@ public class DialerActivity extends BaseActivity {
             });
         }else{
             imageSimPreference.setVisibility(View.GONE);
-        }
+        }*/
 
         callButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -709,7 +709,7 @@ public class DialerActivity extends BaseActivity {
                                 .this);
                         if (telephonyInfo != null) {
                             boolean isDualSim = telephonyInfo.isDualSIM();
-                            if (!isDualSim) {
+//                            if (!isDualSim) {
                                 imageSimPreference.setVisibility(View.GONE);
                                 String simSerialNumber = telephonyInfo.simSerialNumber;
                                 if (!StringUtils.isEmpty(simSerialNumber)) {
@@ -721,7 +721,7 @@ public class DialerActivity extends BaseActivity {
                                     Toast.makeText(DialerActivity.this, getString(R.string.str_no_sim),
                                             Toast.LENGTH_SHORT).show();
                                 }
-                            } else {
+                           /* } else {
                                 String callFromSim =  Utils.getStringPreference(DialerActivity.this,
                                         AppConstants.EXTRA_DIALER_SIM_PREFERENCE,"-1");
                                 if(StringUtils.equalsIgnoreCase(callFromSim,"1")){
@@ -746,7 +746,7 @@ public class DialerActivity extends BaseActivity {
                                                 Toast.LENGTH_SHORT).show();
                                     }
                                 }
-                            }
+                            }*/
 
                         }
                     } else {

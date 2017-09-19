@@ -76,8 +76,6 @@ public class WsConstants {
     public static final String WS_AVG_RATING_SHARE_BADGE_ROOT = "http://qa.rcrc.ac/r/";
     //PLAY STORE LINK
     public static String PLAY_STORE_LINK = "http://qa.rcrc.ac/a/";
-
-
     //</editor-fold>
 
     /**
