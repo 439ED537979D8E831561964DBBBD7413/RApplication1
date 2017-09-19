@@ -37,6 +37,7 @@
     <string name="str_welcom_message">તમારા સંપર્કોનો સ્માર્ટ થવાનો સમય આવી ગયો છે </string>
     <string name="str_done">થઈ ગયું</string>
     <string name="str_vcf_done">VCF file generated successfully!!</string>
+    <string name="verify_now">હવે ચકાસો</string>
 
     <!--  Other  -->
     <string name="error_facebook_login_cancelled">ફેસબુક લૉગિન નિષ્ફળ!</string>
@@ -135,7 +136,7 @@
         <item>LinkedIn</item>
         <item>GooglePlus</item>
         <item>Instagram</item>
-        <item>Pintrest</item>
+        <item>Pinterest</item>
         <item>અન્ય</item>
         <item>કસ્ટમ</item>
     </string-array>
@@ -702,7 +703,6 @@
     <string name="my_profile_share">પ્રોફાઇલ શેર કરો</string>
     <string name="share_rating_via_social_media">સોશ્યિલ મીડિયા દ્વારા રેટિંગ શેર કરો</string>
     <string name="error_no_social_app_found">કૃપા કરીને માહિતી શેર કરવા માટે ફેસબુક અથવા લિન્ક્ડઇન અથવા ટ્વિટર એપ્લિકેશન ઇન્સ્ટોલ કરો</string>
-
 
 
 </resources>

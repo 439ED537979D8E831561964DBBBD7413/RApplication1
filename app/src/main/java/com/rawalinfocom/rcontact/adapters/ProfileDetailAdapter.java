@@ -616,6 +616,10 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             holder.imgActionType.setImageResource(R.drawable.ico_skype_svg);
         } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains("whatsapp")) {
             holder.imgActionType.setImageResource(R.drawable.ico_whatsapp_svg);
+        } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("instagram")) {
+            holder.imgActionType.setImageResource(R.drawable.ico_instagram_svg);
+        } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("pinterest")) {
+            holder.imgActionType.setImageResource(R.drawable.ico_pinterest_svg);
         } else {
             holder.imgActionType.setImageResource(R.drawable.ico_other_svg);
         }
@@ -644,6 +648,12 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                         } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
                                 ("whatsapp")) {
                             url = "https://web.whatsapp.com/" + imAccount.getIMAccountDetails();
+                        } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
+                                ("instagram")) {
+                            url = "http://instagram.com/_u/" + imAccount.getIMAccountDetails();
+                        } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
+                                ("pinterest")) {
+                            url = "https://www.pinterest.com/" + imAccount.getIMAccountDetails();
                         }
 
                         if (url != null) {
@@ -750,6 +760,12 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                         } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
                                 ("whatsapp")) {
                             url = "https://web.whatsapp.com/" + imAccount.getIMAccountDetails();
+                        } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
+                                ("instagram")) {
+                            url = "http://instagram.com/_u/" + imAccount.getIMAccountDetails();
+                        } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
+                                ("pinterest")) {
+                            url = "https://www.pinterest.com/" + imAccount.getIMAccountDetails();
                         }
 
                         if (url != null) {
