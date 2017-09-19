@@ -815,15 +815,15 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                 arrayListUserContact.add(profileData);
                             }
                         }
-
                     }
                 }
             }
         }
 
         setSearchCount(arrayListUserContact.size());
+
         notifyDataSetChanged();
     }
 
-    //</editor-fold>
+//</editor-fold>
 }

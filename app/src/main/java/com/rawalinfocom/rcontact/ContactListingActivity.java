@@ -524,14 +524,26 @@ public class ContactListingActivity extends BaseActivity implements RippleView
             @Override
             public void onClick(String number, String email) {
 
-                ArrayList<String> mobileNumbers = new ArrayList<>();
-                ArrayList<String> emailIds = new ArrayList<>();
+                if (!number.equalsIgnoreCase("")) {
 
-                mobileNumbers.add(number);
-                emailIds.add(email);
+                    Intent smsIntent = new Intent(Intent.ACTION_SENDTO);
+                    smsIntent.addCategory(Intent.CATEGORY_DEFAULT);
+                    smsIntent.setType("vnd.android-dir/mms-sms");
+                    smsIntent.putExtra("sms_body", AppConstants.PLAY_STORE_LINK + getPackageName());
+                    smsIntent.setData(Uri.parse("sms:" + number));
+                    startActivity(smsIntent);
 
-                inviteContact(mobileNumbers, emailIds);
+                } else {
 
+                    ArrayList<String> mobileNumbers = new ArrayList<>();
+                    ArrayList<String> emailIds = new ArrayList<>();
+
+                    mobileNumbers.add(number);
+                    emailIds.add(email);
+
+                    inviteContact(mobileNumbers, emailIds);
+
+                }
             }
         });
         recyclerViewContacts.setAdapter(phoneBookContactListAdapter);

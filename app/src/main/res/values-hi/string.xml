@@ -37,6 +37,7 @@
     <string name="str_welcom_message">आपके सम्पर्को के स्मार्ट होने का समय आ गया है </string>
     <string name="str_done">समाप्त</string>
     <string name="str_vcf_done">VCF file generated successfully!!</string>
+    <string name="verify_now">सत्यापित करें</string>
 
     <!--  Other  -->
     <string name="error_facebook_login_cancelled">फेसबुक लॉग इन असफल!</string>
@@ -130,11 +131,12 @@
     </string-array>
 
     <string-array name="types_social_media">
-        <item>WhatsApp</item>
         <item>Facebook</item>
         <item>Twitter</item>
         <item>LinkedIn</item>
-        <item>Skype</item>
+        <item>GooglePlus</item>
+        <item>Instagram</item>
+        <item>Pinterest</item>
         <item>अन्य</item>
         <item>कस्टम</item>
     </string-array>

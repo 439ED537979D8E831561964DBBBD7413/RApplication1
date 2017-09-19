@@ -14,11 +14,17 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.linkedin.platform.LISessionManager;
+import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.helper.MaterialProgressDialog;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
+import com.rawalinfocom.rcontact.model.GetGoogleLocationResponse;
+import com.rawalinfocom.rcontact.webservice.RequestWs;
+import com.rawalinfocom.rcontact.webservice.WebServiceGet;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
@@ -128,7 +134,12 @@ public class LinkedinLoginActivity extends AppCompatActivity {
                     //Generate URL for requesting Access Token
                     String accessTokenUrl = getAccessTokenUrl(authorizationToken);
                     //We make the request in a AsyncTask
-                    new PostRequestAsyncTask().execute(accessTokenUrl);
+
+                    if (getIntent().getStringExtra("from").equalsIgnoreCase("profile")) {
+                        new PostUrlRequestAsyncTask().execute(accessTokenUrl);
+                    } else {
+                        new PostRequestAsyncTask().execute(accessTokenUrl);
+                    }
 
                 } else {
                     //Default behaviour
@@ -242,5 +253,92 @@ public class LinkedinLoginActivity extends AppCompatActivity {
         intent.putExtra("isBack", "1");
         setResult(RESULT_OK, intent);
         finish();//finishing activity
+    }
+
+    public class PostUrlRequestAsyncTask extends AsyncTask<String, Void, Object> {
+
+        String accessToken;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = (MaterialProgressDialog) MaterialProgressDialog.ctor(activity, getString(R.string.msg_please_wait));
+            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.setCancelable(true);
+            progressDialog.show();
+        }
+
+        @Override
+        protected Object doInBackground(String... urls) {
+            try {
+
+                if (urls.length > 0) {
+                    String url = urls[0];
+                    HttpClient httpClient = new DefaultHttpClient();
+                    HttpPost httpost = new HttpPost(url);
+                    try {
+                        HttpResponse response = httpClient.execute(httpost);
+                        if (response != null) {
+                            //If status is OK 200
+                            if (response.getStatusLine().getStatusCode() == 200) {
+                                String result = EntityUtils.toString(response.getEntity());
+                                //Convert the string result to a JSON Object
+                                JSONObject resultJson = new JSONObject(result);
+                                //Extract data from JSON Response
+                                accessToken = resultJson.has("access_token") ? resultJson.getString("access_token") : null;
+
+                                HttpGet httpGet = new HttpGet("https://api.linkedin.com/v1/people/~?format=json");
+                                httpGet.setHeader(WsConstants.REQ_AUTHORIZATION, "Bearer " + accessToken);
+                                HttpResponse httpResponse = httpClient.execute(httpGet);
+
+                                if (httpResponse != null) {
+                                    if (httpResponse.getStatusLine().getStatusCode() == 200) {
+                                        String result1 = EntityUtils.toString(httpResponse.getEntity());
+
+                                        return new JSONObject(result1);
+                                    }
+                                }
+
+//                                return new WebServiceGet(activity, "https://api.linkedin.com/v1/people/~?format=json",
+//                                        accessToken).execute(cls);
+                            }
+                        }
+                    } catch (IOException e) {
+                        Log.e("Authorize", "Error Http response " + e.getLocalizedMessage());
+                    } catch (ParseException | JSONException e) {
+                        Log.e("Authorize", "Error Parsing Http response " + e.getLocalizedMessage());
+                    }
+                }
+
+            } catch (Exception e) {
+                Log.e("Authorize", "Error Http response " + e.getLocalizedMessage());
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Object status) {
+            super.onPostExecute(status);
+
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
+
+            JSONObject jsonObject;
+
+            try {
+                jsonObject = new JSONObject(status.toString());
+
+                Intent intent = new Intent();
+                intent.putExtra("url", jsonObject.getJSONObject("siteStandardProfileRequest").getString("url"));
+                intent.putExtra("isBack", "0");
+                setResult(RESULT_OK, intent);
+                finish();//finishing activity
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+                onBackPressed();
+            }
+        }
     }
 }
