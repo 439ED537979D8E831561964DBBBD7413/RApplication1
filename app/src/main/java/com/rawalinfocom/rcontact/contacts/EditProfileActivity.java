@@ -914,7 +914,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 break;
             //</editor-fold>
 
-            // TODO : Hardik
             // <editor-fold desc="button_social_contact_add_field">
             case R.id.button_social_contact_add_field:
                 SocialDialog();
@@ -966,7 +965,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         }
     }
 
-    // TODO : Hardik - SocialDialog
     private void SocialDialog() {
 
         final Dialog dialog = new Dialog(EditProfileActivity.this);
@@ -3077,7 +3075,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         linearLayout.addView(view);
     }
 
-    // TODO : Hardik - addSocialConnectView
     @SuppressLint("InflateParams")
     private void addSocialConnectView(Object detailObject, String imAccountProtocol) {
 
