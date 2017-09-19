@@ -3,7 +3,6 @@ package com.rawalinfocom.rcontact.adapters;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -12,7 +11,6 @@ import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.RecyclerView;
-import android.telephony.PhoneNumberUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -167,17 +165,17 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         holder.imgActionWhatsapp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               /* Uri uri = Uri.parse("smsto:" + number);
+                Uri uri = Uri.parse("smsto:" + number);
                 Intent sendIntent = new Intent(Intent.ACTION_SENDTO, uri);
                 sendIntent.setPackage("com.whatsapp");
-                activity.startActivity(sendIntent);*/
-                Intent sendIntent = new Intent("android.intent.action.MAIN");
+                activity.startActivity(sendIntent);
+               /* Intent sendIntent = new Intent("android.intent.action.MAIN");
                 sendIntent.setComponent(new ComponentName("com.whatsapp", "com.whatsapp" +
                         ".Conversation"));
                 sendIntent.putExtra("jid", PhoneNumberUtils.stripSeparators(StringUtils.substring
                         (number, 1)) + "@s" +
                         ".whatsapp.net");//phone number without "+" prefix
-                activity.startActivity(sendIntent);
+                activity.startActivity(sendIntent);*/
             }
         });
 
@@ -613,6 +611,10 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             holder.imgActionType.setImageResource(R.drawable.ico_skype_svg);
         } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains("whatsapp")) {
             holder.imgActionType.setImageResource(R.drawable.ico_whatsapp_svg);
+        } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("instagram")) {
+            holder.imgActionType.setImageResource(R.drawable.ico_instagram_svg);
+        } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("pinterest")) {
+            holder.imgActionType.setImageResource(R.drawable.ico_pinterest_svg);
         } else {
             holder.imgActionType.setImageResource(R.drawable.ico_other_svg);
         }
@@ -631,7 +633,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                         } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("twitter")) {
                             url = "https://twitter.com/" + imAccount.getIMAccountDetails();
                         } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("linkedin")) {
-                            url = "https://www.linkedin.com/in/" + imAccount.getIMAccountDetails();
+                            url = imAccount.getIMAccountDetails();
                         } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
                                 ("google")) {
                             url = "https://plus.google.com/" + imAccount.getIMAccountDetails();
@@ -641,6 +643,12 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                         } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
                                 ("whatsapp")) {
                             url = "https://web.whatsapp.com/" + imAccount.getIMAccountDetails();
+                        } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
+                                ("instagram")) {
+                            url = "http://instagram.com/_u/" + imAccount.getIMAccountDetails();
+                        } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
+                                ("pinterest")) {
+                            url = "https://www.pinterest.com/" + imAccount.getIMAccountDetails();
                         }
 
                         if (url != null) {

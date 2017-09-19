@@ -90,10 +90,7 @@ public class WsConstants {
     // Aniruddh
 //    public static final String WS_ROOT = "http://10.0.21.122/api/v1/";
 //    public static final String WS_ROOT_V2 = "http://10.0.21.122/api/v2/";
-
-    // Maulik
-//    public static final String WS_ROOT = "http://10.0.51.119/api/v1/";
-
+    
     // Hardik
 //    public static final String WS_ROOT = "http://10.0.30.11/api/v1/";
 
@@ -133,6 +130,7 @@ public class WsConstants {
      * API Headers
      */
     public static final String REQ_HEADER = "rcAuthToken";
+    public static final String REQ_AUTHORIZATION = "Authorization";
     public static final String REQ_THROTTLING_HEADER = "Retry-After";
 
     /**

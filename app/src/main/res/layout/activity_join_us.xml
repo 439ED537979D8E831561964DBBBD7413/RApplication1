@@ -73,7 +73,7 @@
                 android:contentDescription="@string/app_name"
                 android:gravity="center|start"
                 android:padding="5dp"
-                android:src="@drawable/ico_pintrest_color_svg" />
+                android:src="@drawable/ico_pinterest_color_svg" />
 
             <ImageView
                 android:id="@+id/imgYouTube"

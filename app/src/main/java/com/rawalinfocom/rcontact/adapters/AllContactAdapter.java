@@ -828,8 +828,9 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         }
 
         setSearchCount(arrayListUserContact.size());
+
         notifyDataSetChanged();
     }
 
-    //</editor-fold>
+//</editor-fold>
 }

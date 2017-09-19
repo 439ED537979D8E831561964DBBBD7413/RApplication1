@@ -63,7 +63,7 @@ public class RContactApplication extends Application {
         super.onCreate();
 
         mInstance = this;
-        hashKey();
+//        hashKey();
 
 //         Fabric Initialization
 //        Fabric.with(this, new Crashlytics());
