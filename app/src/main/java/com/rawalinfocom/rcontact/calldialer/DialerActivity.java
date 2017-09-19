@@ -1217,8 +1217,7 @@ public class DialerActivity extends BaseActivity {
         return contactName;
     }
 
-    private void
-    initSwipe() {
+    private void initSwipe() {
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper
                 .SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
 
