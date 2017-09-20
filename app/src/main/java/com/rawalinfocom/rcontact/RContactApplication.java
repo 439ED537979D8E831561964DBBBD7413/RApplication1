@@ -63,10 +63,10 @@ public class RContactApplication extends Application {
         super.onCreate();
 
         mInstance = this;
-        hashKey();
+//        hashKey();
 
 //         Fabric Initialization
-//        Fabric.with(this, new Crashlytics());
+        Fabric.with(this, new Crashlytics());
 
         arrayListAllPhoneBookContacts = new ArrayList<>();
 //        arrayListAllContactHeaders = new ArrayList<>();
