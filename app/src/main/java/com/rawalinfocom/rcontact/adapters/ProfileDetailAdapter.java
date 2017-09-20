@@ -167,17 +167,17 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         holder.imgActionWhatsapp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               /* Uri uri = Uri.parse("smsto:" + number);
+                Uri uri = Uri.parse("smsto:" + number);
                 Intent sendIntent = new Intent(Intent.ACTION_SENDTO, uri);
                 sendIntent.setPackage("com.whatsapp");
-                activity.startActivity(sendIntent);*/
-                Intent sendIntent = new Intent("android.intent.action.MAIN");
+                activity.startActivity(sendIntent);
+               /* Intent sendIntent = new Intent("android.intent.action.MAIN");
                 sendIntent.setComponent(new ComponentName("com.whatsapp", "com.whatsapp" +
                         ".Conversation"));
                 sendIntent.putExtra("jid", PhoneNumberUtils.stripSeparators(StringUtils.substring
                         (number, 1)) + "@s" +
                         ".whatsapp.net");//phone number without "+" prefix
-                activity.startActivity(sendIntent);
+                activity.startActivity(sendIntent);*/
             }
         });
 
