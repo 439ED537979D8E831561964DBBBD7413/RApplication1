@@ -21,6 +21,7 @@ public class Country implements Serializable {
     private String countryCodeNumber;
     private String countryName;
     private String countryNumberMaxDigits;
+    private String countryNumberMinDigits;
 
     @JsonProperty("cm_id")
     public String getCountryId() {
@@ -65,5 +66,14 @@ public class Country implements Serializable {
 
     public void setCountryNumberMaxDigits(String countryNumberMaxDigits) {
         this.countryNumberMaxDigits = countryNumberMaxDigits;
+    }
+
+    @JsonProperty("cm_min_digits")
+    public String getCountryNumberMinDigits() {
+        return countryNumberMinDigits;
+    }
+
+    public void setCountryNumberMinDigits(String countryNumberMinDigits) {
+        this.countryNumberMinDigits = countryNumberMinDigits;
     }
 }

@@ -9,14 +9,17 @@ buildscript {
 }
 
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 apply plugin: 'io.fabric'
 apply plugin: 'android-apt'
+apply plugin: 'realm-android'
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
     maven {
         url 'https://maven.google.com'
     }
+    mavenCentral()
 }
 
 android {
@@ -70,6 +73,10 @@ android {
     android{
         useLibrary  'org.apache.http.legacy'
     }
+}
+
+realm {
+    syncEnabled = true
 }
 
 final SUPPORT_LIBRARY_VERSION = '26.0.1'
@@ -129,6 +136,7 @@ dependencies {
     debugCompile 'com.amitshekhar.android:debug-db:0.4.0'
 
     compile "com.android.support:exifinterface:$SUPPORT_LIBRARY_VERSION"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 }
 
 apply plugin: 'com.google.gms.google-services'
