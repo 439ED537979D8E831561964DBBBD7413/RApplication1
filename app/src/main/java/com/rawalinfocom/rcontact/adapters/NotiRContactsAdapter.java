@@ -1,5 +1,6 @@
 package com.rawalinfocom.rcontact.adapters;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -374,6 +375,10 @@ public class NotiRContactsAdapter extends RecyclerView.Adapter<NotiRContactsAdap
 
         private String notiType, notiUrl;
 
+        public MyDialogFragment() {
+        }
+
+        @SuppressLint("ValidFragment")
         public MyDialogFragment(String notiType, String notiUrl) {
             this.notiType = notiType;
             this.notiUrl = notiUrl;
