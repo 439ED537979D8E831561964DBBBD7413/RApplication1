@@ -335,7 +335,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                         }
                         count = count + 1;
                         startAt = startAt + globalSearchTypeArrayList.size();
-                        // TODO: 20/09/17 Removing LocalRCP data from global list
+                        // TODO: 20/09/17 Removing Local data from global list
                         for(int i=0; i<globalSearchTypeArrayList.size();i++){
                             GlobalSearchType globalSearchType =  globalSearchTypeArrayList.get(i);
                             String number =  globalSearchTypeArrayList.get(i).getMobileNumber();
