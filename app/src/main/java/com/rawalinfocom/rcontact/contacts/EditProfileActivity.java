@@ -74,6 +74,7 @@ import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.TableAddressMaster;
+import com.rawalinfocom.rcontact.database.TableCountryMaster;
 import com.rawalinfocom.rcontact.database.TableEmailMaster;
 import com.rawalinfocom.rcontact.database.TableEventMaster;
 import com.rawalinfocom.rcontact.database.TableImMaster;
@@ -91,7 +92,6 @@ import com.rawalinfocom.rcontact.helper.imgcrop.CropImageView;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.Address;
 import com.rawalinfocom.rcontact.model.Country;
-import com.rawalinfocom.rcontact.model.DbCountry;
 import com.rawalinfocom.rcontact.model.Email;
 import com.rawalinfocom.rcontact.model.Event;
 import com.rawalinfocom.rcontact.model.ImAccount;
@@ -341,8 +341,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     RelativeLayout relativeActionBack;
 
     ArrayAdapter<String> spinnerPhoneAdapter, spinnerEmailAdapter, spinnerAddressAdapter,
-            spinnerWebsiteAdapter,
-            spinnerImAccountAdapter, spinnerEventAdapter;
+            spinnerCountryAdapter, spinnerWebsiteAdapter, spinnerEventAdapter;
 
     ArrayList<ProfileDataOperation> arrayListProfile;
     boolean isStorageFromSettings = false, isCameraFromSettings = false;
@@ -421,9 +420,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         googleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this, this).addApi
                 (Auth.GOOGLE_SIGN_IN_API, gso).build();
 
-        init();
-
-        realm = Realm.getDefaultInstance();
+        // REALM
+      /*  realm = Realm.getDefaultInstance();
         try {
             long countryCount = realm.where(DbCountry.class).count();
             if (countryCount <= 0) {
@@ -431,7 +429,14 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             }
         } finally {
             realm.close();
+        }*/
+
+        TableCountryMaster tableCountryMaster = new TableCountryMaster(databaseHandler);
+        if (tableCountryMaster.getCountryCount() <= 0) {
+            getCountryList();
         }
+
+        init();
 
         /*btnShare.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -902,7 +907,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                     ArrayList<Country> countryList = countryCodeResponse.getArrayListCountry();
 
-                    if (countryList.size() > 0) {
+                    // REALM
+                    /*if (countryList.size() > 0) {
                         realm = Realm.getDefaultInstance();
                         realm.beginTransaction();  //open the database database operation
 
@@ -921,6 +927,25 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         }
 
                         realm.commitTransaction(); //close the database
+                    }*/
+
+                    if (countryList.size() > 0) {
+                        ArrayList<Country> arrayListCountry = new ArrayList<>();
+                        TableCountryMaster tableCountryMaster = new TableCountryMaster
+                                (databaseHandler);
+                        for (int i = 0; i < countryList.size(); i++) {
+                            Country country = new Country();
+                            country.setCountryId(countryList.get(i).getCountryId());
+                            country.setCountryCode(countryList.get(i).getCountryCode());
+                            country.setCountryCodeNumber(countryList.get(i).getCountryCodeNumber());
+                            country.setCountryName(countryList.get(i).getCountryName());
+                            country.setCountryNumberMaxDigits(countryList.get(i)
+                                    .getCountryNumberMaxDigits());
+                            country.setCountryNumberMinDigits(countryList.get(i)
+                                    .getCountryNumberMinDigits());
+                            arrayListCountry.add(country);
+                        }
+                        tableCountryMaster.addArrayCountry(arrayListCountry);
                     }
 
 
@@ -3354,7 +3379,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 .text_image_map_marker);
         final Spinner spinnerType = view.findViewById(R.id.spinner_type);
         final EditText inputCountry = view.findViewById(R.id.input_country);
+        final Spinner spinnerCountry = view.findViewById(R.id.spinner_country);
         final EditText inputState = view.findViewById(R.id.input_state);
+        final Spinner spinnerState = view.findViewById(R.id.spinner_state);
         final EditText inputCity = view.findViewById(R.id.input_city);
         final EditText inputStreet = view.findViewById(R.id.input_street);
         final EditText inputNeighborhood = view.findViewById(R.id.input_neighborhood);
@@ -3370,8 +3397,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         final RelativeLayout relativeRowEditProfile = view.findViewById(R.id
                 .relative_row_edit_profile);
 
-        inputCountry.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
-        inputState.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
         inputCity.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
         inputStreet.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
         inputNeighborhood.setInputType(InputType.TYPE_CLASS_TEXT | InputType
@@ -3379,16 +3404,14 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         inputPinCode.setInputType(InputType.TYPE_CLASS_TEXT);
 
         textImageMapMarker.setTypeface(Utils.typefaceIcons(this));
-        inputCountry.setTypeface(Utils.typefaceRegular(this));
-        inputState.setTypeface(Utils.typefaceRegular(this));
         inputCity.setTypeface(Utils.typefaceRegular(this));
         inputStreet.setTypeface(Utils.typefaceRegular(this));
         inputNeighborhood.setTypeface(Utils.typefaceRegular(this));
         inputPinCode.setTypeface(Utils.typefaceRegular(this));
         inputPoBox.setTypeface(Utils.typefaceRegular(this));
 
-        inputCountry.setHint(R.string.hint_country_required);
-        inputState.setHint(R.string.hint_state_required);
+//        inputCountry.setHint(R.string.hint_country_required);
+//        inputState.setHint(R.string.hint_state_required);
         inputCity.setHint(R.string.hint_city_town_required);
         inputStreet.setHint(R.string.hint_address_line_1_required);
         inputNeighborhood.setHint(R.string.hint_address_line_2_optional);
@@ -3408,10 +3431,27 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 .list_item_spinner, typeList);
         spinnerType.setAdapter(spinnerAdapter);
 
+        // REALM
+        /*RealmResults<DbCountry> countries = realm.where(DbCountry.class).findAll();
+        //fetching the data
+        if (countries.load()) {
+            Log.i("addAddressView", countries.toString());
+        }*/
+
+        TableCountryMaster tableCountryMaster = new TableCountryMaster(databaseHandler);
+
+        ArrayAdapter<String> countrySpinnerAdapter = new ArrayAdapter<>(this, R.layout
+                .list_item_spinner, tableCountryMaster.getAllCountryName());
+        spinnerCountry.setAdapter(countrySpinnerAdapter);
+
+        ArrayAdapter<String> stateSpinnerAdapter = new ArrayAdapter<>(this, R.layout
+                .list_item_spinner, tableCountryMaster.getAllCountryName());
+        spinnerState.setAdapter(stateSpinnerAdapter);
+
         if (detailObject != null) {
             ProfileDataOperationAddress address = (ProfileDataOperationAddress) detailObject;
-            inputCountry.setText(address.getCountry());
-            inputState.setText(address.getState());
+//            inputCountry.setText(address.getCountry());
+//            inputState.setText(address.getState());
             inputCity.setText(address.getCity());
             inputStreet.setText(address.getStreet());
             inputNeighborhood.setText(address.getNeighborhood());
@@ -3436,7 +3476,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             spinnerType.setTag(R.id.spinner_position, spinnerPosition);
             relativeRowEditProfile.setTag(address.getAddId());
         } else {
-            setAddressTextWatcher(inputCountry, textImageMapMarker, inputIsAddressModified);
+//            setAddressTextWatcher(inputCountry, textImageMapMarker, inputIsAddressModified);
             setAddressTextWatcher(inputState, textImageMapMarker, inputIsAddressModified);
             setAddressTextWatcher(inputCity, textImageMapMarker, inputIsAddressModified);
             setAddressTextWatcher(inputStreet, textImageMapMarker, inputIsAddressModified);

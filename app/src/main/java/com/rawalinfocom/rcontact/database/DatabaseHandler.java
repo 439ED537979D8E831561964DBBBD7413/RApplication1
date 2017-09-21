@@ -14,7 +14,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     // All Static variables
     // Database Version
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
 
     // Database Name
     public static final String DATABASE_NAME = "RContact.db";
@@ -84,10 +84,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                         + "COLUMN " + TableProfileMaster.COLUMN_PM_BADGE + " text ");
             case 3:
                 // For version 4
-                db.execSQL("ALTER TABLE " + TableRCNotificationUpdates.TABLE_RC_NOTIFICATION_UPDATES + " ADD "
+                db.execSQL("ALTER TABLE " + TableRCNotificationUpdates
+                        .TABLE_RC_NOTIFICATION_UPDATES + " ADD "
                         + "COLUMN " + TableRCNotificationUpdates.COLUMN_NU_TYPE + " text ");
-                db.execSQL("ALTER TABLE " + TableRCNotificationUpdates.TABLE_RC_NOTIFICATION_UPDATES + " ADD "
+                db.execSQL("ALTER TABLE " + TableRCNotificationUpdates
+                        .TABLE_RC_NOTIFICATION_UPDATES + " ADD "
                         + "COLUMN " + TableRCNotificationUpdates.COLUMN_NU_URL + " text ");
+            /*case 4:
+                // For version 5
+                db.execSQL("ALTER TABLE " + TableCountryMaster.TABLE_RC_COUNTRY_MASTER + " ADD "
+                        + "COLUMN " + TableCountryMaster.COLUMN_CM_MIN_DIGITS + " integer ");*/
         }
 
         // create new tables
@@ -117,7 +123,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             db.execSQL("delete from " + TableCommentMaster.TABLE_RC_COMMENT_MASTER);
             db.execSQL("delete from " + TableRCNotificationUpdates.TABLE_RC_NOTIFICATION_UPDATES);
             db.execSQL("delete from " + TableRCContactRequest.TABLE_RC_CONTACT_ACCESS_REQUEST);
-            db.execSQL("delete from " + TableNotificationStateMaster.TABLE_NOTIFICATION_STATE_MASTER);
+            db.execSQL("delete from " + TableNotificationStateMaster
+                    .TABLE_NOTIFICATION_STATE_MASTER);
             db.execSQL("delete from " + TableSpamDetailMaster.TABLE_SPAM_DETAIL_MASTER);
         } catch (Exception e) {
             System.out.println("RContacts table clear error");

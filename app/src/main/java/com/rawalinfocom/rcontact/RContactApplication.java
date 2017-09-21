@@ -68,7 +68,6 @@ public class RContactApplication extends Application {
         RealmConfiguration config = new RealmConfiguration.Builder().name("rcontacts.realm")
                 .schemaVersion(1).build();
         Realm.setDefaultConfiguration(config);
-
         arrayListAllPhoneBookContacts = new ArrayList<>();
 //        arrayListAllContactHeaders = new ArrayList<>();
         arrayListFavPhoneBookContacts = new ArrayList<>();
