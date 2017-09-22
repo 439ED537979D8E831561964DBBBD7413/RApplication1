@@ -316,6 +316,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                 }
             }
             //</editor-fold>
+
             // <editor-fold desc="REQ_GET_GLOBAL_SEARCH_RECORDS">
             else if (serviceType.contains(WsConstants.REQ_GET_GLOBAL_SEARCH_RECORDS)) {
                 WsResponseObject globalSearchRecordsResponse = (WsResponseObject) data;
@@ -335,13 +336,15 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                         }
                         count = count + 1;
                         startAt = startAt + globalSearchTypeArrayList.size();
-                        // TODO: 20/09/17 Removing Local data from global list
-                        for(int i=0; i<globalSearchTypeArrayList.size();i++){
-                            GlobalSearchType globalSearchType =  globalSearchTypeArrayList.get(i);
-                            String number =  globalSearchTypeArrayList.get(i).getMobileNumber();
-                            if(!number.startsWith("+"))
-                                number =  "+" + number;
-                            if(!arrayListRCPNumber.contains(number)){
+
+                        //  Removing Local data from global list
+
+                        for (int i = 0; i < globalSearchTypeArrayList.size(); i++) {
+                            GlobalSearchType globalSearchType = globalSearchTypeArrayList.get(i);
+                            String number = globalSearchTypeArrayList.get(i).getMobileNumber();
+                            if (!number.startsWith("+"))
+                                number = "+" + number;
+                            if (!arrayListRCPNumber.contains(number)) {
                                 globalSearchTypeArrayListMain.add(globalSearchType);
                             }
                         }
@@ -539,7 +542,8 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                                         formattedNumber = "+" + formattedNumber;
                                     }
                                     ArrayList<String> arrayListForUnknownContact = new
-                                            ArrayList<>(Arrays.asList(getString(R.string.str_call) + formattedNumber,
+                                            ArrayList<>(Arrays.asList(getString(R.string
+                                                    .str_call) + formattedNumber,
                                             getString(R.string.add_to_contact),
                                             getString(R.string.add_to_existing_contact),
                                             getString(R.string.send_sms),
@@ -575,20 +579,24 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                                     String currentId = globalSearchType.getRcpPmId();
                                     if (isRcpVerified == 1 && !(currentId.equalsIgnoreCase
                                             (previousId))) {
-                                        String publicUrl = globalSearchType.getPublicProfileUrl();
+                                       /* String publicUrl = globalSearchType.getPublicProfileUrl();
                                         if (!StringUtils.isEmpty(publicUrl)) {
                                             previousId = globalSearchType.getRcpPmId();
                                             String url = publicUrl;
                                             Intent i = new Intent(Intent.ACTION_VIEW);
                                             i.setData(Uri.parse(url));
                                             startActivity(i);
-                                            /*Intent intent = new Intent(SearchActivity.this,
-                                                    WebBrowserActivity.class);
-                                            intent.putExtra(AppConstants
-                                                    .EXTRA_GLOBAL_PUBLIC_PROFILE_URL, publicUrl);
-                                            startActivity(intent);
-                                            overridePendingTransition(R.anim.enter, R.anim.exit);*/
-                                        }
+                                        }*/
+                                        // TODO: 22/09/17
+                                        Bundle bundle = new Bundle();
+                                        bundle.putString(AppConstants.EXTRA_PM_ID,
+                                                globalSearchType.getRcpPmId());
+                                        Intent intent = new Intent(SearchActivity.this,
+                                                PublicProfileDetailActivity.class);
+                                        intent.putExtras(bundle);
+                                        SearchActivity.this.startActivity(intent);
+                                        SearchActivity.this.overridePendingTransition(R.anim
+                                                .enter, R.anim.exit);
                                     }
                                 }
                             }
@@ -616,16 +624,16 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
         }
 
         arrayListRCPNumber = new ArrayList<>();
-        for(int i=0; i <arrayListDisplayProfile.size(); i++){
-            UserProfile userProfile =  arrayListDisplayProfile.get(i);
-            String number =  userProfile.getMobileNumber();
+        for (int i = 0; i < arrayListDisplayProfile.size(); i++) {
+            UserProfile userProfile = arrayListDisplayProfile.get(i);
+            String number = userProfile.getMobileNumber();
             arrayListRCPNumber.add(number);
         }
 
-        for(int i=0; i<objectArrayListContact.size() ; i++){
+        for (int i = 0; i < objectArrayListContact.size(); i++) {
             ProfileData profileData = (ProfileData) objectArrayListContact.get(i);
-            String number =  profileData.getTempNumber();
-            if(!arrayListRCPNumber.contains(number))
+            String number = profileData.getTempNumber();
+            if (!arrayListRCPNumber.contains(number))
                 arrayListRCPNumber.add(number);
         }
     }
@@ -809,15 +817,18 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                                 textSearchCount.setVisibility(View.GONE);
                                 textNoRecordsLocal.setVisibility(View.GONE);
                                 // TODO: 21/08/17 check for Rcontacts
-                                if (arrayListDisplayProfile != null && arrayListDisplayProfile.size() > 0) {
-                                    rContactListAdapter = new RContactListAdapter(SearchActivity.this,
+                                if (arrayListDisplayProfile != null && arrayListDisplayProfile
+                                        .size() > 0) {
+                                    rContactListAdapter = new RContactListAdapter(SearchActivity
+                                            .this,
                                             arrayListRContact);
                                     rContactListAdapter.filter(text);
                                     if (rContactListAdapter.getSearchCount() > 0) {
                                         rlTitle.setVisibility(View.VISIBLE);
                                         textSearchCount.setVisibility(View.VISIBLE);
                                         textNoRecordsLocal.setVisibility(View.GONE);
-                                        textSearchCount.setText(rContactListAdapter.getSearchCount() + "");
+                                        textSearchCount.setText(rContactListAdapter
+                                                .getSearchCount() + "");
                                         recycleViewPbContact.setAdapter(rContactListAdapter);
                                     } else {
                                         rlTitle.setVisibility(View.VISIBLE);
@@ -905,7 +916,8 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                             } else {
                                 if (allContactAdapter.getSearchCount() == 0) {
                                     // TODO: 21/08/17 check for Rcontacts
-                                    if (rContactListAdapter != null && rContactListAdapter.getSearchCount() > 0) {
+                                    if (rContactListAdapter != null && rContactListAdapter
+                                            .getSearchCount() > 0) {
                                         rlTitle.setVisibility(View.VISIBLE);
                                         textSearchCount.setVisibility(View.VISIBLE);
                                         int rCount = rContactListAdapter.getSearchCount();
@@ -1392,9 +1404,11 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                                 }*/
                             } else {
 
-                                if (rContactListAdapter != null && rContactListAdapter.getSearchCount() > 0) {
+                                if (rContactListAdapter != null && rContactListAdapter
+                                        .getSearchCount() > 0) {
                                     numberToSend = StringUtils.defaultString(((RContactListAdapter
-                                            .RContactViewHolder) viewHolder).textContactNumber.getText()
+                                            .RContactViewHolder) viewHolder).textContactNumber
+                                            .getText()
                                             .toString());
                                 }
 
@@ -1468,10 +1482,12 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                             if (allContactAdapter.getSearchCount() == 0) {
                                 if (rContactListAdapter != null && rContactListAdapter
                                         .getSearchCount() == 0) {
-                                    if (simpleCallLogListAdapter != null && simpleCallLogListAdapter.getSearchCount() > 0)
+                                    if (simpleCallLogListAdapter != null &&
+                                            simpleCallLogListAdapter.getSearchCount() > 0)
                                         simpleCallLogListAdapter.notifyDataSetChanged();
                                 } else {
-                                    /*if (simpleCallLogListAdapter != null && simpleCallLogListAdapter.getSearchCount()>0)
+                                    /*if (simpleCallLogListAdapter != null &&
+                                    simpleCallLogListAdapter.getSearchCount()>0)
                                         simpleCallLogListAdapter.notifyDataSetChanged();
                                     else if (rContactListAdapter != null
                                             && rContactListAdapter.getSearchCount() > 0) {
@@ -1485,7 +1501,8 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
 
                             } else {
                                 allContactAdapter.notifyDataSetChanged();
-                                /*if (rContactListAdapter != null && rContactListAdapter.getSearchCount() > 0)
+                                /*if (rContactListAdapter != null && rContactListAdapter
+                                .getSearchCount() > 0)
                                     rContactListAdapter.notifyDataSetChanged();*/
                             }
                         }
@@ -1567,7 +1584,8 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
 
         final String formattedNumber = Utils.getFormattedNumber(SearchActivity.this, numberToSend);
         Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + formattedNumber));
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) !=
+                PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding

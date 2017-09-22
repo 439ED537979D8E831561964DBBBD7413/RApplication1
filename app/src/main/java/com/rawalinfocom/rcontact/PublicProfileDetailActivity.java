@@ -63,8 +63,6 @@ import butterknife.ButterKnife;
 public class PublicProfileDetailActivity extends BaseActivity implements RippleView
         .OnRippleCompleteListener, WsResponseListener {
 
-    private final String TAG_IMAGE_SHARE = "tag_share";
-
     @BindView(R.id.include_toolbar)
     Toolbar includeToolbar;
     TextView textToolbarTitle;
@@ -295,47 +293,6 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
     private void getIntentDetails(Intent intent) {
         if (intent != null) {
 
-            if (intent.hasExtra(AppConstants.EXTRA_DIALOG_CALL_LOG_INSTANCE)) {
-                isDialogCallLogInstance = intent.getBooleanExtra(AppConstants
-                        .EXTRA_DIALOG_CALL_LOG_INSTANCE, false);
-            }
-
-            if (intent.hasExtra(AppConstants.EXTRA_RCP_VERIFIED_ID)) {
-                callLogRcpVerfiedId = intent.getStringExtra(AppConstants.EXTRA_RCP_VERIFIED_ID);
-            }
-
-            if (intent.hasExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER)) {
-                historyNumber = intent.getStringExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER);
-            }
-
-            if (intent.hasExtra(AppConstants.EXTRA_CALL_HISTORY_NAME)) {
-                historyName = intent.getStringExtra(AppConstants.EXTRA_CALL_HISTORY_NAME);
-            }
-
-            if (intent.hasExtra(AppConstants.EXTRA_CALL_HISTORY_DATE)) {
-                historyDate = intent.getLongExtra(AppConstants.EXTRA_CALL_HISTORY_DATE, 0);
-            }
-
-            if (intent.hasExtra(AppConstants.EXTRA_CALL_UNIQUE_ID)) {
-                hashMapKey = intent.getStringExtra(AppConstants.EXTRA_CALL_UNIQUE_ID);
-            }
-
-            if (intent.hasExtra(AppConstants.EXTRA_UNIQUE_CONTACT_ID)) {
-                uniqueContactId = intent.getStringExtra(AppConstants.EXTRA_UNIQUE_CONTACT_ID);
-            }
-
-            if (intent.hasExtra(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE)) {
-                profileThumbnail = intent.getStringExtra(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE);
-            }
-
-            if (intent.hasExtra(AppConstants.EXTRA_CALL_LOG_CLOUD_NAME)) {
-                callLogCloudName = intent.getStringExtra(AppConstants.EXTRA_CALL_LOG_CLOUD_NAME);
-            }
-
-            if (intent.hasExtra(AppConstants.EXTRA_IS_RCP_USER)) {
-                isCallLogRcpUser = intent.getBooleanExtra(AppConstants.EXTRA_IS_RCP_USER, false);
-            }
-
             if (intent.hasExtra(AppConstants.EXTRA_PM_ID)) {
                 pmId = intent.getStringExtra(AppConstants.EXTRA_PM_ID);
                 if (!StringUtils.isEmpty(pmId)) {
@@ -373,26 +330,6 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                 pmId = "-1";
             }
 
-            if (intent.hasExtra(AppConstants.EXTRA_CONTACT_NAME)) {
-                contactName = intent.getStringExtra(AppConstants.EXTRA_CONTACT_NAME);
-            } else {
-                contactName = "";
-            }
-
-            if (intent.hasExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME)) {
-                cloudContactName = intent.getStringExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME);
-                cloudContactName = StringUtils.substring(cloudContactName, 2, cloudContactName
-                        .length() - 1);
-            }
-
-            if (intent.hasExtra(AppConstants.EXTRA_CHECK_NUMBER_FAVOURITE)) {
-                checkNumberFavourite = intent.getStringExtra(AppConstants
-                        .EXTRA_CHECK_NUMBER_FAVOURITE);
-            }
-
-            if (intent.hasExtra(AppConstants.EXTRA_CONTACT_POSITION)) {
-                listClickedPosition = intent.getIntExtra(AppConstants.EXTRA_CONTACT_POSITION, -1);
-            }
         }
 
     }

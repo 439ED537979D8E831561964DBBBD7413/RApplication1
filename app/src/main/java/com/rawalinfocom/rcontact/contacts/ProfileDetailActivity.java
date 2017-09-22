@@ -4244,7 +4244,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     //</editor-fold>
 
-
     private BroadcastReceiver localBroadcastReceiverDialog = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
