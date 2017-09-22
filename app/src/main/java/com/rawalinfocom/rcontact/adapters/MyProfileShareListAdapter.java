@@ -8,6 +8,7 @@ import android.content.pm.LabeledIntent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.os.Parcelable;
 import android.support.v4.content.FileProvider;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
@@ -45,6 +46,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import butterknife.BindView;
@@ -68,15 +70,15 @@ public class MyProfileShareListAdapter extends RecyclerView.Adapter<MyProfileSha
     Activity mActivity;
 
     public MyProfileShareListAdapter(Context context, ArrayList<String> arrayList, String pmId,
-                                     ProfileDataOperation profileDataOperationVcard,String contactName,
+                                     ProfileDataOperation profileDataOperationVcard, String contactName,
                                      Activity activity) {
         this.context = context;
         this.arrayListString = arrayList;
         this.pmID = pmId;
         databaseHandler = new DatabaseHandler(context);
         this.profileDataOperationVcard = profileDataOperationVcard;
-        if(!StringUtils.isEmpty(contactName))
-            this.contactName =  contactName;
+        if (!StringUtils.isEmpty(contactName))
+            this.contactName = contactName;
         this.mActivity = activity;
 
     }
@@ -115,30 +117,30 @@ public class MyProfileShareListAdapter extends RecyclerView.Adapter<MyProfileSha
                     }
                 }
 
-                if(value.equalsIgnoreCase(context.getString(R.string.average_rate_sharing))){
-                    if (!StringUtils.equalsAnyIgnoreCase(pmID, "-1")){
+                if (value.equalsIgnoreCase(context.getString(R.string.average_rate_sharing))) {
+                    if (!StringUtils.equalsAnyIgnoreCase(pmID, "-1")) {
                         String sharingUrl = "Click link to see " + contactName + " 's average rating." + "\n"
                                 + WsConstants.WS_AVG_RATING_SHARE_BADGE_ROOT + userProfile.getPmBadge();
-                        if(Utils.isNetworkAvailable(context))
+                        if (Utils.isNetworkAvailable(context)) {
                             shareAverageRating(sharingUrl);
-                        else{
+                            //shareAverageRating(sharingUrl);
+                        } else {
 //                            Utils.showErrorSnackBar(context, llRoot, context.getResources()
 //                                    .getString(R.string.msg_no_network));
                             Intent localBroadcastIntent = new Intent(AppConstants
                                     .ACTION_LOCAL_BROADCAST_DIALOG);
                             LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance
                                     (context);
-                            localBroadcastIntent.putExtra("networkIssue","true");
+                            localBroadcastIntent.putExtra("networkIssue", "true");
                             myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
 
                         }
                     }
 
-                }else if(value.equalsIgnoreCase(context.getString(R.string.my_profile_share))){
-                    if (!StringUtils.equalsAnyIgnoreCase(pmID, "-1")){
+                } else if (value.equalsIgnoreCase(context.getString(R.string.my_profile_share))) {
+                    if (!StringUtils.equalsAnyIgnoreCase(pmID, "-1")) {
                         // RCP profile or Own Profile
-                        if(Utils.isNetworkAvailable(context))
-                        {
+                        if (Utils.isNetworkAvailable(context)) {
                             Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                             sharingIntent.setType("text/plain");
                             String shareBody;
@@ -152,14 +154,15 @@ public class MyProfileShareListAdapter extends RecyclerView.Adapter<MyProfileSha
                             context.startActivity(Intent.createChooser(sharingIntent, context.getString(R.string
                                     .str_share_contact_via)));
 
-                        }else{
+                        } else {
                             Intent localBroadcastIntent = new Intent(AppConstants
                                     .ACTION_LOCAL_BROADCAST_DIALOG);
                             LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance
                                     (context);
-                            localBroadcastIntent.putExtra("networkIssue","true");
-                            myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);                        }
-                    }else{
+                            localBroadcastIntent.putExtra("networkIssue", "true");
+                            myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+                        }
+                    } else {
                         shareContact();
                     }
 
@@ -250,8 +253,8 @@ public class MyProfileShareListAdapter extends RecyclerView.Adapter<MyProfileSha
                                         .ACTION_LOCAL_BROADCAST_DIALOG);
                                 LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance
                                         (context);
-                                localBroadcastIntent.putExtra("responseError","true");
-                                localBroadcastIntent.putExtra("responseMessage",profileSharingResponse.getMessage());
+                                localBroadcastIntent.putExtra("responseError", "true");
+                                localBroadcastIntent.putExtra("responseMessage", profileSharingResponse.getMessage());
                                 myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
                             } else {
                                 Log.e("onDeliveryResponse: ", "otpDetailResponse null");
@@ -261,7 +264,7 @@ public class MyProfileShareListAdapter extends RecyclerView.Adapter<MyProfileSha
                                         .ACTION_LOCAL_BROADCAST_DIALOG);
                                 LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance
                                         (context);
-                                localBroadcastIntent.putExtra("serverError","true");
+                                localBroadcastIntent.putExtra("serverError", "true");
                                 myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
                             }
                         }
@@ -279,64 +282,53 @@ public class MyProfileShareListAdapter extends RecyclerView.Adapter<MyProfileSha
                     .ACTION_LOCAL_BROADCAST_DIALOG);
             LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance
                     (context);
-            localBroadcastIntent.putExtra("networkIssue","true");
+            localBroadcastIntent.putExtra("networkIssue", "true");
             myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
 
         }
     }
 
     private void shareAverageRating(String url) {
+        List<Intent> intentShareList = new ArrayList<Intent>();
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        List<ResolveInfo> resolveInfoList = mActivity.getPackageManager().queryIntentActivities(shareIntent, 0);
 
-        PackageManager pm = mActivity.getPackageManager();
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_SEND);
-        intent.setType("text/*");
+        for (ResolveInfo resInfo : resolveInfoList) {
+            String packageName = resInfo.activityInfo.packageName;
+            String name = resInfo.activityInfo.name;
+//        Log.d(TAG, "Package Name : " + packageName);
+//        Log.d(TAG, "Name : " + name);
 
-        List<ResolveInfo> resInfo = pm.queryIntentActivities(intent, 0);
-        List<LabeledIntent> intentList = new ArrayList<LabeledIntent>();
-        for (int i = 0; i < resInfo.size(); i++) {
-            // Extract the label, append it, and repackage it in a LabeledIntent
-            ResolveInfo ri = resInfo.get(i);
-            String packageName = ri.activityInfo.packageName;
-            if (packageName.contains("com.twitter.android") || packageName.contains("com.facebook.katana")
-                    || packageName.contains("com.linkedin.android")) {
-                intent.setComponent(new ComponentName(packageName, ri.activityInfo.name));
-                if (packageName.contains("com.twitter.android")) {
-                    intent.putExtra(Intent.EXTRA_TEXT, url);
-                } else if (packageName.contains("com.facebook.katana")) {
-                    // Warning: Facebook IGNORES our text. They say "These fields are intended for users to express themselves. Pre-filling these fields erodes the authenticity of the user voice."
-                    // One workaround is to use the Facebook SDK to post, but that doesn't allow the user to choose how they want to share. We can also make a custom landing page, and the link
-                    // will show the <meta content ="..."> text from that page with our link in Facebook.
-                    intent.setType("text/plain");
-                    intent.putExtra("android.intent.extra.TEXT", url);
+            if (packageName.contains("com.facebook") ||
+                    packageName.contains("com.twitter.android") ||
+                    packageName.contains("com.linkedin.android")) {
 
-
-                } else if (packageName.contains("com.linkedin.android")) {
-                    // If Gmail shows up twice, try removing this else-if clause and the reference to "android.gm" above
-                    intent.putExtra(android.content.Intent.EXTRA_TEXT, url);
+                if (name.contains("com.twitter.android.DMActivity")) {
+                    continue;
                 }
-                intentList.add(new LabeledIntent(intent, packageName, ri.loadLabel(pm), ri.icon));
-            }
 
+                Intent intent = new Intent();
+                intent.setComponent(new ComponentName(packageName, name));
+                intent.setAction(Intent.ACTION_SEND);
+                intent.setType("text/plain");
+                intent.putExtra(Intent.EXTRA_TEXT, url);
+                intentShareList.add(intent);
+            }
         }
 
-        if(resInfo.size()>0){
-            // convert intentList to array
-            LabeledIntent[] extraIntents = intentList.toArray(new LabeledIntent[intentList.size()]);
-            Intent openInChooser = Intent.createChooser(intent, context.getString(R.string.share_rating_via_social_media));
-            openInChooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, extraIntents);
-            context.startActivity(openInChooser);
-        }else{
-            // NO App Found
+        if (intentShareList.isEmpty()) {
             Intent localBroadcastIntent = new Intent(AppConstants
                     .ACTION_LOCAL_BROADCAST_DIALOG);
             LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance
                     (context);
             localBroadcastIntent.putExtra("noApps","true");
             myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
-
+        } else {
+            Intent chooserIntent = Intent.createChooser(intentShareList.remove(0), context.getString(R.string.share_rating_via_social_media));
+            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentShareList.toArray(new Parcelable[]{}));
+            mActivity.startActivity(chooserIntent);
         }
-
     }
-
 }
