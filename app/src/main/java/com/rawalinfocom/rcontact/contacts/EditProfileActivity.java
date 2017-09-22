@@ -2871,7 +2871,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     }
 
     private void checkBeforeOrganizationViewAdd() {
-        boolean toAdd = false, isChecked = true;
+        boolean toAdd = false, isChecked;
         for (int i = 0; i < linearOrganizationDetails.getChildCount(); i++) {
             View linearView = linearOrganizationDetails.getChildAt(i);
             EditText inputCompanyName = linearView.findViewById(R.id.input_company_name);
@@ -3410,11 +3410,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             }
 
         } else {
-//            if (linearOrganizationDetails.getChildCount() == 0) {
             checkboxOrganization.setChecked(true);
             inputToDate.setEnabled(false);
             imageToDate.setEnabled(false);
-//            }
         }
 
         checkboxOrganization.setOnCheckedChangeListener(new CompoundButton
@@ -3427,9 +3425,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         CheckBox checkbox = view.findViewById(R.id
                                 .checkbox_organization);
                         if (checkbox != null) {
-//                            if (!(checkbox.getTag() == buttonView.getTag())) {
-//                                checkbox.setChecked(false);
-//                            }
 
                             inputToDate.setEnabled(false);
                             imageToDate.setEnabled(false);
