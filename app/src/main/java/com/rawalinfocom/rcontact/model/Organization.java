@@ -14,6 +14,8 @@ public class Organization {
     private Integer omIsPrivate;
     private String omOrganizationPrivacy;
     private String rcProfileMasterPmId;
+    private String omOrganizationFromDate;
+    private String omOrganizationToDate;
 
     /*private String omOrganizationType;
     private String omCustomType;
@@ -84,5 +86,21 @@ public class Organization {
 
     public void setOmIsPrivate(Integer omIsPrivate) {
         this.omIsPrivate = omIsPrivate;
+    }
+
+    public String getOmOrganizationFromDate() {
+        return omOrganizationFromDate;
+    }
+
+    public void setOmOrganizationFromDate(String omOrganizationFromDate) {
+        this.omOrganizationFromDate = omOrganizationFromDate;
+    }
+
+    public String getOmOrganizationToDate() {
+        return omOrganizationToDate;
+    }
+
+    public void setOmOrganizationToDate(String omOrganizationToDate) {
+        this.omOrganizationToDate = omOrganizationToDate;
     }
 }

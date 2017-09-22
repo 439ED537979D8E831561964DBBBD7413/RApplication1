@@ -367,6 +367,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
     boolean isBirthday = false;
     boolean isEvent = false;
+    boolean isOrganization = false;
     boolean isMale = false, isFemale = false;
     boolean isUpdated = false;
 
@@ -392,6 +393,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     private ArrayList<String> socialTypeList;
     private SocialConnectListAdapter socialConnectListAdapter;
     private String socialId = "";
+    private TextView organizationDateView;
+    ArrayList<ProfileDataOperationEmail> SocialEmailList;
 
     private String[] requiredPermissions = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest
             .permission.WRITE_EXTERNAL_STORAGE};
@@ -415,6 +418,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 .DEFAULT_SIGN_IN).requestEmail().build();
         googleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this, this).addApi
                 (Auth.GOOGLE_SIGN_IN_API, gso).build();
+
+        SocialEmailList = new ArrayList<>();
 
         init();
 
@@ -617,9 +622,21 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                     ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
                     imAccount.setIMAccountProtocol("LinkedIn");
+                    imAccount.setIMAccountFirstName(data.getStringExtra("first_name"));
+                    imAccount.setIMAccountLastName(data.getStringExtra("last_name"));
+                    imAccount.setIMAccountProfileImage(data.getStringExtra("profileImage"));
                     imAccount.setIMAccountDetails(socialId);
                     imAccount.setIMAccountPublic(IntegerConstants.PRIVACY_MY_CONTACT);
                     arrayListSocialContactObject.add(imAccount);
+
+                    ProfileDataOperationEmail email = new ProfileDataOperationEmail();
+                    email.setEmEmailId(StringUtils.trim(data.getStringExtra("email")));
+                    email.setEmType("Work");
+                    email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
+                    email.setEmIsSocial(1);
+                    email.setEmSocialType("linkedin");
+
+                    SocialEmailList.add(email);
 
                     addSocialConnectView(arrayListSocialContactObject.get(arrayListSocialContactObject.size() - 1), "");
 
@@ -691,10 +708,25 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                     socialId = jsonObject.getString("id");
 
                                     ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
+
+                                    imAccount.setIMAccountFirstName(jsonObject.getString("first_name"));
+                                    imAccount.setIMAccountLastName(jsonObject.getString("last_name"));
+
                                     imAccount.setIMAccountProtocol("Facebook");
+                                    imAccount.setIMAccountProfileImage("https://graph.facebook.com/" + socialId +
+                                            "/picture?width=200&height=150");
                                     imAccount.setIMAccountPublic(IntegerConstants.PRIVACY_MY_CONTACT);
                                     imAccount.setIMAccountDetails(socialId);
                                     arrayListSocialContactObject.add(imAccount);
+
+                                    ProfileDataOperationEmail email = new ProfileDataOperationEmail();
+                                    email.setEmEmailId(StringUtils.trim(jsonObject.getString("email")));
+                                    email.setEmType("Work");
+                                    email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
+                                    email.setEmIsSocial(1);
+                                    email.setEmSocialType("facebook");
+
+                                    SocialEmailList.add(email);
 
                                     addSocialConnectView(arrayListSocialContactObject.get(arrayListSocialContactObject.size() - 1)
                                             , "");
@@ -745,9 +777,22 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                 ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
                 imAccount.setIMAccountProtocol("GooglePlus");
+
+                imAccount.setIMAccountFirstName(acct.getGivenName());
+                imAccount.setIMAccountLastName(acct.getFamilyName());
                 imAccount.setIMAccountPublic(IntegerConstants.PRIVACY_MY_CONTACT);
+                imAccount.setIMAccountProfileImage(String.valueOf(acct.getPhotoUrl()));
                 imAccount.setIMAccountDetails(socialId);
                 arrayListSocialContactObject.add(imAccount);
+
+                ProfileDataOperationEmail email = new ProfileDataOperationEmail();
+                email.setEmEmailId(StringUtils.trim(acct.getEmail()));
+                email.setEmType("Work");
+                email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
+                email.setEmIsSocial(1);
+                email.setEmSocialType("google");
+
+                SocialEmailList.add(email);
 
                 addSocialConnectView(arrayListSocialContactObject.get(arrayListSocialContactObject.size() - 1), "");
             }
@@ -818,6 +863,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         case AppConstants.IM_ACCOUNT:
                             linearSocialContactDetails.removeAllViews();
                             socialContactDetails();
+                            linearEmailDetails.removeAllViews();
+                            emailDetails();
                             break;
                         case AppConstants.WEBSITE:
                             linearWebsiteDetails.removeAllViews();
@@ -1228,6 +1275,26 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
             // <editor-fold desc="button_social_contact_update">
             case R.id.button_social_contact_update:
+
+                ArrayList<ProfileDataOperationEmail> arrayListFinalEmailAccount = new ArrayList<>();
+
+                TableEmailMaster tableEmailMaster = new TableEmailMaster(databaseHandler);
+
+                ArrayList<Email> arrayListEmail = tableEmailMaster.getEmailsFromPmId(Integer.parseInt
+                        (getUserPmId()));
+                ArrayList<ProfileDataOperationEmail> arrayListNewEmailAccount = new ArrayList<>();
+
+                for (int i = 0; i < arrayListEmail.size(); i++) {
+                    ProfileDataOperationEmail email = new ProfileDataOperationEmail();
+                    email.setEmEmailId(arrayListEmail.get(i).getEmEmailAddress());
+                    email.setEmType(arrayListEmail.get(i).getEmEmailType());
+                    email.setEmId(arrayListEmail.get(i).getEmRecordIndexId());
+                    email.setEmPublic(Integer.parseInt(arrayListEmail.get(i).getEmEmailPrivacy()));
+                    email.setEmRcpType(Integer.parseInt(arrayListEmail.get(i).getEmIsVerified()));
+
+                    arrayListNewEmailAccount.add(email);
+                }
+
                 ArrayList<ProfileDataOperationImAccount> arrayListNewImAccount = new ArrayList<>();
                 isValid = true;
                 for (int i = 0; i < linearSocialContactDetails.getChildCount(); i++) {
@@ -1235,17 +1302,24 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     View linearSocialContact = linearSocialContactDetails.getChildAt(i);
                     EditText imAccountName = linearSocialContact.findViewById(R.id
                             .input_value);
-//                    Spinner imAccountProtocol = linearSocialContact.findViewById(R.id
-//                            .spinner_type);
                     TextView textIsPublic = linearSocialContact.findViewById(R.id
                             .text_is_public);
                     TextView imAccountProtocol = linearSocialContact.findViewById(R.id
                             .input_protocol);
+                    TextView imAccountProfileImage = linearSocialContact.findViewById(R.id
+                            .text_profile_image);
                     RelativeLayout relativeRowEditProfileSocial = linearSocialContact
                             .findViewById(R.id.relative_row_edit_profile_social);
+                    TextView textFirstName = linearSocialContact.findViewById(R.id.text_first_name);
+                    TextView textLastName = linearSocialContact.findViewById(R.id.text_last_name);
+
                     imAccount.setIMAccountDetails(imAccountName.getText().toString().trim());
+                    imAccount.setIMUserId(imAccountName.getText().toString().trim());
                     imAccount.setIMAccountProtocol(imAccountProtocol.getText().toString().trim());
                     imAccount.setIMId((String) relativeRowEditProfileSocial.getTag());
+                    imAccount.setIMAccountProfileImage(imAccountProfileImage.getText().toString().trim());
+                    imAccount.setIMAccountFirstName(textFirstName.getText().toString().trim());
+                    imAccount.setIMAccountLastName(textLastName.getText().toString().trim());
 
                     if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
                         imAccount.setIMAccountPublic(Integer.parseInt(textIsPublic.getText()
@@ -1267,8 +1341,14 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 }
                 if (isValid) {
                     if (arrayListNewImAccount.size() > 0) {
+
+                        arrayListFinalEmailAccount.addAll(arrayListNewEmailAccount);
+                        arrayListFinalEmailAccount.addAll(SocialEmailList);
+
                         profileDataOperation.setPbIMAccounts(arrayListNewImAccount);
+                        profileDataOperation.setPbEmailId(arrayListFinalEmailAccount);
                         editProfile(profileDataOperation, AppConstants.IM_ACCOUNT);
+
                     } else {
                         if (arrayListSocialContactObject.size() > 0) {
                             profileDataOperation.setPbIMAccounts(arrayListNewImAccount);
@@ -1342,6 +1422,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             .input_company_name);
                     EditText inputDesignationName = linearOrganization.findViewById(R.id
                             .input_designation_name);
+
+                    EditText inputFromDate = linearOrganization.findViewById(R.id.input_from_date);
+                    EditText inputToDate = linearOrganization.findViewById(R.id.input_to_date);
+
                     RelativeLayout relativeRowEditProfile = linearOrganization
                             .findViewById(R.id.relative_row_edit_profile);
                     CheckBox checkboxOrganization = linearOrganization.findViewById(R
@@ -1350,25 +1434,48 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     organization.setOrgJobTitle(inputDesignationName.getText().toString().trim());
                     organization.setOrgId((String) relativeRowEditProfile.getTag());
                     organization.setIsCurrent(checkboxOrganization.isChecked() ? 1 : 0);
-
                     organization.setOrgPublic(IntegerConstants.PRIVACY_EVERYONE);
 
+                    if (!StringUtils.isBlank(inputToDate.getText().toString().trim())) {
+                        organization.setOrgToDate(
+                                Utils.convertDateFormat(inputToDate.getText()
+                                        .toString().trim(), getEventDateFormatForUpdate(inputToDate.getText()
+                                        .toString().trim()), "yyyy-MM-dd HH:mm:ss"));
+
+                    } else {
+                        organization.setOrgToDate(inputToDate.getText().toString().trim());
+                    }
+
+                    organization.setOrgFromDate(
+                            Utils.convertDateFormat(inputFromDate.getText()
+                                    .toString().trim(), getEventDateFormatForUpdate(inputFromDate.getText()
+                                    .toString().trim()), "yyyy-MM-dd HH:mm:ss"));
+
                     if (!StringUtils.isBlank(organization.getOrgName()) ||
-                            !StringUtils.isBlank(organization.getOrgJobTitle())) {
+                            !StringUtils.isBlank(organization.getOrgJobTitle()) ||
+                            !StringUtils.isBlank(organization.getOrgFromDate())) {
                         if (!StringUtils.isBlank(organization.getOrgName())) {
-                            if (!StringUtils.isBlank(organization.getOrgJobTitle())) {
-                                arrayListNewOrganization.add(organization);
-                            } else {
+                            if (StringUtils.isBlank(organization.getOrgJobTitle())) {
                                 Utils.showErrorSnackBar(this, relativeRootEditProfile,
                                         getString(R.string.error_required_org_designation));
                                 isValid = false;
+                            } else if (StringUtils.isBlank(organization.getOrgFromDate())) {
+                                Utils.showErrorSnackBar(this, relativeRootEditProfile,
+                                        getString(R.string.error_required_org_from_date));
+                                isValid = false;
                                 break;
+                            } else if (!checkboxOrganization.isChecked() && StringUtils.isBlank(organization.getOrgToDate())) {
+                                Utils.showErrorSnackBar(this, relativeRootEditProfile,
+                                        getString(R.string.error_required_org_to_date));
+                                isValid = false;
+                                break;
+                            } else {
+                                arrayListNewOrganization.add(organization);
                             }
                         } else {
                             Utils.showErrorSnackBar(this, relativeRootEditProfile,
                                     getString(R.string.error_required_org_name));
                             isValid = false;
-                            break;
                         }
                     } else {
                         if (i != 0) {
@@ -1391,13 +1498,15 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                      /*   profileDataOperation.setPbOrganization(arrayListNewOrganization);
                         editProfile(profileDataOperation, AppConstants.ORGANIZATION);*/
                     if (arrayListNewOrganization.size() > 0) {
-                        if (!isCurrentSelected) {
-                            Utils.showErrorSnackBar(this, relativeRootEditProfile, getString(R
-                                    .string.error_current_organization));
-                        } else {
-                            profileDataOperation.setPbOrganization(arrayListNewOrganization);
-                            editProfile(profileDataOperation, AppConstants.ORGANIZATION);
-                        }
+                        profileDataOperation.setPbOrganization(arrayListNewOrganization);
+                        editProfile(profileDataOperation, AppConstants.ORGANIZATION);
+//                        if (!isCurrentSelected) {
+//                            Utils.showErrorSnackBar(this, relativeRootEditProfile, getString(R
+//                                    .string.error_current_organization));
+//                        } else {
+//                            profileDataOperation.setPbOrganization(arrayListNewOrganization);
+//                            editProfile(profileDataOperation, AppConstants.ORGANIZATION);
+//                        }
                     } else {
                         if (arrayListOrganizationObject.size() > 0) {
                             profileDataOperation.setPbOrganization(arrayListNewOrganization);
@@ -2291,7 +2400,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 if (isBirthday) {
                     updateBirthdayEditText(myCalendar);
                 } else if (isEvent) {
-                    updateEditTextEvent(myCalendar);
+                    updateEditTextEvent(myCalendar, "event");
+                } else if (isOrganization) {
+                    updateEditTextEvent(myCalendar, "organization");
                 } else {
                     updateAnniversaryEditText(myCalendar);
                 }
@@ -2365,8 +2476,18 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 //        updateEditTextEvent(myCalendar);
     }
 
+    private void updateOrganizationText(TextView textView) {
+        final Calendar myCalendar = Calendar.getInstance();
+        organizationDateView = textView;
+        new DatePickerDialog(EditProfileActivity.this, dataPicker, myCalendar
+                .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+//        updateEditTextEvent(myCalendar);
+    }
+
     @SuppressLint("SimpleDateFormat")
-    private void updateEditTextEvent(Calendar myCalendar) {
+    private void updateEditTextEvent(Calendar myCalendar, String type) {
+
         SimpleDateFormat format = new SimpleDateFormat("d");
         String date = format.format(myCalendar.getTime());
 
@@ -2380,10 +2501,16 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             format = new SimpleDateFormat(EVENT_GENERAL_DATE_FORMAT);
 
         String yourDate = format.format(myCalendar.getTime());
-        if (!TextUtils.isEmpty(yourDate))
-            editTextEvent.setText(yourDate);
 
-//        isEvent = false;
+        if (type.equalsIgnoreCase("event")) {
+            if (!TextUtils.isEmpty(yourDate))
+                editTextEvent.setText(yourDate);
+            isEvent = false;
+        } else {
+            if (!TextUtils.isEmpty(yourDate))
+                organizationDateView.setText(yourDate);
+            isOrganization = false;
+        }
     }
 
     private void genderDetails() {
@@ -2477,6 +2604,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             email.setEmPublic(Integer.parseInt(arrayListEmail.get(i).getEmEmailPrivacy()));
             email.setEmRcpType(Integer.parseInt(arrayListEmail.get(i).getEmIsVerified()));
             arrayListEmailObject.add(email);
+
+//            SocialEmailList.add(email);
         }
         if (arrayListEmailObject.size() > 0) {
             for (int i = 0; i < arrayListEmailObject.size(); i++) {
@@ -2536,8 +2665,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         for (int i = 0; i < arrayListImAccount.size(); i++) {
             ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
             imAccount.setIMAccountProtocol(arrayListImAccount.get(i).getImImProtocol());
-//            imAccount.setIMAccountType(arrayListImAccount.get(i).getImImType());
             imAccount.setIMAccountDetails(arrayListImAccount.get(i).getImImDetail());
+            imAccount.setIMAccountFirstName(arrayListImAccount.get(i).getImImFirstName());
+            imAccount.setIMAccountLastName(arrayListImAccount.get(i).getImImLastName());
+            imAccount.setIMAccountProfileImage(arrayListImAccount.get(i).getImImProfileImage());
             imAccount.setIMId(arrayListImAccount.get(i).getImRecordIndexId());
             imAccount.setIMAccountPublic(Integer.parseInt(arrayListImAccount.get(i)
                     .getImImPrivacy()));
@@ -2613,13 +2744,26 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 .getOrganizationsFromPmId(Integer.parseInt(getUserPmId()));
         arrayListOrganizationObject = new ArrayList<>();
         for (int i = 0; i < arrayListOrganization.size(); i++) {
+
+            String formattedFromDate = "", formattedToDate = "";
+
             ProfileDataOperationOrganization organization = new ProfileDataOperationOrganization();
             organization.setOrgName(arrayListOrganization.get(i).getOmOrganizationCompany());
-            organization.setOrgJobTitle(arrayListOrganization.get(i).getOmOrganizationDesignation
-                    ());
+
+            if (!StringUtils.isEmpty(arrayListOrganization.get(i).getOmOrganizationFromDate())) {
+                formattedFromDate = Utils.convertDateFormat(arrayListOrganization.get(i).getOmOrganizationFromDate(),
+                        "yyyy-MM-dd hh:mm:ss", getEventDateFormat(arrayListOrganization.get(i).getOmOrganizationFromDate()));
+            }
+            if (!StringUtils.isEmpty(arrayListOrganization.get(i).getOmOrganizationToDate())) {
+                formattedToDate = Utils.convertDateFormat(arrayListOrganization.get(i).getOmOrganizationToDate(),
+                        "yyyy-MM-dd hh:mm:ss", getEventDateFormat(arrayListOrganization.get(i).getOmOrganizationToDate()));
+            }
+
+            organization.setOrgFromDate(formattedFromDate);
+            organization.setOrgToDate(formattedToDate);
+            organization.setOrgJobTitle(arrayListOrganization.get(i).getOmOrganizationDesignation());
             organization.setOrgId(arrayListOrganization.get(i).getOmRecordIndexId());
-            organization.setIsCurrent(Integer.parseInt(arrayListOrganization.get(i)
-                    .getOmIsCurrent()));
+            organization.setIsCurrent(Integer.parseInt(arrayListOrganization.get(i).getOmIsCurrent()));
             arrayListOrganizationObject.add(organization);
         }
 
@@ -2727,17 +2871,29 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     }
 
     private void checkBeforeOrganizationViewAdd() {
-        boolean toAdd = false;
+        boolean toAdd = false, isChecked = true;
         for (int i = 0; i < linearOrganizationDetails.getChildCount(); i++) {
             View linearView = linearOrganizationDetails.getChildAt(i);
             EditText inputCompanyName = linearView.findViewById(R.id.input_company_name);
-            EditText inputDesignationName = linearView.findViewById(R.id
-                    .input_designation_name);
-            if (StringUtils.length(StringUtils.trimToEmpty(inputCompanyName.getText().toString())
-            ) < 1 || StringUtils.length(StringUtils.trimToEmpty(inputDesignationName.getText()
+            EditText inputDesignationName = linearView.findViewById(R.id.input_designation_name);
+            CheckBox checkboxOrganization = linearView.findViewById(R.id.checkbox_organization);
+            EditText inputFromDate = linearView.findViewById(R.id.input_from_date);
+            EditText inputToDate = linearView.findViewById(R.id.input_to_date);
+
+            isChecked = checkboxOrganization.isChecked();
+
+            if (StringUtils.length(StringUtils.trimToEmpty(inputCompanyName.getText()
+                    .toString())) < 1 || StringUtils.length(StringUtils.trimToEmpty(inputDesignationName.getText()
+                    .toString())) < 1 || StringUtils.length(StringUtils.trimToEmpty(inputFromDate.getText()
                     .toString())) < 1) {
-                toAdd = false;
-                break;
+                if (isChecked && StringUtils.length(StringUtils.trimToEmpty(inputToDate.getText()
+                        .toString())) < 1) {
+                    toAdd = false;
+                    break;
+                } else {
+                    toAdd = false;
+                    break;
+                }
             } else {
                 toAdd = true;
             }
@@ -2882,8 +3038,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     if (email.getEmRcpType() == IntegerConstants.RCP_TYPE_PRIMARY) {
                         inputValue.setTypeface(Utils.typefaceIcons(EditProfileActivity.this));
                         inputValue.setEnabled(false);
-                        spinnerType.setEnabled(false);
-                        imageViewDelete.setVisibility(View.INVISIBLE);
+                        spinnerType.setVisibility(View.GONE);
+                        imageViewDelete.setVisibility(View.GONE);
                        /* inputValue.setText(String.format("%s %s", email.getEmEmailId(),
                                 getString(R.string.im_icon_verify)));*/
                         inputValue.setText(Utils.setMultipleTypeface(EditProfileActivity.this,
@@ -3087,10 +3243,15 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         LinearLayout linearContent = view.findViewById(R.id.linear_content);
 
         final EditText inputValue = view.findViewById(R.id.input_value);
+        TextView textFirstName = view.findViewById(R.id.text_first_name);
+        TextView textLastName = view.findViewById(R.id.text_last_name);
         TextView textIsVerified = view.findViewById(R.id.text_is_verified);
         TextView textProtocol = view.findViewById(R.id.input_protocol);
+        TextView imAccountProfileImage = view.findViewById(R.id.text_profile_image);
+
         textIsVerified.setText(R.string.verify_now);
         textIsVerified.setVisibility(View.GONE);
+
         final RelativeLayout relativeRowEditProfileSocial = view.findViewById(R.id
                 .relative_row_edit_profile_social);
 
@@ -3102,8 +3263,11 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         if (detailObject != null) {
             ProfileDataOperationImAccount imAccount = (ProfileDataOperationImAccount)
                     detailObject;
+
             inputValue.setText(imAccount.getIMAccountDetails());
             textProtocol.setText(imAccount.getIMAccountProtocol());
+            textFirstName.setText(imAccount.getIMAccountFirstName());
+            textLastName.setText(imAccount.getIMAccountLastName());
 
             if (imAccount.getIMAccountProtocol().equalsIgnoreCase("Facebook")
                     || imAccount.getIMAccountProtocol().equalsIgnoreCase("GooglePlus")
@@ -3111,6 +3275,16 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                 inputValue.setEnabled(false);
                 linearContent.setVisibility(View.GONE);
+                imageViewSocialProfile.setVisibility(View.VISIBLE);
+
+                imAccountProfileImage.setText(imAccount.getIMAccountProfileImage());
+
+                Glide.with(EditProfileActivity.this)
+                        .load(imAccount.getIMAccountProfileImage())
+                        .error(R.drawable.home_screen_profile)
+                        .bitmapTransform(new CropCircleTransformation(EditProfileActivity.this))
+                        .override(120, 120)
+                        .into(imageViewSocialProfile);
 
             } else {
                 linearContent.setVisibility(View.VISIBLE);
@@ -3118,16 +3292,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
             if (imAccount.getIMAccountProtocol().equalsIgnoreCase("Facebook")) {
                 imageViewSocialIcon.setImageResource(R.drawable.ico_facebook_svg);
-//                imageViewSocialIcon.setImageResource(R.drawable.ico_social_facebook_svg);
             } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("GooglePlus")) {
                 imageViewSocialIcon.setImageResource(R.drawable.ico_google_plus_svg);
-//                imageViewSocialIcon.setImageResource(R.drawable.ico_google_plus_color_svg);
             } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("LinkedIn")) {
                 imageViewSocialIcon.setImageResource(R.drawable.ico_linkedin_svg);
-//                imageViewSocialIcon.setImageResource(R.drawable.ico_socia_linkedin_svg);
             } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("Twitter")) {
                 imageViewSocialIcon.setImageResource(R.drawable.ico_twitter_svg);
-//                imageViewSocialIcon.setImageResource(R.drawable.ico_social_twitter_svg);
             } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("Instagram")) {
                 imageViewSocialIcon.setImageResource(R.drawable.ico_instagram_svg);
             } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("Pinterest")) {
@@ -3144,6 +3314,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         } else {
 
             textProtocol.setText(imAccountProtocol);
+            imAccountProfileImage.setText("");
+            imageViewSocialProfile.setVisibility(View.GONE);
 
             if (imAccountProtocol.equalsIgnoreCase("Facebook")) {
                 imageViewSocialIcon.setImageResource(R.drawable.ico_facebook_svg);
@@ -3194,6 +3366,18 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         final CheckBox checkboxOrganization = view.findViewById(R.id
                 .checkbox_organization);
 
+        final EditText inputFromDate = view.findViewById(R.id.input_from_date);
+        final EditText inputToDate = view.findViewById(R.id.input_to_date);
+
+        inputFromDate.setHint(R.string.hint_choose_from_date);
+        inputFromDate.setFocusable(false);
+
+        inputToDate.setHint(R.string.hint_choose_to_date);
+        inputToDate.setFocusable(false);
+
+        final ImageView imageFromDate = view.findViewById(R.id.image_from_date);
+        final ImageView imageToDate = view.findViewById(R.id.image_to_date);
+
         checkboxOrganization.setTag(linearOrganizationDetails.getChildCount());
 
         final RelativeLayout relativeRowEditProfile = view.findViewById(R.id
@@ -3215,10 +3399,22 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             inputCompanyName.setText(organization.getOrgName());
             inputDesignationName.setText(organization.getOrgJobTitle());
             checkboxOrganization.setChecked(organization.getIsCurrent() == 1);
-        } else {
-            if (linearOrganizationDetails.getChildCount() == 0) {
-                checkboxOrganization.setChecked(true);
+
+            if (organization.getIsCurrent() == 1) {
+                inputToDate.setEnabled(false);
+                imageToDate.setEnabled(false);
+                inputFromDate.setText(organization.getOrgFromDate());
+            } else {
+                inputFromDate.setText(organization.getOrgFromDate());
+                inputToDate.setText(organization.getOrgToDate());
             }
+
+        } else {
+//            if (linearOrganizationDetails.getChildCount() == 0) {
+            checkboxOrganization.setChecked(true);
+            inputToDate.setEnabled(false);
+            imageToDate.setEnabled(false);
+//            }
         }
 
         checkboxOrganization.setOnCheckedChangeListener(new CompoundButton
@@ -3231,13 +3427,21 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         CheckBox checkbox = view.findViewById(R.id
                                 .checkbox_organization);
                         if (checkbox != null) {
-                            if (!(checkbox.getTag() == buttonView.getTag())) {
-                                checkbox.setChecked(false);
-                            }
+//                            if (!(checkbox.getTag() == buttonView.getTag())) {
+//                                checkbox.setChecked(false);
+//                            }
+
+                            inputToDate.setEnabled(false);
+                            imageToDate.setEnabled(false);
+
+                            inputToDate.setText("");
+                            inputToDate.setHint(R.string.hint_choose_to_date);
                         }
-
                     }
+                } else {
 
+                    inputToDate.setEnabled(true);
+                    imageToDate.setEnabled(true);
                 }
             }
         });
@@ -3253,6 +3457,22 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     inputDesignationName.getText().clear();
                     checkboxOrganization.setChecked(true);
                 }
+            }
+        });
+
+        imageFromDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isOrganization = true;
+                updateOrganizationText(inputFromDate);
+            }
+        });
+
+        imageToDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isOrganization = true;
+                updateOrganizationText(inputToDate);
             }
         });
 
@@ -3989,12 +4209,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         userProfile.setPmRcpId(getUserPmId());
         userProfile.setPmFirstName(profileDetail.getPbNameFirst());
         userProfile.setPmLastName(profileDetail.getPbNameLast());
-//        userProfile.setPmSuffix(profileDetail.getPbNameSuffix());
-//        userProfile.setPmNickName(profileDetail.getPbNickname());
-//        userProfile.setPmPhoneticFirstName(profileDetail.getPbPhoneticNameFirst());
-//        userProfile.setPmPhoneticMiddleName(profileDetail.getPbPhoneticNameMiddle());
-//        userProfile.setPmPhoneticLastName(profileDetail.getPbPhoneticNameLast());
-//        userProfile.setPmNotes(profileDetail.getPbNote());
         userProfile.setProfileRating(profileDetail.getProfileRating());
         userProfile.setTotalProfileRateUser(profileDetail.getTotalProfileRateUser());
         userProfile.setPmIsFavourite(profileDetail.getIsFavourite());
@@ -4055,7 +4269,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 arrayListEmail.add(email);
             }
 
-
             tableEmailMaster.addArrayEmail(arrayListEmail);
         }
         //</editor-fold>
@@ -4078,9 +4291,11 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 organization.setOmOrganizationCompany(arrayListOrganization.get(i).getOrgName());
                 organization.setOmOrganizationDesignation(arrayListOrganization.get(i)
                         .getOrgJobTitle());
+                organization.setOmOrganizationFromDate(arrayListOrganization.get(i).getOrgFromDate());
+                organization.setOmOrganizationToDate(arrayListOrganization.get(i).getOrgToDate());
                 organization.setOmIsCurrent(String.valueOf(arrayListOrganization.get(i)
                         .getIsCurrent()));
-                organization.setRcProfileMasterPmId(getUserPmId());
+                organization.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 organizationList.add(organization);
             }
 
@@ -4159,11 +4374,14 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             for (int j = 0; j < arrayListImAccount.size(); j++) {
                 ImAccount imAccount = new ImAccount();
                 imAccount.setImRecordIndexId(arrayListImAccount.get(j).getIMId());
-                imAccount.setImImDetail(arrayListImAccount.get(j).getIMAccountDetails());
                 imAccount.setImImProtocol(arrayListImAccount.get(j).getIMAccountProtocol());
                 imAccount.setImImPrivacy(String.valueOf(arrayListImAccount.get(j)
                         .getIMAccountPublic()));
-                imAccount.setRcProfileMasterPmId(getUserPmId());
+                imAccount.setImImFirstName(arrayListImAccount.get(j).getIMAccountFirstName());
+                imAccount.setImImLastName(arrayListImAccount.get(j).getIMAccountLastName());
+                imAccount.setImImProfileImage(arrayListImAccount.get(j).getIMAccountProfileImage());
+                imAccount.setImImDetail(arrayListImAccount.get(j).getIMAccountDetails());
+                imAccount.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 imAccountsList.add(imAccount);
             }
 
@@ -4253,13 +4471,31 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     editProfileObject, null, WsResponseObject.class, WsConstants
                     .REQ_PROFILE_UPDATE + ":" + type, getResources().getString(R.string
                     .msg_please_wait), true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                    WsConstants.WS_ROOT + WsConstants
+                    WsConstants.WS_ROOT_V2 + WsConstants
                             .REQ_PROFILE_UPDATE);
         } else {
             Utils.showErrorSnackBar(this, relativeRootEditProfile, getResources()
                     .getString(R.string.msg_no_network));
         }
     }
+
+//    private void editProfileForSocial(ProfileDataOperation editProfile, int type) {
+//
+//        WsRequestObject editProfileObject = new WsRequestObject();
+//        editProfileObject.setProfileUpdate(editProfile);
+//
+//        if (Utils.isNetworkAvailable(this)) {
+//            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+//                    editProfileObject, null, WsResponseObject.class, WsConstants
+//                    .REQ_PROFILE_UPDATE + ":" + type, getResources().getString(R.string
+//                    .msg_please_wait), true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+//                    WsConstants.WS_ROOT_V2 + WsConstants
+//                            .REQ_PROFILE_UPDATE);
+//        } else {
+//            Utils.showErrorSnackBar(this, relativeRootEditProfile, getResources()
+//                    .getString(R.string.msg_no_network));
+//        }
+//    }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {

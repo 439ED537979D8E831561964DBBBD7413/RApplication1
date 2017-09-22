@@ -331,6 +331,10 @@ public class LinkedinLoginActivity extends AppCompatActivity {
 
                 Intent intent = new Intent();
                 intent.putExtra("url", jsonObject.getJSONObject("siteStandardProfileRequest").getString("url"));
+                intent.putExtra("first_name", jsonObject.getString("firstName"));
+                intent.putExtra("last_name", jsonObject.getString("lastName"));
+                intent.putExtra("profileImage", jsonObject.getString("image"));
+                intent.putExtra("email", jsonObject.getString("email"));
                 intent.putExtra("isBack", "0");
                 setResult(RESULT_OK, intent);
                 finish();//finishing activity

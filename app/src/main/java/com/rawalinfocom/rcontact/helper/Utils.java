@@ -697,7 +697,7 @@ public class Utils {
         context.startActivity(intent);
     }
 
-    public static void callIntentWithSimPreference(Context context, String number,String simPreference) {
+    public static void callIntentWithSimPreference(Context context, String number, String simPreference) {
         String unicodeNumber = number.replace("*", Uri.encode("*")).replace("#", Uri.encode("#"));
         Intent intent = new Intent(Intent.ACTION_CALL).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //        intent.putExtra("com.android.phone.force.slot", true);
@@ -1135,6 +1135,8 @@ public class Utils {
                         ());
                 organization.setOmOrganizationDesignation(arrayListOrganization.get(i)
                         .getOrgJobTitle());
+                organization.setOmOrganizationFromDate(arrayListOrganization.get(i).getOrgFromDate());
+                organization.setOmOrganizationToDate(arrayListOrganization.get(i).getOrgToDate());
                 organization.setOmIsCurrent(String.valueOf(arrayListOrganization.get(i)
                         .getIsCurrent()));
                 organization.setRcProfileMasterPmId(profileDetail.getRcpPmId());
@@ -1210,6 +1212,9 @@ public class Utils {
                 imAccount.setImImProtocol(arrayListImAccount.get(j).getIMAccountProtocol());
                 imAccount.setImImPrivacy(String.valueOf(arrayListImAccount.get(j)
                         .getIMAccountPublic()));
+                imAccount.setImImFirstName(arrayListImAccount.get(j).getIMAccountFirstName());
+                imAccount.setImImLastName(arrayListImAccount.get(j).getIMAccountLastName());
+                imAccount.setImImProfileImage(arrayListImAccount.get(j).getIMAccountProfileImage());
                 imAccount.setImImDetail(arrayListImAccount.get(j).getIMAccountDetails());
 //                imAccount.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 imAccount.setRcProfileMasterPmId(profileDetail.getRcpPmId());
