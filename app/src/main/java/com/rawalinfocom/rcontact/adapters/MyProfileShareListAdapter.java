@@ -119,7 +119,7 @@ public class MyProfileShareListAdapter extends RecyclerView.Adapter<MyProfileSha
 
                 if (value.equalsIgnoreCase(context.getString(R.string.average_rate_sharing))) {
                     if (!StringUtils.equalsAnyIgnoreCase(pmID, "-1")) {
-                        String sharingUrl = "Click link to see " + contactName + " 's average rating." + "\n"
+                        String sharingUrl = "Click link to see " + contactName + "'s average rating." + "\n"
                                 + WsConstants.WS_AVG_RATING_SHARE_BADGE_ROOT + userProfile.getPmBadge();
                         if (Utils.isNetworkAvailable(context)) {
                             shareAverageRating(sharingUrl);
