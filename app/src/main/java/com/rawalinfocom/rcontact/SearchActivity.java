@@ -345,6 +345,8 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                                 globalSearchTypeArrayListMain.add(globalSearchType);
                             }
                         }
+
+
                         recycleViewGlobalContact.setVisibility(View.VISIBLE);
                         if (count > 9)
                             rippleViewMoreGlobalContacts.setVisibility(View.GONE);
