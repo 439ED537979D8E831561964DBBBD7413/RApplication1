@@ -59,6 +59,7 @@ import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.CallLogType;
 import com.rawalinfocom.rcontact.model.GlobalSearchType;
+import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.SmsDataType;
 import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
@@ -152,6 +153,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
     ArrayList<UserProfile> arrayListDisplayProfile;
     ArrayList<Object> arrayListRContact;
     RContactListAdapter rContactListAdapter;
+    ArrayList<String> arrayListRCPNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -333,7 +335,18 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                         }
                         count = count + 1;
                         startAt = startAt + globalSearchTypeArrayList.size();
-                        globalSearchTypeArrayListMain.addAll(globalSearchTypeArrayList);
+                        // TODO: 20/09/17 Removing Local data from global list
+                        for(int i=0; i<globalSearchTypeArrayList.size();i++){
+                            GlobalSearchType globalSearchType =  globalSearchTypeArrayList.get(i);
+                            String number =  globalSearchTypeArrayList.get(i).getMobileNumber();
+                            if(!number.startsWith("+"))
+                                number =  "+" + number;
+                            if(!arrayListRCPNumber.contains(number)){
+                                globalSearchTypeArrayListMain.add(globalSearchType);
+                            }
+                        }
+
+
                         recycleViewGlobalContact.setVisibility(View.VISIBLE);
                         if (count > 9)
                             rippleViewMoreGlobalContacts.setVisibility(View.GONE);
@@ -601,6 +614,20 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
         if (arrayListDisplayProfile.size() > 0) {
             arrayListRContact.addAll(arrayListDisplayProfile);
         }
+
+        arrayListRCPNumber = new ArrayList<>();
+        for(int i=0; i <arrayListDisplayProfile.size(); i++){
+            UserProfile userProfile =  arrayListDisplayProfile.get(i);
+            String number =  userProfile.getMobileNumber();
+            arrayListRCPNumber.add(number);
+        }
+
+        for(int i=0; i<objectArrayListContact.size() ; i++){
+            ProfileData profileData = (ProfileData) objectArrayListContact.get(i);
+            String number =  profileData.getTempNumber();
+            if(!arrayListRCPNumber.contains(number))
+                arrayListRCPNumber.add(number);
+        }
     }
 
     private void onClickEvents() {
@@ -629,6 +656,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                         globalSearchCount = 0;
                         textGlobalSearchCount.setText("");
                         rippleViewMoreGlobalContacts.setVisibility(View.GONE);
+                        globalSearchTypeArrayListMain.clear();
                     }
                 } else {
                     finish();
@@ -715,6 +743,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                         globalSearchCount = 0;
                         textGlobalSearchCount.setText("");
                         rippleViewMoreGlobalContacts.setVisibility(View.GONE);
+                        globalSearchTypeArrayListMain.clear();
                     }
                     Pattern numberPat = Pattern.compile("\\d+");
 //                    Pattern numberPat = Pattern.compile("[+][0-9]+");
@@ -976,6 +1005,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                         globalSearchCount = 0;
                         textGlobalSearchCount.setText("");
                         rippleViewMoreGlobalContacts.setVisibility(View.GONE);
+                        globalSearchTypeArrayListMain.clear();
                     }
 
                 }
