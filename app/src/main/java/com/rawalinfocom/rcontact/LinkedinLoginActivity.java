@@ -54,6 +54,8 @@ public class LinkedinLoginActivity extends AppCompatActivity {
     //This is the url that LinkedIn Auth process will redirect to. We can put whatever we want that starts with http:// or https:// .
     //We use a made up url that we will intercept when redirecting. Avoid Uppercases.
     private static final String REDIRECT_URI = "https://www.rcontacts.in";
+
+    private static final String SCOPE = "r_fullprofile%20r_emailaddress%20w_share";
     /*********************************************/
 
     //These are constants used for build the urls
@@ -66,6 +68,7 @@ public class LinkedinLoginActivity extends AppCompatActivity {
     private static final String RESPONSE_TYPE_VALUE = "code";
     private static final String CLIENT_ID_PARAM = "client_id";
     private static final String STATE_PARAM = "state";
+    private static final String SCOPE_PARAM = "scope";
     private static final String REDIRECT_URI_PARAM = "redirect_uri";
     /*---------------------------------------*/
     private static final String QUESTION_MARK = "?";
@@ -186,6 +189,7 @@ public class LinkedinLoginActivity extends AppCompatActivity {
                 + QUESTION_MARK + RESPONSE_TYPE_PARAM + EQUALS + RESPONSE_TYPE_VALUE
                 + AMPERSAND + CLIENT_ID_PARAM + EQUALS + API_KEY
                 + AMPERSAND + STATE_PARAM + EQUALS + STATE
+                + AMPERSAND + SCOPE_PARAM + EQUALS + SCOPE
                 + AMPERSAND + REDIRECT_URI_PARAM + EQUALS + REDIRECT_URI;
     }
 
@@ -324,23 +328,29 @@ public class LinkedinLoginActivity extends AppCompatActivity {
                 progressDialog.dismiss();
             }
 
-            JSONObject jsonObject;
+            JSONObject finalJsonObject;
 
-            try {
-                jsonObject = new JSONObject(status.toString());
+            if (status != null) {
 
-                Intent intent = new Intent();
-                intent.putExtra("url", jsonObject.getJSONObject("siteStandardProfileRequest").getString("url"));
-                intent.putExtra("first_name", jsonObject.getString("firstName"));
-                intent.putExtra("last_name", jsonObject.getString("lastName"));
-                intent.putExtra("profileImage", jsonObject.getString("image"));
-                intent.putExtra("email", jsonObject.getString("email"));
-                intent.putExtra("isBack", "0");
-                setResult(RESULT_OK, intent);
-                finish();//finishing activity
+                try {
+                    finalJsonObject = new JSONObject(status.toString());
 
-            } catch (JSONException e) {
-                e.printStackTrace();
+                    Intent intent = new Intent();
+                    intent.putExtra("url", finalJsonObject.getJSONObject("siteStandardProfileRequest").getString("url"));
+                    intent.putExtra("first_name", finalJsonObject.getString("firstName"));
+                    intent.putExtra("last_name", finalJsonObject.getString("lastName"));
+                    intent.putExtra("profileImage", finalJsonObject.getString("image"));
+                    intent.putExtra("email", finalJsonObject.getString("email"));
+                    intent.putExtra("isBack", "0");
+                    setResult(RESULT_OK, intent);
+                    finish();//finishing activity
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    onBackPressed();
+                }
+
+            } else {
                 onBackPressed();
             }
         }
