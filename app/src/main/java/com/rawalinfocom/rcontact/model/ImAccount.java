@@ -8,6 +8,9 @@ public class ImAccount {
 
     private String imId;
     private String imRecordIndexId;
+    private String imImFirstName;
+    private String imImLastName;
+    private String imImProfileImage;
     private String imImDetail;
     private String imImProtocol;
     private String imImPrivacy;
@@ -28,6 +31,30 @@ public class ImAccount {
 
     public void setImImDetail(String imImDetail) {
         this.imImDetail = imImDetail;
+    }
+
+    public String getImImFirstName() {
+        return imImFirstName;
+    }
+
+    public void setImImFirstName(String imImFirstName) {
+        this.imImFirstName = imImFirstName;
+    }
+
+    public String getImImLastName() {
+        return imImLastName;
+    }
+
+    public void setImImLastName(String imImLastName) {
+        this.imImLastName = imImLastName;
+    }
+
+    public String getImImProfileImage() {
+        return imImProfileImage;
+    }
+
+    public void setImImProfileImage(String imImProfileImage) {
+        this.imImProfileImage = imImProfileImage;
     }
 
     public String getImImProtocol() {

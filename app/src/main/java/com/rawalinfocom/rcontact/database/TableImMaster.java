@@ -25,13 +25,16 @@ public class TableImMaster {
     }
 
     // Table Names
-    public static final String TABLE_RC_IM_MASTER = "rc_im_master";
+    static final String TABLE_RC_IM_MASTER = "rc_im_master";
 
     // Column Names
     private static final String COLUMN_IM_ID = "im_id";
     static final String COLUMN_IM_RECORD_INDEX_ID = "im_record_index_id";
     //    static final String COLUMN_IM_IM_TYPE = "im_im_type";
 //    private static final String COLUMN_IM_CUSTOM_TYPE = "im_custom_type";
+    static final String COLUMN_IM_FIRST_NAME = "im_first_name";
+    static final String COLUMN_IM_LAST_NAME = "im_last_name";
+    static final String COLUMN_IM_PROFILE_IMAGE = "im_profile_image";
     static final String COLUMN_IM_DETAIL = "im_detail";
     static final String COLUMN_IM_PROTOCOL = "im_protocol";
     static final String COLUMN_IM_PRIVACY = "im_privacy";
@@ -44,6 +47,9 @@ public class TableImMaster {
             " " + COLUMN_IM_ID + " integer NOT NULL CONSTRAINT rc_im_master_pk PRIMARY KEY," +
             " " + COLUMN_IM_RECORD_INDEX_ID + " text, " +
             " " + COLUMN_IM_DETAIL + " text," +
+            " " + COLUMN_IM_FIRST_NAME + " text," +
+            " " + COLUMN_IM_LAST_NAME + " text," +
+            " " + COLUMN_IM_PROFILE_IMAGE + " text," +
             " " + COLUMN_IM_PROTOCOL + " text NOT NULL," +
             " " + COLUMN_IM_PRIVACY + " integer DEFAULT 2," +
             " " + COLUMN_IM_IS_PRIVATE + " integer," +
@@ -80,6 +86,9 @@ public class TableImMaster {
             values.put(COLUMN_IM_ID, arrayListImAccount.get(i).getImId());
             values.put(COLUMN_IM_RECORD_INDEX_ID, arrayListImAccount.get(i).getImRecordIndexId());
             values.put(COLUMN_IM_DETAIL, arrayListImAccount.get(i).getImImDetail());
+            values.put(COLUMN_IM_FIRST_NAME, arrayListImAccount.get(i).getImImFirstName());
+            values.put(COLUMN_IM_LAST_NAME, arrayListImAccount.get(i).getImImLastName());
+            values.put(COLUMN_IM_PROFILE_IMAGE, arrayListImAccount.get(i).getImImProfileImage());
             values.put(COLUMN_IM_PROTOCOL, arrayListImAccount.get(i).getImImProtocol());
             values.put(COLUMN_IM_PRIVACY, arrayListImAccount.get(i).getImImPrivacy());
             values.put(COLUMN_IM_IS_PRIVATE, arrayListImAccount.get(i).getImIsPrivate());
@@ -116,6 +125,9 @@ public class TableImMaster {
             values.put(COLUMN_IM_ID, arrayListImAccount.get(i).getImId());
             values.put(COLUMN_IM_RECORD_INDEX_ID, arrayListImAccount.get(i).getImRecordIndexId());
             values.put(COLUMN_IM_DETAIL, arrayListImAccount.get(i).getImImDetail());
+            values.put(COLUMN_IM_FIRST_NAME, arrayListImAccount.get(i).getImImFirstName());
+            values.put(COLUMN_IM_LAST_NAME, arrayListImAccount.get(i).getImImLastName());
+            values.put(COLUMN_IM_PROFILE_IMAGE, arrayListImAccount.get(i).getImImProfileImage());
             values.put(COLUMN_IM_PROTOCOL, arrayListImAccount.get(i).getImImProtocol());
             values.put(COLUMN_IM_PRIVACY, MoreObjects.firstNonNull(
                     Integer.parseInt(arrayListImAccount.get(i).getImImPrivacy()), 0));
@@ -157,6 +169,9 @@ public class TableImMaster {
         String selectQuery = "SELECT DISTINCT " +
                 COLUMN_IM_RECORD_INDEX_ID + ", " +
                 COLUMN_IM_DETAIL + ", " +
+                COLUMN_IM_FIRST_NAME + ", " +
+                COLUMN_IM_LAST_NAME + ", " +
+                COLUMN_IM_PROFILE_IMAGE + ", " +
                 COLUMN_IM_PROTOCOL + ", " +
                 COLUMN_IM_PRIVACY + ", " +
                 COLUMN_IM_IS_PRIVATE + ", " +
@@ -174,6 +189,9 @@ public class TableImMaster {
                 imAccount.setImRecordIndexId(cursor.getString(cursor.getColumnIndex
                         (COLUMN_IM_RECORD_INDEX_ID)));
                 imAccount.setImImDetail(cursor.getString(cursor.getColumnIndex(COLUMN_IM_DETAIL)));
+                imAccount.setImImFirstName(cursor.getString(cursor.getColumnIndex(COLUMN_IM_FIRST_NAME)));
+                imAccount.setImImLastName(cursor.getString(cursor.getColumnIndex(COLUMN_IM_LAST_NAME)));
+                imAccount.setImImProfileImage(cursor.getString(cursor.getColumnIndex(COLUMN_IM_PROFILE_IMAGE)));
                 imAccount.setImImProtocol(cursor.getString(cursor.getColumnIndex
                         (COLUMN_IM_PROTOCOL)));
                 imAccount.setImImPrivacy(cursor.getString(cursor.getColumnIndex

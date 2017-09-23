@@ -596,7 +596,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
     private void displayImAccount(final ProfileDetailViewHolder holder, final int position) {
         final ProfileDataOperationImAccount imAccount = (ProfileDataOperationImAccount) arrayList
                 .get(position);
-        holder.textMain.setText(imAccount.getIMAccountDetails());
+        holder.textMain.setText(imAccount.getIMAccountFirstName() + " " + imAccount.getIMAccountLastName());
         holder.textSub.setText(imAccount.getIMAccountProtocol());
 
         if (imAccount.getIMAccountProtocol().equalsIgnoreCase("facebook")) {
@@ -633,7 +633,10 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                         } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("twitter")) {
                             url = "https://twitter.com/" + imAccount.getIMAccountDetails();
                         } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("linkedin")) {
-                            url = imAccount.getIMAccountDetails();
+                            if (!imAccount.getIMAccountDetails().startsWith("https://www.linkedin.com"))
+                                url = "https://www.linkedin.com/" + imAccount.getIMAccountDetails();
+                            else
+                                url = imAccount.getIMAccountDetails();
                         } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
                                 ("google")) {
                             url = "https://plus.google.com/" + imAccount.getIMAccountDetails();

@@ -55,8 +55,8 @@
     <string name="error_invalid_number">Please add valid Number</string>
     <string name="msg_empty_country">No Country Available</string>
     <string name="title_verification">Verification</string>
-    <string name="title_verifying_mobile_number"><![CDATA[Sit back & Relax! while we verify your mobile number]]></string>
-    <string name="msg_enter_otp">Enter the 6 Digit OTP below in case if we fail to detect the SMS automatically</string>
+    <string name="title_verifying_mobile_number"><![CDATA[Sit back & relax! while we verify your Mobile Number]]></string>
+    <string name="msg_enter_otp">Enter the 6-digit OTP below in case we fail to detect it automatically</string>
     <string name="action_resend">Resend</string>
     <string name="msg_otp_verification_success">OTP Verified Successfully</string>
     <string name="error_otp_verification_fail">OTP doesn\'t match</string>
@@ -177,12 +177,12 @@
     <string name="past_received_response">Past Received Responses</string>
     <string name="text_custom">Custom</string>
     <string name="msg_please_enter_some_comment">Please enter some comment first!</string>
-    <string name="text_wishes_on_your">Wishes you on your\u0020</string>
+    <string name="text_wishes_on_your">wished you on your \u0020</string>
     <string name="text_year_old">Year Old</string>
     <string name="text_years_old">Years Old</string>
     <string name="text_on">\u0020on\u0020</string>
-    <string name="text_you_wrote_on_timeline">You wrote to %1$s\'s Timeline</string>
-    <string name="text_reply_you_on_your">%1$s replied for your message</string>
+    <string name="text_you_wrote_on_timeline">You wrote on %1$s\'s Timeline</string>
+    <string name="text_reply_you_on_your">%1$s replied to your message</string>
     <string name="text_rate_you">Rate you</string>
     <string name="text_rating_done">Given</string>
     <string name="text_rating_receive">Received</string>
@@ -291,7 +291,7 @@
     <string name="copy_to_clipboard">Copy to clip board</string>
     <string name="view_profile">View Profile</string>
     <string name="view_reply">View Reply</string>
-    <string name="text_reply_you">Reply You</string>
+    <string name="text_reply_you">Reply</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
     <string name="clear_call_log">Clear Call Log</string>
@@ -413,7 +413,7 @@
     <string name="str_comment_reply">Your comment sent successfully</string>
     <string name="str_rating_comment_hint_1">%1$s replied you for your Rating</string>
     <string name="str_rating_comment_hint_2">You Rated %1$s</string>
-    <string name="str_rating_comment_hint_3">%1$s Rated You</string>
+    <string name="str_rating_comment_hint_3">%1$s rated you</string>
     <string name="str_view_more">View More</string>
     <string name="str_view_less">View Less</string>
     <string name="str_confirm">CONFIRM</string>
@@ -424,7 +424,7 @@
 
     <!--<string name="str_tab_r_contact">RContact</string>-->
     <string name="str_requested_for_your">Requested for your %1$s</string>
-    <string name="str_confirmed_your_request_for">confirmed your request for %1$s</string>
+    <string name="str_confirmed_your_request_for">confirmed your request to view %1$s</string>
 
     <!-- Profile -->
     <string name="str_copy_number">Copied Number</string>
@@ -590,6 +590,8 @@
     <string name="error_required_state">State is required!</string>
     <string name="error_required_country">Country is required!</string>
     <string name="hint_choose_date">Choose date</string>
+    <string name="hint_choose_from_date">From date</string>
+    <string name="hint_choose_to_date">To date</string>
     <string name="str_upload_via">Upload Via</string>
     <string name="str_take_photo">Take Photo</string>
     <string name="str_choose_photo">Choose Photo</string>
@@ -606,6 +608,8 @@
     <string name="hint_number">Number</string>
     <string name="error_required_org_designation">Organization designation is required!</string>
     <string name="error_required_org_name">Organization name is required!</string>
+    <string name="error_required_org_from_date">From date is required!</string>
+    <string name="error_required_org_to_date">To date is required!</string>
     <string name="success_profile_update">Profile Updated Successfully!</string>
     <string name="error_select_gender">Select any gender!</string>
     <string name="error_required_web_address">Web address is required!</string>

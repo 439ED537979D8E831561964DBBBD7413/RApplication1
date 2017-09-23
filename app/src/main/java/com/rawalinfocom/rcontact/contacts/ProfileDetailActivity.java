@@ -2169,45 +2169,14 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         organization.setOrgJobTitle(contactOrganizationCursor.getString
                                 (contactOrganizationCursor.getColumnIndex(ContactsContract
                                         .CommonDataKinds.Organization.TITLE)));
-                        organization.setOrgDepartment(contactOrganizationCursor.getString
-                                (contactOrganizationCursor.getColumnIndex(ContactsContract
-                                        .CommonDataKinds.Organization.DEPARTMENT)));
-                        organization.setOrgType(phoneBookContacts.getOrganizationType
-                                (contactOrganizationCursor,
-                                        contactOrganizationCursor.getInt((contactOrganizationCursor
-                                                .getColumnIndex(ContactsContract.CommonDataKinds
-                                                        .Organization.TYPE)))));
-                        organization.setOrgJobDescription(contactOrganizationCursor.getString
-                                (contactOrganizationCursor.getColumnIndex(ContactsContract
-                                        .CommonDataKinds.Organization.JOB_DESCRIPTION)));
-                        organization.setOrgOfficeLocation(contactOrganizationCursor.getString
-                                (contactOrganizationCursor.getColumnIndex(ContactsContract
-                                        .CommonDataKinds.Organization.OFFICE_LOCATION)));
                         organization.setOrgRcpType(String.valueOf(IntegerConstants
                                 .RCP_TYPE_LOCAL_PHONE_BOOK));
-
                         organizationOperation.setOrgName(contactOrganizationCursor.getString
                                 (contactOrganizationCursor.getColumnIndex(ContactsContract
                                         .CommonDataKinds.Organization.COMPANY)));
                         organizationOperation.setOrgJobTitle(contactOrganizationCursor.getString
                                 (contactOrganizationCursor.getColumnIndex(ContactsContract
                                         .CommonDataKinds.Organization.TITLE)));
-                        organizationOperation.setOrgDepartment(contactOrganizationCursor.getString
-                                (contactOrganizationCursor.getColumnIndex(ContactsContract
-                                        .CommonDataKinds.Organization.DEPARTMENT)));
-                        organizationOperation.setOrgType(phoneBookContacts.getOrganizationType
-                                (contactOrganizationCursor,
-                                        contactOrganizationCursor.getInt((contactOrganizationCursor
-                                                .getColumnIndex(ContactsContract.CommonDataKinds
-                                                        .Organization.TYPE)))));
-                        organizationOperation.setOrgJobDescription(contactOrganizationCursor
-                                .getString
-                                        (contactOrganizationCursor.getColumnIndex(ContactsContract
-                                                .CommonDataKinds.Organization.JOB_DESCRIPTION)));
-                        organizationOperation.setOrgOfficeLocation(contactOrganizationCursor
-                                .getString
-                                        (contactOrganizationCursor.getColumnIndex(ContactsContract
-                                                .CommonDataKinds.Organization.OFFICE_LOCATION)));
 
                         if (!arrayListOrganization.contains(organization)) {
                             arrayListPhoneBookOrganization.add(organization);
@@ -3987,6 +3956,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 organization.setOmOrganizationCompany(arrayListOrganization.get(i).getOrgName());
                 organization.setOmOrganizationDesignation(arrayListOrganization.get(i)
                         .getOrgJobTitle());
+                organization.setOmOrganizationFromDate(arrayListOrganization.get(i).getOrgFromDate());
+                organization.setOmOrganizationToDate(arrayListOrganization.get(i).getOrgToDate());
                 organization.setOmIsPrivate(arrayListOrganization.get(i).getIsPrivate());
                 organization.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 organizationList.add(organization);
@@ -4077,6 +4048,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 imAccount.setImImProtocol(arrayListImAccount.get(j).getIMAccountProtocol());
                 imAccount.setImImPrivacy(String.valueOf(arrayListImAccount.get(j)
                         .getIMAccountPublic()));
+                imAccount.setImImFirstName(arrayListImAccount.get(j).getIMAccountFirstName());
+                imAccount.setImImLastName(arrayListImAccount.get(j).getIMAccountLastName());
+                imAccount.setImImProfileImage(arrayListImAccount.get(j).getIMAccountProfileImage());
                 imAccount.setImIsPrivate(arrayListImAccount.get(j).getIMAccountIsPrivate());
                 imAccount.setRcProfileMasterPmId(profileDetail.getRcpPmId());
 

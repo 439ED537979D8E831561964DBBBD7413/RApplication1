@@ -24,13 +24,15 @@ public class TableOrganizationMaster {
     }
 
     // Table Names
-    public static final String TABLE_RC_ORGANIZATION_MASTER = "rc_organization_master";
+    static final String TABLE_RC_ORGANIZATION_MASTER = "rc_organization_master";
 
     // Column Names
     private static final String COLUMN_OM_ID = "om_id";
     private static final String COLUMN_OM_RECORD_INDEX_ID = "om_record_index_id";
     static final String COLUMN_OM_ORGANIZATION_COMPANY = "om_organization_company";
     static final String COLUMN_OM_ORGANIZATION_DESIGNATION = "om_organization_designation";
+    static final String COLUMN_OM_ORGANIZATION_FROM_DATE = "om_organization_from_date";
+    static final String COLUMN_OM_ORGANIZATION_TO_DATE = "om_organization_to_date";
     private static final String COLUMN_OM_ORGANIZATION_PRIVACY = "om_organization_privacy";
     private static final String COLUMN_OM_ORGANIZATION_IS_PRIVATE = "om_organization_is_private";
     static final String COLUMN_OM_ORGANIZATION_IS_CURRENT = "om_organization_is_current";
@@ -44,6 +46,8 @@ public class TableOrganizationMaster {
             " " + COLUMN_OM_RECORD_INDEX_ID + " text," +
             " " + COLUMN_OM_ORGANIZATION_COMPANY + " text NOT NULL," +
             " " + COLUMN_OM_ORGANIZATION_DESIGNATION + " text," +
+            " " + COLUMN_OM_ORGANIZATION_FROM_DATE + " text," +
+            " " + COLUMN_OM_ORGANIZATION_TO_DATE + " text," +
             " " + COLUMN_OM_ORGANIZATION_IS_CURRENT + " integer," +
             " " + COLUMN_OM_ORGANIZATION_IS_PRIVATE + " integer," +
             " " + COLUMN_OM_ORGANIZATION_PRIVACY + " integer DEFAULT 1," +
@@ -85,6 +89,10 @@ public class TableOrganizationMaster {
                     .getOmOrganizationCompany());
             values.put(COLUMN_OM_ORGANIZATION_DESIGNATION, arrayListOrganization.get(i)
                     .getOmOrganizationDesignation());
+            values.put(COLUMN_OM_ORGANIZATION_FROM_DATE, arrayListOrganization.get(i)
+                    .getOmOrganizationFromDate());
+            values.put(COLUMN_OM_ORGANIZATION_TO_DATE, arrayListOrganization.get(i)
+                    .getOmOrganizationToDate());
             values.put(COLUMN_OM_ORGANIZATION_IS_CURRENT, arrayListOrganization.get(i)
                     .getOmIsCurrent());
             values.put(COLUMN_OM_ORGANIZATION_IS_PRIVATE, arrayListOrganization.get(i)
@@ -123,6 +131,8 @@ public class TableOrganizationMaster {
             values.put(COLUMN_OM_ID, arrayListOrganization.get(i).getOmId());
             values.put(COLUMN_OM_RECORD_INDEX_ID, arrayListOrganization.get(i).getOmRecordIndexId());
             values.put(COLUMN_OM_ORGANIZATION_COMPANY, arrayListOrganization.get(i).getOmOrganizationCompany());
+            values.put(COLUMN_OM_ORGANIZATION_FROM_DATE, arrayListOrganization.get(i).getOmOrganizationFromDate());
+            values.put(COLUMN_OM_ORGANIZATION_TO_DATE, arrayListOrganization.get(i).getOmOrganizationToDate());
             values.put(COLUMN_OM_ORGANIZATION_DESIGNATION, arrayListOrganization.get(i).getOmOrganizationDesignation());
             values.put(COLUMN_OM_ORGANIZATION_IS_PRIVATE,
                     MoreObjects.firstNonNull(arrayListOrganization.get(i).getOmIsPrivate(), 0));
@@ -160,7 +170,8 @@ public class TableOrganizationMaster {
 
         Cursor cursor = db.query(TABLE_RC_ORGANIZATION_MASTER, new String[]{COLUMN_OM_ID,
                 COLUMN_OM_RECORD_INDEX_ID, COLUMN_OM_ORGANIZATION_COMPANY,
-                COLUMN_OM_ORGANIZATION_DESIGNATION, COLUMN_OM_ORGANIZATION_IS_CURRENT,
+                COLUMN_OM_ORGANIZATION_DESIGNATION, COLUMN_OM_ORGANIZATION_FROM_DATE,
+                COLUMN_OM_ORGANIZATION_TO_DATE, COLUMN_OM_ORGANIZATION_IS_CURRENT,
                 COLUMN_OM_ORGANIZATION_IS_PRIVATE, COLUMN_OM_ORGANIZATION_PRIVACY,
                 COLUMN_RC_PROFILE_MASTER_PM_ID}, COLUMN_OM_ID + "=?", new String[]{String.valueOf
                 (omId)}, null, null, null, null);
@@ -176,6 +187,10 @@ public class TableOrganizationMaster {
                     (COLUMN_OM_ORGANIZATION_COMPANY)));
             organization.setOmOrganizationDesignation(cursor.getString(cursor.getColumnIndex
                     (COLUMN_OM_ORGANIZATION_DESIGNATION)));
+            organization.setOmOrganizationFromDate(cursor.getString(cursor.getColumnIndex
+                    (COLUMN_OM_ORGANIZATION_FROM_DATE)));
+            organization.setOmOrganizationToDate(cursor.getString(cursor.getColumnIndex
+                    (COLUMN_OM_ORGANIZATION_TO_DATE)));
             organization.setOmIsCurrent(cursor.getString(cursor.getColumnIndex
                     (COLUMN_OM_ORGANIZATION_IS_CURRENT)));
             organization.setOmIsPrivate(cursor.getInt(cursor.getColumnIndex
@@ -201,6 +216,8 @@ public class TableOrganizationMaster {
         String selectQuery = "SELECT DISTINCT " + COLUMN_OM_RECORD_INDEX_ID + ", " +
                 COLUMN_OM_ORGANIZATION_COMPANY + ", " +
                 COLUMN_OM_ORGANIZATION_DESIGNATION + ", " +
+                COLUMN_OM_ORGANIZATION_FROM_DATE + ", " +
+                COLUMN_OM_ORGANIZATION_TO_DATE + ", " +
                 COLUMN_OM_ORGANIZATION_IS_CURRENT + ", " +
                 COLUMN_OM_ORGANIZATION_IS_PRIVATE + ", " +
                 COLUMN_OM_ORGANIZATION_PRIVACY + ", " +
@@ -221,6 +238,10 @@ public class TableOrganizationMaster {
                         (COLUMN_OM_ORGANIZATION_COMPANY)));
                 organization.setOmOrganizationDesignation(cursor.getString(cursor.getColumnIndex
                         (COLUMN_OM_ORGANIZATION_DESIGNATION)));
+                organization.setOmOrganizationFromDate(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_OM_ORGANIZATION_FROM_DATE)));
+                organization.setOmOrganizationToDate(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_OM_ORGANIZATION_TO_DATE)));
                 organization.setOmIsCurrent(cursor.getString(cursor.getColumnIndex
                         (COLUMN_OM_ORGANIZATION_IS_CURRENT)));
                 organization.setOmIsPrivate(cursor.getInt(cursor.getColumnIndex
