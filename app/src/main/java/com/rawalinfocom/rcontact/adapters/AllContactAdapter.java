@@ -809,11 +809,18 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 for (int i = 0; i < arraylist.size(); i++) {
                     if (arraylist.get(i) instanceof ProfileData) {
                         ProfileData profileData = (ProfileData) arraylist.get(i);
+//                        String firstName =  profileData.getTempFirstName() + " ";
                         if (!StringUtils.isEmpty(profileData.getName())) {
                             if (profileData.getName().toLowerCase(Locale.getDefault()).contains
                                     (charText)) {
                                 arrayListUserContact.add(profileData);
-                            }
+                            }/*else{
+                                if(firstName.toLowerCase(Locale.getDefault()).equalsIgnoreCase(charText)
+                                        || !StringUtils.isEmpty(profileData.getTempLastName())
+                                        && StringUtils.equalsIgnoreCase(profileData.getTempLastName().toLowerCase(Locale.getDefault()),charText)){
+                                    arrayListUserContact.add(profileData);
+                                }
+                            }*/
                         }
                     }
                 }

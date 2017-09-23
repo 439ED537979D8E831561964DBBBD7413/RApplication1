@@ -700,10 +700,10 @@ public class Utils {
     public static void callIntentWithSimPreference(Context context, String number, String simPreference) {
         String unicodeNumber = number.replace("*", Uri.encode("*")).replace("#", Uri.encode("#"));
         Intent intent = new Intent(Intent.ACTION_CALL).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        intent.putExtra("com.android.phone.force.slot", true);
+        intent.putExtra("com.android.phone.force.slot", true);
         intent.putExtra("com.android.phone.extra.slot", Integer.parseInt(simPreference));
         //        intent.putExtra("Cdma_Supp", true);
-        intent.putExtra("simSlot", Integer.parseInt(simPreference));
+//        intent.putExtra("simSlot", Integer.parseInt(simPreference));
         intent.setData(Uri.parse("tel:" + unicodeNumber));
         context.startActivity(intent);
     }

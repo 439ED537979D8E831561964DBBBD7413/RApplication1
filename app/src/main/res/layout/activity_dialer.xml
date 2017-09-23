@@ -697,7 +697,7 @@
                 android:src="@drawable/ico_ask_sim_svg"
                 android:layout_gravity="center"
                 android:layout_marginTop="@dimen/margin_10dp"
-                >
+                android:visibility="gone">
             </ImageView>
 
             <com.rawalinfocom.rcontact.helper.RippleView

@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.BaseFragment;
+import com.rawalinfocom.rcontact.BaseNotificationFragment;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.adapters.NotiCommentsAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
@@ -55,7 +56,7 @@ import butterknife.ButterKnife;
  * Created by maulik on 15/03/17.
  */
 
-public class NotiCommentsFragment extends BaseFragment implements WsResponseListener {
+public class NotiCommentsFragment extends BaseNotificationFragment implements WsResponseListener {
 
 
     @BindView(R.id.search_view_noti_comments)
