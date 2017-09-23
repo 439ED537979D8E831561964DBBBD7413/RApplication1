@@ -88,6 +88,20 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                         + "COLUMN " + TableRCNotificationUpdates.COLUMN_NU_TYPE + " text ");
                 db.execSQL("ALTER TABLE " + TableRCNotificationUpdates.TABLE_RC_NOTIFICATION_UPDATES + " ADD "
                         + "COLUMN " + TableRCNotificationUpdates.COLUMN_NU_URL + " text ");
+
+                // For Organization
+                db.execSQL("ALTER TABLE " + TableOrganizationMaster.TABLE_RC_ORGANIZATION_MASTER + " ADD "
+                        + "COLUMN " + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_FROM_DATE + " text ");
+                db.execSQL("ALTER TABLE " + TableOrganizationMaster.TABLE_RC_ORGANIZATION_MASTER + " ADD "
+                        + "COLUMN " + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_TO_DATE + " text ");
+
+                // For IM Account
+                db.execSQL("ALTER TABLE " + TableImMaster.TABLE_RC_IM_MASTER + " ADD "
+                        + "COLUMN " + TableImMaster.COLUMN_IM_FIRST_NAME + " text ");
+                db.execSQL("ALTER TABLE " + TableImMaster.TABLE_RC_IM_MASTER + " ADD "
+                        + "COLUMN " + TableImMaster.COLUMN_IM_LAST_NAME + " text ");
+                db.execSQL("ALTER TABLE " + TableImMaster.TABLE_RC_IM_MASTER + " ADD "
+                        + "COLUMN " + TableImMaster.COLUMN_IM_PROFILE_IMAGE + " text ");
         }
 
         // create new tables

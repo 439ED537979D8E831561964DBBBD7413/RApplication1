@@ -128,6 +128,7 @@ public class WsRequestObject {
     private ArrayList<ContactPackage> arrayListPackageData;
 
     private ProfileDataOperation profileEdit;
+    private ProfileDataOperation profileUpdate;
 
     private ArrayList<CallLogHistoryType> historyTypeArrayList;
 
@@ -639,6 +640,15 @@ public class WsRequestObject {
 
     public void setProfileEdit(ProfileDataOperation profileEdit) {
         this.profileEdit = profileEdit;
+    }
+
+    @JsonProperty("profile_update")
+    public ProfileDataOperation profileUpdate() {
+        return profileUpdate;
+    }
+
+    public void setProfileUpdate(ProfileDataOperation profileUpdate) {
+        this.profileUpdate = profileUpdate;
     }
 
     @JsonProperty("call_history")

@@ -71,9 +71,9 @@ public class AppLanguageListAdapter extends RecyclerView.Adapter<AppLanguageList
         for (int i = 0; i < appLanguageArrayList.size(); i++) {
             AppLanguage appLanguage1 = appLanguageArrayList.get(i);
             if (i == position)
-                appLanguageArrayList.set(position, new AppLanguage(appLanguage1.getLanguageName(), appLanguage.getLanguageType(), true));
+                appLanguageArrayList.set(position, new AppLanguage(appLanguage1.getLanguageName(), appLanguage1.getLanguageType(), true));
             else
-                appLanguageArrayList.set(i, new AppLanguage(appLanguage1.getLanguageName(), appLanguage.getLanguageType(), false));
+                appLanguageArrayList.set(i, new AppLanguage(appLanguage1.getLanguageName(), appLanguage1.getLanguageType(), false));
 
         }
         notifyDataSetChanged();
