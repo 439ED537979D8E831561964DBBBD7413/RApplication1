@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -20,6 +21,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
 import android.provider.Settings;
@@ -129,7 +131,6 @@ import java.util.regex.Pattern;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.Optional;
 
 public class ProfileDetailActivity extends BaseActivity implements RippleView
         .OnRippleCompleteListener, WsResponseListener {
@@ -241,7 +242,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     CardView cardOtherDetails;
     @BindView(R.id.button_view_more)
     Button buttonViewMore;
-    @Nullable @BindView(R.id.image_expand_collapse)
+    @Nullable
+    @BindView(R.id.image_expand_collapse)
     ImageView imageExpandCollapse;
     @BindView(R.id.ripple_view_more)
     RippleView rippleViewMore;
@@ -380,9 +382,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         IntentFilter intentFilter = new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_PROFILE);
         localBroadcastManager.registerReceiver(localBroadcastReceiver, intentFilter);
 
-        LocalBroadcastManager localBroadcastManager1 =  LocalBroadcastManager.getInstance(this);
+        LocalBroadcastManager localBroadcastManager1 = LocalBroadcastManager.getInstance(this);
         IntentFilter intentFilter1 = new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_DIALOG);
-        localBroadcastManager1.registerReceiver(localBroadcastReceiverDialog,intentFilter1);
+        localBroadcastManager1.registerReceiver(localBroadcastReceiverDialog, intentFilter1);
 
         if (profileActivityCallInstance) {
 //            fetchCallLogHistoryDateWise(historyNumber);
@@ -738,15 +740,17 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         showChooseShareOption(null, null);
                     }*/
 
-                    if(displayOwnProfile){
-                        ArrayList arrayList = new ArrayList(Arrays.asList(getString(R.string.my_profile_share),
+                    if (displayOwnProfile) {
+                        ArrayList arrayList = new ArrayList(Arrays.asList(getString(R.string
+                                        .my_profile_share),
                                 getString(R.string.average_rate_sharing)));
                         MyProfileShareDialog myProfileShareDialog = new
-                                MyProfileShareDialog(this, arrayList,pmId,profileDataOperationVcard,contactName,
+                                MyProfileShareDialog(this, arrayList, pmId,
+                                profileDataOperationVcard, contactName,
                                 ProfileDetailActivity.this);
                         myProfileShareDialog.showDialog();
 
-                    }else{
+                    } else {
                         if (!StringUtils.equalsAnyIgnoreCase(pmId, "-1")) {
                             TableProfileMaster tableProfileMaster = new TableProfileMaster
                                     (databaseHandler);
@@ -760,9 +764,41 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 number = StringUtils.substring(number, 1);
                             }
 
-//                        if (!StringUtils.equalsAnyIgnoreCase(pmId, "-1")) {
-                            // RCP profile or Own Profile
-                            Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+                            Intent shareIntent = new Intent();
+                            shareIntent.setAction(Intent.ACTION_SEND);
+                            shareIntent.setType("text/x-vcard");
+                            List<ResolveInfo> listVCardResInfo = getPackageManager()
+                                    .queryIntentActivities(shareIntent, 0);
+
+                            List<Intent> targetedShareIntents = new ArrayList<>();
+                            if (!listVCardResInfo.isEmpty()) {
+                                for (ResolveInfo resolveInfo : listVCardResInfo) {
+                                    String packageName = resolveInfo.activityInfo.packageName;
+                                    Intent targetedShareIntent = new Intent(android.content
+                                            .Intent.ACTION_SEND);
+                                    targetedShareIntent.setType("text/plain");
+                                    String shareBody;
+                                    if (StringUtils.isBlank(userProfile.getPmBadge())) {
+                                        shareBody = WsConstants.WS_PROFILE_VIEW_BADGE_ROOT + number;
+                                    } else {
+                                        shareBody = WsConstants.WS_PROFILE_VIEW_BADGE_ROOT +
+                                                userProfile.getPmBadge();
+                                    }
+                                    targetedShareIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
+                                    targetedShareIntent.setPackage(packageName);
+                                    targetedShareIntents.add(targetedShareIntent);
+                                }
+
+                                Intent chooserIntent = Intent.createChooser(targetedShareIntents
+                                        .remove(0), getString(R.string.str_share_contact_via));
+
+                                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS,
+                                        targetedShareIntents.toArray(new
+                                                Parcelable[targetedShareIntents.size()]));
+                                startActivity(chooserIntent);
+                            }
+
+                            /*Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                             sharingIntent.setType("text/plain");
                             String shareBody;
                             if (StringUtils.isBlank(userProfile.getPmBadge())) {
@@ -773,12 +809,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             }
                             sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
                             startActivity(Intent.createChooser(sharingIntent, getString(R.string
-                                    .str_share_contact_via)));
-//                        } else {
-//                            // Non-Rcp profile
-//                            shareContact();
-//
-//                        }
+                                    .str_share_contact_via)));*/
+
                         } else {
                             shareContact();
                         }
@@ -2137,45 +2169,14 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         organization.setOrgJobTitle(contactOrganizationCursor.getString
                                 (contactOrganizationCursor.getColumnIndex(ContactsContract
                                         .CommonDataKinds.Organization.TITLE)));
-                        organization.setOrgDepartment(contactOrganizationCursor.getString
-                                (contactOrganizationCursor.getColumnIndex(ContactsContract
-                                        .CommonDataKinds.Organization.DEPARTMENT)));
-                        organization.setOrgType(phoneBookContacts.getOrganizationType
-                                (contactOrganizationCursor,
-                                        contactOrganizationCursor.getInt((contactOrganizationCursor
-                                                .getColumnIndex(ContactsContract.CommonDataKinds
-                                                        .Organization.TYPE)))));
-                        organization.setOrgJobDescription(contactOrganizationCursor.getString
-                                (contactOrganizationCursor.getColumnIndex(ContactsContract
-                                        .CommonDataKinds.Organization.JOB_DESCRIPTION)));
-                        organization.setOrgOfficeLocation(contactOrganizationCursor.getString
-                                (contactOrganizationCursor.getColumnIndex(ContactsContract
-                                        .CommonDataKinds.Organization.OFFICE_LOCATION)));
                         organization.setOrgRcpType(String.valueOf(IntegerConstants
                                 .RCP_TYPE_LOCAL_PHONE_BOOK));
-
                         organizationOperation.setOrgName(contactOrganizationCursor.getString
                                 (contactOrganizationCursor.getColumnIndex(ContactsContract
                                         .CommonDataKinds.Organization.COMPANY)));
                         organizationOperation.setOrgJobTitle(contactOrganizationCursor.getString
                                 (contactOrganizationCursor.getColumnIndex(ContactsContract
                                         .CommonDataKinds.Organization.TITLE)));
-                        organizationOperation.setOrgDepartment(contactOrganizationCursor.getString
-                                (contactOrganizationCursor.getColumnIndex(ContactsContract
-                                        .CommonDataKinds.Organization.DEPARTMENT)));
-                        organizationOperation.setOrgType(phoneBookContacts.getOrganizationType
-                                (contactOrganizationCursor,
-                                        contactOrganizationCursor.getInt((contactOrganizationCursor
-                                                .getColumnIndex(ContactsContract.CommonDataKinds
-                                                        .Organization.TYPE)))));
-                        organizationOperation.setOrgJobDescription(contactOrganizationCursor
-                                .getString
-                                        (contactOrganizationCursor.getColumnIndex(ContactsContract
-                                                .CommonDataKinds.Organization.JOB_DESCRIPTION)));
-                        organizationOperation.setOrgOfficeLocation(contactOrganizationCursor
-                                .getString
-                                        (contactOrganizationCursor.getColumnIndex(ContactsContract
-                                                .CommonDataKinds.Organization.OFFICE_LOCATION)));
 
                         if (!arrayListOrganization.contains(organization)) {
                             arrayListPhoneBookOrganization.add(organization);
@@ -2190,8 +2191,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
 
             if (!Utils.isArraylistNullOrEmpty(arrayListOrganization) || !Utils
-                    .isArraylistNullOrEmpty
-                            (arrayListPhoneBookOrganization)) {
+                    .isArraylistNullOrEmpty(arrayListPhoneBookOrganization)) {
 
                 final ArrayList<ProfileDataOperationOrganization> tempOrganization = new
                         ArrayList<>();
@@ -3956,6 +3956,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 organization.setOmOrganizationCompany(arrayListOrganization.get(i).getOrgName());
                 organization.setOmOrganizationDesignation(arrayListOrganization.get(i)
                         .getOrgJobTitle());
+                organization.setOmOrganizationFromDate(arrayListOrganization.get(i).getOrgFromDate());
+                organization.setOmOrganizationToDate(arrayListOrganization.get(i).getOrgToDate());
                 organization.setOmIsPrivate(arrayListOrganization.get(i).getIsPrivate());
                 organization.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 organizationList.add(organization);
@@ -4046,6 +4048,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 imAccount.setImImProtocol(arrayListImAccount.get(j).getIMAccountProtocol());
                 imAccount.setImImPrivacy(String.valueOf(arrayListImAccount.get(j)
                         .getIMAccountPublic()));
+                imAccount.setImImFirstName(arrayListImAccount.get(j).getIMAccountFirstName());
+                imAccount.setImImLastName(arrayListImAccount.get(j).getIMAccountLastName());
+                imAccount.setImImProfileImage(arrayListImAccount.get(j).getIMAccountProfileImage());
                 imAccount.setImIsPrivate(arrayListImAccount.get(j).getIMAccountIsPrivate());
                 imAccount.setRcProfileMasterPmId(profileDetail.getRcpPmId());
 
@@ -4213,37 +4218,40 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     //</editor-fold>
 
-
     private BroadcastReceiver localBroadcastReceiverDialog = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent.hasExtra("networkIssue")){
-                String intentNetworkIssue =  intent.getStringExtra("networkIssue");
-                if(StringUtils.equalsIgnoreCase(intentNetworkIssue,"true")){
-                    Utils.showErrorSnackBar(ProfileDetailActivity.this, relativeRootProfileDetail, getResources()
-                            .getString(R.string.msg_no_network));
+            if (intent.hasExtra("networkIssue")) {
+                String intentNetworkIssue = intent.getStringExtra("networkIssue");
+                if (StringUtils.equalsIgnoreCase(intentNetworkIssue, "true")) {
+                    Utils.showErrorSnackBar(ProfileDetailActivity.this,
+                            relativeRootProfileDetail, getResources()
+                                    .getString(R.string.msg_no_network));
                 }
-            }else if(intent.hasExtra("responseError")) {
-                String responseError =  intent.getStringExtra("responseError");
-                if(StringUtils.equalsIgnoreCase(responseError,"true")){
-                    if(intent.hasExtra("responseMessage")){
-                        String responseMessage =  intent.getStringExtra("responseMessage");
-                        if(!StringUtils.isEmpty(responseMessage)){
-                            Utils.showErrorSnackBar(ProfileDetailActivity.this, relativeRootProfileDetail,responseMessage);
+            } else if (intent.hasExtra("responseError")) {
+                String responseError = intent.getStringExtra("responseError");
+                if (StringUtils.equalsIgnoreCase(responseError, "true")) {
+                    if (intent.hasExtra("responseMessage")) {
+                        String responseMessage = intent.getStringExtra("responseMessage");
+                        if (!StringUtils.isEmpty(responseMessage)) {
+                            Utils.showErrorSnackBar(ProfileDetailActivity.this,
+                                    relativeRootProfileDetail, responseMessage);
                         }
                     }
                 }
-            }else if(intent.hasExtra("serverError")){
-                String serverError =  intent.getStringExtra("serverError");
-                if(StringUtils.equalsIgnoreCase(serverError,"true")){
-                    Utils.showErrorSnackBar(ProfileDetailActivity.this, relativeRootProfileDetail, getResources()
-                            .getString(R.string.msg_try_later));
+            } else if (intent.hasExtra("serverError")) {
+                String serverError = intent.getStringExtra("serverError");
+                if (StringUtils.equalsIgnoreCase(serverError, "true")) {
+                    Utils.showErrorSnackBar(ProfileDetailActivity.this,
+                            relativeRootProfileDetail, getResources()
+                                    .getString(R.string.msg_try_later));
                 }
-            }else if(intent.hasExtra("noApps")){
-                String noAppFound =  intent.getStringExtra("noApps");
-                if(StringUtils.equalsIgnoreCase(noAppFound,"true")){
-                    Utils.showErrorSnackBar(ProfileDetailActivity.this, relativeRootProfileDetail, getResources()
-                            .getString(R.string.error_no_social_app_found));
+            } else if (intent.hasExtra("noApps")) {
+                String noAppFound = intent.getStringExtra("noApps");
+                if (StringUtils.equalsIgnoreCase(noAppFound, "true")) {
+                    Utils.showErrorSnackBar(ProfileDetailActivity.this,
+                            relativeRootProfileDetail, getResources()
+                                    .getString(R.string.error_no_social_app_found));
                 }
             }
 

@@ -1,5 +1,6 @@
 package com.rawalinfocom.rcontact;
 
+import android.*;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -518,6 +519,37 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
     }
 
     @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            /*case AppConstants.MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // Permission Granted
+                    if (Utils.isLocationEnabled(this)) {
+                        getLocationDetail();
+                    } else {
+                        gpsTracker.showSettingsAlert();
+                    }
+                }
+            }
+            break;*/
+            case FACEBOOK_LOGIN_PERMISSION:
+            case GOOGLE_LOGIN_PERMISSION:
+            case LINKEDIN_LOGIN_PERMISSION:
+                if (permissions[0].equals(android.Manifest.permission
+                        .READ_EXTERNAL_STORAGE) && permissions[1].equals(android.Manifest.permission
+                        .WRITE_EXTERNAL_STORAGE)) {
+                    prepareToLoginUsingSocialMedia(requestCode);
+                }
+                break;
+        }
+    }
+
+    @Override
     public void onComplete(RippleView rippleView) {
         switch (rippleView.getId()) {
 
@@ -727,6 +759,7 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
     public void linkedInSignIn() {
 
         Intent intent = new Intent(ReLoginEnterPasswordActivity.this, LinkedinLoginActivity.class);
+        intent.putExtra("from", "login");
         startActivityForResult(intent, RC_LINKEDIN_SIGN_IN);// Activity is started with requestCode
 
 //        LISessionManager.getInstance(getApplicationContext()).init(this, buildScope(), new

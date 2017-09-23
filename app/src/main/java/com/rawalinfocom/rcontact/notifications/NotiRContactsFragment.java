@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.BaseFragment;
+import com.rawalinfocom.rcontact.BaseNotificationFragment;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.adapters.NotiRContactsAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
@@ -37,7 +38,7 @@ import butterknife.ButterKnife;
  * Created by maulik on 15/03/17.
  */
 
-public class NotiRContactsFragment extends BaseFragment implements WsResponseListener {
+public class NotiRContactsFragment extends BaseNotificationFragment implements WsResponseListener {
 
     TableRCNotificationUpdates tableRCNotificationUpdates;
     @BindView(R.id.recycler_view)

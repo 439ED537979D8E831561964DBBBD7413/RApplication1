@@ -37,6 +37,7 @@
     <string name="str_welcom_message">आपके सम्पर्को के स्मार्ट होने का समय आ गया है </string>
     <string name="str_done">समाप्त</string>
     <string name="str_vcf_done">VCF file generated successfully!!</string>
+    <string name="verify_now">सत्यापित करें</string>
 
     <!--  Other  -->
     <string name="error_facebook_login_cancelled">फेसबुक लॉग इन असफल!</string>
@@ -130,11 +131,12 @@
     </string-array>
 
     <string-array name="types_social_media">
-        <item>WhatsApp</item>
         <item>Facebook</item>
         <item>Twitter</item>
         <item>LinkedIn</item>
-        <item>Skype</item>
+        <item>GooglePlus</item>
+        <item>Instagram</item>
+        <item>Pinterest</item>
         <item>अन्य</item>
         <item>कस्टम</item>
     </string-array>
@@ -588,6 +590,8 @@
     <string name="error_required_state">राज्य का नाम आवश्यक है</string>
     <string name="error_required_country">देश का नाम आवश्यक है</string>
     <string name="hint_choose_date">दिनांक चुनें</string>
+    <string name="hint_choose_from_date">From date</string>
+    <string name="hint_choose_to_date">To date</string>
     <string name="str_upload_via">अपलोड का माध्यम</string>
     <string name="str_take_photo">फोटो खींचें</string>
     <string name="str_choose_photo">फोटो चुनें</string>
@@ -604,6 +608,8 @@
     <string name="hint_number">नंबर</string>
     <string name="error_required_org_designation">पदनाम आवश्यक है</string>
     <string name="error_required_org_name">संगठन का नाम आवश्यक है</string>
+    <string name="error_required_org_from_date">From date is required!</string>
+    <string name="error_required_org_to_date">To date is required!</string>
     <string name="success_profile_update">प्रोफाइल को सफलतापूर्वक अपडेट किया गया!</string>
     <string name="error_select_gender">अपना लिंग चुनें</string>
     <string name="error_required_web_address">वेब एड्रेस आवश्यक है</string>

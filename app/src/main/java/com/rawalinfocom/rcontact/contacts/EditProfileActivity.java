@@ -2,13 +2,11 @@ package com.rawalinfocom.rcontact.contacts;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.content.ComponentName;
 import android.content.Intent;
-import android.content.pm.LabeledIntent;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -18,9 +16,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputType;
@@ -48,11 +49,27 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.facebook.share.model.ShareLinkContent;
-import com.facebook.share.widget.ShareDialog;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.common.base.MoreObjects;
+import com.linkedin.platform.LISessionManager;
 import com.rawalinfocom.rcontact.BaseActivity;
+import com.rawalinfocom.rcontact.LinkedinLoginActivity;
+import com.rawalinfocom.rcontact.ProfileRegistrationActivity;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.adapters.SocialConnectListAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
@@ -94,6 +111,8 @@ import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -116,7 +135,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class EditProfileActivity extends BaseActivity implements WsResponseListener, RippleView
-        .OnRippleCompleteListener {
+        .OnRippleCompleteListener, GoogleApiClient.OnConnectionFailedListener {
 
     private final String EVENT_GENERAL_DATE_FORMAT = "dd'th' MMMM, yyyy";
     private final String EVENT_ST_DATE_FORMAT = "dd'st' MMMM, yyyy";
@@ -348,6 +367,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
     boolean isBirthday = false;
     boolean isEvent = false;
+    boolean isOrganization = false;
     boolean isMale = false, isFemale = false;
     boolean isUpdated = false;
 
@@ -355,6 +375,29 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     MaterialDialog backConfirmationDialog;
 
     ColorStateList defaultMarkerColor;
+
+    // Social Login
+    private final int RC_SIGN_IN = 7;
+    private final int RC_LINKEDIN_SIGN_IN = 8;
+
+    // Google API Client
+    private GoogleApiClient googleApiClient;
+
+    private static final int FACEBOOK_LOGIN_PERMISSION = 21;
+    private static final int GOOGLE_LOGIN_PERMISSION = 22;
+    private static final int LINKEDIN_LOGIN_PERMISSION = 23;
+    // Facebook Callback Manager
+    CallbackManager callbackManager;
+    // End
+
+    private ArrayList<String> socialTypeList;
+    private SocialConnectListAdapter socialConnectListAdapter;
+    private String socialId = "";
+    private TextView organizationDateView;
+    ArrayList<ProfileDataOperationEmail> SocialEmailList;
+
+    private String[] requiredPermissions = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest
+            .permission.WRITE_EXTERNAL_STORAGE};
 
     //<editor-fold desc="Override Methods">
     /*String imageurl = "https://static.pexels.com/photos/87452/flowers-background-butterflies-beautiful-87452.jpeg";
@@ -367,6 +410,17 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         setContentView(R.layout.activity_edit_profile);
         ButterKnife.bind(this);
         arrayListProfile = new ArrayList<>();
+
+        FacebookSdk.sdkInitialize(getApplicationContext());
+
+        // Google+ Registration
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions
+                .DEFAULT_SIGN_IN).requestEmail().build();
+        googleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this, this).addApi
+                (Auth.GOOGLE_SIGN_IN_API, gso).build();
+
+        SocialEmailList = new ArrayList<>();
+
         init();
 
         /*btnShare.setOnClickListener(new View.OnClickListener() {
@@ -542,6 +596,219 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
             }
         }
+
+        if (IntegerConstants.REGISTRATION_VIA == IntegerConstants.REGISTRATION_VIA_FACEBOOK) {
+            // Facebook Callback
+            callbackManager.onActivityResult(requestCode, resultCode, data);
+        } else if (IntegerConstants.REGISTRATION_VIA == IntegerConstants
+                .REGISTRATION_VIA_LINED_IN) {
+            // LinkedIn Callback
+            LISessionManager.getInstance(getApplicationContext()).onActivityResult(this,
+                    requestCode, resultCode, data);
+        }
+
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            handleSignInResult(result);
+        }
+
+        if (resultCode == RESULT_OK && requestCode == RC_LINKEDIN_SIGN_IN) {
+
+            if (data != null) {
+                if (data.getStringExtra("isBack").equalsIgnoreCase("0")) {
+                    //If everything went Ok, change to another activity.
+                    socialId = data.getStringExtra("url");
+
+                    ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
+                    imAccount.setIMAccountProtocol("LinkedIn");
+                    imAccount.setIMAccountFirstName(data.getStringExtra("first_name"));
+                    imAccount.setIMAccountLastName(data.getStringExtra("last_name"));
+                    imAccount.setIMAccountProfileImage(data.getStringExtra("profileImage"));
+                    imAccount.setIMAccountDetails(socialId);
+                    imAccount.setIMAccountPublic(IntegerConstants.PRIVACY_MY_CONTACT);
+                    arrayListSocialContactObject.add(imAccount);
+
+                    ProfileDataOperationEmail email = new ProfileDataOperationEmail();
+                    email.setEmEmailId(StringUtils.trim(data.getStringExtra("email")));
+                    email.setEmType("Work");
+                    email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
+                    email.setEmIsSocial(1);
+                    email.setEmSocialType("linkedin");
+
+                    SocialEmailList.add(email);
+
+                    addSocialConnectView(arrayListSocialContactObject.get(arrayListSocialContactObject.size() - 1), "");
+
+                } else {
+                    Utils.showErrorSnackBar(this, relativeRootEditProfile, "Login cancelled!");
+                }
+            } else {
+                Utils.showErrorSnackBar(this, relativeRootEditProfile, "Login cancelled!");
+            }
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private void checkPermissionToExecute(String[] permissions, int requestCode) {
+        boolean READ_EXTERNAL_STORAGE = ContextCompat.checkSelfPermission
+                (EditProfileActivity
+                        .this, permissions[0]) !=
+                PackageManager.PERMISSION_GRANTED;
+        boolean WRITE_EXTERNAL_STORAGE = ContextCompat.checkSelfPermission
+                (EditProfileActivity
+                        .this, permissions[1]) !=
+                PackageManager.PERMISSION_GRANTED;
+        if (READ_EXTERNAL_STORAGE || WRITE_EXTERNAL_STORAGE) {
+            requestPermissions(permissions, requestCode);
+        } else {
+            prepareToLoginUsingSocialMedia(requestCode);
+        }
+    }
+
+    private void prepareToLoginUsingSocialMedia(int requestCode) {
+        switch (requestCode) {
+            case FACEBOOK_LOGIN_PERMISSION:
+
+                // Facebook Initialization
+                FacebookSdk.sdkInitialize(getApplicationContext());
+                callbackManager = CallbackManager.Factory.create();
+
+                // Callback registration
+                registerFacebookCallback();
+
+                LoginManager.getInstance().logInWithReadPermissions(EditProfileActivity
+                        .this, Arrays.asList(getString(R.string.str_public_profile),
+                        getString(R.string.str_small_cap_email)));
+                break;
+            case GOOGLE_LOGIN_PERMISSION:
+                googleSignIn();
+                break;
+            case LINKEDIN_LOGIN_PERMISSION:
+                linkedInSignIn();
+                break;
+        }
+    }
+
+    private void registerFacebookCallback() {
+        LoginManager.getInstance().registerCallback(callbackManager,
+                new FacebookCallback<LoginResult>() {
+                    @Override
+                    public void onSuccess(final LoginResult loginResult) {
+
+                        GraphRequest graphRequest = GraphRequest.newMeRequest(loginResult
+                                .getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
+
+                            @Override
+                            public void onCompleted(JSONObject jsonObject, GraphResponse
+                                    graphResponse) {
+
+                                try {
+
+                                    socialId = jsonObject.getString("id");
+
+                                    ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
+
+                                    imAccount.setIMAccountFirstName(jsonObject.getString("first_name"));
+                                    imAccount.setIMAccountLastName(jsonObject.getString("last_name"));
+
+                                    imAccount.setIMAccountProtocol("Facebook");
+                                    imAccount.setIMAccountProfileImage("https://graph.facebook.com/" + socialId +
+                                            "/picture?width=200&height=150");
+                                    imAccount.setIMAccountPublic(IntegerConstants.PRIVACY_MY_CONTACT);
+                                    imAccount.setIMAccountDetails(socialId);
+                                    arrayListSocialContactObject.add(imAccount);
+
+                                    ProfileDataOperationEmail email = new ProfileDataOperationEmail();
+                                    email.setEmEmailId(StringUtils.trim(jsonObject.getString("email")));
+                                    email.setEmType("Work");
+                                    email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
+                                    email.setEmIsSocial(1);
+                                    email.setEmSocialType("facebook");
+
+                                    SocialEmailList.add(email);
+
+                                    addSocialConnectView(arrayListSocialContactObject.get(arrayListSocialContactObject.size() - 1)
+                                            , "");
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
+                        });
+
+                        Bundle parameters = new Bundle();
+                        parameters.putString("fields", "id, first_name, last_name, email,gender, " +
+                                "birthday, location");
+                        graphRequest.setParameters(parameters);
+                        graphRequest.executeAsync();
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        Utils.showErrorSnackBar(EditProfileActivity.this,
+                                relativeRootEditProfile, getString(R.string
+                                        .error_facebook_login_cancelled));
+                    }
+
+                    @Override
+                    public void onError(FacebookException exception) {
+                        Utils.showErrorSnackBar(EditProfileActivity.this,
+                                relativeRootEditProfile, exception.getMessage());
+                    }
+                });
+    }
+
+    private void googleSignIn() {
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    private void handleSignInResult(GoogleSignInResult result) {
+        Log.i("Sign In Result", "handleSignInResult:" + result.isSuccess());
+        if (result.isSuccess()) {
+            // Signed in successfully.
+            GoogleSignInAccount acct = result.getSignInAccount();
+
+            if (acct != null) {
+
+                socialId = acct.getId();
+
+                ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
+                imAccount.setIMAccountProtocol("GooglePlus");
+
+                imAccount.setIMAccountFirstName(acct.getGivenName());
+                imAccount.setIMAccountLastName(acct.getFamilyName());
+                imAccount.setIMAccountPublic(IntegerConstants.PRIVACY_MY_CONTACT);
+                imAccount.setIMAccountProfileImage(String.valueOf(acct.getPhotoUrl()));
+                imAccount.setIMAccountDetails(socialId);
+                arrayListSocialContactObject.add(imAccount);
+
+                ProfileDataOperationEmail email = new ProfileDataOperationEmail();
+                email.setEmEmailId(StringUtils.trim(acct.getEmail()));
+                email.setEmType("Work");
+                email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
+                email.setEmIsSocial(1);
+                email.setEmSocialType("google");
+
+                SocialEmailList.add(email);
+
+                addSocialConnectView(arrayListSocialContactObject.get(arrayListSocialContactObject.size() - 1), "");
+            }
+
+        } else {
+            // Signed out.
+            Utils.showErrorSnackBar(EditProfileActivity.this,
+                    relativeRootEditProfile, getString(R.string.error_retrieving_details));
+        }
+    }
+
+    public void linkedInSignIn() {
+
+        Intent intent = new Intent(EditProfileActivity.this, LinkedinLoginActivity.class);
+        intent.putExtra("from", "profile");
+        startActivityForResult(intent, RC_LINKEDIN_SIGN_IN);// Activity is started with requestCode
     }
 
     @Override
@@ -596,6 +863,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         case AppConstants.IM_ACCOUNT:
                             linearSocialContactDetails.removeAllViews();
                             socialContactDetails();
+                            linearEmailDetails.removeAllViews();
+                            emailDetails();
                             break;
                         case AppConstants.WEBSITE:
                             linearWebsiteDetails.removeAllViews();
@@ -694,7 +963,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
             // <editor-fold desc="button_social_contact_add_field">
             case R.id.button_social_contact_add_field:
-                checkBeforeViewAdd(AppConstants.IM_ACCOUNT, linearSocialContactDetails);
+                SocialDialog();
                 break;
             //</editor-fold>
 
@@ -741,6 +1010,81 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             //</editor-fold>
 
         }
+    }
+
+    private void SocialDialog() {
+
+        final Dialog dialog = new Dialog(EditProfileActivity.this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(true);
+
+        View dialogView = LayoutInflater.from(EditProfileActivity.this).inflate(R.layout.dialog_social_list, null);
+        dialog.setContentView(dialogView);
+
+        TextView txtTitle = (TextView) dialogView.findViewById(R.id.tvDialogTitle);
+        txtTitle.setText(getString(R.string.str_social_connect));
+
+        RecyclerView recycleViewSocialList = dialogView.findViewById(R.id.recycle_view_social_list);
+        recycleViewSocialList.setLayoutManager(new LinearLayoutManager(EditProfileActivity.this,
+                LinearLayoutManager.VERTICAL, false));
+
+        socialConnectListAdapter = new SocialConnectListAdapter(socialTypeList
+                , new SocialConnectListAdapter.onClickListener() {
+            @Override
+            public void onClick(String socialName) {
+
+                dialog.dismiss();
+
+                if (socialName.equalsIgnoreCase("Facebook")) {
+
+                    IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_FACEBOOK;
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        checkPermissionToExecute(requiredPermissions, FACEBOOK_LOGIN_PERMISSION);
+                    } else {
+                        // Facebook Initialization
+                        FacebookSdk.sdkInitialize(getApplicationContext());
+                        callbackManager = CallbackManager.Factory.create();
+
+                        // Callback registration
+                        registerFacebookCallback();
+
+                        LoginManager.getInstance().logInWithReadPermissions(EditProfileActivity.this,
+                                Arrays.asList(getString(R.string.str_public_profile), getString(R.string.str_small_cap_email)));
+
+                    }
+
+                } else if (socialName.equalsIgnoreCase("GooglePlus")) {
+
+                    IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_GOOGLE;
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        checkPermissionToExecute(requiredPermissions, GOOGLE_LOGIN_PERMISSION);
+                    } else {
+                        googleSignIn();
+                    }
+
+                } else if (socialName.equalsIgnoreCase("Linkedin")) {
+
+
+                    IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_LINED_IN;
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        checkPermissionToExecute(requiredPermissions, LINKEDIN_LOGIN_PERMISSION);
+                    } else {
+                        linkedInSignIn();
+                    }
+
+                } else if (socialName.equalsIgnoreCase("Custom")) {
+                    showCustomTypeDialogForSocial();
+                } else {
+                    checkBeforeSocialViewAdd(socialName);
+                }
+            }
+        });
+        recycleViewSocialList.setAdapter(socialConnectListAdapter);
+
+        dialog.show();
     }
 
     @OnClick({R.id.button_name_update, R.id.button_phone_update, R.id.button_email_update, R.id
@@ -931,6 +1275,26 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
             // <editor-fold desc="button_social_contact_update">
             case R.id.button_social_contact_update:
+
+                ArrayList<ProfileDataOperationEmail> arrayListFinalEmailAccount = new ArrayList<>();
+
+                TableEmailMaster tableEmailMaster = new TableEmailMaster(databaseHandler);
+
+                ArrayList<Email> arrayListEmail = tableEmailMaster.getEmailsFromPmId(Integer.parseInt
+                        (getUserPmId()));
+                ArrayList<ProfileDataOperationEmail> arrayListNewEmailAccount = new ArrayList<>();
+
+                for (int i = 0; i < arrayListEmail.size(); i++) {
+                    ProfileDataOperationEmail email = new ProfileDataOperationEmail();
+                    email.setEmEmailId(arrayListEmail.get(i).getEmEmailAddress());
+                    email.setEmType(arrayListEmail.get(i).getEmEmailType());
+                    email.setEmId(arrayListEmail.get(i).getEmRecordIndexId());
+                    email.setEmPublic(Integer.parseInt(arrayListEmail.get(i).getEmEmailPrivacy()));
+                    email.setEmRcpType(Integer.parseInt(arrayListEmail.get(i).getEmIsVerified()));
+
+                    arrayListNewEmailAccount.add(email);
+                }
+
                 ArrayList<ProfileDataOperationImAccount> arrayListNewImAccount = new ArrayList<>();
                 isValid = true;
                 for (int i = 0; i < linearSocialContactDetails.getChildCount(); i++) {
@@ -938,15 +1302,24 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     View linearSocialContact = linearSocialContactDetails.getChildAt(i);
                     EditText imAccountName = linearSocialContact.findViewById(R.id
                             .input_value);
-                    Spinner imAccountProtocol = linearSocialContact.findViewById(R.id
-                            .spinner_type);
                     TextView textIsPublic = linearSocialContact.findViewById(R.id
                             .text_is_public);
-                    RelativeLayout relativeRowEditProfile = linearSocialContact
-                            .findViewById(R.id.relative_row_edit_profile);
+                    TextView imAccountProtocol = linearSocialContact.findViewById(R.id
+                            .input_protocol);
+                    TextView imAccountProfileImage = linearSocialContact.findViewById(R.id
+                            .text_profile_image);
+                    RelativeLayout relativeRowEditProfileSocial = linearSocialContact
+                            .findViewById(R.id.relative_row_edit_profile_social);
+                    TextView textFirstName = linearSocialContact.findViewById(R.id.text_first_name);
+                    TextView textLastName = linearSocialContact.findViewById(R.id.text_last_name);
+
                     imAccount.setIMAccountDetails(imAccountName.getText().toString().trim());
-                    imAccount.setIMAccountProtocol((String) imAccountProtocol.getSelectedItem());
-                    imAccount.setIMId((String) relativeRowEditProfile.getTag());
+                    imAccount.setIMUserId(imAccountName.getText().toString().trim());
+                    imAccount.setIMAccountProtocol(imAccountProtocol.getText().toString().trim());
+                    imAccount.setIMId((String) relativeRowEditProfileSocial.getTag());
+                    imAccount.setIMAccountProfileImage(imAccountProfileImage.getText().toString().trim());
+                    imAccount.setIMAccountFirstName(textFirstName.getText().toString().trim());
+                    imAccount.setIMAccountLastName(textLastName.getText().toString().trim());
 
                     if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
                         imAccount.setIMAccountPublic(Integer.parseInt(textIsPublic.getText()
@@ -968,8 +1341,14 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 }
                 if (isValid) {
                     if (arrayListNewImAccount.size() > 0) {
+
+                        arrayListFinalEmailAccount.addAll(arrayListNewEmailAccount);
+                        arrayListFinalEmailAccount.addAll(SocialEmailList);
+
                         profileDataOperation.setPbIMAccounts(arrayListNewImAccount);
+                        profileDataOperation.setPbEmailId(arrayListFinalEmailAccount);
                         editProfile(profileDataOperation, AppConstants.IM_ACCOUNT);
+
                     } else {
                         if (arrayListSocialContactObject.size() > 0) {
                             profileDataOperation.setPbIMAccounts(arrayListNewImAccount);
@@ -1043,6 +1422,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             .input_company_name);
                     EditText inputDesignationName = linearOrganization.findViewById(R.id
                             .input_designation_name);
+
+                    EditText inputFromDate = linearOrganization.findViewById(R.id.input_from_date);
+                    EditText inputToDate = linearOrganization.findViewById(R.id.input_to_date);
+
                     RelativeLayout relativeRowEditProfile = linearOrganization
                             .findViewById(R.id.relative_row_edit_profile);
                     CheckBox checkboxOrganization = linearOrganization.findViewById(R
@@ -1051,25 +1434,48 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     organization.setOrgJobTitle(inputDesignationName.getText().toString().trim());
                     organization.setOrgId((String) relativeRowEditProfile.getTag());
                     organization.setIsCurrent(checkboxOrganization.isChecked() ? 1 : 0);
-
                     organization.setOrgPublic(IntegerConstants.PRIVACY_EVERYONE);
 
+                    if (!StringUtils.isBlank(inputToDate.getText().toString().trim())) {
+                        organization.setOrgToDate(
+                                Utils.convertDateFormat(inputToDate.getText()
+                                        .toString().trim(), getEventDateFormatForUpdate(inputToDate.getText()
+                                        .toString().trim()), "yyyy-MM-dd HH:mm:ss"));
+
+                    } else {
+                        organization.setOrgToDate(inputToDate.getText().toString().trim());
+                    }
+
+                    organization.setOrgFromDate(
+                            Utils.convertDateFormat(inputFromDate.getText()
+                                    .toString().trim(), getEventDateFormatForUpdate(inputFromDate.getText()
+                                    .toString().trim()), "yyyy-MM-dd HH:mm:ss"));
+
                     if (!StringUtils.isBlank(organization.getOrgName()) ||
-                            !StringUtils.isBlank(organization.getOrgJobTitle())) {
+                            !StringUtils.isBlank(organization.getOrgJobTitle()) ||
+                            !StringUtils.isBlank(organization.getOrgFromDate())) {
                         if (!StringUtils.isBlank(organization.getOrgName())) {
-                            if (!StringUtils.isBlank(organization.getOrgJobTitle())) {
-                                arrayListNewOrganization.add(organization);
-                            } else {
+                            if (StringUtils.isBlank(organization.getOrgJobTitle())) {
                                 Utils.showErrorSnackBar(this, relativeRootEditProfile,
                                         getString(R.string.error_required_org_designation));
                                 isValid = false;
+                            } else if (StringUtils.isBlank(organization.getOrgFromDate())) {
+                                Utils.showErrorSnackBar(this, relativeRootEditProfile,
+                                        getString(R.string.error_required_org_from_date));
+                                isValid = false;
                                 break;
+                            } else if (!checkboxOrganization.isChecked() && StringUtils.isBlank(organization.getOrgToDate())) {
+                                Utils.showErrorSnackBar(this, relativeRootEditProfile,
+                                        getString(R.string.error_required_org_to_date));
+                                isValid = false;
+                                break;
+                            } else {
+                                arrayListNewOrganization.add(organization);
                             }
                         } else {
                             Utils.showErrorSnackBar(this, relativeRootEditProfile,
                                     getString(R.string.error_required_org_name));
                             isValid = false;
-                            break;
                         }
                     } else {
                         if (i != 0) {
@@ -1092,13 +1498,15 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                      /*   profileDataOperation.setPbOrganization(arrayListNewOrganization);
                         editProfile(profileDataOperation, AppConstants.ORGANIZATION);*/
                     if (arrayListNewOrganization.size() > 0) {
-                        if (!isCurrentSelected) {
-                            Utils.showErrorSnackBar(this, relativeRootEditProfile, getString(R
-                                    .string.error_current_organization));
-                        } else {
-                            profileDataOperation.setPbOrganization(arrayListNewOrganization);
-                            editProfile(profileDataOperation, AppConstants.ORGANIZATION);
-                        }
+                        profileDataOperation.setPbOrganization(arrayListNewOrganization);
+                        editProfile(profileDataOperation, AppConstants.ORGANIZATION);
+//                        if (!isCurrentSelected) {
+//                            Utils.showErrorSnackBar(this, relativeRootEditProfile, getString(R
+//                                    .string.error_current_organization));
+//                        } else {
+//                            profileDataOperation.setPbOrganization(arrayListNewOrganization);
+//                            editProfile(profileDataOperation, AppConstants.ORGANIZATION);
+//                        }
                     } else {
                         if (arrayListOrganizationObject.size() > 0) {
                             profileDataOperation.setPbOrganization(arrayListNewOrganization);
@@ -1992,7 +2400,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 if (isBirthday) {
                     updateBirthdayEditText(myCalendar);
                 } else if (isEvent) {
-                    updateEditTextEvent(myCalendar);
+                    updateEditTextEvent(myCalendar, "event");
+                } else if (isOrganization) {
+                    updateEditTextEvent(myCalendar, "organization");
                 } else {
                     updateAnniversaryEditText(myCalendar);
                 }
@@ -2066,8 +2476,18 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 //        updateEditTextEvent(myCalendar);
     }
 
+    private void updateOrganizationText(TextView textView) {
+        final Calendar myCalendar = Calendar.getInstance();
+        organizationDateView = textView;
+        new DatePickerDialog(EditProfileActivity.this, dataPicker, myCalendar
+                .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+//        updateEditTextEvent(myCalendar);
+    }
+
     @SuppressLint("SimpleDateFormat")
-    private void updateEditTextEvent(Calendar myCalendar) {
+    private void updateEditTextEvent(Calendar myCalendar, String type) {
+
         SimpleDateFormat format = new SimpleDateFormat("d");
         String date = format.format(myCalendar.getTime());
 
@@ -2081,10 +2501,16 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             format = new SimpleDateFormat(EVENT_GENERAL_DATE_FORMAT);
 
         String yourDate = format.format(myCalendar.getTime());
-        if (!TextUtils.isEmpty(yourDate))
-            editTextEvent.setText(yourDate);
 
-//        isEvent = false;
+        if (type.equalsIgnoreCase("event")) {
+            if (!TextUtils.isEmpty(yourDate))
+                editTextEvent.setText(yourDate);
+            isEvent = false;
+        } else {
+            if (!TextUtils.isEmpty(yourDate))
+                organizationDateView.setText(yourDate);
+            isOrganization = false;
+        }
     }
 
     private void genderDetails() {
@@ -2178,6 +2604,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             email.setEmPublic(Integer.parseInt(arrayListEmail.get(i).getEmEmailPrivacy()));
             email.setEmRcpType(Integer.parseInt(arrayListEmail.get(i).getEmIsVerified()));
             arrayListEmailObject.add(email);
+
+//            SocialEmailList.add(email);
         }
         if (arrayListEmailObject.size() > 0) {
             for (int i = 0; i < arrayListEmailObject.size(); i++) {
@@ -2225,6 +2653,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     }
 
     private void socialContactDetails() {
+
+        socialTypeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
+                .array.types_social_media)));
+
         TableImMaster tableImMaster = new TableImMaster(databaseHandler);
 
         ArrayList<ImAccount> arrayListImAccount = tableImMaster.getImAccountFromPmId(Integer
@@ -2233,18 +2665,25 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         for (int i = 0; i < arrayListImAccount.size(); i++) {
             ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
             imAccount.setIMAccountProtocol(arrayListImAccount.get(i).getImImProtocol());
-//            imAccount.setIMAccountType(arrayListImAccount.get(i).getImImType());
             imAccount.setIMAccountDetails(arrayListImAccount.get(i).getImImDetail());
+            imAccount.setIMAccountFirstName(arrayListImAccount.get(i).getImImFirstName());
+            imAccount.setIMAccountLastName(arrayListImAccount.get(i).getImImLastName());
+            imAccount.setIMAccountProfileImage(arrayListImAccount.get(i).getImImProfileImage());
             imAccount.setIMId(arrayListImAccount.get(i).getImRecordIndexId());
             imAccount.setIMAccountPublic(Integer.parseInt(arrayListImAccount.get(i)
                     .getImImPrivacy()));
             arrayListSocialContactObject.add(imAccount);
+
+            if (arrayListImAccount.get(i).getImImProtocol().equalsIgnoreCase("Facebook")
+                    || arrayListImAccount.get(i).getImImProtocol().equalsIgnoreCase("GooglePlus")
+                    || arrayListImAccount.get(i).getImImProtocol().equalsIgnoreCase("LinkedIn")) {
+                socialTypeList.remove(arrayListImAccount.get(i).getImImProtocol());
+            }
         }
 
         if (arrayListSocialContactObject.size() > 0) {
             for (int i = 0; i < arrayListSocialContactObject.size(); i++) {
-                addView(AppConstants.IM_ACCOUNT, linearSocialContactDetails,
-                        arrayListSocialContactObject.get(i), i);
+                addSocialConnectView(arrayListSocialContactObject.get(i), "");
             }
             for (int i = 0; i < linearSocialContactDetails.getChildCount(); i++) {
                 View linearSocialContact = linearSocialContactDetails.getChildAt(i);
@@ -2252,9 +2691,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         .input_value);
                 socialContact.addTextChangedListener(valueTextWatcher);
             }
-        } else {
-            addView(AppConstants.IM_ACCOUNT, linearSocialContactDetails, null, -1);
         }
+//        else {
+//            addView(AppConstants.IM_ACCOUNT, linearSocialContactDetails, null, -1);
+//        }
     }
 
     private void eventDetails() {
@@ -2304,13 +2744,26 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 .getOrganizationsFromPmId(Integer.parseInt(getUserPmId()));
         arrayListOrganizationObject = new ArrayList<>();
         for (int i = 0; i < arrayListOrganization.size(); i++) {
+
+            String formattedFromDate = "", formattedToDate = "";
+
             ProfileDataOperationOrganization organization = new ProfileDataOperationOrganization();
             organization.setOrgName(arrayListOrganization.get(i).getOmOrganizationCompany());
-            organization.setOrgJobTitle(arrayListOrganization.get(i).getOmOrganizationDesignation
-                    ());
+
+            if (!StringUtils.isEmpty(arrayListOrganization.get(i).getOmOrganizationFromDate())) {
+                formattedFromDate = Utils.convertDateFormat(arrayListOrganization.get(i).getOmOrganizationFromDate(),
+                        "yyyy-MM-dd hh:mm:ss", getEventDateFormat(arrayListOrganization.get(i).getOmOrganizationFromDate()));
+            }
+            if (!StringUtils.isEmpty(arrayListOrganization.get(i).getOmOrganizationToDate())) {
+                formattedToDate = Utils.convertDateFormat(arrayListOrganization.get(i).getOmOrganizationToDate(),
+                        "yyyy-MM-dd hh:mm:ss", getEventDateFormat(arrayListOrganization.get(i).getOmOrganizationToDate()));
+            }
+
+            organization.setOrgFromDate(formattedFromDate);
+            organization.setOrgToDate(formattedToDate);
+            organization.setOrgJobTitle(arrayListOrganization.get(i).getOmOrganizationDesignation());
             organization.setOrgId(arrayListOrganization.get(i).getOmRecordIndexId());
-            organization.setIsCurrent(Integer.parseInt(arrayListOrganization.get(i)
-                    .getOmIsCurrent()));
+            organization.setIsCurrent(Integer.parseInt(arrayListOrganization.get(i).getOmIsCurrent()));
             arrayListOrganizationObject.add(organization);
         }
 
@@ -2418,15 +2871,46 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     }
 
     private void checkBeforeOrganizationViewAdd() {
-        boolean toAdd = false;
+        boolean toAdd = false, isChecked;
         for (int i = 0; i < linearOrganizationDetails.getChildCount(); i++) {
             View linearView = linearOrganizationDetails.getChildAt(i);
             EditText inputCompanyName = linearView.findViewById(R.id.input_company_name);
-            EditText inputDesignationName = linearView.findViewById(R.id
-                    .input_designation_name);
-            if (StringUtils.length(StringUtils.trimToEmpty(inputCompanyName.getText().toString())
-            ) < 1 || StringUtils.length(StringUtils.trimToEmpty(inputDesignationName.getText()
+            EditText inputDesignationName = linearView.findViewById(R.id.input_designation_name);
+            CheckBox checkboxOrganization = linearView.findViewById(R.id.checkbox_organization);
+            EditText inputFromDate = linearView.findViewById(R.id.input_from_date);
+            EditText inputToDate = linearView.findViewById(R.id.input_to_date);
+
+            isChecked = checkboxOrganization.isChecked();
+
+            if (StringUtils.length(StringUtils.trimToEmpty(inputCompanyName.getText()
+                    .toString())) < 1 || StringUtils.length(StringUtils.trimToEmpty(inputDesignationName.getText()
+                    .toString())) < 1 || StringUtils.length(StringUtils.trimToEmpty(inputFromDate.getText()
                     .toString())) < 1) {
+                if (isChecked && StringUtils.length(StringUtils.trimToEmpty(inputToDate.getText()
+                        .toString())) < 1) {
+                    toAdd = false;
+                    break;
+                } else {
+                    toAdd = false;
+                    break;
+                }
+            } else {
+                toAdd = true;
+            }
+        }
+        if (toAdd) {
+            isUpdated = true;
+            addOrganizationView(null);
+        }
+    }
+
+    private void checkBeforeSocialViewAdd(String imAccountProtocol) {
+        boolean toAdd = false;
+        for (int i = 0; i < linearSocialContactDetails.getChildCount(); i++) {
+            View linearView = linearSocialContactDetails.getChildAt(i);
+            EditText editText = linearView.findViewById(R.id.input_value);
+
+            if (StringUtils.length(StringUtils.trimToEmpty(editText.getText().toString())) < 1) {
                 toAdd = false;
                 break;
             } else {
@@ -2435,7 +2919,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         }
         if (toAdd) {
             isUpdated = true;
-            addOrganizationView(null);
+            addSocialConnectView(null, imAccountProtocol);
         }
     }
 
@@ -2554,8 +3038,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     if (email.getEmRcpType() == IntegerConstants.RCP_TYPE_PRIMARY) {
                         inputValue.setTypeface(Utils.typefaceIcons(EditProfileActivity.this));
                         inputValue.setEnabled(false);
-                        spinnerType.setEnabled(false);
-                        imageViewDelete.setVisibility(View.INVISIBLE);
+                        spinnerType.setVisibility(View.GONE);
+                        imageViewDelete.setVisibility(View.GONE);
                        /* inputValue.setText(String.format("%s %s", email.getEmEmailId(),
                                 getString(R.string.im_icon_verify)));*/
                         inputValue.setText(Utils.setMultipleTypeface(EditProfileActivity.this,
@@ -2615,44 +3099,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     spinnerType.setSelection(spinnerPosition);
                     spinnerType.setTag(R.id.spinner_position, spinnerPosition);
                     relativeRowEditProfile.setTag(webAddress.getWebId());
-                }
-                break;
-            //</editor-fold>
-
-            //<editor-fold desc="IM_ACCOUNT">
-            case AppConstants.IM_ACCOUNT:
-                linerCheckbox.setVisibility(View.GONE);
-                imageViewDelete.setTag(AppConstants.IM_ACCOUNT);
-                inputValue.setHint(R.string.hint_account_name);
-                spinnerType.setTag(R.id.spinner_type, AppConstants.IM_ACCOUNT);
-                typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
-                        .array.types_social_media)));
-                spinnerImAccountAdapter = new ArrayAdapter<>(this, R.layout
-                        .list_item_spinner, typeList);
-                spinnerImAccountAdapter.setDropDownViewResource(android.R.layout
-                        .simple_spinner_dropdown_item);
-                spinnerType.setAdapter(spinnerImAccountAdapter);
-                spinnerType.setSelection(1);
-                inputValue.setInputType(InputType.TYPE_CLASS_TEXT);
-                if (detailObject != null) {
-                    ProfileDataOperationImAccount imAccount = (ProfileDataOperationImAccount)
-                            detailObject;
-                    inputValue.setText(imAccount.getIMAccountDetails());
-                    textIsPublic.setText(String.valueOf(imAccount.getIMAccountPublic()));
-                    int spinnerPosition;
-                    if (typeList.contains(StringUtils.defaultString(imAccount
-                            .getIMAccountProtocol()))) {
-                        spinnerPosition = spinnerImAccountAdapter.getPosition(imAccount
-                                .getIMAccountProtocol());
-                    } else {
-                        spinnerImAccountAdapter.add(imAccount.getIMAccountProtocol());
-                        spinnerImAccountAdapter.notifyDataSetChanged();
-                        spinnerPosition = spinnerImAccountAdapter.getPosition(imAccount
-                                .getIMAccountProtocol());
-                    }
-                    spinnerType.setSelection(spinnerPosition);
-                    spinnerType.setTag(R.id.spinner_position, spinnerPosition);
-                    relativeRowEditProfile.setTag(imAccount.getIMId());
                 }
                 break;
             //</editor-fold>
@@ -2786,6 +3232,131 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     }
 
     @SuppressLint("InflateParams")
+    private void addSocialConnectView(Object detailObject, String imAccountProtocol) {
+
+        View view = LayoutInflater.from(this).inflate(R.layout.list_item_edit_profile_social, null);
+        ImageView imageViewDelete = view.findViewById(R.id.image_delete);
+        ImageView imageViewSocialIcon = view.findViewById(R.id.image_social_icon);
+        ImageView imageViewSocialProfile = view.findViewById(R.id.image_social_profile);
+        imageViewSocialProfile.setVisibility(View.GONE);
+
+        LinearLayout linearContent = view.findViewById(R.id.linear_content);
+
+        final EditText inputValue = view.findViewById(R.id.input_value);
+        TextView textFirstName = view.findViewById(R.id.text_first_name);
+        TextView textLastName = view.findViewById(R.id.text_last_name);
+        TextView textIsVerified = view.findViewById(R.id.text_is_verified);
+        TextView textProtocol = view.findViewById(R.id.input_protocol);
+        TextView imAccountProfileImage = view.findViewById(R.id.text_profile_image);
+
+        textIsVerified.setText(R.string.verify_now);
+        textIsVerified.setVisibility(View.GONE);
+
+        final RelativeLayout relativeRowEditProfileSocial = view.findViewById(R.id
+                .relative_row_edit_profile_social);
+
+        imageViewDelete.setTag(AppConstants.IM_ACCOUNT);
+        inputValue.setHint(R.string.hint_account_name);
+        inputValue.setTypeface(Utils.typefaceIcons(EditProfileActivity.this));
+
+        inputValue.setInputType(InputType.TYPE_CLASS_TEXT);
+        if (detailObject != null) {
+            ProfileDataOperationImAccount imAccount = (ProfileDataOperationImAccount)
+                    detailObject;
+
+            inputValue.setText(imAccount.getIMAccountDetails());
+            textProtocol.setText(imAccount.getIMAccountProtocol());
+            textFirstName.setText(imAccount.getIMAccountFirstName());
+            textLastName.setText(imAccount.getIMAccountLastName());
+
+            if (imAccount.getIMAccountProtocol().equalsIgnoreCase("Facebook")
+                    || imAccount.getIMAccountProtocol().equalsIgnoreCase("GooglePlus")
+                    || imAccount.getIMAccountProtocol().equalsIgnoreCase("LinkedIn")) {
+
+                inputValue.setEnabled(false);
+                linearContent.setVisibility(View.GONE);
+                imageViewSocialProfile.setVisibility(View.VISIBLE);
+
+                imAccountProfileImage.setText(imAccount.getIMAccountProfileImage());
+
+                Glide.with(EditProfileActivity.this)
+                        .load(imAccount.getIMAccountProfileImage())
+                        .error(R.drawable.home_screen_profile)
+                        .bitmapTransform(new CropCircleTransformation(EditProfileActivity.this))
+                        .override(120, 120)
+                        .into(imageViewSocialProfile);
+
+            } else {
+                linearContent.setVisibility(View.VISIBLE);
+            }
+
+            if (imAccount.getIMAccountProtocol().equalsIgnoreCase("Facebook")) {
+                imageViewSocialIcon.setImageResource(R.drawable.ico_facebook_svg);
+            } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("GooglePlus")) {
+                imageViewSocialIcon.setImageResource(R.drawable.ico_google_plus_svg);
+            } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("LinkedIn")) {
+                imageViewSocialIcon.setImageResource(R.drawable.ico_linkedin_svg);
+            } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("Twitter")) {
+                imageViewSocialIcon.setImageResource(R.drawable.ico_twitter_svg);
+            } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("Instagram")) {
+                imageViewSocialIcon.setImageResource(R.drawable.ico_instagram_svg);
+            } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("Pinterest")) {
+                imageViewSocialIcon.setImageResource(R.drawable.ico_pinterest_svg);
+            } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("Other")) {
+                imageViewSocialIcon.setImageResource(R.drawable.ico_other_svg);
+            } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("Custom")) {
+                imageViewSocialIcon.setImageResource(R.drawable.ico_other_svg);
+            } else {
+                imageViewSocialIcon.setImageResource(R.drawable.ico_other_svg);
+            }
+
+            relativeRowEditProfileSocial.setTag(imAccount.getIMId());
+        } else {
+
+            textProtocol.setText(imAccountProtocol);
+            imAccountProfileImage.setText("");
+            imageViewSocialProfile.setVisibility(View.GONE);
+
+            if (imAccountProtocol.equalsIgnoreCase("Facebook")) {
+                imageViewSocialIcon.setImageResource(R.drawable.ico_facebook_svg);
+            } else if (imAccountProtocol.equalsIgnoreCase("GooglePlus")) {
+                imageViewSocialIcon.setImageResource(R.drawable.ico_google_plus_svg);
+            } else if (imAccountProtocol.equalsIgnoreCase("LinkedIn")) {
+                imageViewSocialIcon.setImageResource(R.drawable.ico_linkedin_svg);
+            } else if (imAccountProtocol.equalsIgnoreCase("Twitter")) {
+                imageViewSocialIcon.setImageResource(R.drawable.ico_twitter_svg);
+            } else if (imAccountProtocol.equalsIgnoreCase("Instagram")) {
+                imageViewSocialIcon.setImageResource(R.drawable.ico_instagram_svg);
+            } else if (imAccountProtocol.equalsIgnoreCase("Pinterest")) {
+                imageViewSocialIcon.setImageResource(R.drawable.ico_pinterest_svg);
+            } else if (imAccountProtocol.equalsIgnoreCase("Other")) {
+                imageViewSocialIcon.setImageResource(R.drawable.ico_other_svg);
+            } else if (imAccountProtocol.equalsIgnoreCase("Custom")) {
+                imageViewSocialIcon.setImageResource(R.drawable.ico_other_svg);
+            } else {
+                imageViewSocialIcon.setImageResource(R.drawable.ico_other_svg);
+            }
+        }
+
+        imageViewDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                isUpdated = true;
+
+                if (linearSocialContactDetails.getChildCount() > 1) {
+                    linearSocialContactDetails.removeView(relativeRowEditProfileSocial);
+                } else if (linearSocialContactDetails.getChildCount() == 1) {
+                    inputValue.getText().clear();
+                }
+            }
+        });
+        //</editor-fold>
+
+        linearSocialContactDetails.addView(view);
+    }
+
+    @SuppressLint("InflateParams")
     private void addOrganizationView(Object detailObject) {
         View view = LayoutInflater.from(this).inflate(R.layout
                 .list_item_my_profile_edit_organization, null);
@@ -2794,6 +3365,18 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         inputDesignationName = view.findViewById(R.id.input_designation_name);
         final CheckBox checkboxOrganization = view.findViewById(R.id
                 .checkbox_organization);
+
+        final EditText inputFromDate = view.findViewById(R.id.input_from_date);
+        final EditText inputToDate = view.findViewById(R.id.input_to_date);
+
+        inputFromDate.setHint(R.string.hint_choose_from_date);
+        inputFromDate.setFocusable(false);
+
+        inputToDate.setHint(R.string.hint_choose_to_date);
+        inputToDate.setFocusable(false);
+
+        final ImageView imageFromDate = view.findViewById(R.id.image_from_date);
+        final ImageView imageToDate = view.findViewById(R.id.image_to_date);
 
         checkboxOrganization.setTag(linearOrganizationDetails.getChildCount());
 
@@ -2816,10 +3399,20 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             inputCompanyName.setText(organization.getOrgName());
             inputDesignationName.setText(organization.getOrgJobTitle());
             checkboxOrganization.setChecked(organization.getIsCurrent() == 1);
-        } else {
-            if (linearOrganizationDetails.getChildCount() == 0) {
-                checkboxOrganization.setChecked(true);
+
+            if (organization.getIsCurrent() == 1) {
+                inputToDate.setEnabled(false);
+                imageToDate.setEnabled(false);
+                inputFromDate.setText(organization.getOrgFromDate());
+            } else {
+                inputFromDate.setText(organization.getOrgFromDate());
+                inputToDate.setText(organization.getOrgToDate());
             }
+
+        } else {
+            checkboxOrganization.setChecked(true);
+            inputToDate.setEnabled(false);
+            imageToDate.setEnabled(false);
         }
 
         checkboxOrganization.setOnCheckedChangeListener(new CompoundButton
@@ -2832,13 +3425,18 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         CheckBox checkbox = view.findViewById(R.id
                                 .checkbox_organization);
                         if (checkbox != null) {
-                            if (!(checkbox.getTag() == buttonView.getTag())) {
-                                checkbox.setChecked(false);
-                            }
+
+                            inputToDate.setEnabled(false);
+                            imageToDate.setEnabled(false);
+
+                            inputToDate.setText("");
+                            inputToDate.setHint(R.string.hint_choose_to_date);
                         }
-
                     }
+                } else {
 
+                    inputToDate.setEnabled(true);
+                    imageToDate.setEnabled(true);
                 }
             }
         });
@@ -2854,6 +3452,22 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     inputDesignationName.getText().clear();
                     checkboxOrganization.setChecked(true);
                 }
+            }
+        });
+
+        imageFromDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isOrganization = true;
+                updateOrganizationText(inputFromDate);
+            }
+        });
+
+        imageToDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isOrganization = true;
+                updateOrganizationText(inputToDate);
             }
         });
 
@@ -3390,6 +4004,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                     .getText().toString()));
                             spinnerType.setTag(R.id.spinner_position, spinnerPhoneAdapter
                                     .getPosition(inputCustomName.getText().toString()));*/
+
                             tempSpinnerAdapter.add(inputCustomName.getText().toString());
                             tempSpinnerAdapter.notifyDataSetChanged();
                             spinnerType.setSelection(tempSpinnerAdapter.getPosition
@@ -3428,12 +4043,17 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             break;
 
                         case AppConstants.IM_ACCOUNT:
-                            tempSpinnerAdapter.add(inputCustomName.getText().toString());
-                            tempSpinnerAdapter.notifyDataSetChanged();
-                            spinnerType.setSelection(tempSpinnerAdapter.getPosition
-                                    (inputCustomName.getText().toString()));
-                            spinnerType.setTag(R.id.spinner_position, tempSpinnerAdapter
-                                    .getPosition(inputCustomName.getText().toString()));
+                            socialTypeList.add(inputCustomName.getText().toString());
+
+                            if (socialConnectListAdapter != null)
+                                socialConnectListAdapter.notifyDataSetChanged();
+
+//                            tempSpinnerAdapter.add(inputCustomName.getText().toString());
+//                            tempSpinnerAdapter.notifyDataSetChanged();
+//                            spinnerType.setSelection(tempSpinnerAdapter.getPosition
+//                                    (inputCustomName.getText().toString()));
+//                            spinnerType.setTag(R.id.spinner_position, tempSpinnerAdapter
+//                                    .getPosition(inputCustomName.getText().toString()));
                             break;
 
                         case AppConstants.ADDRESS:
@@ -3445,6 +4065,67 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                     .getPosition(inputCustomName.getText().toString()));
                             break;
                     }
+                } else {
+                    Utils.showErrorSnackBar(EditProfileActivity.this, relativeRootEditProfile,
+                            getString(R.string.error_custom_type));
+                }
+            }
+        });
+        dialog.show();
+    }
+
+    private void showCustomTypeDialogForSocial() {
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_custom_type);
+        dialog.setCancelable(false);
+
+        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+        layoutParams.copyFrom(dialog.getWindow().getAttributes());
+        layoutParams.width = (int) (getResources().getDisplayMetrics().widthPixels * 0.90);
+        layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+        dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
+
+        TextView textDialogTitle = dialog.findViewById(R.id.text_dialog_title);
+        final EditText inputCustomName = dialog.findViewById(R.id.input_custom_name);
+
+        RippleView rippleLeft = dialog.findViewById(R.id.ripple_left);
+        Button buttonLeft = dialog.findViewById(R.id.button_left);
+        RippleView rippleRight = dialog.findViewById(R.id.ripple_right);
+        Button buttonRight = dialog.findViewById(R.id.button_right);
+
+        textDialogTitle.setTypeface(Utils.typefaceSemiBold(this));
+        inputCustomName.setTypeface(Utils.typefaceRegular(this));
+        buttonRight.setTypeface(Utils.typefaceSemiBold(this));
+        buttonLeft.setTypeface(Utils.typefaceSemiBold(this));
+
+        textDialogTitle.setText(getString(R.string.str_custom_label));
+
+        buttonLeft.setText(R.string.action_cancel);
+        buttonRight.setText(R.string.action_ok);
+
+        rippleLeft.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
+            @Override
+            public void onComplete(RippleView rippleView) {
+                dialog.dismiss();
+            }
+        });
+
+        rippleRight.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
+            @Override
+            public void onComplete(RippleView rippleView) {
+                if (!StringUtils.isBlank(inputCustomName.getText().toString())) {
+                    Utils.hideSoftKeyboard(EditProfileActivity.this, inputCustomName);
+                    dialog.dismiss();
+
+                    socialTypeList.add(inputCustomName.getText().toString());
+
+                    if (socialConnectListAdapter != null)
+                        socialConnectListAdapter.notifyDataSetChanged();
+
+                    addSocialConnectView(null, inputCustomName.getText().toString());
+
                 } else {
                     Utils.showErrorSnackBar(EditProfileActivity.this, relativeRootEditProfile,
                             getString(R.string.error_custom_type));
@@ -3523,12 +4204,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         userProfile.setPmRcpId(getUserPmId());
         userProfile.setPmFirstName(profileDetail.getPbNameFirst());
         userProfile.setPmLastName(profileDetail.getPbNameLast());
-//        userProfile.setPmSuffix(profileDetail.getPbNameSuffix());
-//        userProfile.setPmNickName(profileDetail.getPbNickname());
-//        userProfile.setPmPhoneticFirstName(profileDetail.getPbPhoneticNameFirst());
-//        userProfile.setPmPhoneticMiddleName(profileDetail.getPbPhoneticNameMiddle());
-//        userProfile.setPmPhoneticLastName(profileDetail.getPbPhoneticNameLast());
-//        userProfile.setPmNotes(profileDetail.getPbNote());
         userProfile.setProfileRating(profileDetail.getProfileRating());
         userProfile.setTotalProfileRateUser(profileDetail.getTotalProfileRateUser());
         userProfile.setPmIsFavourite(profileDetail.getIsFavourite());
@@ -3589,7 +4264,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 arrayListEmail.add(email);
             }
 
-
             tableEmailMaster.addArrayEmail(arrayListEmail);
         }
         //</editor-fold>
@@ -3612,9 +4286,11 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 organization.setOmOrganizationCompany(arrayListOrganization.get(i).getOrgName());
                 organization.setOmOrganizationDesignation(arrayListOrganization.get(i)
                         .getOrgJobTitle());
+                organization.setOmOrganizationFromDate(arrayListOrganization.get(i).getOrgFromDate());
+                organization.setOmOrganizationToDate(arrayListOrganization.get(i).getOrgToDate());
                 organization.setOmIsCurrent(String.valueOf(arrayListOrganization.get(i)
                         .getIsCurrent()));
-                organization.setRcProfileMasterPmId(getUserPmId());
+                organization.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 organizationList.add(organization);
             }
 
@@ -3693,11 +4369,14 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             for (int j = 0; j < arrayListImAccount.size(); j++) {
                 ImAccount imAccount = new ImAccount();
                 imAccount.setImRecordIndexId(arrayListImAccount.get(j).getIMId());
-                imAccount.setImImDetail(arrayListImAccount.get(j).getIMAccountDetails());
                 imAccount.setImImProtocol(arrayListImAccount.get(j).getIMAccountProtocol());
                 imAccount.setImImPrivacy(String.valueOf(arrayListImAccount.get(j)
                         .getIMAccountPublic()));
-                imAccount.setRcProfileMasterPmId(getUserPmId());
+                imAccount.setImImFirstName(arrayListImAccount.get(j).getIMAccountFirstName());
+                imAccount.setImImLastName(arrayListImAccount.get(j).getIMAccountLastName());
+                imAccount.setImImProfileImage(arrayListImAccount.get(j).getIMAccountProfileImage());
+                imAccount.setImImDetail(arrayListImAccount.get(j).getIMAccountDetails());
+                imAccount.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 imAccountsList.add(imAccount);
             }
 
@@ -3787,12 +4466,35 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     editProfileObject, null, WsResponseObject.class, WsConstants
                     .REQ_PROFILE_UPDATE + ":" + type, getResources().getString(R.string
                     .msg_please_wait), true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                    WsConstants.WS_ROOT + WsConstants
+                    WsConstants.WS_ROOT_V2 + WsConstants
                             .REQ_PROFILE_UPDATE);
         } else {
             Utils.showErrorSnackBar(this, relativeRootEditProfile, getResources()
                     .getString(R.string.msg_no_network));
         }
+    }
+
+//    private void editProfileForSocial(ProfileDataOperation editProfile, int type) {
+//
+//        WsRequestObject editProfileObject = new WsRequestObject();
+//        editProfileObject.setProfileUpdate(editProfile);
+//
+//        if (Utils.isNetworkAvailable(this)) {
+//            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+//                    editProfileObject, null, WsResponseObject.class, WsConstants
+//                    .REQ_PROFILE_UPDATE + ":" + type, getResources().getString(R.string
+//                    .msg_please_wait), true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+//                    WsConstants.WS_ROOT_V2 + WsConstants
+//                            .REQ_PROFILE_UPDATE);
+//        } else {
+//            Utils.showErrorSnackBar(this, relativeRootEditProfile, getResources()
+//                    .getString(R.string.msg_no_network));
+//        }
+//    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
     }
 
     //</editor-fold>

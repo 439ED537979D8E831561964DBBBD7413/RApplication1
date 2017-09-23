@@ -1570,6 +1570,10 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                                             ());
                             organization.setOmOrganizationDesignation(arrayListOrganization.get(j)
                                     .getOrgJobTitle());
+                            organization.setOmOrganizationFromDate(arrayListOrganization.get(j)
+                                    .getOrgFromDate());
+                            organization.setOmOrganizationToDate(arrayListOrganization.get(j)
+                                    .getOrgToDate());
                             organization.setOmIsCurrent(String.valueOf(arrayListOrganization.get(j)
                                     .getIsCurrent()));
                             organization.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
@@ -2700,18 +2704,18 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                             organization.setOrgJobTitle(cursor.getString
                                     (cursor.getColumnIndex(ContactsContract
                                             .CommonDataKinds.Organization.TITLE)));
-                            organization.setOrgDepartment(cursor.getString
-                                    (cursor.getColumnIndex(ContactsContract
-                                            .CommonDataKinds.Organization.DEPARTMENT)));
-                            organization.setOrgType(phoneBookContacts.getOrganizationType(cursor,
-                                    cursor.getInt((cursor.getColumnIndex(ContactsContract
-                                            .CommonDataKinds.Organization.TYPE)))));
-                            organization.setOrgJobDescription(cursor.getString
-                                    (cursor.getColumnIndex(ContactsContract
-                                            .CommonDataKinds.Organization.JOB_DESCRIPTION)));
-                            organization.setOrgOfficeLocation(cursor.getString
-                                    (cursor.getColumnIndex(ContactsContract
-                                            .CommonDataKinds.Organization.OFFICE_LOCATION)));
+//                            organization.setOrgDepartment(cursor.getString
+//                                    (cursor.getColumnIndex(ContactsContract
+//                                            .CommonDataKinds.Organization.DEPARTMENT)));
+//                            organization.setOrgType(phoneBookContacts.getOrganizationType(cursor,
+//                                    cursor.getInt((cursor.getColumnIndex(ContactsContract
+//                                            .CommonDataKinds.Organization.TYPE)))));
+//                            organization.setOrgJobDescription(cursor.getString
+//                                    (cursor.getColumnIndex(ContactsContract
+//                                            .CommonDataKinds.Organization.JOB_DESCRIPTION)));
+//                            organization.setOrgOfficeLocation(cursor.getString
+//                                    (cursor.getColumnIndex(ContactsContract
+//                                            .CommonDataKinds.Organization.OFFICE_LOCATION)));
                             organization.setOrgPublic(IntegerConstants.PRIVACY_EVERYONE);
 
                             phoneBookContact.addOrganization(organization);

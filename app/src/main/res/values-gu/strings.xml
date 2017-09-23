@@ -37,6 +37,7 @@
     <string name="str_welcom_message">તમારા સંપર્કોનો સ્માર્ટ થવાનો સમય આવી ગયો છે </string>
     <string name="str_done">થઈ ગયું</string>
     <string name="str_vcf_done">VCF file generated successfully!!</string>
+    <string name="verify_now">હવે ચકાસો</string>
 
     <!--  Other  -->
     <string name="error_facebook_login_cancelled">ફેસબુક લૉગિન નિષ્ફળ!</string>
@@ -130,11 +131,12 @@
     </string-array>
 
     <string-array name="types_social_media">
-        <item>WhatsApp</item>
         <item>Facebook</item>
         <item>Twitter</item>
         <item>LinkedIn</item>
-        <item>Skype</item>
+        <item>GooglePlus</item>
+        <item>Instagram</item>
+        <item>Pinterest</item>
         <item>અન્ય</item>
         <item>કસ્ટમ</item>
     </string-array>
@@ -588,6 +590,8 @@
     <string name="error_required_state">રાજ્ય નું નામ આવશ્યક છે</string>
     <string name="error_required_country">દેશનું નામ આવશ્યક છે</string>
     <string name="hint_choose_date">તારીખ પસંદ કરો</string>
+    <string name="hint_choose_from_date">From date</string>
+    <string name="hint_choose_to_date">To date</string>
     <string name="str_upload_via">અપલોડ કરવાનો માધ્યમ</string>
     <string name="str_take_photo">ફોટો ખેંચો</string>
     <string name="str_choose_photo">ફોટો પસંદ કરો</string>
@@ -604,6 +608,8 @@
     <string name="hint_number">નંબર</string>
     <string name="error_required_org_designation">પદનામ આવશયક છે</string>
     <string name="error_required_org_name">સંસ્થાનું નામ આવશયક છે</string>
+    <string name="error_required_org_from_date">From date is required!</string>
+    <string name="error_required_org_to_date">To date is required!</string>
     <string name="success_profile_update">પ્રોફાઇલ સફળતાપૂર્વક અપડેટ થઈ!</string>
     <string name="error_select_gender">તમારું લિંગ પસંદ કરો</string>
     <string name="error_required_web_address">વેબ એડ્રેસ આવશયક છે</string>
@@ -701,7 +707,6 @@
     <string name="my_profile_share">પ્રોફાઇલ શેર કરો</string>
     <string name="share_rating_via_social_media">સોશ્યિલ મીડિયા દ્વારા રેટિંગ શેર કરો</string>
     <string name="error_no_social_app_found">કૃપા કરીને માહિતી શેર કરવા માટે ફેસબુક અથવા લિન્ક્ડઇન અથવા ટ્વિટર એપ્લિકેશન ઇન્સ્ટોલ કરો</string>
-
 
 
 </resources>

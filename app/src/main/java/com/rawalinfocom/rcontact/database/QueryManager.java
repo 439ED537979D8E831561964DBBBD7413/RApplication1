@@ -255,6 +255,8 @@ public class QueryManager {
         // <editor-fold desc="Im Account">
         String imAccountQuery = "SELECT im." +
                 TableImMaster.COLUMN_IM_PROTOCOL + ", im." + TableImMaster
+                .COLUMN_IM_FIRST_NAME + ", im." + TableImMaster
+                .COLUMN_IM_LAST_NAME + ", im." + TableImMaster
                 .COLUMN_IM_PRIVACY + ", im." + TableImMaster
                 .COLUMN_IM_IS_PRIVATE + ", im." + TableImMaster
                 .COLUMN_IM_RECORD_INDEX_ID + ", im." + TableImMaster.COLUMN_IM_DETAIL +
@@ -277,6 +279,12 @@ public class QueryManager {
                 imAccount.setIMAccountDetails(StringUtils.defaultString(imAccountCursor
                         .getString(imAccountCursor.getColumnIndex(TableImMaster
                                 .COLUMN_IM_DETAIL))));
+                imAccount.setIMAccountFirstName(StringUtils.defaultString(imAccountCursor
+                        .getString(imAccountCursor.getColumnIndex(TableImMaster
+                                .COLUMN_IM_FIRST_NAME))));
+                imAccount.setIMAccountLastName(StringUtils.defaultString(imAccountCursor
+                        .getString(imAccountCursor.getColumnIndex(TableImMaster
+                                .COLUMN_IM_LAST_NAME))));
                 imAccount.setIMId(StringUtils.defaultString(imAccountCursor
                         .getString(imAccountCursor.getColumnIndex(TableImMaster
                                 .COLUMN_IM_RECORD_INDEX_ID))));

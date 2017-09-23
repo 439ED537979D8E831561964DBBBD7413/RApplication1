@@ -194,8 +194,8 @@ public class DialerActivity extends BaseActivity {
     TextView textWxyz;
     @BindView(R.id.text_plus)
     TextView textPlus;
-    @BindView(R.id.image_sim_preference)
-    ImageView imageSimPreference;
+//    @BindView(R.id.image_sim_preference)
+//    ImageView imageSimPreference;
     private String[] requiredPermissions = {Manifest.permission.READ_CALL_LOG};
     MaterialDialog permissionConfirmationDialog;
     ArrayList<Object> objectArrayListContact;
@@ -205,8 +205,8 @@ public class DialerActivity extends BaseActivity {
     TableProfileMaster tableProfileMaster;
     TableProfileMobileMapping tableProfileMobileMapping;
     ArrayList<ProfileData> secondaryContactList;
-    boolean isDualSim;
-    int simCount = 0;
+//    boolean isDualSim;
+//    int simCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -227,9 +227,9 @@ public class DialerActivity extends BaseActivity {
         slideDownAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.slide_down_animation);
 
-        TelephonyInfo telephonyInfo = TelephonyInfo.getInstance(DialerActivity
+        /*TelephonyInfo telephonyInfo = TelephonyInfo.getInstance(DialerActivity
                 .this);
-        /*if (telephonyInfo != null) {
+        if (telephonyInfo != null) {
             isDualSim = telephonyInfo.isDualSIM();
             if(isDualSim){
                 imageSimPreference.setVisibility(View.GONE);
@@ -672,7 +672,7 @@ public class DialerActivity extends BaseActivity {
         });
 
         /*if(isDualSim){
-            imageSimPreference.setVisibility(View.VISIBLE);
+            imageSimPreference.setVisibility(View.GONE);
             if(simCount == 0){
                 Utils.setStringPreference(DialerActivity.this,AppConstants.EXTRA_DIALER_SIM_PREFERENCE,"0");
             }
@@ -710,7 +710,7 @@ public class DialerActivity extends BaseActivity {
                         if (telephonyInfo != null) {
                             boolean isDualSim = telephonyInfo.isDualSIM();
 //                            if (!isDualSim) {
-                                imageSimPreference.setVisibility(View.GONE);
+//                                imageSimPreference.setVisibility(View.GONE);
                                 String simSerialNumber = telephonyInfo.simSerialNumber;
                                 if (!StringUtils.isEmpty(simSerialNumber)) {
                                     numberToCall = Utils.getFormattedNumber(DialerActivity.this,
@@ -721,7 +721,7 @@ public class DialerActivity extends BaseActivity {
                                     Toast.makeText(DialerActivity.this, getString(R.string.str_no_sim),
                                             Toast.LENGTH_SHORT).show();
                                 }
-                           /* } else {
+                            /*} else {
                                 String callFromSim =  Utils.getStringPreference(DialerActivity.this,
                                         AppConstants.EXTRA_DIALER_SIM_PREFERENCE,"-1");
                                 if(StringUtils.equalsIgnoreCase(callFromSim,"1")){
@@ -1217,8 +1217,7 @@ public class DialerActivity extends BaseActivity {
         return contactName;
     }
 
-    private void
-    initSwipe() {
+    private void initSwipe() {
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper
                 .SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
 

@@ -992,8 +992,6 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                                 relativeRootProfileRegistration, exception.getMessage());
                     }
                 });
-
-
     }
 
     private Bundle getFacebookData(JSONObject object) {
@@ -1179,6 +1177,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
     public void linkedInSignIn() {
 
         Intent intent = new Intent(ProfileRegistrationActivity.this, LinkedinLoginActivity.class);
+        intent.putExtra("from", "login");
         startActivityForResult(intent, RC_LINKEDIN_SIGN_IN);// Activity is started with requestCode
 
 //        LISessionManager.getInstance(getApplicationContext()).init(this, buildScope(), new

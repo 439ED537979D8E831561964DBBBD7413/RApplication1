@@ -13,7 +13,11 @@ import java.io.Serializable;
 public class ProfileDataOperationImAccount implements Serializable {
 
     private String IMId;
+    private String IMUserId;
     private String IMAccountType;
+    private String IMAccountFirstName;
+    private String IMAccountLastName;
+    private String IMAccountProfileImage;
     private String IMAccountDetails;
     private String IMAccountProtocol;
     private Integer IMAccountPublic;
@@ -29,6 +33,15 @@ public class ProfileDataOperationImAccount implements Serializable {
 
     public void setIMId(String IMId) {
         this.IMId = IMId;
+    }
+
+    @JsonProperty("user_id")
+    public String getIMUserId() {
+        return IMUserId;
+    }
+
+    public void setIMUserId(String IMUserId) {
+        this.IMId = IMUserId;
     }
 
     @JsonProperty("im_account_type")
@@ -47,6 +60,33 @@ public class ProfileDataOperationImAccount implements Serializable {
 
     public void setIMAccountDetails(String IMAccountDetails) {
         this.IMAccountDetails = IMAccountDetails;
+    }
+
+    @JsonProperty("first_name")
+    public String getIMAccountFirstName() {
+        return StringUtils.defaultString(this.IMAccountFirstName);
+    }
+
+    public void setIMAccountFirstName(String IMAccountFirstName) {
+        this.IMAccountFirstName = IMAccountFirstName;
+    }
+
+    @JsonProperty("last_name")
+    public String getIMAccountLastName() {
+        return StringUtils.defaultString(this.IMAccountLastName);
+    }
+
+    public void setIMAccountLastName(String IMAccountLastName) {
+        this.IMAccountLastName = IMAccountLastName;
+    }
+
+    @JsonProperty("im_account_image")
+    public String getIMAccountProfileImage() {
+        return StringUtils.defaultString(this.IMAccountProfileImage);
+    }
+
+    public void setIMAccountProfileImage(String IMAccountProfileImage) {
+        this.IMAccountProfileImage = IMAccountProfileImage;
     }
 
     @JsonProperty("im_account_public")
