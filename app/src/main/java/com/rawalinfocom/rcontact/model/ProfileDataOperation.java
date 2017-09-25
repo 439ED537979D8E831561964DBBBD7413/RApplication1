@@ -25,6 +25,7 @@ public class ProfileDataOperation implements Serializable {
     private String pbNameFirst;
     private String pbNameMiddle;
     private ArrayList<ProfileDataOperationOrganization> pbOrganization;
+    private ArrayList<OrganizationListData> pbOrganizationList;
     private String isFavourite;
     private String pbSource;
     private String pbNamePrefix;
@@ -146,6 +147,15 @@ public class ProfileDataOperation implements Serializable {
 
     public void setPbOrganization(ArrayList<ProfileDataOperationOrganization> pbOrganization) {
         this.pbOrganization = pbOrganization;
+    }
+
+    @JsonProperty("pb_organization_list")
+    public ArrayList<OrganizationListData> getPbOrganizationList() {
+        return pbOrganizationList;
+    }
+
+    public void setPbOrganizationList(ArrayList<OrganizationListData> pbOrganizationList) {
+        this.pbOrganizationList = pbOrganizationList;
     }
 
     @JsonProperty("is_favourite")
