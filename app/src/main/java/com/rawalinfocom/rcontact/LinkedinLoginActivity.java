@@ -28,6 +28,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -55,7 +56,7 @@ public class LinkedinLoginActivity extends AppCompatActivity {
     //We use a made up url that we will intercept when redirecting. Avoid Uppercases.
     private static final String REDIRECT_URI = "https://www.rcontacts.in";
 
-    private static final String SCOPE = "r_fullprofile%20r_emailaddress%20w_share";
+    private static final String SCOPE = "r_basicprofile,r_emailaddress";
     /*********************************************/
 
     //These are constants used for build the urls
@@ -80,6 +81,7 @@ public class LinkedinLoginActivity extends AppCompatActivity {
 
     private Activity activity;
     private MaterialProgressDialog progressDialog;
+//    private JSONObject jsonObject;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -188,9 +190,9 @@ public class LinkedinLoginActivity extends AppCompatActivity {
         return AUTHORIZATION_URL
                 + QUESTION_MARK + RESPONSE_TYPE_PARAM + EQUALS + RESPONSE_TYPE_VALUE
                 + AMPERSAND + CLIENT_ID_PARAM + EQUALS + API_KEY
+                + AMPERSAND + REDIRECT_URI_PARAM + EQUALS + REDIRECT_URI
                 + AMPERSAND + STATE_PARAM + EQUALS + STATE
-                + AMPERSAND + SCOPE_PARAM + EQUALS + SCOPE
-                + AMPERSAND + REDIRECT_URI_PARAM + EQUALS + REDIRECT_URI;
+                + AMPERSAND + SCOPE_PARAM + EQUALS + SCOPE;
     }
 
     private class PostRequestAsyncTask extends AsyncTask<String, Void, Boolean> {
@@ -291,7 +293,24 @@ public class LinkedinLoginActivity extends AppCompatActivity {
                                 //Extract data from JSON Response
                                 accessToken = resultJson.has("access_token") ? resultJson.getString("access_token") : null;
 
-                                HttpGet httpGet = new HttpGet("https://api.linkedin.com/v1/people/~?format=json");
+//                                HttpGet httpGet = new HttpGet("https://api.linkedin.com/v1/people/~?format=json");
+//                                httpGet.setHeader(WsConstants.REQ_AUTHORIZATION, "Bearer " + accessToken);
+//                                HttpResponse httpResponse = httpClient.execute(httpGet);
+//
+//                                if (httpResponse != null) {
+//                                    if (httpResponse.getStatusLine().getStatusCode() == 200) {
+//                                        String result1 = EntityUtils.toString(httpResponse.getEntity());
+//
+//                                        jsonObject = new JSONObject(result1);
+//                                    }
+//                                }
+
+                                String topCardUrl = "https://api.linkedin.com/v1/people/~:(first-name,last-name," +
+                                        "site-standard-profile-request,email-address,picture-url,picture-urls::(original))" +
+                                        "?format=json";
+
+                                HttpGet httpGet = new HttpGet(topCardUrl);
+//                                HttpGet httpGet = new HttpGet("https://api.linkedin.com/v1/people/~?format=json");
                                 httpGet.setHeader(WsConstants.REQ_AUTHORIZATION, "Bearer " + accessToken);
                                 HttpResponse httpResponse = httpClient.execute(httpGet);
 
@@ -303,8 +322,6 @@ public class LinkedinLoginActivity extends AppCompatActivity {
                                     }
                                 }
 
-//                                return new WebServiceGet(activity, "https://api.linkedin.com/v1/people/~?format=json",
-//                                        accessToken).execute(cls);
                             }
                         }
                     } catch (IOException e) {
@@ -339,8 +356,16 @@ public class LinkedinLoginActivity extends AppCompatActivity {
                     intent.putExtra("url", finalJsonObject.getJSONObject("siteStandardProfileRequest").getString("url"));
                     intent.putExtra("first_name", finalJsonObject.getString("firstName"));
                     intent.putExtra("last_name", finalJsonObject.getString("lastName"));
-                    intent.putExtra("profileImage", finalJsonObject.getString("image"));
-                    intent.putExtra("email", finalJsonObject.getString("email"));
+
+                    JSONObject pictureUrls = finalJsonObject.getJSONObject("pictureUrls");
+                    JSONArray jsonArray = pictureUrls.getJSONArray("values");
+                    if (jsonArray.length() > 0) {
+                        intent.putExtra("profileImage", jsonArray.get(0).toString());
+                    } else {
+                        intent.putExtra("profileImage", finalJsonObject.getString("pictureUrl"));
+                    }
+
+                    intent.putExtra("email", finalJsonObject.getString("emailAddress"));
                     intent.putExtra("isBack", "0");
                     setResult(RESULT_OK, intent);
                     finish();//finishing activity

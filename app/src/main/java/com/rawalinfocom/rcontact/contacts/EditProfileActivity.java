@@ -67,8 +67,10 @@ import com.google.common.base.MoreObjects;
 import com.linkedin.platform.LISessionManager;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.LinkedinLoginActivity;
+import com.rawalinfocom.rcontact.OrganizationListActivity;
 import com.rawalinfocom.rcontact.ProfileRegistrationActivity;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.adapters.OrganizationSearchListAdapter;
 import com.rawalinfocom.rcontact.adapters.SocialConnectListAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
@@ -3390,6 +3392,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
         inputCompanyName.setTypeface(Utils.typefaceRegular(this));
         inputDesignationName.setTypeface(Utils.typefaceRegular(this));
+
+        inputCompanyName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(EditProfileActivity.this, OrganizationListActivity.class));
+            }
+        });
 
         ProfileDataOperationOrganization organization = (ProfileDataOperationOrganization)
                 detailObject;
