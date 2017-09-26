@@ -288,14 +288,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     @BindView(R.id.button_invite)
     Button buttonInvite;
 
-    @Nullable
     @BindView(R.id.image_enlarge)
     ImageView imageEnlarge;
-    @Nullable
     @BindView(R.id.frame_image_enlarge)
     FrameLayout frameImageEnlarge;
 
-    @Nullable
     @BindView(R.id.frame_container)
     FrameLayout frameContainer;
 
@@ -2235,6 +2232,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         } else {
             imageProfile.setImageResource(R.drawable.home_screen_profile);
         }
+
+        imageProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                zoomImageFromThumb(imageProfile, profileThumbnail);
+            }
+        });
 
         imageRightCenter.setImageResource(R.drawable.ic_phone);
         imageRightCenter.setTag(TAG_IMAGE_CALL);
