@@ -1,57 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="?attr/actionBarSize"
-    android:background="@color/colorPrimary"
-    android:elevation="4dp"
-    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-    app:contentInsetLeft="0dp"
-    app:contentInsetStart="0dp"
-    tools:ignore="UnusedAttribute">
+                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                   xmlns:tools="http://schemas.android.com/tools"
+                                   android:layout_width="match_parent"
+                                   android:layout_height="?attr/actionBarSize"
+                                   android:background="@color/colorPrimary"
+                                   android:elevation="4dp"
+                                   android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                                   app:contentInsetLeft="0dp"
+                                   app:contentInsetStart="0dp"
+                                   tools:ignore="UnusedAttribute">
 
 
     <RelativeLayout
+        android:id="@+id/rl_main"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/rl_main">
+        android:layout_height="match_parent">
 
         <ImageView
+            android:id="@+id/iv_search"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:id="@+id/iv_search"
-            android:src="@drawable/ic_search"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/margin_5dp"
-            android:layout_centerVertical="true" />
+            android:src="@drawable/ic_search"/>
 
 
         <EditText
             android:id="@+id/search"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/iv_search"
             android:layout_marginLeft="@dimen/margin_5dp"
-            android:layout_toLeftOf="@+id/iv_close"
             android:layout_marginRight="@dimen/margin_10dp"
-            android:hint="@string/search_hint"
-            android:singleLine="true"
+            android:layout_toLeftOf="@+id/iv_close"
+            android:layout_toRightOf="@+id/iv_search"
+            android:backgroundTint="@color/colorWhite"
             android:ellipsize="end"
-            android:text="+919427621424"
-            android:backgroundTint="@color/colorWhite">
+            android:hint="@string/search_hint"
+            android:singleLine="true">
 
-            <requestFocus />
+            <requestFocus/>
         </EditText>
 
 
         <ImageView
+            android:id="@+id/iv_close"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:id="@+id/iv_close"
-            android:src="@drawable/ic_close"
-            android:layout_marginRight="@dimen/margin_5dp"
+            android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_alignParentRight="true" />
+            android:layout_marginRight="@dimen/margin_5dp"
+            android:src="@drawable/ic_close"/>
     </RelativeLayout>
 
 
