@@ -1,6 +1,7 @@
 package com.rawalinfocom.rcontact;
 
 import android.*;
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -426,6 +427,37 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
                 .PREF_DISABLE_EVENT_PUSH, false);
         Utils.setBooleanPreference(this, AppConstants
                 .PREF_DISABLE_POPUP, false);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            /*case AppConstants.MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // Permission Granted
+                    if (Utils.isLocationEnabled(this)) {
+                        getLocationDetail();
+                    } else {
+                        gpsTracker.showSettingsAlert();
+                    }
+                }
+            }
+            break;*/
+            case FACEBOOK_LOGIN_PERMISSION:
+            case GOOGLE_LOGIN_PERMISSION:
+            case LINKEDIN_LOGIN_PERMISSION:
+                if (permissions[0].equals(android.Manifest.permission
+                        .READ_EXTERNAL_STORAGE) && permissions[1].equals(Manifest.permission
+                        .WRITE_EXTERNAL_STORAGE)) {
+                    prepareToLoginUsingSocialMedia(requestCode);
+                }
+                break;
+        }
     }
 
     @Override

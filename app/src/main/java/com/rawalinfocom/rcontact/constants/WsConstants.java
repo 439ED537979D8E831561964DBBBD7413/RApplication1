@@ -61,7 +61,7 @@ public class WsConstants {
     //<editor-fold desc="QA">
 
     // API ROOT
-//    public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
+    public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
     public static final String WS_ROOT_V2 = "http://apiqa.rcontacts.in/api/v2/";
     // TERMS-CONDITIONS URL
     public static final String URL_TERMS_CONDITIONS = "http://webqa.rcontacts.in/global/terms";
@@ -85,17 +85,18 @@ public class WsConstants {
      */
     //<editor-fold desc="Local">
     // Monal
-    public static final String WS_ROOT = "http://10.0.21.163/api/v1/";
+//    public static final String WS_ROOT = "http://10.0.21.163/api/v1/";
 
     // Aniruddh
-//    public static final String WS_ROOT = "http://10.0.21.122/api/v1/";
-//    public static final String WS_ROOT_V2 = "http://10.0.21.122/api/v2/";
+    /*public static final String WS_ROOT = "http://10.0.21.122/api/v1/";
+    public static final String WS_ROOT_V2 = "http://10.0.21.122/api/v2/";*/
 
     // Hardik
 //    public static final String WS_ROOT = "http://10.0.30.11/api/v1/";
 
     // Shailesh
 //    public static final String WS_ROOT = "http://10.0.21.14:8001/api/v1/";
+//    public static final String WS_ROOT_V2 = "http://10.0.21.14:8001/api/v2/";
 
     // Jignesh
 //    public static final String WS_ROOT = "http://10.0.21.15:8000/api/v1/";

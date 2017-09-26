@@ -689,6 +689,10 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
                                             ());
                             organization.setOmOrganizationDesignation(arrayListOrganization.get(j)
                                     .getOrgJobTitle());
+                            organization.setOmOrganizationFromDate(arrayListOrganization.get(j)
+                                    .getOrgFromDate());
+                            organization.setOmOrganizationToDate(arrayListOrganization.get(j)
+                                    .getOrgToDate());
                             organization.setOmIsCurrent(String.valueOf(arrayListOrganization.get(j)
                                     .getIsCurrent()));
                             organization.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());

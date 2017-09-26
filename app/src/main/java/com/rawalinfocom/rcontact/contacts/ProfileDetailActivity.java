@@ -1,6 +1,10 @@
 package com.rawalinfocom.rcontact.contacts;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
@@ -15,6 +19,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -43,8 +49,10 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -279,6 +287,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     RippleView rippleInvite;
     @BindView(R.id.button_invite)
     Button buttonInvite;
+
+    @BindView(R.id.image_enlarge)
+    ImageView imageEnlarge;
+    @BindView(R.id.frame_image_enlarge)
+    FrameLayout frameImageEnlarge;
+
+    @BindView(R.id.frame_container)
+    FrameLayout frameContainer;
+
     String callLogCloudName;
     boolean isCallLogRcpUser, isRatingUpdate = false;
     boolean isDialogCallLogInstance;
@@ -286,6 +303,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     RelativeLayout relativeRootRatingDialog;
 
     ProfileDataOperation profileDataOperationVcard;
+
+    private Animator mCurrentAnimator;
+    private int mShortAnimationDuration;
 
     String pmId = "", phoneBookId, contactName = "", cloudContactName = null, checkNumberFavourite =
             null, thumbnailUrl = "";
@@ -1656,7 +1676,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             if (displayOwnProfile) {
                 TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
-                UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer
+                final UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer
                         .parseInt(pmId));
                 textFullScreenText.setText(userProfile.getPmFirstName() + " " + userProfile
                         .getPmLastName());
@@ -1675,6 +1695,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     imageProfile.setImageResource(R.drawable.home_screen_profile);
                 }
 
+                imageProfile.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        zoomImageFromThumb(imageProfile, userProfile.getPmProfileImage());
+                    }
+                });
+
             } else {
                 textFullScreenText.setText(contactName);
                 if (StringUtils.length(thumbnailUrl) > 0) {
@@ -1690,6 +1717,14 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 } else {
                     imageProfile.setImageResource(R.drawable.home_screen_profile);
                 }
+
+                imageProfile.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        zoomImageFromThumb(imageProfile, thumbnailUrl);
+                    }
+                });
+
             }
             if (StringUtils.length(cloudContactName) > 0) {
                 textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
@@ -1856,6 +1891,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         recyclerCallHistory.setLayoutManager(mLinearLayoutManager);
         recyclerCallHistory.setNestedScrollingEnabled(false);
 
+        mShortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
         Utils.setRatingColor(ProfileDetailActivity.this, ratingUser);
 
 //        LayerDrawable stars = (LayerDrawable) ratingUser.getProgressDrawable();
@@ -1907,6 +1944,145 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     }
 
+    private void zoomImageFromThumb(final View thumbView, String imageUrl) {
+        // If there's an animation in progress, cancel it
+        // immediately and proceed with this one.
+        if (mCurrentAnimator != null) {
+            mCurrentAnimator.cancel();
+        }
+
+        // Load the high-resolution "zoomed-in" image.
+        Glide.with(this)
+                .load(imageUrl)
+                .placeholder(R.drawable.home_screen_profile)
+                .bitmapTransform(new CropCircleTransformation(this))
+                .error(R.drawable.home_screen_profile)
+                .into(imageEnlarge);
+
+        // Calculate the starting and ending bounds for the zoomed-in image.
+        // This step involves lots of math. Yay, math.
+        final Rect startBounds = new Rect();
+        final Rect finalBounds = new Rect();
+        final Point globalOffset = new Point();
+
+        // The start bounds are the global visible rectangle of the thumbnail,
+        // and the final bounds are the global visible rectangle of the container
+        // view. Also set the container view's offset as the origin for the
+        // bounds, since that's the origin for the positioning animation
+        // properties (X, Y).
+        thumbView.getGlobalVisibleRect(startBounds);
+        frameContainer.getGlobalVisibleRect(finalBounds, globalOffset);
+        startBounds.offset(-globalOffset.x, -globalOffset.y);
+        finalBounds.offset(-globalOffset.x, -globalOffset.y);
+
+        // Adjust the start bounds to be the same aspect ratio as the final
+        // bounds using the "center crop" technique. This prevents undesirable
+        // stretching during the animation. Also calculate the start scaling
+        // factor (the end scaling factor is always 1.0).
+        float startScale;
+        if ((float) finalBounds.width() / finalBounds.height()
+                > (float) startBounds.width() / startBounds.height()) {
+            // Extend start bounds horizontally
+            startScale = (float) startBounds.height() / finalBounds.height();
+            float startWidth = startScale * finalBounds.width();
+            float deltaWidth = (startWidth - startBounds.width()) / 2;
+            startBounds.left -= deltaWidth;
+            startBounds.right += deltaWidth;
+        } else {
+            // Extend start bounds vertically
+            startScale = (float) startBounds.width() / finalBounds.width();
+            float startHeight = startScale * finalBounds.height();
+            float deltaHeight = (startHeight - startBounds.height()) / 2;
+            startBounds.top -= deltaHeight;
+            startBounds.bottom += deltaHeight;
+        }
+
+        // Hide the thumbnail and show the zoomed-in view. When the animation
+        // begins, it will position the zoomed-in view in the place of the
+        // thumbnail.
+        thumbView.setAlpha(0f);
+        frameImageEnlarge.setVisibility(View.VISIBLE);
+
+        // Set the pivot point for SCALE_X and SCALE_Y transformations
+        // to the top-left corner of the zoomed-in view (the default
+        // is the center of the view).
+        imageEnlarge.setPivotX(0f);
+        imageEnlarge.setPivotY(0f);
+
+        // Construct and run the parallel animation of the four translation and
+        // scale properties (X, Y, SCALE_X, and SCALE_Y).
+        AnimatorSet set = new AnimatorSet();
+        set
+                .play(ObjectAnimator.ofFloat(imageEnlarge, View.X,
+                        startBounds.left, finalBounds.left))
+                .with(ObjectAnimator.ofFloat(imageEnlarge, View.Y,
+                        startBounds.top, finalBounds.top))
+                .with(ObjectAnimator.ofFloat(imageEnlarge, View.SCALE_X,
+                        startScale, 1f)).with(ObjectAnimator.ofFloat(imageEnlarge,
+                View.SCALE_Y, startScale, 1f));
+        set.setDuration(mShortAnimationDuration);
+        set.setInterpolator(new DecelerateInterpolator());
+        set.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mCurrentAnimator = null;
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                mCurrentAnimator = null;
+            }
+        });
+        set.start();
+        mCurrentAnimator = set;
+
+        // Upon clicking the zoomed-in image, it should zoom back down
+        // to the original bounds and show the thumbnail instead of
+        // the expanded image.
+        final float startScaleFinal = startScale;
+        imageEnlarge.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mCurrentAnimator != null) {
+                    mCurrentAnimator.cancel();
+                }
+
+                // Animate the four positioning/sizing properties in parallel,
+                // back to their original values.
+                AnimatorSet set = new AnimatorSet();
+                set.play(ObjectAnimator
+                        .ofFloat(imageEnlarge, View.X, startBounds.left))
+                        .with(ObjectAnimator
+                                .ofFloat(imageEnlarge,
+                                        View.Y, startBounds.top))
+                        .with(ObjectAnimator
+                                .ofFloat(imageEnlarge,
+                                        View.SCALE_X, startScaleFinal))
+                        .with(ObjectAnimator
+                                .ofFloat(imageEnlarge,
+                                        View.SCALE_Y, startScaleFinal));
+                set.setDuration(mShortAnimationDuration);
+                set.setInterpolator(new DecelerateInterpolator());
+                set.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        thumbView.setAlpha(1f);
+                        frameImageEnlarge.setVisibility(View.GONE);
+                        mCurrentAnimator = null;
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+                        thumbView.setAlpha(1f);
+                        frameImageEnlarge.setVisibility(View.GONE);
+                        mCurrentAnimator = null;
+                    }
+                });
+                set.start();
+                mCurrentAnimator = set;
+            }
+        });
+    }
 
     private void getDataFromDB() {
         ProfileDataOperation profileDataOperation = queryManager.getRcProfileDetail
@@ -2057,6 +2233,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             imageProfile.setImageResource(R.drawable.home_screen_profile);
         }
 
+        imageProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                zoomImageFromThumb(imageProfile, profileThumbnail);
+            }
+        });
+
         imageRightCenter.setImageResource(R.drawable.ic_phone);
         imageRightCenter.setTag(TAG_IMAGE_CALL);
 
@@ -2169,45 +2352,14 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         organization.setOrgJobTitle(contactOrganizationCursor.getString
                                 (contactOrganizationCursor.getColumnIndex(ContactsContract
                                         .CommonDataKinds.Organization.TITLE)));
-                        organization.setOrgDepartment(contactOrganizationCursor.getString
-                                (contactOrganizationCursor.getColumnIndex(ContactsContract
-                                        .CommonDataKinds.Organization.DEPARTMENT)));
-                        organization.setOrgType(phoneBookContacts.getOrganizationType
-                                (contactOrganizationCursor,
-                                        contactOrganizationCursor.getInt((contactOrganizationCursor
-                                                .getColumnIndex(ContactsContract.CommonDataKinds
-                                                        .Organization.TYPE)))));
-                        organization.setOrgJobDescription(contactOrganizationCursor.getString
-                                (contactOrganizationCursor.getColumnIndex(ContactsContract
-                                        .CommonDataKinds.Organization.JOB_DESCRIPTION)));
-                        organization.setOrgOfficeLocation(contactOrganizationCursor.getString
-                                (contactOrganizationCursor.getColumnIndex(ContactsContract
-                                        .CommonDataKinds.Organization.OFFICE_LOCATION)));
                         organization.setOrgRcpType(String.valueOf(IntegerConstants
                                 .RCP_TYPE_LOCAL_PHONE_BOOK));
-
                         organizationOperation.setOrgName(contactOrganizationCursor.getString
                                 (contactOrganizationCursor.getColumnIndex(ContactsContract
                                         .CommonDataKinds.Organization.COMPANY)));
                         organizationOperation.setOrgJobTitle(contactOrganizationCursor.getString
                                 (contactOrganizationCursor.getColumnIndex(ContactsContract
                                         .CommonDataKinds.Organization.TITLE)));
-                        organizationOperation.setOrgDepartment(contactOrganizationCursor.getString
-                                (contactOrganizationCursor.getColumnIndex(ContactsContract
-                                        .CommonDataKinds.Organization.DEPARTMENT)));
-                        organizationOperation.setOrgType(phoneBookContacts.getOrganizationType
-                                (contactOrganizationCursor,
-                                        contactOrganizationCursor.getInt((contactOrganizationCursor
-                                                .getColumnIndex(ContactsContract.CommonDataKinds
-                                                        .Organization.TYPE)))));
-                        organizationOperation.setOrgJobDescription(contactOrganizationCursor
-                                .getString
-                                        (contactOrganizationCursor.getColumnIndex(ContactsContract
-                                                .CommonDataKinds.Organization.JOB_DESCRIPTION)));
-                        organizationOperation.setOrgOfficeLocation(contactOrganizationCursor
-                                .getString
-                                        (contactOrganizationCursor.getColumnIndex(ContactsContract
-                                                .CommonDataKinds.Organization.OFFICE_LOCATION)));
 
                         if (!arrayListOrganization.contains(organization)) {
                             arrayListPhoneBookOrganization.add(organization);
@@ -3987,6 +4139,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 organization.setOmOrganizationCompany(arrayListOrganization.get(i).getOrgName());
                 organization.setOmOrganizationDesignation(arrayListOrganization.get(i)
                         .getOrgJobTitle());
+                organization.setOmOrganizationFromDate(arrayListOrganization.get(i)
+                        .getOrgFromDate());
+                organization.setOmOrganizationToDate(arrayListOrganization.get(i).getOrgToDate());
                 organization.setOmIsPrivate(arrayListOrganization.get(i).getIsPrivate());
                 organization.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 organizationList.add(organization);
@@ -4077,6 +4232,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 imAccount.setImImProtocol(arrayListImAccount.get(j).getIMAccountProtocol());
                 imAccount.setImImPrivacy(String.valueOf(arrayListImAccount.get(j)
                         .getIMAccountPublic()));
+                imAccount.setImImFirstName(arrayListImAccount.get(j).getIMAccountFirstName());
+                imAccount.setImImLastName(arrayListImAccount.get(j).getIMAccountLastName());
+                imAccount.setImImProfileImage(arrayListImAccount.get(j).getIMAccountProfileImage());
                 imAccount.setImIsPrivate(arrayListImAccount.get(j).getIMAccountIsPrivate());
                 imAccount.setRcProfileMasterPmId(profileDetail.getRcpPmId());
 
@@ -4243,7 +4401,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     }
 
     //</editor-fold>
-
 
     private BroadcastReceiver localBroadcastReceiverDialog = new BroadcastReceiver() {
         @Override

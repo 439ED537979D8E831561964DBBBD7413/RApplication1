@@ -1562,20 +1562,20 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 organization.setOrgJobTitle(contactOrganizationCursor.getString
                         (contactOrganizationCursor.getColumnIndex(ContactsContract
                                 .CommonDataKinds.Organization.TITLE)));
-                organization.setOrgDepartment(contactOrganizationCursor.getString
-                        (contactOrganizationCursor.getColumnIndex(ContactsContract
-                                .CommonDataKinds.Organization.DEPARTMENT)));
-                organization.setOrgType(phoneBookContacts.getOrganizationType
-                        (contactOrganizationCursor,
-                                contactOrganizationCursor.getInt((contactOrganizationCursor
-                                        .getColumnIndex(ContactsContract.CommonDataKinds
-                                                .Organization.TYPE)))));
-                organization.setOrgJobDescription(contactOrganizationCursor.getString
-                        (contactOrganizationCursor.getColumnIndex(ContactsContract
-                                .CommonDataKinds.Organization.JOB_DESCRIPTION)));
-                organization.setOrgOfficeLocation(contactOrganizationCursor.getString
-                        (contactOrganizationCursor.getColumnIndex(ContactsContract
-                                .CommonDataKinds.Organization.OFFICE_LOCATION)));
+//                organization.setOrgDepartment(contactOrganizationCursor.getString
+//                        (contactOrganizationCursor.getColumnIndex(ContactsContract
+//                                .CommonDataKinds.Organization.DEPARTMENT)));
+//                organization.setOrgType(phoneBookContacts.getOrganizationType
+//                        (contactOrganizationCursor,
+//                                contactOrganizationCursor.getInt((contactOrganizationCursor
+//                                        .getColumnIndex(ContactsContract.CommonDataKinds
+//                                                .Organization.TYPE)))));
+//                organization.setOrgJobDescription(contactOrganizationCursor.getString
+//                        (contactOrganizationCursor.getColumnIndex(ContactsContract
+//                                .CommonDataKinds.Organization.JOB_DESCRIPTION)));
+//                organization.setOrgOfficeLocation(contactOrganizationCursor.getString
+//                        (contactOrganizationCursor.getColumnIndex(ContactsContract
+//                                .CommonDataKinds.Organization.OFFICE_LOCATION)));
                 organization.setOrgRcpType(String.valueOf(IntegerConstants
                         .RCP_TYPE_LOCAL_PHONE_BOOK));
 
@@ -1585,21 +1585,20 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 organizationOperation.setOrgJobTitle(contactOrganizationCursor.getString
                         (contactOrganizationCursor.getColumnIndex(ContactsContract
                                 .CommonDataKinds.Organization.TITLE)));
-                organizationOperation.setOrgDepartment(contactOrganizationCursor.getString
-                        (contactOrganizationCursor.getColumnIndex(ContactsContract
-                                .CommonDataKinds.Organization.DEPARTMENT)));
-                organizationOperation.setOrgType(phoneBookContacts.getOrganizationType
-                        (contactOrganizationCursor,
-                                contactOrganizationCursor.getInt((contactOrganizationCursor
-                                        .getColumnIndex(ContactsContract.CommonDataKinds
-                                                .Organization.TYPE)))));
-                organizationOperation.setOrgJobDescription(contactOrganizationCursor.getString
-                        (contactOrganizationCursor.getColumnIndex(ContactsContract
-                                .CommonDataKinds.Organization.JOB_DESCRIPTION)));
-                organizationOperation.setOrgOfficeLocation(contactOrganizationCursor.getString
-                        (contactOrganizationCursor.getColumnIndex(ContactsContract
-                                .CommonDataKinds.Organization.OFFICE_LOCATION)));
-
+//                organizationOperation.setOrgDepartment(contactOrganizationCursor.getString
+//                        (contactOrganizationCursor.getColumnIndex(ContactsContract
+//                                .CommonDataKinds.Organization.DEPARTMENT)));
+//                organizationOperation.setOrgType(phoneBookContacts.getOrganizationType
+//                        (contactOrganizationCursor,
+//                                contactOrganizationCursor.getInt((contactOrganizationCursor
+//                                        .getColumnIndex(ContactsContract.CommonDataKinds
+//                                                .Organization.TYPE)))));
+//                organizationOperation.setOrgJobDescription(contactOrganizationCursor.getString
+//                        (contactOrganizationCursor.getColumnIndex(ContactsContract
+//                                .CommonDataKinds.Organization.JOB_DESCRIPTION)));
+//                organizationOperation.setOrgOfficeLocation(contactOrganizationCursor.getString
+//                        (contactOrganizationCursor.getColumnIndex(ContactsContract
+//                                .CommonDataKinds.Organization.OFFICE_LOCATION)));
 
                 if (!arrayListOrganization.contains(organization)) {
                     arrayListPhoneBookOrganization.add(organization);

@@ -15,8 +15,10 @@ public class ProfileDataOperationEmail implements Serializable {
     private String emId;
     private String emEmailId;
     private String emType;
+    private String emSocialType;
     private Integer emPublic;
     private Integer emRcpType;
+    private Integer emIsSocial;
     private String emIsVerified;
     private Integer emIsPrivate;
 
@@ -47,6 +49,24 @@ public class ProfileDataOperationEmail implements Serializable {
         this.emType = emType;
     }
 
+    @JsonProperty("social_type")
+    public String getEmSocialType() {
+        return StringUtils.defaultString(this.emSocialType);
+    }
+
+    public void setEmSocialType(String emSocialType) {
+        this.emSocialType = emSocialType;
+    }
+
+    @JsonProperty("is_social")
+    public Integer getEmIsSocail() {
+        return this.emIsSocial;
+    }
+
+    public void setEmIsSocial(Integer emIsSocial) {
+        this.emIsSocial = emIsSocial;
+    }
+
     @JsonProperty("em_public")
     public Integer getEmPublic() {
         return this.emPublic;
@@ -56,7 +76,7 @@ public class ProfileDataOperationEmail implements Serializable {
         this.emPublic = emPublic;
     }
 
-//    @JsonProperty("em_rcp_type")
+    //    @JsonProperty("em_rcp_type")
     @JsonProperty("is_verified")
     public Integer getEmRcpType() {
         return emRcpType;

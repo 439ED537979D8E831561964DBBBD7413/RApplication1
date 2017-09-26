@@ -590,6 +590,8 @@
     <string name="error_required_state">રાજ્ય નું નામ આવશ્યક છે</string>
     <string name="error_required_country">દેશનું નામ આવશ્યક છે</string>
     <string name="hint_choose_date">તારીખ પસંદ કરો</string>
+    <string name="hint_choose_from_date">From date</string>
+    <string name="hint_choose_to_date">To date</string>
     <string name="str_upload_via">અપલોડ કરવાનો માધ્યમ</string>
     <string name="str_take_photo">ફોટો ખેંચો</string>
     <string name="str_choose_photo">ફોટો પસંદ કરો</string>
@@ -606,6 +608,8 @@
     <string name="hint_number">નંબર</string>
     <string name="error_required_org_designation">પદનામ આવશયક છે</string>
     <string name="error_required_org_name">સંસ્થાનું નામ આવશયક છે</string>
+    <string name="error_required_org_from_date">From date is required!</string>
+    <string name="error_required_org_to_date">To date is required!</string>
     <string name="success_profile_update">પ્રોફાઇલ સફળતાપૂર્વક અપડેટ થઈ!</string>
     <string name="error_select_gender">તમારું લિંગ પસંદ કરો</string>
     <string name="error_required_web_address">વેબ એડ્રેસ આવશયક છે</string>
