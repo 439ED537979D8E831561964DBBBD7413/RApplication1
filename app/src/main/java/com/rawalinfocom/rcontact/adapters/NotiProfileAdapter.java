@@ -27,6 +27,10 @@ import com.rawalinfocom.rcontact.model.NotiProfileItem;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 
 import butterknife.BindView;
@@ -40,12 +44,12 @@ public class NotiProfileAdapter extends RecyclerView.Adapter<NotiProfileAdapter.
 
     private Fragment activity;
     private List<NotiProfileItem> list;
-    private int recyclerPosition;
+//    private int recyclerPosition;
 
-    public NotiProfileAdapter(Fragment activity, List<NotiProfileItem> list, int recyclerPosition) {
+    public NotiProfileAdapter(Fragment activity, List<NotiProfileItem> list/*, int recyclerPosition*/) {
         this.activity = activity;
         this.list = list;
-        this.recyclerPosition = recyclerPosition;
+//        this.recyclerPosition = recyclerPosition;
     }
 
     public void updateList(List<NotiProfileItem> list) {
@@ -95,11 +99,23 @@ public class NotiProfileAdapter extends RecyclerView.Adapter<NotiProfileAdapter.
             holder.buttonRequestConfirm.setText(activity.getString(R.string.view_profile));
             holder.buttonRequestReject.setVisibility(View.GONE);
         }
-        if (recyclerPosition == 1) {
-            holder.textRequestNotiTime.setText(Utils.formatDateTime(item.getNotiRequestTime(), "dd MMM, hh:mm a"));
-        } else {
-            holder.textRequestNotiTime.setText(Utils.formatDateTime(item.getNotiRequestTime(), "hh:mm a"));
+//        if (recyclerPosition == 1) {
+//            holder.textRequestNotiTime.setText(Utils.formatDateTime(item.getNotiRequestTime(), "dd MMM, hh:mm a"));
+//        } else {
+//            holder.textRequestNotiTime.setText(Utils.formatDateTime(item.getNotiRequestTime(), "hh:mm a"));
+//        }
+
+        String notiTime =  item.getNotiRequestTime();
+        String date =  Utils.formatDateTime(notiTime,"yyyy-MM-dd");
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
+        String current = s.format(c.getTime());
+        if(StringUtils.equalsIgnoreCase(current,date)){
+            holder.textRequestNotiTime.setText(Utils.formatDateTime(notiTime,"hh:mm a"));
+        }else{
+            holder.textRequestNotiTime.setText(Utils.formatDateTime(notiTime,"dd MMM, yy"));
         }
+
         if (!TextUtils.isEmpty(item.getPersonImage())) {
             Glide.with(activity)
                     .load(item.getPersonImage())
