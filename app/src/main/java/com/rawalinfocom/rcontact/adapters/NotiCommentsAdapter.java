@@ -17,7 +17,11 @@ import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransforma
 import com.rawalinfocom.rcontact.notifications.NotificationPopupDialog;
 import com.rawalinfocom.rcontact.model.NotiCommentsItem;
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import butterknife.BindView;
@@ -32,13 +36,13 @@ public class NotiCommentsAdapter extends RecyclerView.Adapter<NotiCommentsAdapte
 
     private Context context;
     private List<NotiCommentsItem> list;
-    private int recyclerPosition;
+//    private int recyclerPosition;
     NotificationPopupDialog notificationPopupDialog;
 
-    public NotiCommentsAdapter(Context context, List<NotiCommentsItem> list, int recyclerPosition) {
+    public NotiCommentsAdapter(Context context, List<NotiCommentsItem> list/*, int recyclerPosition*/) {
         this.context = context;
         this.list = list;
-        this.recyclerPosition = recyclerPosition;
+//        this.recyclerPosition = recyclerPosition;
     }
 
     public void updateList(List<NotiCommentsItem> list) {
@@ -68,7 +72,7 @@ public class NotiCommentsAdapter extends RecyclerView.Adapter<NotiCommentsAdapte
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.list_item_noti_comments, parent, false);
+                .inflate(R.layout.list_item_noti_comments_temp, parent, false);
         return new MyViewHolder(itemView);
     }
 
@@ -77,11 +81,23 @@ public class NotiCommentsAdapter extends RecyclerView.Adapter<NotiCommentsAdapte
         final NotiCommentsItem item = list.get(position);
         holder.textCommenterName.setText(item.getCommenterName());
         holder.textCommentDetailInfo.setText(item.getCommenterInfo());
-        if (recyclerPosition == 2) {
+        /*if (recyclerPosition == 2) {
             holder.textCommentNotiTime.setText(Utils.formatDateTime(item.getNotiCommentTime(), "dd MMM, hh:mm a"));
         } else {
             holder.textCommentNotiTime.setText(Utils.formatDateTime(item.getNotiCommentTime(), "hh:mm a"));
+        }*/
+
+        String notiTime =  item.getNotiCommentTime();
+        String date =  Utils.formatDateTime(notiTime,"yyyy-MM-dd");
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
+        String current = s.format(c.getTime());
+        if(StringUtils.equalsIgnoreCase(current,date)){
+            holder.textCommentNotiTime.setText(Utils.formatDateTime(notiTime,"hh:mm a"));
+        }else{
+            holder.textCommentNotiTime.setText(Utils.formatDateTime(notiTime,"dd MMM, yy"));
         }
+
         if (!TextUtils.isEmpty(item.getCommenterImage())) {
             Glide.with(context)
                     .load(item.getCommenterImage())

@@ -62,8 +62,8 @@ public class WsConstants {
 
     // API ROOT
     public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
-//    public static final String WS_ROOT_V2 = "http://apiqa.rcontacts.in/api/v2/";
-    public static final String WS_ROOT_V2 = "http://apiqa.rcontacts.in/api/v1/";
+    public static final String WS_ROOT_V2 = "http://apiqa.rcontacts.in/api/v2/";
+//    public static final String WS_ROOT_V2 = "http://apiqa.rcontacts.in/api/v1/";
     // TERMS-CONDITIONS URL
     public static final String URL_TERMS_CONDITIONS = "http://webqa.rcontacts.in/global/terms";
     // FAQ URL

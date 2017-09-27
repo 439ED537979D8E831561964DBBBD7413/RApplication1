@@ -23,7 +23,9 @@ import com.rawalinfocom.rcontact.notifications.RatingHistoryPopupDialog;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import butterknife.BindView;
@@ -38,13 +40,13 @@ public class NotiRatingHistoryAdapter extends RecyclerView.Adapter<NotiRatingHis
 
     private Context context;
     private List<NotiRatingItem> list;
-    private int recyclerPosition;
+//    private int recyclerPosition;
     RatingHistoryPopupDialog notificationPopupDialog;
 
-    public NotiRatingHistoryAdapter(Context context, List<NotiRatingItem> list, int recyclerPosition) {
+    public NotiRatingHistoryAdapter(Context context, List<NotiRatingItem> list/*, int recyclerPosition*/) {
         this.context = context;
         this.list = list;
-        this.recyclerPosition = recyclerPosition;
+//        this.recyclerPosition = recyclerPosition;
     }
 
     public void updateList(List<NotiRatingItem> list) {
@@ -114,11 +116,23 @@ public class NotiRatingHistoryAdapter extends RecyclerView.Adapter<NotiRatingHis
         Utils.setRatingStarColor(stars.getDrawable(0), ContextCompat.getColor(context, android.R
                 .color.darker_gray));
 
-        if (recyclerPosition == 0) {
+        /*if (recyclerPosition == 0) {
             holder.textRatingNotiTime.setText(Utils.formatDateTime(item.getNotiTime(), "hh:mm a"));
         } else {
             holder.textRatingNotiTime.setText(Utils.formatDateTime(item.getNotiTime(), "dd MMM, hh:mm a"));
+        }*/
+
+        String notiTime =  item.getNotiTime();
+        String date =  Utils.formatDateTime(notiTime,"yyyy-MM-dd");
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
+        String current = s.format(c.getTime());
+        if(StringUtils.equalsIgnoreCase(current,date)){
+            holder.textRatingNotiTime.setText(Utils.formatDateTime(notiTime,"hh:mm a"));
+        }else{
+            holder.textRatingNotiTime.setText(Utils.formatDateTime(notiTime,"dd MMM, yy"));
         }
+
         if (item.getHistoryType() == 0) {
             holder.historyPlaceHolder.setText(context.getResources().getString(R.string.text_you_rated));
             holder.textRatingDetailInfo.setText(String.format(context.getString(R.string.str_rating_comment_hint_2)
