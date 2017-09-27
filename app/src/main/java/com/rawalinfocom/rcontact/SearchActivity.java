@@ -587,7 +587,6 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                                             i.setData(Uri.parse(url));
                                             startActivity(i);
                                         }*/
-                                        // TODO: 22/09/17
                                         Bundle bundle = new Bundle();
                                         bundle.putString(AppConstants.EXTRA_PM_ID,
                                                 globalSearchType.getRcpPmId());
