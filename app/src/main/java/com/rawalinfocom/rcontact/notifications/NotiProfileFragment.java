@@ -173,6 +173,16 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
                     if (notiProfileAdapter != null)
                         notiProfileAdapter.updateList(listAllRequest);
 
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (getActivity() != null)
+                                ((NotificationsDetailActivity) getActivity())
+                                        .updateNotificationCount(AppConstants
+                                                .NOTIFICATION_TYPE_PROFILE_REQUEST);
+                        }
+                    }, 300);
+
 //                    textPastTitle.setText(getString(R.string.past_pending_requests));
 
                     /*if (todayProfileAdapter != null)
@@ -180,15 +190,7 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
                     if (pastProfileAdapter != null) {
                         pastProfileAdapter.updateList(listPastRequest);
                         updateHeight();
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (getActivity() != null)
-                                    ((NotificationsDetailActivity) getActivity())
-                                            .updateNotificationCount(AppConstants
-                                                    .NOTIFICATION_TYPE_PROFILE_REQUEST);
-                            }
-                        }, 800);
+
                     }*/
 
                 } else {
@@ -197,24 +199,27 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
 
                     if (notiProfileAdapter != null)
                         notiProfileAdapter.updateList(listAllResponse);
+
+                    if (isFirstTime) {
+                            new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (getActivity() != null)
+                                ((NotificationsDetailActivity) getActivity())
+                                        .updateNotificationCount(AppConstants
+                                                .NOTIFICATION_TYPE_PROFILE_RESPONSE);
+                        }
+                    }, 300);
+                    isFirstTime = false;
+                }
+
 //                    if (todayProfileAdapter != null)
 //                        todayProfileAdapter.updateList(listTodayResponse);
 //                    if (pastProfileAdapter != null) {
 //                        pastProfileAdapter.updateList(listPastResponse);
 //                        updateHeight();
 //
-//                        if (isFirstTime) {
-//                            new Handler().postDelayed(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    if (getActivity() != null)
-//                                        ((NotificationsDetailActivity) getActivity())
-//                                                .updateNotificationCount(AppConstants
-//                                                        .NOTIFICATION_TYPE_PROFILE_RESPONSE);
-//                                }
-//                            }, 800);
-//                            isFirstTime = false;
-//                        }
+//
 //                    }
                 }
 
