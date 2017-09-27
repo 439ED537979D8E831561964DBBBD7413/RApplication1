@@ -15,6 +15,7 @@ public class WsConstants {
 
     /*// API ROOT
     public static final String WS_ROOT = "https://api.rcontacts.in/api/v1/";
+    public static final String WS_ROOT_V2 = "https://api.rcontacts.in/api/v2/";
     // TERMS-CONDITIONS URL
     public static final String URL_TERMS_CONDITIONS = "https://www.rcontacts.in/global/terms";
     // FAQ URL
@@ -38,6 +39,7 @@ public class WsConstants {
 
     /*// API ROOT
     public static final String WS_ROOT = "http://apistaging.rcontacts.in/api/v1/";
+    public static final String WS_ROOT_V2 = "http://apistaging.rcontacts.in/api/v2/";
     // TERMS-CONDITIONS URL
     public static final String URL_TERMS_CONDITIONS = "http://webstaging.rcontacts.in/global/terms";
     // FAQ URL
@@ -59,7 +61,6 @@ public class WsConstants {
      * QA
      */
     //<editor-fold desc="QA">
-
     // API ROOT
     public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
     public static final String WS_ROOT_V2 = "http://apiqa.rcontacts.in/api/v2/";
@@ -76,8 +77,6 @@ public class WsConstants {
     public static final String WS_AVG_RATING_SHARE_BADGE_ROOT = "http://qa.rcrc.ac/r/";
     //PLAY STORE LINK
     public static String PLAY_STORE_LINK = "http://qa.rcrc.ac/a/";
-
-
     //</editor-fold>
 
     /**

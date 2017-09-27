@@ -289,7 +289,7 @@ public class MyProfileShareListAdapter extends RecyclerView.Adapter<MyProfileSha
     }
 
     private void shareAverageRating(String url) {
-        List<Intent> intentShareList = new ArrayList<Intent>();
+        List<Intent> intentShareList = new ArrayList<>();
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
