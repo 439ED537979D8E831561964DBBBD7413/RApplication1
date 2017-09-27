@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.rawalinfocom.rcontact.notifications.NotiCommentsFragment">
+
+
+    <android.support.v7.widget.SearchView
+        android:id="@+id/search_view_noti_comments"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <View
+        android:id="@+id/divider_timeline_search"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/search_view_noti_comments"
+        android:layout_gravity="center_vertical"
+        android:background="@color/colorDarkGray" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view_comment_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/divider_timeline_search"
+        android:layout_above="@+id/text_view_more"
+        android:visibility="visible" />
+
+    <TextView
+        android:id="@+id/text_view_more"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:background="@drawable/background_border"
+        android:gravity="center"
+        android:paddingLeft="2dp"
+        android:paddingRight="2dp"
+        android:text="@string/footer_noti_rating_text"
+        android:textAllCaps="true"
+        android:textColor="@color/colorPrimary" />
+
+</RelativeLayout>

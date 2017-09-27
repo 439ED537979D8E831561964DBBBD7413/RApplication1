@@ -16,13 +16,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.common.base.MoreObjects;
-import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.BaseNotificationFragment;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.adapters.NotiProfileAdapter;
@@ -60,7 +58,7 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
     @BindView(R.id.search_view_profile)
     SearchView searchView;
 
-    @BindView(R.id.header1)
+    /*@BindView(R.id.header1)
     TextView textTodayTitle;
 
     @BindView(R.id.header1_icon)
@@ -84,25 +82,34 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
     @BindView(R.id.recycler_view2)
     RecyclerView recyclerPastProfile;
 
-    @BindView(R.id.text_view_more)
-    TextView textViewMore;
+    @BindView(R.id.tab_profile)
+    TabLayout tabProfile;*/
 
     @BindView(R.id.tab_profile)
     TabLayout tabProfile;
+
+    @BindView(R.id.text_view_more)
+    TextView textViewMore;
+
     @BindView(R.id.layout_root)
     RelativeLayout layoutRoot;
+    @BindView(R.id.recycler_view_profile_list)
+    RecyclerView recyclerViewProfileList;
 
     @Override
     public void getFragmentArguments() {
 
     }
 
-    NotiProfileAdapter todayProfileAdapter;
-    NotiProfileAdapter pastProfileAdapter;
-    List<NotiProfileItem> listTodayRequest;
-    List<NotiProfileItem> listPastRequest;
-    List<NotiProfileItem> listTodayResponse;
-    List<NotiProfileItem> listPastResponse;
+    NotiProfileAdapter notiProfileAdapter;
+//    NotiProfileAdapter todayProfileAdapter;
+//    NotiProfileAdapter pastProfileAdapter;
+    List<NotiProfileItem> listAllRequest;
+//    List<NotiProfileItem> listTodayRequest;
+//    List<NotiProfileItem> listPastRequest;
+    List<NotiProfileItem> listAllResponse;
+//    List<NotiProfileItem> listTodayResponse;
+//    List<NotiProfileItem> listPastResponse;
     private static int tabIndex = 0;
     SoftKeyboard softKeyboard;
     String today;
@@ -128,7 +135,7 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_notification_profile, container, false);
+        View view = inflater.inflate(R.layout.fragment_notification_profile_temp, container, false);
         ButterKnife.bind(this, view);
         return view;
     }
@@ -163,9 +170,12 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
                 tabIndex = tab.getPosition();
                 if (tabIndex == 0) {
 
-                    textPastTitle.setText(getString(R.string.past_pending_requests));
+                    if (notiProfileAdapter != null)
+                        notiProfileAdapter.updateList(listAllRequest);
 
-                    if (todayProfileAdapter != null)
+//                    textPastTitle.setText(getString(R.string.past_pending_requests));
+
+                    /*if (todayProfileAdapter != null)
                         todayProfileAdapter.updateList(listTodayRequest);
                     if (pastProfileAdapter != null) {
                         pastProfileAdapter.updateList(listPastRequest);
@@ -179,31 +189,33 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
                                                     .NOTIFICATION_TYPE_PROFILE_REQUEST);
                             }
                         }, 800);
-                    }
+                    }*/
 
                 } else {
 
-                    textPastTitle.setText(getString(R.string.past_received_response));
+//                    textPastTitle.setText(getString(R.string.past_received_response));
 
-                    if (todayProfileAdapter != null)
-                        todayProfileAdapter.updateList(listTodayResponse);
-                    if (pastProfileAdapter != null) {
-                        pastProfileAdapter.updateList(listPastResponse);
-                        updateHeight();
-
-                        if (isFirstTime) {
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (getActivity() != null)
-                                        ((NotificationsDetailActivity) getActivity())
-                                                .updateNotificationCount(AppConstants
-                                                        .NOTIFICATION_TYPE_PROFILE_RESPONSE);
-                                }
-                            }, 800);
-                            isFirstTime = false;
-                        }
-                    }
+                    if (notiProfileAdapter != null)
+                        notiProfileAdapter.updateList(listAllResponse);
+//                    if (todayProfileAdapter != null)
+//                        todayProfileAdapter.updateList(listTodayResponse);
+//                    if (pastProfileAdapter != null) {
+//                        pastProfileAdapter.updateList(listPastResponse);
+//                        updateHeight();
+//
+//                        if (isFirstTime) {
+//                            new Handler().postDelayed(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    if (getActivity() != null)
+//                                        ((NotificationsDetailActivity) getActivity())
+//                                                .updateNotificationCount(AppConstants
+//                                                        .NOTIFICATION_TYPE_PROFILE_RESPONSE);
+//                                }
+//                            }, 800);
+//                            isFirstTime = false;
+//                        }
+//                    }
                 }
 
             }
@@ -268,39 +280,39 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
             }
         });
 
-        textTodayTitle.setTypeface(Utils.typefaceRegular(getActivity()));
-        textPastTitle.setTypeface(Utils.typefaceRegular(getActivity()));
+//        textTodayTitle.setTypeface(Utils.typefaceRegular(getActivity()));
+//        textPastTitle.setTypeface(Utils.typefaceRegular(getActivity()));
         textViewMore.setTypeface(Utils.typefaceRegular(getActivity()));
-        headerTodayIcon.setImageResource(R.drawable.ic_collapse);
-        headerTodayLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (recyclerTodayProfile.getVisibility() == View.VISIBLE) {
-                    recyclerTodayProfile.setVisibility(View.GONE);
-                    headerTodayIcon.setImageResource(R.drawable.ic_expand);
-                } else {
-                    recyclerTodayProfile.setVisibility(View.VISIBLE);
-                    headerTodayIcon.setImageResource(R.drawable.ic_collapse);
-                }
-                recyclerPastProfile.setVisibility(View.GONE);
-                headerPastIcon.setImageResource(R.drawable.ic_expand);
-            }
-        });
-        headerPastLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                recyclerTodayProfile.setVisibility(View.GONE);
-                headerTodayIcon.setImageResource(R.drawable.ic_expand);
-                if (recyclerPastProfile.getVisibility() == View.VISIBLE) {
-                    recyclerPastProfile.setVisibility(View.GONE);
-                    headerPastIcon.setImageResource(R.drawable.ic_expand);
-                } else {
-                    recyclerPastProfile.setVisibility(View.VISIBLE);
-                    headerPastIcon.setImageResource(R.drawable.ic_collapse);
-                }
-
-            }
-        });
+//        headerTodayIcon.setImageResource(R.drawable.ic_collapse);
+//        headerTodayLayout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (recyclerTodayProfile.getVisibility() == View.VISIBLE) {
+//                    recyclerTodayProfile.setVisibility(View.GONE);
+//                    headerTodayIcon.setImageResource(R.drawable.ic_expand);
+//                } else {
+//                    recyclerTodayProfile.setVisibility(View.VISIBLE);
+//                    headerTodayIcon.setImageResource(R.drawable.ic_collapse);
+//                }
+//                recyclerPastProfile.setVisibility(View.GONE);
+//                headerPastIcon.setImageResource(R.drawable.ic_expand);
+//            }
+//        });
+//        headerPastLayout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                recyclerTodayProfile.setVisibility(View.GONE);
+//                headerTodayIcon.setImageResource(R.drawable.ic_expand);
+//                if (recyclerPastProfile.getVisibility() == View.VISIBLE) {
+//                    recyclerPastProfile.setVisibility(View.GONE);
+//                    headerPastIcon.setImageResource(R.drawable.ic_expand);
+//                } else {
+//                    recyclerPastProfile.setVisibility(View.VISIBLE);
+//                    headerPastIcon.setImageResource(R.drawable.ic_collapse);
+//                }
+//
+//            }
+//        });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -312,15 +324,17 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
             public boolean onQueryTextChange(String newText) {
                 if (tabIndex == 0) {
                     if (TextUtils.isEmpty(newText)) {
-                        todayProfileAdapter.updateList(listTodayRequest);
-                        pastProfileAdapter.updateList(listPastRequest);
-                        updateHeight();
+                        notiProfileAdapter.updateList(listAllRequest);
+//                        todayProfileAdapter.updateList(listTodayRequest);
+//                        pastProfileAdapter.updateList(listPastRequest);
+//                        updateHeight();
                     }
                 } else {
                     if (TextUtils.isEmpty(newText)) {
-                        todayProfileAdapter.updateList(listTodayResponse);
-                        pastProfileAdapter.updateList(listPastResponse);
-                        updateHeight();
+                        notiProfileAdapter.updateList(listAllResponse);
+//                        todayProfileAdapter.updateList(listTodayResponse);
+//                        pastProfileAdapter.updateList(listPastResponse);
+//                        updateHeight();
                     }
 
                 }
@@ -340,39 +354,63 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
 
         if (tabIndex == 0) {
             List<NotiProfileItem> temp = new ArrayList<>();
-            for (NotiProfileItem item : listTodayRequest) {
+            for (NotiProfileItem item : listAllRequest) {
                 if (item.getPersonName().toLowerCase().contains(query.toLowerCase())) {
                     temp.add(item);
                 }
             }
-            todayProfileAdapter.updateList(temp);
+            notiProfileAdapter.updateList(temp);
 
-            temp = new ArrayList<>();
-            for (NotiProfileItem item : listPastRequest) {
-                if (item.getPersonName().toLowerCase().contains(query.toLowerCase())) {
-                    temp.add(item);
-                }
-            }
-            pastProfileAdapter.updateList(temp);
-            updateHeight();
+//            temp = new ArrayList<>();
+//            for (NotiProfileItem item : listPastRequest) {
+//                if (item.getPersonName().toLowerCase().contains(query.toLowerCase())) {
+//                    temp.add(item);
+//                }
+//            }
+//            pastProfileAdapter.updateList(temp);
+//            updateHeight();
+//            List<NotiProfileItem> temp = new ArrayList<>();
+//            for (NotiProfileItem item : listTodayRequest) {
+//                if (item.getPersonName().toLowerCase().contains(query.toLowerCase())) {
+//                    temp.add(item);
+//                }
+//            }
+//            todayProfileAdapter.updateList(temp);
+//
+//            temp = new ArrayList<>();
+//            for (NotiProfileItem item : listPastRequest) {
+//                if (item.getPersonName().toLowerCase().contains(query.toLowerCase())) {
+//                    temp.add(item);
+//                }
+//            }
+//            pastProfileAdapter.updateList(temp);
+//            updateHeight();
         } else {
 
             List<NotiProfileItem> temp = new ArrayList<>();
-            for (NotiProfileItem item : listTodayResponse) {
+            for (NotiProfileItem item : listAllResponse) {
                 if (item.getPersonName().toLowerCase().contains(query.toLowerCase())) {
                     temp.add(item);
                 }
             }
-            todayProfileAdapter.updateList(temp);
+            notiProfileAdapter.updateList(temp);
 
-            temp = new ArrayList<>();
-            for (NotiProfileItem item : listPastResponse) {
-                if (item.getPersonName().toLowerCase().contains(query.toLowerCase())) {
-                    temp.add(item);
-                }
-            }
-            pastProfileAdapter.updateList(temp);
-            updateHeight();
+//            List<NotiProfileItem> temp = new ArrayList<>();
+//            for (NotiProfileItem item : listTodayResponse) {
+//                if (item.getPersonName().toLowerCase().contains(query.toLowerCase())) {
+//                    temp.add(item);
+//                }
+//            }
+//            todayProfileAdapter.updateList(temp);
+//
+//            temp = new ArrayList<>();
+//            for (NotiProfileItem item : listPastResponse) {
+//                if (item.getPersonName().toLowerCase().contains(query.toLowerCase())) {
+//                    temp.add(item);
+//                }
+//            }
+//            pastProfileAdapter.updateList(temp);
+//            updateHeight();
         }
     }
 
@@ -381,30 +419,39 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
         today = getDate(0);
         yesterDay = getDate(-1);
         pastday6thDay = getDate(-6);
+
         ArrayList<PrivacyRequestDataItem> pendingRequestToday = tableRCContactRequest
-                .getAllPendingRequest(today, today);
-        ArrayList<PrivacyRequestDataItem> pendingRequestPastDays = tableRCContactRequest
-                .getAllPendingRequest(pastday6thDay, yesterDay);
+                .getAllPendingRequest(pastday6thDay, today);
+//        ArrayList<PrivacyRequestDataItem> pendingRequestToday = tableRCContactRequest
+//                .getAllPendingRequest(today, today);
+//        ArrayList<PrivacyRequestDataItem> pendingRequestPastDays = tableRCContactRequest
+//                .getAllPendingRequest(pastday6thDay, yesterDay);
 
         ArrayList<PrivacyRequestDataItem> responseReceivedToday = tableRCContactRequest
-                .getAllResponseReceived(today, today);
-        ArrayList<PrivacyRequestDataItem> responseReceivedPastDays = tableRCContactRequest
-                .getAllResponseReceived(pastday6thDay, yesterDay);
+                .getAllResponseReceived(pastday6thDay, today);
+//        ArrayList<PrivacyRequestDataItem> responseReceivedToday = tableRCContactRequest
+//                .getAllResponseReceived(today, today);
+//        ArrayList<PrivacyRequestDataItem> responseReceivedPastDays = tableRCContactRequest
+//                .getAllResponseReceived(pastday6thDay, yesterDay);
 
-        listTodayRequest = createRatingList(pendingRequestToday, 0);
-        listPastRequest = createRatingList(pendingRequestPastDays, 0);
-        listTodayResponse = createRatingList(responseReceivedToday, 1);
-        listPastResponse = createRatingList(responseReceivedPastDays, 1);
+        listAllRequest = createRatingList(pendingRequestToday, 0);
+//        listTodayRequest = createRatingList(pendingRequestToday, 0);
+//        listPastRequest = createRatingList(pendingRequestPastDays, 0);
+        listAllResponse = createRatingList(responseReceivedToday, 1);
+//        listTodayResponse = createRatingList(responseReceivedToday, 1);
+//        listPastResponse = createRatingList(responseReceivedPastDays, 1);
 
-        todayProfileAdapter = new NotiProfileAdapter(this, listTodayRequest, 0);
-        pastProfileAdapter = new NotiProfileAdapter(this, listPastRequest, 1);
+        notiProfileAdapter = new NotiProfileAdapter(this, listAllRequest);
+//        todayProfileAdapter = new NotiProfileAdapter(this, listTodayRequest, 0);
+//        pastProfileAdapter = new NotiProfileAdapter(this, listPastRequest, 1);
+        recyclerViewProfileList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerViewProfileList.setAdapter(notiProfileAdapter);
+//        recyclerTodayProfile.setAdapter(todayProfileAdapter);
+//        recyclerPastProfile.setAdapter(pastProfileAdapter);
 
-        recyclerTodayProfile.setAdapter(todayProfileAdapter);
-        recyclerPastProfile.setAdapter(pastProfileAdapter);
+//        updateHeight();
 
-        updateHeight();
-
-        recyclerPastProfile.setVisibility(View.GONE);
+//        recyclerPastProfile.setVisibility(View.GONE);
     }
 
     private List<NotiProfileItem> createRatingList(ArrayList<PrivacyRequestDataItem>
@@ -481,9 +528,9 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         int height = (displaymetrics.heightPixels * heightPercent) / 100;
 
-
-        setRecyclerViewHeight(recyclerTodayProfile, height);
-        setRecyclerViewHeight(recyclerPastProfile, height);
+//
+//        setRecyclerViewHeight(recyclerTodayProfile, height);
+//        setRecyclerViewHeight(recyclerPastProfile, height);
     }
 
     private void setRecyclerViewHeight(RecyclerView recyclerView, int height) {
@@ -587,29 +634,43 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
     private void refreshAllList() {
 
         ArrayList<PrivacyRequestDataItem> pendingRequestToday = tableRCContactRequest
-                .getAllPendingRequest(today, today);
-        ArrayList<PrivacyRequestDataItem> pendingRequestPastDays = tableRCContactRequest
-                .getAllPendingRequest(pastday6thDay, yesterDay);
+                .getAllPendingRequest(pastday6thDay, today);
+//        ArrayList<PrivacyRequestDataItem> pendingRequestToday = tableRCContactRequest
+//                .getAllPendingRequest(today, today);
+//        ArrayList<PrivacyRequestDataItem> pendingRequestPastDays = tableRCContactRequest
+//                .getAllPendingRequest(pastday6thDay, yesterDay);
         ArrayList<PrivacyRequestDataItem> responseReceivedToday = tableRCContactRequest
-                .getAllResponseReceived(today, today);
-        ArrayList<PrivacyRequestDataItem> responseReceivedPastDays = tableRCContactRequest
-                .getAllResponseReceived(pastday6thDay, yesterDay);
+                .getAllResponseReceived(pastday6thDay, today);
+//        ArrayList<PrivacyRequestDataItem> responseReceivedToday = tableRCContactRequest
+//                .getAllResponseReceived(today, today);
+//        ArrayList<PrivacyRequestDataItem> responseReceivedPastDays = tableRCContactRequest
+//                .getAllResponseReceived(pastday6thDay, yesterDay);
 
 
-        listTodayRequest = createRatingList(pendingRequestToday, 0);
-        listPastRequest = createRatingList(pendingRequestPastDays, 0);
-        listTodayResponse = createRatingList(responseReceivedToday, 1);
-        listPastResponse = createRatingList(responseReceivedPastDays, 1);
+        listAllRequest = createRatingList(pendingRequestToday, 0);
+//        listTodayRequest = createRatingList(pendingRequestToday, 0);
+//        listPastRequest = createRatingList(pendingRequestPastDays, 0);
+        listAllResponse = createRatingList(responseReceivedToday, 1);
+//        listTodayResponse = createRatingList(responseReceivedToday, 1);
+//        listPastResponse = createRatingList(responseReceivedPastDays, 1);
 
         if (tabIndex == 0) {
-            todayProfileAdapter.updateList(listTodayRequest);
-            pastProfileAdapter.updateList(listPastRequest);
+            notiProfileAdapter.updateList(listAllRequest);
+//            todayProfileAdapter.updateList(listTodayRequest);
+//            pastProfileAdapter.updateList(listPastRequest);
         } else {
-            todayProfileAdapter.updateList(listTodayResponse);
-            pastProfileAdapter.updateList(listPastResponse);
+            notiProfileAdapter.updateList(listAllResponse);
+//            todayProfileAdapter.updateList(listTodayResponse);
+//            pastProfileAdapter.updateList(listPastResponse);
         }
 
-        updateHeight();
+//        updateHeight();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+//        null.unbind();
     }
 
 //    private String updatePrivacySetting(String ppmTag, String cloudMongoId) {

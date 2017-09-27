@@ -17,7 +17,11 @@ import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransforma
 import com.rawalinfocom.rcontact.model.NotiRatingItem;
 import com.rawalinfocom.rcontact.notifications.NotificationPopupDialog;
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import butterknife.BindView;
@@ -32,10 +36,10 @@ public class NotiRatingAdapter extends RecyclerView.Adapter<NotiRatingAdapter.My
 
     private Context context;
     private List<NotiRatingItem> list;
-    private int recyclerPosition;
+//    private int recyclerPosition;
     NotificationPopupDialog notificationPopupDialog;
 
-    public NotiRatingAdapter(Context context, List<NotiRatingItem> list, int recyclerPosition) {
+    public NotiRatingAdapter(Context context, List<NotiRatingItem> list/*, int recyclerPosition*/) {
         this.context = context;
         this.list = list;
     }
@@ -67,7 +71,7 @@ public class NotiRatingAdapter extends RecyclerView.Adapter<NotiRatingAdapter.My
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.list_item_noti_rating, parent, false);
+                .inflate(R.layout.list_item_noti_rating_temp, parent, false);
         return new MyViewHolder(itemView);
     }
 
@@ -75,11 +79,23 @@ public class NotiRatingAdapter extends RecyclerView.Adapter<NotiRatingAdapter.My
     public void onBindViewHolder(MyViewHolder holder, int position) {
         final NotiRatingItem item = list.get(position);
         holder.textRaterName.setText(item.getRaterName());
-        if (recyclerPosition == 2) {
+        /*if (recyclerPosition == 2) {
             holder.textRatingNotiTime.setText(Utils.formatDateTime(item.getNotiTime(), "dd MMM, hh:mm a"));
         } else {
             holder.textRatingNotiTime.setText(Utils.formatDateTime(item.getNotiTime(), "hh:mm a"));
+        }*/
+
+        String notiTime =  item.getNotiTime();
+        String date =  Utils.formatDateTime(notiTime,"yyyy-MM-dd");
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
+        String current = s.format(c.getTime());
+        if(StringUtils.equalsIgnoreCase(current,date)){
+            holder.textRatingNotiTime.setText(Utils.formatDateTime(notiTime,"hh:mm a"));
+        }else{
+            holder.textRatingNotiTime.setText(Utils.formatDateTime(notiTime,"dd MMM, yy"));
         }
+
         holder.textRatingDetailInfo.setText(String.format(context.getString(R.string.str_rating_comment_hint_1), item.getRaterName()));
         if (!TextUtils.isEmpty(item.getRaterPersonImage())) {
             Glide.with(context)
