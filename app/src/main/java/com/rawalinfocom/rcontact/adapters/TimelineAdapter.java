@@ -31,6 +31,8 @@ import com.rawalinfocom.rcontact.notifications.TimelineActivity;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 
 import butterknife.BindView;
@@ -40,12 +42,12 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
 
     private List<TimelineItem> list;
     private Activity activity;
-    private int recyclerPosition;
+//    private int recyclerPosition;
 
-    public TimelineAdapter(Activity activity, List<TimelineItem> list, int recyclerPosition) {
+    public TimelineAdapter(Activity activity, List<TimelineItem> list) {
         this.list = list;
         this.activity = activity;
-        this.recyclerPosition = recyclerPosition;
+//        this.recyclerPosition = recyclerPosition;
     }
 
     @Override
@@ -60,7 +62,30 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
         final TimelineItem item = list.get(position);
         holder.textWisherName.setText(item.getWisherName());
         holder.textEventName.setText(item.getEventName());
-        holder.textTimelineNotiTime.setText(item.getNotiTime());
+        if(!StringUtils.isEmpty(item.getNotiTime())){
+//            holder.textTimelineNotiTime.setText(item.getNotiTime());
+            String notiTime =  item.getNotiTime();
+            String date =  Utils.formatDateTime(notiTime,"yyyy-MM-dd");
+            Calendar c = Calendar.getInstance();
+            SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
+            String current = s.format(c.getTime());
+            if(StringUtils.equalsIgnoreCase(current,date)){
+                holder.textTimelineNotiTime.setText(Utils.formatDateTime(notiTime,"hh:mm a"));
+            }else{
+                holder.textTimelineNotiTime.setText(Utils.formatDateTime(notiTime,"dd MMM, yy"));
+            }
+        }else{
+            String wishersCommentTime =  item.getWisherCommentTime();
+            String date =  Utils.formatDateTime(wishersCommentTime,"yyyy-MM-dd");
+            Calendar c = Calendar.getInstance();
+            SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
+            String current = s.format(c.getTime());
+            if(StringUtils.equalsIgnoreCase(current,date)){
+                holder.textTimelineNotiTime.setText(Utils.formatDateTime(wishersCommentTime,"hh:mm a"));
+            }else{
+                holder.textTimelineNotiTime.setText(Utils.formatDateTime(wishersCommentTime,"dd MMM, yy"));
+            }
+        }
         String wisherComment = item.getWisherComment();
         String userComment = item.getUserComment();
 
@@ -70,28 +95,30 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
         if (wisherComment != null && wisherComment.length() > 0) {
             holder.textWisherComment.setVisibility(View.VISIBLE);
             holder.textWisherComment.setText(wisherComment);
-            if (recyclerPosition == 0)
-                holder.textWisherCommentTime.setText(Utils.formatDateTime(item.getWisherCommentTime(), "hh:mm a"));
-            else
-                holder.textWisherCommentTime.setText(Utils.formatDateTime(item.getWisherCommentTime(), "dd MMM, hh:mm a"));
+            holder.textWisherCommentTime.setText(Utils.formatDateTime(item.getWisherCommentTime(), "hh:mm a"));
+//            if (recyclerPosition == 0)
+//                holder.textWisherCommentTime.setText(Utils.formatDateTime(item.getWisherCommentTime(), "hh:mm a"));
+//            else
+//                holder.textWisherCommentTime.setText(Utils.formatDateTime(item.getWisherCommentTime(), "dd MMM, hh:mm a"));
         } else {
             holder.textWisherComment.setVisibility(View.GONE);
             if (notiType == 1) {
                 //set rating done time only
-                if (recyclerPosition == 0)
-                    holder.textWisherCommentTime.setText(Utils.formatDateTime(item.getWisherCommentTime(), "hh:mm a"));
-                else
-                    holder.textWisherCommentTime.setText(Utils.formatDateTime(item.getWisherCommentTime(), "dd MMM, hh:mm a"));
+                holder.textWisherCommentTime.setText(Utils.formatDateTime(item.getWisherCommentTime(), "hh:mm a"));
+//                if (recyclerPosition == 0)
+//                    holder.textWisherCommentTime.setText(Utils.formatDateTime(item.getWisherCommentTime(), "hh:mm a"));
+//                else
+//                    holder.textWisherCommentTime.setText(Utils.formatDateTime(item.getWisherCommentTime(), "dd MMM, hh:mm a"));
             }
         }
         if (userComment != null && userComment.length() > 0) {
             holder.layoutUserCommentDone.setVisibility(View.VISIBLE);
             holder.textUserComment.setText(userComment);
-
-            if (recyclerPosition == 0)
-                holder.textUserCommentTime.setText(Utils.formatDateTime(item.getUserCommentTime(), "hh:mm a"));
-            else
-                holder.textUserCommentTime.setText(Utils.formatDateTime(item.getUserCommentTime(), "dd MMM, hh:mm a"));
+            holder.textUserCommentTime.setText(Utils.formatDateTime(item.getUserCommentTime(), "hh:mm a"));
+//            if (recyclerPosition == 0)
+//                holder.textUserCommentTime.setText(Utils.formatDateTime(item.getUserCommentTime(), "hh:mm a"));
+//            else
+//                holder.textUserCommentTime.setText(Utils.formatDateTime(item.getUserCommentTime(), "dd MMM, hh:mm a"));
 
             holder.layoutUserCommentPending.setVisibility(View.GONE);
         } else {
@@ -124,7 +151,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
             public void onClick(View v) {
                 String userComment = holder.edittextUserComment.getText().toString().trim();
                 if (!(userComment.matches(""))) {
-                    TimelineActivity.selectedRecycler = recyclerPosition;
+//                    TimelineActivity.selectedRecycler = recyclerPosition;
                     TimelineActivity.selectedRecyclerItem = position;
                     addReplyonComment(item.getCrmType(), item.getCrmCloudPrId(), userComment, AppConstants.COMMENT_STATUS_RECEIVED, item.getEvmRecordIndexId());
                 } else {
@@ -214,6 +241,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
+
         @BindView(R.id.image_wisher)
         ImageView imageWisher;
 
@@ -271,6 +299,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
         public MyViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
+            System.out.println("timeline MyViewHolder");
             textWisherName.setTypeface(Utils.typefaceRegular(activity));
 
             textEventName.setTypeface(Utils.typefaceRegular(activity));

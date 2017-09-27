@@ -386,6 +386,12 @@
 
     </RelativeLayout>
 
+    <FrameLayout
+        android:id="@+id/frame_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/include_toolbar">
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -734,6 +740,24 @@
         </android.support.v4.widget.NestedScrollView>
 
     </RelativeLayout>
+
+        <FrameLayout
+            android:id="@+id/frame_image_enlarge"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/finestBlack40"
+            android:visibility="gone"
+            tools:visibility="gone">
+
+            <ImageView
+                android:id="@+id/image_enlarge"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/str_content_description"/>
+
+        </FrameLayout>
+
+    </FrameLayout>
 
 </RelativeLayout>
 

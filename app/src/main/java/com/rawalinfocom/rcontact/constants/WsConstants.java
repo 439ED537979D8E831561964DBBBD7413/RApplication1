@@ -77,7 +77,6 @@ public class WsConstants {
     //PLAY STORE LINK
     public static String PLAY_STORE_LINK = "http://qa.rcrc.ac/a/";
 
-
     //</editor-fold>
 
     /**
@@ -175,5 +174,4 @@ public class WsConstants {
     public static final String REQ_GET_RATING_DETAILS = "get-rating-details";
     public static final String REQ_GET_COMMENT_DETAILS = "get-comment-details";
     public static final String REQ_GET_RCP_CONTACT = "get-rcp-contact";
-
 }
