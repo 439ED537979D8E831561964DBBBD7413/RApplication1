@@ -26,6 +26,10 @@ import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 import com.rawalinfocom.rcontact.notifications.EventsActivity;
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 
 import butterknife.BindView;
@@ -36,12 +40,12 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
 
     private List<EventItem> list;
     private Activity activity;
-    private int recyclerPosition;
+//    private int recyclerPosition;
 
-    public EventAdapter(Activity activity, List<EventItem> list, int recyclerPosition) {
+    public EventAdapter(Activity activity, List<EventItem> list/*, int recyclerPosition*/) {
         this.list = list;
         this.activity = activity;
-        this.recyclerPosition = recyclerPosition;
+//        this.recyclerPosition = recyclerPosition;
     }
 
     @Override
@@ -56,7 +60,35 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
         final EventItem item = list.get(position);
         holder.textPersonName.setText(item.getPersonName());
         holder.textEventName.setText(item.getEventName());
-        holder.textEventCommentTime.setText(Utils.formatDateTime(item.getCommentTime(), "dd-MM hh:mm a"));
+//        holder.textEventCommentTime.setText(Utils.formatDateTime(item.getCommentTime(), "dd-MM hh:mm a"));
+
+        String notiTime =  item.getEventDate();
+        String date =  Utils.formatDateTime(notiTime,"yyyy-MM-dd");
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
+        String current = s.format(c.getTime());
+
+        Calendar c1 = Calendar.getInstance();
+        c1.add(Calendar.DATE, 1);
+        SimpleDateFormat s1 = new SimpleDateFormat("yyyy-MM-dd");
+        String tomorrowDate =  s1.format(c1.getTime());
+
+        Calendar c2 = Calendar.getInstance();
+        c2.add(Calendar.DATE, -1);
+        SimpleDateFormat s2 = new SimpleDateFormat("yyyy-MM-dd");
+        String yesDate =  s2.format(c2.getTime());
+
+        if(StringUtils.equalsIgnoreCase(current,date)){
+            holder.textEventCommentTime.setVisibility(View.VISIBLE);
+            holder.textEventCommentTime.setText("Today");
+        }else if(StringUtils.equalsIgnoreCase(yesDate,date)){
+            holder.textEventCommentTime.setVisibility(View.VISIBLE);
+            holder.textEventCommentTime.setText("Yesterday");
+        }else{
+            holder.textEventCommentTime.setVisibility(View.VISIBLE);
+            holder.textEventCommentTime.setText(Utils.formatDateTime(notiTime,"dd MMM, yy"));
+        }
+
         int notiType = item.getEventType();
         String on = activity.getResources().getString(R.string.text_on);
         String eventDetail = "";
@@ -70,7 +102,33 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
         } else {
             holder.textEventDetailInfo.setText(item.getEventName() + on + Utils.formatDateTime(item.getEventDate(), "dd MMM"));
         }
-        if (recyclerPosition != 2) {
+
+        if(StringUtils.equalsIgnoreCase(current,date)){
+            if (!item.isEventCommentPending()) {
+                holder.textUserComment.setVisibility(View.VISIBLE);
+                holder.textUserComment.setText(activity.getResources().getString(R.string.text_you_wrote_on_timeline, item.getPersonFirstName()));
+                holder.layoutUserCommentPending.setVisibility(View.GONE);
+            }else{
+                holder.textUserComment.setVisibility(View.GONE);
+                holder.layoutUserCommentPending.setVisibility(View.VISIBLE);
+            }
+        }else if(StringUtils.equalsIgnoreCase(yesDate,date)){
+            if (!item.isEventCommentPending()) {
+                holder.textUserComment.setVisibility(View.VISIBLE);
+                holder.textUserComment.setText(activity.getResources().getString(R.string.text_you_wrote_on_timeline, item.getPersonFirstName()));
+                holder.layoutUserCommentPending.setVisibility(View.GONE);
+            }else{
+                holder.textUserComment.setVisibility(View.GONE);
+                holder.layoutUserCommentPending.setVisibility(View.VISIBLE);
+            }
+        }else{
+            holder.layoutUserCommentPending.setVisibility(View.GONE);
+            holder.textUserComment.setVisibility(View.GONE);
+            holder.textEventCommentTime.setVisibility(View.GONE);
+        }
+
+
+       /* if (recyclerPosition != 2) {
             if (!item.isEventCommentPending()) {
                 holder.textUserComment.setVisibility(View.VISIBLE);
                 holder.textUserComment.setText(activity.getResources().getString(R.string.text_you_wrote_on_timeline, item.getPersonFirstName()));
@@ -84,7 +142,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
             holder.layoutUserCommentPending.setVisibility(View.GONE);
             holder.textUserComment.setVisibility(View.GONE);
             holder.textEventCommentTime.setVisibility(View.GONE);
-        }
+        }*/
+
         if (!TextUtils.isEmpty(item.getPersonImage())) {
             Glide.with(activity)
                     .load(item.getPersonImage())
@@ -103,7 +162,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
                 String userComment = holder.edittextUserComment.getText().toString().trim();
                 if (!(userComment.matches(""))) {
                     EventsActivity.evmRecordId = item.getEventRecordIndexId();
-                    EventsActivity.selectedRecycler = recyclerPosition;
+                    EventsActivity.selectedRecycler = 0;
                     EventsActivity.selectedRecyclerItem = position;
                     addEventComment(item.getEventName(), item.getPersonRcpPmId(), userComment, item.getEventDate(), AppConstants.COMMENT_STATUS_SENT, item.getEventRecordIndexId());
                 } else {

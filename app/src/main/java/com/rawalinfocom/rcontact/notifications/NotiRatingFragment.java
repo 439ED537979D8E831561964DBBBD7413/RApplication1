@@ -21,7 +21,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.BaseNotificationFragment;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.adapters.NotiRatingAdapter;
@@ -60,12 +59,13 @@ public class NotiRatingFragment extends BaseNotificationFragment implements WsRe
     @BindView(R.id.search_view_noti_rating)
     SearchView searchViewNotiRating;
 
-    @BindView(R.id.header1)
+   /* @BindView(R.id.header1)
     TextView textTodayTitle;
     @BindView(R.id.header1_icon)
     ImageView headerTodayIcon;
     @BindView(R.id.relative_header1)
     RelativeLayout headerTodayLayout;
+
     @BindView(R.id.recycler_view1)
     RecyclerView recyclerTodayRating;
 
@@ -85,19 +85,21 @@ public class NotiRatingFragment extends BaseNotificationFragment implements WsRe
     @BindView(R.id.relative_header3)
     RelativeLayout headerPastdayLayout;
     @BindView(R.id.recycler_view3)
-    RecyclerView recyclerPastDayRating;
+    RecyclerView recyclerPastDayRating;*/
 
     @BindView(R.id.text_view_more)
     TextView textViewMore;
     TableCommentMaster tableCommentMaster;
 
-    List<NotiRatingItem> listTodayRating;
-    List<NotiRatingItem> listYesterdayRating;
-    List<NotiRatingItem> listPastRating;
+    List<NotiRatingItem> listAllRating;
+//    List<NotiRatingItem> listTodayRating;
+//    List<NotiRatingItem> listYesterdayRating;
+//    List<NotiRatingItem> listPastRating;
 
-    NotiRatingAdapter todayRatingAdapter;
-    NotiRatingAdapter yesterdayRatingAdapter;
-    NotiRatingAdapter pastRatingAdapter;
+    NotiRatingAdapter notiRatingAdapter;
+//    NotiRatingAdapter todayRatingAdapter;
+//    NotiRatingAdapter yesterdayRatingAdapter;
+//    NotiRatingAdapter pastRatingAdapter;
 
     @BindView(R.id.layout_root)
     RelativeLayout layoutRoot;
@@ -106,6 +108,8 @@ public class NotiRatingFragment extends BaseNotificationFragment implements WsRe
     String yesterDay;
     String dayBeforeYesterday;
     String pastday5thDay;
+    @BindView(R.id.recycler_view_rating_list)
+    RecyclerView recyclerViewRatingList;
 
     @Override
     public void getFragmentArguments() {
@@ -119,7 +123,7 @@ public class NotiRatingFragment extends BaseNotificationFragment implements WsRe
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_notification_rating, container, false);
+        View view = inflater.inflate(R.layout.fragment_notification_rating_temp, container, false);
         ButterKnife.bind(this, view);
         return view;
     }
@@ -142,22 +146,34 @@ public class NotiRatingFragment extends BaseNotificationFragment implements WsRe
         dayBeforeYesterday = getDate(-2);
         pastday5thDay = getDate(-6);
 
-        ArrayList<Comment> replyReceivedToday = tableCommentMaster.getAllRatingReplyReceived(today, today);
-        ArrayList<Comment> replyReceivedYesterDay = tableCommentMaster.getAllRatingReplyReceived(yesterDay, yesterDay);
-        ArrayList<Comment> replyReceivedPastDays = tableCommentMaster.getAllRatingReplyReceived(pastday5thDay, dayBeforeYesterday);
+        ArrayList<Comment> replyReceivedAll = tableCommentMaster.getAllRatingReplyReceived(pastday5thDay, today);
+//        ArrayList<Comment> replyReceivedToday = tableCommentMaster.getAllRatingReplyReceived(today, today);
+//        ArrayList<Comment> replyReceivedYesterDay = tableCommentMaster.getAllRatingReplyReceived(yesterDay, yesterDay);
+//        ArrayList<Comment> replyReceivedPastDays = tableCommentMaster.getAllRatingReplyReceived(pastday5thDay, dayBeforeYesterday);
 
-        listTodayRating = createRatingReplyList(replyReceivedToday);
-        listYesterdayRating = createRatingReplyList(replyReceivedYesterDay);
-        listPastRating = createRatingReplyList(replyReceivedPastDays);
+        listAllRating = createRatingReplyList(replyReceivedAll);
+//        listTodayRating = createRatingReplyList(replyReceivedToday);
+//        listYesterdayRating = createRatingReplyList(replyReceivedYesterDay);
+//        listPastRating = createRatingReplyList(replyReceivedPastDays);
 
-        todayRatingAdapter = new NotiRatingAdapter(getActivity(), listTodayRating, 0);
-        yesterdayRatingAdapter = new NotiRatingAdapter(getActivity(), listYesterdayRating, 1);
-        pastRatingAdapter = new NotiRatingAdapter(getActivity(), listPastRating, 2);
+        notiRatingAdapter = new NotiRatingAdapter(getActivity(), listAllRating);
+//        todayRatingAdapter = new NotiRatingAdapter(getActivity(), listTodayRating, 0);
+//        yesterdayRatingAdapter = new NotiRatingAdapter(getActivity(), listYesterdayRating, 1);
+//        pastRatingAdapter = new NotiRatingAdapter(getActivity(), listPastRating, 2);
+        recyclerViewRatingList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerViewRatingList.setAdapter(notiRatingAdapter);
+//        recyclerTodayRating.setAdapter(todayRatingAdapter);
+//        recyclerYesterDayRating.setAdapter(yesterdayRatingAdapter);
+//        recyclerPastDayRating.setAdapter(pastRatingAdapter);
+//        updateHeight();
 
-        recyclerTodayRating.setAdapter(todayRatingAdapter);
-        recyclerYesterDayRating.setAdapter(yesterdayRatingAdapter);
-        recyclerPastDayRating.setAdapter(pastRatingAdapter);
-        updateHeight();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (getActivity() != null)
+                    ((NotificationsDetailActivity) getActivity()).updateNotificationCount(AppConstants.NOTIFICATION_TYPE_RATE);
+            }
+        }, 300);
     }
 
     private void updateHeight() {
@@ -189,16 +205,10 @@ public class NotiRatingFragment extends BaseNotificationFragment implements WsRe
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         int height = (displaymetrics.heightPixels * heightPercent) / 100;
 
-        setRecyclerViewHeight(recyclerTodayRating, height);
-        setRecyclerViewHeight(recyclerYesterDayRating, height);
-        setRecyclerViewHeight(recyclerPastDayRating, height);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (getActivity() != null)
-                    ((NotificationsDetailActivity) getActivity()).updateNotificationCount(AppConstants.NOTIFICATION_TYPE_RATE);
-            }
-        }, 800);
+//        setRecyclerViewHeight(recyclerTodayRating, height);
+//        setRecyclerViewHeight(recyclerYesterDayRating, height);
+//        setRecyclerViewHeight(recyclerPastDayRating, height);
+
     }
 
     private void setRecyclerViewHeight(RecyclerView recyclerView, int height) {
@@ -251,7 +261,7 @@ public class NotiRatingFragment extends BaseNotificationFragment implements WsRe
             new AsyncWebServiceCall(fragment, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     addCommentObject, null, WsResponseObject.class, WsConstants
                     .REQ_GET_EVENT_COMMENT, getResources().getString(R.string.msg_please_wait), true)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,WsConstants.WS_ROOT + WsConstants.REQ_GET_EVENT_COMMENT);
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants.REQ_GET_EVENT_COMMENT);
         } else {
             Toast.makeText(getActivity(), getResources().getString(R.string.msg_no_network), Toast.LENGTH_SHORT).show();
         }
@@ -285,66 +295,66 @@ public class NotiRatingFragment extends BaseNotificationFragment implements WsRe
                 });
             }
         });
-        textTodayTitle.setTypeface(Utils.typefaceRegular(getActivity()));
-        textYesterDayTitle.setTypeface(Utils.typefaceRegular(getActivity()));
-        textPastDaysTitle.setTypeface(Utils.typefaceRegular(getActivity()));
+//        textTodayTitle.setTypeface(Utils.typefaceRegular(getActivity()));
+//        textYesterDayTitle.setTypeface(Utils.typefaceRegular(getActivity()));
+//        textPastDaysTitle.setTypeface(Utils.typefaceRegular(getActivity()));
         textViewMore.setTypeface(Utils.typefaceRegular(getActivity()));
 
-        headerTodayIcon.setImageResource(R.drawable.ic_collapse);
-        headerTodayLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (recyclerTodayRating.getVisibility() == View.VISIBLE) {
-                    recyclerTodayRating.setVisibility(View.GONE);
-                    headerTodayIcon.setImageResource(R.drawable.ic_expand);
-                } else {
-                    recyclerTodayRating.setVisibility(View.VISIBLE);
-                    headerTodayIcon.setImageResource(R.drawable.ic_collapse);
-                }
-                recyclerYesterDayRating.setVisibility(View.GONE);
-                headerYesterDayIcon.setImageResource(R.drawable.ic_expand);
-
-                recyclerPastDayRating.setVisibility(View.GONE);
-                headerPastDayIcon.setImageResource(R.drawable.ic_expand);
-            }
-        });
-        headerYesterdayLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                recyclerTodayRating.setVisibility(View.GONE);
-                headerTodayIcon.setImageResource(R.drawable.ic_expand);
-
-                if (recyclerYesterDayRating.getVisibility() == View.VISIBLE) {
-                    recyclerYesterDayRating.setVisibility(View.GONE);
-                    headerYesterDayIcon.setImageResource(R.drawable.ic_expand);
-                } else {
-                    recyclerYesterDayRating.setVisibility(View.VISIBLE);
-                    headerYesterDayIcon.setImageResource(R.drawable.ic_collapse);
-                }
-
-                recyclerPastDayRating.setVisibility(View.GONE);
-                headerPastDayIcon.setImageResource(R.drawable.ic_expand);
-            }
-        });
-        headerPastdayLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                recyclerTodayRating.setVisibility(View.GONE);
-                headerTodayIcon.setImageResource(R.drawable.ic_expand);
-
-                recyclerYesterDayRating.setVisibility(View.GONE);
-                headerYesterDayIcon.setImageResource(R.drawable.ic_expand);
-
-                if (recyclerPastDayRating.getVisibility() == View.VISIBLE) {
-                    recyclerPastDayRating.setVisibility(View.GONE);
-                    headerPastDayIcon.setImageResource(R.drawable.ic_expand);
-                } else {
-                    recyclerPastDayRating.setVisibility(View.VISIBLE);
-                    headerPastDayIcon.setImageResource(R.drawable.ic_collapse);
-                }
-            }
-        });
+//        headerTodayIcon.setImageResource(R.drawable.ic_collapse);
+//        headerTodayLayout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (recyclerTodayRating.getVisibility() == View.VISIBLE) {
+//                    recyclerTodayRating.setVisibility(View.GONE);
+//                    headerTodayIcon.setImageResource(R.drawable.ic_expand);
+//                } else {
+//                    recyclerTodayRating.setVisibility(View.VISIBLE);
+//                    headerTodayIcon.setImageResource(R.drawable.ic_collapse);
+//                }
+//                recyclerYesterDayRating.setVisibility(View.GONE);
+//                headerYesterDayIcon.setImageResource(R.drawable.ic_expand);
+//
+//                recyclerPastDayRating.setVisibility(View.GONE);
+//                headerPastDayIcon.setImageResource(R.drawable.ic_expand);
+//            }
+//        });
+//        headerYesterdayLayout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                recyclerTodayRating.setVisibility(View.GONE);
+//                headerTodayIcon.setImageResource(R.drawable.ic_expand);
+//
+//                if (recyclerYesterDayRating.getVisibility() == View.VISIBLE) {
+//                    recyclerYesterDayRating.setVisibility(View.GONE);
+//                    headerYesterDayIcon.setImageResource(R.drawable.ic_expand);
+//                } else {
+//                    recyclerYesterDayRating.setVisibility(View.VISIBLE);
+//                    headerYesterDayIcon.setImageResource(R.drawable.ic_collapse);
+//                }
+//
+//                recyclerPastDayRating.setVisibility(View.GONE);
+//                headerPastDayIcon.setImageResource(R.drawable.ic_expand);
+//            }
+//        });
+//        headerPastdayLayout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                recyclerTodayRating.setVisibility(View.GONE);
+//                headerTodayIcon.setImageResource(R.drawable.ic_expand);
+//
+//                recyclerYesterDayRating.setVisibility(View.GONE);
+//                headerYesterDayIcon.setImageResource(R.drawable.ic_expand);
+//
+//                if (recyclerPastDayRating.getVisibility() == View.VISIBLE) {
+//                    recyclerPastDayRating.setVisibility(View.GONE);
+//                    headerPastDayIcon.setImageResource(R.drawable.ic_expand);
+//                } else {
+//                    recyclerPastDayRating.setVisibility(View.VISIBLE);
+//                    headerPastDayIcon.setImageResource(R.drawable.ic_collapse);
+//                }
+//            }
+//        });
         searchViewNotiRating.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -355,17 +365,18 @@ public class NotiRatingFragment extends BaseNotificationFragment implements WsRe
             @Override
             public boolean onQueryTextChange(String newText) {
                 if (TextUtils.isEmpty(newText)) {
-                    todayRatingAdapter.updateList(listTodayRating);
-                    yesterdayRatingAdapter.updateList(listYesterdayRating);
-                    pastRatingAdapter.updateList(listPastRating);
-                    updateHeight();
+                    notiRatingAdapter.updateList(listAllRating);
+//                    todayRatingAdapter.updateList(listTodayRating);
+//                    yesterdayRatingAdapter.updateList(listYesterdayRating);
+//                    pastRatingAdapter.updateList(listPastRating);
+//                    updateHeight();
                 }
                 return false;
             }
         });
 
-        recyclerYesterDayRating.setVisibility(View.GONE);
-        recyclerPastDayRating.setVisibility(View.GONE);
+//        recyclerYesterDayRating.setVisibility(View.GONE);
+//        recyclerPastDayRating.setVisibility(View.GONE);
         textViewMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -378,29 +389,36 @@ public class NotiRatingFragment extends BaseNotificationFragment implements WsRe
         {
 
             List<NotiRatingItem> temp = new ArrayList<>();
-            for (NotiRatingItem item : listTodayRating) {
+            for (NotiRatingItem item : listAllRating) {
                 if (item.getRaterName().toLowerCase().contains(query.toLowerCase())) {
                     temp.add(item);
                 }
             }
-            todayRatingAdapter.updateList(temp);
+            notiRatingAdapter.updateList(temp);
 
-            temp = new ArrayList<>();
-            for (NotiRatingItem item : listYesterdayRating) {
-                if (item.getRaterName().toLowerCase().contains(query.toLowerCase())) {
-                    temp.add(item);
-                }
-            }
-            yesterdayRatingAdapter.updateList(temp);
-
-            temp = new ArrayList<>();
-            for (NotiRatingItem item : listPastRating) {
-                if (item.getRaterName().toLowerCase().contains(query.toLowerCase())) {
-                    temp.add(item);
-                }
-            }
-            pastRatingAdapter.updateList(temp);
-            updateHeight();
+//            for (NotiRatingItem item : listTodayRating) {
+//                if (item.getRaterName().toLowerCase().contains(query.toLowerCase())) {
+//                    temp.add(item);
+//                }
+//            }
+//            todayRatingAdapter.updateList(temp);
+//
+//            temp = new ArrayList<>();
+//            for (NotiRatingItem item : listYesterdayRating) {
+//                if (item.getRaterName().toLowerCase().contains(query.toLowerCase())) {
+//                    temp.add(item);
+//                }
+//            }
+//            yesterdayRatingAdapter.updateList(temp);
+//
+//            temp = new ArrayList<>();
+//            for (NotiRatingItem item : listPastRating) {
+//                if (item.getRaterName().toLowerCase().contains(query.toLowerCase())) {
+//                    temp.add(item);
+//                }
+//            }
+//            pastRatingAdapter.updateList(temp);
+//            updateHeight();
         }
     }
 
@@ -445,18 +463,27 @@ public class NotiRatingFragment extends BaseNotificationFragment implements WsRe
 
     private void refreshAllList() {
 
-        ArrayList<Comment> replyReceivedToday = tableCommentMaster.getAllRatingReplyReceived(today, today);
-        ArrayList<Comment> replyReceivedYesterDay = tableCommentMaster.getAllRatingReplyReceived(yesterDay, yesterDay);
-        ArrayList<Comment> replyReceivedPastDays = tableCommentMaster.getAllRatingReplyReceived(pastday5thDay, dayBeforeYesterday);
+        ArrayList<Comment> replyReceivedAll = tableCommentMaster.getAllRatingReplyReceived(pastday5thDay, today);
+//        ArrayList<Comment> replyReceivedToday = tableCommentMaster.getAllRatingReplyReceived(today, today);
+//        ArrayList<Comment> replyReceivedYesterDay = tableCommentMaster.getAllRatingReplyReceived(yesterDay, yesterDay);
+//        ArrayList<Comment> replyReceivedPastDays = tableCommentMaster.getAllRatingReplyReceived(pastday5thDay, dayBeforeYesterday);
 
-        listTodayRating = createRatingReplyList(replyReceivedToday);
-        listYesterdayRating = createRatingReplyList(replyReceivedYesterDay);
-        listPastRating = createRatingReplyList(replyReceivedPastDays);
+        listAllRating = createRatingReplyList(replyReceivedAll);
+//        listTodayRating = createRatingReplyList(replyReceivedToday);
+//        listYesterdayRating = createRatingReplyList(replyReceivedYesterDay);
+//        listPastRating = createRatingReplyList(replyReceivedPastDays);
 
-        todayRatingAdapter.updateList(listTodayRating);
-        yesterdayRatingAdapter.updateList(listYesterdayRating);
-        pastRatingAdapter.updateList(listPastRating);
+        notiRatingAdapter.updateList(listAllRating);
+//        todayRatingAdapter.updateList(listTodayRating);
+//        yesterdayRatingAdapter.updateList(listYesterdayRating);
+//        pastRatingAdapter.updateList(listPastRating);
 
-        updateHeight();
+//        updateHeight();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+//        null.unbind();
     }
 }

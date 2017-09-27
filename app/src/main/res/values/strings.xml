@@ -706,5 +706,6 @@
     <string name="my_profile_share">Share Profile</string>
     <string name="share_rating_via_social_media">Share rating via Social Media</string>
     <string name="error_no_social_app_found">Please install Facebook or LinkedIn or Twitter app to share information.</string>
+    <string name="org_list">Organizations List</string>
 
 </resources>

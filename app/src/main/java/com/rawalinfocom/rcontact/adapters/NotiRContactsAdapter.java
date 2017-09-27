@@ -39,11 +39,14 @@ import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.model.NotiRContactsItem;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
@@ -121,7 +124,20 @@ public class NotiRContactsAdapter extends RecyclerView.Adapter<NotiRContactsAdap
         NotiRContactsItem item = list.get(position);
 
         holder.textTitle.setText(item.getNotiTitle());
-        holder.textNotiTime.setText(Utils.formatDateTime(item.getNotiTime(), "dd MMM, hh:mm a"));
+
+        String notiTime =  item.getNotiTime();
+        String date =  Utils.formatDateTime(notiTime,"yyyy-MM-dd");
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
+        String current = s.format(c.getTime());
+        if(StringUtils.equalsIgnoreCase(current,date)){
+            holder.textNotiTime.setText(Utils.formatDateTime(notiTime,"hh:mm a"));
+        }else{
+            holder.textNotiTime.setText(Utils.formatDateTime(notiTime,"dd MMM, yy"));
+        }
+
+
+//        holder.textNotiTime.setText(Utils.formatDateTime(item.getNotiTime(), "dd MMM, hh:mm a"));
 
         String text = item.getNotiDetails().trim();
 
@@ -363,6 +379,7 @@ public class NotiRContactsAdapter extends RecyclerView.Adapter<NotiRContactsAdap
         return image;
     }
 
+    @SuppressLint("ValidFragment")
     public static class MyDialogFragment extends DialogFragment {
 
         @BindView(R.id.image_banner)
@@ -374,9 +391,6 @@ public class NotiRContactsAdapter extends RecyclerView.Adapter<NotiRContactsAdap
         TextView txtDetails;
 
         private String notiType, notiUrl;
-
-        public MyDialogFragment() {
-        }
 
         @SuppressLint("ValidFragment")
         public MyDialogFragment(String notiType, String notiUrl) {
