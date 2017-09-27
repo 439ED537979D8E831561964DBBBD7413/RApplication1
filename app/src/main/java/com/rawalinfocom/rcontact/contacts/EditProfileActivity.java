@@ -4641,6 +4641,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         }
 
 
-    //</editor-fold>
+        //</editor-fold>
 
+    }
 }

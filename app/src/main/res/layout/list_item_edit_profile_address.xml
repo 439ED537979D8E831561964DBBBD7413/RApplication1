@@ -99,6 +99,7 @@
                         android:clickable="false"
                         android:textColor="@color/colorAccent"
                         android:textSize="16sp"
+                        android:visibility="gone"
                         tools:ignore="TextFields"
                         tools:text="1234567890"/>
 
@@ -141,6 +142,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorAccent"
+                android:visibility="gone"
                 android:textSize="16sp"/>
             <!--android:textColorHint="@color/darkCyan"-->
 
