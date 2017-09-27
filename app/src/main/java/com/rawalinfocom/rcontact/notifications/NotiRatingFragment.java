@@ -166,6 +166,14 @@ public class NotiRatingFragment extends BaseNotificationFragment implements WsRe
 //        recyclerYesterDayRating.setAdapter(yesterdayRatingAdapter);
 //        recyclerPastDayRating.setAdapter(pastRatingAdapter);
 //        updateHeight();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (getActivity() != null)
+                    ((NotificationsDetailActivity) getActivity()).updateNotificationCount(AppConstants.NOTIFICATION_TYPE_RATE);
+            }
+        }, 300);
     }
 
     private void updateHeight() {
@@ -200,13 +208,7 @@ public class NotiRatingFragment extends BaseNotificationFragment implements WsRe
 //        setRecyclerViewHeight(recyclerTodayRating, height);
 //        setRecyclerViewHeight(recyclerYesterDayRating, height);
 //        setRecyclerViewHeight(recyclerPastDayRating, height);
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                if (getActivity() != null)
-//                    ((NotificationsDetailActivity) getActivity()).updateNotificationCount(AppConstants.NOTIFICATION_TYPE_RATE);
-//            }
-//        }, 800);
+
     }
 
     private void setRecyclerViewHeight(RecyclerView recyclerView, int height) {

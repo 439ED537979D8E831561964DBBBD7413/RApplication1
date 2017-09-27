@@ -342,14 +342,18 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                         for (int i = 0; i < globalSearchTypeArrayList.size(); i++) {
                             GlobalSearchType globalSearchType = globalSearchTypeArrayList.get(i);
                             String number = globalSearchTypeArrayList.get(i).getMobileNumber();
-                            if (!number.startsWith("+"))
-                                number = "+" + number;
-                            if (!arrayListRCPNumber.contains(number)) {
+                            if(!StringUtils.isEmpty(number)){
+                                if (!number.startsWith("+"))
+                                    number = "+" + number;
+                                if (!arrayListRCPNumber.contains(number)) {
+                                    globalSearchTypeArrayListMain.add(globalSearchType);
+                                }
+                            }else{
                                 globalSearchTypeArrayListMain.add(globalSearchType);
                             }
+
                         }
-
-
+                        
                         recycleViewGlobalContact.setVisibility(View.VISIBLE);
                         if (count > 9)
                             rippleViewMoreGlobalContacts.setVisibility(View.GONE);
@@ -1043,6 +1047,13 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
     private void getGlobalDataWebServiceCall(String searchQuery, int maxRecords, int startAt) {
         if (Utils.isNetworkAvailable(this)) {
             WsRequestObject deviceDetailObject = new WsRequestObject();
+            Pattern numberPat = Pattern.compile(".*[a-zA-Z].*");
+            Matcher matcher1 = numberPat.matcher(searchQuery);
+            if (matcher1.find()){
+                deviceDetailObject.setType("name");
+            }else{
+                deviceDetailObject.setType("phone_number");
+            }
             deviceDetailObject.setSearchQuery(searchQuery);
             deviceDetailObject.setSearchStartAt(startAt);
             deviceDetailObject.setSearchMaxRecord(maxRecords);
