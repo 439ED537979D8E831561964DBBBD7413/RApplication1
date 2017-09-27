@@ -70,20 +70,6 @@ public class QueryManager {
 //                    (cursor.getColumnIndex(TableProfileMaster.COLUMN_PM_MIDDLE_NAME))));
             profileDataOperation.setPbNameLast(StringUtils.defaultString(cursor.getString(cursor
                     .getColumnIndex(TableProfileMaster.COLUMN_PM_LAST_NAME))));
-//            profileDataOperation.setPbNameSuffix(StringUtils.defaultString(cursor.getString
-//                    (cursor.getColumnIndex(TableProfileMaster.COLUMN_PM_SUFFIX))));
-//            profileDataOperation.setPbNickname(StringUtils.defaultString(cursor.getString(cursor
-//                    .getColumnIndex(TableProfileMaster.COLUMN_PM_NICK_NAME))));
-//            profileDataOperation.setPbPhoneticNameFirst(StringUtils.defaultString(cursor
-//                    .getString(cursor.getColumnIndex(TableProfileMaster
-//                            .COLUMN_PM_PHONETIC_FIRST_NAME))));
-//            profileDataOperation.setPbPhoneticNameMiddle(StringUtils.defaultString(cursor
-//                    .getString(cursor.getColumnIndex(TableProfileMaster
-//                            .COLUMN_PM_PHONETIC_MIDDLE_NAME))));
-//            profileDataOperation.setPbPhoneticNameLast(StringUtils.defaultString(cursor.getString
-//                    (cursor.getColumnIndex(TableProfileMaster.COLUMN_PM_PHONETIC_LAST_NAME))));
-//            profileDataOperation.setPbNote(StringUtils.defaultString(cursor.getString(cursor
-//                    .getColumnIndex(TableProfileMaster.COLUMN_PM_NOTES))));
             profileDataOperation.setPbGender(StringUtils.defaultString(cursor.getString(cursor
                     .getColumnIndex(TableProfileMaster.COLUMN_PM_GENDER))));
             profileDataOperation.setIsFavourite(StringUtils.defaultString(cursor.getString(cursor
@@ -282,8 +268,6 @@ public class QueryManager {
         if (imAccountCursor.moveToFirst()) {
             do {
                 ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
-               /* imAccount.setIMAccountType(StringUtils.defaultString(imAccountCursor.getString
-                        (imAccountCursor.getColumnIndex(TableImMaster.COLUMN_IM_IM_TYPE))));*/
                 imAccount.setIMAccountProtocol(StringUtils.defaultString(imAccountCursor
                         .getString(imAccountCursor.getColumnIndex(TableImMaster
                                 .COLUMN_IM_PROTOCOL))));
@@ -512,10 +496,6 @@ public class QueryManager {
         if (cursor.moveToFirst()) {
             do {
                 ProfileData profileData = new ProfileData();
-                /*profileData.setTempFirstName(cursor.getString(cursor.getColumnIndex
-                        (TableProfileMaster.COLUMN_PM_FIRST_NAME)));
-                profileData.setTempLastName(cursor.getString(cursor.getColumnIndex
-                        (TableProfileMaster.COLUMN_PM_LAST_NAME)));*/
                 profileData.setTempRcpName(cursor.getString(cursor.getColumnIndex
                         (TableProfileMaster.COLUMN_PM_FIRST_NAME)) + " " + cursor.getString
                         (cursor.getColumnIndex(TableProfileMaster.COLUMN_PM_LAST_NAME)));
