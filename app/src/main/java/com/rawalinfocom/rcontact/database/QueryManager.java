@@ -70,20 +70,6 @@ public class QueryManager {
 //                    (cursor.getColumnIndex(TableProfileMaster.COLUMN_PM_MIDDLE_NAME))));
             profileDataOperation.setPbNameLast(StringUtils.defaultString(cursor.getString(cursor
                     .getColumnIndex(TableProfileMaster.COLUMN_PM_LAST_NAME))));
-//            profileDataOperation.setPbNameSuffix(StringUtils.defaultString(cursor.getString
-//                    (cursor.getColumnIndex(TableProfileMaster.COLUMN_PM_SUFFIX))));
-//            profileDataOperation.setPbNickname(StringUtils.defaultString(cursor.getString(cursor
-//                    .getColumnIndex(TableProfileMaster.COLUMN_PM_NICK_NAME))));
-//            profileDataOperation.setPbPhoneticNameFirst(StringUtils.defaultString(cursor
-//                    .getString(cursor.getColumnIndex(TableProfileMaster
-//                            .COLUMN_PM_PHONETIC_FIRST_NAME))));
-//            profileDataOperation.setPbPhoneticNameMiddle(StringUtils.defaultString(cursor
-//                    .getString(cursor.getColumnIndex(TableProfileMaster
-//                            .COLUMN_PM_PHONETIC_MIDDLE_NAME))));
-//            profileDataOperation.setPbPhoneticNameLast(StringUtils.defaultString(cursor.getString
-//                    (cursor.getColumnIndex(TableProfileMaster.COLUMN_PM_PHONETIC_LAST_NAME))));
-//            profileDataOperation.setPbNote(StringUtils.defaultString(cursor.getString(cursor
-//                    .getColumnIndex(TableProfileMaster.COLUMN_PM_NOTES))));
             profileDataOperation.setPbGender(StringUtils.defaultString(cursor.getString(cursor
                     .getColumnIndex(TableProfileMaster.COLUMN_PM_GENDER))));
             profileDataOperation.setIsFavourite(StringUtils.defaultString(cursor.getString(cursor
@@ -144,6 +130,7 @@ public class QueryManager {
         //<editor-fold desc="EmailId">
         String emailIdQuery = "SELECT email." + TableEmailMaster.COLUMN_EM_EMAIL_ADDRESS + "," +
                 "email." + TableEmailMaster.COLUMN_EM_EMAIL_TYPE +
+                ",email." + TableEmailMaster.COLUMN_EM_SOCIAL_TYPE +
                 ",email." + TableEmailMaster.COLUMN_EM_IS_PRIVATE + ",email." + TableEmailMaster
                 .COLUMN_EM_EMAIL_PRIVACY + ",email." + TableEmailMaster.COLUMN_EM_RECORD_INDEX_ID +
                 ",email." + TableEmailMaster.COLUMN_EM_IS_VERIFIED + " FROM " + TableEmailMaster
@@ -162,6 +149,8 @@ public class QueryManager {
                         (emailIdCursor.getColumnIndex(TableEmailMaster.COLUMN_EM_EMAIL_ADDRESS))));
                 email.setEmType(StringUtils.defaultString(emailIdCursor.getString(emailIdCursor
                         .getColumnIndex(TableEmailMaster.COLUMN_EM_EMAIL_TYPE))));
+                email.setEmSocialType(StringUtils.defaultString(emailIdCursor.getString(emailIdCursor
+                        .getColumnIndex(TableEmailMaster.COLUMN_EM_SOCIAL_TYPE))));
                 email.setEmPublic(Integer.parseInt(StringUtils.defaultString(emailIdCursor
                         .getString(emailIdCursor.getColumnIndex(TableEmailMaster
                                 .COLUMN_EM_EMAIL_PRIVACY)), "0")));
@@ -181,9 +170,11 @@ public class QueryManager {
         //</editor-fold>
 
         // <editor-fold desc="Organization">
-        String organizationQuery = "SELECT org." + TableOrganizationMaster
-                .COLUMN_OM_ORGANIZATION_COMPANY + ", org." + TableOrganizationMaster
-                .COLUMN_OM_ORGANIZATION_DESIGNATION + " from " + TableOrganizationMaster
+        String organizationQuery = "SELECT org." + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_COMPANY
+                + ",org." + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_FROM_DATE
+                + ",org." + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_TO_DATE
+                + ",org." + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_DESIGNATION
+                + " from " + TableOrganizationMaster
                 .TABLE_RC_ORGANIZATION_MASTER + " org WHERE org." + TableOrganizationMaster
                 .COLUMN_RC_PROFILE_MASTER_PM_ID + " IN (" + rcpId + ") ORDER BY org." +
                 TableOrganizationMaster.COLUMN_OM_ORGANIZATION_IS_CURRENT + " DESC";
@@ -203,6 +194,12 @@ public class QueryManager {
                 organization.setOrgJobTitle(StringUtils.defaultString(organizationCursor
                         .getString(organizationCursor.getColumnIndex(TableOrganizationMaster
                                 .COLUMN_OM_ORGANIZATION_DESIGNATION))));
+                organization.setOrgFromDate(StringUtils.defaultString(organizationCursor.getString
+                        (organizationCursor.getColumnIndex(TableOrganizationMaster
+                                .COLUMN_OM_ORGANIZATION_FROM_DATE))));
+                organization.setOrgToDate(StringUtils.defaultString(organizationCursor.getString
+                        (organizationCursor.getColumnIndex(TableOrganizationMaster
+                                .COLUMN_OM_ORGANIZATION_TO_DATE))));
                 organization.setOrgRcpType(String.valueOf(IntegerConstants
                         .RCP_TYPE_CLOUD_PHONE_BOOK));
                 arrayListOrganization.add(organization);
@@ -271,8 +268,6 @@ public class QueryManager {
         if (imAccountCursor.moveToFirst()) {
             do {
                 ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
-               /* imAccount.setIMAccountType(StringUtils.defaultString(imAccountCursor.getString
-                        (imAccountCursor.getColumnIndex(TableImMaster.COLUMN_IM_IM_TYPE))));*/
                 imAccount.setIMAccountProtocol(StringUtils.defaultString(imAccountCursor
                         .getString(imAccountCursor.getColumnIndex(TableImMaster
                                 .COLUMN_IM_PROTOCOL))));
@@ -501,10 +496,6 @@ public class QueryManager {
         if (cursor.moveToFirst()) {
             do {
                 ProfileData profileData = new ProfileData();
-                /*profileData.setTempFirstName(cursor.getString(cursor.getColumnIndex
-                        (TableProfileMaster.COLUMN_PM_FIRST_NAME)));
-                profileData.setTempLastName(cursor.getString(cursor.getColumnIndex
-                        (TableProfileMaster.COLUMN_PM_LAST_NAME)));*/
                 profileData.setTempRcpName(cursor.getString(cursor.getColumnIndex
                         (TableProfileMaster.COLUMN_PM_FIRST_NAME)) + " " + cursor.getString
                         (cursor.getColumnIndex(TableProfileMaster.COLUMN_PM_LAST_NAME)));

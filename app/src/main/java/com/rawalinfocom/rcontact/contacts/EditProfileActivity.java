@@ -67,8 +67,10 @@ import com.google.common.base.MoreObjects;
 import com.linkedin.platform.LISessionManager;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.LinkedinLoginActivity;
+import com.rawalinfocom.rcontact.OrganizationListActivity;
 import com.rawalinfocom.rcontact.ProfileRegistrationActivity;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.adapters.OrganizationSearchListAdapter;
 import com.rawalinfocom.rcontact.adapters.SocialConnectListAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
@@ -370,6 +372,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     boolean isOrganization = false;
     boolean isMale = false, isFemale = false;
     boolean isUpdated = false;
+    boolean isAdd = true;
 
     UserProfile userProfile;
     MaterialDialog backConfirmationDialog;
@@ -395,6 +398,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     private String socialId = "";
     private TextView organizationDateView;
     ArrayList<ProfileDataOperationEmail> SocialEmailList;
+    ArrayList<ProfileDataOperationEmail> arrayListOldEmailAccount;
 
     private String[] requiredPermissions = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest
             .permission.WRITE_EXTERNAL_STORAGE};
@@ -420,6 +424,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 (Auth.GOOGLE_SIGN_IN_API, gso).build();
 
         SocialEmailList = new ArrayList<>();
+        arrayListOldEmailAccount = new ArrayList<>();
 
         init();
 
@@ -619,6 +624,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 if (data.getStringExtra("isBack").equalsIgnoreCase("0")) {
                     //If everything went Ok, change to another activity.
                     socialId = data.getStringExtra("url");
+                    isAdd = true;
 
                     ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
                     imAccount.setIMAccountProtocol("LinkedIn");
@@ -629,14 +635,37 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     imAccount.setIMAccountPublic(IntegerConstants.PRIVACY_MY_CONTACT);
                     arrayListSocialContactObject.add(imAccount);
 
-                    ProfileDataOperationEmail email = new ProfileDataOperationEmail();
-                    email.setEmEmailId(StringUtils.trim(data.getStringExtra("email")));
-                    email.setEmType("Work");
-                    email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
-                    email.setEmIsSocial(1);
-                    email.setEmSocialType("linkedin");
+                    for (int i = 0; i < arrayListEmailObject.size(); i++) {
+                        ProfileDataOperationEmail operationEmail = (ProfileDataOperationEmail)
+                                arrayListEmailObject.get(i);
+                        if (operationEmail.getEmEmailId().equalsIgnoreCase(
+                                StringUtils.trim(data.getStringExtra("email")))) {
 
-                    SocialEmailList.add(email);
+                            ProfileDataOperationEmail email = new ProfileDataOperationEmail();
+                            email.setEmEmailId(StringUtils.trim(data.getStringExtra("email")));
+                            email.setEmType("Work");
+                            email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
+                            email.setEmIsSocial(2);
+                            email.setEmSocialType(operationEmail.getEmSocialType() + ",linkedin");
+                            SocialEmailList.add(email);
+
+                            arrayListOldEmailAccount.remove(i);
+
+                            isAdd = false;
+                            break;
+                        }
+                    }
+
+                    if (isAdd) {
+
+                        ProfileDataOperationEmail email = new ProfileDataOperationEmail();
+                        email.setEmEmailId(StringUtils.trim(data.getStringExtra("email")));
+                        email.setEmType("Work");
+                        email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
+                        email.setEmIsSocial(2);
+                        email.setEmSocialType("linkedin");
+                        SocialEmailList.add(email);
+                    }
 
                     addSocialConnectView(arrayListSocialContactObject.get(arrayListSocialContactObject.size() - 1), "");
 
@@ -691,6 +720,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     }
 
     private void registerFacebookCallback() {
+
         LoginManager.getInstance().registerCallback(callbackManager,
                 new FacebookCallback<LoginResult>() {
                     @Override
@@ -706,6 +736,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                 try {
 
                                     socialId = jsonObject.getString("id");
+                                    isAdd = true;
 
                                     ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
 
@@ -719,14 +750,36 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                     imAccount.setIMAccountDetails(socialId);
                                     arrayListSocialContactObject.add(imAccount);
 
-                                    ProfileDataOperationEmail email = new ProfileDataOperationEmail();
-                                    email.setEmEmailId(StringUtils.trim(jsonObject.getString("email")));
-                                    email.setEmType("Work");
-                                    email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
-                                    email.setEmIsSocial(1);
-                                    email.setEmSocialType("facebook");
+                                    for (int i = 0; i < arrayListEmailObject.size(); i++) {
+                                        ProfileDataOperationEmail operationEmail = (ProfileDataOperationEmail)
+                                                arrayListEmailObject.get(i);
+                                        if (operationEmail.getEmEmailId().equalsIgnoreCase(
+                                                StringUtils.trim(jsonObject.getString("email")))) {
 
-                                    SocialEmailList.add(email);
+                                            ProfileDataOperationEmail email = new ProfileDataOperationEmail();
+                                            email.setEmEmailId(StringUtils.trim(jsonObject.getString("email")));
+                                            email.setEmType("Work");
+                                            email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
+                                            email.setEmIsSocial(2);
+                                            email.setEmSocialType(operationEmail.getEmSocialType() + ",facebook");
+                                            SocialEmailList.add(email);
+
+                                            arrayListOldEmailAccount.remove(i);
+
+                                            isAdd = false;
+                                            break;
+                                        }
+                                    }
+
+                                    if (isAdd) {
+                                        ProfileDataOperationEmail email = new ProfileDataOperationEmail();
+                                        email.setEmEmailId(StringUtils.trim(jsonObject.getString("email")));
+                                        email.setEmType("Work");
+                                        email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
+                                        email.setEmIsSocial(2);
+                                        email.setEmSocialType("facebook");
+                                        SocialEmailList.add(email);
+                                    }
 
                                     addSocialConnectView(arrayListSocialContactObject.get(arrayListSocialContactObject.size() - 1)
                                             , "");
@@ -774,6 +827,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             if (acct != null) {
 
                 socialId = acct.getId();
+                isAdd = true;
 
                 ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
                 imAccount.setIMAccountProtocol("GooglePlus");
@@ -785,14 +839,37 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 imAccount.setIMAccountDetails(socialId);
                 arrayListSocialContactObject.add(imAccount);
 
-                ProfileDataOperationEmail email = new ProfileDataOperationEmail();
-                email.setEmEmailId(StringUtils.trim(acct.getEmail()));
-                email.setEmType("Work");
-                email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
-                email.setEmIsSocial(1);
-                email.setEmSocialType("google");
+                for (int i = 0; i < arrayListEmailObject.size(); i++) {
+                    ProfileDataOperationEmail operationEmail = (ProfileDataOperationEmail)
+                            arrayListEmailObject.get(i);
+                    if (operationEmail.getEmEmailId().equalsIgnoreCase(
+                            StringUtils.trim(acct.getEmail()))) {
 
-                SocialEmailList.add(email);
+                        ProfileDataOperationEmail email = new ProfileDataOperationEmail();
+                        email.setEmEmailId(StringUtils.trim(acct.getEmail()));
+                        email.setEmType("Work");
+                        email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
+                        email.setEmIsSocial(2);
+                        email.setEmSocialType(operationEmail.getEmSocialType() + ",google");
+                        SocialEmailList.add(email);
+
+                        arrayListOldEmailAccount.remove(i);
+
+                        isAdd = false;
+                        break;
+                    }
+                }
+
+                if (isAdd) {
+
+                    ProfileDataOperationEmail email = new ProfileDataOperationEmail();
+                    email.setEmEmailId(StringUtils.trim(acct.getEmail()));
+                    email.setEmType("Work");
+                    email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
+                    email.setEmIsSocial(2);
+                    email.setEmSocialType("google");
+                    SocialEmailList.add(email);
+                }
 
                 addSocialConnectView(arrayListSocialContactObject.get(arrayListSocialContactObject.size() - 1), "");
             }
@@ -1234,6 +1311,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     if (StringUtils.length(textIsVerified.getText().toString()) > 0) {
                         email.setEmRcpType(Integer.parseInt(textIsVerified.getText().toString()
                                 .trim()));
+                    } else {
+                        email.setEmRcpType(IntegerConstants.RCP_TYPE_SECONDARY);
                     }
 
                     if (!StringUtils.isBlank(email.getEmEmailId())) {
@@ -1278,22 +1357,25 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                 ArrayList<ProfileDataOperationEmail> arrayListFinalEmailAccount = new ArrayList<>();
 
-                TableEmailMaster tableEmailMaster = new TableEmailMaster(databaseHandler);
+//                TableEmailMaster tableEmailMaster = new TableEmailMaster(databaseHandler);
 
-                ArrayList<Email> arrayListEmail = tableEmailMaster.getEmailsFromPmId(Integer.parseInt
-                        (getUserPmId()));
-                ArrayList<ProfileDataOperationEmail> arrayListNewEmailAccount = new ArrayList<>();
-
-                for (int i = 0; i < arrayListEmail.size(); i++) {
-                    ProfileDataOperationEmail email = new ProfileDataOperationEmail();
-                    email.setEmEmailId(arrayListEmail.get(i).getEmEmailAddress());
-                    email.setEmType(arrayListEmail.get(i).getEmEmailType());
-                    email.setEmId(arrayListEmail.get(i).getEmRecordIndexId());
-                    email.setEmPublic(Integer.parseInt(arrayListEmail.get(i).getEmEmailPrivacy()));
-                    email.setEmRcpType(Integer.parseInt(arrayListEmail.get(i).getEmIsVerified()));
-
-                    arrayListNewEmailAccount.add(email);
-                }
+//                ArrayList<Email> arrayListEmail = tableEmailMaster.getEmailsFromPmId(Integer.parseInt
+//                        (getUserPmId()));
+//                ArrayList<ProfileDataOperationEmail> arrayListNewEmailAccount = new ArrayList<>();
+//
+//                for (int i = 0; i < arrayListEmail.size(); i++) {
+//
+//                    if (!SocialEmailList.contains(arrayListEmail.get(i).getEmEmailAddress())) {
+//                        ProfileDataOperationEmail email = new ProfileDataOperationEmail();
+//                        email.setEmEmailId(arrayListEmail.get(i).getEmEmailAddress());
+//                        email.setEmType(arrayListEmail.get(i).getEmEmailType());
+//                        email.setEmId(arrayListEmail.get(i).getEmRecordIndexId());
+//                        email.setEmPublic(Integer.parseInt(arrayListEmail.get(i).getEmEmailPrivacy()));
+//                        email.setEmRcpType(Integer.parseInt(arrayListEmail.get(i).getEmIsVerified()));
+//
+//                        arrayListNewEmailAccount.add(email);
+//                    }
+//                }
 
                 ArrayList<ProfileDataOperationImAccount> arrayListNewImAccount = new ArrayList<>();
                 isValid = true;
@@ -1342,7 +1424,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 if (isValid) {
                     if (arrayListNewImAccount.size() > 0) {
 
-                        arrayListFinalEmailAccount.addAll(arrayListNewEmailAccount);
+                        arrayListFinalEmailAccount.addAll(arrayListOldEmailAccount);
                         arrayListFinalEmailAccount.addAll(SocialEmailList);
 
                         profileDataOperation.setPbIMAccounts(arrayListNewImAccount);
@@ -2599,13 +2681,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         for (int i = 0; i < arrayListEmail.size(); i++) {
             ProfileDataOperationEmail email = new ProfileDataOperationEmail();
             email.setEmEmailId(arrayListEmail.get(i).getEmEmailAddress());
+            email.setEmSocialType(arrayListEmail.get(i).getEmSocialType());
             email.setEmType(arrayListEmail.get(i).getEmEmailType());
             email.setEmId(arrayListEmail.get(i).getEmRecordIndexId());
             email.setEmPublic(Integer.parseInt(arrayListEmail.get(i).getEmEmailPrivacy()));
             email.setEmRcpType(Integer.parseInt(arrayListEmail.get(i).getEmIsVerified()));
             arrayListEmailObject.add(email);
-
-//            SocialEmailList.add(email);
+            arrayListOldEmailAccount.add(email);
         }
         if (arrayListEmailObject.size() > 0) {
             for (int i = 0; i < arrayListEmailObject.size(); i++) {
@@ -3046,6 +3128,19 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                 email.getEmEmailId() + " " + getString(R.string.im_icon_verify),
                                 0, (StringUtils.length(email.getEmEmailId()) + 1), ((StringUtils
                                         .length(email.getEmEmailId()) + 1) + 1)));
+
+                    } else if (email.getEmRcpType() == IntegerConstants.RCP_TYPE_SECONDARY &&
+                            !email.getEmSocialType().equalsIgnoreCase("")) {
+                        inputValue.setTypeface(Utils.typefaceIcons(EditProfileActivity.this));
+                        inputValue.setEnabled(false);
+                        spinnerType.setVisibility(View.GONE);
+                        imageViewDelete.setVisibility(View.GONE);
+                       /* inputValue.setText(String.format("%s %s", email.getEmEmailId(),
+                                getString(R.string.im_icon_verify)));*/
+                        inputValue.setText(Utils.setMultipleTypeface(EditProfileActivity.this,
+                                email.getEmEmailId() + " " + getString(R.string.im_icon_verify),
+                                0, (StringUtils.length(email.getEmEmailId()) + 1), ((StringUtils
+                                        .length(email.getEmEmailId()) + 1) + 1)));
                     } else {
                         inputValue.setText(email.getEmEmailId());
                     }
@@ -3390,6 +3485,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
         inputCompanyName.setTypeface(Utils.typefaceRegular(this));
         inputDesignationName.setTypeface(Utils.typefaceRegular(this));
+
+//        inputCompanyName.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                startActivity(new Intent(EditProfileActivity.this, OrganizationListActivity.class));
+//            }
+//        });
 
         ProfileDataOperationOrganization organization = (ProfileDataOperationOrganization)
                 detailObject;
@@ -4257,6 +4359,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 Email email = new Email();
                 email.setEmRecordIndexId(arrayListEmailId.get(i).getEmId());
                 email.setEmEmailAddress(arrayListEmailId.get(i).getEmEmailId());
+                email.setEmSocialType(arrayListEmailId.get(i).getEmSocialType());
                 email.setEmEmailType(arrayListEmailId.get(i).getEmType());
                 email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(i).getEmPublic()));
                 email.setEmIsVerified(String.valueOf(arrayListEmailId.get(i).getEmRcpType()));

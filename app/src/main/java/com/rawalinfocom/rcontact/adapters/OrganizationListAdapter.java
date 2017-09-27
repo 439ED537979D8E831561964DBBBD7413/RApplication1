@@ -63,6 +63,22 @@ public class OrganizationListAdapter extends RecyclerView.Adapter<OrganizationLi
             holder.textSub.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
         }
 
+        if (organization.getOrgToDate().equalsIgnoreCase("")) {
+            String formattedFromDate = Utils.convertDateFormat(organization.getOrgFromDate(),
+                    "yyyy-MM-dd hh:mm:ss", Utils.getEventDateFormat(organization.getOrgFromDate()));
+
+            holder.textTime.setText(String.format("%s to Present ", formattedFromDate));
+        } else {
+
+            String formattedFromDate = Utils.convertDateFormat(organization.getOrgFromDate(),
+                    "yyyy-MM-dd hh:mm:ss", Utils.getEventDateFormat(organization.getOrgFromDate()));
+            String formattedToDate = Utils.convertDateFormat(organization.getOrgToDate(),
+                    "yyyy-MM-dd hh:mm:ss", Utils.getEventDateFormat(organization.getOrgToDate()));
+
+            holder.textTime.setText(String.format("%s to %s ", formattedFromDate, formattedToDate));
+
+        }
+
     }
 
     @Override
@@ -76,6 +92,8 @@ public class OrganizationListAdapter extends RecyclerView.Adapter<OrganizationLi
         TextView textMain;
         @BindView(R.id.text_sub)
         TextView textSub;
+        @BindView(R.id.text_time)
+        TextView textTime;
 
         OrganizationViewHolder(View itemView) {
             super(itemView);
@@ -83,6 +101,9 @@ public class OrganizationListAdapter extends RecyclerView.Adapter<OrganizationLi
 
             textMain.setTypeface(Utils.typefaceRegular(context));
             textSub.setTypeface(Utils.typefaceRegular(context));
+            textTime.setTypeface(Utils.typefaceRegular(context));
+
+            textTime.setVisibility(View.VISIBLE);
         }
     }
 }

@@ -181,7 +181,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     private final int CONTACT_CHUNK = 50;
     int lastSyncedData = 0;
 
-    public  Toolbar getToolbar(){
+    public Toolbar getToolbar() {
         return this.toolbar;
     }
 
@@ -1522,6 +1522,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                         for (int j = 0; j < arrayListEmailId.size(); j++) {
                             Email email = new Email();
                             email.setEmEmailAddress(arrayListEmailId.get(j).getEmEmailId());
+                            email.setEmSocialType(arrayListEmailId.get(j).getEmSocialType());
                             email.setEmRecordIndexId(arrayListEmailId.get(j).getEmId());
                             email.setEmEmailType(arrayListEmailId.get(j).getEmType());
                             email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(j)
