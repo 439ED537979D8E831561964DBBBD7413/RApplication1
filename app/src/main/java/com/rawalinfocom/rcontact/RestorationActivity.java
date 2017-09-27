@@ -643,6 +643,7 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
                             Email email = new Email();
                             email.setEmEmailAddress(arrayListEmailId.get(j).getEmEmailId());
                             email.setEmRecordIndexId(arrayListEmailId.get(j).getEmId());
+                            email.setEmSocialType(arrayListEmailId.get(i).getEmSocialType());
                             email.setEmEmailType(arrayListEmailId.get(j).getEmType());
                             email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(j)
                                     .getEmPublic()));

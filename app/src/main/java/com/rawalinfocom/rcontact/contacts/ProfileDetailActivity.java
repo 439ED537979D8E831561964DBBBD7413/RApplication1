@@ -3986,6 +3986,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 Email email = new Email();
                 email.setEmRecordIndexId(arrayListEmailId.get(i).getEmId());
                 email.setEmEmailAddress(arrayListEmailId.get(i).getEmEmailId());
+                email.setEmSocialType(arrayListEmailId.get(i).getEmSocialType());
                 email.setEmEmailType(arrayListEmailId.get(i).getEmType());
                 email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(i).getEmPublic()));
                 email.setEmIsPrivate(arrayListEmailId.get(i).getEmIsPrivate());

@@ -193,10 +193,10 @@ public class OrganizationListActivity extends BaseActivity implements RippleView
 
         for (int i = 0; i < 30; i++) {
             OrganizationData organizationData = new OrganizationData();
-            organizationData.setOmId(String.valueOf(i * 45));
-            organizationData.setOmRecordIndexId(String.valueOf(i * 45));
-            organizationData.setOmOrganizationCompany("Rawal Infocom " + (i * 45));
-            organizationData.setOmOrganizationDesignation("Android Developer " + (i * 45));
+            organizationData.setOmId(String.valueOf(i * 12));
+            organizationData.setOmRecordIndexId(String.valueOf(i * 12));
+            organizationData.setOmOrganizationCompany("Rawal Infocom " + (i * 12));
+            organizationData.setOmOrganizationDesignation("Android Developer " + (i));
             organizationData.setOmOrganizationProfileImage("https://media.licdn.com/mpr/mpr/shrink_200_200/" +
                     "AAEAAQAAAAAAAAgxAAAAJDZmZjk4OGEyLTIwMGItNDAwNS05MTEwLTJmMDM3YTBmNjVjMw.png");
             arrayListOrganization.add(organizationData);

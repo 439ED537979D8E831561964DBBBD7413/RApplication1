@@ -341,8 +341,19 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             else
                 holder.llPrivacy.setVisibility(View.GONE);
         } else if (emRcpType == IntegerConstants.RCP_TYPE_SECONDARY) {
-            holder.textMain.setText(emailId);
-            holder.textMain.setTextColor(colorPineGreen);
+
+            if (!email.getEmSocialType().equalsIgnoreCase("")) {
+                holder.textMain.setText(Utils.setMultipleTypeface(activity, emailId + " " + activity
+                                .getString(R.string.im_icon_verify), 0,
+                        (StringUtils.length(emailId) + 1), (
+                                (StringUtils.length(emailId) + 1) + 1)));
+                holder.textMain.setTextColor(colorPineGreen);
+            } else {
+                holder.textMain.setText(emailId);
+                holder.textMain.setTextColor(colorPineGreen);
+
+            }
+
             if (isOwnProfile) {
                 switch ((MoreObjects.firstNonNull(email.getEmPublic(), 2))) {
                     case 1:
@@ -536,7 +547,6 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
         int addressRcpType = Integer.parseInt(StringUtils.defaultIfEmpty(address.getRcpType(),
                 String.valueOf(IntegerConstants.RCP_TYPE_SECONDARY)));
-        final ProfileDetailViewHolder viewHodler = holder;
         if (addressRcpType == IntegerConstants.RCP_TYPE_LOCAL_PHONE_BOOK) {
             holder.textMain.setTextColor(colorBlack);
         } else {
@@ -573,7 +583,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 @Override
                 public void onClick(View v) {
                     PrivacySettingPopupDialog privacySettingPopupDialog = new
-                            PrivacySettingPopupDialog(viewHodler, activity, listner, AppConstants
+                            PrivacySettingPopupDialog(holder, activity, listner, AppConstants
                             .ADDRESS,
                             position, address.getAddPublic(), address.getAddId());
                     privacySettingPopupDialog.setDialogTitle(activity.getResources().getString(R
@@ -596,7 +606,12 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
     private void displayImAccount(final ProfileDetailViewHolder holder, final int position) {
         final ProfileDataOperationImAccount imAccount = (ProfileDataOperationImAccount) arrayList
                 .get(position);
-        holder.textMain.setText(imAccount.getIMAccountFirstName() + " " + imAccount.getIMAccountLastName());
+
+        if (!imAccount.getIMAccountFirstName().equalsIgnoreCase(""))
+            holder.textMain.setText(imAccount.getIMAccountFirstName() + " " + imAccount.getIMAccountLastName());
+        else
+            holder.textMain.setText(imAccount.getIMAccountDetails());
+
         holder.textSub.setText(imAccount.getIMAccountProtocol());
 
         if (imAccount.getIMAccountProtocol().equalsIgnoreCase("facebook")) {
@@ -677,7 +692,10 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                         } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("twitter")) {
                             url = "https://twitter.com/" + imAccount.getIMAccountDetails();
                         } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("linkedin")) {
-                            url = "https://www.linkedin.com/in/" + imAccount.getIMAccountDetails();
+                            if (!imAccount.getIMAccountDetails().startsWith("https://www.linkedin.com"))
+                                url = "https://www.linkedin.com/" + imAccount.getIMAccountDetails();
+                            else
+                                url = imAccount.getIMAccountDetails();
                         } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
                                 ("google")) {
                             url = "https://plus.google.com/" + imAccount.getIMAccountDetails();

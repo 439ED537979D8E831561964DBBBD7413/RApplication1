@@ -102,6 +102,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                         + "COLUMN " + TableImMaster.COLUMN_IM_LAST_NAME + " text ");
                 db.execSQL("ALTER TABLE " + TableImMaster.TABLE_RC_IM_MASTER + " ADD "
                         + "COLUMN " + TableImMaster.COLUMN_IM_PROFILE_IMAGE + " text ");
+
+                // For Email
+                db.execSQL("ALTER TABLE " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + " ADD "
+                        + "COLUMN " + TableEmailMaster.COLUMN_EM_SOCIAL_TYPE + " text ");
         }
 
         // create new tables
