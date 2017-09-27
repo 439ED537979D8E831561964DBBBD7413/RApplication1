@@ -1248,4 +1248,24 @@ public class Utils {
         //</editor-fold>
     }
 
+    public static String getEventDateFormat(String date) {
+
+        date = StringUtils.substring(date, 8, 10);
+        if (!StringUtils.isNumeric(date)) {
+            date = StringUtils.substring(date, 0, 1);
+        }
+
+        String format;
+        if (date.endsWith("1") && !date.endsWith("11"))
+//            format = "d'st' MMMM, yyyy";
+            format = "dd'st' MMMM, yyyy";
+        else if (date.endsWith("2") && !date.endsWith("12"))
+            format = "dd'nd' MMMM, yyyy";
+        else if (date.endsWith("3") && !date.endsWith("13"))
+            format = "dd'rd' MMMM, yyyy";
+        else
+            format = "dd'th' MMMM, yyyy";
+        return format;
+    }
+
 }

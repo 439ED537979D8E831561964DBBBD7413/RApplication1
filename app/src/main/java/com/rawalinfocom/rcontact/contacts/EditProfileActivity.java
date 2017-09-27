@@ -1311,6 +1311,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     if (StringUtils.length(textIsVerified.getText().toString()) > 0) {
                         email.setEmRcpType(Integer.parseInt(textIsVerified.getText().toString()
                                 .trim()));
+                    } else {
+                        email.setEmRcpType(IntegerConstants.RCP_TYPE_SECONDARY);
                     }
 
                     if (!StringUtils.isBlank(email.getEmEmailId())) {

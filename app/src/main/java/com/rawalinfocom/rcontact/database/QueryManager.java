@@ -144,6 +144,7 @@ public class QueryManager {
         //<editor-fold desc="EmailId">
         String emailIdQuery = "SELECT email." + TableEmailMaster.COLUMN_EM_EMAIL_ADDRESS + "," +
                 "email." + TableEmailMaster.COLUMN_EM_EMAIL_TYPE +
+                ",email." + TableEmailMaster.COLUMN_EM_SOCIAL_TYPE +
                 ",email." + TableEmailMaster.COLUMN_EM_IS_PRIVATE + ",email." + TableEmailMaster
                 .COLUMN_EM_EMAIL_PRIVACY + ",email." + TableEmailMaster.COLUMN_EM_RECORD_INDEX_ID +
                 ",email." + TableEmailMaster.COLUMN_EM_IS_VERIFIED + " FROM " + TableEmailMaster
@@ -162,6 +163,8 @@ public class QueryManager {
                         (emailIdCursor.getColumnIndex(TableEmailMaster.COLUMN_EM_EMAIL_ADDRESS))));
                 email.setEmType(StringUtils.defaultString(emailIdCursor.getString(emailIdCursor
                         .getColumnIndex(TableEmailMaster.COLUMN_EM_EMAIL_TYPE))));
+                email.setEmSocialType(StringUtils.defaultString(emailIdCursor.getString(emailIdCursor
+                        .getColumnIndex(TableEmailMaster.COLUMN_EM_SOCIAL_TYPE))));
                 email.setEmPublic(Integer.parseInt(StringUtils.defaultString(emailIdCursor
                         .getString(emailIdCursor.getColumnIndex(TableEmailMaster
                                 .COLUMN_EM_EMAIL_PRIVACY)), "0")));
@@ -181,9 +184,11 @@ public class QueryManager {
         //</editor-fold>
 
         // <editor-fold desc="Organization">
-        String organizationQuery = "SELECT org." + TableOrganizationMaster
-                .COLUMN_OM_ORGANIZATION_COMPANY + ", org." + TableOrganizationMaster
-                .COLUMN_OM_ORGANIZATION_DESIGNATION + " from " + TableOrganizationMaster
+        String organizationQuery = "SELECT org." + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_COMPANY
+                + ",org." + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_FROM_DATE
+                + ",org." + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_TO_DATE
+                + ",org." + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_DESIGNATION
+                + " from " + TableOrganizationMaster
                 .TABLE_RC_ORGANIZATION_MASTER + " org WHERE org." + TableOrganizationMaster
                 .COLUMN_RC_PROFILE_MASTER_PM_ID + " IN (" + rcpId + ") ORDER BY org." +
                 TableOrganizationMaster.COLUMN_OM_ORGANIZATION_IS_CURRENT + " DESC";
@@ -203,6 +208,12 @@ public class QueryManager {
                 organization.setOrgJobTitle(StringUtils.defaultString(organizationCursor
                         .getString(organizationCursor.getColumnIndex(TableOrganizationMaster
                                 .COLUMN_OM_ORGANIZATION_DESIGNATION))));
+                organization.setOrgFromDate(StringUtils.defaultString(organizationCursor.getString
+                        (organizationCursor.getColumnIndex(TableOrganizationMaster
+                                .COLUMN_OM_ORGANIZATION_FROM_DATE))));
+                organization.setOrgToDate(StringUtils.defaultString(organizationCursor.getString
+                        (organizationCursor.getColumnIndex(TableOrganizationMaster
+                                .COLUMN_OM_ORGANIZATION_TO_DATE))));
                 organization.setOrgRcpType(String.valueOf(IntegerConstants
                         .RCP_TYPE_CLOUD_PHONE_BOOK));
                 arrayListOrganization.add(organization);

@@ -328,7 +328,6 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         });
 
         int emRcpType = email.getEmRcpType();
-        final ProfileDetailViewHolder viewHodler = holder;
         if (emRcpType == IntegerConstants.RCP_TYPE_PRIMARY) {
             holder.textMain.setText(Utils.setMultipleTypeface(activity, emailId + " " + activity
                             .getString(R.string.im_icon_verify), 0,
@@ -340,7 +339,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 holder.llPrivacy.setVisibility(View.GONE);
             else
                 holder.llPrivacy.setVisibility(View.GONE);
-        } else if (emRcpType == IntegerConstants.RCP_TYPE_SECONDARY) {
+        } else {
 
             if (!email.getEmSocialType().equalsIgnoreCase("")) {
                 holder.textMain.setText(Utils.setMultipleTypeface(activity, emailId + " " + activity
@@ -351,7 +350,6 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             } else {
                 holder.textMain.setText(emailId);
                 holder.textMain.setTextColor(colorPineGreen);
-
             }
 
             if (isOwnProfile) {
@@ -384,7 +382,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 @Override
                 public void onClick(View v) {
                     PrivacySettingPopupDialog privacySettingPopupDialog = new
-                            PrivacySettingPopupDialog(viewHodler, activity, listner, AppConstants
+                            PrivacySettingPopupDialog(holder, activity, listner, AppConstants
                             .EMAIL,
                             position, email.getEmPublic(), email.getEmId());
                     privacySettingPopupDialog.setDialogTitle(activity.getResources().getString(R
@@ -401,10 +399,32 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                     sendAccessRequest(pmTo, "pb_email_id", email.getEmId());
                 }
             });
-        } else {
-            holder.textMain.setText(emailId);
-            holder.textMain.setTextColor(colorBlack);
         }
+//        else {
+//
+//            holder.textMain.setText(emailId);
+//
+//            if (isOwnProfile) {
+//                holder.llPrivacy.setVisibility(View.VISIBLE);
+//                holder.textMain.setTextColor(colorPineGreen);
+//            } else {
+//                holder.llPrivacy.setVisibility(View.GONE);
+//                holder.textMain.setTextColor(colorBlack);
+//            }
+//
+//            holder.llPrivacy.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    PrivacySettingPopupDialog privacySettingPopupDialog = new
+//                            PrivacySettingPopupDialog(holder, activity, listner, AppConstants
+//                            .EMAIL,
+//                            position, email.getEmPublic(), email.getEmId());
+//                    privacySettingPopupDialog.setDialogTitle(activity.getResources().getString(R
+//                            .string.privacy_dialog_title));
+//                    privacySettingPopupDialog.showDialog();
+//                }
+//            });
+//        }
     }
 
     private void displayWebsite(final ProfileDetailViewHolder holder, final int position) {
