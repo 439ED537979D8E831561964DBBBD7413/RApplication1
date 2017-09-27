@@ -860,11 +860,14 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 holder.llPrivacy.setVisibility(View.VISIBLE);
             } else {
                 holder.llPrivacy.setVisibility(View.GONE);
-                if (event.getIsPrivate() == IntegerConstants.IS_PRIVATE) {
+                if(event.getIsPrivate() != null){
+                    if (event.getIsPrivate() == IntegerConstants.IS_PRIVATE) {
 //                    holder.imageView2.setVisibility(View.GONE);
-                    holder.buttonRequest.setVisibility(View.VISIBLE);
-                    holder.imgActionType.setVisibility(View.GONE);
+                        holder.buttonRequest.setVisibility(View.VISIBLE);
+                        holder.imgActionType.setVisibility(View.GONE);
+                    }
                 }
+
             }
             final ProfileDetailViewHolder viewHodler = holder;
             holder.llPrivacy.setOnClickListener(new View.OnClickListener() {
