@@ -1802,6 +1802,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                             Utils.showErrorSnackBar(this,
                                                     relativeRootEditProfile, getString(R.string
                                                             .error_required_address_mapping));
+                                            Animation animShake = AnimationUtils.loadAnimation(this, R.anim.shake);
+                                            textImageMapMarker.startAnimation(animShake);
                                             textImageMapMarker.setTextColor(ContextCompat
                                                     .getColor(this, R.color
                                                             .colorSnackBarNegative));
