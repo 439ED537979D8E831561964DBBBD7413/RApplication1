@@ -69,10 +69,7 @@ import com.google.common.base.MoreObjects;
 import com.linkedin.platform.LISessionManager;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.LinkedinLoginActivity;
-import com.rawalinfocom.rcontact.OrganizationListActivity;
-import com.rawalinfocom.rcontact.ProfileRegistrationActivity;
 import com.rawalinfocom.rcontact.R;
-import com.rawalinfocom.rcontact.adapters.OrganizationSearchListAdapter;
 import com.rawalinfocom.rcontact.adapters.SocialConnectListAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
@@ -792,17 +789,21 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                     arrayListSocialContactObject.add(imAccount);
 
                                     for (int i = 0; i < arrayListEmailObject.size(); i++) {
-                                        ProfileDataOperationEmail operationEmail = (ProfileDataOperationEmail)
+                                        ProfileDataOperationEmail operationEmail =
+                                                (ProfileDataOperationEmail)
                                                 arrayListEmailObject.get(i);
                                         if (operationEmail.getEmEmailId().equalsIgnoreCase(
                                                 StringUtils.trim(jsonObject.getString("email")))) {
 
-                                            ProfileDataOperationEmail email = new ProfileDataOperationEmail();
-                                            email.setEmEmailId(StringUtils.trim(jsonObject.getString("email")));
+                                            ProfileDataOperationEmail email = new
+                                                    ProfileDataOperationEmail();
+                                            email.setEmEmailId(StringUtils.trim(jsonObject
+                                                    .getString("email")));
                                             email.setEmType("Work");
                                             email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
                                             email.setEmIsSocial(2);
-                                            email.setEmSocialType(operationEmail.getEmSocialType() + ",facebook");
+                                            email.setEmSocialType(operationEmail.getEmSocialType
+                                                    () + ",facebook");
                                             SocialEmailList.add(email);
 
                                             arrayListOldEmailAccount.remove(i);
@@ -813,8 +814,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                     }
 
                                     if (isAdd) {
-                                        ProfileDataOperationEmail email = new ProfileDataOperationEmail();
-                                        email.setEmEmailId(StringUtils.trim(jsonObject.getString("email")));
+                                        ProfileDataOperationEmail email = new
+                                                ProfileDataOperationEmail();
+                                        email.setEmEmailId(StringUtils.trim(jsonObject.getString
+                                                ("email")));
                                         email.setEmType("Work");
                                         email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
                                         email.setEmIsSocial(2);
@@ -1114,6 +1117,11 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 selectImageFromCamera();
             }
         }
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
     }
 
     //</editor-fold>
@@ -1470,7 +1478,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
 //                TableEmailMaster tableEmailMaster = new TableEmailMaster(databaseHandler);
 
-//                ArrayList<Email> arrayListEmail = tableEmailMaster.getEmailsFromPmId(Integer.parseInt
+//                ArrayList<Email> arrayListEmail = tableEmailMaster.getEmailsFromPmId(Integer
+// .parseInt
 //                        (getUserPmId()));
 //                ArrayList<ProfileDataOperationEmail> arrayListNewEmailAccount = new ArrayList<>();
 //
@@ -1481,8 +1490,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 //                        email.setEmEmailId(arrayListEmail.get(i).getEmEmailAddress());
 //                        email.setEmType(arrayListEmail.get(i).getEmEmailType());
 //                        email.setEmId(arrayListEmail.get(i).getEmRecordIndexId());
-//                        email.setEmPublic(Integer.parseInt(arrayListEmail.get(i).getEmEmailPrivacy()));
-//                        email.setEmRcpType(Integer.parseInt(arrayListEmail.get(i).getEmIsVerified()));
+//                        email.setEmPublic(Integer.parseInt(arrayListEmail.get(i)
+// .getEmEmailPrivacy()));
+//                        email.setEmRcpType(Integer.parseInt(arrayListEmail.get(i)
+// .getEmIsVerified()));
 //
 //                        arrayListNewEmailAccount.add(email);
 //                    }
@@ -1869,7 +1880,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                                 Utils.showErrorSnackBar(this,
                                                         relativeRootEditProfile, getString(R.string
                                                                 .error_required_address_mapping));
-                                                Animation animShake = AnimationUtils.loadAnimation(this, R.anim.shake);
+                                                Animation animShake = AnimationUtils
+                                                        .loadAnimation(this, R.anim.shake);
                                                 textImageMapMarker.startAnimation(animShake);
                                                 textImageMapMarker.setTextColor(ContextCompat
                                                         .getColor(EditProfileActivity
@@ -1884,7 +1896,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                             Utils.showErrorSnackBar(this,
                                                     relativeRootEditProfile, getString(R.string
                                                             .error_required_address_mapping));
-                                            Animation animShake = AnimationUtils.loadAnimation(this, R.anim.shake);
+                                            Animation animShake = AnimationUtils.loadAnimation
+                                                    (this, R.anim.shake);
                                             textImageMapMarker.startAnimation(animShake);
                                             textImageMapMarker.setTextColor(ContextCompat
                                                     .getColor(this, R.color
@@ -3624,7 +3637,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 //        inputCompanyName.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
-//                startActivity(new Intent(EditProfileActivity.this, OrganizationListActivity.class));
+//                startActivity(new Intent(EditProfileActivity.this, OrganizationListActivity
+// .class));
 //            }
 //        });
 
@@ -4778,4 +4792,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         //</editor-fold>
 
     }
+
+    //</editor-fold>
+
 }
