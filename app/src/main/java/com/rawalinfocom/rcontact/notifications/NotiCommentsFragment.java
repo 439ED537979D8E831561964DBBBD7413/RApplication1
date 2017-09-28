@@ -21,7 +21,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.BaseNotificationFragment;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.adapters.NotiCommentsAdapter;
@@ -62,7 +61,7 @@ public class NotiCommentsFragment extends BaseNotificationFragment implements Ws
     @BindView(R.id.search_view_noti_comments)
     SearchView searchViewNotiComments;
 
-    @BindView(R.id.header1)
+    /*@BindView(R.id.header1)
     TextView textTodayTitle;
     @BindView(R.id.header1_icon)
     ImageView headerTodayIcon;
@@ -87,23 +86,24 @@ public class NotiCommentsFragment extends BaseNotificationFragment implements Ws
     @BindView(R.id.relative_header3)
     RelativeLayout headerPastdayLayout;
     @BindView(R.id.recycler_view3)
-    RecyclerView recyclerPastDayComments;
+    RecyclerView recyclerPastDayComments;*/
 
     @BindView(R.id.text_view_more)
     TextView textViewMore;
     SoftKeyboard softKeyboard;
 
-    List<NotiCommentsItem> listTodayComments;
-    List<NotiCommentsItem> listYesterdayComments;
-    List<NotiCommentsItem> listPastComments;
+    List<NotiCommentsItem> listAllComments;
+//    List<NotiCommentsItem> listTodayComments;
+//    List<NotiCommentsItem> listYesterdayComments;
+//    List<NotiCommentsItem> listPastComments;
 
     TableCommentMaster tableCommentMaster;
 
-    NotiCommentsAdapter todayCommentsAdapter;
+    NotiCommentsAdapter notiCommentsAdapter;
+//    NotiCommentsAdapter todayCommentsAdapter;
+//    NotiCommentsAdapter yesterdayCommentsAdapter;
+//    NotiCommentsAdapter pastCommentsAdapter;
 
-    NotiCommentsAdapter yesterdayCommentsAdapter;
-
-    NotiCommentsAdapter pastCommentsAdapter;
     @BindView(R.id.layout_root)
     RelativeLayout layoutRoot;
 
@@ -111,6 +111,8 @@ public class NotiCommentsFragment extends BaseNotificationFragment implements Ws
     String yesterDay;
     String dayBeforeYesterday;
     String pastday5thDay;
+    @BindView(R.id.recycler_view_comment_list)
+    RecyclerView recyclerViewCommentList;
 
     @Override
     public void getFragmentArguments() {
@@ -124,7 +126,7 @@ public class NotiCommentsFragment extends BaseNotificationFragment implements Ws
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_notification_comments, container, false);
+        View view = inflater.inflate(R.layout.fragment_notification_comments_temp, container, false);
         ButterKnife.bind(this, view);
         return view;
     }
@@ -148,25 +150,35 @@ public class NotiCommentsFragment extends BaseNotificationFragment implements Ws
         dayBeforeYesterday = getDate(-2);
         pastday5thDay = getDate(-6);
 
-        ArrayList<Comment> replyReceivedToday = tableCommentMaster.getAllReplyReceived(today, today);
-        ArrayList<Comment> replyReceivedYesterDay = tableCommentMaster.getAllReplyReceived(yesterDay, yesterDay);
-        ArrayList<Comment> replyReceivedPastDays = tableCommentMaster.getAllReplyReceived(pastday5thDay, dayBeforeYesterday);
+        ArrayList<Comment> replyReceivedAll = tableCommentMaster.getAllReplyReceived(pastday5thDay, today);
+//        ArrayList<Comment> replyReceivedToday = tableCommentMaster.getAllReplyReceived(today, today);
+//        ArrayList<Comment> replyReceivedYesterDay = tableCommentMaster.getAllReplyReceived(yesterDay, yesterDay);
+//        ArrayList<Comment> replyReceivedPastDays = tableCommentMaster.getAllReplyReceived(pastday5thDay, dayBeforeYesterday);
 
-        listTodayComments = createReplyList(replyReceivedToday);
-        listYesterdayComments = createReplyList(replyReceivedYesterDay);
-        listPastComments = createReplyList(replyReceivedPastDays);
+        listAllComments = createReplyList(replyReceivedAll);
+//        listTodayComments = createReplyList(replyReceivedToday);
+//        listYesterdayComments = createReplyList(replyReceivedYesterDay);
+//        listPastComments = createReplyList(replyReceivedPastDays);
 
-        todayCommentsAdapter = new NotiCommentsAdapter(getActivity(), listTodayComments, 0);
-        yesterdayCommentsAdapter = new NotiCommentsAdapter(getActivity(), listYesterdayComments, 1);
-        pastCommentsAdapter = new NotiCommentsAdapter(getActivity(), listPastComments, 2);
+        notiCommentsAdapter = new NotiCommentsAdapter(getActivity(), listAllComments);
+//        todayCommentsAdapter = new NotiCommentsAdapter(getActivity(), listTodayComments, 0);
+//        yesterdayCommentsAdapter = new NotiCommentsAdapter(getActivity(), listYesterdayComments, 1);
+//        pastCommentsAdapter = new NotiCommentsAdapter(getActivity(), listPastComments, 2);
 
-        recyclerTodayComments.setAdapter(todayCommentsAdapter);
-        recyclerYesterDayComments.setAdapter(yesterdayCommentsAdapter);
-        recyclerPastDayComments.setAdapter(pastCommentsAdapter);
+        recyclerViewCommentList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerViewCommentList.setAdapter(notiCommentsAdapter);
+//        recyclerTodayComments.setAdapter(todayCommentsAdapter);
+//        recyclerYesterDayComments.setAdapter(yesterdayCommentsAdapter);
+//        recyclerPastDayComments.setAdapter(pastCommentsAdapter);
 
-        updateHeight();
-
-
+//        updateHeight();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (getActivity() != null)
+                    ((NotificationsDetailActivity) getActivity()).updateNotificationCount(AppConstants.NOTIFICATION_TYPE_COMMENTS);
+            }
+        }, 300);
     }
 
     private void updateHeight() {
@@ -195,16 +207,10 @@ public class NotiCommentsFragment extends BaseNotificationFragment implements Ws
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         int height = (displaymetrics.heightPixels * heightPercent) / 100;
 
-        setRecyclerViewHeight(recyclerTodayComments, height);
-        setRecyclerViewHeight(recyclerYesterDayComments, height);
-        setRecyclerViewHeight(recyclerPastDayComments, height);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (getActivity() != null)
-                    ((NotificationsDetailActivity) getActivity()).updateNotificationCount(AppConstants.NOTIFICATION_TYPE_COMMENTS);
-            }
-        }, 800);
+//        setRecyclerViewHeight(recyclerTodayComments, height);
+//        setRecyclerViewHeight(recyclerYesterDayComments, height);
+//        setRecyclerViewHeight(recyclerPastDayComments, height);
+//
     }
 
     private void setRecyclerViewHeight(RecyclerView recyclerView, int height) {
@@ -289,66 +295,68 @@ public class NotiCommentsFragment extends BaseNotificationFragment implements Ws
                 });
             }
         });
-        textTodayTitle.setTypeface(Utils.typefaceRegular(getActivity()));
-        textYesterDayTitle.setTypeface(Utils.typefaceRegular(getActivity()));
-        textPastDaysTitle.setTypeface(Utils.typefaceRegular(getActivity()));
+
+//        textTodayTitle.setTypeface(Utils.typefaceRegular(getActivity()));
+//        textYesterDayTitle.setTypeface(Utils.typefaceRegular(getActivity()));
+//        textPastDaysTitle.setTypeface(Utils.typefaceRegular(getActivity()));
         textViewMore.setTypeface(Utils.typefaceRegular(getActivity()));
 
-        headerTodayIcon.setImageResource(R.drawable.ic_collapse);
-        headerTodayLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (recyclerTodayComments.getVisibility() == View.VISIBLE) {
-                    recyclerTodayComments.setVisibility(View.GONE);
-                    headerTodayIcon.setImageResource(R.drawable.ic_expand);
-                } else {
-                    recyclerTodayComments.setVisibility(View.VISIBLE);
-                    headerTodayIcon.setImageResource(R.drawable.ic_collapse);
-                }
-                recyclerYesterDayComments.setVisibility(View.GONE);
-                headerYesterDayIcon.setImageResource(R.drawable.ic_expand);
+//        headerTodayIcon.setImageResource(R.drawable.ic_collapse);
+//        headerTodayLayout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (recyclerTodayComments.getVisibility() == View.VISIBLE) {
+//                    recyclerTodayComments.setVisibility(View.GONE);
+//                    headerTodayIcon.setImageResource(R.drawable.ic_expand);
+//                } else {
+//                    recyclerTodayComments.setVisibility(View.VISIBLE);
+//                    headerTodayIcon.setImageResource(R.drawable.ic_collapse);
+//                }
+//                recyclerYesterDayComments.setVisibility(View.GONE);
+//                headerYesterDayIcon.setImageResource(R.drawable.ic_expand);
+//
+//                recyclerPastDayComments.setVisibility(View.GONE);
+//                headerPastDayIcon.setImageResource(R.drawable.ic_expand);
+//            }
+//        });
+//        headerYesterdayLayout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                recyclerTodayComments.setVisibility(View.GONE);
+//                headerTodayIcon.setImageResource(R.drawable.ic_expand);
+//
+//                if (recyclerYesterDayComments.getVisibility() == View.VISIBLE) {
+//                    recyclerYesterDayComments.setVisibility(View.GONE);
+//                    headerYesterDayIcon.setImageResource(R.drawable.ic_expand);
+//                } else {
+//                    recyclerYesterDayComments.setVisibility(View.VISIBLE);
+//                    headerYesterDayIcon.setImageResource(R.drawable.ic_collapse);
+//                }
+//
+//                recyclerPastDayComments.setVisibility(View.GONE);
+//                headerPastDayIcon.setImageResource(R.drawable.ic_expand);
+//            }
+//        });
+//        headerPastdayLayout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                recyclerTodayComments.setVisibility(View.GONE);
+//                headerTodayIcon.setImageResource(R.drawable.ic_expand);
+//
+//                recyclerYesterDayComments.setVisibility(View.GONE);
+//                headerYesterDayIcon.setImageResource(R.drawable.ic_expand);
+//
+//                if (recyclerPastDayComments.getVisibility() == View.VISIBLE) {
+//                    recyclerPastDayComments.setVisibility(View.GONE);
+//                    headerPastDayIcon.setImageResource(R.drawable.ic_expand);
+//                } else {
+//                    recyclerPastDayComments.setVisibility(View.VISIBLE);
+//                    headerPastDayIcon.setImageResource(R.drawable.ic_collapse);
+//                }
+//            }
+//        });
 
-                recyclerPastDayComments.setVisibility(View.GONE);
-                headerPastDayIcon.setImageResource(R.drawable.ic_expand);
-            }
-        });
-        headerYesterdayLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                recyclerTodayComments.setVisibility(View.GONE);
-                headerTodayIcon.setImageResource(R.drawable.ic_expand);
-
-                if (recyclerYesterDayComments.getVisibility() == View.VISIBLE) {
-                    recyclerYesterDayComments.setVisibility(View.GONE);
-                    headerYesterDayIcon.setImageResource(R.drawable.ic_expand);
-                } else {
-                    recyclerYesterDayComments.setVisibility(View.VISIBLE);
-                    headerYesterDayIcon.setImageResource(R.drawable.ic_collapse);
-                }
-
-                recyclerPastDayComments.setVisibility(View.GONE);
-                headerPastDayIcon.setImageResource(R.drawable.ic_expand);
-            }
-        });
-        headerPastdayLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                recyclerTodayComments.setVisibility(View.GONE);
-                headerTodayIcon.setImageResource(R.drawable.ic_expand);
-
-                recyclerYesterDayComments.setVisibility(View.GONE);
-                headerYesterDayIcon.setImageResource(R.drawable.ic_expand);
-
-                if (recyclerPastDayComments.getVisibility() == View.VISIBLE) {
-                    recyclerPastDayComments.setVisibility(View.GONE);
-                    headerPastDayIcon.setImageResource(R.drawable.ic_expand);
-                } else {
-                    recyclerPastDayComments.setVisibility(View.VISIBLE);
-                    headerPastDayIcon.setImageResource(R.drawable.ic_collapse);
-                }
-            }
-        });
         searchViewNotiComments.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -359,16 +367,18 @@ public class NotiCommentsFragment extends BaseNotificationFragment implements Ws
             @Override
             public boolean onQueryTextChange(String newText) {
                 if (TextUtils.isEmpty(newText)) {
-                    todayCommentsAdapter.updateList(listTodayComments);
-                    yesterdayCommentsAdapter.updateList(listYesterdayComments);
-                    pastCommentsAdapter.updateList(listPastComments);
+                    notiCommentsAdapter.updateList(listAllComments);
+//                    todayCommentsAdapter.updateList(listTodayComments);
+//                    yesterdayCommentsAdapter.updateList(listYesterdayComments);
+//                    pastCommentsAdapter.updateList(listPastComments);
                     updateHeight();
                 }
                 return false;
             }
         });
-        recyclerYesterDayComments.setVisibility(View.GONE);
-        recyclerPastDayComments.setVisibility(View.GONE);
+
+//        recyclerYesterDayComments.setVisibility(View.GONE);
+//        recyclerPastDayComments.setVisibility(View.GONE);
         textViewMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -381,29 +391,37 @@ public class NotiCommentsFragment extends BaseNotificationFragment implements Ws
         {
 
             List<NotiCommentsItem> temp = new ArrayList<>();
-            for (NotiCommentsItem item : listTodayComments) {
+            for (NotiCommentsItem item : listAllComments) {
                 if (item.getCommenterName().toLowerCase().contains(query.toLowerCase())) {
                     temp.add(item);
                 }
             }
-            todayCommentsAdapter.updateList(temp);
+            notiCommentsAdapter.updateList(temp);
 
-            temp = new ArrayList<>();
-            for (NotiCommentsItem item : listYesterdayComments) {
-                if (item.getCommenterName().toLowerCase().contains(query.toLowerCase())) {
-                    temp.add(item);
-                }
-            }
-            yesterdayCommentsAdapter.updateList(temp);
-
-            temp = new ArrayList<>();
-            for (NotiCommentsItem item : listPastComments) {
-                if (item.getCommenterName().toLowerCase().contains(query.toLowerCase())) {
-                    temp.add(item);
-                }
-            }
-            pastCommentsAdapter.updateList(temp);
-            updateHeight();
+//            List<NotiCommentsItem> temp = new ArrayList<>();
+//            for (NotiCommentsItem item : listTodayComments) {
+//                if (item.getCommenterName().toLowerCase().contains(query.toLowerCase())) {
+//                    temp.add(item);
+//                }
+//            }
+//            todayCommentsAdapter.updateList(temp);
+//
+//            temp = new ArrayList<>();
+//            for (NotiCommentsItem item : listYesterdayComments) {
+//                if (item.getCommenterName().toLowerCase().contains(query.toLowerCase())) {
+//                    temp.add(item);
+//                }
+//            }
+//            yesterdayCommentsAdapter.updateList(temp);
+//
+//            temp = new ArrayList<>();
+//            for (NotiCommentsItem item : listPastComments) {
+//                if (item.getCommenterName().toLowerCase().contains(query.toLowerCase())) {
+//                    temp.add(item);
+//                }
+//            }
+//            pastCommentsAdapter.updateList(temp);
+//            updateHeight();
         }
     }
 
@@ -482,18 +500,28 @@ public class NotiCommentsFragment extends BaseNotificationFragment implements Ws
     }
 
     private void refreshAllList() {
-        ArrayList<Comment> replyReceivedToday = tableCommentMaster.getAllReplyReceived(today, today);
-        ArrayList<Comment> replyReceivedYesterDay = tableCommentMaster.getAllReplyReceived(yesterDay, yesterDay);
-        ArrayList<Comment> replyReceivedPastDays = tableCommentMaster.getAllReplyReceived(pastday5thDay, dayBeforeYesterday);
 
-        listTodayComments = createReplyList(replyReceivedToday);
-        listYesterdayComments = createReplyList(replyReceivedYesterDay);
-        listPastComments = createReplyList(replyReceivedPastDays);
+        ArrayList<Comment> replyReceivedAll = tableCommentMaster.getAllReplyReceived(pastday5thDay, today);
+//        ArrayList<Comment> replyReceivedToday = tableCommentMaster.getAllReplyReceived(today, today);
+//        ArrayList<Comment> replyReceivedYesterDay = tableCommentMaster.getAllReplyReceived(yesterDay, yesterDay);
+//        ArrayList<Comment> replyReceivedPastDays = tableCommentMaster.getAllReplyReceived(pastday5thDay, dayBeforeYesterday);
 
-        todayCommentsAdapter.updateList(listTodayComments);
-        yesterdayCommentsAdapter.updateList(listYesterdayComments);
-        pastCommentsAdapter.updateList(listPastComments);
+        listAllComments = createReplyList(replyReceivedAll);
+//        listTodayComments = createReplyList(replyReceivedToday);
+//        listYesterdayComments = createReplyList(replyReceivedYesterDay);
+//        listPastComments = createReplyList(replyReceivedPastDays);
 
-        updateHeight();
+        notiCommentsAdapter.updateList(listAllComments);
+//        todayCommentsAdapter.updateList(listTodayComments);
+//        yesterdayCommentsAdapter.updateList(listYesterdayComments);
+//        pastCommentsAdapter.updateList(listPastComments);
+
+//        updateHeight();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+//        null.unbind();
     }
 }

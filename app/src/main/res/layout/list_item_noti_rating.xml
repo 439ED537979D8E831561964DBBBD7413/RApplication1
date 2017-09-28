@@ -23,12 +23,11 @@
             android:src="@mipmap/ic_launcher" />
 
         <LinearLayout
-            android:id="@+id/linear_content_main"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toLeftOf="@+id/button_rating_view_reply"
+            android:orientation="horizontal"
             android:layout_toRightOf="@id/image_rater"
-            android:orientation="vertical">
+            android:id="@+id/llName">
 
             <TextView
                 android:id="@+id/text_rater_name"
@@ -40,13 +39,25 @@
 
             <TextView
                 android:id="@+id/text_rating_noti_time"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:gravity="end"
+                android:layout_gravity="right"
                 android:paddingRight="@dimen/activity_horizontal_margin"
                 android:textAppearance="?android:textAppearanceSmall"
                 tools:text="11:15 PM" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linear_content_main"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/button_rating_view_reply"
+            android:layout_toRightOf="@id/image_rater"
+            android:orientation="vertical"
+            android:layout_below="@+id/llName">
 
             <TextView
                 android:id="@+id/text_rating_detail_info"
@@ -65,7 +76,6 @@
             android:textColor="@color/colorWhite"
             app:backgroundTint="@color/dialogUserNameTextColor"
             tools:text="View Reply" />
-
     </RelativeLayout>
 
     <View

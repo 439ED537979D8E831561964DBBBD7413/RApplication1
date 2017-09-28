@@ -875,6 +875,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     for (int j = 0; j < arrayListEmailId.size(); j++) {
                         Email email = new Email();
                         email.setEmEmailAddress(arrayListEmailId.get(j).getEmEmailId());
+                        email.setEmSocialType(arrayListEmailId.get(j).getEmSocialType());
                         email.setEmRecordIndexId(arrayListEmailId.get(j).getEmId());
                         email.setEmEmailType(arrayListEmailId.get(j).getEmType());
                         email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(j)

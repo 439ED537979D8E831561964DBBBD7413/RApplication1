@@ -32,15 +32,24 @@ public class PhoneBookContactDetailAdapter extends RecyclerView
     private Context context;
     private ArrayList<Object> arrayListContactDetail;
 
-    private ArrayList<Integer> arrayListSelectedContacts;
+    private onClickListener clickListener;
 
-    private boolean isSelectedAll;
+    public interface onClickListener {
+        void onPhoneNumberClick(String number);
+
+        void onEmailClick(String email);
+    }
+
+//    private ArrayList<Integer> arrayListSelectedContacts;
+
+//    private boolean isSelectedAll;
 
     public PhoneBookContactDetailAdapter(Context context, ArrayList<Object>
-            arrayListContactDetail) {
+            arrayListContactDetail, onClickListener clickListener) {
         this.context = context;
+        this.clickListener = clickListener;
         this.arrayListContactDetail = new ArrayList<>();
-        this.arrayListSelectedContacts = new ArrayList<>();
+//        this.arrayListSelectedContacts = new ArrayList<>();
         this.arrayListContactDetail.addAll(arrayListContactDetail);
     }
 
@@ -67,6 +76,8 @@ public class PhoneBookContactDetailAdapter extends RecyclerView
             holder.textMain.setText(phoneNumber.getPhoneNumber());
             holder.textSub.setText(phoneNumber.getPhoneType());
 
+            holder.relativeRowContactDetails.setTag(position);
+
         } else if (arrayListContactDetail.get(position) instanceof ProfileDataOperationEmail) {
             holder.textSub.setVisibility(View.VISIBLE);
 
@@ -77,46 +88,69 @@ public class PhoneBookContactDetailAdapter extends RecyclerView
             holder.textMain.setText(email.getEmEmailId());
             holder.textSub.setText(email.getEmType());
 
+            holder.relativeRowContactDetails.setTag(position);
+
         }
 
-        if (!isSelectedAll) {
-            holder.checkboxSelectContact.setChecked(false);
-            if (arrayListSelectedContacts.contains(position)) {
-                holder.checkboxSelectContact.setChecked(true);
-            } else {
-                holder.checkboxSelectContact.setChecked(false);
-            }
-        } else {
-            holder.checkboxSelectContact.setChecked(true);
-        }
-
-        holder.checkboxSelectContact.setTag(position);
-
-        holder.checkboxSelectContact.setOnClickListener(new View.OnClickListener() {
+        holder.relativeRowContactDetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 int pos = (int) view.getTag();
 
-                CheckBox checkBox = (CheckBox) view;
-                if (pos == 0) {
-                    isSelectAll(checkBox.isChecked());
-                } else {
-                    if (checkBox.isChecked()) {
-                        if (!arrayListSelectedContacts.contains(pos)) {
-                            arrayListSelectedContacts.add(pos);
-                        }
-                        if (arrayListSelectedContacts.size() == (arrayListContactDetail.size() -
-                                1)) {
-                            isSelectAll(true);
-                        }
-                    } else {
-                        removeChecked(pos);
-                    }
-                }
+                if (arrayListContactDetail.get(position) instanceof
+                        ProfileDataOperationPhoneNumber) {
 
+                    if (clickListener != null)
+                        clickListener.onPhoneNumberClick(((ProfileDataOperationPhoneNumber)
+                                arrayListContactDetail.get(position)).getPhoneNumber());
+
+                } else if (arrayListContactDetail.get(position) instanceof ProfileDataOperationEmail) {
+                    if (clickListener != null)
+                        clickListener.onEmailClick(((ProfileDataOperationEmail)
+                                arrayListContactDetail.get(position)).getEmEmailId());
+                }
             }
         });
+
+//        if (!isSelectedAll) {
+//            holder.checkboxSelectContact.setChecked(false);
+//            if (arrayListSelectedContacts.contains(position)) {
+//                holder.checkboxSelectContact.setChecked(true);
+//            } else {
+//                holder.checkboxSelectContact.setChecked(false);
+//            }
+//        } else {
+//            holder.checkboxSelectContact.setChecked(true);
+//        }
+
+//        holder.checkboxSelectContact.setTag(position);
+
+//        holder.checkboxSelectContact.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//                int pos = (int) view.getTag();
+//
+//                CheckBox checkBox = (CheckBox) view;
+//                if (pos == 0) {
+//                    isSelectAll(checkBox.isChecked());
+//                } else {
+//                    if (checkBox.isChecked()) {
+//                        if (!arrayListSelectedContacts.contains(pos)) {
+//                            arrayListSelectedContacts.add(pos);
+//                        }
+//                        if (arrayListSelectedContacts.size() == (arrayListContactDetail.size() -
+//                                1)) {
+//                            isSelectAll(true);
+//                        }
+//                    } else {
+//                        removeChecked(pos);
+//                    }
+//                }
+//
+//            }
+//        });
 
 //        holder.checkboxSelectContact.setOnCheckedChangeListener(new CompoundButton
 //                .OnCheckedChangeListener() {
@@ -152,38 +186,38 @@ public class PhoneBookContactDetailAdapter extends RecyclerView
         return arrayListContactDetail.size();
     }
 
-    private void isSelectAll(boolean checked) {
-        isSelectedAll = checked;
-        arrayListSelectedContacts.clear();
-        if (checked) {
-            for (int i = 1; i < getItemCount(); i++) {
-                if (!arrayListSelectedContacts.contains(i)) {
-                    arrayListSelectedContacts.add(i);
-                }
-            }
-        }
-        try {
-            notifyDataSetChanged();
-        } catch (Exception ignore) {
-        }
-    }
+//    private void isSelectAll(boolean checked) {
+//        isSelectedAll = checked;
+//        arrayListSelectedContacts.clear();
+//        if (checked) {
+//            for (int i = 1; i < getItemCount(); i++) {
+//                if (!arrayListSelectedContacts.contains(i)) {
+//                    arrayListSelectedContacts.add(i);
+//                }
+//            }
+//        }
+//        try {
+//            notifyDataSetChanged();
+//        } catch (Exception ignore) {
+//        }
+//    }
 
-    private void removeChecked(int tagPosition) {
-        isSelectedAll = false;
-        arrayListSelectedContacts.remove((Integer) 0);
-        if (arrayListSelectedContacts.contains(tagPosition)) {
-            arrayListSelectedContacts.remove((Integer) tagPosition);
-        }
-        try {
-            notifyDataSetChanged();
-//            notifyItemChanged(0);
-        } catch (Exception ignore) {
-        }
-    }
+//    private void removeChecked(int tagPosition) {
+//        isSelectedAll = false;
+//        arrayListSelectedContacts.remove((Integer) 0);
+//        if (arrayListSelectedContacts.contains(tagPosition)) {
+//            arrayListSelectedContacts.remove((Integer) tagPosition);
+//        }
+//        try {
+//            notifyDataSetChanged();
+////            notifyItemChanged(0);
+//        } catch (Exception ignore) {
+//        }
+//    }
 
-    public ArrayList<Integer> getArrayListSelectedContacts() {
-        return arrayListSelectedContacts;
-    }
+//    public ArrayList<Integer> getArrayListSelectedContacts() {
+//        return arrayListSelectedContacts;
+//    }
 
     class ContactDetailViewHolder extends RecyclerView.ViewHolder {
 
@@ -202,6 +236,8 @@ public class PhoneBookContactDetailAdapter extends RecyclerView
 
             textMain.setTypeface(Utils.typefaceSemiBold(context));
             textSub.setTypeface(Utils.typefaceRegular(context));
+
+            checkboxSelectContact.setVisibility(View.GONE);
 
         }
     }
