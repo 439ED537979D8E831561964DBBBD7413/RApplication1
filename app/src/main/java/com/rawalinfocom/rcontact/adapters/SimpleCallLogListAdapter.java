@@ -166,7 +166,8 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
         final String number = callLogType.getNumber();
 
         // change the row state to activated
-        holder.itemView.setActivated(selectedItems.get(position, false));
+        if(selectedItems != null )
+            holder.itemView.setActivated(selectedItems.get(position, false));
 
         if (!StringUtils.isEmpty(number)) {
             formattedNumber = Utils.getFormattedNumber(mActivity, number);
@@ -562,7 +563,7 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
                     }
                 } else {
 
-                    if (!(selectedItems.size() >= 0)) {
+                    if(selectedItems.size()<=0){
                         arrayListForKnownContact = new ArrayList<>(Arrays.asList(mActivity.getString(R.string.action_call) +
                                         (!TextUtils.isEmpty(name) ? (" " + name) : (" " + number)), mActivity.getString(R.string.send_sms),
                                 mActivity.getString(R.string.remove_from_call_log), mActivity.getString(R.string.copy_phone_number)));
@@ -571,6 +572,7 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
                         materialListDialog.setDialogTitle((!TextUtils.isEmpty(name) ? (" " + name) : (" " + number)));
                         materialListDialog.showDialog();
                     }
+
 
 //                    if (!TextUtils.isEmpty(name)) {
 //                        if (StringUtils.containsOnly(name, "\\d+")) {
@@ -792,6 +794,7 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
             ButterKnife.bind(this, itemView);
             textSimType.setVisibility(View.GONE);
             image3dotsCallLog.setVisibility(View.VISIBLE);
+//            image3dotsCallLog.setEnabled(true);
         }
 
         @Override
@@ -841,6 +844,7 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
         void onMessageRowClicked(int position);
 
         void onRowLongClicked(int position);
+
     }
 
 
@@ -868,28 +872,35 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
                 return true;
             }
         });
+
+
     }
 
 
     private void applyIconAnimation(CallLogViewHolder holder, int position) {
-        if (selectedItems.get(position, false)) {
-            holder.rlImageProfile.setVisibility(View.INVISIBLE);
-            resetIconYAxis(holder.iconBack);
-            holder.iconBack.setVisibility(View.VISIBLE);
-            holder.iconBack.setAlpha(1);
-            if (currentSelectedIndex == position) {
-                FlipAnimator.flipView(mActivity, holder.iconBack, holder.rlImageProfile, true);
-                resetCurrentIndex();
+        if(selectedItems != null){
+            if (selectedItems.get(position, false)) {
+                holder.rlImageProfile.setVisibility(View.INVISIBLE);
+                resetIconYAxis(holder.iconBack);
+                holder.iconBack.setVisibility(View.VISIBLE);
+                holder.iconBack.setAlpha(1);
+                if (currentSelectedIndex == position) {
+                    FlipAnimator.flipView(mActivity, holder.iconBack, holder.rlImageProfile, true);
+                    resetCurrentIndex();
+                }
+            } else {
+                holder.iconBack.setVisibility(View.GONE);
+                resetIconYAxis(holder.rlImageProfile);
+                holder.rlImageProfile.setVisibility(View.VISIBLE);
+                holder.rlImageProfile.setAlpha(1);
+                if ((reverseAllAnimations && animationItemsIndex.get(position, false)) || currentSelectedIndex == position) {
+                    FlipAnimator.flipView(mActivity, holder.iconBack, holder.rlImageProfile, false);
+                    resetCurrentIndex();
+                }
+                holder.image3dotsCallLog.setEnabled(true);
             }
-        } else {
-            holder.iconBack.setVisibility(View.GONE);
-            resetIconYAxis(holder.rlImageProfile);
-            holder.rlImageProfile.setVisibility(View.VISIBLE);
-            holder.rlImageProfile.setAlpha(1);
-            if ((reverseAllAnimations && animationItemsIndex.get(position, false)) || currentSelectedIndex == position) {
-                FlipAnimator.flipView(mActivity, holder.iconBack, holder.rlImageProfile, false);
-                resetCurrentIndex();
-            }
+
+
         }
     }
 
@@ -909,28 +920,36 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
 
     public void toggleSelection(int pos) {
         currentSelectedIndex = pos;
-        if (selectedItems.get(pos, false)) {
-            selectedItems.delete(pos);
-            animationItemsIndex.delete(pos);
-            arrayListToDelete.remove(arrayListCallLogs.get(pos));
-            setArrayListToDelete(arrayListToDelete);
-        } else {
-            selectedItems.put(pos, true);
-            animationItemsIndex.put(pos, true);
-            arrayListToDelete.add(arrayListCallLogs.get(pos));
-            setArrayListToDelete(arrayListToDelete);
+        if(selectedItems != null){
+            if (selectedItems.get(pos, false)) {
+                selectedItems.delete(pos);
+                animationItemsIndex.delete(pos);
+                arrayListToDelete.remove(arrayListCallLogs.get(pos));
+                setArrayListToDelete(arrayListToDelete);
+            } else {
+                selectedItems.put(pos, true);
+                animationItemsIndex.put(pos, true);
+                arrayListToDelete.add(arrayListCallLogs.get(pos));
+                setArrayListToDelete(arrayListToDelete);
+            }
         }
         notifyItemChanged(pos);
     }
 
     public void clearSelections() {
         reverseAllAnimations = true;
-        selectedItems.clear();
+        if(selectedItems != null)
+            selectedItems.clear();
         notifyDataSetChanged();
+//        mActivity.findViewById(R.id.image_3dots_call_log).setEnabled(true);
+
     }
 
     public int getSelectedItemCount() {
-        return selectedItems.size();
+        if(selectedItems != null)
+            return selectedItems.size();
+        else
+            return 0;
     }
 
     public List<Integer> getSelectedItems() {
