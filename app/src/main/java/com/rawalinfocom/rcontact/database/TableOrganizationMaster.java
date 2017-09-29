@@ -122,6 +122,11 @@ public class TableOrganizationMaster {
     public void addUpdateArrayOrganization(ArrayList<Organization> arrayListOrganization, String RcpPmId) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
 
+        int count = db.delete(TABLE_RC_ORGANIZATION_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
+                RcpPmId, null);
+        if (count > 0) System.out.println("RContact data delete ");
+
+
 //        ContentValues values = new ContentValues();
         for (int i = 0; i < arrayListOrganization.size(); i++) {
             ContentValues values = new ContentValues();

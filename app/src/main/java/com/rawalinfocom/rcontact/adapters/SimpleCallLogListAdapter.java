@@ -50,7 +50,6 @@ import butterknife.ButterKnife;
 public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
-
     private ArrayList<CallLogType> arrayListCallLogs;
     private ArrayList<String> arrayListForKnownContact;
     private ArrayList<String> arrayListForUnknownContact;
@@ -563,13 +562,15 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
                     }
                 } else {
 
-                    arrayListForKnownContact = new ArrayList<>(Arrays.asList(mActivity.getString(R.string.action_call) +
-                                    (!TextUtils.isEmpty(name) ? (" " + name) : (" " + number)), mActivity.getString(R.string.send_sms),
-                            mActivity.getString(R.string.remove_from_call_log), mActivity.getString(R.string.copy_phone_number)));
+                    if (!(selectedItems.size() >= 0)) {
+                        arrayListForKnownContact = new ArrayList<>(Arrays.asList(mActivity.getString(R.string.action_call) +
+                                        (!TextUtils.isEmpty(name) ? (" " + name) : (" " + number)), mActivity.getString(R.string.send_sms),
+                                mActivity.getString(R.string.remove_from_call_log), mActivity.getString(R.string.copy_phone_number)));
 
-                    materialListDialog = new MaterialListDialog(mActivity, arrayListForKnownContact, number, date, name, uniqueRowID, "");
-                    materialListDialog.setDialogTitle((!TextUtils.isEmpty(name) ? (" " + name) : (" " + number)));
-                    materialListDialog.showDialog();
+                        materialListDialog = new MaterialListDialog(mActivity, arrayListForKnownContact, number, date, name, uniqueRowID, "");
+                        materialListDialog.setDialogTitle((!TextUtils.isEmpty(name) ? (" " + name) : (" " + number)));
+                        materialListDialog.showDialog();
+                    }
 
 //                    if (!TextUtils.isEmpty(name)) {
 //                        if (StringUtils.containsOnly(name, "\\d+")) {
