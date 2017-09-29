@@ -183,7 +183,7 @@
     <string name="text_on">\u0020on\u0020</string>
     <string name="text_you_wrote_on_timeline">You wrote on %1$s\'s Timeline</string>
     <string name="text_reply_you_on_your">%1$s replied to your message</string>
-    <string name="text_rate_you">Rate you</string>
+    <string name="text_rate_you">Rated you</string>
     <string name="text_rating_done">Given</string>
     <string name="text_rating_receive">Received</string>
     <string name="text_tab_profile">Profile</string>
@@ -291,7 +291,7 @@
     <string name="copy_to_clipboard">Copy to clip board</string>
     <string name="view_profile">View Profile</string>
     <string name="view_reply">View Reply</string>
-    <string name="text_reply_you">Reply</string>
+    <string name="text_reply_you">\'s reply</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
     <string name="clear_call_log">Clear Call Log</string>
@@ -406,12 +406,12 @@
 
     <!-- Comment & Notification-->
     <string name="str_view_reply">VIEW REPLY</string>
-    <string name="str_reply_you">Reply You</string>
+    <string name="str_reply_you"> \'s reply</string>
     <string name="str_unread_notification_hint_1">You have</string>
     <string name="str_unread_notification_hint_2">unread notification</string>
     <string name="str_unread_notification_hint_3">You have no unread Notifications</string>
     <string name="str_comment_reply">Your comment sent successfully</string>
-    <string name="str_rating_comment_hint_1">%1$s replied you for your Rating</string>
+    <string name="str_rating_comment_hint_1">%1$s replied you</string>
     <string name="str_rating_comment_hint_2">You Rated %1$s</string>
     <string name="str_rating_comment_hint_3">%1$s rated you</string>
     <string name="str_view_more">View More</string>

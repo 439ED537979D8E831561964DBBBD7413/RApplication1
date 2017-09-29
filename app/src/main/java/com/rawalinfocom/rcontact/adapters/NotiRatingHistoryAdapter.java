@@ -40,7 +40,7 @@ public class NotiRatingHistoryAdapter extends RecyclerView.Adapter<NotiRatingHis
 
     private Context context;
     private List<NotiRatingItem> list;
-//    private int recyclerPosition;
+    //    private int recyclerPosition;
     RatingHistoryPopupDialog notificationPopupDialog;
 
     public NotiRatingHistoryAdapter(Context context, List<NotiRatingItem> list/*, int recyclerPosition*/) {
@@ -122,15 +122,15 @@ public class NotiRatingHistoryAdapter extends RecyclerView.Adapter<NotiRatingHis
             holder.textRatingNotiTime.setText(Utils.formatDateTime(item.getNotiTime(), "dd MMM, hh:mm a"));
         }*/
 
-        String notiTime =  item.getNotiTime();
-        String date =  Utils.formatDateTime(notiTime,"yyyy-MM-dd");
+        String notiTime = item.getNotiTime();
+        String date = Utils.formatDateTime(notiTime, "yyyy-MM-dd");
         Calendar c = Calendar.getInstance();
         SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
         String current = s.format(c.getTime());
-        if(StringUtils.equalsIgnoreCase(current,date)){
-            holder.textRatingNotiTime.setText(Utils.formatDateTime(notiTime,"hh:mm a"));
-        }else{
-            holder.textRatingNotiTime.setText(Utils.formatDateTime(notiTime,"dd MMM, yy"));
+        if (StringUtils.equalsIgnoreCase(current, date)) {
+            holder.textRatingNotiTime.setText(Utils.formatDateTime(notiTime, "hh:mm a"));
+        } else {
+            holder.textRatingNotiTime.setText(Utils.formatDateTime(notiTime, "dd MMM, yy"));
         }
 
         if (item.getHistoryType() == 0) {
@@ -174,7 +174,8 @@ public class NotiRatingHistoryAdapter extends RecyclerView.Adapter<NotiRatingHis
 
                 notificationPopupDialog = new RatingHistoryPopupDialog(context, arrayListComments, true);
                 if (item.getHistoryType() == 0) {
-                    notificationPopupDialog.setDialogTitle(context.getResources().getString(R.string.text_you_rated) + " " + item.getReceiverPersonName());
+                    notificationPopupDialog.setDialogTitle(context.getResources().getString(R.string.text_you_rated)
+                            + " " + item.getReceiverPersonName());
                 } else {
                     notificationPopupDialog.setDialogTitle(item.getRaterName() + " " + context.getResources().getString(R.string.text_rated_you));
                 }
@@ -182,8 +183,6 @@ public class NotiRatingHistoryAdapter extends RecyclerView.Adapter<NotiRatingHis
                 notificationPopupDialog.showDialog();
             }
         });
-
-
     }
 
     @Override

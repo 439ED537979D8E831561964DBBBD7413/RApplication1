@@ -115,10 +115,6 @@ public class TableEmailMaster {
     public void addUpdateArrayEmail(ArrayList<Email> arrayListEmail, String RcpPmId) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
 
-        int count = db.delete(TABLE_RC_EMAIL_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
-                RcpPmId, null);
-        if (count > 0) System.out.println("RContact data delete ");
-
 //        ContentValues values = new ContentValues();
         for (int i = 0; i < arrayListEmail.size(); i++) {
             ContentValues values = new ContentValues();

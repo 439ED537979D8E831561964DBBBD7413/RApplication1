@@ -1,5 +1,6 @@
 package com.rawalinfocom.rcontact.adapters;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
@@ -9,14 +10,18 @@ import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -33,6 +38,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.util.Util;
 import com.rawalinfocom.rcontact.AboutHelpActivity;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.helper.TouchImageView;
 import com.rawalinfocom.rcontact.helper.Utils;
@@ -47,8 +53,11 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import butterknife.BindView;
@@ -64,15 +73,16 @@ public class NotiRContactsAdapter extends RecyclerView.Adapter<NotiRContactsAdap
 
     private List<NotiRContactsItem> list;
     private Activity activity;
-    private File dir;
+    private OnClickListener clickListener;
 
-    public NotiRContactsAdapter(Activity activity, List<NotiRContactsItem> list) {
+    public interface OnClickListener {
+        void onClick(int position);
+    }
+
+    public NotiRContactsAdapter(Activity activity, List<NotiRContactsItem> list, OnClickListener clickListener) {
         this.activity = activity;
         this.list = list;
-
-        dir = new File(Environment.getExternalStorageDirectory()
-                .toString() + File.separator + "RContacts" + File.separator + "saved_images");
-
+        this.clickListener = clickListener;
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
@@ -125,15 +135,15 @@ public class NotiRContactsAdapter extends RecyclerView.Adapter<NotiRContactsAdap
 
         holder.textTitle.setText(item.getNotiTitle());
 
-        String notiTime =  item.getNotiTime();
-        String date =  Utils.formatDateTime(notiTime,"yyyy-MM-dd");
+        String notiTime = item.getNotiTime();
+        String date = Utils.formatDateTime(notiTime, "yyyy-MM-dd");
         Calendar c = Calendar.getInstance();
         SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
         String current = s.format(c.getTime());
-        if(StringUtils.equalsIgnoreCase(current,date)){
-            holder.textNotiTime.setText(Utils.formatDateTime(notiTime,"hh:mm a"));
-        }else{
-            holder.textNotiTime.setText(Utils.formatDateTime(notiTime,"dd MMM, yy"));
+        if (StringUtils.equalsIgnoreCase(current, date)) {
+            holder.textNotiTime.setText(Utils.formatDateTime(notiTime, "hh:mm a"));
+        } else {
+            holder.textNotiTime.setText(Utils.formatDateTime(notiTime, "dd MMM, yy"));
         }
 
 
@@ -255,128 +265,12 @@ public class NotiRContactsAdapter extends RecyclerView.Adapter<NotiRContactsAdap
 
                 } else {
 
-                    // Execute DownloadImage AsyncTask
-
-                    File file = new File(dir, list.get(pos).getNotiUrl().substring(
-                            list.get(pos).getNotiUrl().lastIndexOf("/") + 1));
-
-                    if (file.exists()) {
-
-                        String path = file.getAbsolutePath();
-
-                        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-                        sharingIntent.setType("image/*");
-                        String shareBody = list.get(pos).getNotiTitle() + "\n\n" + list.get(pos).getNotiDetails() + "\n\n";
-                        sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
-                        sharingIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(path)));
-                        activity.startActivity(sharingIntent);
-
-                    } else {
-                        new DownloadImage(pos).execute(list.get(pos).getNotiUrl());
-                    }
+                    if (clickListener != null)
+                        clickListener.onClick(pos);
                 }
 
                 break;
         }
-    }
-
-    // DownloadImage AsyncTask
-    private class DownloadImage extends AsyncTask<String, Void, Bitmap> {
-
-        private int pos;
-
-        DownloadImage(int pos) {
-            this.pos = pos;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            Utils.showProgressDialog(activity, "Please wait...", false);
-        }
-
-        @Override
-        protected Bitmap doInBackground(String... URL) {
-
-            String imageURL = URL[0];
-
-            Bitmap bitmap = null;
-            try {
-                // Download Image from URL
-                InputStream input = new java.net.URL(imageURL).openStream();
-                // Decode Bitmap
-                bitmap = BitmapFactory.decodeStream(input);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return bitmap;
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap result) {
-
-            Utils.hideProgressDialog();
-
-            String path = SaveImage(result,
-                    list.get(pos).getNotiUrl().substring(list.get(pos).getNotiUrl().lastIndexOf("/") + 1));
-
-//            System.out.println("RContacts path --> " + path);
-
-            Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-            sharingIntent.setType("image/*");
-            String shareBody = list.get(pos).getNotiTitle() + "\n\n" + list.get(pos).getNotiDetails() + "\n\n";
-            sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
-            sharingIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(path)));
-            activity.startActivity(sharingIntent);
-
-        }
-    }
-
-    private String SaveImage(Bitmap finalBitmap, String imageName) {
-
-        try {
-            if (!dir.exists())
-                dir.mkdir();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        File file = new File(dir, imageName);
-
-        try {
-            FileOutputStream out = new FileOutputStream(file);
-            finalBitmap.compress(Bitmap.CompressFormat.PNG, 70, out);
-            out.flush();
-            out.close();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        ContentValues image = getImageContent(file, imageName);
-        activity.getContentResolver().insert(
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, image);
-
-//        System.out.println("RContacts file path --> " + file.getAbsolutePath());
-
-        return file.getAbsolutePath();
-    }
-
-    public ContentValues getImageContent(File parent, String imageName) {
-        ContentValues image = new ContentValues();
-        image.put(MediaStore.Images.Media.TITLE, imageName);
-        image.put(MediaStore.Images.Media.DISPLAY_NAME, imageName);
-        image.put(MediaStore.Images.Media.DESCRIPTION, "App Image");
-        image.put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis());
-        image.put(MediaStore.Images.Media.MIME_TYPE, "image/jpg");
-        image.put(MediaStore.Images.Media.ORIENTATION, 0);
-        image.put(MediaStore.Images.ImageColumns.BUCKET_ID, parent.toString()
-                .toLowerCase().hashCode());
-        image.put(MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME, parent.getName()
-                .toLowerCase());
-        image.put(MediaStore.Images.Media.SIZE, parent.length());
-        image.put(MediaStore.Images.Media.DATA, parent.getAbsolutePath());
-        return image;
     }
 
     @SuppressLint("ValidFragment")

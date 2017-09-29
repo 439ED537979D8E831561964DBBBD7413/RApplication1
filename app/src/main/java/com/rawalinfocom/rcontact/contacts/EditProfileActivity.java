@@ -24,6 +24,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.Html;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -141,10 +142,6 @@ import butterknife.OnClick;
 public class EditProfileActivity extends BaseActivity implements WsResponseListener, RippleView
         .OnRippleCompleteListener, GoogleApiClient.OnConnectionFailedListener {
 
-    private final String EVENT_GENERAL_DATE_FORMAT = "dd'th' MMMM, yyyy";
-    private final String EVENT_ST_DATE_FORMAT = "dd'st' MMMM, yyyy";
-    private final String EVENT_ND_DATE_FORMAT = "dd'nd' MMMM, yyyy";
-    private final String EVENT_RD_DATE_FORMAT = "dd'rd' MMMM, yyyy";
     public static final int MEDIA_TYPE_IMAGE = 1;
     private static final int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 100;
     private static final int GALLERY_IMAGE_REQUEST_CODE = 500;
@@ -1326,11 +1323,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             .text_is_public);
                     TextView textIsVerified = linearEmail.findViewById(R.id
                             .text_is_verified);
+                    TextView textIsSocial = linearEmail.findViewById(R.id.text_is_social);
                     RelativeLayout relativeRowEditProfile = linearEmail
                             .findViewById(R.id.relative_row_edit_profile);
                     email.setEmEmailId(StringUtils.trim(emailId.getText().toString().trim()));
                     email.setEmType((String) emailType.getSelectedItem());
                     email.setEmId((String) relativeRowEditProfile.getTag());
+                    email.setEmSocialType(textIsSocial.getText().toString().trim());
                     if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
                         email.setEmPublic(Integer.parseInt(textIsPublic.getText().toString().trim
                                 ()));
@@ -2561,13 +2560,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         String date = format.format(myCalendar.getTime());
 
         if (date.endsWith("1") && !date.endsWith("11"))
-            format = new SimpleDateFormat(EVENT_ST_DATE_FORMAT);
+            format = new SimpleDateFormat(AppConstants.EVENT_ST_DATE_FORMAT);
         else if (date.endsWith("2") && !date.endsWith("12"))
-            format = new SimpleDateFormat(EVENT_ND_DATE_FORMAT);
+            format = new SimpleDateFormat(AppConstants.EVENT_ND_DATE_FORMAT);
         else if (date.endsWith("3") && !date.endsWith("13"))
-            format = new SimpleDateFormat(EVENT_RD_DATE_FORMAT);
+            format = new SimpleDateFormat(AppConstants.EVENT_RD_DATE_FORMAT);
         else
-            format = new SimpleDateFormat(EVENT_GENERAL_DATE_FORMAT);
+            format = new SimpleDateFormat(AppConstants.EVENT_GENERAL_DATE_FORMAT);
 
         format.format(myCalendar.getTime());
 
@@ -2580,13 +2579,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         String date = format.format(myCalendar.getTime());
 
         if (date.endsWith("1") && !date.endsWith("11"))
-            format = new SimpleDateFormat(EVENT_ST_DATE_FORMAT);
+            format = new SimpleDateFormat(AppConstants.EVENT_ST_DATE_FORMAT);
         else if (date.endsWith("2") && !date.endsWith("12"))
-            format = new SimpleDateFormat(EVENT_ND_DATE_FORMAT);
+            format = new SimpleDateFormat(AppConstants.EVENT_ND_DATE_FORMAT);
         else if (date.endsWith("3") && !date.endsWith("13"))
-            format = new SimpleDateFormat(EVENT_RD_DATE_FORMAT);
+            format = new SimpleDateFormat(AppConstants.EVENT_RD_DATE_FORMAT);
         else
-            format = new SimpleDateFormat(EVENT_GENERAL_DATE_FORMAT);
+            format = new SimpleDateFormat(AppConstants.EVENT_GENERAL_DATE_FORMAT);
 
         format.format(myCalendar.getTime());
 
@@ -2617,13 +2616,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         String date = format.format(myCalendar.getTime());
 
         if (date.endsWith("1") && !date.endsWith("11"))
-            format = new SimpleDateFormat(EVENT_ST_DATE_FORMAT);
+            format = new SimpleDateFormat(AppConstants.EVENT_ST_DATE_FORMAT);
         else if (date.endsWith("2") && !date.endsWith("12"))
-            format = new SimpleDateFormat(EVENT_ND_DATE_FORMAT);
+            format = new SimpleDateFormat(AppConstants.EVENT_ND_DATE_FORMAT);
         else if (date.endsWith("3") && !date.endsWith("13"))
-            format = new SimpleDateFormat(EVENT_RD_DATE_FORMAT);
+            format = new SimpleDateFormat(AppConstants.EVENT_RD_DATE_FORMAT);
         else
-            format = new SimpleDateFormat(EVENT_GENERAL_DATE_FORMAT);
+            format = new SimpleDateFormat(AppConstants.EVENT_GENERAL_DATE_FORMAT);
 
         String yourDate = format.format(myCalendar.getTime());
 
@@ -3087,6 +3086,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         final CheckBox checkboxHideYear = view.findViewById(R.id.checkbox_hide_year);
         TextView textLabelCheckbox = view.findViewById(R.id.text_label_checkbox);
         TextView textIsPublic = view.findViewById(R.id.text_is_public);
+        TextView textIsSocial = view.findViewById(R.id.text_is_social);
         TextView textIsVerified = view.findViewById(R.id.text_is_verified);
         ImageView imageViewCalender = view.findViewById(R.id.image_calender);
         imageViewCalender.setVisibility(View.GONE);
@@ -3189,16 +3189,20 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         imageViewDelete.setVisibility(View.GONE);
                        /* inputValue.setText(String.format("%s %s", email.getEmEmailId(),
                                 getString(R.string.im_icon_verify)));*/
-                        inputValue.setText(Utils.setMultipleTypeface(EditProfileActivity.this,
-                                email.getEmEmailId() + " " + getString(R.string.im_icon_verify),
-                                0, (StringUtils.length(email.getEmEmailId()) + 1), ((StringUtils
-                                        .length(email.getEmEmailId()) + 1) + 1)));
+
+                        String s = Utils.setMultipleTypeface(EditProfileActivity.this, email.getEmEmailId() + " <font color" +
+                                "='#00bfff'>" + getString(R.string.im_icon_verify) + "</font>", 0, (StringUtils.length
+                                (email.getEmEmailId()) + 1), ((StringUtils.length(email.getEmEmailId()) + 1) + 1)).toString();
+
+                        inputValue.setText(Html.fromHtml(s));
                     } else {
                         inputValue.setText(email.getEmEmailId());
                     }
 
                     textIsPublic.setText(String.valueOf(email.getEmPublic()));
                     textIsVerified.setText(String.valueOf(email.getEmRcpType()));
+                    textIsSocial.setText(String.valueOf(email.getEmSocialType()));
+
                     int spinnerPosition;
                     if (typeList.contains(StringUtils.defaultString(email.getEmType()))) {
                         spinnerPosition = spinnerEmailAdapter.getPosition(email.getEmType());
@@ -4109,7 +4113,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 calendar.set(Calendar.YEAR, year);
                 calendar.set(Calendar.MONTH, monthOfYear);
                 calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                SimpleDateFormat sdf = new SimpleDateFormat(EVENT_GENERAL_DATE_FORMAT, Locale.US);
+                SimpleDateFormat sdf = new SimpleDateFormat(AppConstants.EVENT_GENERAL_DATE_FORMAT, Locale.US);
                 editText.setText(sdf.format(calendar.getTime()));
             }
 
@@ -4593,13 +4597,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         String format;
         if (date.endsWith("1") && !date.endsWith("11"))
 //            format = "d'st' MMMM, yyyy";
-            format = EVENT_ST_DATE_FORMAT;
+            format = AppConstants.EVENT_ST_DATE_FORMAT;
         else if (date.endsWith("2") && !date.endsWith("12"))
-            format = EVENT_ND_DATE_FORMAT;
+            format = AppConstants.EVENT_ND_DATE_FORMAT;
         else if (date.endsWith("3") && !date.endsWith("13"))
-            format = EVENT_RD_DATE_FORMAT;
+            format = AppConstants.EVENT_RD_DATE_FORMAT;
         else
-            format = EVENT_GENERAL_DATE_FORMAT;
+            format = AppConstants.EVENT_GENERAL_DATE_FORMAT;
         return format;
     }
 
@@ -4613,13 +4617,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         String format;
         if (date.endsWith("1") && !date.endsWith("11"))
 //            format = "d'st' MMMM, yyyy";
-            format = EVENT_ST_DATE_FORMAT;
+            format = AppConstants.EVENT_ST_DATE_FORMAT;
         else if (date.endsWith("2") && !date.endsWith("12"))
-            format = EVENT_ND_DATE_FORMAT;
+            format = AppConstants.EVENT_ND_DATE_FORMAT;
         else if (date.endsWith("3") && !date.endsWith("13"))
-            format = EVENT_RD_DATE_FORMAT;
+            format = AppConstants.EVENT_RD_DATE_FORMAT;
         else
-            format = EVENT_GENERAL_DATE_FORMAT;
+            format = AppConstants.EVENT_GENERAL_DATE_FORMAT;
         return format;
     }
 

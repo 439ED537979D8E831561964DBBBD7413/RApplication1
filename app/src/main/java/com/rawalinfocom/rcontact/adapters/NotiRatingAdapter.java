@@ -36,7 +36,7 @@ public class NotiRatingAdapter extends RecyclerView.Adapter<NotiRatingAdapter.My
 
     private Context context;
     private List<NotiRatingItem> list;
-//    private int recyclerPosition;
+    //    private int recyclerPosition;
     NotificationPopupDialog notificationPopupDialog;
 
     public NotiRatingAdapter(Context context, List<NotiRatingItem> list/*, int recyclerPosition*/) {
@@ -85,15 +85,15 @@ public class NotiRatingAdapter extends RecyclerView.Adapter<NotiRatingAdapter.My
             holder.textRatingNotiTime.setText(Utils.formatDateTime(item.getNotiTime(), "hh:mm a"));
         }*/
 
-        String notiTime =  item.getNotiTime();
-        String date =  Utils.formatDateTime(notiTime,"yyyy-MM-dd");
+        String notiTime = item.getNotiTime();
+        String date = Utils.formatDateTime(notiTime, "yyyy-MM-dd");
         Calendar c = Calendar.getInstance();
         SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
         String current = s.format(c.getTime());
-        if(StringUtils.equalsIgnoreCase(current,date)){
-            holder.textRatingNotiTime.setText(Utils.formatDateTime(notiTime,"hh:mm a"));
-        }else{
-            holder.textRatingNotiTime.setText(Utils.formatDateTime(notiTime,"dd MMM, yy"));
+        if (StringUtils.equalsIgnoreCase(current, date)) {
+            holder.textRatingNotiTime.setText(Utils.formatDateTime(notiTime, "hh:mm a"));
+        } else {
+            holder.textRatingNotiTime.setText(Utils.formatDateTime(notiTime, "dd MMM, yy"));
         }
 
         holder.textRatingDetailInfo.setText(String.format(context.getString(R.string.str_rating_comment_hint_1), item.getRaterName()));
@@ -124,7 +124,7 @@ public class NotiRatingAdapter extends RecyclerView.Adapter<NotiRatingAdapter.My
                 arrayListComments.add(item.getRaterPersonImage());
                 arrayListComments.add(item.getReceiverPersonImage());
                 notificationPopupDialog = new NotificationPopupDialog(context, arrayListComments, true);
-                notificationPopupDialog.setDialogTitle(item.getRaterName() + " " + context.getString(R.string.text_reply_you));
+                notificationPopupDialog.setDialogTitle(item.getRaterName() + context.getString(R.string.text_reply_you));
                 notificationPopupDialog.setRatingInfo(item.getRating());
                 notificationPopupDialog.showDialog();
             }
