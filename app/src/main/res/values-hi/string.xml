@@ -411,7 +411,7 @@
     <string name="str_unread_notification_hint_2">अपठित सूचना(एं) है</string>
     <string name="str_unread_notification_hint_3">आपके पास कोई अपठित सूचना(एं) नहीं है</string>
     <string name="str_comment_reply">आपकी टिप्पणी सफलतापूर्वक भेजी गई</string>
-    <string name="str_rating_comment_hint_1">%1$s ने आपकी रेटिंग और टिप्पणी पर आपको उत्तर दिया</string>
+    <string name="str_rating_comment_hint_1">%1$s ने आपको उत्तर दिया</string>
     <string name="str_rating_comment_hint_2">%1$s को आपने रेटिंग दी और उनके लिए टिपण्णी लिखी</string>
     <string name="str_rating_comment_hint_3">%1$s से आपको रेटिंग प्राप्त हुई</string>
     <string name="str_view_more">अधिक देखें</string>
@@ -707,6 +707,7 @@
     <string name="my_profile_share">प्रोफ़ाइल शेयर करें</string>
     <string name="share_rating_via_social_media">सोशल मीडिया द्वारा रेटिंग शेयर  करें</string>
     <string name="error_no_social_app_found">जानकारी साझा करने के लिए कृपया फेसबुक या लिंक्डइन या ट्विटर ऐप इंस्टॉल करें।</string>
+    <string name="org_list">Organizations List</string>
 
 
 </resources>

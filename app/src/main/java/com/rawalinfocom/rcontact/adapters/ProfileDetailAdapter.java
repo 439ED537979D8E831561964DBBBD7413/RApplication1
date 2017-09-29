@@ -11,6 +11,7 @@ import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,11 +21,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.common.base.MoreObjects;
+import com.rawalinfocom.rcontact.PublicProfileDetailActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
+import com.rawalinfocom.rcontact.contacts.EditProfileActivity;
 import com.rawalinfocom.rcontact.contacts.PrivacySettingPopupDialog;
 import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
@@ -53,12 +56,6 @@ import butterknife.ButterKnife;
 
 public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdapter
         .ProfileDetailViewHolder> implements PrivacySettingPopupDialog.DialogCallback {
-
-
-    private final String EVENT_GENERAL_DATE_FORMAT = "dd'th' MMMM, yyyy";
-    private final String EVENT_ST_DATE_FORMAT = "dd'st' MMMM, yyyy";
-    private final String EVENT_ND_DATE_FORMAT = "dd'nd' MMMM, yyyy";
-    private final String EVENT_RD_DATE_FORMAT = "dd'rd' MMMM, yyyy";
 
     private Activity activity;
     private ArrayList<Object> arrayList;
@@ -93,6 +90,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
     @Override
     public void onBindViewHolder(ProfileDetailViewHolder holder, int position) {
         holder.llPrivacy.setVisibility(View.GONE);
+        holder.textTic.setVisibility(View.GONE);
 //        if (isOwnProfile) {
 //            holder.viewOtherProfile.setVisibility(View.GONE);
 //        } else {
@@ -145,7 +143,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             @Override
             public void onClick(View view) {
 
-                if (!number.startsWith("+xx") && !number.startsWith("+XX")) {
+                if (!number.contains("xx") && !number.contains("XX")) {
 
                     if (ContextCompat.checkSelfPermission(activity, android.Manifest
                             .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
@@ -156,7 +154,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                             ((ProfileDetailActivity) activity).callNumber = number;
                         }
                     } else {
-                        Utils.callIntent(activity, number);
+                        if (!number.contains("xx") && !number.contains("XX"))
+                            Utils.callIntent(activity, number);
                     }
                 }
             }
@@ -182,7 +181,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         holder.textMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!number.startsWith("+xx") && !number.startsWith("+XX")) {
+                if (!number.contains("xx") && !number.contains("XX")) {
                     if (ContextCompat.checkSelfPermission(activity, android.Manifest
                             .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                         activity.requestPermissions(new String[]{Manifest.permission
@@ -192,7 +191,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                             ((ProfileDetailActivity) activity).callNumber = number;
                         }
                     } else {
-                        Utils.callIntent(activity, number);
+                        if (!number.contains("xx") && !number.contains("XX"))
+                            Utils.callIntent(activity, number);
                     }
                 }
             }
@@ -203,9 +203,11 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             public boolean onLongClick(View view) {
                 Utils.copyToClipboard(activity, activity.getString(R.string.str_copy_number), (
                         (TextView) view).getText().toString());
-                Utils.showSuccessSnackBar(activity, ((ProfileDetailActivity) activity)
-                        .getRelativeRootProfileDetail(), activity.getString(R.string
-                        .str_copy_number_clip_board));
+                if (activity instanceof ProfileDetailActivity) {
+                    Utils.showSuccessSnackBar(activity, ((ProfileDetailActivity) activity)
+                            .getRelativeRootProfileDetail(), activity.getString(R.string
+                            .str_copy_number_clip_board));
+                }
                 return true;
             }
         });
@@ -277,6 +279,17 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             holder.textMain.setText(number);
             holder.textMain.setTextColor(colorBlack);
         }
+        if (activity instanceof PublicProfileDetailActivity) {
+            if (pbRcpType == IntegerConstants.RCP_TYPE_PRIMARY){
+                String newNumber = "+" + holder.textMain.getText();
+                Utils.setMultipleTypeface(activity, newNumber + " " + activity
+                                .getString(R.string.im_icon_verify), 0,
+                        (StringUtils.length(newNumber) + 1), (
+                                (StringUtils.length(newNumber) + 1) + 1));
+            }else{
+                holder.textMain.setText("+" + holder.textMain.getText());
+            }
+        }
     }
 
     private void displayEmail(final ProfileDetailViewHolder holder, final int position) {
@@ -320,9 +333,13 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 Utils.copyToClipboard(activity, activity.getString(R.string.str_copy_email), (
                         (TextView) view).getText()
                         .toString());
-                Utils.showSuccessSnackBar(activity, ((ProfileDetailActivity) activity)
-                        .getRelativeRootProfileDetail(), activity.getString(R.string
-                        .str_copy_email_clip_board));
+                if (activity instanceof ProfileDetailActivity) {
+                    Utils.showSuccessSnackBar(activity, ((ProfileDetailActivity) activity)
+                            .getRelativeRootProfileDetail(), activity.getString(R.string
+                            .str_copy_email_clip_board));
+                } else {
+                }
+
                 return true;
             }
         });
@@ -341,15 +358,26 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 holder.llPrivacy.setVisibility(View.GONE);
         } else {
 
-            if (!email.getEmSocialType().equalsIgnoreCase("")) {
-                holder.textMain.setText(Utils.setMultipleTypeface(activity, emailId + " " + activity
-                                .getString(R.string.im_icon_verify), 0,
-                        (StringUtils.length(emailId) + 1), (
-                                (StringUtils.length(emailId) + 1) + 1)));
-                holder.textMain.setTextColor(colorPineGreen);
+            if (isOwnProfile || emRcpType == IntegerConstants.RCP_TYPE_SECONDARY) {
+                if (!email.getEmSocialType().equalsIgnoreCase("")) {
+
+                    holder.textTic.setTypeface(Utils.typefaceIcons(activity));
+//                    String s = Utils.setMultipleTypeface(activity, email.getEmEmailId() + " <font color" +
+//                            "='#00bfff'>" + activity.getString(R.string.im_icon_verify) + "</font>", 0, (StringUtils.length
+//                            (email.getEmEmailId()) + 1), ((StringUtils.length(email.getEmEmailId()) + 1) + 1)).toString();
+
+                    holder.textTic.setVisibility(View.VISIBLE);
+                    holder.textMain.setText(emailId);
+                    holder.textTic.setText(activity.getString(R.string.im_icon_verify));
+                    holder.textMain.setTextColor(colorPineGreen);
+                } else {
+                    holder.textMain.setText(emailId);
+                    holder.textMain.setTextColor(colorPineGreen);
+                }
             } else {
                 holder.textMain.setText(emailId);
-                holder.textMain.setTextColor(colorPineGreen);
+                holder.llPrivacy.setVisibility(View.GONE);
+                holder.textMain.setTextColor(colorBlack);
             }
 
             if (isOwnProfile) {
@@ -664,7 +692,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                         String url = null;
 
                         if (imAccount.getIMAccountProtocol().equalsIgnoreCase("facebook")) {
-                            url = "https://www.facebook.com/" + imAccount.getIMAccountDetails();
+                            Utils.getOpenFacebookIntent(activity, imAccount.getIMAccountDetails());
+                            return;
                         } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("twitter")) {
                             url = "https://twitter.com/" + imAccount.getIMAccountDetails();
                         } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("linkedin")) {
@@ -674,7 +703,9 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                                 url = imAccount.getIMAccountDetails();
                         } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
                                 ("google")) {
-                            url = "https://plus.google.com/" + imAccount.getIMAccountDetails();
+//                            url = "https://plus.google.com/" + imAccount.getIMAccountDetails();
+                            Utils.openGPlus(activity, imAccount.getIMAccountDetails());
+                            return;
                         } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
                                 ("skype")) {
                             url = "https://web.skype.com/" + imAccount.getIMAccountDetails();
@@ -708,7 +739,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                     if (StringUtils.length(imAccount.getIMAccountDetails()) > 0) {
                         String url = null;
                         if (imAccount.getIMAccountProtocol().equalsIgnoreCase("facebook")) {
-                            url = "https://www.facebook.com/" + imAccount.getIMAccountDetails();
+                            Utils.getOpenFacebookIntent(activity, imAccount.getIMAccountDetails());
+                            return;
                         } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("twitter")) {
                             url = "https://twitter.com/" + imAccount.getIMAccountDetails();
                         } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("linkedin")) {
@@ -718,7 +750,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                                 url = imAccount.getIMAccountDetails();
                         } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
                                 ("google")) {
-                            url = "https://plus.google.com/" + imAccount.getIMAccountDetails();
+                            Utils.openGPlus(activity, imAccount.getIMAccountDetails());
+                            return;
                         } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
                                 ("skype")) {
                             url = "https://web.skype.com/" + imAccount.getIMAccountDetails();
@@ -898,7 +931,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 holder.llPrivacy.setVisibility(View.VISIBLE);
             } else {
                 holder.llPrivacy.setVisibility(View.GONE);
-                if(event.getIsPrivate() != null){
+                if (event.getIsPrivate() != null) {
                     if (event.getIsPrivate() == IntegerConstants.IS_PRIVATE) {
 //                    holder.imageView2.setVisibility(View.GONE);
                         holder.buttonRequest.setVisibility(View.VISIBLE);
@@ -954,13 +987,13 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         String format;
         if (date.endsWith("1") && !date.endsWith("11"))
 //            format = "d'st' MMMM, yyyy";
-            format = EVENT_ST_DATE_FORMAT;
+            format = AppConstants.EVENT_ST_DATE_FORMAT;
         else if (date.endsWith("2") && !date.endsWith("12"))
-            format = EVENT_ND_DATE_FORMAT;
+            format = AppConstants.EVENT_ND_DATE_FORMAT;
         else if (date.endsWith("3") && !date.endsWith("13"))
-            format = EVENT_RD_DATE_FORMAT;
+            format = AppConstants.EVENT_RD_DATE_FORMAT;
         else
-            format = EVENT_GENERAL_DATE_FORMAT;
+            format = AppConstants.EVENT_GENERAL_DATE_FORMAT;
         return format;
     }
 
@@ -1055,6 +1088,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         ImageView imgActionWhatsapp;
         @BindView(R.id.text_main)
         public TextView textMain;
+        @BindView(R.id.text_tic)
+        public TextView textTic;
         @BindView(R.id.text_sub)
         TextView textSub;
         @BindView(R.id.button_privacy)
@@ -1073,6 +1108,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             textMain.setTypeface(Utils.typefaceRegular(activity));
             textSub.setTypeface(Utils.typefaceRegular(activity));
             imgActionWhatsapp.setVisibility(View.GONE);
+            textTic.setVisibility(View.GONE);
         }
     }
 }

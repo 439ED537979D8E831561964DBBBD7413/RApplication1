@@ -2,6 +2,7 @@ package com.rawalinfocom.rcontact;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
@@ -180,6 +181,10 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     int tabPosition = -1;
     private final int CONTACT_CHUNK = 50;
     int lastSyncedData = 0;
+
+
+    private ArrayList<Object> arrayListPBPhoneNumber;
+    private ArrayList<Object> arrayListPBEmailAddress;
 
     public Toolbar getToolbar() {
         return this.toolbar;
@@ -1488,10 +1493,20 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     ArrayList<MobileNumber> arrayListMobileNumber = new ArrayList<>();
                     for (int j = 0; j < arrayListPhoneNumber.size(); j++) {
 
+                        getUserData(arrayListPhoneNumber.get(j).getPhoneId());
+
                         MobileNumber mobileNumber = new MobileNumber();
                         mobileNumber.setMnmRecordIndexId(arrayListPhoneNumber.get(j).getPhoneId());
-                        mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j)
-                                .getPhoneNumber());
+
+                        if (arrayListPBPhoneNumber.size() > 0)
+                            if (arrayListPBPhoneNumber.contains("+" + arrayListPhoneNumber.get(j).getOriginalNumber())) {
+                                mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j).getOriginalNumber());
+                            } else {
+                                mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j).getPhoneNumber());
+                            }
+                        else
+                            mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j).getPhoneNumber());
+
                         mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(j).getPhoneType());
                         mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber.get(j)
                                 .getPhonePublic()));
@@ -1521,7 +1536,16 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                         ArrayList<Email> arrayListEmail = new ArrayList<>();
                         for (int j = 0; j < arrayListEmailId.size(); j++) {
                             Email email = new Email();
-                            email.setEmEmailAddress(arrayListEmailId.get(j).getEmEmailId());
+
+                            if (arrayListPBEmailAddress.size() > 0)
+                                if (arrayListPBEmailAddress.contains(arrayListEmailId.get(j).getOriginalEmail())) {
+                                    email.setEmEmailAddress( arrayListEmailId.get(j).getOriginalEmail());
+                                } else {
+                                    email.setEmEmailAddress( arrayListEmailId.get(j).getEmEmailId());
+                                }
+                            else
+                                email.setEmEmailAddress(arrayListEmailId.get(j).getEmEmailId());
+
                             email.setEmSocialType(arrayListEmailId.get(j).getEmSocialType());
                             email.setEmRecordIndexId(arrayListEmailId.get(j).getEmId());
                             email.setEmEmailType(arrayListEmailId.get(j).getEmType());
@@ -3801,6 +3825,49 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     }
 
     //</editor-fold>
+
+    private void getUserData(String phoneBookId) {
+
+        arrayListPBPhoneNumber = new ArrayList<>();
+        arrayListPBEmailAddress = new ArrayList<>();
+
+        // From PhoneBook
+        Cursor contactNumberCursor = phoneBookContacts.getContactNumbers(phoneBookId);
+
+        if (contactNumberCursor != null && contactNumberCursor.getCount() > 0) {
+            while (contactNumberCursor.moveToNext()) {
+
+                ProfileDataOperationPhoneNumber phoneNumber = new
+                        ProfileDataOperationPhoneNumber();
+                ProfileDataOperationPhoneNumber phoneNumberOperation = new
+                        ProfileDataOperationPhoneNumber();
+
+                arrayListPBPhoneNumber.add(Utils.getFormattedNumber(MainActivity.this,
+                        contactNumberCursor.getString(contactNumberCursor.getColumnIndex
+                                (ContactsContract.CommonDataKinds.Phone.NUMBER))));
+
+            }
+            contactNumberCursor.close();
+        }
+
+        //</editor-fold>
+
+        // <editor-fold desc="Email Id">
+
+        // From PhoneBook
+        Cursor contactEmailCursor = phoneBookContacts.getContactEmail(phoneBookId);
+
+        if (contactEmailCursor != null && contactEmailCursor.getCount() > 0) {
+            while (contactEmailCursor.moveToNext()) {
+                arrayListPBEmailAddress.add(contactEmailCursor.getString(contactEmailCursor
+                        .getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)));
+            }
+            contactEmailCursor.close();
+        }
+
+        //</editor-fold>
+    }
+
 
      /*private BroadcastReceiver localBroadCastReceiverRecentSMS = new BroadcastReceiver() {
         @Override

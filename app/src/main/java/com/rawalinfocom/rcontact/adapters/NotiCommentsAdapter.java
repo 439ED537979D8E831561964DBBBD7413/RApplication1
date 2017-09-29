@@ -36,7 +36,7 @@ public class NotiCommentsAdapter extends RecyclerView.Adapter<NotiCommentsAdapte
 
     private Context context;
     private List<NotiCommentsItem> list;
-//    private int recyclerPosition;
+    //    private int recyclerPosition;
     NotificationPopupDialog notificationPopupDialog;
 
     public NotiCommentsAdapter(Context context, List<NotiCommentsItem> list/*, int recyclerPosition*/) {
@@ -87,15 +87,15 @@ public class NotiCommentsAdapter extends RecyclerView.Adapter<NotiCommentsAdapte
             holder.textCommentNotiTime.setText(Utils.formatDateTime(item.getNotiCommentTime(), "hh:mm a"));
         }*/
 
-        String notiTime =  item.getNotiCommentTime();
-        String date =  Utils.formatDateTime(notiTime,"yyyy-MM-dd");
+        String notiTime = item.getNotiCommentTime();
+        String date = Utils.formatDateTime(notiTime, "yyyy-MM-dd");
         Calendar c = Calendar.getInstance();
         SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
         String current = s.format(c.getTime());
-        if(StringUtils.equalsIgnoreCase(current,date)){
-            holder.textCommentNotiTime.setText(Utils.formatDateTime(notiTime,"hh:mm a"));
-        }else{
-            holder.textCommentNotiTime.setText(Utils.formatDateTime(notiTime,"dd MMM, yy"));
+        if (StringUtils.equalsIgnoreCase(current, date)) {
+            holder.textCommentNotiTime.setText(Utils.formatDateTime(notiTime, "hh:mm a"));
+        } else {
+            holder.textCommentNotiTime.setText(Utils.formatDateTime(notiTime, "dd MMM, yy"));
         }
 
         if (!TextUtils.isEmpty(item.getCommenterImage())) {
@@ -127,7 +127,7 @@ public class NotiCommentsAdapter extends RecyclerView.Adapter<NotiCommentsAdapte
                 arrayListComments.add(item.getReceiverPersonImage());
 
                 notificationPopupDialog = new NotificationPopupDialog(context, arrayListComments, false);
-                notificationPopupDialog.setDialogTitle(item.getCommenterName() + context.getString(R.string.str_reply_you));
+                notificationPopupDialog.setDialogTitle(item.getCommenterName() + "" + context.getString(R.string.str_reply_you));
                 notificationPopupDialog.showDialog();
             }
         });

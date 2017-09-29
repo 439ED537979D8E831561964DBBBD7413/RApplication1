@@ -56,19 +56,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
         // on upgrade drop older tables
-        /*if(newVersion > oldVersion){
-
-            db.execSQL("ALTER TABLE " + TableRCContactRequest.TABLE_RC_CONTACT_ACCESS_REQUEST +
-                    " ADD COLUMN " +  TableRCContactRequest.COLUMN_CAR_IMG  + " text ") ;
-
-            db.execSQL("ALTER TABLE " + TableRCContactRequest.TABLE_RC_CONTACT_ACCESS_REQUEST +
-                    " ADD COLUMN " +  TableRCContactRequest.COLUMN_CAR_PROFILE_DETAILS  + " text
-                    ") ;
-
-            // create new tables
-            onCreate(db);
-        }*/
-
         switch (oldVersion) {
             case 1:
                 // For version 2

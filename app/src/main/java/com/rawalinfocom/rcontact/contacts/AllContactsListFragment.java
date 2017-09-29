@@ -38,6 +38,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.BaseFragment;
+import com.rawalinfocom.rcontact.MainActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.AllContactAdapter;
@@ -141,6 +142,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     int settingRequestPermission = 0;
     public String callNumber = "";
     private SyncingTask syncingTask;
+    private ArrayList<String> arrayListPBPhoneNumber;
+    private ArrayList<String> arrayListPBEmailAddress;
 
     //<editor-fold desc="Constructors">
 
@@ -840,10 +843,21 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 ArrayList<MobileNumber> arrayListMobileNumber = new ArrayList<>();
                 for (int j = 0; j < arrayListPhoneNumber.size(); j++) {
 
+                    getUserData(arrayListPhoneNumber.get(j).getPhoneId());
+
                     MobileNumber mobileNumber = new MobileNumber();
+
                     mobileNumber.setMnmRecordIndexId(arrayListPhoneNumber.get(j).getPhoneId());
-                    mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j)
-                            .getPhoneNumber());
+
+                    if (arrayListPBPhoneNumber.size() > 0)
+                        if (arrayListPBPhoneNumber.contains("+" + arrayListPhoneNumber.get(j).getOriginalNumber())) {
+                            mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j).getOriginalNumber());
+                        } else {
+                            mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j).getPhoneNumber());
+                        }
+                    else
+                        mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j).getPhoneNumber());
+
                     mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(j).getPhoneType());
                     mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber.get(j)
                             .getPhonePublic()));
@@ -873,8 +887,18 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                             .getPbEmailId();
                     ArrayList<Email> arrayListEmail = new ArrayList<>();
                     for (int j = 0; j < arrayListEmailId.size(); j++) {
+
                         Email email = new Email();
-                        email.setEmEmailAddress(arrayListEmailId.get(j).getEmEmailId());
+
+                        if (arrayListPBEmailAddress.size() > 0)
+                            if (arrayListPBEmailAddress.contains(arrayListEmailId.get(j).getOriginalEmail())) {
+                                email.setEmEmailAddress(arrayListEmailId.get(j).getOriginalEmail());
+                            } else {
+                                email.setEmEmailAddress(arrayListEmailId.get(j).getEmEmailId());
+                            }
+                        else
+                            email.setEmEmailAddress( arrayListEmailId.get(j).getEmEmailId());
+
                         email.setEmSocialType(arrayListEmailId.get(j).getEmSocialType());
                         email.setEmRecordIndexId(arrayListEmailId.get(j).getEmId());
                         email.setEmEmailType(arrayListEmailId.get(j).getEmType());
@@ -1068,6 +1092,48 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 }
             }
         }
+    }
+
+    private void getUserData(String phoneBookId) {
+
+        arrayListPBPhoneNumber = new ArrayList<>();
+        arrayListPBEmailAddress = new ArrayList<>();
+
+        // From PhoneBook
+        Cursor contactNumberCursor = phoneBookContacts.getContactNumbers(phoneBookId);
+
+        if (contactNumberCursor != null && contactNumberCursor.getCount() > 0) {
+            while (contactNumberCursor.moveToNext()) {
+
+                ProfileDataOperationPhoneNumber phoneNumber = new
+                        ProfileDataOperationPhoneNumber();
+                ProfileDataOperationPhoneNumber phoneNumberOperation = new
+                        ProfileDataOperationPhoneNumber();
+
+                arrayListPBPhoneNumber.add(Utils.getFormattedNumber(getActivity(),
+                        contactNumberCursor.getString(contactNumberCursor.getColumnIndex
+                                (ContactsContract.CommonDataKinds.Phone.NUMBER))));
+
+            }
+            contactNumberCursor.close();
+        }
+
+        //</editor-fold>
+
+        // <editor-fold desc="Email Id">
+
+        // From PhoneBook
+        Cursor contactEmailCursor = phoneBookContacts.getContactEmail(phoneBookId);
+
+        if (contactEmailCursor != null && contactEmailCursor.getCount() > 0) {
+            while (contactEmailCursor.moveToNext()) {
+                arrayListPBEmailAddress.add(contactEmailCursor.getString(contactEmailCursor
+                        .getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)));
+            }
+            contactEmailCursor.close();
+        }
+
+        //</editor-fold>
     }
 
     private void initSwipe() {

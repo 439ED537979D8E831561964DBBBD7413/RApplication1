@@ -410,7 +410,6 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
         getProfileDetails();
 
         layoutVisibility();
-
         initSwipe();
 
     }
@@ -445,9 +444,9 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
             imageProfile.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-//                    if (StringUtils.length(profileDetail.getPbProfilePhoto()) > 0) {
+                    if (StringUtils.length(profileDetail.getPbProfilePhoto()) > 0) {
                     zoomImageFromThumb(imageProfile, profileDetail.getPbProfilePhoto());
-//                    }
+                    }
                 }
             });
 
@@ -773,7 +772,11 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                 if (viewHolder instanceof ProfileDetailAdapter.ProfileDetailViewHolder &&
                         StringUtils.startsWithIgnoreCase(((ProfileDetailAdapter
                                 .ProfileDetailViewHolder) viewHolder).textMain.getText()
-                                .toString(), "+XX")) {
+                                .toString(), "+XX") || viewHolder instanceof ProfileDetailAdapter.ProfileDetailViewHolder &&
+                        StringUtils.startsWithIgnoreCase(((ProfileDetailAdapter
+                                .ProfileDetailViewHolder) viewHolder).textMain.getText()
+                                .toString(), "" +
+                                "XX") ) {
                     return 0;
                 }
                 return super.getSwipeDirs(recyclerView, viewHolder);
