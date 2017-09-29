@@ -40,6 +40,14 @@ public class AppConstants {
 
     //</editor-fold>
 
+    //<editor-fold desc="Calendar Date Formate">
+    public static String EVENT_GENERAL_DATE_FORMAT = "dd'th' MMMM, yyyy";
+    public static String EVENT_ST_DATE_FORMAT = "dd'st' MMMM, yyyy";
+    public static String EVENT_ND_DATE_FORMAT = "dd'nd' MMMM, yyyy";
+    public static String EVENT_RD_DATE_FORMAT = "dd'rd' MMMM, yyyy";
+
+    //</editor-fold>
+
     //<editor-fold desc="GCM Constants">
 
     public static final String GCM_SERVER_KEY = "AIzaSyBv-bFhNJmIhNW4_8jROcy46_axuK3Fl6g";
