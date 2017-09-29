@@ -319,7 +319,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     ProfileDetailAdapter phoneDetailAdapter;
     MaterialDialog callConfirmationDialog;
 
+    ArrayList<String> arrayListPBPhoneNumber;
+    ArrayList<String> arrayListPBEmailAddress;
     ArrayList<String> arrayListFavouriteContacts;
+
     RContactApplication rContactApplication;
     boolean profileActivityCallInstance = false;
     ArrayList<CallLogType> arrayListHistory;
@@ -435,10 +438,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 //            }
         }
         if (displayOwnProfile) {
-            ProfileDataOperation profileDataOperation = queryManager.getRcProfileDetail
-                    (this, pmId);
-            setUpView(profileDataOperation);
-            layoutVisibility();
+            if(pmId != null){
+                ProfileDataOperation profileDataOperation = queryManager.getRcProfileDetail
+                        (this, pmId);
+                setUpView(profileDataOperation);
+                layoutVisibility();
+            }
         }
     }
 
@@ -523,6 +528,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         smsIntent.putExtra("sms_body", AppConstants.PLAY_STORE_LINK + getPackageName());
                         smsIntent.setData(Uri.parse("sms:" + phoneNumbers.get(0).getPhoneNumber()));
                         startActivity(smsIntent);
+
 
 //                        inviteContact(numbers, null);
                     } else if (emails.size() > 0) {
@@ -1106,6 +1112,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 Utils.hideProgressDialog();
                 if (getProfileResponse != null && StringUtils.equalsIgnoreCase(getProfileResponse
                         .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+
+                    getUserData();
 
                     ProfileDataOperation profileDetail = getProfileResponse.getProfileDetail();
                     storeProfileDataToDb(profileDetail);
@@ -1706,7 +1714,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 imageProfile.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        zoomImageFromThumb(imageProfile, userProfile.getPmProfileImage());
+                        if (StringUtils.length(userProfile.getPmProfileImage()) > 0){
+                            zoomImageFromThumb(imageProfile, userProfile.getPmProfileImage());
+                        }
+
                     }
                 });
 
@@ -1729,7 +1740,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 imageProfile.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        zoomImageFromThumb(imageProfile, thumbnailUrl);
+                        if (StringUtils.length(thumbnailUrl) > 0){
+                            zoomImageFromThumb(imageProfile, thumbnailUrl);
+                        }
+
                     }
                 });
 
@@ -2244,7 +2258,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         imageProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                zoomImageFromThumb(imageProfile, profileThumbnail);
+                if (StringUtils.length(thumbnailUrl) > 0){
+                    zoomImageFromThumb(imageProfile, profileThumbnail);
+                }
+
             }
         });
 
@@ -4114,6 +4131,51 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     }
 
+    private void getUserData() {
+
+        String rawId;
+
+        arrayListPBPhoneNumber = new ArrayList<>();
+        arrayListPBEmailAddress = new ArrayList<>();
+
+        if (checkNumberFavourite == null) {
+            rawId = phoneBookId;
+        } else {
+            rawId = checkNumberFavourite;
+        }
+
+        // From PhoneBook
+        Cursor contactNumberCursor = phoneBookContacts.getContactNumbers(rawId);
+
+        if (contactNumberCursor != null && contactNumberCursor.getCount() > 0) {
+            while (contactNumberCursor.moveToNext()) {
+
+                arrayListPBPhoneNumber.add(Utils.getFormattedNumber(this,
+                        contactNumberCursor.getString(contactNumberCursor.getColumnIndex
+                                (ContactsContract.CommonDataKinds.Phone.NUMBER))));
+
+            }
+            contactNumberCursor.close();
+        }
+
+        //</editor-fold>
+
+        // <editor-fold desc="Email Id">
+
+        // From PhoneBook
+        Cursor contactEmailCursor = phoneBookContacts.getContactEmail(rawId);
+
+        if (contactEmailCursor != null && contactEmailCursor.getCount() > 0) {
+            while (contactEmailCursor.moveToNext()) {
+                arrayListPBEmailAddress.add(contactEmailCursor.getString(contactEmailCursor
+                        .getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)));
+            }
+            contactEmailCursor.close();
+        }
+
+        //</editor-fold>
+    }
+
     private void storeProfileDataToDb(ProfileDataOperation profileDetail) {
 
         //<editor-fold desc="Basic Details">
@@ -4143,7 +4205,16 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 MobileNumber mobileNumber = new MobileNumber();
                 mobileNumber.setMnmRecordIndexId(arrayListPhoneNumber.get(i).getPhoneId());
                 mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(i).getPhoneType());
-                mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(i).getPhoneNumber());
+
+                if (arrayListPBPhoneNumber.size() > 0)
+                    if (arrayListPBPhoneNumber.contains("+" + arrayListPhoneNumber.get(i).getOriginalNumber())) {
+                        mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(i).getOriginalNumber());
+                    } else {
+                        mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(i).getPhoneNumber());
+                    }
+                else
+                    mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(i).getPhoneNumber());
+
                 mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber.get(i)
                         .getPhonePublic()));
                 mobileNumber.setMnmIsPrimary(String.valueOf(arrayListPhoneNumber.get(i)
@@ -4168,7 +4239,16 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             for (int i = 0; i < arrayListEmailId.size(); i++) {
                 Email email = new Email();
                 email.setEmRecordIndexId(arrayListEmailId.get(i).getEmId());
-                email.setEmEmailAddress(arrayListEmailId.get(i).getEmEmailId());
+
+                if (arrayListPBEmailAddress.size() > 0)
+                    if (arrayListPBEmailAddress.contains(arrayListEmailId.get(i).getOriginalEmail())) {
+                        email.setEmEmailAddress(arrayListEmailId.get(i).getOriginalEmail());
+                    } else {
+                        email.setEmEmailAddress(arrayListEmailId.get(i).getEmEmailId());
+                    }
+                else
+                    email.setEmEmailAddress(arrayListEmailId.get(i).getEmEmailId());
+
                 email.setEmSocialType(arrayListEmailId.get(i).getEmSocialType());
                 email.setEmEmailType(arrayListEmailId.get(i).getEmType());
                 email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(i).getEmPublic()));
@@ -4186,6 +4266,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         //<editor-fold desc="Organization Master">
         TableOrganizationMaster tableOrganizationMaster = new TableOrganizationMaster
                 (databaseHandler);
+
+        tableOrganizationMaster.deleteOrganization(profileDetail.getRcpPmId());
 
         if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbOrganization())) {
             ArrayList<ProfileDataOperationOrganization> arrayListOrganization = profileDetail
@@ -4215,6 +4297,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         // <editor-fold desc="Website Master">
         TableWebsiteMaster tableWebsiteMaster = new TableWebsiteMaster(databaseHandler);
 
+        tableWebsiteMaster.deleteWebsite(profileDetail.getRcpPmId());
+
         if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbWebAddress())) {
 //            ArrayList<String> arrayListWebsite = profileDetail.getPbWebAddress();
             ArrayList<ProfileDataOperationWebAddress> arrayListWebsite = profileDetail
@@ -4231,13 +4315,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
 
             tableWebsiteMaster.addUpdateArrayWebsite(websiteList, profileDetail.getRcpPmId());
-        } else {
+        }else {
             tableWebsiteMaster.deleteData(profileDetail.getRcpPmId());
         }
         //</editor-fold>
 
         //<editor-fold desc="Address Master">
         TableAddressMaster tableAddressMaster = new TableAddressMaster(databaseHandler);
+
+        tableAddressMaster.deleteAddress(profileDetail.getRcpPmId());
 
         if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbAddress())) {
             ArrayList<ProfileDataOperationAddress> arrayListAddress = profileDetail.getPbAddress();
@@ -4270,13 +4356,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
 
             tableAddressMaster.addUpdateArrayAddress(addressList, profileDetail.getRcpPmId());
-        } else {
+        }else {
             tableAddressMaster.deleteData(profileDetail.getRcpPmId());
         }
         //</editor-fold>
 
         // <editor-fold desc="Im Account Master">
         TableImMaster tableImMaster = new TableImMaster(databaseHandler);
+
+        tableImMaster.deleteImAccount(profileDetail.getRcpPmId());
 
         if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbIMAccounts())) {
             ArrayList<ProfileDataOperationImAccount> arrayListImAccount = profileDetail
@@ -4308,6 +4396,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         // <editor-fold desc="Event Master">
         TableEventMaster tableEventMaster = new TableEventMaster(databaseHandler);
 
+        tableEventMaster.deleteEvent(profileDetail.getRcpPmId());
+
         if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEvent())) {
             ArrayList<ProfileDataOperationEvent> arrayListEvent = profileDetail.getPbEvent();
             ArrayList<Event> eventList = new ArrayList<>();
@@ -4323,7 +4413,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
 
             tableEventMaster.addUpdateArrayEvent(eventList, profileDetail.getRcpPmId());
-        } else {
+        }else {
             tableEventMaster.deleteData(profileDetail.getRcpPmId());
         }
         //</editor-fold>

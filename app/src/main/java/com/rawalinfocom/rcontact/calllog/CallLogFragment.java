@@ -187,7 +187,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 .PREF_RECENT_CALLS_BROADCAST_RECEIVER_CALL_LOG_TAB, true);
 
         isCallLogFragment = true;
-        toolbar =  getMainActivity().getToolbar();
+        toolbar = getMainActivity().getToolbar();
 
     }
 
@@ -205,7 +205,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         // if enabled, change the row state to activated
         if (simpleCallLogListAdapter.getSelectedItemCount() > 0) {
             enableActionMode(position);
-        }else{
+        } else {
 
             CallLogType selectedCallLogData = callLogTypeArrayList.get(position);
             String key = "";
@@ -248,7 +248,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     cloudName = contactDisplayName;
                 }
             }
-            long date =  selectedCallLogData.getDate();
+            long date = selectedCallLogData.getDate();
             long selectedLogDate, dateFromReceiver = 0;
             Date dateFromReceiver1 = selectedCallLogData.getCallReceiverDate();
             if (dateFromReceiver1 != null) {
@@ -349,6 +349,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         @Override
         public void onDestroyActionMode(ActionMode mode) {
             toolbar.setVisibility(View.VISIBLE);
+            if (mode != null)
+                mode.finish();
             simpleCallLogListAdapter.clearSelections();
 //            swipeRefreshLayout.setEnabled(true);
             actionMode = null;
@@ -359,6 +361,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     // mAdapter.notifyDataSetChanged();
                 }
             });
+
         }
     }
 
@@ -941,6 +944,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 final String value = parent.getSelectedItem().toString();
                 if (!TextUtils.isEmpty(value)) {
                     selectedCallType = value;
+                    if (simpleCallLogListAdapter != null)
+                        actionModeCallback.onDestroyActionMode(actionMode);
 
                     Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
@@ -986,7 +991,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
         callLogTypeArrayList.clear();
         simpleCallLogListAdapter = new SimpleCallLogListAdapter(getActivity(),
-                callLogTypeArrayList,this);
+                callLogTypeArrayList, this);
         recyclerCallLogs.setAdapter(simpleCallLogListAdapter);
 
         try {
@@ -1169,11 +1174,11 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     }
 
                     simpleCallLogListAdapter = new SimpleCallLogListAdapter(getActivity(),
-                            filteredList,this);
+                            filteredList, this);
 
                 } else {
                     simpleCallLogListAdapter = new SimpleCallLogListAdapter(getActivity(),
-                            callLogTypeArrayList,this);
+                            callLogTypeArrayList, this);
                 }
 
                 recyclerCallLogs.setAdapter(simpleCallLogListAdapter);

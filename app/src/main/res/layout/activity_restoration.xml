@@ -33,7 +33,7 @@
         android:layout_marginTop="@dimen/margin_15dp"
         android:gravity="center"
         android:text="@string/str_restoring"
-        android:textAppearance="?android:textAppearanceMedium"
+        android:textAppearance="?android:textAppearanceSmall"
         android:textColor="@color/colorAccent" />
 
     <LinearLayout

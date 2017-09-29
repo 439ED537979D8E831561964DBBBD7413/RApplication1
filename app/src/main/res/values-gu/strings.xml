@@ -411,7 +411,7 @@
     <string name="str_unread_notification_hint_2">વાંચ્યા વગરની સૂચના(ઓ) છે.</string>
     <string name="str_unread_notification_hint_3">તમારી પાસે કોઈ વાંચ્યા વગરની સૂચના(ઓ) નથી.</string>
     <string name="str_comment_reply">તમારી ટિપ્પણી સફળતાપૂર્વક મોકલવામાં આવી છે</string>
-    <string name="str_rating_comment_hint_1">%1$s એ તમારા રેટિંગ અને ટિપ્પણી નો જવાબ આપ્યો</string>
+    <string name="str_rating_comment_hint_1">%1$s એ જવાબ આપ્યો</string>
     <string name="str_rating_comment_hint_2">%1$s ને તમે રેટ કર્યું અને એમના માટે ટિપ્પણી કરી</string>
     <string name="str_rating_comment_hint_3">%1$s થી તમને રેટિંગ મળી</string>
     <string name="str_view_more">વધુ જુવો</string>
