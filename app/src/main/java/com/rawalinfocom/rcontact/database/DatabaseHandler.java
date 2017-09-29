@@ -32,7 +32,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL(TableCountryMaster.CREATE_TABLE_RC_COUNTRY_MASTER);
         db.execSQL(TableOtpLogDetails.CREATE_TABLE_OTP_LOG_DETAILS);
         db.execSQL(TableProfileMaster.CREATE_TABLE_RC_PROFILE_MASTER);
-        db.execSQL(TableEmailMaster.CREATE_TABLE_RC_EMAIL_MASTER);
+        db.execSQL(TableEmailMaster.CREATE_TABLE_RC_EMAIL_MASTER_1);
         db.execSQL(TableMobileMaster.CREATE_TABLE_RC_MOBILE_NUMBER_MASTER);
         db.execSQL(TableProfileMobileMapping.CREATE_TABLE_PB_PROFILE_MOBILE_MAPPING);
         db.execSQL(TableProfileEmailMapping.CREATE_TABLE_PB_PROFILE_EMAIL_MAPPING);
@@ -50,6 +50,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL(TableRCContactRequest.CREATE_TABLE_RC_CONTACT_REQUEST);
         db.execSQL(TableNotificationStateMaster.CREATE_TABLE_NOTIFICATION_STATE_MASTER);
         db.execSQL(TableSpamDetailMaster.CREATE_TABLE_SPAM_DETAIL_MASTER);
+
+        db.execSQL("ALTER TABLE " + TableEmailMaster.TABLE_RC_EMAIL_MASTER_TEMP
+                + " RENAME TO " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + ";");
     }
 
     @Override

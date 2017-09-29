@@ -54,7 +54,7 @@ public class TableEmailMaster {
             " " + COLUMN_EM_EMAIL_PRIVACY + " integer DEFAULT 2," +
             " " + COLUMN_EM_IS_VERIFIED + " integer," +
             " " + COLUMN_EM_IS_PRIVATE + " integer," +
-            " " + COLUMN_RC_PROFILE_MASTER_PM_ID + " integer" +
+            " " + COLUMN_RC_PROFILE_MASTER_PM_ID + " integer," +
             " UNIQUE(" + COLUMN_EM_EMAIL_ADDRESS + ", " + COLUMN_RC_PROFILE_MASTER_PM_ID + ")" +
             ");";
 
@@ -70,7 +70,7 @@ public class TableEmailMaster {
             " " + COLUMN_EM_IS_VERIFIED + " integer," +
             " " + COLUMN_EM_IS_PRIVATE + " integer," +
             " " + COLUMN_RC_PROFILE_MASTER_PM_ID + " integer" +
-            " UNIQUE(" + COLUMN_EM_EMAIL_ADDRESS + ", " + COLUMN_RC_PROFILE_MASTER_PM_ID + ")" +
+//            " UNIQUE(" + COLUMN_EM_EMAIL_ADDRESS + ", " + COLUMN_RC_PROFILE_MASTER_PM_ID + ")" +
             ");";
 
     // Adding new Email
