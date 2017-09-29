@@ -4145,17 +4145,19 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         }
 
         // From PhoneBook
-        Cursor contactNumberCursor = phoneBookContacts.getContactNumbers(rawId);
+        if(!StringUtils.isEmpty(rawId)){
+            Cursor contactNumberCursor = phoneBookContacts.getContactNumbers(rawId);
 
-        if (contactNumberCursor != null && contactNumberCursor.getCount() > 0) {
-            while (contactNumberCursor.moveToNext()) {
+            if (contactNumberCursor != null && contactNumberCursor.getCount() > 0) {
+                while (contactNumberCursor.moveToNext()) {
 
-                arrayListPBPhoneNumber.add(Utils.getFormattedNumber(this,
-                        contactNumberCursor.getString(contactNumberCursor.getColumnIndex
-                                (ContactsContract.CommonDataKinds.Phone.NUMBER))));
+                    arrayListPBPhoneNumber.add(Utils.getFormattedNumber(this,
+                            contactNumberCursor.getString(contactNumberCursor.getColumnIndex
+                                    (ContactsContract.CommonDataKinds.Phone.NUMBER))));
 
+                }
+                contactNumberCursor.close();
             }
-            contactNumberCursor.close();
         }
 
         //</editor-fold>
