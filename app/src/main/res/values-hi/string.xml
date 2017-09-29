@@ -707,6 +707,7 @@
     <string name="my_profile_share">प्रोफ़ाइल शेयर करें</string>
     <string name="share_rating_via_social_media">सोशल मीडिया द्वारा रेटिंग शेयर  करें</string>
     <string name="error_no_social_app_found">जानकारी साझा करने के लिए कृपया फेसबुक या लिंक्डइन या ट्विटर ऐप इंस्टॉल करें।</string>
+    <string name="org_list">Organizations List</string>
 
 
 </resources>
