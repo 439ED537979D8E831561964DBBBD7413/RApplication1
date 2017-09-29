@@ -20,6 +20,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -364,7 +365,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     DatePickerDialog.OnDateSetListener dataPicker;
     EditText editTextEvent;
     //    EditText inputValue;
-    EditText inputCompanyName, inputDesignationName;
+//    EditText inputCompanyName, inputDesignationName;
 
     boolean isBirthday = false;
     boolean isEvent = false;
@@ -1547,6 +1548,18 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     organization.setIsCurrent(checkboxOrganization.isChecked() ? 1 : 0);
                     organization.setOrgPublic(IntegerConstants.PRIVACY_EVERYONE);
 
+                    ColorStateList colorStateList = ColorStateList.valueOf(ContextCompat.getColor(EditProfileActivity
+                            .this, R.color.colorDarkGray));
+                    ViewCompat.setBackgroundTintList(inputFromDate, colorStateList);
+                    ViewCompat.setBackgroundTintList(inputToDate, colorStateList);
+
+                    if (checkboxOrganization.isChecked()) {
+
+                        ColorStateList colorState = ColorStateList.valueOf(ContextCompat.getColor(EditProfileActivity
+                                .this, R.color.grayishMagenta));
+                        ViewCompat.setBackgroundTintList(inputToDate, colorState);
+                    }
+
                     if (!StringUtils.isBlank(inputToDate.getText().toString().trim())) {
                         organization.setOrgToDate(
                                 Utils.convertDateFormat(inputToDate.getText()
@@ -1575,12 +1588,26 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             } else if (StringUtils.isBlank(organization.getOrgFromDate())) {
                                 Utils.showErrorSnackBar(this, relativeRootEditProfile,
                                         getString(R.string.error_required_org_from_date));
+//                                inputFromDate.setHighlightColor(ContextCompat.getColor(EditProfileActivity
+//                                        .this, R.color.colorSnackBarNegative));
+
+                                ColorStateList colorStateList1 = ColorStateList.valueOf(ContextCompat.getColor(EditProfileActivity
+                                        .this, R.color.colorSnackBarNegative));
+                                ViewCompat.setBackgroundTintList(inputFromDate, colorStateList1);
+
                                 isValid = false;
                                 break;
                             } else if (!checkboxOrganization.isChecked() && StringUtils.isBlank
                                     (organization.getOrgToDate())) {
                                 Utils.showErrorSnackBar(this, relativeRootEditProfile,
                                         getString(R.string.error_required_org_to_date));
+//                                inputToDate.setHighlightColor(ContextCompat.getColor(EditProfileActivity
+//                                        .this, R.color.colorSnackBarNegative));
+
+                                ColorStateList colorStateList1 = ColorStateList.valueOf(ContextCompat.getColor(EditProfileActivity
+                                        .this, R.color.colorSnackBarNegative));
+                                ViewCompat.setBackgroundTintList(inputToDate, colorStateList1);
+
                                 isValid = false;
                                 break;
                             } else {
@@ -2901,6 +2928,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             for (int i = 0; i < arrayListOrganizationObject.size(); i++) {
                 addOrganizationView(arrayListOrganizationObject.get(i));
             }
+            EditText inputCompanyName = linearOrganizationDetails.findViewById(R.id.input_company_name);
+            EditText inputDesignationName = linearOrganizationDetails.findViewById(R.id.input_designation_name);
             inputCompanyName.addTextChangedListener(valueTextWatcher);
             inputDesignationName.addTextChangedListener(valueTextWatcher);
         } else {
@@ -3512,8 +3541,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         View view = LayoutInflater.from(this).inflate(R.layout
                 .list_item_my_profile_edit_organization, null);
         ImageView deleteOrganization = view.findViewById(R.id.deleteOrganization);
-        inputCompanyName = view.findViewById(R.id.input_company_name);
-        inputDesignationName = view.findViewById(R.id.input_designation_name);
+        final EditText inputCompanyName = view.findViewById(R.id.input_company_name);
+        final EditText inputDesignationName = view.findViewById(R.id.input_designation_name);
         final CheckBox checkboxOrganization = view.findViewById(R.id
                 .checkbox_organization);
 
@@ -3608,6 +3637,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 } else if (linearOrganizationDetails.getChildCount() == 1) {
                     inputCompanyName.getText().clear();
                     inputDesignationName.getText().clear();
+                    inputFromDate.getText().clear();
+                    inputToDate.getText().clear();
                     checkboxOrganization.setChecked(true);
                 }
             }

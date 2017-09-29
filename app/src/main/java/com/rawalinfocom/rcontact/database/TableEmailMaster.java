@@ -54,7 +54,7 @@ public class TableEmailMaster {
             " " + COLUMN_EM_IS_VERIFIED + " integer," +
             " " + COLUMN_EM_IS_PRIVATE + " integer," +
             " " + COLUMN_RC_PROFILE_MASTER_PM_ID + " integer," +
-            " UNIQUE(" + COLUMN_EM_EMAIL_ADDRESS + ", " + COLUMN_RC_PROFILE_MASTER_PM_ID + ")" +
+            " UNIQUE(" + COLUMN_EM_ID + ", " + COLUMN_RC_PROFILE_MASTER_PM_ID + ")" +
             ");";
 
     // Adding new Email
@@ -114,6 +114,11 @@ public class TableEmailMaster {
     // Adding or Updating array Email
     public void addUpdateArrayEmail(ArrayList<Email> arrayListEmail, String RcpPmId) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+        int count = db.delete(TABLE_RC_EMAIL_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
+                RcpPmId, null);
+        if (count > 0) System.out.println("RContact data delete ");
+
 
 //        ContentValues values = new ContentValues();
         for (int i = 0; i < arrayListEmail.size(); i++) {

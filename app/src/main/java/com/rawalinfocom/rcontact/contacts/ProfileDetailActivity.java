@@ -4133,28 +4133,29 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     private void getUserData() {
 
+        String rawId;
+
         arrayListPBPhoneNumber = new ArrayList<>();
         arrayListPBEmailAddress = new ArrayList<>();
 
+        if (checkNumberFavourite == null) {
+            rawId = phoneBookId;
+        } else {
+            rawId = checkNumberFavourite;
+        }
+
         // From PhoneBook
-        if (!isHideFavourite) {
-            Cursor contactNumberCursor = phoneBookContacts.getContactNumbers(phoneBookId);
+        Cursor contactNumberCursor = phoneBookContacts.getContactNumbers(rawId);
 
-            if (contactNumberCursor != null && contactNumberCursor.getCount() > 0) {
-                while (contactNumberCursor.moveToNext()) {
+        if (contactNumberCursor != null && contactNumberCursor.getCount() > 0) {
+            while (contactNumberCursor.moveToNext()) {
 
-                    ProfileDataOperationPhoneNumber phoneNumber = new
-                            ProfileDataOperationPhoneNumber();
-                    ProfileDataOperationPhoneNumber phoneNumberOperation = new
-                            ProfileDataOperationPhoneNumber();
+                arrayListPBPhoneNumber.add(Utils.getFormattedNumber(this,
+                        contactNumberCursor.getString(contactNumberCursor.getColumnIndex
+                                (ContactsContract.CommonDataKinds.Phone.NUMBER))));
 
-                    arrayListPBPhoneNumber.add(Utils.getFormattedNumber(this,
-                            contactNumberCursor.getString(contactNumberCursor.getColumnIndex
-                                    (ContactsContract.CommonDataKinds.Phone.NUMBER))));
-
-                }
-                contactNumberCursor.close();
             }
+            contactNumberCursor.close();
         }
 
         //</editor-fold>
@@ -4162,16 +4163,14 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         // <editor-fold desc="Email Id">
 
         // From PhoneBook
-        if (!isHideFavourite) {
-            Cursor contactEmailCursor = phoneBookContacts.getContactEmail(phoneBookId);
+        Cursor contactEmailCursor = phoneBookContacts.getContactEmail(rawId);
 
-            if (contactEmailCursor != null && contactEmailCursor.getCount() > 0) {
-                while (contactEmailCursor.moveToNext()) {
-                    arrayListPBEmailAddress.add(contactEmailCursor.getString(contactEmailCursor
-                            .getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)));
-                }
-                contactEmailCursor.close();
+        if (contactEmailCursor != null && contactEmailCursor.getCount() > 0) {
+            while (contactEmailCursor.moveToNext()) {
+                arrayListPBEmailAddress.add(contactEmailCursor.getString(contactEmailCursor
+                        .getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)));
             }
+            contactEmailCursor.close();
         }
 
         //</editor-fold>
@@ -4197,8 +4196,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         //<editor-fold desc="Mobile Number">
         TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
-
-        tableMobileMaster.deleteMobileNumber(profileDetail.getRcpPmId());
 
         ArrayList<MobileNumber> arrayListMobileNumber = new ArrayList<>();
         ArrayList<ProfileDataOperationPhoneNumber> arrayListPhoneNumber =
@@ -4228,13 +4225,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
             tableMobileMaster.addUpdateArrayMobileNumber(arrayListMobileNumber, profileDetail
                     .getRcpPmId());
+        } else {
+            tableMobileMaster.deleteData(profileDetail.getRcpPmId());
         }
         //</editor-fold>
 
         //<editor-fold desc="Email Master">
         TableEmailMaster tableEmailMaster = new TableEmailMaster(databaseHandler);
-
-        tableEmailMaster.deleteEmail(profileDetail.getRcpPmId());
 
         if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEmailId())) {
             ArrayList<ProfileDataOperationEmail> arrayListEmailId = profileDetail.getPbEmailId();
@@ -4261,6 +4258,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 arrayListEmail.add(email);
             }
             tableEmailMaster.addUpdateArrayEmail(arrayListEmail, profileDetail.getRcpPmId());
+        } else {
+            tableEmailMaster.deleteData(profileDetail.getRcpPmId());
         }
         //</editor-fold>
 
@@ -4290,6 +4289,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             tableOrganizationMaster.addUpdateArrayOrganization(organizationList, profileDetail
                     .getRcpPmId());
+        } else {
+            tableOrganizationMaster.deleteData(profileDetail.getRcpPmId());
         }
         //</editor-fold>
 
@@ -4314,6 +4315,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
 
             tableWebsiteMaster.addUpdateArrayWebsite(websiteList, profileDetail.getRcpPmId());
+        }else {
+            tableWebsiteMaster.deleteData(profileDetail.getRcpPmId());
         }
         //</editor-fold>
 
@@ -4353,6 +4356,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
 
             tableAddressMaster.addUpdateArrayAddress(addressList, profileDetail.getRcpPmId());
+        }else {
+            tableAddressMaster.deleteData(profileDetail.getRcpPmId());
         }
         //</editor-fold>
 
@@ -4383,6 +4388,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
 
             tableImMaster.addUpdateArrayImAccount(imAccountsList, profileDetail.getRcpPmId());
+        } else {
+            tableImMaster.deleteData(profileDetail.getRcpPmId());
         }
         //</editor-fold>
 
@@ -4406,6 +4413,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
 
             tableEventMaster.addUpdateArrayEvent(eventList, profileDetail.getRcpPmId());
+        }else {
+            tableEventMaster.deleteData(profileDetail.getRcpPmId());
         }
         //</editor-fold>
     }

@@ -50,7 +50,6 @@ import butterknife.ButterKnife;
 public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
-
     private ArrayList<CallLogType> arrayListCallLogs;
     private ArrayList<String> arrayListForKnownContact;
     private ArrayList<String> arrayListForUnknownContact;

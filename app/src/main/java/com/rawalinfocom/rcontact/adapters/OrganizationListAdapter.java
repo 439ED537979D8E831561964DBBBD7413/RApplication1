@@ -78,7 +78,6 @@ public class OrganizationListAdapter extends RecyclerView.Adapter<OrganizationLi
                 holder.textTime.setText(String.format("%s to %s ", formattedFromDate, formattedToDate));
             }
         }
-
     }
 
     @Override
