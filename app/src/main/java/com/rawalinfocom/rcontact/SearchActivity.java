@@ -351,38 +351,43 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                             }else{
                                 globalSearchTypeArrayListMain.add(globalSearchType);
                             }
-
                         }
-                        
-                        recycleViewGlobalContact.setVisibility(View.VISIBLE);
-                        if (count > 9)
-                            rippleViewMoreGlobalContacts.setVisibility(View.GONE);
-                        else {
-                            rippleViewMoreGlobalContacts.setVisibility(View.VISIBLE);
-                            if (globalSearchAdapter != null) {
-//                                recycleViewGlobalContact.scrollToPosition(globalSearchAdapter
-// .getItemCount() - 1);
+
+                        if(globalSearchTypeArrayListMain.size() > 0){
+                            recycleViewGlobalContact.setVisibility(View.VISIBLE);
+                            if (count > 9)
+                                rippleViewMoreGlobalContacts.setVisibility(View.GONE);
+                            else {
+                                if(globalSearchTypeArrayList.size()<5)
+                                    rippleViewMoreGlobalContacts.setVisibility(View.GONE);
+                                else
+                                    rippleViewMoreGlobalContacts.setVisibility(View.VISIBLE);
+
                             }
-                        }
-                        rippleViewSearchOnGlobal.setVisibility(View.GONE);
-                        textGlobalText.setVisibility(View.GONE);
-                        textNoRecords.setVisibility(View.GONE);
-                        if (globalSearchCount > 0) {
-                            globalSearchCount = globalSearchCount + globalSearchTypeArrayList
-                                    .size();
-                        } else {
-                            globalSearchCount = globalSearchTypeArrayList.size();
+                            rippleViewSearchOnGlobal.setVisibility(View.GONE);
+                            textGlobalText.setVisibility(View.GONE);
+                            textNoRecords.setVisibility(View.GONE);
+                            if (globalSearchCount > 0) {
+                                globalSearchCount = globalSearchCount + globalSearchTypeArrayList
+                                        .size();
+                            } else {
+                                globalSearchCount = globalSearchTypeArrayList.size();
+                            }
+
+                            textGlobalSearchCount.setText(globalSearchCount + "");
+
+                            if (globalSearchAdapter == null) {
+                                setGlobalSearchAdapter();
+                            } else {
+                                globalSearchAdapter.notifyDataSetChanged();
+                            }
+
+                            initSwipeForGlobal();
+                        }else{
+                            textNoRecords.setVisibility(View.VISIBLE);
+                            textNoRecords.setTypeface(Utils.typefaceRegular(this));
                         }
 
-                        textGlobalSearchCount.setText(globalSearchCount + "");
-
-                        if (globalSearchAdapter == null) {
-                            setGlobalSearchAdapter();
-                        } else {
-                            globalSearchAdapter.notifyDataSetChanged();
-                        }
-
-                        initSwipeForGlobal();
 
                     } else {
                         if (globalSearchTypeArrayListMain != null &&
@@ -630,14 +635,23 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
         for (int i = 0; i < arrayListDisplayProfile.size(); i++) {
             UserProfile userProfile = arrayListDisplayProfile.get(i);
             String number = userProfile.getMobileNumber();
+            if(!number.startsWith("+91")){
+                number =  "+91" + number;
+                number = number.replace(" ", "").replace("-", "");
+            }
             arrayListRCPNumber.add(number);
         }
 
         for (int i = 0; i < objectArrayListContact.size(); i++) {
             ProfileData profileData = (ProfileData) objectArrayListContact.get(i);
             String number = profileData.getTempNumber();
-            if (!arrayListRCPNumber.contains(number))
+            if (!arrayListRCPNumber.contains(number)){
+                if(!number.startsWith("+91")){
+                    number =  "+91" + number;
+                    number = number.replace(" ", "").replace("-", "");
+                }
                 arrayListRCPNumber.add(number);
+            }
         }
     }
 
@@ -656,8 +670,11 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                         textNoRecords.setVisibility(View.GONE);
                         rippleViewSearchOnGlobal.setVisibility(View.VISIBLE);
                         textGlobalText.setVisibility(View.VISIBLE);
+                        rippleViewMoreGlobalContacts.setVisibility(View.GONE);
+                        globalSearchCount = 0;
+                        textGlobalSearchCount.setText("");
                     } else {
-                        globalSearchTypeArrayListMain = new ArrayList<GlobalSearchType>();
+                        globalSearchTypeArrayListMain.clear();
                         globalSearchAdapter = null;
                         recycleViewGlobalContact.setVisibility(View.GONE);
                         rippleViewSearchOnGlobal.setVisibility(View.VISIBLE);
@@ -1010,7 +1027,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                         rippleViewSearchOnGlobal.setVisibility(View.VISIBLE);
                         textGlobalText.setVisibility(View.VISIBLE);
                     } else {
-                        globalSearchTypeArrayListMain = new ArrayList<GlobalSearchType>();
+                        globalSearchTypeArrayListMain.clear();
                         globalSearchAdapter = null;
                         recycleViewGlobalContact.setVisibility(View.GONE);
                         rippleViewSearchOnGlobal.setVisibility(View.VISIBLE);
@@ -1053,6 +1070,9 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                 deviceDetailObject.setType("name");
             }else{
                 deviceDetailObject.setType("phone_number");
+                if (!searchQuery.startsWith("+91"))
+                    searchQuery = "+91" + searchQuery;
+
             }
             deviceDetailObject.setSearchQuery(searchQuery);
             deviceDetailObject.setSearchStartAt(startAt);
@@ -1298,14 +1318,19 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
 
                 if (direction == ItemTouchHelper.LEFT) {
                     /* SMS */
-                    Intent smsIntent = new Intent(Intent.ACTION_SENDTO);
-                    smsIntent.addCategory(Intent.CATEGORY_DEFAULT);
-                    smsIntent.setType("vnd.android-dir/mms-sms");
-                    smsIntent.setData(Uri.parse("sms:" + numberToSend));
-                    startActivity(smsIntent);
+                    if(!StringUtils.isEmpty(numberToSend))
+                    {
+                        Intent smsIntent = new Intent(Intent.ACTION_SENDTO);
+                        smsIntent.addCategory(Intent.CATEGORY_DEFAULT);
+                        smsIntent.setType("vnd.android-dir/mms-sms");
+                        smsIntent.setData(Uri.parse("sms:" + numberToSend));
+                        startActivity(smsIntent);
+                    }
+
 
                 } else {
-                    dialCall(numberToSend);
+                    if(!StringUtils.isEmpty(numberToSend))
+                            dialCall(numberToSend);
 //                    showCallConfirmationDialog(numberToSend);
                 }
                 Handler handler = new Handler();
@@ -1461,25 +1486,31 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
 
                 if (direction == ItemTouchHelper.LEFT) {
                     /* SMS */
-                    Intent smsIntent = new Intent(Intent.ACTION_SENDTO);
-                    smsIntent.addCategory(Intent.CATEGORY_DEFAULT);
-                    smsIntent.setType("vnd.android-dir/mms-sms");
-                    smsIntent.setData(Uri.parse("sms:" + numberToSend));
-                    startActivity(smsIntent);
+                    if(!StringUtils.isEmpty(numberToSend)){
+                        Intent smsIntent = new Intent(Intent.ACTION_SENDTO);
+                        smsIntent.addCategory(Intent.CATEGORY_DEFAULT);
+                        smsIntent.setType("vnd.android-dir/mms-sms");
+                        smsIntent.setData(Uri.parse("sms:" + numberToSend));
+                        startActivity(smsIntent);
+                    }
+
 
                 } else {
                     if (allContactAdapter != null) {
                         if (allContactAdapter.getSearchCount() == 0) {
                             if (rContactListAdapter != null && rContactListAdapter
                                     .getSearchCount() == 0) {
-                                dialCall(numberToSend);
+                                if(!StringUtils.isEmpty(numberToSend))
+                                    dialCall(numberToSend);
 //                                showCallConfirmationDialog(numberToSend, actionNumber);
                             } else {
-                                dialCall(numberToSend);
+                                if(!StringUtils.isEmpty(numberToSend))
+                                    dialCall(numberToSend);
 //                                showCallConfirmationDialog(numberToSend);
                             }
                         } else {
-                            dialCall(numberToSend);
+                            if(!StringUtils.isEmpty(numberToSend))
+                                dialCall(numberToSend);
 //                            showCallConfirmationDialog(numberToSend);
                         }
                     }

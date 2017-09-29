@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.common.base.MoreObjects;
+import com.rawalinfocom.rcontact.PublicProfileDetailActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
@@ -145,7 +146,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             @Override
             public void onClick(View view) {
 
-                if (!number.startsWith("+xx") && !number.startsWith("+XX")) {
+                if (!number.contains("xx") && !number.contains("XX")) {
 
                     if (ContextCompat.checkSelfPermission(activity, android.Manifest
                             .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
@@ -156,7 +157,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                             ((ProfileDetailActivity) activity).callNumber = number;
                         }
                     } else {
-                        Utils.callIntent(activity, number);
+                        if (!number.contains("xx") && !number.contains("XX"))
+                            Utils.callIntent(activity, number);
                     }
                 }
             }
@@ -182,7 +184,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         holder.textMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!number.startsWith("+xx") && !number.startsWith("+XX")) {
+                if (!number.contains("xx") && !number.contains("XX")) {
                     if (ContextCompat.checkSelfPermission(activity, android.Manifest
                             .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                         activity.requestPermissions(new String[]{Manifest.permission
@@ -192,7 +194,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                             ((ProfileDetailActivity) activity).callNumber = number;
                         }
                     } else {
-                        Utils.callIntent(activity, number);
+                        if (!number.contains("xx") && !number.contains("XX"))
+                            Utils.callIntent(activity, number);
                     }
                 }
             }
@@ -203,9 +206,11 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             public boolean onLongClick(View view) {
                 Utils.copyToClipboard(activity, activity.getString(R.string.str_copy_number), (
                         (TextView) view).getText().toString());
-                Utils.showSuccessSnackBar(activity, ((ProfileDetailActivity) activity)
-                        .getRelativeRootProfileDetail(), activity.getString(R.string
-                        .str_copy_number_clip_board));
+                if (activity instanceof ProfileDetailActivity) {
+                    Utils.showSuccessSnackBar(activity, ((ProfileDetailActivity) activity)
+                            .getRelativeRootProfileDetail(), activity.getString(R.string
+                            .str_copy_number_clip_board));
+                }
                 return true;
             }
         });
@@ -277,6 +282,17 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             holder.textMain.setText(number);
             holder.textMain.setTextColor(colorBlack);
         }
+        if (activity instanceof PublicProfileDetailActivity) {
+            if (pbRcpType == IntegerConstants.RCP_TYPE_PRIMARY){
+                String newNumber = "+" + holder.textMain.getText();
+                Utils.setMultipleTypeface(activity, newNumber + " " + activity
+                                .getString(R.string.im_icon_verify), 0,
+                        (StringUtils.length(newNumber) + 1), (
+                                (StringUtils.length(newNumber) + 1) + 1));
+            }else{
+                holder.textMain.setText("+" + holder.textMain.getText());
+            }
+        }
     }
 
     private void displayEmail(final ProfileDetailViewHolder holder, final int position) {
@@ -320,9 +336,13 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 Utils.copyToClipboard(activity, activity.getString(R.string.str_copy_email), (
                         (TextView) view).getText()
                         .toString());
-                Utils.showSuccessSnackBar(activity, ((ProfileDetailActivity) activity)
-                        .getRelativeRootProfileDetail(), activity.getString(R.string
-                        .str_copy_email_clip_board));
+                if (activity instanceof ProfileDetailActivity) {
+                    Utils.showSuccessSnackBar(activity, ((ProfileDetailActivity) activity)
+                            .getRelativeRootProfileDetail(), activity.getString(R.string
+                            .str_copy_email_clip_board));
+                } else {
+                }
+
                 return true;
             }
         });
@@ -898,7 +918,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 holder.llPrivacy.setVisibility(View.VISIBLE);
             } else {
                 holder.llPrivacy.setVisibility(View.GONE);
-                if(event.getIsPrivate() != null){
+                if (event.getIsPrivate() != null) {
                     if (event.getIsPrivate() == IntegerConstants.IS_PRIVATE) {
 //                    holder.imageView2.setVisibility(View.GONE);
                         holder.buttonRequest.setVisibility(View.VISIBLE);

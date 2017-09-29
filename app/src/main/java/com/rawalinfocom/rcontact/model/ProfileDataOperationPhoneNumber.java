@@ -19,6 +19,16 @@ public class ProfileDataOperationPhoneNumber implements Serializable {
     private String phoneId;
     private Integer pbRcpType;
     private Integer isPrivate;
+    private String originalNumber;
+
+    @JsonProperty("original")
+    public String getOriginalNumber() {
+        return originalNumber;
+    }
+
+    public void setOriginalNumber(String originalNumber) {
+        this.originalNumber = originalNumber;
+    }
 
     @JsonProperty("ph_type")
     public String getPhoneType() {

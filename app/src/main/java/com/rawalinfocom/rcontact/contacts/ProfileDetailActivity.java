@@ -435,10 +435,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 //            }
         }
         if (displayOwnProfile) {
-            ProfileDataOperation profileDataOperation = queryManager.getRcProfileDetail
-                    (this, pmId);
-            setUpView(profileDataOperation);
-            layoutVisibility();
+            if(pmId != null){
+                ProfileDataOperation profileDataOperation = queryManager.getRcProfileDetail
+                        (this, pmId);
+                setUpView(profileDataOperation);
+                layoutVisibility();
+            }
         }
     }
 
@@ -523,6 +525,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         smsIntent.putExtra("sms_body", AppConstants.PLAY_STORE_LINK + getPackageName());
                         smsIntent.setData(Uri.parse("sms:" + phoneNumbers.get(0).getPhoneNumber()));
                         startActivity(smsIntent);
+
 
 //                        inviteContact(numbers, null);
                     } else if (emails.size() > 0) {
@@ -1706,7 +1709,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 imageProfile.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        zoomImageFromThumb(imageProfile, userProfile.getPmProfileImage());
+                        if (StringUtils.length(userProfile.getPmProfileImage()) > 0){
+                            zoomImageFromThumb(imageProfile, userProfile.getPmProfileImage());
+                        }
+
                     }
                 });
 
@@ -1729,7 +1735,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 imageProfile.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        zoomImageFromThumb(imageProfile, thumbnailUrl);
+                        if (StringUtils.length(thumbnailUrl) > 0){
+                            zoomImageFromThumb(imageProfile, thumbnailUrl);
+                        }
+
                     }
                 });
 
@@ -2244,7 +2253,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         imageProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                zoomImageFromThumb(imageProfile, profileThumbnail);
+                if (StringUtils.length(thumbnailUrl) > 0){
+                    zoomImageFromThumb(imageProfile, profileThumbnail);
+                }
+
             }
         });
 
