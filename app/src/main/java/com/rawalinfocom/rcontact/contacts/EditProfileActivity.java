@@ -35,6 +35,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -401,7 +403,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             .permission.WRITE_EXTERNAL_STORAGE};
 
     //<editor-fold desc="Override Methods">
-    /*String imageurl = "https://static.pexels.com/photos/87452/flowers-background-butterflies-beautiful-87452.jpeg";
+    /*String imageurl = "https://static.pexels
+    .com/photos/87452/flowers-background-butterflies-beautiful-87452.jpeg";
     @BindView(R.id.btn_share)
     Button btnShare;*/
 
@@ -447,15 +450,21 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             // Extract the label, append it, and repackage it in a LabeledIntent
             ResolveInfo ri = resInfo.get(i);
             String packageName = ri.activityInfo.packageName;
-            if (packageName.contains("com.twitter.android") || packageName.contains("com.facebook.katana")
+            if (packageName.contains("com.twitter.android") || packageName.contains("com.facebook
+            .katana")
                     || packageName.contains("com.linkedin.android")) {
                 intent.setComponent(new ComponentName(packageName, ri.activityInfo.name));
                 if (packageName.contains("com.twitter.android")) {
                     intent.putExtra(Intent.EXTRA_TEXT, imageurl);
                 } else if (packageName.contains("com.facebook.katana")) {
-                    // Warning: Facebook IGNORES our text. They say "These fields are intended for users to express themselves. Pre-filling these fields erodes the authenticity of the user voice."
-                    // One workaround is to use the Facebook SDK to post, but that doesn't allow the user to choose how they want to share. We can also make a custom landing page, and the link
-                    // will show the <meta content ="..."> text from that page with our link in Facebook.
+                    // Warning: Facebook IGNORES our text. They say "These fields are intended
+                    for users to express themselves. Pre-filling these fields erodes the
+                    authenticity of the user voice."
+                    // One workaround is to use the Facebook SDK to post, but that doesn't allow
+                    the user to choose how they want to share. We can also make a custom landing
+                    page, and the link
+                    // will show the <meta content ="..."> text from that page with our link in
+                    Facebook.
 //                    intent.putExtra(Intent.EXTRA_TEXT, imageurl);
                     *//*ShareDialog shareDialog = new ShareDialog(this);
                     ShareLinkContent linkContent = new ShareLinkContent.Builder()
@@ -470,7 +479,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                     *//*try {
                         Intent mIntentFacebook = new Intent();
-                        mIntentFacebook.setClassName("com.facebook.katana", "com.facebook.composer.shareintent.ImplicitShareIntentHandlerDefaultAlias");
+                        mIntentFacebook.setClassName("com.facebook.katana", "com.facebook
+                        .composer.shareintent.ImplicitShareIntentHandlerDefaultAlias");
                         mIntentFacebook.setAction("android.intent.action.SEND");
                         mIntentFacebook.setType("text/plain");
                         mIntentFacebook.putExtra("android.intent.extra.TEXT", imageurl);
@@ -478,8 +488,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     } catch (Exception e) {
                         e.printStackTrace();
                         Intent mIntentFacebookBrowser = new Intent(Intent.ACTION_SEND);
-                        String mStringURL = "https://www.facebook.com/sharer/sharer.php?u=" + imageurl;
-                        mIntentFacebookBrowser = new Intent(Intent.ACTION_VIEW, Uri.parse(mStringURL));
+                        String mStringURL = "https://www.facebook.com/sharer/sharer.php?u=" +
+                        imageurl;
+                        mIntentFacebookBrowser = new Intent(Intent.ACTION_VIEW, Uri.parse
+                        (mStringURL));
                         startActivity(mIntentFacebookBrowser);
                     }*//*
 
@@ -488,7 +500,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
 
                 } else if (packageName.contains("com.linkedin.android")) {
-                    // If Gmail shows up twice, try removing this else-if clause and the reference to "android.gm" above
+                    // If Gmail shows up twice, try removing this else-if clause and the
+                    reference to "android.gm" above
                     intent.putExtra(android.content.Intent.EXTRA_TEXT, imageurl);
                 }
                 intentList.add(new LabeledIntent(intent, packageName, ri.loadLabel(pm), ri.icon));
@@ -510,8 +523,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         // handle result of pick image chooser
         if (requestCode == CAMERA_CAPTURE_IMAGE_REQUEST_CODE && resultCode == RESULT_OK) {
 
-            // For API >= 23 we need to check specifically that we have permissions to read external storage.
-            if (CropImage.isReadExternalStoragePermissionsRequired(EditProfileActivity.this, fileUri)) {
+            // For API >= 23 we need to check specifically that we have permissions to read
+            // external storage.
+            if (CropImage.isReadExternalStoragePermissionsRequired(EditProfileActivity.this,
+                    fileUri)) {
                 // request permissions and handle the result in onRequestPermissionsResult()
                 requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 3);
             } else {
@@ -524,8 +539,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
             fileUri = data.getData();
 
-            // For API >= 23 we need to check specifically that we have permissions to read external storage.
-            if (CropImage.isReadExternalStoragePermissionsRequired(EditProfileActivity.this, fileUri)) {
+            // For API >= 23 we need to check specifically that we have permissions to read
+            // external storage.
+            if (CropImage.isReadExternalStoragePermissionsRequired(EditProfileActivity.this,
+                    fileUri)) {
                 // request permissions and handle the result in onRequestPermissionsResult()
                 requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 3);
             } else {
@@ -554,7 +571,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream);
 
-                    String bitmapString = Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT);
+                    String bitmapString = Base64.encodeToString(outputStream.toByteArray(),
+                            Base64.DEFAULT);
 
                     ProfileDataOperation profileDataOperation = new ProfileDataOperation();
                     profileDataOperation.setPbProfilePhoto(bitmapString);
@@ -664,7 +682,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         SocialEmailList.add(email);
                     }
 
-                    addSocialConnectView(arrayListSocialContactObject.get(arrayListSocialContactObject.size() - 1), "");
+                    addSocialConnectView(arrayListSocialContactObject.get
+                            (arrayListSocialContactObject.size() - 1), "");
 
                 } else {
                     Utils.showErrorSnackBar(this, relativeRootEditProfile, "Login cancelled!");
@@ -735,15 +754,20 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                     socialId = jsonObject.getString("id");
                                     isAdd = true;
 
-                                    ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
+                                    ProfileDataOperationImAccount imAccount = new
+                                            ProfileDataOperationImAccount();
 
-                                    imAccount.setIMAccountFirstName(jsonObject.getString("first_name"));
-                                    imAccount.setIMAccountLastName(jsonObject.getString("last_name"));
+                                    imAccount.setIMAccountFirstName(jsonObject.getString
+                                            ("first_name"));
+                                    imAccount.setIMAccountLastName(jsonObject.getString
+                                            ("last_name"));
 
                                     imAccount.setIMAccountProtocol("Facebook");
-                                    imAccount.setIMAccountProfileImage("https://graph.facebook.com/" + socialId +
+                                    imAccount.setIMAccountProfileImage("https://graph.facebook" +
+                                            ".com/" + socialId +
                                             "/picture?width=200&height=150");
-                                    imAccount.setIMAccountPublic(IntegerConstants.PRIVACY_MY_CONTACT);
+                                    imAccount.setIMAccountPublic(IntegerConstants
+                                            .PRIVACY_MY_CONTACT);
                                     imAccount.setIMAccountDetails(socialId);
                                     arrayListSocialContactObject.add(imAccount);
 
@@ -778,7 +802,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                         SocialEmailList.add(email);
                                     }
 
-                                    addSocialConnectView(arrayListSocialContactObject.get(arrayListSocialContactObject.size() - 1)
+                                    addSocialConnectView(arrayListSocialContactObject.get
+                                                    (arrayListSocialContactObject.size() - 1)
                                             , "");
 
                                 } catch (JSONException e) {
@@ -868,7 +893,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     SocialEmailList.add(email);
                 }
 
-                addSocialConnectView(arrayListSocialContactObject.get(arrayListSocialContactObject.size() - 1), "");
+                addSocialConnectView(arrayListSocialContactObject.get
+                        (arrayListSocialContactObject.size() - 1), "");
             }
 
         } else {
@@ -1092,7 +1118,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCancelable(true);
 
-        View dialogView = LayoutInflater.from(EditProfileActivity.this).inflate(R.layout.dialog_social_list, null);
+        View dialogView = LayoutInflater.from(EditProfileActivity.this).inflate(R.layout
+                .dialog_social_list, null);
         dialog.setContentView(dialogView);
 
         TextView txtTitle = (TextView) dialogView.findViewById(R.id.tvDialogTitle);
@@ -1123,8 +1150,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         // Callback registration
                         registerFacebookCallback();
 
-                        LoginManager.getInstance().logInWithReadPermissions(EditProfileActivity.this,
-                                Arrays.asList(getString(R.string.str_public_profile), getString(R.string.str_small_cap_email)));
+                        LoginManager.getInstance().logInWithReadPermissions(EditProfileActivity
+                                        .this,
+                                Arrays.asList(getString(R.string.str_public_profile), getString(R
+                                        .string.str_small_cap_email)));
 
                     }
 
@@ -1398,7 +1427,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     imAccount.setIMUserId(imAccountName.getText().toString().trim());
                     imAccount.setIMAccountProtocol(imAccountProtocol.getText().toString().trim());
                     imAccount.setIMId((String) relativeRowEditProfileSocial.getTag());
-                    imAccount.setIMAccountProfileImage(imAccountProfileImage.getText().toString().trim());
+                    imAccount.setIMAccountProfileImage(imAccountProfileImage.getText().toString()
+                            .trim());
                     imAccount.setIMAccountFirstName(textFirstName.getText().toString().trim());
                     imAccount.setIMAccountLastName(textLastName.getText().toString().trim());
 
@@ -1520,8 +1550,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     if (!StringUtils.isBlank(inputToDate.getText().toString().trim())) {
                         organization.setOrgToDate(
                                 Utils.convertDateFormat(inputToDate.getText()
-                                        .toString().trim(), getEventDateFormatForUpdate(inputToDate.getText()
-                                        .toString().trim()), "yyyy-MM-dd HH:mm:ss"));
+                                        .toString().trim(), getEventDateFormatForUpdate
+                                        (inputToDate.getText()
+                                                .toString().trim()), "yyyy-MM-dd HH:mm:ss"));
 
                     } else {
                         organization.setOrgToDate(inputToDate.getText().toString().trim());
@@ -1529,7 +1560,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                     organization.setOrgFromDate(
                             Utils.convertDateFormat(inputFromDate.getText()
-                                    .toString().trim(), getEventDateFormatForUpdate(inputFromDate.getText()
+                                    .toString().trim(), getEventDateFormatForUpdate(inputFromDate
+                                    .getText()
                                     .toString().trim()), "yyyy-MM-dd HH:mm:ss"));
 
                     if (!StringUtils.isBlank(organization.getOrgName()) ||
@@ -1545,7 +1577,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                         getString(R.string.error_required_org_from_date));
                                 isValid = false;
                                 break;
-                            } else if (!checkboxOrganization.isChecked() && StringUtils.isBlank(organization.getOrgToDate())) {
+                            } else if (!checkboxOrganization.isChecked() && StringUtils.isBlank
+                                    (organization.getOrgToDate())) {
                                 Utils.showErrorSnackBar(this, relativeRootEditProfile,
                                         getString(R.string.error_required_org_to_date));
                                 isValid = false;
@@ -1688,20 +1721,15 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     EditText state = linearAddress.findViewById(R.id.input_state);
                     EditText city = linearAddress.findViewById(R.id.input_city);
                     EditText street = linearAddress.findViewById(R.id.input_street);
-                    EditText neighborhood = linearAddress.findViewById(R.id
-                            .input_neighborhood);
-                    EditText pinCode = linearAddress.findViewById(R.id
-                            .input_pin_code);
+                    EditText neighborhood = linearAddress.findViewById(R.id.input_neighborhood);
+                    EditText pinCode = linearAddress.findViewById(R.id.input_pin_code);
                     RelativeLayout relativeRowEditProfile = linearAddress
                             .findViewById(R.id.relative_row_edit_profile);
-                    TextView textLatitude = linearAddress.findViewById(R.id
-                            .input_latitude);
-                    TextView textLongitude = linearAddress.findViewById(R.id
-                            .input_longitude);
+                    TextView textLatitude = linearAddress.findViewById(R.id.input_latitude);
+                    TextView textLongitude = linearAddress.findViewById(R.id.input_longitude);
                     TextView textGoogleAddress = linearAddress.findViewById(R.id
                             .input_google_address);
-                    TextView textIsPublic = linearAddress.findViewById(R.id
-                            .text_is_public);
+                    TextView textIsPublic = linearAddress.findViewById(R.id.text_is_public);
                     TextView inputIsAddressModified = linearAddress.findViewById(R.id
                             .input_is_address_modified);
                     TextView textImageMapMarker = linearAddress.findViewById(R.id
@@ -1753,10 +1781,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                                             "true")) {
                                                 arrayListNewAddress.add(address);
                                             } else {
+                                                Utils.hideSoftKeyboard(EditProfileActivity.this,
+                                                        pinCode);
                                                 Utils.showErrorSnackBar(this,
-                                                        relativeRootEditProfile, getString(R
-                                                                .string
+                                                        relativeRootEditProfile, getString(R.string
                                                                 .error_required_address_mapping));
+                                                Animation animShake = AnimationUtils.loadAnimation(this, R.anim.shake);
+                                                textImageMapMarker.startAnimation(animShake);
                                                 textImageMapMarker.setTextColor(ContextCompat
                                                         .getColor(EditProfileActivity
                                                                 .this, R.color
@@ -1765,9 +1796,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                                 break;
                                             }
                                         } else {
+                                            Utils.hideSoftKeyboard(EditProfileActivity.this,
+                                                    pinCode);
                                             Utils.showErrorSnackBar(this,
                                                     relativeRootEditProfile, getString(R.string
                                                             .error_required_address_mapping));
+                                            Animation animShake = AnimationUtils.loadAnimation(this, R.anim.shake);
+                                            textImageMapMarker.startAnimation(animShake);
                                             textImageMapMarker.setTextColor(ContextCompat
                                                     .getColor(this, R.color
                                                             .colorSnackBarNegative));
@@ -1775,6 +1810,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                             break;
                                         }
                                     } else {
+                                        Utils.hideSoftKeyboard(EditProfileActivity.this,
+                                                street);
                                         Utils.showErrorSnackBar(this, relativeRootEditProfile,
                                                 getString(R.string.error_required_street));
                                         street.requestFocus();
@@ -1782,6 +1819,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                         break;
                                     }
                                 } else {
+                                    Utils.hideSoftKeyboard(EditProfileActivity.this,
+                                            city);
                                     Utils.showErrorSnackBar(this, relativeRootEditProfile,
                                             getString(R.string.error_required_city));
                                     city.requestFocus();
@@ -1789,6 +1828,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                     break;
                                 }
                             } else {
+                                Utils.hideSoftKeyboard(EditProfileActivity.this, state);
                                 Utils.showErrorSnackBar(this, relativeRootEditProfile,
                                         getString(R.string.error_required_state));
                                 state.requestFocus();
@@ -1796,6 +1836,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                 break;
                             }
                         } else {
+                            Utils.hideSoftKeyboard(EditProfileActivity.this, country);
                             Utils.showErrorSnackBar(this, relativeRootEditProfile,
                                     getString(R.string.error_required_country));
                             country.requestFocus();
@@ -1804,6 +1845,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         }
                     } else {
                         if (i != 0) {
+                            Utils.hideSoftKeyboard(EditProfileActivity.this, country);
                             Utils.showErrorSnackBar(this, relativeRootEditProfile,
                                     getString(R.string.error_required_country));
                             country.requestFocus();
@@ -1828,6 +1870,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             profileDataOperation.setPbAddress(arrayListNewAddress);
                             editProfile(profileDataOperation, AppConstants.ADDRESS);
                         } else {
+//                            Utils.hideKeyBoard(EditProfileActivity.this);
                             Utils.showErrorSnackBar(this, relativeRootEditProfile, getString(R
                                     .string.error_no_update));
                         }
@@ -2832,19 +2875,25 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             organization.setOrgName(arrayListOrganization.get(i).getOmOrganizationCompany());
 
             if (!StringUtils.isEmpty(arrayListOrganization.get(i).getOmOrganizationFromDate())) {
-                formattedFromDate = Utils.convertDateFormat(arrayListOrganization.get(i).getOmOrganizationFromDate(),
-                        "yyyy-MM-dd hh:mm:ss", getEventDateFormat(arrayListOrganization.get(i).getOmOrganizationFromDate()));
+                formattedFromDate = Utils.convertDateFormat(arrayListOrganization.get(i)
+                                .getOmOrganizationFromDate(),
+                        "yyyy-MM-dd hh:mm:ss", getEventDateFormat(arrayListOrganization.get(i)
+                                .getOmOrganizationFromDate()));
             }
             if (!StringUtils.isEmpty(arrayListOrganization.get(i).getOmOrganizationToDate())) {
-                formattedToDate = Utils.convertDateFormat(arrayListOrganization.get(i).getOmOrganizationToDate(),
-                        "yyyy-MM-dd hh:mm:ss", getEventDateFormat(arrayListOrganization.get(i).getOmOrganizationToDate()));
+                formattedToDate = Utils.convertDateFormat(arrayListOrganization.get(i)
+                                .getOmOrganizationToDate(),
+                        "yyyy-MM-dd hh:mm:ss", getEventDateFormat(arrayListOrganization.get(i)
+                                .getOmOrganizationToDate()));
             }
 
             organization.setOrgFromDate(formattedFromDate);
             organization.setOrgToDate(formattedToDate);
-            organization.setOrgJobTitle(arrayListOrganization.get(i).getOmOrganizationDesignation());
+            organization.setOrgJobTitle(arrayListOrganization.get(i).getOmOrganizationDesignation
+                    ());
             organization.setOrgId(arrayListOrganization.get(i).getOmRecordIndexId());
-            organization.setIsCurrent(Integer.parseInt(arrayListOrganization.get(i).getOmIsCurrent()));
+            organization.setIsCurrent(Integer.parseInt(arrayListOrganization.get(i)
+                    .getOmIsCurrent()));
             arrayListOrganizationObject.add(organization);
         }
 
@@ -2964,9 +3013,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             isChecked = checkboxOrganization.isChecked();
 
             if (StringUtils.length(StringUtils.trimToEmpty(inputCompanyName.getText()
-                    .toString())) < 1 || StringUtils.length(StringUtils.trimToEmpty(inputDesignationName.getText()
-                    .toString())) < 1 || StringUtils.length(StringUtils.trimToEmpty(inputFromDate.getText()
-                    .toString())) < 1) {
+                    .toString())) < 1 || StringUtils.length(StringUtils.trimToEmpty
+                    (inputDesignationName.getText()
+                            .toString())) < 1 || StringUtils.length(StringUtils.trimToEmpty
+                    (inputFromDate
+                            .getText()
+                            .toString())) < 1) {
                 if (isChecked && StringUtils.length(StringUtils.trimToEmpty(inputToDate.getText()
                         .toString())) < 1) {
                     toAdd = false;
@@ -3895,7 +3947,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
     private String getRealPathFromURI(Uri contentURI) {
         String result;
-        Cursor cursor = EditProfileActivity.this.getContentResolver().query(contentURI, null, null, null, null);
+        Cursor cursor = EditProfileActivity.this.getContentResolver().query(contentURI, null,
+                null, null, null);
         if (cursor == null) { // Source is Dropbox or other similar local file path
             result = contentURI.getPath();
         } else {
@@ -3910,8 +3963,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     private boolean checkPermissionStorage() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            int readPermission = ContextCompat.checkSelfPermission(EditProfileActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE);
-            int writePermission = ContextCompat.checkSelfPermission(EditProfileActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            int readPermission = ContextCompat.checkSelfPermission(EditProfileActivity.this,
+                    Manifest.permission.READ_EXTERNAL_STORAGE);
+            int writePermission = ContextCompat.checkSelfPermission(EditProfileActivity.this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
             List<String> listPermissionsNeeded = new ArrayList<>();
             if (readPermission != PackageManager.PERMISSION_GRANTED) {
@@ -3933,40 +3988,50 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[]
+            grantResults) {
         switch (requestCode) {
             case 1:
 
                 Map<String, Integer> perms = new HashMap<String, Integer>();
                 // Initial
                 perms.put(Manifest.permission.CAMERA, PackageManager.PERMISSION_GRANTED);
-                perms.put(Manifest.permission.READ_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
-                perms.put(Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.READ_EXTERNAL_STORAGE, PackageManager
+                        .PERMISSION_GRANTED);
+                perms.put(Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager
+                        .PERMISSION_GRANTED);
 
                 // Fill with results
                 for (int i = 0; i < permissions.length; i++)
                     perms.put(permissions[i], grantResults[i]);
 
-                boolean isCamera = perms.get(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
-                boolean isStorage = perms.get(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
-                boolean isStorageWrite = perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+                boolean isCamera = perms.get(Manifest.permission.CAMERA) == PackageManager
+                        .PERMISSION_GRANTED;
+                boolean isStorage = perms.get(Manifest.permission.READ_EXTERNAL_STORAGE) ==
+                        PackageManager.PERMISSION_GRANTED;
+                boolean isStorageWrite = perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+                        PackageManager.PERMISSION_GRANTED;
 
                 if (isCamera && isStorage && isStorageWrite)
                     selectImageFromCamera();
                 else
-                    Utils.showErrorSnackBar(EditProfileActivity.this, relativeRootEditProfile, getString(R.string.camera_permission));
+                    Utils.showErrorSnackBar(EditProfileActivity.this, relativeRootEditProfile,
+                            getString(R.string.camera_permission));
                 break;
 
             case 2:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED)
+                if (grantResults.length > 0 && grantResults[0] == PackageManager
+                        .PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED)
                     selectImageFromGallery();
                 else
-                    Utils.showErrorSnackBar(EditProfileActivity.this, relativeRootEditProfile, getString(R.string.storage_permission));
+                    Utils.showErrorSnackBar(EditProfileActivity.this, relativeRootEditProfile,
+                            getString(R.string.storage_permission));
                 break;
 
             case 3:
 
-                if (fileUri != null && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (fileUri != null && grantResults.length > 0 && grantResults[0] ==
+                        PackageManager.PERMISSION_GRANTED) {
                     // required permissions granted, start crop image activity
                     startCropImageActivity(fileUri);
                 }
@@ -3981,8 +4046,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             int permissionCamera = ContextCompat.checkSelfPermission(this,
                     Manifest.permission.CAMERA);
-            int readPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
-            int writePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            int readPermission = ContextCompat.checkSelfPermission(this, Manifest.permission
+                    .READ_EXTERNAL_STORAGE);
+            int writePermission = ContextCompat.checkSelfPermission(this, Manifest.permission
+                    .WRITE_EXTERNAL_STORAGE);
 
             List<String> listPermissionsNeeded = new ArrayList<>();
             if (permissionCamera != PackageManager.PERMISSION_GRANTED) {
@@ -4393,7 +4460,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 organization.setOmOrganizationCompany(arrayListOrganization.get(i).getOrgName());
                 organization.setOmOrganizationDesignation(arrayListOrganization.get(i)
                         .getOrgJobTitle());
-                organization.setOmOrganizationFromDate(arrayListOrganization.get(i).getOrgFromDate());
+                organization.setOmOrganizationFromDate(arrayListOrganization.get(i)
+                        .getOrgFromDate());
                 organization.setOmOrganizationToDate(arrayListOrganization.get(i).getOrgToDate());
                 organization.setOmIsCurrent(String.valueOf(arrayListOrganization.get(i)
                         .getIsCurrent()));

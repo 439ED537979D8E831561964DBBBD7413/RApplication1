@@ -172,8 +172,13 @@ public class NotiCommentsFragment extends BaseNotificationFragment implements Ws
 //        recyclerPastDayComments.setAdapter(pastCommentsAdapter);
 
 //        updateHeight();
-
-
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (getActivity() != null)
+                    ((NotificationsDetailActivity) getActivity()).updateNotificationCount(AppConstants.NOTIFICATION_TYPE_COMMENTS);
+            }
+        }, 300);
     }
 
     private void updateHeight() {
@@ -205,13 +210,7 @@ public class NotiCommentsFragment extends BaseNotificationFragment implements Ws
 //        setRecyclerViewHeight(recyclerTodayComments, height);
 //        setRecyclerViewHeight(recyclerYesterDayComments, height);
 //        setRecyclerViewHeight(recyclerPastDayComments, height);
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                if (getActivity() != null)
-//                    ((NotificationsDetailActivity) getActivity()).updateNotificationCount(AppConstants.NOTIFICATION_TYPE_COMMENTS);
-//            }
-//        }, 800);
+//
     }
 
     private void setRecyclerViewHeight(RecyclerView recyclerView, int height) {
