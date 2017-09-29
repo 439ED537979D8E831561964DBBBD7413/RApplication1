@@ -129,6 +129,34 @@ public class TableCountryMaster {
         return country;
     }
 
+    // Getting single Country
+    public Country getCountryIdFromName(String countryName) {
+        SQLiteDatabase db = databaseHandler.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_RC_COUNTRY_MASTER, new String[]{COLUMN_CM_ID,
+                COLUMN_CM_COUNTRY_CODE, COLUMN_CM_COUNTRY_CODE_NUMBER, COLUMN_CM_COUNTRY_NAME,
+                COLUMN_CM_MAX_DIGITS, COLUMN_CM_MIN_DIGITS}, COLUMN_CM_COUNTRY_NAME + "=?", new
+                String[]{String.valueOf(countryName)}, null, null, null, null);
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        Country country = new Country();
+        if (cursor != null) {
+            country.setCountryId(cursor.getString(0));
+            country.setCountryCode(cursor.getString(1));
+            country.setCountryCodeNumber(cursor.getString(2));
+            country.setCountryName(cursor.getString(3));
+            country.setCountryNumberMaxDigits(cursor.getString(4));
+
+            cursor.close();
+        }
+
+        db.close();
+
+        // return Country
+        return country;
+    }
+
     // Getting All Countries
     public ArrayList<Country> getAllCountries() {
         ArrayList<Country> arrayListCountry = new ArrayList<>();

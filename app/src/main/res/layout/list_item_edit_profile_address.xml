@@ -99,7 +99,6 @@
                         android:clickable="false"
                         android:textColor="@color/colorAccent"
                         android:textSize="16sp"
-                        android:visibility="gone"
                         tools:ignore="TextFields"
                         tools:text="1234567890"/>
 
@@ -142,8 +141,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorAccent"
-                android:visibility="gone"
-                android:textSize="16sp"/>
+                android:textSize="16sp"
+                tools:ignore="TextFields"/>
             <!--android:textColorHint="@color/darkCyan"-->
 
             <Spinner
@@ -159,14 +158,31 @@
 
         </FrameLayout>
 
-        <EditText
-            android:id="@+id/input_city"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/colorAccent"
-            android:textSize="16sp"/>
-        <!--android:textColorHint="@color/darkCyan"-->
+            android:layout_height="wrap_content">
 
+            <EditText
+                android:id="@+id/input_city"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorAccent"
+                android:textSize="16sp"
+                tools:ignore="TextFields"/>
+            <!--android:textColorHint="@color/darkCyan"-->
+
+            <Spinner
+                android:id="@+id/spinner_city"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:gravity="bottom"
+                android:textColor="@color/colorAccent"
+                android:textSize="16sp"
+                tools:ignore="TextFields"
+                tools:text="India"/>
+
+        </FrameLayout>
 
         <EditText
             android:id="@+id/input_street"

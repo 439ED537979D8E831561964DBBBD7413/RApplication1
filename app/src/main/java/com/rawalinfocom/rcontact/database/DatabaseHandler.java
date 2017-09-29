@@ -108,6 +108,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 // For Email
                 db.execSQL("ALTER TABLE " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + " ADD "
                         + "COLUMN " + TableEmailMaster.COLUMN_EM_SOCIAL_TYPE + " text ");
+
+                // For Country
+                db.execSQL("ALTER TABLE " + TableCountryMaster.TABLE_RC_COUNTRY_MASTER + " ADD "
+                        + "COLUMN " + TableCountryMaster.COLUMN_CM_MIN_DIGITS + " integer ");
             /*case 4:
                 // For version 5
                 db.execSQL("ALTER TABLE " + TableCountryMaster.TABLE_RC_COUNTRY_MASTER + " ADD "
