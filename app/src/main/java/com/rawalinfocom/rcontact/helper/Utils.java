@@ -2,6 +2,7 @@ package com.rawalinfocom.rcontact.helper;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -9,6 +10,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -58,6 +60,7 @@ import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.DatabaseHandler;
+import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.database.TableAddressMaster;
 import com.rawalinfocom.rcontact.database.TableEmailMaster;
 import com.rawalinfocom.rcontact.database.TableEventMaster;
@@ -106,6 +109,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static com.thefinestartist.utils.content.ContextUtil.startActivity;
 
 /**
  * Created by Monal on 10/10/16.
@@ -1258,14 +1263,42 @@ public class Utils {
         String format;
         if (date.endsWith("1") && !date.endsWith("11"))
 //            format = "d'st' MMMM, yyyy";
-            format = "dd'st' MMMM, yyyy";
+            format = AppConstants.EVENT_ST_DATE_FORMAT;
         else if (date.endsWith("2") && !date.endsWith("12"))
-            format = "dd'nd' MMMM, yyyy";
+            format = AppConstants.EVENT_ND_DATE_FORMAT;
         else if (date.endsWith("3") && !date.endsWith("13"))
-            format = "dd'rd' MMMM, yyyy";
+            format = AppConstants.EVENT_RD_DATE_FORMAT;
         else
-            format = "dd'th' MMMM, yyyy";
+            format = AppConstants.EVENT_GENERAL_DATE_FORMAT;
         return format;
     }
 
+    //method to get the right URL to use in the intent
+    public static void getOpenFacebookIntent(Context context, String fbId) {
+
+        try {
+            context.getPackageManager()
+                    .getPackageInfo("com.facebook.katana", 0); //Checks if FB is even installed.
+
+            String url = "https://www.facebook.com/" + fbId;
+
+            context.startActivity(new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("fb://facewebmodal/f?href=" + url)));//Trys to make intent with FB's URI
+        } catch (Exception e) {
+            context.startActivity(new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("https://www.facebook.com/" + fbId)));//catches and opens a url to the desired page
+        }
+    }
+
+    public static void openGPlus(Activity activity, String profile) {
+        try {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setClassName("com.google.android.apps.plus",
+                    "com.google.android.apps.plus.phone.UrlGatewayActivity");
+            intent.putExtra("customAppUri", profile);
+            activity.startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://plus.google.com/" + profile)));
+        }
+    }
 }

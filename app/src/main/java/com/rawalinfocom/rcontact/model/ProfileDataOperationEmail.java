@@ -21,6 +21,16 @@ public class ProfileDataOperationEmail implements Serializable {
     private Integer emIsSocial;
     private String emIsVerified;
     private Integer emIsPrivate;
+    private String originalEmail;
+
+    @JsonProperty("original")
+    public String getOriginalEmail() {
+        return originalEmail;
+    }
+
+    public void setOriginalEmail(String originalEmail) {
+        this.originalEmail = originalEmail;
+    }
 
     @JsonProperty("em_id")
     public String getEmId() {

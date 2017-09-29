@@ -31,6 +31,7 @@ public class ProfileDataOperationPhoneNumber implements Serializable {
     }
 
     @JsonProperty("ph_type")
+
     public String getPhoneType() {
         return StringUtils.defaultString(this.phoneType);
     }
@@ -66,7 +67,7 @@ public class ProfileDataOperationPhoneNumber implements Serializable {
         this.phoneId = phoneId;
     }
 
-//    @JsonProperty("pb_rcp_type")
+    //    @JsonProperty("pb_rcp_type")
     @JsonProperty("is_verified")
     public Integer getPbRcpType() {
         return pbRcpType;
