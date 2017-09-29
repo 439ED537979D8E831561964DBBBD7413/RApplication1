@@ -63,20 +63,20 @@ public class OrganizationListAdapter extends RecyclerView.Adapter<OrganizationLi
             holder.textSub.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
         }
 
-        if (organization.getOrgToDate().equalsIgnoreCase("")) {
+        if (StringUtils.equalsIgnoreCase(organization.getOrgToDate(),"")) {
             String formattedFromDate = Utils.convertDateFormat(organization.getOrgFromDate(),
                     "yyyy-MM-dd hh:mm:ss", Utils.getEventDateFormat(organization.getOrgFromDate()));
 
             holder.textTime.setText(String.format("%s to Present ", formattedFromDate));
         } else {
+            if(!StringUtils.isEmpty(organization.getOrgFromDate()) && ! StringUtils.isEmpty(organization.getOrgToDate())){
+                String formattedFromDate = Utils.convertDateFormat(organization.getOrgFromDate(),
+                        "yyyy-MM-dd hh:mm:ss", Utils.getEventDateFormat(organization.getOrgFromDate()));
+                String formattedToDate = Utils.convertDateFormat(organization.getOrgToDate(),
+                        "yyyy-MM-dd hh:mm:ss", Utils.getEventDateFormat(organization.getOrgToDate()));
 
-            String formattedFromDate = Utils.convertDateFormat(organization.getOrgFromDate(),
-                    "yyyy-MM-dd hh:mm:ss", Utils.getEventDateFormat(organization.getOrgFromDate()));
-            String formattedToDate = Utils.convertDateFormat(organization.getOrgToDate(),
-                    "yyyy-MM-dd hh:mm:ss", Utils.getEventDateFormat(organization.getOrgToDate()));
-
-            holder.textTime.setText(String.format("%s to %s ", formattedFromDate, formattedToDate));
-
+                holder.textTime.setText(String.format("%s to %s ", formattedFromDate, formattedToDate));
+            }
         }
 
     }

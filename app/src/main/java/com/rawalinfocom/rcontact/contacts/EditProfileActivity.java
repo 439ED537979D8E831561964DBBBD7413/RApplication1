@@ -3545,7 +3545,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 //        inputCompanyName.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
-//                startActivity(new Intent(EditProfileActivity.this, OrganizationListActivity.class));
+//                startActivity(new Intent(EditProfileActivity.this, \OrganizationListActivity.class));
 //            }
 //        });
 
