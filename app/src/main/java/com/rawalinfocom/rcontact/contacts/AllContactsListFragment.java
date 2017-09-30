@@ -27,6 +27,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.util.LongSparseArray;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -38,7 +39,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.BaseFragment;
-import com.rawalinfocom.rcontact.MainActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.AllContactAdapter;
@@ -95,11 +95,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -132,6 +132,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     PhoneBookContacts phoneBookContacts;
 
     AllContactAdapter allContactListAdapter;
+    @BindView(R.id.swipe_refresh_layout)
+    SwipeRefreshLayout swipeRefreshLayout;
+    Unbinder unbinder;
 
     private View rootView;
     private boolean isReload = false;
@@ -184,7 +187,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         if (isFromSettings) {
             isFromSettings = false;
             if (settingRequestPermission == AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS) {
-                if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission
+                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission
                         .READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
                     if (!isReload) {
                         init();
@@ -232,21 +235,40 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             rootView = inflater.inflate(R.layout.fragment_all_contacts, container, false);
             ButterKnife.bind(this, rootView);
         }
+        unbinder = ButterKnife.bind(this, rootView);
         return rootView;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission
                 .READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{android.Manifest.permission.READ_CONTACTS},
+            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS},
                     AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS);
         } else {
             if (!isReload) {
                 init();
             }
         }
+
+        // implement setOnRefreshListener event on SwipeRefreshLayout
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+                // cancel the Visual indication of a refresh
+                swipeRefreshLayout.setRefreshing(true);
+                if (arrayListPhoneBookContacts != null && arrayListPhoneBookContacts.size() > 0)
+                    loadData();
+            }
+        });
+    }
+
+    private void loadData() {
+        arrayListPhoneBookContacts.clear();
+        progressAllContact.setVisibility(View.VISIBLE);
+        getLoaderManager().restartLoader(0, null, this);
     }
 
     @Override
@@ -536,6 +558,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance
                 (getActivity());
         myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+
+        if (swipeRefreshLayout != null)
+            swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
@@ -603,6 +628,12 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         allContactListAdapter = new AllContactAdapter(this, arrayListPhoneBookContacts, null);
         recyclerViewContactList.setAdapter(allContactListAdapter);
         rContactApplication.setArrayListAllPhoneBookContacts(arrayListPhoneBookContacts);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 
     public class CustomComparator implements Comparator<ProfileData> {
@@ -897,7 +928,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                 email.setEmEmailAddress(arrayListEmailId.get(j).getEmEmailId());
                             }
                         else
-                            email.setEmEmailAddress( arrayListEmailId.get(j).getEmEmailId());
+                            email.setEmEmailAddress(arrayListEmailId.get(j).getEmEmailId());
 
                         email.setEmSocialType(arrayListEmailId.get(j).getEmSocialType());
                         email.setEmRecordIndexId(arrayListEmailId.get(j).getEmId());
@@ -1250,7 +1281,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     }
 
     private void swipeToCall() {
-        if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest
                 .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission
                     .CALL_PHONE}, AppConstants

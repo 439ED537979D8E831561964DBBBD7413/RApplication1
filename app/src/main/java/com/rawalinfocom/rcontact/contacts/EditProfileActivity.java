@@ -662,9 +662,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             email.setEmType("Work");
                             email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
                             email.setEmIsSocial(2);
-                            email.setEmSocialType(operationEmail.getEmSocialType() + ",linkedin");
-                            SocialEmailList.add(email);
+                            if (!operationEmail.getEmSocialType().equalsIgnoreCase(""))
+                                email.setEmSocialType(operationEmail.getEmSocialType() + ",linkedin");
+                            else
+                                email.setEmSocialType("linkedin");
 
+                            SocialEmailList.add(email);
                             arrayListOldEmailAccount.remove(i);
 
                             isAdd = false;
@@ -682,6 +685,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         email.setEmSocialType("linkedin");
                         SocialEmailList.add(email);
                     }
+
+                    socialTypeList.remove("LinkedIn");
 
                     addSocialConnectView(arrayListSocialContactObject.get
                             (arrayListSocialContactObject.size() - 1), "");
@@ -783,9 +788,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                             email.setEmType("Work");
                                             email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
                                             email.setEmIsSocial(2);
-                                            email.setEmSocialType(operationEmail.getEmSocialType() + ",facebook");
-                                            SocialEmailList.add(email);
+                                            if (!operationEmail.getEmSocialType().equalsIgnoreCase(""))
+                                                email.setEmSocialType(operationEmail.getEmSocialType() + ",facebook");
+                                            else
+                                                email.setEmSocialType("facebook");
 
+                                            SocialEmailList.add(email);
                                             arrayListOldEmailAccount.remove(i);
 
                                             isAdd = false;
@@ -802,6 +810,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                         email.setEmSocialType("facebook");
                                         SocialEmailList.add(email);
                                     }
+
+                                    socialTypeList.remove("Facebook");
 
                                     addSocialConnectView(arrayListSocialContactObject.get
                                                     (arrayListSocialContactObject.size() - 1)
@@ -873,9 +883,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         email.setEmType("Work");
                         email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
                         email.setEmIsSocial(2);
-                        email.setEmSocialType(operationEmail.getEmSocialType() + ",google");
-                        SocialEmailList.add(email);
+                        if (!operationEmail.getEmSocialType().equalsIgnoreCase(""))
+                            email.setEmSocialType(operationEmail.getEmSocialType() + ",google");
+                        else
+                            email.setEmSocialType("google");
 
+                        SocialEmailList.add(email);
                         arrayListOldEmailAccount.remove(i);
 
                         isAdd = false;
@@ -893,6 +906,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     email.setEmSocialType("google");
                     SocialEmailList.add(email);
                 }
+
+                socialTypeList.remove("GooglePlus");
 
                 addSocialConnectView(arrayListSocialContactObject.get
                         (arrayListSocialContactObject.size() - 1), "");
@@ -1362,7 +1377,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                     getString(R.string.error_required_email));
                         }
                     }
-
                 }
                 if (isValid) {
                     if (arrayListNewEmail.size() > 0) {
@@ -3526,8 +3540,34 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                 if (linearSocialContactDetails.getChildCount() > 1) {
                     linearSocialContactDetails.removeView(relativeRowEditProfileSocial);
+
+                    TextView textProtocol = relativeRowEditProfileSocial.findViewById(R.id.input_protocol);
+
+                    if (textProtocol != null) {
+                        if (textProtocol.getText().toString().trim().equalsIgnoreCase("Facebook")) {
+                            socialTypeList.add("Facebook");
+                        } else if (textProtocol.getText().toString().trim().equalsIgnoreCase("GooglePlus")) {
+                            socialTypeList.add("GooglePlus");
+                        } else if (textProtocol.getText().toString().trim().equalsIgnoreCase("LinkedIn")) {
+                            socialTypeList.add("LinkedIn");
+                        }
+                    }
+
                 } else if (linearSocialContactDetails.getChildCount() == 1) {
                     inputValue.getText().clear();
+
+                    View view = linearSocialContactDetails.getChildAt(0);
+                    TextView textProtocol = view.findViewById(R.id.input_protocol);
+
+                    if (textProtocol != null) {
+                        if (textProtocol.getText().toString().trim().equalsIgnoreCase("Facebook")) {
+                            socialTypeList.add("Facebook");
+                        } else if (textProtocol.getText().toString().trim().equalsIgnoreCase("GooglePlus")) {
+                            socialTypeList.add("GooglePlus");
+                        } else if (textProtocol.getText().toString().trim().equalsIgnoreCase("LinkedIn")) {
+                            socialTypeList.add("LinkedIn");
+                        }
+                    }
                 }
             }
         });

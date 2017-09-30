@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -16,13 +17,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.BaseNotificationFragment;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.RestorationActivity;
 import com.rawalinfocom.rcontact.adapters.NotiCommentsAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
@@ -38,9 +39,12 @@ import com.rawalinfocom.rcontact.model.Event;
 import com.rawalinfocom.rcontact.model.EventComment;
 import com.rawalinfocom.rcontact.model.EventCommentData;
 import com.rawalinfocom.rcontact.model.NotiCommentsItem;
+import com.rawalinfocom.rcontact.model.RatingRequestResponseDataItem;
 import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -113,6 +117,10 @@ public class NotiCommentsFragment extends BaseNotificationFragment implements Ws
     String pastday5thDay;
     @BindView(R.id.recycler_view_comment_list)
     RecyclerView recyclerViewCommentList;
+    @BindView(R.id.divider_timeline_search)
+    View dividerTimelineSearch;
+    @BindView(R.id.swipe_refresh_layout)
+    SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     public void getFragmentArguments() {
@@ -179,6 +187,20 @@ public class NotiCommentsFragment extends BaseNotificationFragment implements Ws
                     ((NotificationsDetailActivity) getActivity()).updateNotificationCount(AppConstants.NOTIFICATION_TYPE_COMMENTS);
             }
         }, 300);
+
+        // implement setOnRefreshListener event on SwipeRefreshLayout
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+                // cancel the Visual indication of a refresh
+                swipeRefreshLayout.setRefreshing(true);
+
+                String fromDate = Utils.getStringPreference(getActivity(), AppConstants
+                        .KEY_API_CALL_TIME_STAMP_COMMENT, "");
+                pullMechanismServiceCall(fromDate, "", WsConstants.REQ_GET_COMMENT_DETAILS);
+            }
+        });
     }
 
     private void updateHeight() {
@@ -456,6 +478,33 @@ public class NotiCommentsFragment extends BaseNotificationFragment implements Ws
                 saveReplyDataToDb(eventSendCommentData);
                 Utils.hideProgressDialog();
             }
+
+            // <editor-fold desc="REQ_GET_COMMENT_DETAILS">
+            if (serviceType.contains(WsConstants.REQ_GET_COMMENT_DETAILS)) {
+                WsResponseObject getCommentUpdateResponse = (WsResponseObject) data;
+                if (getCommentUpdateResponse != null && StringUtils.equalsIgnoreCase
+                        (getCommentUpdateResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+
+                    // cancel the Visual indication of a refresh
+                    swipeRefreshLayout.setRefreshing(false);
+
+                    storeCommentRequestResponseToDB(getCommentUpdateResponse,
+                            getCommentUpdateResponse.getCommentReceive(), getCommentUpdateResponse.getCommentDone());
+                    refreshAllList();
+                    Utils.hideProgressDialog();
+
+                } else {
+
+                    Utils.hideProgressDialog();
+
+                    if (getCommentUpdateResponse != null) {
+                        System.out.println("RContact error --> " + getCommentUpdateResponse.getMessage());
+                    } else {
+                        System.out.println("RContact error --> getCommentUpdateResponse null");
+                    }
+                }
+            }
+            //</editor-fold>
         } else {
             Utils.hideProgressDialog();
             Toast.makeText(getActivity(), getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
@@ -492,6 +541,72 @@ public class NotiCommentsFragment extends BaseNotificationFragment implements Ws
         refreshAllList();
     }
 
+    // PROFILE COMMENT HISTORY RESTORE
+    private void storeCommentRequestResponseToDB(WsResponseObject getCommentUpdateResponse, ArrayList<RatingRequestResponseDataItem> commentReceive,
+                                                 ArrayList<RatingRequestResponseDataItem> commentDone) {
+
+        try {
+
+            // eventCommentDone
+            for (int i = 0; i < commentDone.size(); i++) {
+
+                RatingRequestResponseDataItem dataItem = commentDone.get(i);
+
+                Comment comment = new Comment();
+                comment.setCrmStatus(AppConstants.COMMENT_STATUS_SENT);
+                comment.setCrmType("Comment");
+                comment.setCrmCloudPrId(dataItem.getCommentId());
+                comment.setCrmRating(dataItem.getPrRatingStars());
+                comment.setRcProfileMasterPmId(dataItem.getToPmId());
+                comment.setCrmComment(dataItem.getComment());
+                comment.setCrmReply(dataItem.getReply());
+                comment.setCrmProfileDetails(dataItem.getName());
+                comment.setCrmImage(dataItem.getPmProfilePhoto());
+                comment.setEvmRecordIndexId(dataItem.getEventRecordIndexId());
+                comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getCreatedAt()));
+                comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getUpdatedAt()));
+                if (!StringUtils.isEmpty(dataItem.getReplyAt()))
+                    comment.setCrmRepliedAt(Utils.getLocalTimeFromUTCTime(dataItem.getReplyAt()));
+                else comment.setCrmRepliedAt("");
+
+                tableCommentMaster.addComment(comment);
+            }
+
+            // eventCommentReceive
+            for (int i = 0; i < commentReceive.size(); i++) {
+
+                RatingRequestResponseDataItem dataItem = commentReceive.get(i);
+
+                Comment comment = new Comment();
+                comment.setCrmStatus(AppConstants.COMMENT_STATUS_RECEIVED);
+                comment.setCrmType("Comment");
+                comment.setCrmCloudPrId(dataItem.getCommentId());
+                comment.setCrmRating(dataItem.getPrRatingStars());
+                comment.setRcProfileMasterPmId(dataItem.getFromPmId());
+                comment.setCrmComment(dataItem.getComment());
+                comment.setCrmReply(dataItem.getReply());
+                comment.setCrmProfileDetails(dataItem.getName());
+                comment.setCrmImage(dataItem.getPmProfilePhoto());
+                comment.setEvmRecordIndexId(dataItem.getEventRecordIndexId());
+                comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getCreatedAt()));
+                comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getUpdatedAt()));
+                if (!StringUtils.isEmpty(dataItem.getReplyAt()))
+                    comment.setCrmRepliedAt(Utils.getLocalTimeFromUTCTime(dataItem.getReplyAt()));
+                else comment.setCrmRepliedAt("");
+
+                tableCommentMaster.addComment(comment);
+            }
+
+        } catch (Exception e) {
+            System.out.println("RContact storeCommentRequestResponseToDB error ");
+        }
+
+        if (!StringUtils.isEmpty(getCommentUpdateResponse.getTimestamp())) {
+            Utils.setStringPreference(getActivity(), AppConstants.KEY_API_CALL_TIME_STAMP_COMMENT,
+                    getCommentUpdateResponse.getTimestamp());
+        }
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -517,6 +632,22 @@ public class NotiCommentsFragment extends BaseNotificationFragment implements Ws
 //        pastCommentsAdapter.updateList(listPastComments);
 
 //        updateHeight();
+    }
+
+    private void pullMechanismServiceCall(String fromDate, String toDate, String url) {
+
+        if (Utils.isNetworkAvailable(getActivity())) {
+            WsRequestObject deviceDetailObject = new WsRequestObject();
+
+            deviceDetailObject.setFromDate(fromDate);
+            deviceDetailObject.setToDate(toDate);
+
+            if (Utils.isNetworkAvailable(getActivity())) {
+                new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), deviceDetailObject, null,
+                        WsResponseObject.class, url, getResources().getString(R.string.msg_please_wait), true)
+                        .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + url);
+            }
+        }
     }
 
     @Override

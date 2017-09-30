@@ -2,8 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
     android:id="@+id/layout_root"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.rawalinfocom.rcontact.notifications.NotiProfileFragment">
 
@@ -26,106 +26,113 @@
         android:layout_below="@id/tab_profile"
         android:background="@color/veryLightGray" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view_profile_list"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/search_view_profile"
-        android:layout_above="@+id/text_view_more"/>
-
-   <!-- <RelativeLayout
-        android:id="@+id/relative_header1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/text_view_more"
         android:layout_below="@id/search_view_profile">
 
-        <RelativeLayout
-            android:id="@+id/h1"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view_profile_list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content" />
 
-            <TextView
-                android:id="@+id/header1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingStart="@dimen/activity_horizontal_margin"
-                android:text="@string/str_today"
-                android:textAppearance="?android:textAppearanceMedium" />
+    </android.support.v4.widget.SwipeRefreshLayout>
 
-            <ImageView
-                android:id="@+id/header1_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_gravity="center"
-                android:paddingEnd="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                android:src="@drawable/ic_expand" />
+    <!-- <RelativeLayout
+         android:id="@+id/relative_header1"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:layout_below="@id/search_view_profile">
 
-        </RelativeLayout>
+         <RelativeLayout
+             android:id="@+id/h1"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content">
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@id/h1"
-            android:layout_marginTop="@dimen/activity_half_horizontal_margin"
-            android:background="@color/colorDarkGray" />
-    </RelativeLayout>
+             <TextView
+                 android:id="@+id/header1"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:paddingLeft="@dimen/activity_horizontal_margin"
+                 android:paddingStart="@dimen/activity_horizontal_margin"
+                 android:text="@string/str_today"
+                 android:textAppearance="?android:textAppearanceMedium" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/relative_header1" />
+             <ImageView
+                 android:id="@+id/header1_icon"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_alignParentEnd="true"
+                 android:layout_alignParentRight="true"
+                 android:layout_gravity="center"
+                 android:paddingEnd="@dimen/activity_horizontal_margin"
+                 android:paddingRight="@dimen/activity_horizontal_margin"
+                 android:src="@drawable/ic_expand" />
 
-    <RelativeLayout
-        android:id="@+id/relative_header2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/recycler_view1">
+         </RelativeLayout>
 
-        <RelativeLayout
-            android:id="@+id/h2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+         <View
+             android:layout_width="match_parent"
+             android:layout_height="1dp"
+             android:layout_below="@id/h1"
+             android:layout_marginTop="@dimen/activity_half_horizontal_margin"
+             android:background="@color/colorDarkGray" />
+     </RelativeLayout>
 
-            <TextView
-                android:id="@+id/text_header2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingStart="@dimen/activity_horizontal_margin"
-                android:text="@string/past_pending_requests"
-                android:textAppearance="?android:textAppearanceMedium" />
+     <android.support.v7.widget.RecyclerView
+         android:id="@+id/recycler_view1"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:layout_below="@id/relative_header1" />
 
-            <ImageView
-                android:id="@+id/header2_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_gravity="center"
-                android:paddingEnd="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                android:src="@drawable/ic_expand" />
+     <RelativeLayout
+         android:id="@+id/relative_header2"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:layout_below="@id/recycler_view1">
 
-        </RelativeLayout>
+         <RelativeLayout
+             android:id="@+id/h2"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content">
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@id/h2"
-            android:layout_marginTop="@dimen/activity_half_horizontal_margin"
-            android:background="@color/colorDarkGray" />
-    </RelativeLayout>
+             <TextView
+                 android:id="@+id/text_header2"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:paddingLeft="@dimen/activity_horizontal_margin"
+                 android:paddingStart="@dimen/activity_horizontal_margin"
+                 android:text="@string/past_pending_requests"
+                 android:textAppearance="?android:textAppearanceMedium" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/relative_header2" />-->
+             <ImageView
+                 android:id="@+id/header2_icon"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_alignParentEnd="true"
+                 android:layout_alignParentRight="true"
+                 android:layout_gravity="center"
+                 android:paddingEnd="@dimen/activity_horizontal_margin"
+                 android:paddingRight="@dimen/activity_horizontal_margin"
+                 android:src="@drawable/ic_expand" />
+
+         </RelativeLayout>
+
+         <View
+             android:layout_width="match_parent"
+             android:layout_height="1dp"
+             android:layout_below="@id/h2"
+             android:layout_marginTop="@dimen/activity_half_horizontal_margin"
+             android:background="@color/colorDarkGray" />
+     </RelativeLayout>
+
+     <android.support.v7.widget.RecyclerView
+         android:id="@+id/recycler_view2"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:layout_below="@id/relative_header2" />-->
 
     <TextView
         android:id="@+id/text_view_more"

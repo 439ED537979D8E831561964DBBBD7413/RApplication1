@@ -99,7 +99,7 @@
                 android:textSize="@dimen/text_size_12sp"
                 android:visibility="gone"
                 app:backgroundTint="@color/dialogUserNameTextColor"
-                tools:visibility="visible" />
+                tools:visibility="gone" />
 
             <LinearLayout
                 android:id="@+id/ll_privacy"
