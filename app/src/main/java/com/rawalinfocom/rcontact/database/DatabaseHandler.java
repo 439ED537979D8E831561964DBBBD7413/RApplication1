@@ -104,7 +104,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 db.execSQL("ALTER TABLE " + TableEmailMaster.TABLE_RC_EMAIL_MASTER_TEMP
                         + " RENAME TO " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + ";");
         }
-
         // create new tables
         onCreate(db);
     }
