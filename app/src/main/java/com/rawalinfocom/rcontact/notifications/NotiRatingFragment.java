@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -16,7 +17,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,9 +36,12 @@ import com.rawalinfocom.rcontact.model.Comment;
 import com.rawalinfocom.rcontact.model.EventComment;
 import com.rawalinfocom.rcontact.model.EventCommentData;
 import com.rawalinfocom.rcontact.model.NotiRatingItem;
+import com.rawalinfocom.rcontact.model.RatingRequestResponseDataItem;
 import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -110,6 +113,10 @@ public class NotiRatingFragment extends BaseNotificationFragment implements WsRe
     String pastday5thDay;
     @BindView(R.id.recycler_view_rating_list)
     RecyclerView recyclerViewRatingList;
+    @BindView(R.id.divider_timeline_search)
+    View dividerTimelineSearch;
+    @BindView(R.id.swipe_refresh_layout)
+    SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     public void getFragmentArguments() {
@@ -174,6 +181,20 @@ public class NotiRatingFragment extends BaseNotificationFragment implements WsRe
                     ((NotificationsDetailActivity) getActivity()).updateNotificationCount(AppConstants.NOTIFICATION_TYPE_RATE);
             }
         }, 300);
+
+        // implement setOnRefreshListener event on SwipeRefreshLayout
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+                // cancel the Visual indication of a refresh
+                swipeRefreshLayout.setRefreshing(true);
+
+                String fromDate = Utils.getStringPreference(getActivity(), AppConstants
+                        .KEY_API_CALL_TIME_STAMP_RATING, "");
+                pullMechanismServiceCall(fromDate, "", WsConstants.REQ_GET_RATING_DETAILS);
+            }
+        });
     }
 
     private void updateHeight() {
@@ -432,6 +453,34 @@ public class NotiRatingFragment extends BaseNotificationFragment implements WsRe
                 saveReplyDataToDb(eventSendCommentData);
                 Utils.hideProgressDialog();
             }
+
+            // <editor-fold desc="REQ_GET_RATING_DETAILS">
+            if (serviceType.contains(WsConstants.REQ_GET_RATING_DETAILS)) {
+                WsResponseObject getRatingUpdateResponse = (WsResponseObject) data;
+                if (getRatingUpdateResponse != null && StringUtils.equalsIgnoreCase
+                        (getRatingUpdateResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+
+                    // cancel the Visual indication of a refresh
+                    swipeRefreshLayout.setRefreshing(false);
+
+                    storeRatingRequestResponseToDB(getRatingUpdateResponse, getRatingUpdateResponse.getRatingReceive(),
+                            getRatingUpdateResponse.getRatingDone(), getRatingUpdateResponse.getRatingDetails());
+                    refreshAllList();
+
+                    Utils.hideProgressDialog();
+
+                } else {
+
+                    Utils.hideProgressDialog();
+
+                    if (getRatingUpdateResponse != null) {
+                        System.out.println("RContact error --> " + getRatingUpdateResponse.getMessage());
+                    } else {
+                        System.out.println("RContact error --> getRatingUpdateResponse null");
+                    }
+                }
+            }
+
         } else {
             Utils.hideProgressDialog();
             Toast.makeText(getActivity(), getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
@@ -451,6 +500,71 @@ public class NotiRatingFragment extends BaseNotificationFragment implements WsRe
                     refreshAllList();
                 }
             }
+        }
+    }
+
+    // PROFILE RATING HISTORY RESTORE
+    private void storeRatingRequestResponseToDB(WsResponseObject getRatingUpdateResponse, ArrayList<RatingRequestResponseDataItem> ratingReceive,
+                                                ArrayList<RatingRequestResponseDataItem> ratingDone, RatingRequestResponseDataItem ratingDetails) {
+
+        try {
+
+            // profileRatingComment
+            for (int i = 0; i < ratingDone.size(); i++) {
+
+                RatingRequestResponseDataItem dataItem = ratingDone.get(i);
+
+                Comment comment = new Comment();
+                comment.setCrmStatus(AppConstants.COMMENT_STATUS_SENT);
+                comment.setCrmType("Rating");
+                comment.setCrmCloudPrId(dataItem.getPrId());
+                comment.setCrmRating(dataItem.getPrRatingStars());
+                comment.setRcProfileMasterPmId(dataItem.getToPmId());
+                comment.setCrmComment(dataItem.getComment());
+                comment.setCrmReply(dataItem.getReply());
+                comment.setCrmProfileDetails(dataItem.getName());
+                comment.setCrmImage(dataItem.getPmProfilePhoto());
+                comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getCreatedAt()));
+                comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getUpdatedAt()));
+                if (!StringUtils.isEmpty(dataItem.getReplyAt()))
+                    comment.setCrmRepliedAt(Utils.getLocalTimeFromUTCTime(dataItem.getReplyAt()));
+                else comment.setCrmRepliedAt("");
+
+                tableCommentMaster.addComment(comment);
+            }
+
+            // profileRatingReply
+            for (int i = 0; i < ratingReceive.size(); i++) {
+
+                RatingRequestResponseDataItem dataItem = ratingReceive.get(i);
+
+                Comment comment = new Comment();
+                comment.setCrmStatus(AppConstants.COMMENT_STATUS_RECEIVED);
+                comment.setCrmType("Rating");
+                comment.setCrmCloudPrId(dataItem.getPrId());
+                comment.setCrmRating(dataItem.getPrRatingStars());
+                comment.setRcProfileMasterPmId(dataItem.getFromPmId());
+                comment.setCrmComment(dataItem.getComment());
+                comment.setCrmReply(dataItem.getReply());
+                comment.setCrmProfileDetails(dataItem.getName());
+                comment.setCrmImage(dataItem.getPmProfilePhoto());
+                comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getCreatedAt()));
+                comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(dataItem.getUpdatedAt()));
+                if (!StringUtils.isEmpty(dataItem.getReplyAt()))
+                    comment.setCrmRepliedAt(Utils.getLocalTimeFromUTCTime(dataItem.getReplyAt()));
+                else comment.setCrmRepliedAt("");
+
+                tableCommentMaster.addComment(comment);
+
+            }
+
+        } catch (Exception e) {
+            System.out.println("RContact storeRatingRequestResponseToDB error ");
+        }
+
+        if (!StringUtils.isEmpty(getRatingUpdateResponse.getTimestamp())) {
+            Utils.setStringPreference(getActivity(), AppConstants.KEY_API_CALL_TIME_STAMP_RATING,
+                    getRatingUpdateResponse.getTimestamp());
         }
     }
 
@@ -479,6 +593,23 @@ public class NotiRatingFragment extends BaseNotificationFragment implements WsRe
 //        pastRatingAdapter.updateList(listPastRating);
 
 //        updateHeight();
+    }
+
+
+    private void pullMechanismServiceCall(String fromDate, String toDate, String url) {
+
+        if (Utils.isNetworkAvailable(getActivity())) {
+            WsRequestObject deviceDetailObject = new WsRequestObject();
+
+            deviceDetailObject.setFromDate(fromDate);
+            deviceDetailObject.setToDate(toDate);
+
+            if (Utils.isNetworkAvailable(getActivity())) {
+                new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), deviceDetailObject,
+                        null, WsResponseObject.class, url, getResources().getString(R.string.msg_please_wait), true)
+                        .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + url);
+            }
+        }
     }
 
     @Override
