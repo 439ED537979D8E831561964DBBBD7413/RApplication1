@@ -468,7 +468,7 @@ public class TableProfileMaster {
 
     }
 
-    public ArrayList<String> getAllRcpId() {
+    public ArrayList<String> getAllRawIds() {
 
         ArrayList<String> arrayListRawId = new ArrayList<>();
         SQLiteDatabase db = null;
@@ -509,6 +509,46 @@ public class TableProfileMaster {
 
         // return user profile list
         return arrayListRawId;
+    }
+
+
+    public ArrayList<String> getAllRcpIds() {
+
+        ArrayList<String> arrayListRcpId = new ArrayList<>();
+        SQLiteDatabase db = null;
+        // Select All Query
+
+        try {
+
+            String selectQuery = "SELECT " + COLUMN_PM_RCP_ID + " FROM " + TABLE_RC_PROFILE_MASTER;
+
+            db = databaseHandler.getWritableDatabase();
+            Cursor cursor = db.rawQuery(selectQuery, null);
+
+            // looping through all rows and adding to list
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    do {
+                        UserProfile userProfile = new UserProfile();
+                        userProfile.setPmRcpId(cursor.getString(cursor.getColumnIndex
+                                (COLUMN_PM_RCP_ID)));
+                        arrayListRcpId.add(userProfile.getPmRcpId());
+
+                    } while (cursor.moveToNext());
+                }
+                cursor.close();
+            }
+
+            db.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (db != null) {
+                db.close();
+            }
+        }
+
+        // return user profile list
+        return arrayListRcpId;
     }
 
     public String getNameFromRawId(String rawId) {

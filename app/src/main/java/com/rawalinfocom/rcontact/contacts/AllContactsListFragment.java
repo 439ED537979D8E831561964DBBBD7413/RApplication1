@@ -38,7 +38,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.BaseFragment;
-import com.rawalinfocom.rcontact.MainActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.AllContactAdapter;
@@ -95,7 +94,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 import butterknife.BindView;
@@ -621,7 +619,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         try {
             TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler
                     ());
-            ArrayList<String> arrayListIds = tableProfileMaster.getAllRcpId();
+            ArrayList<String> arrayListIds = tableProfileMaster.getAllRawIds();
             for (int i = 0; i < arrayListPhoneBookContacts.size(); i++) {
                 if (arrayListPhoneBookContacts.get(i) instanceof ProfileData) {
                     if (arrayListIds.contains(((ProfileData) arrayListPhoneBookContacts.get
