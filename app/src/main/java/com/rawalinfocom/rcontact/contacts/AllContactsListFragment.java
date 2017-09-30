@@ -257,7 +257,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             @Override
             public void onRefresh() {
 
-                // cancel the Visual indication of a refresh
                 swipeRefreshLayout.setRefreshing(true);
                 if (arrayListPhoneBookContacts != null && arrayListPhoneBookContacts.size() > 0)
                     loadData();
