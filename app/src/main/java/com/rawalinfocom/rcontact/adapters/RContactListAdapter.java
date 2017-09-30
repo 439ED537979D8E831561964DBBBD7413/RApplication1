@@ -381,18 +381,31 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         Pattern numberPat = Pattern.compile("\\d+");
         Matcher matcher1 = numberPat.matcher(charText);
         if (matcher1.find()) {
+            charText = charText.toLowerCase(Locale.getDefault());
+            charText = charText.trim();
             arrayListUserProfile.clear();
             if (charText.length() == 0) {
                 arrayListUserProfile.addAll(arraylist);
             } else {
                 for (int i = 0; i < arraylist.size(); i++) {
-                    if (arraylist.get(i) instanceof ProfileData) {
+                    /*if (arraylist.get(i) instanceof ProfileData) {
                         charText = charText.trim();
                         ProfileData profileData = (ProfileData) arraylist.get(i);
                         if (!StringUtils.isEmpty(profileData.getTempNumber())) {
                             String number = profileData.getTempNumber();
                             number = number.replace(" ", "").replace("-", "");
                             if (number.contains(charText)) {
+                                arrayListUserProfile.add(profileData);
+                            }
+                        }
+                    }*/
+                    if (arraylist.get(i) instanceof UserProfile) {
+                        UserProfile profileData = (UserProfile) arraylist.get(i);
+                        String name =  profileData.getMobileNumber();
+                        if (!StringUtils.isEmpty(name)) {
+                            name = name.replace(" ", "").replace("-", "");
+                            if (name.toLowerCase(Locale.getDefault()).contains
+                                    (charText)) {
                                 arrayListUserProfile.add(profileData);
                             }
                         }

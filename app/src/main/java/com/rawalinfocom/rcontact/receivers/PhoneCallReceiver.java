@@ -12,6 +12,7 @@ import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
 import android.provider.Telephony;
@@ -32,7 +33,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.rawalinfocom.rcontact.PublicProfileDetailActivity;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.SearchActivity;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.calllog.CallHistoryDetailsActivity;
 import com.rawalinfocom.rcontact.constants.AppConstants;
@@ -815,11 +818,21 @@ public class PhoneCallReceiver extends BroadcastReceiver {
             @Override
             public void onClick(View v) {
                 if (!StringUtils.isEmpty(publicProfileUrl)) {
-                    Intent i = new Intent(Intent.ACTION_VIEW);
+                    /*Intent i = new Intent(Intent.ACTION_VIEW);
                     i.setData(Uri.parse(publicProfileUrl));
                     i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     endCallDialog.dismiss();
-                    context.startActivity(i);
+                    context.startActivity(i);*/
+                    Bundle bundle = new Bundle();
+                    bundle.putString(AppConstants.EXTRA_PM_ID,
+                            spamDataType.getRcpPmId());
+                    Intent intent = new Intent(context,
+                            PublicProfileDetailActivity.class);
+                    intent.putExtras(bundle);
+                    endCallDialog.dismiss();
+                    context.startActivity(intent);
+//                    context.overridePendingTransition(R.anim
+//                            .enter, R.anim.exit);
                 }
             }
         });

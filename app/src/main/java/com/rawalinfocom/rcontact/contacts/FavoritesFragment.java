@@ -568,7 +568,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
 
     private void getRcpDetail() {
         TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
-        ArrayList<String> arrayListIds = tableProfileMaster.getAllRcpId();
+        ArrayList<String> arrayListIds = tableProfileMaster.getAllRawIds();
         for (int i = 0; i < arrayListPhoneBookContacts.size(); i++) {
             if (arrayListPhoneBookContacts.get(i) instanceof ProfileData) {
                 if (arrayListIds.contains(((ProfileData) arrayListPhoneBookContacts.get

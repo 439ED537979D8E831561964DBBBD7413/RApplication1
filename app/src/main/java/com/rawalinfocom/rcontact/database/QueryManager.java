@@ -113,9 +113,16 @@ public class QueryManager {
                     phoneNumber.setPhoneType(StringUtils.defaultString(mobileNumberCursor.getString
                             (mobileNumberCursor.getColumnIndexOrThrow(TableMobileMaster
                                     .COLUMN_MNM_NUMBER_TYPE))));
-                    phoneNumber.setPbRcpType(Integer.parseInt(mobileNumberCursor.getString
+                    if(mobileNumberCursor.getString
                             (mobileNumberCursor.getColumnIndexOrThrow(TableMobileMaster
-                                    .COLUMN_MNM_IS_PRIMARY))));
+                                    .COLUMN_MNM_IS_PRIMARY)) != null){
+                        phoneNumber.setPbRcpType(Integer.parseInt(mobileNumberCursor.getString
+                                (mobileNumberCursor.getColumnIndexOrThrow(TableMobileMaster
+                                        .COLUMN_MNM_IS_PRIMARY))));
+                    }else{
+                        phoneNumber.setPbRcpType(2);
+                    }
+
                     phoneNumber.setPhonePublic(Integer.parseInt(StringUtils.defaultString
                             (mobileNumberCursor.getString(mobileNumberCursor.getColumnIndexOrThrow
                                     (TableMobileMaster.COLUMN_MNM_NUMBER_PRIVACY)), "0")));
