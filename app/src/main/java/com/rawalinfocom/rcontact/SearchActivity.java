@@ -349,6 +349,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                                     globalSearchTypeArrayListMain.add(globalSearchType);
                                 }
                             } else {
+
                                 globalSearchTypeArrayListMain.add(globalSearchType);
                             }
                         }
@@ -569,7 +570,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
         for (int i = 0; i < arrayListDisplayProfile.size(); i++) {
             UserProfile userProfile = arrayListDisplayProfile.get(i);
             String number = userProfile.getMobileNumber();
-            if (!number.startsWith("+91")) {
+            if (!StringUtils.startsWith(number,"+91")) {
                 number = "+91" + number;
                 number = number.replace(" ", "").replace("-", "");
             }
@@ -580,7 +581,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
             ProfileData profileData = (ProfileData) objectArrayListContact.get(i);
             String number = profileData.getTempNumber();
             if (!arrayListRCPNumber.contains(number)) {
-                if (!number.startsWith("+91")) {
+                if (!StringUtils.startsWith(number,"+91")) {
                     number = "+91" + number;
                     number = number.replace(" ", "").replace("-", "");
                 }
