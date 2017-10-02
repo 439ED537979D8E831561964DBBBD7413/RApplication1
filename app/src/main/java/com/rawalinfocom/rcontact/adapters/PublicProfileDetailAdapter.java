@@ -249,6 +249,7 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
         if(StringUtils.contains(holder.textMain.getText().toString(),"X") ||
                 StringUtils.contains(holder.textMain.getText().toString(),"x")){
             holder.imgActionType.setVisibility(View.GONE);
+            holder.imgActionWhatsapp.setVisibility(View.GONE);
         }
 
 
