@@ -741,6 +741,10 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                         } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
                                 ("pinterest")) {
                             url = "https://www.pinterest.com/" + imAccount.getIMAccountDetails();
+                        }else if(StringUtils.lowerCase(imAccount.getIMAccountDetails()).startsWith("https://")
+                                || StringUtils.lowerCase(imAccount.getIMAccountDetails()).startsWith("http://")
+                                || StringUtils.lowerCase(imAccount.getIMAccountDetails()).startsWith("www.")){
+                            url =  imAccount.getIMAccountDetails();
                         }
 
                         if (url != null) {
@@ -757,7 +761,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             @Override
             public void onClick(View v) {
 
-                String ima = holder.textMain.getText().toString();
+                holder.imgActionType.performClick();
+                /*String ima = holder.textMain.getText().toString();
                 if (!ima.startsWith("XX") && !ima.startsWith("xx")) {
                     if (StringUtils.length(imAccount.getIMAccountDetails()) > 0) {
                         String url = null;
@@ -789,7 +794,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                             activity.startActivity(intent);
                         }
                     }
-                }
+                }*/
             }
         });
 
