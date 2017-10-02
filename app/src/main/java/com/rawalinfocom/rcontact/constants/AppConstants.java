@@ -223,6 +223,7 @@ public class AppConstants {
     public static String KEY_IS_FIRST_TIME = "key_is_first_time";
     public static String KEY_IS_RESTORE_DONE = "key_is_restore_done";
 
+    public static String KEY_API_CALL_TIME_STAMP_RCP = "key_api_call_time_stamp_rcp";
     public static String KEY_API_CALL_TIME_STAMP_RATING = "key_api_call_time_stamp_rating";
     public static String KEY_API_CALL_TIME_STAMP_PROFILE = "key_api_call_time_stamp_profile";
     public static String KEY_API_CALL_TIME_STAMP_COMMENT = "key_api_call_time_stamp_comment";
