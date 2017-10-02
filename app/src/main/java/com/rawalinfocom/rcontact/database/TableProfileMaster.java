@@ -468,7 +468,7 @@ public class TableProfileMaster {
 
     }
 
-    public ArrayList<String> getAllRcpId() {
+    public ArrayList<String> getAllRawIds() {
 
         ArrayList<String> arrayListRawId = new ArrayList<>();
         SQLiteDatabase db = null;

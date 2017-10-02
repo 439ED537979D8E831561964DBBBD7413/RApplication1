@@ -1103,16 +1103,24 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 if (stateResponse != null && StringUtils.equalsIgnoreCase
                         (stateResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                    String[] positionSplit = serviceType.split(":");
+                    final String[] positionSplit = serviceType.split(":");
                     final int position = Integer.parseInt(positionSplit[1]);
+                    String stateName = "";
+                    if (positionSplit.length > 2) {
+                        stateName = positionSplit[2];
+                    }
+                    /*if (positionSplit.length > 3) {
+                        cityName = positionSplit[3];
+                    }*/
 
                     View linearAddress = linearAddressDetails.getChildAt(position);
                     final Spinner spinnerState = linearAddress.findViewById(R.id.spinner_state);
+                    final EditText street = linearAddress.findViewById(R.id.input_street);
 
                     final ArrayList<State> stateList = stateResponse.getArrayListState();
-                    Log.i("onDeliveryResponse", stateList.toString());
 
                     final ArrayList<String> arrayListState = new ArrayList<>();
+                    arrayListState.add(getString(R.string.hint_state_required));
                     for (int i = 0; i < stateList.size(); i++) {
                         arrayListState.add(stateList.get(i).getStateName());
                     }
@@ -1123,14 +1131,31 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             .regularFontColor));
                     stateSpinnerAdapter.setDropDownViewResource(R.layout
                             .list_item_spinner_call_log);
+                    stateSpinnerAdapter.setHintColor(street.getHintTextColors());
                     spinnerState.setAdapter(stateSpinnerAdapter);
+
+                    if (!StringUtils.isBlank(stateName)) {
+                        int statePosition = stateSpinnerAdapter.getPosition(stateName);
+                        if (statePosition != -1) {
+                            spinnerState.setSelection(statePosition);
+                        } else {
+                            spinnerState.setSelection(0);
+                        }
+                    }
 
                     spinnerState.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener
                             () {
                         @Override
                         public void onItemSelected(AdapterView<?> adapterView, View view, int i,
                                                    long l) {
-                            getCityList(stateList.get(i).getStateId(), String.valueOf(position));
+                            if (i != 0) {
+                                String cityName = "";
+                                if (positionSplit.length > 3) {
+                                    cityName = positionSplit[3];
+                                }
+                                getCityList(stateList.get(i - 1).getStateId(), cityName, String
+                                        .valueOf(position));
+                            }
                         }
 
                         @Override
@@ -1163,14 +1188,19 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                     String[] positionSplit = serviceType.split(":");
                     final int position = Integer.parseInt(positionSplit[1]);
+                    String cityName = "";
+                    if (positionSplit.length > 2) {
+                        cityName = positionSplit[2];
+                    }
 
                     View linearAddress = linearAddressDetails.getChildAt(position);
                     final Spinner spinnerCity = linearAddress.findViewById(R.id.spinner_city);
+                    final EditText street = linearAddress.findViewById(R.id.input_street);
 
                     final ArrayList<City> cityList = cityResponse.getArrayListCity();
-                    Log.i("onDeliveryResponse", cityList.toString());
 
                     final ArrayList<String> arrayListCity = new ArrayList<>();
+                    arrayListCity.add(getString(R.string.hint_city_town_required));
                     for (int i = 0; i < cityList.size(); i++) {
                         arrayListCity.add(cityList.get(i).getCityName());
                     }
@@ -1181,7 +1211,17 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             .regularFontColor));
                     citySpinnerAdapter.setDropDownViewResource(R.layout
                             .list_item_spinner_call_log);
+                    citySpinnerAdapter.setHintColor(street.getHintTextColors());
                     spinnerCity.setAdapter(citySpinnerAdapter);
+
+                    if (!StringUtils.isBlank(cityName)) {
+                        int cityPosition = citySpinnerAdapter.getPosition(cityName);
+                        if (cityPosition != -1) {
+                            spinnerCity.setSelection(cityPosition);
+                        } else {
+                            spinnerCity.setSelection(0);
+                        }
+                    }
 
                 } else {
                     if (cityResponse != null) {
@@ -1914,10 +1954,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     Spinner addressType = linearAddress.findViewById(R.id
                             .spinner_type);
 
-                    EditText country = linearAddress.findViewById(R.id
+                   /* EditText country = linearAddress.findViewById(R.id
                             .input_country);
                     EditText state = linearAddress.findViewById(R.id.input_state);
-                    EditText city = linearAddress.findViewById(R.id.input_city);
+                    EditText city = linearAddress.findViewById(R.id.input_city);*/
+                    Spinner country = linearAddress.findViewById(R.id.spinner_country);
+                    Spinner state = linearAddress.findViewById(R.id.spinner_state);
+                    Spinner city = linearAddress.findViewById(R.id.spinner_city);
                     EditText street = linearAddress.findViewById(R.id.input_street);
                     EditText neighborhood = linearAddress.findViewById(R.id.input_neighborhood);
                     EditText pinCode = linearAddress.findViewById(R.id.input_pin_code);
@@ -1933,9 +1976,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     TextView textImageMapMarker = linearAddress.findViewById(R.id
                             .text_image_map_marker);
 
-                    String countryName = country.getText().toString().trim();
-                    String stateName = state.getText().toString().trim();
-                    String cityName = city.getText().toString().trim();
+                    String countryName = country.getSelectedItem().toString().trim();
+                    String stateName = state.getSelectedItem().toString().trim();
+                    String cityName = city.getSelectedItem().toString().trim();
                     String streetName = street.getText().toString().trim();
                     String neighborhoodName = neighborhood.getText().toString().trim();
                     String pinCodeName = pinCode.getText().toString().trim();
@@ -1962,12 +2005,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         address.setAddPublic(IntegerConstants.PRIVACY_MY_CONTACT);
                     }
 
-                    if (!StringUtils.isBlank(address.getCountry()) || !StringUtils.isBlank(
-                            (address.getState())) || !StringUtils.isBlank(address.getCity())
+                    if (country.getSelectedItemPosition() != 0 || state.getSelectedItemPosition()
+                            != 0 || city.getSelectedItemPosition() != 0
                             || !StringUtils.isBlank(address.getStreet())) {
-                        if (!StringUtils.isBlank(address.getCountry())) {
-                            if (!StringUtils.isBlank(address.getState())) {
-                                if (!StringUtils.isBlank(address.getCity())) {
+                        if (country.getSelectedItemPosition() != 0) {
+                            if (state.getSelectedItemPosition() != 0) {
+                                if (city.getSelectedItemPosition() != 0) {
                                     if (!StringUtils.isBlank(address.getStreet())) {
                                         if (!StringUtils.isBlank(address.getGoogleLatLong().get(0))
                                                 && !StringUtils.isBlank(address.getGoogleLatLong
@@ -2019,36 +2062,27 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                         break;
                                     }
                                 } else {
-                                    Utils.hideSoftKeyboard(EditProfileActivity.this,
-                                            city);
                                     Utils.showErrorSnackBar(this, relativeRootEditProfile,
                                             getString(R.string.error_required_city));
-                                    city.requestFocus();
                                     isValid = false;
                                     break;
                                 }
                             } else {
-                                Utils.hideSoftKeyboard(EditProfileActivity.this, state);
                                 Utils.showErrorSnackBar(this, relativeRootEditProfile,
                                         getString(R.string.error_required_state));
-                                state.requestFocus();
                                 isValid = false;
                                 break;
                             }
                         } else {
-                            Utils.hideSoftKeyboard(EditProfileActivity.this, country);
                             Utils.showErrorSnackBar(this, relativeRootEditProfile,
                                     getString(R.string.error_required_country));
-                            country.requestFocus();
                             isValid = false;
                             break;
                         }
                     } else {
                         if (i != 0) {
-                            Utils.hideSoftKeyboard(EditProfileActivity.this, country);
                             Utils.showErrorSnackBar(this, relativeRootEditProfile,
                                     getString(R.string.error_required_country));
-                            country.requestFocus();
                             isValid = false;
                         }
                         break;
@@ -3129,9 +3163,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             arrayListLatLong.add(arrayListAddress.get(i).getAmGoogleLongitude());
             arrayListLatLong.add(arrayListAddress.get(i).getAmGoogleLatitude());
             address.setGoogleLatLong(arrayListLatLong);
-            arrayListLatLong.add(arrayListAddress.get(i).getAmGoogleLongitude());
+            /*arrayListLatLong.add(arrayListAddress.get(i).getAmGoogleLongitude());
             arrayListLatLong.add(arrayListAddress.get(i).getAmGoogleLatitude());
-            address.setGoogleLatLong(arrayListLatLong);
+            address.setGoogleLatLong(arrayListLatLong);*/
             address.setGoogleAddress(arrayListAddress.get(i).getAmGoogleAddress());
             address.setAddId(arrayListAddress.get(i).getAmRecordIndexId());
             address.setAddPublic(Integer.parseInt(arrayListAddress.get(i).getAmAddressPrivacy()));
@@ -3144,9 +3178,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             }
             for (int i = 0; i < linearAddressDetails.getChildCount(); i++) {
                 View linearAddress = linearAddressDetails.getChildAt(i);
-                EditText inputCountry = linearAddress.findViewById(R.id.input_country);
+                /*EditText inputCountry = linearAddress.findViewById(R.id.input_country);
                 EditText inputState = linearAddress.findViewById(R.id.input_state);
-                EditText inputCity = linearAddress.findViewById(R.id.input_city);
+                EditText inputCity = linearAddress.findViewById(R.id.input_city);*/
                 EditText inputStreet = linearAddress.findViewById(R.id.input_street);
                 EditText inputNeighborhood = linearAddress.findViewById(R.id.input_neighborhood);
                 EditText inputPinCode = linearAddress.findViewById(R.id.input_pin_code);
@@ -3154,9 +3188,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         .input_is_address_modified);
                 TextView textImageMapMarker = linearAddress.findViewById(R.id
                         .text_image_map_marker);
-                setAddressTextWatcher(inputCountry, textImageMapMarker, inputIsAddressModified);
+                /*setAddressTextWatcher(inputCountry, textImageMapMarker, inputIsAddressModified);
                 setAddressTextWatcher(inputState, textImageMapMarker, inputIsAddressModified);
-                setAddressTextWatcher(inputCity, textImageMapMarker, inputIsAddressModified);
+                setAddressTextWatcher(inputCity, textImageMapMarker, inputIsAddressModified);*/
                 setAddressTextWatcher(inputStreet, textImageMapMarker, inputIsAddressModified);
                 setAddressTextWatcher(inputNeighborhood, textImageMapMarker,
                         inputIsAddressModified);
@@ -3171,20 +3205,14 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         boolean toAdd = false;
         for (int i = 0; i < linearAddressDetails.getChildCount(); i++) {
             View linearView = linearAddressDetails.getChildAt(i);
-            EditText inputCountry = linearView.findViewById(R.id.input_country);
+            /*EditText inputCountry = linearView.findViewById(R.id.input_country);
             EditText inputState = linearView.findViewById(R.id.input_state);
-            EditText inputCity = linearView.findViewById(R.id.input_city);
+            EditText inputCity = linearView.findViewById(R.id.input_city);*/
             EditText inputStreet = linearView.findViewById(R.id.input_street);
             TextView inputLatitude = linearView.findViewById(R.id.input_latitude);
             TextView inputLongitude = linearView.findViewById(R.id.input_longitude);
-            if (StringUtils.length(StringUtils.trimToEmpty(inputCountry.getText().toString())) <
-                    1 ||
-                    StringUtils.length(StringUtils.trimToEmpty(inputState.getText().toString()))
-                            < 1 ||
-                    StringUtils.length(StringUtils.trimToEmpty(inputCity.getText().toString())) <
-                            1 ||
-                    StringUtils.length(StringUtils.trimToEmpty(inputStreet.getText().toString()))
-                            < 1 ||
+            if (StringUtils.length(StringUtils.trimToEmpty(inputStreet.getText().toString()))
+                    < 1 ||
                     StringUtils.length(StringUtils.trimToEmpty(inputLatitude.getText().toString()))
                             < 1 ||
                     StringUtils.length(StringUtils.trimToEmpty(inputLongitude.getText().toString()))
@@ -3873,6 +3901,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 //        inputCountry.setHint(R.string.hint_country_required);
 //        inputState.setHint(R.string.hint_state_required);
 //        inputCity.setHint(R.string.hint_city_town_required);
+        spinnerCountry.setPromptId(R.string.hint_country_required);
+        spinnerState.setPromptId(R.string.hint_state_required);
+        spinnerCity.setPromptId(R.string.hint_city_town_required);
         inputStreet.setHint(R.string.hint_address_line_1_required);
         inputNeighborhood.setHint(R.string.hint_address_line_2_optional);
         inputPinCode.setHint(R.string.hint_pincode_optional);
@@ -3902,32 +3933,69 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
         final TableCountryMaster tableCountryMaster = new TableCountryMaster(databaseHandler);
 
+        ArrayList<String> countries = new ArrayList<>();
+        countries.add(getString(R.string.hint_country_required));
+        countries.addAll(tableCountryMaster.getAllCountryName());
+
         RSpinnerAdapter countrySpinnerAdapter = new RSpinnerAdapter(this, R.layout
-                .header_spinner_call_log, tableCountryMaster.getAllCountryName(), ContextCompat
+                .header_spinner_call_log, countries, ContextCompat
                 .getColor(this, R.color.colorAccent), ContextCompat
                 .getColor(this, R.color.regularFontColor));
         countrySpinnerAdapter.setDropDownViewResource(R.layout.list_item_spinner_call_log);
+        countrySpinnerAdapter.setHintColor(inputStreet.getHintTextColors());
         spinnerCountry.setAdapter(countrySpinnerAdapter);
+
+        final ArrayList<String> arrayListState = new ArrayList<>();
+        arrayListState.add(getString(R.string.hint_state_required));
+
+        RSpinnerAdapter stateSpinnerAdapter = new RSpinnerAdapter(this, R.layout
+                .header_spinner_call_log, arrayListState, ContextCompat.getColor(this, R
+                .color.colorAccent), ContextCompat.getColor(this, R.color
+                .regularFontColor));
+        stateSpinnerAdapter.setDropDownViewResource(R.layout.list_item_spinner_call_log);
+        stateSpinnerAdapter.setHintColor(inputStreet.getHintTextColors());
+        spinnerState.setAdapter(stateSpinnerAdapter);
+
+        final ArrayList<String> arrayListCity = new ArrayList<>();
+        arrayListCity.add(getString(R.string.hint_city_town_required));
+
+        RSpinnerAdapter citySpinnerAdapter = new RSpinnerAdapter(this, R.layout
+                .header_spinner_call_log, arrayListCity, ContextCompat.getColor(this, R
+                .color.colorAccent), ContextCompat.getColor(this, R.color
+                .regularFontColor));
+        citySpinnerAdapter.setDropDownViewResource(R.layout.list_item_spinner_call_log);
+        citySpinnerAdapter.setHintColor(inputStreet.getHintTextColors());
+        spinnerCity.setAdapter(citySpinnerAdapter);
 
         /*RSpinnerAdapter stateSpinnerAdapter = new RSpinnerAdapter(this, R.layout
                 .header_spinner_call_log, tableCountryMaster.getAllCountryName(), ContextCompat
                 .getColor(this, R.color.colorAccent), ContextCompat
                 .getColor(this, R.color.regularFontColor));
         stateSpinnerAdapter.setDropDownViewResource(R.layout.list_item_spinner_call_log);
-        spinnerState.setAdapter(stateSpinnerAdapter);*/
+        spinnerState.setAdapter(stateSpinnerAdapter);
 
         RSpinnerAdapter citySpinnerAdapter = new RSpinnerAdapter(this, R.layout
                 .header_spinner_call_log, tableCountryMaster.getAllCountryName(), ContextCompat
                 .getColor(this, R.color.colorAccent), ContextCompat
                 .getColor(this, R.color.regularFontColor));
         citySpinnerAdapter.setDropDownViewResource(R.layout.list_item_spinner_call_log);
-        spinnerCity.setAdapter(citySpinnerAdapter);
+        spinnerCity.setAdapter(citySpinnerAdapter);*/
 
         if (detailObject != null) {
             ProfileDataOperationAddress address = (ProfileDataOperationAddress) detailObject;
 //            inputCountry.setText(address.getCountry());
 //            inputState.setText(address.getState());
 //            inputCity.setText(address.getCity());
+
+            ArrayList<String> countryList = new ArrayList<>();
+            countryList.addAll(tableCountryMaster.getAllCountryName());
+
+            int countryPosition = 0;
+            if (countryList.contains(StringUtils.defaultString(address.getCountry()))) {
+                countryPosition = countrySpinnerAdapter.getPosition(address.getCountry());
+            }
+            spinnerCountry.setSelection(countryPosition);
+
             inputStreet.setText(address.getStreet());
             inputNeighborhood.setText(address.getNeighborhood());
             inputPinCode.setText(address.getPostCode());
@@ -3957,14 +4025,31 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             setAddressTextWatcher(inputStreet, textImageMapMarker, inputIsAddressModified);
             setAddressTextWatcher(inputNeighborhood, textImageMapMarker, inputIsAddressModified);
             setAddressTextWatcher(inputPinCode, textImageMapMarker, inputIsAddressModified);
+
+           /* RSpinnerAdapter countrySpinnerAdapter = new RSpinnerAdapter(this, R.layout
+                    .header_spinner_call_log, tableCountryMaster.getAllCountryName(), ContextCompat
+                    .getColor(this, R.color.colorAccent), ContextCompat
+                    .getColor(this, R.color.regularFontColor));
+            countrySpinnerAdapter.setDropDownViewResource(R.layout.list_item_spinner_call_log);
+            spinnerCountry.setAdapter(countrySpinnerAdapter);*/
+
         }
 
         spinnerCountry.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                getStateList(tableCountryMaster.getCountryIdFromName(spinnerCountry
-                        .getSelectedItem().toString()).getCountryId(), String.valueOf(spinnerCountry
-                        .getTag(R.id.spinner_country_position)));
+                if (i != 0) {
+                    String state = "", city = "";
+                    if (detailObject != null) {
+                        ProfileDataOperationAddress address = (ProfileDataOperationAddress)
+                                detailObject;
+                        state = address.getState();
+                        city = address.getCity();
+                    }
+                    getStateList(tableCountryMaster.getCountryIdFromName(spinnerCountry
+                            .getSelectedItem().toString()).getCountryId(), state, city, String
+                            .valueOf(spinnerCountry.getTag(R.id.spinner_country_position)));
+                }
             }
 
             @Override
@@ -3980,9 +4065,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 if (linearAddressDetails.getChildCount() > 1) {
                     linearAddressDetails.removeView(relativeRowEditProfile);
                 } else if (linearAddressDetails.getChildCount() == 1) {
-                    inputCountry.getText().clear();
+                   /* inputCountry.getText().clear();
                     inputState.getText().clear();
-                    inputCity.getText().clear();
+                    inputCity.getText().clear();*/
+                    spinnerCountry.setSelection(0);
+                    spinnerState.setSelection(0);
+                    spinnerCity.setSelection(0);
                     inputStreet.getText().clear();
                     inputNeighborhood.getText().clear();
                     inputPinCode.getText().clear();
@@ -3998,16 +4086,19 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 View view = linearAddressDetails.getChildAt(position);
                 TextView textLatitude = view.findViewById(R.id.input_latitude);
                 TextView textLongitude = view.findViewById(R.id.input_longitude);
-                EditText country = view.findViewById(R.id.input_country);
+                /*EditText country = view.findViewById(R.id.input_country);
                 EditText state = view.findViewById(R.id.input_state);
-                EditText city = view.findViewById(R.id.input_city);
+                EditText city = view.findViewById(R.id.input_city);*/
+                Spinner country = view.findViewById(R.id.spinner_country);
+                Spinner state = view.findViewById(R.id.spinner_state);
+                Spinner city = view.findViewById(R.id.spinner_city);
                 EditText street = view.findViewById(R.id.input_street);
                 EditText neighborhood = view.findViewById(R.id.input_neighborhood);
                 EditText pinCode = view.findViewById(R.id.input_pin_code);
 
-                String countryName = country.getText().toString();
-                String stateName = state.getText().toString();
-                String cityName = city.getText().toString();
+                String countryName = country.getSelectedItem().toString();
+                String stateName = state.getSelectedItem().toString();
+                String cityName = city.getSelectedItem().toString();
                 String streetName = street.getText().toString();
                 String neighborhoodName = neighborhood.getText().toString();
                 String pinCodeName = pinCode.getText().toString();
@@ -4056,7 +4147,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             .REQUEST_CODE_MAP_LOCATION_SELECTION);
                     overridePendingTransition(R.anim.enter, R.anim.exit);
                 } else {
-                    country.requestFocus();
                     textImageMapMarker.setTextColor(ContextCompat.getColor(EditProfileActivity
                             .this, R.color.colorSnackBarNegative));
                     Utils.showErrorSnackBar(EditProfileActivity.this, relativeRootEditProfile,
@@ -4921,14 +5011,14 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
     }
 
-    private void getStateList(String countryId, String position) {
+    private void getStateList(String countryId, String stateName, String cityName, String
+            position) {
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), null, null,
-                    WsResponseObject.class, WsConstants.REQ_STATE_DETAILS + ":" + position,
-                    getString(R
-                            .string.msg_please_wait), false).executeOnExecutor(AsyncTask
-                            .THREAD_POOL_EXECUTOR,
-                    WsConstants.WS_ROOT_V2 + WsConstants.REQ_STATE_DETAILS + "/" + countryId);
+                    WsResponseObject.class, WsConstants.REQ_STATE_DETAILS + ":" + position + ":" +
+                    stateName + ":" + cityName, null, false)
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT_V2 +
+                            WsConstants.REQ_STATE_DETAILS + "/" + countryId);
         } else {
             Utils.showErrorSnackBar(this, relativeRootEditProfile, getResources()
                     .getString(R.string.msg_no_network));
@@ -4936,15 +5026,15 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
     }
 
-    private void getCityList(String stateId, String position) {
+    private void getCityList(String stateId, String cityName, String position) {
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), null, null,
-                    WsResponseObject.class, WsConstants.REQ_CITY_DETAILS + ":" + position,
-                    getString(R
-                            .string.msg_please_wait), false).executeOnExecutor(AsyncTask
-                            .THREAD_POOL_EXECUTOR,
-                    WsConstants.WS_ROOT_V2 + WsConstants.REQ_CITY_DETAILS + "/" + stateId);
+                    WsResponseObject.class, WsConstants.REQ_CITY_DETAILS + ":" + position + ":" +
+                    cityName, null, false).executeOnExecutor(AsyncTask
+                    .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT_V2 + WsConstants.REQ_CITY_DETAILS
+                    + "/" +
+                    stateId);
         } else {
             Utils.showErrorSnackBar(this, relativeRootEditProfile, getResources()
                     .getString(R.string.msg_no_network));

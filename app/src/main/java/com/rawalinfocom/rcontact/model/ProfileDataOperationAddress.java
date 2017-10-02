@@ -30,6 +30,10 @@ public class ProfileDataOperationAddress implements Serializable {
     private Integer addPublic;
     private Integer isPrivate;
 
+    private Integer countryId;
+    private Integer stateId;
+    private Integer cityId;
+
     private String rcpType;
 
     @JsonProperty("add_id")
@@ -132,7 +136,7 @@ public class ProfileDataOperationAddress implements Serializable {
     }
 
     @JsonProperty("formatted_address")
-    public String   getFormattedAddress() {
+    public String getFormattedAddress() {
         return StringUtils.defaultString(formattedAddress);
     }
 
@@ -164,5 +168,32 @@ public class ProfileDataOperationAddress implements Serializable {
 
     public void setIsPrivate(Integer isPrivate) {
         this.isPrivate = isPrivate;
+    }
+
+    @JsonProperty("country_id")
+    public Integer getCountryId() {
+        return countryId;
+    }
+
+    public void setCountryId(Integer countryId) {
+        this.countryId = countryId;
+    }
+
+    @JsonProperty("state_id")
+    public Integer getStateId() {
+        return stateId;
+    }
+
+    public void setStateId(Integer stateId) {
+        this.stateId = stateId;
+    }
+
+    @JsonProperty("city_id")
+    public Integer getCityId() {
+        return cityId;
+    }
+
+    public void setCityId(Integer cityId) {
+        this.cityId = cityId;
     }
 }

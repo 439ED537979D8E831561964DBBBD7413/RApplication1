@@ -1,6 +1,7 @@
 package com.rawalinfocom.rcontact.adapters;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -17,7 +18,8 @@ import java.util.List;
 public class RSpinnerAdapter extends ArrayAdapter<String> {
 
     Context context;
-    int headerColor, dropDownColor;
+    private int headerColor, dropDownColor;
+    private ColorStateList hintColor;
 
     public RSpinnerAdapter(Context context, int resource, List<String> items, int headerColor, int
             dropDownColor) {
@@ -32,7 +34,12 @@ public class RSpinnerAdapter extends ArrayAdapter<String> {
     public View getView(int position, View convertView, ViewGroup parent) {
         TextView view = (TextView) super.getView(position, convertView, parent);
         view.setTypeface(Utils.typefaceRegular(context));
-        view.setTextColor(headerColor);
+        if (position == 0) {
+//            view.setTextColor(Color.parseColor("#808080"));
+            view.setTextColor(hintColor);
+        } else {
+            view.setTextColor(headerColor);
+        }
         return view;
     }
 
@@ -45,4 +52,7 @@ public class RSpinnerAdapter extends ArrayAdapter<String> {
         return view;
     }
 
+    public void setHintColor(ColorStateList hintColor) {
+        this.hintColor = hintColor;
+    }
 }
