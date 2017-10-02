@@ -14,7 +14,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     // All Static variables
     // Database Version
-    private static final int DATABASE_VERSION = 5;  //update to 4 for production/staging // For QA 5
+    private static final int DATABASE_VERSION = 4;  //update to 4 for production/staging // For QA 5
 
     // Database Name
     public static final String DATABASE_NAME = "RContact.db";
@@ -104,16 +104,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                         + "COLUMN " + TableEmailMaster.COLUMN_EM_SOCIAL_TYPE + " text ");
 
 
-                /*System.out.println("RContact db upgrade case 3 --> ");
+                System.out.println("RContact db upgrade case 3 --> ");
                 // For version 4
                 db.execSQL(TableEmailMaster.CREATE_TABLE_RC_EMAIL_MASTER_1);
                 db.execSQL("INSERT INTO " + TableEmailMaster.TABLE_RC_EMAIL_MASTER_TEMP + " SELECT * FROM " +
                         TableEmailMaster.TABLE_RC_EMAIL_MASTER + ";");
                 db.execSQL("DROP TABLE IF EXISTS '" + TableEmailMaster.TABLE_RC_EMAIL_MASTER + "'");
                 db.execSQL("ALTER TABLE " + TableEmailMaster.TABLE_RC_EMAIL_MASTER_TEMP
-                        + " RENAME TO " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + ";");*/
+                        + " RENAME TO " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + ";");
 
-            case 4:
+            /*case 4:
                 System.out.println("RContact db upgrade case 4 --> ");
                 // For version 5
                 db.execSQL(TableEmailMaster.CREATE_TABLE_RC_EMAIL_MASTER_1);
@@ -121,7 +121,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                         TableEmailMaster.TABLE_RC_EMAIL_MASTER + ";");
                 db.execSQL("DROP TABLE IF EXISTS '" + TableEmailMaster.TABLE_RC_EMAIL_MASTER + "'");
                 db.execSQL("ALTER TABLE " + TableEmailMaster.TABLE_RC_EMAIL_MASTER_TEMP
-                        + " RENAME TO " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + ";");
+                        + " RENAME TO " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + ";");*/
         }
 
         // create new tables
