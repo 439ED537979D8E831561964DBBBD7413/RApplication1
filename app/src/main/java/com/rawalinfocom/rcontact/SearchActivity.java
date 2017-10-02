@@ -596,6 +596,19 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                 arrayListRCPNumber.add(number);
             }
         }
+
+        String ownProfileNumber  =  Utils.getStringPreference(this, AppConstants.PREF_USER_NUMBER, "");
+        if((!StringUtils.isEmpty(ownProfileNumber)))
+        {
+            if(!StringUtils.startsWith(ownProfileNumber,"+")){
+                ownProfileNumber =  "+" + ownProfileNumber;
+            }
+
+            if(!arrayListRCPNumber.contains(ownProfileNumber)){
+                arrayListRCPNumber.add(ownProfileNumber);
+            }
+        }
+
     }
 
     private void onClickEvents() {
@@ -697,7 +710,6 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
 
             @Override
             public void afterTextChanged(Editable arg0) {
-                // TODO Auto-generated method stub
                 if (arg0.length() > 0) {
                     if (globalSearchTypeArrayListMain.size() <= 0 && globalSearchAdapter == null) {
                         textNoRecords.setVisibility(View.GONE);
@@ -724,7 +736,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                         if (allContactAdapter != null) {
                             allContactAdapter.filter(text);
                             if (allContactAdapter.getSearchCount() == 0) {
-                                // TODO: 21/08/17 check for Rcontacts
+                                // 21/08/17 check for Rcontacts
                                 if (arrayListDisplayProfile != null && arrayListDisplayProfile
                                         .size() > 0) {
                                     rContactListAdapter = new RContactListAdapter(SearchActivity
@@ -801,7 +813,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                                 rlTitle.setVisibility(View.VISIBLE);
                                 textSearchCount.setVisibility(View.GONE);
                                 textNoRecordsLocal.setVisibility(View.GONE);
-                                // TODO: 21/08/17 check for Rcontacts
+                                // 21/08/17 check for Rcontacts
                                 if (arrayListDisplayProfile != null && arrayListDisplayProfile
                                         .size() > 0) {
                                     rContactListAdapter = new RContactListAdapter(SearchActivity
@@ -836,7 +848,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                             Pattern numberPat1 = Pattern.compile("\\d+");
                             Matcher matcher11 = numberPat1.matcher(arg0);
                             if (matcher11.find()) {
-                                // TODO: 21/08/17 check for Rcontacts
+                                // 21/08/17 check for Rcontacts
                                 if (simpleCallLogListAdapter != null) {
                                     if (simpleCallLogListAdapter.getSearchCount() > 0) {
                                         if (callLogTypeArrayListMain != null &&
@@ -901,7 +913,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                                 }
                             } else {
                                 if (allContactAdapter.getSearchCount() == 0) {
-                                    // TODO: 21/08/17 check for Rcontacts
+                                    //  21/08/17 check for Rcontacts
                                     if (rContactListAdapter != null && rContactListAdapter
                                             .getSearchCount() > 0) {
                                         rlTitle.setVisibility(View.VISIBLE);
@@ -1014,13 +1026,11 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
             @Override
             public void beforeTextChanged(CharSequence arg0, int arg1,
                                           int arg2, int arg3) {
-                // TODO Auto-generated method stub
             }
 
             @Override
             public void onTextChanged(CharSequence arg0, int arg1, int arg2,
                                       int arg3) {
-                // TODO Auto-generated method stub
                 String searchQuery = String.valueOf(arg0);
                 System.out.println(searchQuery);
             }

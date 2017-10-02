@@ -1446,8 +1446,12 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 for (int j = 0; j < mapping.get(i).getRcpPmId().size(); j++) {
                     String phonebookRawId;
                     if (mapLocalRcpId.containsKey(mapping.get(i).getRcpPmId().get(j))) {
-                        phonebookRawId = mapLocalRcpId.get(mapping.get(i).getRcpPmId().get(j)) +
-                                "," + mapping.get(i).getLocalPhoneBookId();
+                        if (!StringUtils.isBlank(mapping.get(i).getLocalPhoneBookId())) {
+                            phonebookRawId = mapLocalRcpId.get(mapping.get(i).getRcpPmId().get(j)) +
+                                    "," + mapping.get(i).getLocalPhoneBookId();
+                        } else {
+                            phonebookRawId = mapping.get(i).getLocalPhoneBookId();
+                        }
                     } else {
                         phonebookRawId = mapping.get(i).getLocalPhoneBookId();
                     }
@@ -1539,9 +1543,9 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
                             if (arrayListPBEmailAddress.size() > 0)
                                 if (arrayListPBEmailAddress.contains(arrayListEmailId.get(j).getOriginalEmail())) {
-                                    email.setEmEmailAddress( arrayListEmailId.get(j).getOriginalEmail());
+                                    email.setEmEmailAddress(arrayListEmailId.get(j).getOriginalEmail());
                                 } else {
-                                    email.setEmEmailAddress( arrayListEmailId.get(j).getEmEmailId());
+                                    email.setEmEmailAddress(arrayListEmailId.get(j).getEmEmailId());
                                 }
                             else
                                 email.setEmEmailAddress(arrayListEmailId.get(j).getEmEmailId());
@@ -1722,27 +1726,36 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                                 .getRcpPmId()))) {
                             return;
                         } else {
-                            String newRawIds = existingRawId + "," + mapLocalRcpId.get(profileData
-                                    .get(i)
-                                    .getRcpPmId());
-                            tableProfileMaster.updateRawIds(Integer.parseInt(userProfile
-                                            .getPmRcpId()),
-                                    newRawIds);
+
+                            if (!StringUtils.isBlank(mapLocalRcpId.get(profileData.get(i).getRcpPmId()))) {
+                                String newRawIds = existingRawId + "," + mapLocalRcpId.get(profileData
+                                        .get(i)
+                                        .getRcpPmId());
+                                tableProfileMaster.updateRawIds(Integer.parseInt(userProfile
+                                                .getPmRcpId()),
+                                        newRawIds);
+                            } else {
+                                return;
+                            }
                         }
                     } else {
                         if (existingRawId.equals(mapLocalRcpId.get(profileData.get(i)
                                 .getRcpPmId())))
                             return;
                         else {
-                            String newRawIds = existingRawId + "," + mapLocalRcpId.get(profileData
-                                    .get(i)
-                                    .getRcpPmId());
-                            tableProfileMaster.updateRawIds(Integer.parseInt(userProfile
-                                            .getPmRcpId()),
-                                    newRawIds);
+
+                            if (!StringUtils.isBlank(mapLocalRcpId.get(profileData.get(i).getRcpPmId()))) {
+                                String newRawIds = existingRawId + "," + mapLocalRcpId.get(profileData
+                                        .get(i)
+                                        .getRcpPmId());
+                                tableProfileMaster.updateRawIds(Integer.parseInt(userProfile
+                                                .getPmRcpId()),
+                                        newRawIds);
+                            } else {
+                                return;
+                            }
                         }
                     }
-
                 }
             }
         } catch (Exception e) {

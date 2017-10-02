@@ -62,28 +62,28 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
         final TimelineItem item = list.get(position);
         holder.textWisherName.setText(item.getWisherName());
         holder.textEventName.setText(item.getEventName());
-        if(!StringUtils.isEmpty(item.getNotiTime())){
+        if (!StringUtils.isEmpty(item.getNotiTime())) {
 //            holder.textTimelineNotiTime.setText(item.getNotiTime());
-            String notiTime =  item.getNotiTime();
-            String date =  Utils.formatDateTime(notiTime,"yyyy-MM-dd");
+            String notiTime = item.getNotiTime();
+            String date = Utils.formatDateTime(notiTime, "yyyy-MM-dd");
             Calendar c = Calendar.getInstance();
             SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
             String current = s.format(c.getTime());
-            if(StringUtils.equalsIgnoreCase(current,date)){
-                holder.textTimelineNotiTime.setText(Utils.formatDateTime(notiTime,"hh:mm a"));
-            }else{
-                holder.textTimelineNotiTime.setText(Utils.formatDateTime(notiTime,"dd MMM, yy"));
+            if (StringUtils.equalsIgnoreCase(current, date)) {
+                holder.textTimelineNotiTime.setText(Utils.formatDateTime(notiTime, "hh:mm a"));
+            } else {
+                holder.textTimelineNotiTime.setText(Utils.formatDateTime(notiTime, "dd MMM, yy"));
             }
-        }else{
-            String wishersCommentTime =  item.getWisherCommentTime();
-            String date =  Utils.formatDateTime(wishersCommentTime,"yyyy-MM-dd");
+        } else {
+            String wishersCommentTime = item.getWisherCommentTime();
+            String date = Utils.formatDateTime(wishersCommentTime, "yyyy-MM-dd");
             Calendar c = Calendar.getInstance();
             SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
             String current = s.format(c.getTime());
-            if(StringUtils.equalsIgnoreCase(current,date)){
-                holder.textTimelineNotiTime.setText(Utils.formatDateTime(wishersCommentTime,"hh:mm a"));
-            }else{
-                holder.textTimelineNotiTime.setText(Utils.formatDateTime(wishersCommentTime,"dd MMM, yy"));
+            if (StringUtils.equalsIgnoreCase(current, date)) {
+                holder.textTimelineNotiTime.setText(Utils.formatDateTime(wishersCommentTime, "hh:mm a"));
+            } else {
+                holder.textTimelineNotiTime.setText(Utils.formatDateTime(wishersCommentTime, "dd MMM, yy"));
             }
         }
         String wisherComment = item.getWisherComment();
@@ -153,6 +153,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
                 if (!(userComment.matches(""))) {
 //                    TimelineActivity.selectedRecycler = recyclerPosition;
                     TimelineActivity.selectedRecyclerItem = position;
+                    holder.edittextUserComment.getText().clear();
                     addReplyonComment(item.getCrmType(), item.getCrmCloudPrId(), userComment, AppConstants.COMMENT_STATUS_RECEIVED, item.getEvmRecordIndexId());
                 } else {
                     Toast.makeText(activity, activity.getResources().getString(R.string.msg_please_enter_some_comment), Toast.LENGTH_SHORT).show();
