@@ -40,7 +40,7 @@ public class TableProfileMobileMapping {
     }
 
     // Table Names
-    public static final String TABLE_PB_PROFILE_MOBILE_MAPPING = "pb_profile_mobile_mapping";
+    static final String TABLE_PB_PROFILE_MOBILE_MAPPING = "pb_profile_mobile_mapping";
 
     // Column Names
     private static final String COLUMN_MPM_ID = "mpm_id";
@@ -222,8 +222,6 @@ public class TableProfileMobileMapping {
         SQLiteDatabase db = databaseHandler.getReadableDatabase();
         try {
 
-            String cloudPmId = "";
-
             String query = "SELECT " + COLUMN_MPM_CLOUD_PM_ID +
                     " FROM " + TABLE_PB_PROFILE_MOBILE_MAPPING + " where " +
                     COLUMN_MPM_MOBILE_NUMBER + " = \"" + mobileNumber + "\"";
@@ -243,7 +241,7 @@ public class TableProfileMobileMapping {
 
         } catch (Exception e) {
             e.printStackTrace();
-            if(db!=null && db.isOpen()){
+            if (db != null && db.isOpen()) {
                 db.close();
             }
         }
