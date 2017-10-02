@@ -103,7 +103,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 db.execSQL("ALTER TABLE " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + " ADD "
                         + "COLUMN " + TableEmailMaster.COLUMN_EM_SOCIAL_TYPE + " text ");
 
-
                 /*System.out.println("RContact db upgrade case 3 --> ");
                 // For version 4
                 db.execSQL(TableEmailMaster.CREATE_TABLE_RC_EMAIL_MASTER_1);
