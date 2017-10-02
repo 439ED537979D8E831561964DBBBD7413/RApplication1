@@ -829,6 +829,7 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                     Intent intent = new Intent(context,
                             PublicProfileDetailActivity.class);
                     intent.putExtras(bundle);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     endCallDialog.dismiss();
                     context.startActivity(intent);
 //                    context.overridePendingTransition(R.anim
