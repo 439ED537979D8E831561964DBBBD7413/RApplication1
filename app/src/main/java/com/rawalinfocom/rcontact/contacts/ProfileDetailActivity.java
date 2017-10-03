@@ -2339,13 +2339,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             cardContactDetails.setVisibility(View.VISIBLE);
             cardOtherDetails.setVisibility(View.VISIBLE);
 
-            if (progressPercentage != null) {
-                progressPercentage.setBarColor(Color.parseColor("#CCE4E1"), Color.parseColor
-                        ("#00796B"));
-//                progressPercentage.setValueAnimated(0, 70, 1500);
-                progressPercentage.setValueAnimated(70);
-            }
-
             profileDataOperationVcard = new ProfileDataOperation();
 
             profileDataOperationVcard.setPbNameFirst(contactName);
@@ -3003,11 +2996,54 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
 
 
+            if (profileDetail != null) {
+                showProfilePercentage(profileDetail);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
 
 
+    }
+
+    private void showProfilePercentage(ProfileDataOperation profileDetail) {
+        if (progressPercentage != null) {
+            progressPercentage.setBarColor(Color.parseColor("#CCE4E1"), Color.parseColor
+                    ("#00796B"));
+
+            int percentage = 5;
+            if (!StringUtils.isBlank(profileDetail.getPbGender())) {
+                percentage += 5;
+            }
+            if (!StringUtils.isBlank(profileDetail.getPbProfilePhoto())) {
+                percentage += 5;
+            }
+            if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbOrganization())) {
+                percentage += 15;
+            }
+            if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbWebAddress())) {
+                percentage += 5;
+            }
+            if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbAddress())) {
+                percentage += 20;
+            }
+            if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEvent())) {
+                percentage += 5;
+            }
+            if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEmailId())) {
+                percentage += 5;
+                for (int i = 0; i < profileDetail.getPbEmailId().size(); i++) {
+                    if (profileDetail.getPbEmailId().get(i).getEmRcpType() == IntegerConstants
+                            .RCP_TYPE_PRIMARY) {
+                        percentage += 15;
+                        break;
+                    }
+                }
+            }
+
+            progressPercentage.setValueAnimated(percentage);
+        }
     }
 
     private void showAllOrganizations(ArrayList<ProfileDataOperationOrganization>
@@ -3024,13 +3060,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
 
-        TextView textDialogTitle = (TextView) dialog.findViewById(R.id.text_dialog_title);
+        TextView textDialogTitle = dialog.findViewById(R.id.text_dialog_title);
         textDialogTitle.setText(getString(R.string.title_all_organizations));
         textDialogTitle.setTypeface(Utils.typefaceSemiBold(this));
 
-        Button buttonRight = (Button) dialog.findViewById(R.id.button_right);
-        RippleView rippleRight = (RippleView) dialog.findViewById(R.id.ripple_right);
-        RippleView rippleLeft = (RippleView) dialog.findViewById(R.id.ripple_left);
+        Button buttonRight = dialog.findViewById(R.id.button_right);
+        RippleView rippleRight = dialog.findViewById(R.id.ripple_right);
+        RippleView rippleLeft = dialog.findViewById(R.id.ripple_left);
 
         rippleLeft.setVisibility(View.GONE);
 
@@ -3044,7 +3080,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
         });
 
-        RecyclerView recyclerViewDialogList = (RecyclerView) dialog.findViewById(R.id
+        RecyclerView recyclerViewDialogList = dialog.findViewById(R.id
                 .recycler_view_dialog_list);
         recyclerViewDialogList.setLayoutManager(new LinearLayoutManager(this));
 
