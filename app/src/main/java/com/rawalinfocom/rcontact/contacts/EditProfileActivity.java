@@ -397,7 +397,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     private SocialConnectListAdapter socialConnectListAdapter;
     private String socialId = "";
     private TextView organizationDateView;
-    ArrayList<ProfileDataOperationEmail> SocialEmailList;
+    //    ArrayList<ProfileDataOperationEmail> SocialEmailList;
     ArrayList<ProfileDataOperationEmail> arrayListOldEmailAccount;
 
     private String[] requiredPermissions = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest
@@ -424,8 +424,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         googleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this, this).addApi
                 (Auth.GOOGLE_SIGN_IN_API, gso).build();
 
-        SocialEmailList = new ArrayList<>();
-        arrayListOldEmailAccount = new ArrayList<>();
+//        SocialEmailList = new ArrayList<>();
 
         init();
 
@@ -662,13 +661,17 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             email.setEmType("Work");
                             email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
                             email.setEmIsSocial(2);
-                            if (!operationEmail.getEmSocialType().equalsIgnoreCase(""))
+                            if (!operationEmail.getEmSocialType().equalsIgnoreCase("")) {
                                 email.setEmSocialType(operationEmail.getEmSocialType() + ",linkedin");
-                            else
+                                email.setEmId(operationEmail.getEmId());
+                                email.setEmRcpType(operationEmail.getEmRcpType());
+                            } else {
                                 email.setEmSocialType("linkedin");
+                            }
+//                            SocialEmailList.add(email);
+//                            arrayListOldEmailAccount.remove(i);
 
-                            SocialEmailList.add(email);
-                            arrayListOldEmailAccount.remove(i);
+                            arrayListOldEmailAccount.set(i, email);
 
                             isAdd = false;
                             break;
@@ -683,7 +686,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
                         email.setEmIsSocial(2);
                         email.setEmSocialType("linkedin");
-                        SocialEmailList.add(email);
+//                        SocialEmailList.add(email);
+
+                        arrayListOldEmailAccount.add(email);
                     }
 
                     socialTypeList.remove("LinkedIn");
@@ -757,66 +762,77 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                                 try {
 
-                                    socialId = jsonObject.getString("id");
-                                    isAdd = true;
+                                    if (!jsonObject.getString("email").equalsIgnoreCase("")) {
+                                        socialId = jsonObject.getString("id");
+                                        isAdd = true;
 
-                                    ProfileDataOperationImAccount imAccount = new
-                                            ProfileDataOperationImAccount();
+                                        ProfileDataOperationImAccount imAccount = new
+                                                ProfileDataOperationImAccount();
 
-                                    imAccount.setIMAccountFirstName(jsonObject.getString
-                                            ("first_name"));
-                                    imAccount.setIMAccountLastName(jsonObject.getString
-                                            ("last_name"));
+                                        imAccount.setIMAccountFirstName(jsonObject.getString
+                                                ("first_name"));
+                                        imAccount.setIMAccountLastName(jsonObject.getString
+                                                ("last_name"));
 
-                                    imAccount.setIMAccountProtocol("Facebook");
-                                    imAccount.setIMAccountProfileImage("https://graph.facebook" +
-                                            ".com/" + socialId +
-                                            "/picture?width=200&height=150");
-                                    imAccount.setIMAccountPublic(IntegerConstants
-                                            .PRIVACY_MY_CONTACT);
-                                    imAccount.setIMAccountDetails(socialId);
-                                    arrayListSocialContactObject.add(imAccount);
+                                        imAccount.setIMAccountProtocol("Facebook");
+                                        imAccount.setIMAccountProfileImage("https://graph.facebook" +
+                                                ".com/" + socialId +
+                                                "/picture?width=200&height=150");
+                                        imAccount.setIMAccountPublic(IntegerConstants
+                                                .PRIVACY_MY_CONTACT);
+                                        imAccount.setIMAccountDetails(socialId);
+                                        arrayListSocialContactObject.add(imAccount);
 
-                                    for (int i = 0; i < arrayListEmailObject.size(); i++) {
-                                        ProfileDataOperationEmail operationEmail = (ProfileDataOperationEmail)
-                                                arrayListEmailObject.get(i);
-                                        if (operationEmail.getEmEmailId().equalsIgnoreCase(
-                                                StringUtils.trim(jsonObject.getString("email")))) {
+                                        for (int i = 0; i < arrayListEmailObject.size(); i++) {
+                                            ProfileDataOperationEmail operationEmail = (ProfileDataOperationEmail)
+                                                    arrayListEmailObject.get(i);
+                                            if (operationEmail.getEmEmailId().equalsIgnoreCase(
+                                                    StringUtils.trim(jsonObject.getString("email")))) {
 
+                                                ProfileDataOperationEmail email = new ProfileDataOperationEmail();
+                                                email.setEmEmailId(StringUtils.trim(jsonObject.getString("email")));
+                                                email.setEmType("Work");
+                                                email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
+                                                email.setEmIsSocial(2);
+                                                if (!operationEmail.getEmSocialType().equalsIgnoreCase("")) {
+                                                    email.setEmSocialType(operationEmail.getEmSocialType() + ",facebook");
+                                                    email.setEmId(operationEmail.getEmId());
+                                                    email.setEmRcpType(operationEmail.getEmRcpType());
+                                                } else {
+                                                    email.setEmSocialType("facebook");
+                                                }
+
+//                                                SocialEmailList.add(email);
+//                                                arrayListOldEmailAccount.remove(i);
+
+                                                arrayListOldEmailAccount.set(i, email);
+
+                                                isAdd = false;
+                                                break;
+                                            }
+                                        }
+
+                                        if (isAdd) {
                                             ProfileDataOperationEmail email = new ProfileDataOperationEmail();
                                             email.setEmEmailId(StringUtils.trim(jsonObject.getString("email")));
                                             email.setEmType("Work");
                                             email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
                                             email.setEmIsSocial(2);
-                                            if (!operationEmail.getEmSocialType().equalsIgnoreCase(""))
-                                                email.setEmSocialType(operationEmail.getEmSocialType() + ",facebook");
-                                            else
-                                                email.setEmSocialType("facebook");
+                                            email.setEmSocialType("facebook");
+//                                            SocialEmailList.add(email);
 
-                                            SocialEmailList.add(email);
-                                            arrayListOldEmailAccount.remove(i);
-
-                                            isAdd = false;
-                                            break;
+                                            arrayListOldEmailAccount.add(email);
                                         }
+
+                                        socialTypeList.remove("Facebook");
+
+                                        addSocialConnectView(arrayListSocialContactObject.get
+                                                        (arrayListSocialContactObject.size() - 1)
+                                                , "");
+                                    } else {
+                                        Utils.showErrorSnackBar(EditProfileActivity.this,
+                                                relativeRootEditProfile, "Email address not found!!");
                                     }
-
-                                    if (isAdd) {
-                                        ProfileDataOperationEmail email = new ProfileDataOperationEmail();
-                                        email.setEmEmailId(StringUtils.trim(jsonObject.getString("email")));
-                                        email.setEmType("Work");
-                                        email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
-                                        email.setEmIsSocial(2);
-                                        email.setEmSocialType("facebook");
-                                        SocialEmailList.add(email);
-                                    }
-
-                                    socialTypeList.remove("Facebook");
-
-                                    addSocialConnectView(arrayListSocialContactObject.get
-                                                    (arrayListSocialContactObject.size() - 1)
-                                            , "");
-
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -883,13 +899,18 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         email.setEmType("Work");
                         email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
                         email.setEmIsSocial(2);
-                        if (!operationEmail.getEmSocialType().equalsIgnoreCase(""))
+                        if (!operationEmail.getEmSocialType().equalsIgnoreCase("")) {
                             email.setEmSocialType(operationEmail.getEmSocialType() + ",google");
-                        else
+                            email.setEmId(operationEmail.getEmId());
+                            email.setEmRcpType(operationEmail.getEmRcpType());
+                        } else {
                             email.setEmSocialType("google");
+                        }
 
-                        SocialEmailList.add(email);
-                        arrayListOldEmailAccount.remove(i);
+//                        SocialEmailList.add(email);
+//                        arrayListOldEmailAccount.remove(i);
+
+                        arrayListOldEmailAccount.set(i, email);
 
                         isAdd = false;
                         break;
@@ -904,7 +925,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
                     email.setEmIsSocial(2);
                     email.setEmSocialType("google");
-                    SocialEmailList.add(email);
+//                    SocialEmailList.add(email);
+                    arrayListOldEmailAccount.add(email);
                 }
 
                 socialTypeList.remove("GooglePlus");
@@ -1469,7 +1491,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     if (arrayListNewImAccount.size() > 0) {
 
                         arrayListFinalEmailAccount.addAll(arrayListOldEmailAccount);
-                        arrayListFinalEmailAccount.addAll(SocialEmailList);
+//                        arrayListFinalEmailAccount.addAll(SocialEmailList);
 
                         profileDataOperation.setPbIMAccounts(arrayListNewImAccount);
                         profileDataOperation.setPbEmailId(arrayListFinalEmailAccount);
@@ -2756,6 +2778,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     }
 
     private void emailDetails() {
+
+        arrayListOldEmailAccount = new ArrayList<>();
+
         TableEmailMaster tableEmailMaster = new TableEmailMaster(databaseHandler);
 
         ArrayList<Email> arrayListEmail = tableEmailMaster.getEmailsFromPmId(Integer.parseInt

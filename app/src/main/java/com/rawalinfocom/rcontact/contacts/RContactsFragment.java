@@ -295,7 +295,9 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
 
                 // cancel the Visual indication of a refresh
                 swipeRefreshLayout.setRefreshing(true);
-                RCPContactServiceCall("", WsConstants.REQ_GET_RCP_CONTACT);
+                String fromDate = Utils.getStringPreference(getActivity(), AppConstants
+                        .KEY_API_CALL_TIME_STAMP_RCP, "");
+                RCPContactServiceCall(fromDate, WsConstants.REQ_GET_RCP_CONTACT);
             }
         });
     }
@@ -507,6 +509,11 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
                                 .getArrayListMapping());
                     }
 
+                    if (!StringUtils.isEmpty(getRCPContactUpdateResponse.getTimestamp())) {
+                        Utils.setStringPreference(getActivity(), AppConstants.KEY_API_CALL_TIME_STAMP_RCP,
+                                getRCPContactUpdateResponse.getTimestamp());
+                    }
+
                     swipeRefreshLayout.setRefreshing(false);
                     Utils.hideProgressDialog();
 
@@ -602,8 +609,13 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
                     for (int j = 0; j < mapping.get(i).getRcpPmId().size(); j++) {
                         String phonebookRawId;
                         if (mapLocalRcpId.containsKey(mapping.get(i).getRcpPmId().get(j))) {
-                            phonebookRawId = mapLocalRcpId.get(mapping.get(i).getRcpPmId().get(j)) +
-                                    "," + mapping.get(i).getLocalPhoneBookId();
+
+                            if (!StringUtils.isBlank(mapping.get(i).getLocalPhoneBookId())) {
+                                phonebookRawId = mapLocalRcpId.get(mapping.get(i).getRcpPmId().get(j)) +
+                                        "," + mapping.get(i).getLocalPhoneBookId();
+                            } else {
+                                phonebookRawId = mapping.get(i).getLocalPhoneBookId();
+                            }
                         } else {
                             phonebookRawId = mapping.get(i).getLocalPhoneBookId();
                         }
@@ -879,27 +891,36 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
                                 .getRcpPmId()))) {
                             return;
                         } else {
-                            String newRawIds = existingRawId + "," + mapLocalRcpId.get(profileData
-                                    .get(i)
-                                    .getRcpPmId());
-                            tableProfileMaster.updateRawIds(Integer.parseInt(userProfile
-                                            .getPmRcpId()),
-                                    newRawIds);
+
+                            if (!StringUtils.isBlank(mapLocalRcpId.get(profileData.get(i).getRcpPmId()))) {
+                                String newRawIds = existingRawId + "," + mapLocalRcpId.get(profileData
+                                        .get(i)
+                                        .getRcpPmId());
+                                tableProfileMaster.updateRawIds(Integer.parseInt(userProfile
+                                                .getPmRcpId()),
+                                        newRawIds);
+                            } else {
+                                return;
+                            }
                         }
                     } else {
                         if (existingRawId.equals(mapLocalRcpId.get(profileData.get(i)
                                 .getRcpPmId())))
                             return;
                         else {
-                            String newRawIds = existingRawId + "," + mapLocalRcpId.get(profileData
-                                    .get(i)
-                                    .getRcpPmId());
-                            tableProfileMaster.updateRawIds(Integer.parseInt(userProfile
-                                            .getPmRcpId()),
-                                    newRawIds);
+
+                            if (!StringUtils.isBlank(mapLocalRcpId.get(profileData.get(i).getRcpPmId()))) {
+                                String newRawIds = existingRawId + "," + mapLocalRcpId.get(profileData
+                                        .get(i)
+                                        .getRcpPmId());
+                                tableProfileMaster.updateRawIds(Integer.parseInt(userProfile
+                                                .getPmRcpId()),
+                                        newRawIds);
+                            } else {
+                                return;
+                            }
                         }
                     }
-
                 }
             }
         } catch (Exception e) {

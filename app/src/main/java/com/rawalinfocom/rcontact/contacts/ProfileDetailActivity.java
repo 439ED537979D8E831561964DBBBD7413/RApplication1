@@ -438,7 +438,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 //            }
         }
         if (displayOwnProfile) {
-            if(pmId != null){
+            if (pmId != null) {
                 ProfileDataOperation profileDataOperation = queryManager.getRcProfileDetail
                         (this, pmId);
                 setUpView(profileDataOperation);
@@ -1714,7 +1714,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 imageProfile.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if (StringUtils.length(userProfile.getPmProfileImage()) > 0){
+                        if (StringUtils.length(userProfile.getPmProfileImage()) > 0) {
                             zoomImageFromThumb(imageProfile, userProfile.getPmProfileImage());
                         }
 
@@ -1740,7 +1740,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 imageProfile.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if (StringUtils.length(thumbnailUrl) > 0){
+                        if (StringUtils.length(thumbnailUrl) > 0) {
                             zoomImageFromThumb(imageProfile, thumbnailUrl);
                         }
 
@@ -2258,7 +2258,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         imageProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (StringUtils.length(thumbnailUrl) > 0){
+                if (StringUtils.length(thumbnailUrl) > 0) {
                     zoomImageFromThumb(imageProfile, profileThumbnail);
                 }
 
@@ -4031,6 +4031,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 Email email = new Email();
                 email.setEmRecordIndexId(arrayListEmailId.get(i).getEmId());
                 email.setEmEmailAddress(arrayListEmailId.get(i).getEmEmailId());
+                email.setEmSocialType(arrayListEmailId.get(i).getEmSocialType());
                 email.setEmEmailType(arrayListEmailId.get(i).getEmType());
                 email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(i).getEmPublic()));
                 email.setEmIsVerified(String.valueOf(arrayListEmailId.get(i).getEmRcpType()));
@@ -4091,11 +4092,14 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 ImAccount imAccount = new ImAccount();
                 imAccount.setImRecordIndexId(arrayListImAccount.get(j).getIMId());
                 imAccount.setImImDetail(arrayListImAccount.get(j).getIMAccountDetails());
-//                imAccount.setImImType(arrayListImAccount.get(j).getIMAccountType());
                 imAccount.setImImProtocol(arrayListImAccount.get(j).getIMAccountProtocol());
                 imAccount.setImImPrivacy(String.valueOf(arrayListImAccount.get(j)
                         .getIMAccountPublic()));
-                imAccount.setRcProfileMasterPmId(getUserPmId());
+                imAccount.setImImFirstName(arrayListImAccount.get(j).getIMAccountFirstName());
+                imAccount.setImImLastName(arrayListImAccount.get(j).getIMAccountLastName());
+                imAccount.setImImProfileImage(arrayListImAccount.get(j).getIMAccountProfileImage());
+                imAccount.setImIsPrivate(arrayListImAccount.get(j).getIMAccountIsPrivate());
+                imAccount.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 imAccountsList.add(imAccount);
             }
 
@@ -4142,10 +4146,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             rawId = phoneBookId;
         } else {
             rawId = checkNumberFavourite;
+
+            if (StringUtils.contains(rawId, ",")) {
+                String rawIds[] = rawId.split(",");
+                rawId = rawIds[0];
+            }
         }
 
         // From PhoneBook
-        if(!StringUtils.isEmpty(rawId)){
+        if (!StringUtils.isEmpty(rawId)) {
             Cursor contactNumberCursor = phoneBookContacts.getContactNumbers(rawId);
 
             if (contactNumberCursor != null && contactNumberCursor.getCount() > 0) {
@@ -4317,7 +4326,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
 
             tableWebsiteMaster.addUpdateArrayWebsite(websiteList, profileDetail.getRcpPmId());
-        }else {
+        } else {
             tableWebsiteMaster.deleteData(profileDetail.getRcpPmId());
         }
         //</editor-fold>
@@ -4358,7 +4367,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
 
             tableAddressMaster.addUpdateArrayAddress(addressList, profileDetail.getRcpPmId());
-        }else {
+        } else {
             tableAddressMaster.deleteData(profileDetail.getRcpPmId());
         }
         //</editor-fold>
@@ -4415,7 +4424,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
 
             tableEventMaster.addUpdateArrayEvent(eventList, profileDetail.getRcpPmId());
-        }else {
+        } else {
             tableEventMaster.deleteData(profileDetail.getRcpPmId());
         }
         //</editor-fold>

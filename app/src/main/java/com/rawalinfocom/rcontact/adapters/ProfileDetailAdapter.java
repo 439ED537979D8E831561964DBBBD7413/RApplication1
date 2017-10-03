@@ -137,6 +137,10 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             holder.imgActionWhatsapp.setVisibility(View.VISIBLE);
         }
 
+        if (number.contains("xx") || number.contains("XX")) {
+            holder.imgActionWhatsapp.setVisibility(View.GONE);
+        }
+
         holder.imgActionType.setImageResource(R.drawable.ico_phone_alt_svg);
         holder.imgActionType.setOnClickListener(new View.OnClickListener() {
             @TargetApi(Build.VERSION_CODES.M)
@@ -221,8 +225,16 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             holder.textMain.setTextColor(colorPineGreen);
             if (isOwnProfile)
                 holder.llPrivacy.setVisibility(View.GONE);
-            else
+            else {
                 holder.llPrivacy.setVisibility(View.GONE);
+                if ((MoreObjects.firstNonNull(phoneNumber.getIsPrivate(), 0)) == IntegerConstants
+                        .IS_PRIVATE) {
+//                    holder.imageView2.setVisibility(View.GONE);
+                    holder.buttonRequest.setVisibility(View.VISIBLE);
+                    holder.imgActionType.setVisibility(View.GONE);
+                    holder.imgActionWhatsapp.setVisibility(View.GONE);
+                }
+            }
         } else if (pbRcpType == IntegerConstants.RCP_TYPE_SECONDARY) {
             holder.textMain.setText(number);
             holder.textMain.setTextColor(colorPineGreen);
@@ -280,13 +292,13 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             holder.textMain.setTextColor(colorBlack);
         }
         if (activity instanceof PublicProfileDetailActivity) {
-            if (pbRcpType == IntegerConstants.RCP_TYPE_PRIMARY){
+            if (pbRcpType == IntegerConstants.RCP_TYPE_PRIMARY) {
                 String newNumber = "+" + holder.textMain.getText();
                 Utils.setMultipleTypeface(activity, newNumber + " " + activity
                                 .getString(R.string.im_icon_verify), 0,
                         (StringUtils.length(newNumber) + 1), (
                                 (StringUtils.length(newNumber) + 1) + 1));
-            }else{
+            } else {
                 holder.textMain.setText("+" + holder.textMain.getText());
             }
         }
@@ -354,20 +366,31 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             if (isOwnProfile)
 //                holder.llPrivacy.setVisibility(View.INVISIBLE);
                 holder.llPrivacy.setVisibility(View.GONE);
-            else
+            else {
                 holder.llPrivacy.setVisibility(View.GONE);
+                if ((MoreObjects.firstNonNull(email.getEmIsPrivate(), 0)) == IntegerConstants
+                        .IS_PRIVATE) {
+//                    holder.imageView2.setVisibility(View.GONE);
+                    holder.buttonRequest.setVisibility(View.VISIBLE);
+                    holder.imgActionType.setVisibility(View.GONE);
+                }
+            }
         } else {
 
             if (isOwnProfile || emRcpType == IntegerConstants.RCP_TYPE_SECONDARY) {
                 if (!email.getEmSocialType().equalsIgnoreCase("")) {
 
-                    holder.textTic.setTypeface(Utils.typefaceIcons(activity));
+                    holder.textMain.setTypeface(Utils.typefaceIcons(activity));
 //                    String s = Utils.setMultipleTypeface(activity, email.getEmEmailId() + " <font color" +
 //                            "='#00bfff'>" + activity.getString(R.string.im_icon_verify) + "</font>", 0, (StringUtils.length
 //                            (email.getEmEmailId()) + 1), ((StringUtils.length(email.getEmEmailId()) + 1) + 1)).toString();
 
-                    holder.textTic.setVisibility(View.VISIBLE);
-                    holder.textMain.setText(emailId);
+                    String s = Utils.setMultipleTypeface(activity, email.getEmEmailId() + " <font color" +
+                            "='#00bfff'>" + activity.getString(R.string.im_icon_verify) + "</font>", 0, (StringUtils.length
+                            (email.getEmEmailId()) + 1), ((StringUtils.length(email.getEmEmailId()) + 1) + 1)).toString();
+
+                    holder.textTic.setVisibility(View.GONE);
+                    holder.textMain.setText(Html.fromHtml(s));
                     holder.textTic.setText(activity.getString(R.string.im_icon_verify));
                     holder.textMain.setTextColor(colorPineGreen);
                 } else {
