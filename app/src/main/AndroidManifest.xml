@@ -201,6 +201,12 @@
         <activity
             android:name=".OrganizationListActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".relation.ExistingRelationActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".relation.AddNewRelationActivity"
+            android:screenOrientation="portrait" />
 
         <activity android:name=".helper.imgcrop.CropImageActivity" />
 

@@ -363,15 +363,7 @@ public class ContactUsActivity extends BaseActivity implements RippleView
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                if (ContextCompat.checkSelfPermission(activity,
-                        android.Manifest.permission.READ_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED) {
-
-                    ActivityCompat.requestPermissions(activity, new
-                            String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, AppConstants
-                            .MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
-
-                } else {
+                if (checkPermissionForStorage()) {
                     selectImageFromGallery();
                 }
             }
@@ -381,7 +373,7 @@ public class ContactUsActivity extends BaseActivity implements RippleView
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                if (checkPermission()) {
+                if (checkPermissionForCamera()) {
                     selectImageFromCamera();
                 }
             }
@@ -458,6 +450,7 @@ public class ContactUsActivity extends BaseActivity implements RippleView
                 break;
         }
     }
+
     /**
      * Start crop image activity for the given image.
      */
@@ -468,7 +461,7 @@ public class ContactUsActivity extends BaseActivity implements RippleView
                 .start(ContactUsActivity.this);
     }
 
-    private boolean checkPermission() {
+    private boolean checkPermissionForCamera() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             int permissionCamera = ContextCompat.checkSelfPermission(this,
@@ -488,8 +481,7 @@ public class ContactUsActivity extends BaseActivity implements RippleView
             }
 
             if (!listPermissionsNeeded.isEmpty()) {
-                ActivityCompat.requestPermissions(this,
-                        listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),
+                requestPermissions(listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),
                         1);
                 return false;
             } else {
@@ -499,7 +491,32 @@ public class ContactUsActivity extends BaseActivity implements RippleView
         return true;
     }
 
-//    private File mFileTemp;
+    private boolean checkPermissionForStorage() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int readPermission = ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE);
+            int writePermission = ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+            List<String> listPermissionsNeeded = new ArrayList<>();
+            if (readPermission != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(android.Manifest.permission.READ_EXTERNAL_STORAGE);
+            }
+            if (writePermission != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            }
+
+            if (!listPermissionsNeeded.isEmpty()) {
+                requestPermissions(listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),
+                        2);
+                return false;
+            } else {
+                return true;
+            }
+        }
+        return true;
+    }
+
+    //    private File mFileTemp;
     private Uri fileUri;
     public static final int MEDIA_TYPE_IMAGE = 1;
     private static final int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 100;

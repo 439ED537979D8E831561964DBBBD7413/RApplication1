@@ -120,6 +120,7 @@ import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.Website;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
+import com.rawalinfocom.rcontact.relation.ExistingRelationActivity;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -153,9 +154,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     Toolbar includeToolbar;
     TextView textToolbarTitle;
     RippleView rippleActionBack;
+    RippleView rippleActionRelation;
     RippleView rippleActionRightLeft;
     RippleView rippleActionRightCenter;
     RippleView rippleActionRightRight;
+    ImageView imageRelation;
     ImageView imageRightLeft;
     ImageView imageRightCenter;
     ImageView imageRightRight;
@@ -837,6 +840,18 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         }
                     }
                 }
+                break;
+            //</editor-fold>
+
+            //<editor-fold desc="Favourites">
+            case R.id.ripple_action_relation:
+
+                if (displayOwnProfile) {
+                    startActivity(new Intent(ProfileDetailActivity.this, ExistingRelationActivity.class));
+                } else {
+                    startActivity(new Intent(ProfileDetailActivity.this, ExistingRelationActivity.class));
+                }
+
                 break;
             //</editor-fold>
 
@@ -1844,10 +1859,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     private void init() {
         rippleActionBack = ButterKnife.findById(includeToolbar, R.id.ripple_action_back);
         textToolbarTitle = ButterKnife.findById(includeToolbar, R.id.text_toolbar_title);
+        imageRelation = ButterKnife.findById(includeToolbar, R.id.image_relation);
         imageRightLeft = ButterKnife.findById(includeToolbar, R.id.image_right_left);
         imageRightCenter = ButterKnife.findById(includeToolbar, R.id.image_right_center);
         imageRightRight = ButterKnife.findById(includeToolbar, R.id.image_right_right);
         rippleActionRightLeft = ButterKnife.findById(includeToolbar, R.id.ripple_action_right_left);
+        rippleActionRelation = ButterKnife.findById(includeToolbar, R.id.ripple_action_relation);
         rippleActionRightCenter = ButterKnife.findById(includeToolbar, R.id
                 .ripple_action_right_center);
         rippleActionRightRight = ButterKnife.findById(includeToolbar, R.id
@@ -1884,6 +1901,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         textFullScreenText.setSelected(true);
         rippleViewMore.setOnRippleCompleteListener(this);
         rippleActionBack.setOnRippleCompleteListener(this);
+        rippleActionRelation.setOnRippleCompleteListener(this);
         rippleActionRightLeft.setOnRippleCompleteListener(this);
         rippleActionRightCenter.setOnRippleCompleteListener(this);
         rippleActionRightRight.setOnRippleCompleteListener(this);

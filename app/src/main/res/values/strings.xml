@@ -708,4 +708,16 @@
     <string name="error_no_social_app_found">Please install Facebook or LinkedIn or Twitter app to share information.</string>
     <string name="org_list">Organizations List</string>
 
+    <!-- Relation -->
+    <string name="search_here">Search...</string>
+    <string name="str_no_relation_found">No Relation Found</string>
+    <string name="relation_toolbar_title">Existing Relation</string>
+    <string name="add_relation_toolbar_title">Add Relation</string>
+    <string name="str_add_name">Add Name</string>
+    <string name="choose_relation">Choose Relation</string>
+    <string name="business_relation">Business Relation</string>
+    <string name="family_relation">Family Relation</string>
+    <string name="friend_relation">Friend Relation</string>
+    <string name="str_friend">Friend</string>
+
 </resources>

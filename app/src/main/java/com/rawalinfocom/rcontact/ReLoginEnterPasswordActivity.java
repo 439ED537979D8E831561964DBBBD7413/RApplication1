@@ -489,12 +489,13 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
         if (IntegerConstants.REGISTRATION_VIA == IntegerConstants.REGISTRATION_VIA_FACEBOOK) {
             // Facebook Callback
             callbackManager.onActivityResult(requestCode, resultCode, data);
-        } else if (IntegerConstants.REGISTRATION_VIA == IntegerConstants
-                .REGISTRATION_VIA_LINED_IN) {
-            // LinkedIn Callback
-            LISessionManager.getInstance(getApplicationContext()).onActivityResult(this,
-                    requestCode, resultCode, data);
         }
+//        else if (IntegerConstants.REGISTRATION_VIA == IntegerConstants
+//                .REGISTRATION_VIA_LINED_IN) {
+//            // LinkedIn Callback
+//            LISessionManager.getInstance(getApplicationContext()).onActivityResult(this,
+//                    requestCode, resultCode, data);
+//        }
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
