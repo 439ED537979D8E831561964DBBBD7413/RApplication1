@@ -163,6 +163,7 @@
     <string name="nav_text_events">ઈવેન્ટ્સ</string>
     <string name="nav_text_rating_history">રેટિંગ ઇતિહાસ</string>
     <string name="nav_text_invite_contact">તમારા સંપર્કોને આમંત્રિત કરો</string>
+    <string name="nav_text_relation_recommendation">સંબંધ ભલામણ</string>
     <string name="nav_text_share_rcontact">RContacts એપ શેર કરો</string>
     <string name="nav_text_settings">સેટિંગ્સ</string>
     <string name="nav_text_block_contact">બ્લોક કરેલા સંપર્કો ની સૂચિ</string>

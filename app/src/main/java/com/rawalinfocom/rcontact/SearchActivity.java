@@ -397,7 +397,6 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                             textNoRecords.setTypeface(Utils.typefaceRegular(this));
                         }
 
-
                     } else {
                         if (globalSearchTypeArrayListMain != null &&
                                 globalSearchTypeArrayListMain.size() > 0) {

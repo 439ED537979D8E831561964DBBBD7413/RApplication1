@@ -1677,9 +1677,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     private void layoutVisibility() {
         if (profileActivityCallInstance) {
-
 //            new GetRCPNameAndProfileImage().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
             relativeContactDetails.setVisibility(View.GONE);
             relativeCallHistory.setVisibility(View.VISIBLE);
             rippleCallLog.setVisibility(View.GONE);

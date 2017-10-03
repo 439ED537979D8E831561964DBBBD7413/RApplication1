@@ -163,6 +163,7 @@
     <string name="nav_text_events">Events</string>
     <string name="nav_text_rating_history">Rating History</string>
     <string name="nav_text_invite_contact">Invite contacts</string>
+    <string name="nav_text_relation_recommendation">Relation Recommendation</string>
     <string name="nav_text_share_rcontact">Share RContacts App</string>
     <string name="nav_text_settings">Settings</string>
     <string name="nav_text_block_contact">Block Contact List</string>
