@@ -31,6 +31,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -1105,13 +1106,11 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                     final String[] positionSplit = serviceType.split(":");
                     final int position = Integer.parseInt(positionSplit[1]);
-                    String stateName = "";
+                   /* String stateName = "";
                     if (positionSplit.length > 2) {
                         stateName = positionSplit[2];
-                    }
-                    /*if (positionSplit.length > 3) {
-                        cityName = positionSplit[3];
                     }*/
+
 
                     View linearAddress = linearAddressDetails.getChildAt(position);
                     final Spinner spinnerState = linearAddress.findViewById(R.id.spinner_state);
@@ -1134,14 +1133,14 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     stateSpinnerAdapter.setHintColor(street.getHintTextColors());
                     spinnerState.setAdapter(stateSpinnerAdapter);
 
-                    if (!StringUtils.isBlank(stateName)) {
+                   /* if (!StringUtils.isBlank(stateName)) {
                         int statePosition = stateSpinnerAdapter.getPosition(stateName);
                         if (statePosition != -1) {
                             spinnerState.setSelection(statePosition);
                         } else {
                             spinnerState.setSelection(0);
                         }
-                    }
+                    }*/
 
                     spinnerState.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener
                             () {
@@ -1149,12 +1148,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         public void onItemSelected(AdapterView<?> adapterView, View view, int i,
                                                    long l) {
                             if (i != 0) {
-                                String cityName = "";
+                               /* String cityName = "";
                                 if (positionSplit.length > 3) {
                                     cityName = positionSplit[3];
-                                }
-                                getCityList(stateList.get(i - 1).getStateId(), cityName, String
-                                        .valueOf(position));
+                                }*/
+                                getCityList(stateList.get(i - 1).getStateId(), String.valueOf
+                                        (position));
                             }
                         }
 
@@ -1188,10 +1187,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                     String[] positionSplit = serviceType.split(":");
                     final int position = Integer.parseInt(positionSplit[1]);
-                    String cityName = "";
+                    /*String cityName = "";
                     if (positionSplit.length > 2) {
                         cityName = positionSplit[2];
-                    }
+                    }*/
 
                     View linearAddress = linearAddressDetails.getChildAt(position);
                     final Spinner spinnerCity = linearAddress.findViewById(R.id.spinner_city);
@@ -1214,14 +1213,14 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     citySpinnerAdapter.setHintColor(street.getHintTextColors());
                     spinnerCity.setAdapter(citySpinnerAdapter);
 
-                    if (!StringUtils.isBlank(cityName)) {
+                    /*if (!StringUtils.isBlank(cityName)) {
                         int cityPosition = citySpinnerAdapter.getPosition(cityName);
                         if (cityPosition != -1) {
                             spinnerCity.setSelection(cityPosition);
                         } else {
                             spinnerCity.setSelection(0);
                         }
-                    }
+                    }*/
 
                 } else {
                     if (cityResponse != null) {
@@ -3967,20 +3966,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         citySpinnerAdapter.setHintColor(inputStreet.getHintTextColors());
         spinnerCity.setAdapter(citySpinnerAdapter);
 
-        /*RSpinnerAdapter stateSpinnerAdapter = new RSpinnerAdapter(this, R.layout
-                .header_spinner_call_log, tableCountryMaster.getAllCountryName(), ContextCompat
-                .getColor(this, R.color.colorAccent), ContextCompat
-                .getColor(this, R.color.regularFontColor));
-        stateSpinnerAdapter.setDropDownViewResource(R.layout.list_item_spinner_call_log);
-        spinnerState.setAdapter(stateSpinnerAdapter);
-
-        RSpinnerAdapter citySpinnerAdapter = new RSpinnerAdapter(this, R.layout
-                .header_spinner_call_log, tableCountryMaster.getAllCountryName(), ContextCompat
-                .getColor(this, R.color.colorAccent), ContextCompat
-                .getColor(this, R.color.regularFontColor));
-        citySpinnerAdapter.setDropDownViewResource(R.layout.list_item_spinner_call_log);
-        spinnerCity.setAdapter(citySpinnerAdapter);*/
-
         if (detailObject != null) {
             ProfileDataOperationAddress address = (ProfileDataOperationAddress) detailObject;
 //            inputCountry.setText(address.getCountry());
@@ -3995,6 +3980,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 countryPosition = countrySpinnerAdapter.getPosition(address.getCountry());
             }
             spinnerCountry.setSelection(countryPosition);
+
+            arrayListState.add(address.getState());
+            spinnerState.setSelection(stateSpinnerAdapter.getPosition(address.getState()));
+
+            arrayListCity.add(address.getCity());
+            spinnerCity.setSelection(citySpinnerAdapter.getPosition(address.getCity()));
 
             inputStreet.setText(address.getStreet());
             inputNeighborhood.setText(address.getNeighborhood());
@@ -4026,35 +4017,56 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             setAddressTextWatcher(inputNeighborhood, textImageMapMarker, inputIsAddressModified);
             setAddressTextWatcher(inputPinCode, textImageMapMarker, inputIsAddressModified);
 
-           /* RSpinnerAdapter countrySpinnerAdapter = new RSpinnerAdapter(this, R.layout
-                    .header_spinner_call_log, tableCountryMaster.getAllCountryName(), ContextCompat
-                    .getColor(this, R.color.colorAccent), ContextCompat
-                    .getColor(this, R.color.regularFontColor));
-            countrySpinnerAdapter.setDropDownViewResource(R.layout.list_item_spinner_call_log);
-            spinnerCountry.setAdapter(countrySpinnerAdapter);*/
-
         }
 
         spinnerCountry.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if (i != 0) {
-                    String state = "", city = "";
+                if (i != 0 && detailObject == null) {
+                    /*String state = "", city = "";
                     if (detailObject != null) {
                         ProfileDataOperationAddress address = (ProfileDataOperationAddress)
                                 detailObject;
                         state = address.getState();
                         city = address.getCity();
-                    }
+                    }*/
                     getStateList(tableCountryMaster.getCountryIdFromName(spinnerCountry
-                            .getSelectedItem().toString()).getCountryId(), state, city, String
-                            .valueOf(spinnerCountry.getTag(R.id.spinner_country_position)));
+                            .getSelectedItem().toString()).getCountryId(), String.valueOf
+                            (spinnerCountry.getTag(R.id.spinner_country_position)));
                 }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
 
+            }
+        });
+
+        spinnerState.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    if (spinnerCountry.getSelectedItemPosition() != 0) {
+                        getStateList(tableCountryMaster.getCountryIdFromName(spinnerCountry
+                                .getSelectedItem().toString()).getCountryId(), String.valueOf
+                                (spinnerCountry.getTag(R.id.spinner_country_position)));
+                    }
+                }
+                return false;
+            }
+        });
+
+        spinnerCity.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    if (spinnerCountry.getSelectedItemPosition() != 0) {
+                        getCityList(tableCountryMaster.getCountryIdFromName(spinnerCountry
+                                .getSelectedItem().toString()).getCountryId(), String.valueOf
+                                (spinnerCountry.getTag(R.id.spinner_country_position)));
+                    }
+                }
+                return false;
             }
         });
 
@@ -5011,12 +5023,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
     }
 
-    private void getStateList(String countryId, String stateName, String cityName, String
+    private void getStateList(String countryId, String
             position) {
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), null, null,
-                    WsResponseObject.class, WsConstants.REQ_STATE_DETAILS + ":" + position + ":" +
-                    stateName + ":" + cityName, null, false)
+                    WsResponseObject.class, WsConstants.REQ_STATE_DETAILS + ":" + position, null,
+                    false)
                     .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT_V2 +
                             WsConstants.REQ_STATE_DETAILS + "/" + countryId);
         } else {
@@ -5026,12 +5038,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
     }
 
-    private void getCityList(String stateId, String cityName, String position) {
+    private void getCityList(String stateId, String position) {
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), null, null,
-                    WsResponseObject.class, WsConstants.REQ_CITY_DETAILS + ":" + position + ":" +
-                    cityName, null, false).executeOnExecutor(AsyncTask
+                    WsResponseObject.class, WsConstants.REQ_CITY_DETAILS + ":" + position, null,
+                    false).executeOnExecutor(AsyncTask
                     .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT_V2 + WsConstants.REQ_CITY_DETAILS
                     + "/" +
                     stateId);
