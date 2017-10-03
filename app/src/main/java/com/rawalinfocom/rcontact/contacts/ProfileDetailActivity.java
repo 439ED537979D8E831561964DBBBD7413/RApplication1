@@ -832,19 +832,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 startActivity(chooserIntent);
                             }
 
-                            /*Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-                            sharingIntent.setType("text/plain");
-                            String shareBody;
-                            if (StringUtils.isBlank(userProfile.getPmBadge())) {
-                                shareBody = WsConstants.WS_PROFILE_VIEW_BADGE_ROOT + number;
-                            } else {
-                                shareBody = WsConstants.WS_PROFILE_VIEW_BADGE_ROOT + userProfile
-                                        .getPmBadge();
-                            }
-                            sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
-                            startActivity(Intent.createChooser(sharingIntent, getString(R.string
-                                    .str_share_contact_via)));*/
-
                         } else {
                             shareContact();
                         }
