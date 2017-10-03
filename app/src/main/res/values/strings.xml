@@ -707,5 +707,7 @@
     <string name="share_rating_via_social_media">Share rating via Social Media</string>
     <string name="error_no_social_app_found">Please install Facebook or LinkedIn or Twitter app to share information.</string>
     <string name="org_list">Organizations List</string>
+    <string name="str_complete_profile">COMPLETE YOUR PROFILE</string>
+    <string name="str_complete_profile_description">To create 360° visibility among your contacts, we advice you to fill in all your digital details.</string>
 
 </resources>

@@ -708,6 +708,8 @@
     <string name="share_rating_via_social_media">સોશ્યિલ મીડિયા દ્વારા રેટિંગ શેર કરો</string>
     <string name="error_no_social_app_found">કૃપા કરીને માહિતી શેર કરવા માટે ફેસબુક અથવા લિન્ક્ડઇન અથવા ટ્વિટર એપ્લિકેશન ઇન્સ્ટોલ કરો</string>
     <string name="org_list">Organizations List</string>
+    <string name="str_complete_profile">તમારી પ્રોફાઈલ પૂર્ણ કરો</string>
+    <string name="str_complete_profile_description">તમારા સંપર્કોમાં 360° દૃશ્યતા બનાવવા માટે, અમે તમને તમારી બધી ડિજિટલ વિગતો ભરવા માટે સલાહ આપી છે.</string>
 
 
 </resources>
