@@ -80,14 +80,15 @@
                         android:hint="@string/str_add_name"
                         android:scrollbars="vertical"
                         android:textColor="@color/colorAccent"
-                        android:textSize="16sp" />
+                        android:textSize="14sp" />
 
                     <ImageView
                         android:id="@+id/img_clear"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:contentDescription="@string/app_name"
-                        android:src="@drawable/close_vector" />
+                        android:src="@drawable/close_vector"
+                        android:visibility="gone" />
 
                 </LinearLayout>
 
@@ -112,15 +113,44 @@
                         android:textColor="@color/colorBlack"
                         android:textSize="@dimen/text_size_14sp" />
 
-                    <EditText
-                        android:id="@+id/input_value_business"
+                    <LinearLayout
+                        android:id="@+id/linear_business_relation"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/margin_8dp"
-                        android:hint="@string/choose_relation"
-                        android:scrollbars="vertical"
-                        android:textColor="@color/colorAccent"
-                        android:textSize="16sp" />
+                        android:layout_marginTop="@dimen/margin_15dp"
+                        android:background="#F0F0F0"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="2dp"
+                        android:visibility="gone" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:padding="2dp">
+
+                        <EditText
+                            android:id="@+id/input_value_business"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/margin_8dp"
+                            android:layout_weight="1"
+                            android:hint="@string/choose_relation"
+                            android:scrollbars="vertical"
+                            android:textColor="@color/colorAccent"
+                            android:textSize="14sp" />
+
+                        <ImageView
+                            android:id="@+id/img_business_clear"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:contentDescription="@string/app_name"
+                            android:src="@drawable/close_vector"
+                            android:visibility="gone" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
@@ -145,16 +175,33 @@
                         android:textColor="@color/colorBlack"
                         android:textSize="@dimen/text_size_14sp" />
 
-                    <EditText
-                        android:id="@+id/input_value_family"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/margin_8dp"
-                        android:hint="@string/choose_relation"
-                        android:scrollbars="vertical"
-                        android:textColor="@color/colorAccent"
-                        android:textSize="16sp" />
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:padding="2dp">
 
+                        <EditText
+                            android:id="@+id/input_value_family"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/margin_8dp"
+                            android:layout_weight="1"
+                            android:hint="@string/choose_relation"
+                            android:scrollbars="vertical"
+                            android:textColor="@color/colorAccent"
+                            android:textSize="16sp" />
+
+                        <ImageView
+                            android:id="@+id/img_family_clear"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:contentDescription="@string/app_name"
+                            android:src="@drawable/close_vector"
+                            android:visibility="gone" />
+
+                    </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout
@@ -186,10 +233,9 @@
                         android:hint="@string/str_friend"
                         android:scrollbars="vertical"
                         android:textColor="@color/colorAccent"
-                        android:textSize="16sp" />
+                        android:textSize="14sp" />
 
                 </LinearLayout>
-
 
                 <LinearLayout
                     android:layout_width="match_parent"

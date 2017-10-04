@@ -265,7 +265,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     }
 
     private void loadData() {
-        arrayListPhoneBookContacts.clear();
+        array.clear();
+        arrayListPhoneBookContacts = null;
         progressAllContact.setVisibility(View.VISIBLE);
         getLoaderManager().restartLoader(0, null, this);
     }

@@ -68,13 +68,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.common.base.MoreObjects;
-import com.linkedin.platform.LISessionManager;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.LinkedinLoginActivity;
-import com.rawalinfocom.rcontact.OrganizationListActivity;
-import com.rawalinfocom.rcontact.ProfileRegistrationActivity;
 import com.rawalinfocom.rcontact.R;
-import com.rawalinfocom.rcontact.adapters.OrganizationSearchListAdapter;
 import com.rawalinfocom.rcontact.adapters.SocialConnectListAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
@@ -1220,10 +1216,11 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         linkedInSignIn();
                     }
 
-                } else if (socialName.equalsIgnoreCase("Custom")) {
+                } else if (socialName.equalsIgnoreCase("Custom") || socialName.equalsIgnoreCase("કસ્ટમ")
+                        || socialName.equalsIgnoreCase("कस्टम")) {
                     showCustomTypeDialogForSocial();
                 } else {
-                    checkBeforeSocialViewAdd(socialName);
+                    addSocialConnectView(null, socialName);
                 }
             }
         });

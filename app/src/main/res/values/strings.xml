@@ -715,9 +715,13 @@
     <string name="add_relation_toolbar_title">Add Relation</string>
     <string name="str_add_name">Add Name</string>
     <string name="choose_relation">Choose Relation</string>
+    <string name="choose_name">Choose Name</string>
     <string name="business_relation">Business Relation</string>
     <string name="family_relation">Family Relation</string>
     <string name="friend_relation">Friend Relation</string>
     <string name="str_friend">Friend</string>
-
+    <string name="str_back">Back</string>
+    <string name="str_next">Next</string>
+    <string name="str_hint_add_organization">Please add organization to add Business Relation</string>
+    <string name="str_hint_add_family">Please set your gender to add Family Relation</string>
 </resources>

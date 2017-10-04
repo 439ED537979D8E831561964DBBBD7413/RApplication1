@@ -64,6 +64,25 @@ public class AppConstants {
 
     //</editor-fold>
 
+    //<editor-fold desc="Business Relation">
+
+    public static String RELATION_COWORKER = "Co-Worker";
+    public static String RELATION_SUPPLIER = "Supplier";
+    public static String RELATION_COMPETITOR = "Competitor";
+    public static String RELATION_CUSTOMER = "Customer";
+
+    //<editor-fold">
+
+    //<editor-fold desc="Family Relation">
+
+    public static String[] FAMILY_RELATION = {"Father", "Father-in-law", "Step Father", "Grand father", "Son", "Son-in-law",
+            "Step-son", "Grand son", "Brother", "Brother-in-law", "Cousin brother", "Step brother", "Uncle", "Maternal Uncle",
+            "Nephew", "Husband", "Mother", "Mother-in-law", "Step mother", "Grand mother", "Daughter", "Daughter-in-law",
+            "Granddaughter", "Step daughter", "Sister", "Step sister", "Cousin sister", "Sister-in-law", "Aunt", "Maternal Aunt",
+            "Niece", "Wife"};
+
+    //<editor-fold">
+
     //<editor-fold desc="Request Codes">
 
     public static int REQUEST_CODE_COUNTRY_REGISTRATION = 2;

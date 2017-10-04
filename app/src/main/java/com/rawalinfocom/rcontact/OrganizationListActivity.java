@@ -14,7 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.rawalinfocom.rcontact.adapters.OrganizationSearchListAdapter;
+import com.rawalinfocom.rcontact.adapters.EnterpriseOrganizationsAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
@@ -62,7 +62,7 @@ public class OrganizationListActivity extends BaseActivity implements RippleView
 
     private Activity activity;
     private ArrayList<OrganizationData> arrayListOrganization;
-    private OrganizationSearchListAdapter adapter;
+    private EnterpriseOrganizationsAdapter adapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -205,9 +205,9 @@ public class OrganizationListActivity extends BaseActivity implements RippleView
 
     private void setOrganizationListData() {
 
-        adapter = new OrganizationSearchListAdapter(activity, arrayListOrganization,
+        adapter = new EnterpriseOrganizationsAdapter(activity, arrayListOrganization,
 
-                new OrganizationSearchListAdapter.OnClickListener() {
+                new EnterpriseOrganizationsAdapter.OnClickListener() {
                     @Override
                     public void onClick(String organizationName) {
                         Toast.makeText(activity, organizationName, Toast.LENGTH_SHORT).show();
