@@ -3123,6 +3123,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             if (percentage < 100) {
                 relativeProfilePercentage.setVisibility(View.VISIBLE);
+
+                textCompleteProfile.setTypeface(Utils.typefaceSemiBold(ProfileDetailActivity.this));
+                textCompleteProfileDescription.setTypeface(Utils.typefaceRegular
+                        (ProfileDetailActivity.this));
+
                 progressPercentage.setValueAnimated(percentage);
 
                 if (arrayListRemainingFields.size() > 0) {
@@ -3132,6 +3137,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             .str_complete_profile_description), arrayListRemainingFields.get
                             (random.nextInt(arrayListRemainingFields.size()))));
                 }
+
             } else {
                 relativeProfilePercentage.setVisibility(View.GONE);
             }

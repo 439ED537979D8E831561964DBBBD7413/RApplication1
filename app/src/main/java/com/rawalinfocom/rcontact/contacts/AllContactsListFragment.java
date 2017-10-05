@@ -38,6 +38,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -168,6 +169,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     CircleProgressView progressPercentage;
     @BindView(R.id.cl_swipe_dismiss)
     CoordinatorLayout clSwipeDismiss;
+    @BindView(R.id.button_update_now)
+    Button buttonUpdateNow;
 
     QueryManager queryManager;
 
@@ -639,11 +642,14 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         swipeDismissBehavior.setListener(new SwipeDismissBehavior.OnDismissListener() {
             @Override
             public void onDismiss(View view) {
+                clSwipeDismiss.setVisibility(View.GONE);
             }
 
             @Override
             public void onDragStateChanged(int state) {
-                clSwipeDismiss.setVisibility(View.GONE);
+                /*if (state != SwipeDismissBehavior.STATE_IDLE) {
+                    clSwipeDismiss.setVisibility(View.GONE);
+                }*/
             }
         });
 
@@ -1457,6 +1463,10 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     .PREF_PROFILE_REMAINING_FIELDS, arrayListRemainingFields);
 
             if (percentage < 100) {
+
+                textCompleteProfile.setTypeface(Utils.typefaceSemiBold(getActivity()));
+                textCompleteProfileDescription.setTypeface(Utils.typefaceRegular(getActivity()));
+
                 relativeProfilePercentage.setVisibility(View.VISIBLE);
                 progressPercentage.setValueAnimated(percentage);
 
@@ -1468,6 +1478,15 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                             (random.nextInt(arrayListRemainingFields.size()))));
                 }
 
+                buttonUpdateNow.setTypeface(Utils.typefaceRegular(getActivity()));
+
+                buttonUpdateNow.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ((BaseActivity) getActivity()).startActivityIntent(getActivity(),
+                                EditProfileActivity.class, null);
+                    }
+                });
 
             } else {
                 relativeProfilePercentage.setVisibility(View.GONE);
