@@ -593,12 +593,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                     startActivity(intent);
                                 }
                             } else {
-                                CallConfirmationListDialog callConfirmationListDialog = new
-                                        CallConfirmationListDialog(this, listPhoneNumber,
-                                        false);
-                                callConfirmationListDialog.setDialogTitle(getString(R.string
-                                        .please_select_number_view_sms_log));
-                                callConfirmationListDialog.showDialog();
+                                if(listPhoneNumber.size()>0){
+                                    CallConfirmationListDialog callConfirmationListDialog = new
+                                            CallConfirmationListDialog(this, listPhoneNumber,
+                                            false);
+                                    callConfirmationListDialog.setDialogTitle(getString(R.string
+                                            .please_select_number_view_sms_log));
+                                    callConfirmationListDialog.showDialog();
+                                }
+
                             }
 
                         } else {
@@ -1679,9 +1682,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     private void layoutVisibility() {
         if (profileActivityCallInstance) {
-
 //            new GetRCPNameAndProfileImage().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
             relativeContactDetails.setVisibility(View.GONE);
             relativeCallHistory.setVisibility(View.VISIBLE);
             rippleCallLog.setVisibility(View.GONE);
@@ -2265,7 +2266,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         imageProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (StringUtils.length(thumbnailUrl) > 0) {
+                if (StringUtils.length(profileThumbnail) > 0) {
                     zoomImageFromThumb(imageProfile, profileThumbnail);
                 }
 

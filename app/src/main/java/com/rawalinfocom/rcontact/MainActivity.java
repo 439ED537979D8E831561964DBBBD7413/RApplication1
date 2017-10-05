@@ -116,6 +116,7 @@ import com.rawalinfocom.rcontact.notifications.NotificationsActivity;
 import com.rawalinfocom.rcontact.notifications.RatingHistory;
 import com.rawalinfocom.rcontact.notifications.TimelineActivity;
 import com.rawalinfocom.rcontact.receivers.NetworkConnectionReceiver;
+import com.rawalinfocom.rcontact.relation.RelationRecommendationActivity;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -415,6 +416,10 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                             .show();
                 }
 
+                break;
+
+            case R.id.nav_ll_relation:
+//                startActivityIntent(MainActivity.this, RelationRecommendationActivity.class, null);
                 break;
         }
 
@@ -1225,6 +1230,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         TextView nav_txt_about = navigationView.findViewById(R.id.nav_txt_about);
         TextView nav_txt_export = navigationView.findViewById(R.id.nav_txt_export);
         TextView nav_txt_feedback = navigationView.findViewById(R.id.nav_txt_feedback);
+        ImageView nav_img_relation =  navigationView.findViewById(R.id.nav_img_relation);
 
         LinearLayout nav_ll_account = navigationView.findViewById(R.id.nav_ll_account);
         LinearLayout nav_ll_timeline = navigationView.findViewById(R.id.nav_ll_timeline);
@@ -1237,6 +1243,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         LinearLayout nav_ll_about = navigationView.findViewById(R.id.nav_ll_about);
         LinearLayout nav_ll_export = navigationView.findViewById(R.id.nav_ll_export);
         LinearLayout nav_ll_feedback = navigationView.findViewById(R.id.nav_ll_feedback);
+        LinearLayout nav_ll_relation = navigationView.findViewById(R.id.nav_ll_relation);
 
         nav_ll_account.setOnClickListener(this);
         nav_ll_timeline.setOnClickListener(this);
@@ -1249,6 +1256,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         nav_ll_about.setOnClickListener(this);
         nav_ll_export.setOnClickListener(this);
         nav_ll_feedback.setOnClickListener(this);
+        nav_ll_relation.setOnClickListener(this);
 
         nav_txt_export.setVisibility(View.GONE);
 
@@ -1274,6 +1282,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         nav_txt_export.setText(R.string.im_icon_about_help);
         nav_txt_feedback.setTypeface(Utils.typefaceIcons(this));
         nav_txt_feedback.setText(R.string.im_icon_about_help);
+        nav_img_relation.setImageResource(R.drawable.ico_nav_relation_svg);
+
     }
 
     @TargetApi(Build.VERSION_CODES.M)

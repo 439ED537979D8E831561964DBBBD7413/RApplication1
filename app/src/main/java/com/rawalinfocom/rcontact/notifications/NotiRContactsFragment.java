@@ -123,7 +123,7 @@ public class NotiRContactsFragment extends BaseNotificationFragment implements W
             }
         }, 800);
 
-        getAllRContactUpdates(this);
+        getAllRContactUpdates();
         getImageFromVideo();
     }
 
@@ -158,14 +158,14 @@ public class NotiRContactsFragment extends BaseNotificationFragment implements W
 
     }
 
-    private void getAllRContactUpdates(Fragment fragment) {
+    private void getAllRContactUpdates() {
 
         WsRequestObject allUpdatesObject = new WsRequestObject();
         allUpdatesObject.setTimeStamp(Utils.getStringPreference(getActivity(),
                 AppConstants.KEY_RCONTACTS_API_CALL_TIME_STAMP, ""));
 
         if (Utils.isNetworkAvailable(getActivity())) {
-            new AsyncWebServiceCall(fragment, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+            new AsyncWebServiceCall(getActivity(), WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     allUpdatesObject, null, WsResponseObject.class, WsConstants
                     .REQ_GET_RCONTACT_UPDATES, "Getting updates..", true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
                     WsConstants.WS_ROOT_V2 + WsConstants.REQ_GET_RCONTACT_UPDATES);

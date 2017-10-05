@@ -14,7 +14,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     // All Static variables
     // Database Version
-    private static final int DATABASE_VERSION = 4;  //update to 4 for production/staging // For QA 5
+    private static final int DATABASE_VERSION = 5;  //update to 4 for production/staging // For QA 5
 
     // Database Name
     public static final String DATABASE_NAME = "RContact.db";
