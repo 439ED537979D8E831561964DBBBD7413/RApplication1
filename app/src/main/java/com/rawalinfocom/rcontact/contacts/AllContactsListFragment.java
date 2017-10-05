@@ -22,6 +22,8 @@ import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.SwipeDismissBehavior;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
@@ -153,7 +155,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     private ArrayList<String> arrayListPBPhoneNumber;
     private ArrayList<String> arrayListPBEmailAddress;
 
-    @Nullable
     @BindView(R.id.relative_profile_percentage)
     RelativeLayout relativeProfilePercentage;
     @Nullable
@@ -165,6 +166,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     @Nullable
     @BindView(R.id.progress_percentage)
     CircleProgressView progressPercentage;
+    @BindView(R.id.cl_swipe_dismiss)
+    CoordinatorLayout clSwipeDismiss;
 
     QueryManager queryManager;
 
@@ -626,6 +629,24 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         queryManager = new QueryManager(((BaseActivity) getActivity()).getDatabaseHandler());
         ProfileDataOperation profileDataOperation = queryManager.getRcProfileDetail
                 (getActivity(), ((BaseActivity) getActivity()).getUserPmId());
+
+        final SwipeDismissBehavior swipeDismissBehavior = new SwipeDismissBehavior();
+        swipeDismissBehavior.setSwipeDirection(SwipeDismissBehavior.SWIPE_DIRECTION_START_TO_END);
+        CoordinatorLayout.LayoutParams layoutParams =
+                (CoordinatorLayout.LayoutParams) relativeProfilePercentage.getLayoutParams();
+        layoutParams.setBehavior(swipeDismissBehavior);
+
+        swipeDismissBehavior.setListener(new SwipeDismissBehavior.OnDismissListener() {
+            @Override
+            public void onDismiss(View view) {
+            }
+
+            @Override
+            public void onDragStateChanged(int state) {
+                clSwipeDismiss.setVisibility(View.GONE);
+            }
+        });
+
         showProfilePercentage(profileDataOperation);
     }
 
@@ -1446,6 +1467,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                             .str_complete_profile_description), arrayListRemainingFields.get
                             (random.nextInt(arrayListRemainingFields.size()))));
                 }
+
+
             } else {
                 relativeProfilePercentage.setVisibility(View.GONE);
             }
