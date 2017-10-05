@@ -585,8 +585,6 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
                     }
 
 
-
-
 //                    if (!TextUtils.isEmpty(name)) {
 //                        if (StringUtils.containsOnly(name, "\\d+")) {
 //                            arrayListForKnownContact = new ArrayList<>(Arrays.asList(mActivity.getString(R.string.action_call) +
