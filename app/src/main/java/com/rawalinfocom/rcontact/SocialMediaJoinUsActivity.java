@@ -95,24 +95,36 @@ public class SocialMediaJoinUsActivity extends BaseActivity implements RippleVie
         imgLinkedin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(WsConstants.WS_LINKEDIN_URL));
+                startActivity(i);
             }
         });
 
         imgPintrest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(WsConstants.WS_PINTEREST_URL));
+                startActivity(i);
             }
         });
 
         imgYouTube.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(WsConstants.WS_YOUTUBE_URL));
+                startActivity(i);
             }
         });
 
         imgGooglePlus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(WsConstants.WS_GOOGLE_URL));
+                startActivity(i);
             }
         });
     }
