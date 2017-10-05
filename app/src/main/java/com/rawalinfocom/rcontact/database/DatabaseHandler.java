@@ -14,7 +14,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     // All Static variables
     // Database Version
-    private static final int DATABASE_VERSION = 5;  //update to 4 for production/staging // For QA 5
+    private static final int DATABASE_VERSION = 4;  //update to 4 for production/staging // For QA 5
 
     // Database Name
     public static final String DATABASE_NAME = "RContact.db";
@@ -110,8 +110,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 db.execSQL(TableEmailMaster.CREATE_TABLE_RC_EMAIL_MASTER_1);
                 db.execSQL("INSERT INTO " + TableEmailMaster.TABLE_RC_EMAIL_MASTER_TEMP + "(em_id,em_email_address," +
                         "em_email_type,em_record_index_id,em_email_privacy,em_is_private,em_is_verified,rc_profile_master_pm_id)" +
-                        " SELECT em_id,em_email_address,em_email_type,em_record_index_id,em_email_privacy,em_is_private,em_is_verified," +
-                        "rc_profile_master_pm_id FROM " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + ";");
+                        " SELECT em_id,em_email_address,em_email_type,em_record_index_id,em_email_privacy,em_is_private," +
+                        "em_is_verified,rc_profile_master_pm_id FROM " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + ";");
                 db.execSQL("DROP TABLE IF EXISTS '" + TableEmailMaster.TABLE_RC_EMAIL_MASTER + "'");
                 db.execSQL("ALTER TABLE " + TableEmailMaster.TABLE_RC_EMAIL_MASTER_TEMP
                         + " RENAME TO " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + ";");

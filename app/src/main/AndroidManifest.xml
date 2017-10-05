@@ -209,6 +209,9 @@
             android:name=".relation.AddNewRelationActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".relation.RelationRecommendationActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".relation.RContactsListActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme1" />
@@ -275,7 +278,6 @@
         <activity
             android:name=".TermsConditionsActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".relation.RelationRecommendationActivity"></activity>
     </application>
 
 </manifest>
