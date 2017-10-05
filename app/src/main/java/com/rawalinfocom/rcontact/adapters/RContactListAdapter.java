@@ -76,8 +76,6 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         this.arraylist.addAll(arrayListUserContact);
     }
 
-
-
     public void updateList(int pos, ArrayList<Object> arrayListUserProfile) {
         this.arrayListUserProfile = arrayListUserProfile;
         notifyItemChanged(pos);

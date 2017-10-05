@@ -183,7 +183,6 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     private final int CONTACT_CHUNK = 50;
     int lastSyncedData = 0;
 
-
     private ArrayList<Object> arrayListPBPhoneNumber;
     private ArrayList<Object> arrayListPBEmailAddress;
 

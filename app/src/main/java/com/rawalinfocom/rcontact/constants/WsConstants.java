@@ -13,7 +13,7 @@ public class WsConstants {
      */
     //<editor-fold desc="Production">
 
-   /* // API ROOT
+    /*// API ROOT
     public static final String WS_ROOT = "https://api.rcontacts.in/api/v1/";
     public static final String WS_ROOT_V2 = "https://api.rcontacts.in/api/v2/";
     // TERMS-CONDITIONS URL
@@ -61,8 +61,8 @@ public class WsConstants {
      */
     //<editor-fold desc="QA">
     // API ROOT
-    public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
-    public static final String WS_ROOT_V2 = "http://apiqa.rcontacts.in/api/v2/";
+//    public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
+//    public static final String WS_ROOT_V2 = "http://apiqa.rcontacts.in/api/v2/";
     // TERMS-CONDITIONS URL
     public static final String URL_TERMS_CONDITIONS = "http://webqa.rcontacts.in/global/terms";
     // FAQ URL
@@ -86,8 +86,8 @@ public class WsConstants {
 //    public static final String WS_ROOT = "http://10.0.21.163/api/v1/";
 
     // Aniruddh
-//    public static final String WS_ROOT = "http://10.0.21.122/api/v1/";
-//    public static final String WS_ROOT_V2 = "http://10.0.21.122/api/v2/";
+    public static final String WS_ROOT = "http://10.0.21.122/api/v1/";
+    public static final String WS_ROOT_V2 = "http://10.0.21.122/api/v2/";
 
     // Hardik
 //    public static final String WS_ROOT = "http://10.0.30.11/api/v1/";
@@ -173,4 +173,5 @@ public class WsConstants {
     public static final String REQ_GET_RATING_DETAILS = "get-rating-details";
     public static final String REQ_GET_COMMENT_DETAILS = "get-comment-details";
     public static final String REQ_GET_RCP_CONTACT = "get-rcp-contact";
+    public static final String REQ_GET_CHECK_VERSION = "check-version";
 }

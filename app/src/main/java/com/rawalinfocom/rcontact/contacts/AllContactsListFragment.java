@@ -120,8 +120,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     TextView textTotalContacts;
 
     public static ArrayList<Object> arrayListPhoneBookContacts;
-    public static ArrayList<Object> arrayListPhoneBookContactsTemp;
-    public static ArrayList<ProfileData> arrayListContacts;
+    //    public static ArrayList<Object> arrayListPhoneBookContactsTemp;
+//    public static ArrayList<ProfileData> arrayListContacts;
     ArrayList<ProfileData> arrayListSyncUserContact = new ArrayList<>();
     ArrayList<String> arrayListFavouriteContacts;
 
@@ -265,7 +265,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     }
 
     private void loadData() {
-        arrayListPhoneBookContacts.clear();
+        array.clear();
+        arrayListPhoneBookContacts = null;
         progressAllContact.setVisibility(View.VISIBLE);
         getLoaderManager().restartLoader(0, null, this);
     }
@@ -523,8 +524,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         if (arrayListPhoneBookContacts == null) {
 
             arrayListPhoneBookContacts = new ArrayList<>();
-            arrayListPhoneBookContactsTemp = new ArrayList<>();
-            arrayListContacts = new ArrayList<>();
+//            arrayListPhoneBookContactsTemp = new ArrayList<>();
+//            arrayListContacts = new ArrayList<>();
             arrayListFavouriteContacts = new ArrayList<>();
 
             phoneBookContacts = new PhoneBookContacts(getActivity());
@@ -610,19 +611,19 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
      */
     public void setRecyclerViewLayoutManager() {
 
-        if (Utils.getStringPreference(getActivity(), AppConstants.PREF_SHORT_BY_CONTACT, "0")
-                .equalsIgnoreCase("0")) {
-
-            if (arrayListPhoneBookContacts.size() == 0) {
-                arrayListPhoneBookContacts.addAll(arrayListPhoneBookContactsTemp);
-            } else {
-                arrayListPhoneBookContactsTemp.addAll(arrayListPhoneBookContacts);
-            }
-        } else {
-            Collections.sort(arrayListContacts, new CustomComparator());
-            arrayListPhoneBookContacts.clear();
-            arrayListPhoneBookContacts.addAll(arrayListContacts);
-        }
+//        if (Utils.getStringPreference(getActivity(), AppConstants.PREF_SHORT_BY_CONTACT, "0")
+//                .equalsIgnoreCase("0")) {
+//
+//            if (arrayListPhoneBookContacts.size() == 0) {
+//                arrayListPhoneBookContacts.addAll(arrayListPhoneBookContactsTemp);
+//            } else {
+//                arrayListPhoneBookContactsTemp.addAll(arrayListPhoneBookContacts);
+//            }
+//        } else {
+//            Collections.sort(arrayListContacts, new CustomComparator());
+//            arrayListPhoneBookContacts.clear();
+//            arrayListPhoneBookContacts.addAll(arrayListContacts);
+//        }
 
         allContactListAdapter = new AllContactAdapter(this, arrayListPhoneBookContacts, null);
         recyclerViewContactList.setAdapter(allContactListAdapter);
@@ -731,7 +732,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     profileData = new ProfileData();
                     array.put(id, profileData);
                     arrayListPhoneBookContacts.add(profileData);
-                    arrayListContacts.add(profileData);
+//                    arrayListContacts.add(profileData);
                 }
 
                 profileData.setLocalPhoneBookId(data.getString(rawIdIdx));

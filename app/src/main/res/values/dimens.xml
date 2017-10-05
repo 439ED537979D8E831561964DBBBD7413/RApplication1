@@ -62,6 +62,7 @@
     <!--call dialer-->
     <dimen name="padding_12dp">12dp</dimen>
     <dimen name="padding_11dp">11dp</dimen>
+    <dimen name="text_size_26sp">26sp</dimen>
     <dimen name="text_size_32sp">32sp</dimen>
     <dimen name="text_size_45sp">45sp</dimen>
     <dimen name="text_size_25sp">25sp</dimen>
