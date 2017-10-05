@@ -465,7 +465,7 @@
     <string name="str_email">Email</string>
     <string name="str_small_cap_email">email</string>
     <string name="str_website">Website</string>
-    <string name="str_address">Address</string>
+    <string name="str_address">Postal Address</string>
     <string name="str_link">Link</string>
     <!--<string name="str_account_name">Account Name</string>-->
     <string name="str_choose_date">Choose date</string>
@@ -709,4 +709,6 @@
     <string name="error_no_social_app_found">Please install Facebook or LinkedIn or Twitter app to share information.</string>
     <string name="org_list">Organizations List</string>
 
+    <!--Relation Recommendation-->
+    <string name="toolbar_title">Relation Recommendation</string>
 </resources>

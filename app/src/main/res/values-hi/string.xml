@@ -465,7 +465,7 @@
     <string name="str_email">ईमेल</string>
     <string name="str_small_cap_email">ईमेल</string>
     <string name="str_website">वेबसाइट</string>
-    <string name="str_address">पता</string>
+    <string name="str_address">पोस्टल पता</string>
     <string name="str_link">लिंक</string>
     <!--<string name="str_account_name">खाते का नाम</string>-->
     <string name="str_choose_date">दिनांक चुनें</string>
@@ -710,5 +710,7 @@
     <string name="error_no_social_app_found">जानकारी साझा करने के लिए कृपया फेसबुक या लिंक्डइन या ट्विटर ऐप इंस्टॉल करें।</string>
     <string name="org_list">Organizations List</string>
 
+    <!--Relation Recommendation-->
+    <string name="toolbar_title">संबंध सिफारिश</string>
 
 </resources>

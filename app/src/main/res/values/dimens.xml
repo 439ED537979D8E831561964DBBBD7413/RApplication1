@@ -93,4 +93,7 @@
     <dimen name="defaultMenuLayoutMargin">4dp</dimen>
     <dimen name="defaultMenuCornerRadius">2dp</dimen>
 
+    <!--Relation Recommendation-->
+    <dimen name="margin_30dp">30dp</dimen>
+
 </resources>

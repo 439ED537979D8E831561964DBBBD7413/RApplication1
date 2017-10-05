@@ -142,13 +142,14 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
             this.arrayListCallLogs.addAll(callLogTypes);
         } else {
             this.arrayListCallLogs = callLogTypes;
+            this.listener = listener;
+            selectedItems = new SparseBooleanArray();
+            animationItemsIndex = new SparseBooleanArray();
+            arrayListToDelete = new ArrayList<>();
         }
         this.arrayList = new ArrayList<>();
         this.arrayList.addAll(arrayListCallLogs);
-        this.listener = listener;
-        selectedItems = new SparseBooleanArray();
-        animationItemsIndex = new SparseBooleanArray();
-        arrayListToDelete = new ArrayList<>();
+
     }
 
     @Override
@@ -563,7 +564,7 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
                     }
                 } else {
 
-                    if(selectedItems.size()<=0){
+                    if(AppConstants.isFromSearchActivity){
                         arrayListForKnownContact = new ArrayList<>(Arrays.asList(mActivity.getString(R.string.action_call) +
                                         (!TextUtils.isEmpty(name) ? (" " + name) : (" " + number)), mActivity.getString(R.string.send_sms),
                                 mActivity.getString(R.string.remove_from_call_log), mActivity.getString(R.string.copy_phone_number)));
@@ -571,7 +572,19 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
                         materialListDialog = new MaterialListDialog(mActivity, arrayListForKnownContact, number, date, name, uniqueRowID, "");
                         materialListDialog.setDialogTitle((!TextUtils.isEmpty(name) ? (" " + name) : (" " + number)));
                         materialListDialog.showDialog();
+                    }else{
+                        if(selectedItems != null && selectedItems.size()<=0){
+                            arrayListForKnownContact = new ArrayList<>(Arrays.asList(mActivity.getString(R.string.action_call) +
+                                            (!TextUtils.isEmpty(name) ? (" " + name) : (" " + number)), mActivity.getString(R.string.send_sms),
+                                    mActivity.getString(R.string.remove_from_call_log), mActivity.getString(R.string.copy_phone_number)));
+
+                            materialListDialog = new MaterialListDialog(mActivity, arrayListForKnownContact, number, date, name, uniqueRowID, "");
+                            materialListDialog.setDialogTitle((!TextUtils.isEmpty(name) ? (" " + name) : (" " + number)));
+                            materialListDialog.showDialog();
+                        }
                     }
+
+
 
 
 //                    if (!TextUtils.isEmpty(name)) {
@@ -849,29 +862,33 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
 
 
     private void applyClickEvents(CallLogViewHolder holder, final int position) {
-        holder.rlImageProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                listener.onIconClicked(position);
-            }
-        });
+
+        if(!AppConstants.isFromSearchActivity){
+            holder.rlImageProfile.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    listener.onIconClicked(position);
+                }
+            });
 
 
-        holder.relativeRowMain.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                listener.onMessageRowClicked(position);
-            }
-        });
+            holder.relativeRowMain.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    listener.onMessageRowClicked(position);
+                }
+            });
 
-        holder.relativeRowMain.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                listener.onRowLongClicked(position);
-                view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
-                return true;
-            }
-        });
+            holder.relativeRowMain.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    listener.onRowLongClicked(position);
+                    view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+                    return true;
+                }
+            });
+        }
+
 
 
     }

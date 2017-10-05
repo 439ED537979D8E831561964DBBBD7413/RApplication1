@@ -116,6 +116,7 @@ import com.rawalinfocom.rcontact.notifications.NotificationsActivity;
 import com.rawalinfocom.rcontact.notifications.RatingHistory;
 import com.rawalinfocom.rcontact.notifications.TimelineActivity;
 import com.rawalinfocom.rcontact.receivers.NetworkConnectionReceiver;
+import com.rawalinfocom.rcontact.relation.RelationRecommendationActivity;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -419,6 +420,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 break;
 
             case R.id.nav_ll_relation:
+//                startActivityIntent(MainActivity.this, RelationRecommendationActivity.class, null);
                 break;
         }
 

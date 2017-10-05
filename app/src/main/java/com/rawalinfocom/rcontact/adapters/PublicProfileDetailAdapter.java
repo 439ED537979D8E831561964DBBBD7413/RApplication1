@@ -64,6 +64,8 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
     //    private boolean isOwnProfile = false;
     private String pmId;
 
+    boolean showNumber;
+
     public PublicProfileDetailAdapter(Activity activity, ArrayList<Object> arrayList, int
             profileDetailType, String pmId) {
         this.activity = activity;
@@ -239,20 +241,28 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
             holder.textMain.setText("+" + holder.textMain.getText());
         }
 
-        if (pbRcpType == IntegerConstants.RCP_TYPE_PRIMARY) {
-            holder.textMain.setText(StringUtils.replacePattern(holder.textMain.getText().toString(), "[0-9]", "X"));
-            holder.textMain.setText(Utils.setMultipleTypeface(activity, holder.textMain.getText() + " " + activity
-                            .getString(R.string.im_icon_verify), 0,
-                    (StringUtils.length(holder.textMain.getText()) + 1), ((StringUtils.length(holder.textMain.getText()) + 1) + 1)));
+
+        if (showNumber == false) {
+            if (pbRcpType == IntegerConstants.RCP_TYPE_PRIMARY) {
+                holder.textMain.setText(StringUtils.replacePattern(holder.textMain.getText().toString(), "[0-9]", "X"));
+                holder.textMain.setText(Utils.setMultipleTypeface(activity, holder.textMain.getText() + " " + activity
+                                .getString(R.string.im_icon_verify), 0,
+                        (StringUtils.length(holder.textMain.getText()) + 1), ((StringUtils.length(holder.textMain.getText()) + 1) + 1)));
+            }
+        }else{
+            if (pbRcpType == IntegerConstants.RCP_TYPE_PRIMARY) {
+                String numberToShow =  "+" + phoneNumber.getOriginalNumber();
+                holder.textMain.setText(Utils.setMultipleTypeface(activity, numberToShow + " " + activity
+                                .getString(R.string.im_icon_verify), 0,
+                        (StringUtils.length(numberToShow) + 1), ((StringUtils.length(numberToShow) + 1) + 1)));
+            }
         }
 
-        if(StringUtils.contains(holder.textMain.getText().toString(),"X") ||
-                StringUtils.contains(holder.textMain.getText().toString(),"x")){
+        if (StringUtils.contains(holder.textMain.getText().toString(), "X") ||
+                StringUtils.contains(holder.textMain.getText().toString(), "x")) {
             holder.imgActionType.setVisibility(View.GONE);
             holder.imgActionWhatsapp.setVisibility(View.GONE);
         }
-
-
     }
 
     private void displayEmail(final ProfileDetailViewHolder holder, final int position) {
@@ -335,8 +345,8 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
             });*/
         }
 
-        if((MoreObjects.firstNonNull(email.getEmIsPrivate(), 0)) == IntegerConstants
-                .IS_PRIVATE){
+        if ((MoreObjects.firstNonNull(email.getEmIsPrivate(), 0)) == IntegerConstants
+                .IS_PRIVATE) {
             holder.imgActionType.setVisibility(View.GONE);
         }
 //        else {
@@ -416,8 +426,8 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
             });*/
 
         }
-        if((MoreObjects.firstNonNull(address.getIsPrivate(), 0)) == IntegerConstants
-                .IS_PRIVATE){
+        if ((MoreObjects.firstNonNull(address.getIsPrivate(), 0)) == IntegerConstants
+                .IS_PRIVATE) {
             holder.imgActionType.setVisibility(View.GONE);
         }
     }
@@ -634,5 +644,9 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
             imgActionType.setVisibility(View.VISIBLE);
             buttonPrivacy.setVisibility(View.GONE);
         }
+    }
+
+    public void setShowNumber(boolean showNumber) {
+        this.showNumber = showNumber;
     }
 }
