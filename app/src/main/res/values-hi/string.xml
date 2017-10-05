@@ -709,7 +709,7 @@
     <string name="error_no_social_app_found">जानकारी साझा करने के लिए कृपया फेसबुक या लिंक्डइन या ट्विटर ऐप इंस्टॉल करें।</string>
     <string name="org_list">Organizations List</string>
     <string name="str_complete_profile">अपनी प्रोफ़ाइल पूरी करें</string>
-    <string name="str_complete_profile_description">अपने संपर्कों में 360° दृश्यता बनाने के लिए, हम आपको अपने सभी डिजिटल विवरण भरने के लिए सलाह देते हैं।</string>
+    <string name="str_complete_profile_description">अपने डिजिटल विवरणों के 360° पूरा करने के लिए अपने %1$s को भरें।</string>
 
 
 </resources>

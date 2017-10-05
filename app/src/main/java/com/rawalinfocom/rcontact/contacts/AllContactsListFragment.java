@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.net.Uri;
@@ -38,6 +39,7 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
@@ -48,6 +50,7 @@ import com.rawalinfocom.rcontact.constants.ContactStorageConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
+import com.rawalinfocom.rcontact.database.QueryManager;
 import com.rawalinfocom.rcontact.database.TableAddressMaster;
 import com.rawalinfocom.rcontact.database.TableEmailMaster;
 import com.rawalinfocom.rcontact.database.TableEventMaster;
@@ -64,6 +67,7 @@ import com.rawalinfocom.rcontact.helper.ProgressWheel;
 import com.rawalinfocom.rcontact.helper.RecyclerItemDecoration;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.helper.circleprogressview.CircleProgressView;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.Address;
 import com.rawalinfocom.rcontact.model.Email;
@@ -95,6 +99,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 import butterknife.BindView;
@@ -147,6 +152,21 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     private SyncingTask syncingTask;
     private ArrayList<String> arrayListPBPhoneNumber;
     private ArrayList<String> arrayListPBEmailAddress;
+
+    @Nullable
+    @BindView(R.id.relative_profile_percentage)
+    RelativeLayout relativeProfilePercentage;
+    @Nullable
+    @BindView(R.id.text_complete_profile)
+    TextView textCompleteProfile;
+    @Nullable
+    @BindView(R.id.text_complete_profile_description)
+    TextView textCompleteProfileDescription;
+    @Nullable
+    @BindView(R.id.progress_percentage)
+    CircleProgressView progressPercentage;
+
+    QueryManager queryManager;
 
     //<editor-fold desc="Constructors">
 
@@ -602,6 +622,11 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         RecyclerItemDecoration decoration = new RecyclerItemDecoration(getActivity(), ContextCompat
                 .getColor(getActivity(), R.color.colorVeryLightGray), 0.7f);
         recyclerViewContactList.addItemDecoration(decoration);
+
+        queryManager = new QueryManager(((BaseActivity) getActivity()).getDatabaseHandler());
+        ProfileDataOperation profileDataOperation = queryManager.getRcProfileDetail
+                (getActivity(), ((BaseActivity) getActivity()).getUserPmId());
+        showProfilePercentage(profileDataOperation);
     }
 
 
@@ -880,13 +905,17 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     mobileNumber.setMnmRecordIndexId(arrayListPhoneNumber.get(j).getPhoneId());
 
                     if (arrayListPBPhoneNumber.size() > 0)
-                        if (arrayListPBPhoneNumber.contains("+" + arrayListPhoneNumber.get(j).getOriginalNumber())) {
-                            mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j).getOriginalNumber());
+                        if (arrayListPBPhoneNumber.contains("+" + arrayListPhoneNumber.get(j)
+                                .getOriginalNumber())) {
+                            mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j)
+                                    .getOriginalNumber());
                         } else {
-                            mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j).getPhoneNumber());
+                            mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j)
+                                    .getPhoneNumber());
                         }
                     else
-                        mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j).getPhoneNumber());
+                        mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j)
+                                .getPhoneNumber());
 
                     mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(j).getPhoneType());
                     mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber.get(j)
@@ -921,7 +950,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         Email email = new Email();
 
                         if (arrayListPBEmailAddress.size() > 0)
-                            if (arrayListPBEmailAddress.contains(arrayListEmailId.get(j).getOriginalEmail())) {
+                            if (arrayListPBEmailAddress.contains(arrayListEmailId.get(j)
+                                    .getOriginalEmail())) {
                                 email.setEmEmailAddress(arrayListEmailId.get(j).getOriginalEmail());
                             } else {
                                 email.setEmEmailAddress(arrayListEmailId.get(j).getEmEmailId());
@@ -1289,6 +1319,136 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             AppConstants.setIsFirstTime(false);
             Utils.callIntent(getActivity(), Utils.getFormattedNumber(getActivity
                     (), callNumber));
+        }
+    }
+
+    private void showProfilePercentage(ProfileDataOperation profileDetail) {
+        if (progressPercentage != null) {
+            progressPercentage.setBarColor(Color.parseColor("#CCE4E1"), Color.parseColor
+                    ("#00796B"));
+
+            int percentage = 5;
+            ArrayList<String> arrayListRemainingFields = new ArrayList<>();
+            if (Utils.hasSharedPreference(getActivity(), AppConstants
+                    .PREF_PROFILE_REMAINING_FIELDS)) {
+                arrayListRemainingFields.addAll(Utils.getArrayListPreference(getActivity(),
+                        AppConstants.PREF_PROFILE_REMAINING_FIELDS));
+            }
+
+            if (!StringUtils.isBlank(profileDetail.getPbGender())) {
+                percentage += 5;
+                if (arrayListRemainingFields.contains(getString(R.string.str_gender))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_gender));
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_gender));
+            }
+
+            if (!StringUtils.isBlank(profileDetail.getPbProfilePhoto())) {
+                percentage += 5;
+                if (arrayListRemainingFields.contains(getString(R.string.str_profile_photo))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_profile_photo));
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_profile_photo));
+            }
+
+            if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbOrganization())) {
+                percentage += 15;
+                if (arrayListRemainingFields.contains(getString(R.string.str_organization))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_organization));
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_organization));
+            }
+
+            if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbWebAddress())) {
+                percentage += 5;
+                if (arrayListRemainingFields.contains(getString(R.string.str_website))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_website));
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_website));
+            }
+
+            if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbAddress())) {
+                percentage += 20;
+                if (arrayListRemainingFields.contains(getString(R.string.str_address))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_address));
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_address));
+            }
+
+            if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEvent())) {
+                percentage += 5;
+                if (arrayListRemainingFields.contains(getString(R.string.str_event))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_event));
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_event));
+            }
+
+            if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEmailId())) {
+                percentage += 5;
+                for (int i = 0; i < profileDetail.getPbEmailId().size(); i++) {
+                    if (profileDetail.getPbEmailId().get(i).getEmRcpType() == IntegerConstants
+                            .RCP_TYPE_PRIMARY) {
+                        percentage += 15;
+                        break;
+                    }
+                }
+                if (arrayListRemainingFields.contains(getString(R.string.str_email))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_email));
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_email));
+            }
+
+            if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbIMAccounts())) {
+                ArrayList<String> savedImAccount = new ArrayList<>();
+                for (int i = 0; i < profileDetail.getPbIMAccounts().size(); i++) {
+                    savedImAccount.add(profileDetail.getPbIMAccounts().get(i)
+                            .getIMAccountProtocol());
+                }
+                if (savedImAccount.contains(getString(R.string.facebook))) {
+                    percentage += 5;
+                }
+                if (savedImAccount.contains(getString(R.string.google_plus))) {
+                    percentage += 5;
+                }
+                if (savedImAccount.contains(getString(R.string.linked_in))) {
+                    percentage += 5;
+                }
+                if (!(savedImAccount.contains(getString(R.string.facebook))) && !(savedImAccount
+                        .contains(getString(R.string.google_plus))) && !(savedImAccount.contains
+                        (getString(R.string.linked_in)))) {
+                    percentage += 5;
+                }
+                if (arrayListRemainingFields.contains(getString(R.string.str_social_contact))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_social_contact));
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_social_contact));
+            }
+
+            Utils.setArrayListPreference(getActivity(), AppConstants
+                    .PREF_PROFILE_REMAINING_FIELDS, arrayListRemainingFields);
+
+            if (percentage < 100) {
+                relativeProfilePercentage.setVisibility(View.VISIBLE);
+                progressPercentage.setValueAnimated(percentage);
+
+                if (arrayListRemainingFields.size() > 0) {
+                    Random random = new Random();
+
+                    textCompleteProfileDescription.setText(String.format(getString(R.string
+                            .str_complete_profile_description), arrayListRemainingFields.get
+                            (random.nextInt(arrayListRemainingFields.size()))));
+                }
+            } else {
+                relativeProfilePercentage.setVisibility(View.GONE);
+            }
         }
     }
 

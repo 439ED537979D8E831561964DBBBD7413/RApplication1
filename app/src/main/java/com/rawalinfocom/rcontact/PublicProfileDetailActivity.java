@@ -41,7 +41,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.adapters.OrganizationListAdapter;
-import com.rawalinfocom.rcontact.adapters.ProfileDetailAdapter;
 import com.rawalinfocom.rcontact.adapters.PublicProfileDetailAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
@@ -148,21 +147,18 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
     LinearLayout linearOrganizationDetail;
     @BindView(R.id.rating_user)
     RatingBar ratingUser;
-    @BindView(R.id.linear_call_sms)
+    @BindView(R.id.relative_profile_percentage)
+    RelativeLayout relativeProfilePercentage;
+     @BindView(R.id.linear_call_sms)
     LinearLayout linearCallSms;
-    @BindView(R.id.relative_call_history)
+   /*@BindView(R.id.relative_call_history)
     RelativeLayout relativeCallHistory;
     @BindView(R.id.recycler_call_history)
-    RecyclerView recyclerCallHistory;
+    RecyclerView recyclerCallHistory;*/
 
     @BindView(R.id.ripple_invite)
     RippleView rippleInvite;
 
-    @BindView(R.id.ripple_view_old_records)
-    RippleView rippleViewOldRecords;
-
-    @BindView(R.id.button_view_old_records)
-    Button buttonViewOldRecords;
 
     @BindView(R.id.image_enlarge)
     ImageView imageEnlarge;
@@ -389,17 +385,15 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
         textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color
                 .colorAccent));
 
+        relativeProfilePercentage.setVisibility(View.GONE);
+
         textFullScreenText.setSelected(true);
         rippleViewMore.setOnRippleCompleteListener(this);
         rippleActionBack.setOnRippleCompleteListener(this);
 
-        buttonViewOldRecords.setTypeface(Utils.typefaceRegular(this));
-        rippleViewOldRecords.setVisibility(View.GONE);
-        rippleViewOldRecords.setOnRippleCompleteListener(this);
-
         mLinearLayoutManager = new LinearLayoutManager(this);
-        recyclerCallHistory.setLayoutManager(mLinearLayoutManager);
-        recyclerCallHistory.setNestedScrollingEnabled(false);
+        /*recyclerCallHistory.setLayoutManager(mLinearLayoutManager);
+        recyclerCallHistory.setNestedScrollingEnabled(false);*/
 
         Utils.setRatingColor(PublicProfileDetailActivity.this, ratingUser);
 
@@ -446,7 +440,7 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                 @Override
                 public void onClick(View view) {
                     if (StringUtils.length(profileDetail.getPbProfilePhoto()) > 0) {
-                    zoomImageFromThumb(imageProfile, profileDetail.getPbProfilePhoto());
+                        zoomImageFromThumb(imageProfile, profileDetail.getPbProfilePhoto());
                     }
                 }
             });
@@ -550,7 +544,7 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
             ArrayList<ProfileDataOperationEmail> arrayListEmail = new ArrayList<>();
             ArrayList<String> arrayListCloudEmail = new ArrayList<>();
             if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEmailId
-                                ())) {
+                    ())) {
                 arrayListEmail.addAll(profileDetail.getPbEmailId());
 //                for (int i = 0; i < arrayListEmail.size(); i++) {
 //                    arrayListCloudEmail.add(arrayListEmail.get(i).getEmEmailId());
@@ -562,8 +556,9 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                 tempEmail.addAll(arrayListEmail);
 //                tempEmail.addAll(arrayListCloudEmail);
                 linearEmail.setVisibility(View.VISIBLE);
-               PublicProfileDetailAdapter emailDetailAdapter = new PublicProfileDetailAdapter(this, tempEmail,
-                        AppConstants.EMAIL, pmId);
+                PublicProfileDetailAdapter emailDetailAdapter = new PublicProfileDetailAdapter
+                        (this, tempEmail,
+                                AppConstants.EMAIL, pmId);
                 recyclerViewEmail.setAdapter(emailDetailAdapter);
             } else {
                 linearEmail.setVisibility(View.GONE);
@@ -584,8 +579,9 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                 tempWebsite.addAll(arrayListWebsite);
 
                 linearWebsite.setVisibility(View.VISIBLE);
-               PublicProfileDetailAdapter websiteDetailAdapter = new PublicProfileDetailAdapter(this,
-                        tempWebsite, AppConstants.WEBSITE, pmId);
+                PublicProfileDetailAdapter websiteDetailAdapter = new PublicProfileDetailAdapter
+                        (this,
+                                tempWebsite, AppConstants.WEBSITE, pmId);
                 recyclerViewWebsite.setAdapter(websiteDetailAdapter);
             } else {
                 linearWebsite.setVisibility(View.GONE);
@@ -605,8 +601,9 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                 ArrayList<Object> tempAddress = new ArrayList<>();
                 tempAddress.addAll(arrayListAddress);
                 linearAddress.setVisibility(View.VISIBLE);
-               PublicProfileDetailAdapter addressDetailAdapter = new PublicProfileDetailAdapter(this,
-                        tempAddress, AppConstants.ADDRESS,pmId);
+                PublicProfileDetailAdapter addressDetailAdapter = new PublicProfileDetailAdapter
+                        (this,
+                                tempAddress, AppConstants.ADDRESS, pmId);
                 recyclerViewAddress.setAdapter(addressDetailAdapter);
             } else {
                 linearAddress.setVisibility(View.GONE);
@@ -626,7 +623,8 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                 ArrayList<Object> tempImAccount = new ArrayList<>();
                 tempImAccount.addAll(arrayListImAccount);
                 linearSocialContact.setVisibility(View.VISIBLE);
-               PublicProfileDetailAdapter imAccountDetailAdapter = new PublicProfileDetailAdapter(this,
+                PublicProfileDetailAdapter imAccountDetailAdapter = new
+                        PublicProfileDetailAdapter(this,
                         tempImAccount, AppConstants.IM_ACCOUNT, pmId);
                 recyclerViewSocialContact.setAdapter(imAccountDetailAdapter);
             } else {
@@ -655,8 +653,9 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                 ArrayList<Object> tempEvent = new ArrayList<>();
                 tempEvent.addAll(arrayListEvent);
                 linearEvent.setVisibility(View.VISIBLE);
-               PublicProfileDetailAdapter eventDetailAdapter = new PublicProfileDetailAdapter(this, tempEvent,
-                        AppConstants.EVENT, pmId);
+                PublicProfileDetailAdapter eventDetailAdapter = new PublicProfileDetailAdapter
+                        (this, tempEvent,
+                                AppConstants.EVENT, pmId);
                 recyclerViewEvent.setAdapter(eventDetailAdapter);
             } else {
                 linearEvent.setVisibility(View.GONE);
@@ -774,11 +773,12 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                 if (viewHolder instanceof PublicProfileDetailAdapter.ProfileDetailViewHolder &&
                         StringUtils.startsWithIgnoreCase(((PublicProfileDetailAdapter
                                 .ProfileDetailViewHolder) viewHolder).textMain.getText()
-                                .toString(), "+XX") || viewHolder instanceof PublicProfileDetailAdapter.ProfileDetailViewHolder &&
+                                .toString(), "+XX") || viewHolder instanceof
+                        PublicProfileDetailAdapter.ProfileDetailViewHolder &&
                         StringUtils.startsWithIgnoreCase(((PublicProfileDetailAdapter
                                 .ProfileDetailViewHolder) viewHolder).textMain.getText()
                                 .toString(), "" +
-                                "XX") ) {
+                                "XX")) {
                     return 0;
                 }
                 return super.getSwipeDirs(recyclerView, viewHolder);

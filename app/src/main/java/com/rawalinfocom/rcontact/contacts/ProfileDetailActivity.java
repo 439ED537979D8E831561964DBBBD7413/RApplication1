@@ -135,6 +135,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -2297,7 +2298,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         imageProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (StringUtils.length(thumbnailUrl) > 0) {
+                if (StringUtils.length(profileThumbnail) > 0) {
                     zoomImageFromThumb(imageProfile, profileThumbnail);
                 }
 
@@ -2996,7 +2997,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
 
 
-            if (profileDetail != null) {
+            if (displayOwnProfile && profileDetail != null) {
                 showProfilePercentage(profileDetail);
             }
 
@@ -3013,24 +3014,67 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     ("#00796B"));
 
             int percentage = 5;
+            ArrayList<String> arrayListRemainingFields = new ArrayList<>();
+            if (Utils.hasSharedPreference(ProfileDetailActivity.this, AppConstants
+                    .PREF_PROFILE_REMAINING_FIELDS)) {
+                arrayListRemainingFields.addAll(Utils.getArrayListPreference(ProfileDetailActivity
+                        .this, AppConstants.PREF_PROFILE_REMAINING_FIELDS));
+            }
+
             if (!StringUtils.isBlank(profileDetail.getPbGender())) {
                 percentage += 5;
+                if (arrayListRemainingFields.contains(getString(R.string.str_gender))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_gender));
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_gender));
             }
+
             if (!StringUtils.isBlank(profileDetail.getPbProfilePhoto())) {
                 percentage += 5;
+                if (arrayListRemainingFields.contains(getString(R.string.str_profile_photo))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_profile_photo));
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_profile_photo));
             }
+
             if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbOrganization())) {
                 percentage += 15;
+                if (arrayListRemainingFields.contains(getString(R.string.str_organization))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_organization));
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_organization));
             }
+
             if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbWebAddress())) {
                 percentage += 5;
+                if (arrayListRemainingFields.contains(getString(R.string.str_website))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_website));
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_website));
             }
+
             if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbAddress())) {
                 percentage += 20;
+                if (arrayListRemainingFields.contains(getString(R.string.str_address))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_address));
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_address));
             }
+
             if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEvent())) {
                 percentage += 5;
+                if (arrayListRemainingFields.contains(getString(R.string.str_event))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_event));
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_event));
             }
+
             if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEmailId())) {
                 percentage += 5;
                 for (int i = 0; i < profileDetail.getPbEmailId().size(); i++) {
@@ -3040,9 +3084,57 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         break;
                     }
                 }
+                if (arrayListRemainingFields.contains(getString(R.string.str_email))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_email));
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_email));
             }
 
-            progressPercentage.setValueAnimated(percentage);
+            if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbIMAccounts())) {
+                ArrayList<String> savedImAccount = new ArrayList<>();
+                for (int i = 0; i < profileDetail.getPbIMAccounts().size(); i++) {
+                    savedImAccount.add(profileDetail.getPbIMAccounts().get(i)
+                            .getIMAccountProtocol());
+                }
+                if (savedImAccount.contains(getString(R.string.facebook))) {
+                    percentage += 5;
+                }
+                if (savedImAccount.contains(getString(R.string.google_plus))) {
+                    percentage += 5;
+                }
+                if (savedImAccount.contains(getString(R.string.linked_in))) {
+                    percentage += 5;
+                }
+                if (!(savedImAccount.contains(getString(R.string.facebook))) && !(savedImAccount
+                        .contains(getString(R.string.google_plus))) && !(savedImAccount.contains
+                        (getString(R.string.linked_in)))) {
+                    percentage += 5;
+                }
+                if (arrayListRemainingFields.contains(getString(R.string.str_social_contact))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_social_contact));
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_social_contact));
+            }
+
+            Utils.setArrayListPreference(ProfileDetailActivity.this, AppConstants
+                    .PREF_PROFILE_REMAINING_FIELDS, arrayListRemainingFields);
+
+            if (percentage < 100) {
+                relativeProfilePercentage.setVisibility(View.VISIBLE);
+                progressPercentage.setValueAnimated(percentage);
+
+                if (arrayListRemainingFields.size() > 0) {
+                    Random random = new Random();
+
+                    textCompleteProfileDescription.setText(String.format(getString(R.string
+                            .str_complete_profile_description), arrayListRemainingFields.get
+                            (random.nextInt(arrayListRemainingFields.size()))));
+                }
+            } else {
+                relativeProfilePercentage.setVisibility(View.GONE);
+            }
         }
     }
 
