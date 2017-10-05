@@ -48,9 +48,9 @@ public class SplashActivity extends BaseActivity implements WsResponseListener {
         activity = SplashActivity.this;
         relativeRootSplash = (RelativeLayout) findViewById(R.id.relative_root_splash);
 
-        redirectToActivity();
+//        redirectToActivity();
 
-//        checkVersion();
+        checkVersion();
 
 //        switch (Utils.getIntegerPreference(activity, AppConstants
 //                .PREF_LAUNCH_SCREEN_INT, IntegerConstants.LAUNCH_TUTORIAL_ACTIVITY)) {
