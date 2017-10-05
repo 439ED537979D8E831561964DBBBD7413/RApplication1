@@ -1871,8 +1871,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         rippleActionRightRight = ButterKnife.findById(includeToolbar, R.id
                 .ripple_action_right_right);
 
-        rippleActionRelation.setVisibility(View.GONE);
-
+//        rippleActionRelation.setVisibility(View.GONE);
+//
         Utils.setRoundedCornerBackground(buttonInvite, ContextCompat.getColor
                 (ProfileDetailActivity.this, R.color.colorAccent), 5, 0, ContextCompat.getColor
                 (ProfileDetailActivity.this, R.color.colorAccent));
@@ -1904,7 +1904,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         textFullScreenText.setSelected(true);
         rippleViewMore.setOnRippleCompleteListener(this);
         rippleActionBack.setOnRippleCompleteListener(this);
-        rippleActionRelation.setOnRippleCompleteListener(this);
+//        rippleActionRelation.setOnRippleCompleteListener(this);
         rippleActionRightLeft.setOnRippleCompleteListener(this);
         rippleActionRightCenter.setOnRippleCompleteListener(this);
         rippleActionRightRight.setOnRippleCompleteListener(this);
