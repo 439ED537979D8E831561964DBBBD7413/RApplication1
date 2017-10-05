@@ -105,6 +105,9 @@ public class WsRequestObject {
     private Integer pmIdWhose;
     private ContactReceiver receiver;
 
+    private String appVersion;
+    private String appPlatform;
+
     private String dmModel;
     private String dmVersion;
     private String dmBrand;
@@ -542,6 +545,24 @@ public class WsRequestObject {
 
     public void setArrayListEmailAddress(ArrayList<String> arrayListEmailAddress) {
         this.arrayListEmailAddress = arrayListEmailAddress;
+    }
+
+    @JsonProperty("version")
+    public String getAppVersion() {
+        return appVersion;
+    }
+
+    public void setAppVersion(String appVersion) {
+        this.appVersion = appVersion;
+    }
+
+    @JsonProperty("platform")
+    public String getAppPlatform() {
+        return appPlatform;
+    }
+
+    public void setAppPlatform(String appPlatform) {
+        this.appPlatform = appPlatform;
     }
 
     @JsonProperty("dm_model")

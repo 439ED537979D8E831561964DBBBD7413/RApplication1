@@ -299,7 +299,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                         (StringUtils.length(newNumber) + 1), (
                                 (StringUtils.length(newNumber) + 1) + 1));
             } else {
-                holder.textMain.setText("+" + holder.textMain.getText());
+                holder.textMain.setText(String.format("+%s", holder.textMain.getText()));
             }
         }
     }
@@ -349,7 +349,6 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                     Utils.showSuccessSnackBar(activity, ((ProfileDetailActivity) activity)
                             .getRelativeRootProfileDetail(), activity.getString(R.string
                             .str_copy_email_clip_board));
-                } else {
                 }
 
                 return true;
@@ -817,7 +816,6 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             holder.textMain.setTextColor(colorBlack);
         } else {
             holder.textMain.setTextColor(colorPineGreen);
-            final ProfileDetailViewHolder viewHodler = holder;
             if (isOwnProfile) {
                 holder.buttonPrivacy.setVisibility(View.VISIBLE);
                 switch ((MoreObjects.firstNonNull(imAccount.getIMAccountPublic(), 2))) {
@@ -849,7 +847,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 @Override
                 public void onClick(View v) {
                     PrivacySettingPopupDialog privacySettingPopupDialog = new
-                            PrivacySettingPopupDialog(viewHodler, activity, listner,
+                            PrivacySettingPopupDialog(holder, activity, listner,
                             AppConstants.IM_ACCOUNT, position, imAccount.getIMAccountPublic(),
                             imAccount.getIMId());
                     privacySettingPopupDialog.setDialogTitle(activity.getResources().getString(R
@@ -1117,7 +1115,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         @BindView(R.id.text_main)
         public TextView textMain;
         @BindView(R.id.text_tic)
-        public TextView textTic;
+        TextView textTic;
         @BindView(R.id.text_sub)
         TextView textSub;
         @BindView(R.id.button_privacy)

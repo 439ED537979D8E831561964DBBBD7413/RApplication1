@@ -103,7 +103,7 @@ public class QueryManager {
         ArrayList<ProfileDataOperationPhoneNumber> arrayListPhoneNumber = new ArrayList<>();
 
         // looping through all rows and adding to list
-        if(mobileNumberCursor != null && mobileNumberCursor.getCount()>0){
+        if (mobileNumberCursor != null && mobileNumberCursor.getCount() > 0) {
             if (mobileNumberCursor.moveToFirst()) {
                 do {
                     ProfileDataOperationPhoneNumber phoneNumber = new ProfileDataOperationPhoneNumber();
@@ -113,13 +113,13 @@ public class QueryManager {
                     phoneNumber.setPhoneType(StringUtils.defaultString(mobileNumberCursor.getString
                             (mobileNumberCursor.getColumnIndexOrThrow(TableMobileMaster
                                     .COLUMN_MNM_NUMBER_TYPE))));
-                    if(mobileNumberCursor.getString
+                    if (mobileNumberCursor.getString
                             (mobileNumberCursor.getColumnIndexOrThrow(TableMobileMaster
-                                    .COLUMN_MNM_IS_PRIMARY)) != null){
+                                    .COLUMN_MNM_IS_PRIMARY)) != null) {
                         phoneNumber.setPbRcpType(Integer.parseInt(mobileNumberCursor.getString
                                 (mobileNumberCursor.getColumnIndexOrThrow(TableMobileMaster
                                         .COLUMN_MNM_IS_PRIMARY))));
-                    }else{
+                    } else {
                         phoneNumber.setPbRcpType(2);
                     }
 
@@ -155,7 +155,7 @@ public class QueryManager {
         ArrayList<ProfileDataOperationEmail> arrayListEmail = new ArrayList<>();
 
         // looping through all rows and adding to list
-        if(emailIdCursor != null && emailIdCursor.getCount() >0){
+        if (emailIdCursor != null && emailIdCursor.getCount() > 0) {
             if (emailIdCursor.moveToFirst()) {
                 do {
                     ProfileDataOperationEmail email = new ProfileDataOperationEmail();
@@ -200,7 +200,7 @@ public class QueryManager {
         ArrayList<ProfileDataOperationOrganization> arrayListOrganization = new ArrayList<>();
 
         // looping through all rows and adding to list
-        if(organizationCursor != null && organizationCursor.getCount()>0){
+        if (organizationCursor != null && organizationCursor.getCount() > 0) {
             if (organizationCursor.moveToFirst()) {
                 do {
                     ProfileDataOperationOrganization organization = new
@@ -242,7 +242,7 @@ public class QueryManager {
         ArrayList<ProfileDataOperationEvent> arrayListEvent = new ArrayList<>();
 
         // looping through all rows and adding to list
-        if(eventCursor != null && eventCursor.getCount()>0){
+        if (eventCursor != null && eventCursor.getCount() > 0) {
             if (eventCursor.moveToFirst()) {
                 do {
                     ProfileDataOperationEvent event = new ProfileDataOperationEvent();
@@ -287,7 +287,7 @@ public class QueryManager {
         ArrayList<ProfileDataOperationImAccount> arrayListImAccount = new ArrayList<>();
 
         // looping through all rows and adding to list
-        if(imAccountCursor != null && imAccountCursor.getCount()>0){
+        if (imAccountCursor != null && imAccountCursor.getCount() > 0) {
             if (imAccountCursor.moveToFirst()) {
                 do {
                     ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
@@ -343,7 +343,7 @@ public class QueryManager {
         ArrayList<ProfileDataOperationAddress> arrayListAddress = new ArrayList<>();
 
         // looping through all rows and adding to list
-        if(addressCursor != null && addressCursor.getCount()>0){
+        if (addressCursor != null && addressCursor.getCount() > 0) {
             if (addressCursor.moveToFirst()) {
                 do {
                     ProfileDataOperationAddress address = new ProfileDataOperationAddress();
@@ -388,7 +388,7 @@ public class QueryManager {
 
         ArrayList<ProfileDataOperationWebAddress> arrayListWebsite = new ArrayList<>();
         // looping through all rows and adding to list
-        if(websiteCursor != null && websiteCursor.getCount()>0){
+        if (websiteCursor != null && websiteCursor.getCount() > 0) {
             if (websiteCursor.moveToFirst()) {
                 do {
                     ProfileDataOperationWebAddress webAddress = new ProfileDataOperationWebAddress();

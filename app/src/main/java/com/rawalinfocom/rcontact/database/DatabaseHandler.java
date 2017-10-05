@@ -78,19 +78,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 db.execSQL("ALTER TABLE " + TableProfileMaster.TABLE_RC_PROFILE_MASTER + " ADD "
                         + "COLUMN " + TableProfileMaster.COLUMN_PM_BADGE + " text ");
             case 3:
-                System.out.println("RContact db upgrade case 3 --> ");
+                System.out.println("RContact db upgrade case 3 r-contact --> ");
                 // For version 4
                 db.execSQL("ALTER TABLE " + TableRCNotificationUpdates.TABLE_RC_NOTIFICATION_UPDATES + " ADD "
                         + "COLUMN " + TableRCNotificationUpdates.COLUMN_NU_TYPE + " text ");
                 db.execSQL("ALTER TABLE " + TableRCNotificationUpdates.TABLE_RC_NOTIFICATION_UPDATES + " ADD "
                         + "COLUMN " + TableRCNotificationUpdates.COLUMN_NU_URL + " text ");
 
+                System.out.println("RContact db upgrade case 3 organization --> ");
                 // For Organization
                 db.execSQL("ALTER TABLE " + TableOrganizationMaster.TABLE_RC_ORGANIZATION_MASTER + " ADD "
                         + "COLUMN " + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_FROM_DATE + " text ");
                 db.execSQL("ALTER TABLE " + TableOrganizationMaster.TABLE_RC_ORGANIZATION_MASTER + " ADD "
                         + "COLUMN " + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_TO_DATE + " text ");
 
+                System.out.println("RContact db upgrade case 3 im account --> ");
                 // For IM Account
                 db.execSQL("ALTER TABLE " + TableImMaster.TABLE_RC_IM_MASTER + " ADD "
                         + "COLUMN " + TableImMaster.COLUMN_IM_FIRST_NAME + " text ");
@@ -99,26 +101,25 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 db.execSQL("ALTER TABLE " + TableImMaster.TABLE_RC_IM_MASTER + " ADD "
                         + "COLUMN " + TableImMaster.COLUMN_IM_PROFILE_IMAGE + " text ");
 
+                /*System.out.println("RContact db upgrade case 3 email --> ");
                 // For Email
-                db.execSQL("ALTER TABLE " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + " ADD "
-                        + "COLUMN " + TableEmailMaster.COLUMN_EM_SOCIAL_TYPE + " text ");
-
-
-                /*System.out.println("RContact db upgrade case 3 --> ");
-                // For version 4
                 db.execSQL(TableEmailMaster.CREATE_TABLE_RC_EMAIL_MASTER_1);
-                db.execSQL("INSERT INTO " + TableEmailMaster.TABLE_RC_EMAIL_MASTER_TEMP + " SELECT * FROM " +
-                        TableEmailMaster.TABLE_RC_EMAIL_MASTER + ";");
+                db.execSQL("INSERT INTO " + TableEmailMaster.TABLE_RC_EMAIL_MASTER_TEMP + "(em_id,em_email_address," +
+                        "em_email_type,em_record_index_id,em_email_privacy,em_is_private,em_is_verified,rc_profile_master_pm_id)" +
+                        " SELECT em_id,em_email_address,em_email_type,em_record_index_id,em_email_privacy,em_is_private," +
+                        "em_is_verified,rc_profile_master_pm_id FROM " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + ";");
                 db.execSQL("DROP TABLE IF EXISTS '" + TableEmailMaster.TABLE_RC_EMAIL_MASTER + "'");
                 db.execSQL("ALTER TABLE " + TableEmailMaster.TABLE_RC_EMAIL_MASTER_TEMP
                         + " RENAME TO " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + ";");*/
 
             case 4:
-                System.out.println("RContact db upgrade case 4 --> ");
+                System.out.println("RContact db upgrade case 4 email --> ");
                 // For version 5
                 db.execSQL(TableEmailMaster.CREATE_TABLE_RC_EMAIL_MASTER_1);
-                db.execSQL("INSERT INTO " + TableEmailMaster.TABLE_RC_EMAIL_MASTER_TEMP + " SELECT * FROM " +
-                        TableEmailMaster.TABLE_RC_EMAIL_MASTER + ";");
+                db.execSQL("INSERT INTO " + TableEmailMaster.TABLE_RC_EMAIL_MASTER_TEMP + "(em_id,em_email_address," +
+                        "em_email_type,em_record_index_id,em_email_privacy,em_is_private,em_is_verified,rc_profile_master_pm_id)" +
+                        " SELECT em_id,em_email_address,em_email_type,em_record_index_id,em_email_privacy,em_is_private," +
+                        "em_is_verified,rc_profile_master_pm_id FROM " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + ";");
                 db.execSQL("DROP TABLE IF EXISTS '" + TableEmailMaster.TABLE_RC_EMAIL_MASTER + "'");
                 db.execSQL("ALTER TABLE " + TableEmailMaster.TABLE_RC_EMAIL_MASTER_TEMP
                         + " RENAME TO " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + ";");
