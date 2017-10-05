@@ -1870,6 +1870,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         rippleActionRightRight = ButterKnife.findById(includeToolbar, R.id
                 .ripple_action_right_right);
 
+        rippleActionRelation.setVisibility(View.GONE);
+
         Utils.setRoundedCornerBackground(buttonInvite, ContextCompat.getColor
                 (ProfileDetailActivity.this, R.color.colorAccent), 5, 0, ContextCompat.getColor
                 (ProfileDetailActivity.this, R.color.colorAccent));

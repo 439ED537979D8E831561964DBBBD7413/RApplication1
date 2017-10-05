@@ -724,4 +724,9 @@
     <string name="str_next">Next</string>
     <string name="str_hint_add_organization">Please add organization to add Business Relation</string>
     <string name="str_hint_add_family">Please set your gender to add Family Relation</string>
+
+    <!-- Force update -->
+    <string name="youAreNotUpdatedTitle">Update Available</string>
+    <string name="youAreNotUpdatedMessage">A new version of RContacts Application is available. Please update to version\s</string>
+    <string name="youAreNotUpdatedMessage1">\s now</string>
 </resources>
