@@ -514,7 +514,8 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
                                 getRCPContactUpdateResponse.getTimestamp());
                     }
 
-                    swipeRefreshLayout.setRefreshing(false);
+                    if (swipeRefreshLayout != null)
+                        swipeRefreshLayout.setRefreshing(false);
                     Utils.hideProgressDialog();
 
                     getRContactFromDB();

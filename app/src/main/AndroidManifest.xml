@@ -52,7 +52,6 @@
         android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -201,7 +200,6 @@
         <activity
             android:name=".OrganizationListActivity"
             android:screenOrientation="portrait" />
-
         <activity android:name=".helper.imgcrop.CropImageActivity" />
 
         <!-- receiver -->
@@ -263,6 +261,7 @@
         <activity
             android:name=".TermsConditionsActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".relation.RelationRecommendationActivity"></activity>
     </application>
 
 </manifest>

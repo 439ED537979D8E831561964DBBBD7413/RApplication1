@@ -45,6 +45,7 @@
     <dimen name="margin_10dp">10dp</dimen>
     <dimen name="margin_8dp">8dp</dimen>
     <dimen name="margin_15dp">15dp</dimen>
+    <dimen name="margin_16dp">16dp</dimen>
     <dimen name="padding_15dp">15dp</dimen>
     <dimen name="padding_20dp">20dp</dimen>
     <dimen name="margin_2dp">2dp</dimen>
@@ -91,5 +92,8 @@
     <dimen name="defaultMenuTextPaddingRight">32dp</dimen>
     <dimen name="defaultMenuLayoutMargin">4dp</dimen>
     <dimen name="defaultMenuCornerRadius">2dp</dimen>
+
+    <!--Relation Recommendation-->
+    <dimen name="margin_30dp">30dp</dimen>
 
 </resources>
