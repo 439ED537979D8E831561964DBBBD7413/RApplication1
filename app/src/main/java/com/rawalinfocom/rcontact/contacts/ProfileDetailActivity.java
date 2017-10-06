@@ -354,7 +354,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     public String callNumber = "";
     String callLogRcpVerfiedId = "";
-
+    boolean isFromNotification;
     AsyncWebServiceCall asyncGetProfileDetails;
 
     //<editor-fold desc="Override Methods">
@@ -593,7 +593,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                     startActivity(intent);
                                 }
                             } else {
-                                if(listPhoneNumber.size()>0){
+                                if (listPhoneNumber.size() > 0) {
                                     CallConfirmationListDialog callConfirmationListDialog = new
                                             CallConfirmationListDialog(this, listPhoneNumber,
                                             false);
@@ -976,6 +976,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             }
                         }
                     } else {
+
                         if (!TextUtils.isEmpty(historyName)) {
                             ArrayList<String> arrayListName = new ArrayList<>(Arrays.asList(this
                                             .getString(R.string.edit),
@@ -1037,11 +1038,40 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             rawId = checkNumberFavourite;
                         }
 
-                        OptionMenuDialog optionMenu = new OptionMenuDialog(ProfileDetailActivity
-                                .this, rawId, menuType, isFavourite == 1, isFromFavourite,
-                                isCallLogRcpUser);
+                        if(isFromNotification){
+                            if(!StringUtils.isBlank(contactName)){
+                                if(contactName.startsWith("+91")){
+                                    String contactNumber =  contactName.substring(0,13);
+                                    String isContactName =  getNameFromNumber(contactNumber);
+                                    if(StringUtils.isBlank(isContactName)){
+                                        ArrayList<String> arrayListNumber = new ArrayList<>(Arrays.asList
+                                                (this.getString(R.string.add_to_contact),
+                                                        this.getString(R.string.add_to_existing_contact)));
+                                        ProfileMenuOptionDialog profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
+                                                arrayListNumber, contactNumber, 0,
+                                                false, null, "", "",
+                                                "", "", "", false,
+                                                "", "");
+                                        profileMenuOptionDialog.showDialog();
+                                    }
+                                }else{
+                                    OptionMenuDialog optionMenu = new OptionMenuDialog(ProfileDetailActivity
+                                            .this, rawId, menuType, isFavourite == 1, isFromFavourite,
+                                            isCallLogRcpUser);
 
-                        optionMenu.showDialog();
+                                    optionMenu.showDialog();
+                                }
+
+                            }
+                        }else{
+                            OptionMenuDialog optionMenu = new OptionMenuDialog(ProfileDetailActivity
+                                    .this, rawId, menuType, isFavourite == 1, isFromFavourite,
+                                    isCallLogRcpUser);
+
+                            optionMenu.showDialog();
+                        }
+
+
                     }
                 }
                 break;
@@ -1505,6 +1535,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     private void getIntentDetails(Intent intent) {
         if (intent != null) {
 
+            if (intent.hasExtra(AppConstants.EXTRA_FROM_NOTI_PROFILE)) {
+                isFromNotification = intent.getBooleanExtra(AppConstants.EXTRA_FROM_NOTI_PROFILE, false);
+            }
             if (intent.hasExtra(AppConstants.EXTRA_DIALOG_CALL_LOG_INSTANCE)) {
                 isDialogCallLogInstance = intent.getBooleanExtra(AppConstants
                         .EXTRA_DIALOG_CALL_LOG_INSTANCE, false);

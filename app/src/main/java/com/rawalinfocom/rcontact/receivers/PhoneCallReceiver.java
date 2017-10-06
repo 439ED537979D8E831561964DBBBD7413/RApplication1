@@ -826,6 +826,8 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                     Bundle bundle = new Bundle();
                     bundle.putString(AppConstants.EXTRA_PM_ID,
                             spamDataType.getRcpPmId());
+                    if(!StringUtils.isBlank(spamDataType.getMobileNumber()))
+                        bundle.putBoolean(AppConstants.PREF_USER_NUMBER, true);
                     Intent intent = new Intent(context,
                             PublicProfileDetailActivity.class);
                     intent.putExtras(bundle);
