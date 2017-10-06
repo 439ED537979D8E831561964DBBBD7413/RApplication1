@@ -37,7 +37,7 @@ public class WsConstants {
      */
     //<editor-fold desc="Staging">
 
-    // API ROOT
+    /*// API ROOT
     public static final String WS_ROOT = "http://apistaging.rcontacts.in/api/v1/";
     public static final String WS_ROOT_V2 = "http://apistaging.rcontacts.in/api/v2/";
     // TERMS-CONDITIONS URL
@@ -53,7 +53,7 @@ public class WsConstants {
     // AVERAGE RATING SHARE
     public static final String WS_AVG_RATING_SHARE_BADGE_ROOT = "http://staging.rcrc.ac/r/";
     //PLAY STORE LINK
-    public static String PLAY_STORE_LINK = "http://staging.rcrc.ac/a/";
+    public static String PLAY_STORE_LINK = "http://staging.rcrc.ac/a/";*/
     //</editor-fold>
 
     /**
