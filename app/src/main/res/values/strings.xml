@@ -718,6 +718,6 @@
     <string name="error_no_social_app_found">Please install Facebook or LinkedIn or Twitter app to share information.</string>
     <string name="org_list">Organizations List</string>
     <string name="str_complete_profile">COMPLETE YOUR PROFILE</string>
-    <string name="str_complete_profile_description">Fill in your %1$s to achieve 360° completion of your digital details.</string>
+    <string name="str_complete_profile_description">Fill in your %1$s to\nachieve 360° completion of your digital details.</string>
 
 </resources>

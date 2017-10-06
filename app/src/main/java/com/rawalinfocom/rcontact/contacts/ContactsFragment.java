@@ -46,6 +46,8 @@ public class ContactsFragment extends BaseFragment {
     RelativeLayout relativeSyncProgress;
     @BindView(R.id.progress_contacts)
     AnimateHorizontalProgressBar progressContacts;
+    @BindView(R.id.include_elevation)
+    View includeElevation;
 
     AllContactsListFragment allContactsFragment;
     RContactsFragment rContactsFragment;
@@ -97,6 +99,8 @@ public class ContactsFragment extends BaseFragment {
         allContactsFragment = AllContactsListFragment.newInstance();
         rContactsFragment = RContactsFragment.newInstance();
         favoritesFragment = FavoritesFragment.newInstance();
+
+        includeElevation.setAlpha(0.5f);
 
         if (!(Utils.getBooleanPreference(getActivity(), AppConstants
                 .PREF_CONTACT_SYNCED, false))) {

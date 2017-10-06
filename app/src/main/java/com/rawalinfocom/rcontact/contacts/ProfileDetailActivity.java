@@ -315,6 +315,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     @Nullable
     @BindView(R.id.progress_percentage)
     CircleProgressView progressPercentage;
+    @BindView(R.id.include_elevation)
+    View includeElevation;
+    @BindView(R.id.include_elevation_top)
+    View includeElevationTop;
 
     String callLogCloudName;
     boolean isCallLogRcpUser, isRatingUpdate = false;
@@ -3127,6 +3131,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 textCompleteProfile.setTypeface(Utils.typefaceSemiBold(ProfileDetailActivity.this));
                 textCompleteProfileDescription.setTypeface(Utils.typefaceRegular
                         (ProfileDetailActivity.this));
+
+                includeElevation.setRotation(180);
+                includeElevation.setAlpha(0.6f);
+                includeElevationTop.setAlpha(0.6f);
 
                 progressPercentage.setValueAnimated(percentage);
 

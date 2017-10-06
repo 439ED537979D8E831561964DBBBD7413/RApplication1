@@ -171,6 +171,10 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     CoordinatorLayout clSwipeDismiss;
     @BindView(R.id.button_update_now)
     Button buttonUpdateNow;
+    @BindView(R.id.relative_content)
+    RelativeLayout relativeContent;
+    @BindView(R.id.include_elevation)
+    View includeElevation;
 
     QueryManager queryManager;
 
@@ -1466,6 +1470,13 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
                 textCompleteProfile.setTypeface(Utils.typefaceSemiBold(getActivity()));
                 textCompleteProfileDescription.setTypeface(Utils.typefaceRegular(getActivity()));
+
+                /*relativeContent.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color
+                        .veryVeryLightGray));*/
+                relativeProfilePercentage.setBackgroundColor(Color.parseColor("#EBEBEB"));
+
+                includeElevation.setRotation(180);
+                includeElevation.setAlpha(0.5f);
 
                 relativeProfilePercentage.setVisibility(View.VISIBLE);
                 progressPercentage.setValueAnimated(percentage);

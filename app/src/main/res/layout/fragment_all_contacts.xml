@@ -58,42 +58,51 @@
                     CircleProgressView:cpv_unitPosition="right_top"
                     CircleProgressView:cpv_unitScale="1"/>
 
-                <Button
-                    android:id="@+id/button_update_now"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:background="@drawable/background_rounded_sides"
-                    android:minHeight="0dp"
-                    android:minWidth="0dp"
-                    android:paddingBottom="@dimen/margin_tiny"
-                    android:paddingEnd="@dimen/margin_small"
-                    android:paddingStart="@dimen/margin_small"
-                    android:paddingTop="@dimen/margin_tiny"
-                    android:text="Update Now"
-                    android:textColor="@color/darkGray"/>
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_toEndOf="@id/progress_percentage"
-                    android:layout_toStartOf="@id/button_update_now"
                     android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/text_complete_profile"
+                    <RelativeLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/str_complete_profile"
-                        android:textColor="@color/dialogTitleTextColor"
-                        android:textSize="@dimen/text_size_16sp"/>
+                        android:layout_height="wrap_content">
+
+                        <Button
+                            android:id="@+id/button_update_now"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:background="@drawable/background_rounded_sides"
+                            android:minHeight="0dp"
+                            android:minWidth="0dp"
+                            android:paddingBottom="@dimen/margin_tiny"
+                            android:paddingEnd="@dimen/margin_small"
+                            android:paddingStart="@dimen/margin_small"
+                            android:paddingTop="@dimen/margin_tiny"
+                            android:text="Update Now"
+                            android:textColor="@color/darkGray"
+                            android:textSize="@dimen/text_size_12sp"/>
+
+                        <TextView
+                            android:id="@+id/text_complete_profile"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_toStartOf="@id/button_update_now"
+                            android:text="@string/str_complete_profile"
+                            android:textColor="@color/dialogTitleTextColor"
+                            android:textSize="@dimen/text_size_14sp"/>
+
+                    </RelativeLayout>
 
                     <TextView
                         android:id="@+id/text_complete_profile_description"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:lineSpacingExtra="1dp"
+                        android:lineSpacingMultiplier="0.75"
                         android:text="@string/str_complete_profile_description"
                         android:textColor="@color/dialer_text_gray"
                         android:textSize="@dimen/text_size_12sp"/>

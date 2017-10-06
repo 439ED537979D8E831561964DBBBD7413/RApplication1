@@ -285,7 +285,7 @@
                         android:background="@color/colorWhite">
 
                         <include
-                            android:id="@+id/include_elevation"
+                            android:id="@+id/include_elevation_top"
                             layout="@layout/layout_elevation"
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/height_elevation"/>
@@ -332,15 +332,17 @@
                                     android:layout_height="wrap_content"
                                     android:text="@string/str_complete_profile"
                                     android:textColor="@color/dialogTitleTextColor"
-                                    android:textSize="@dimen/text_size_16sp"/>
+                                    android:textSize="@dimen/text_size_14sp"/>
 
                                 <TextView
                                     android:id="@+id/text_complete_profile_description"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:lineSpacingExtra="1dp"
+                                    android:lineSpacingMultiplier="0.75"
                                     android:text="@string/str_complete_profile_description"
-                                    android:textSize="@dimen/text_size_12sp"
-                                    android:textColor="@color/dialer_text_gray"/>
+                                    android:textColor="@color/dialer_text_gray"
+                                    android:textSize="@dimen/text_size_12sp"/>
 
                             </LinearLayout>
 
