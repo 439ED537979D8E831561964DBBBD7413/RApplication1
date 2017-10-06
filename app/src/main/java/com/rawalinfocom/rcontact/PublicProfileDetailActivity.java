@@ -38,6 +38,7 @@ import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.adapters.OrganizationListAdapter;
@@ -45,6 +46,7 @@ import com.rawalinfocom.rcontact.adapters.PublicProfileDetailAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
+import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
@@ -286,6 +288,28 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
             }
             //</editor-fold>
 
+            // <editor-fold desc="REQ_PROFILE_PRIVACY_REQUEST">
+            if (serviceType.equalsIgnoreCase(WsConstants.REQ_PROFILE_PRIVACY_REQUEST)) {
+                WsResponseObject editProfileResponse = (WsResponseObject) data;
+
+                Utils.hideProgressDialog();
+
+                if (editProfileResponse != null && StringUtils.equalsIgnoreCase
+                        (editProfileResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+//                    Utils.showSuccessSnackBar(this, relativeRootProfileDetail, editProfileResponse.getMessage());
+                    Toast.makeText(this, editProfileResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                } else {
+                    if (editProfileResponse != null)
+                        Toast.makeText(this, editProfileResponse.getMessage(), Toast.LENGTH_SHORT).show();
+
+//                        Utils.showErrorSnackBar(this, relativeRootProfileDetail, editProfileResponse.getMessage());
+                    else
+                        Toast.makeText(this, getString(R.string.str_request_sending_fail), Toast.LENGTH_SHORT).show();
+
+//                        Utils.showErrorSnackBar(this, relativeRootProfileDetail, getString(R.string.str_request_sending_fail));
+                }
+            }
+            //</editor-fold>
         } else {
             Utils.hideProgressDialog();
             Utils.showErrorSnackBar(this, relativeRootProfileDetail, "" + error

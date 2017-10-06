@@ -1,101 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/margin_10dp">
+    android:layout_margin="@dimen/margin_10dp"
+    android:orientation="vertical">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
         android:id="@+id/ll_person_detail"
-        android:orientation="horizontal"
-        android:background="@drawable/rounded_corner_light_gray">
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:background="@drawable/rounded_corner_light_gray"
+        android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/image_profile"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginEnd="@dimen/margin_10dp"
+            android:layout_marginStart="@dimen/margin_10dp"
             android:background="@drawable/home_screen_profile"
             android:contentDescription="@string/str_content_description"
-            android:visibility="visible"
-            android:layout_gravity="center"
-            android:layout_marginStart="@dimen/margin_10dp"
-            android:layout_marginEnd="@dimen/margin_10dp"/>
+            android:visibility="visible" />
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_gravity="center">
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:orientation="vertical">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:id="@+id/text_name"
-                tools:text="Aniruddh Pal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:textColor="@color/colorAccent"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                tools:text="Aniruddh Pal" />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:id="@+id/text_number"
-                tools:text="+91 8888888877"/>
-
-            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                tools:text="+91 8888888877" />
+
+            <TextView
                 android:id="@+id/text_date_and_time"
-                tools:text="16 Sep, 17"
-                android:textColor="@color/lightGrey"/>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/lightGrey"
+                tools:text="16 Sep, 17" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:layout_gravity="center|end"
-            android:layout_marginStart="@dimen/margin_10dp">
+            android:layout_marginStart="@dimen/margin_10dp"
+            android:orientation="horizontal">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/image_view_correct"
-                android:src="@drawable/ic_delete"
-                android:layout_gravity="end"
-                android:layout_marginEnd="@dimen/padding_20dp"/>
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:id="@+id/image_view_delete"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
                 android:layout_gravity="center|end"
-                android:layout_marginEnd="@dimen/padding_20dp"
-                android:src="@drawable/ico_correct_svg"/>
+                android:layout_marginEnd="@dimen/margin_5dp"
+                android:contentDescription="@string/app_name"
+                android:padding="5dp"
+                android:src="@drawable/ic_delete" />
+
+            <ImageView
+                android:id="@+id/image_view_correct"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_gravity="end"
+                android:layout_marginEnd="@dimen/margin_10dp"
+                android:contentDescription="@string/app_name"
+                android:padding="5dp"
+                android:src="@drawable/ico_correct_svg" />
 
         </LinearLayout>
     </LinearLayout>
 
-    <RelativeLayout
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycle_individual_relation_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/rl_relation_list"
-        android:background="@drawable/three_rounded_corner_transparent"
-        android:layout_marginTop="1dp"
+        android:layout_marginEnd="@dimen/margin_15dp"
         android:layout_marginStart="@dimen/margin_15dp"
-        android:layout_marginEnd="@dimen/margin_15dp">
-
-        <android.support.v7.widget.RecyclerView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/recycle_individual_relation_list">
-
-        </android.support.v7.widget.RecyclerView>
-
-    </RelativeLayout>
+        android:layout_marginTop="1dp"
+        android:background="@drawable/three_rounded_corner_transparent" />
 
 </LinearLayout>

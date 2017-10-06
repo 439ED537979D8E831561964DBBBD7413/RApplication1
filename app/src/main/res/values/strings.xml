@@ -729,6 +729,5 @@
 
     <!-- Force update -->
     <string name="youAreNotUpdatedTitle">Update Available</string>
-    <string name="youAreNotUpdatedMessage">A new version of RContacts Application is available. Please update to version\s</string>
-    <string name="youAreNotUpdatedMessage1">\s now</string>
+    <string name="youAreNotUpdatedMessage">A new version of RContacts Application is available. Please update to latest version\s</string>
 </resources>

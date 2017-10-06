@@ -241,13 +241,13 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
             holder.textMain.setText("+" + holder.textMain.getText());
         }
 
-
         if (showNumber == false) {
             if (pbRcpType == IntegerConstants.RCP_TYPE_PRIMARY) {
                 holder.textMain.setText(StringUtils.replacePattern(holder.textMain.getText().toString(), "[0-9]", "X"));
                 holder.textMain.setText(Utils.setMultipleTypeface(activity, holder.textMain.getText() + " " + activity
                                 .getString(R.string.im_icon_verify), 0,
                         (StringUtils.length(holder.textMain.getText()) + 1), ((StringUtils.length(holder.textMain.getText()) + 1) + 1)));
+                holder.buttonRequest.setVisibility(View.VISIBLE);
             }
         }else{
             if (pbRcpType == IntegerConstants.RCP_TYPE_PRIMARY) {
@@ -255,6 +255,8 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
                 holder.textMain.setText(Utils.setMultipleTypeface(activity, numberToShow + " " + activity
                                 .getString(R.string.im_icon_verify), 0,
                         (StringUtils.length(numberToShow) + 1), ((StringUtils.length(numberToShow) + 1) + 1)));
+
+                holder.buttonRequest.setVisibility(View.GONE);
             }
         }
 
@@ -263,6 +265,14 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
             holder.imgActionType.setVisibility(View.GONE);
             holder.imgActionWhatsapp.setVisibility(View.GONE);
         }
+
+        holder.buttonRequest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int pmTo = Integer.parseInt(pmId);
+                sendAccessRequest(pmTo, "pb_phone_number", phoneNumber.getPhoneId());
+            }
+        });
     }
 
     private void displayEmail(final ProfileDetailViewHolder holder, final int position) {

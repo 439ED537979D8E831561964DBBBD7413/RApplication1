@@ -124,6 +124,8 @@ public class TableRCContactRequest {
                 request.setCarMongodbRecordIndex(cursor.getString(cursor.getColumnIndex(COLUMN_CAR_RECORD_INDEX_ID)));
                 request.setUpdatedAt(cursor.getString(cursor.getColumnIndex(COLUMN_CAR_UPDATED_AT)));
                 request.setCarId(cursor.getInt(cursor.getColumnIndex(COLUMN_CAR_CLOUD_REQUEST_ID)));
+                request.setName(cursor.getString(cursor.getColumnIndex(COLUMN_CAR_PROFILE_DETAILS)));
+                request.setPmProfilePhoto(cursor.getString(cursor.getColumnIndex(COLUMN_CAR_IMG)));
                 arrayList.add(request);
             } while (cursor.moveToNext());
             cursor.close();

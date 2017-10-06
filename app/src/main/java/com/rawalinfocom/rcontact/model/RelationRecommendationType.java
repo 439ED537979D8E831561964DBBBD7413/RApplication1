@@ -9,12 +9,12 @@ import java.util.ArrayList;
 
 public class RelationRecommendationType implements Serializable {
 
-    String firstName;
-    String lastName;
-    String number;
-    String dateAndTime;
+    private String firstName;
+    private String lastName;
+    private String number;
+    private String dateAndTime;
 
-    ArrayList<IndividualRelationRecommendationType> individualRelationRecommendationTypeArrayList;
+    private ArrayList<IndividualRelationRecommendationType> individualRelationRecommendationTypeArrayList;
 
     public ArrayList<IndividualRelationRecommendationType> getIndividualRelationRecommendationTypeArrayList() {
         return individualRelationRecommendationTypeArrayList;
