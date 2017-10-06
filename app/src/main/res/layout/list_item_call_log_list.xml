@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:orientation="vertical">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/relative_row_main"
@@ -48,7 +48,7 @@
                 android:layout_height="45dp"
                 android:background="@drawable/home_screen_profile"
                 android:contentDescription="@string/str_content_description"
-                android:visibility="visible"/>
+                android:visibility="visible" />
 
         </RelativeLayout>
 
@@ -63,7 +63,7 @@
             android:paddingLeft="@dimen/padding_5dp"
             android:paddingTop="@dimen/padding_5dp"
             android:src="@drawable/ic_action_more_vertical"
-            android:tint="@color/colorDarkGray"/>
+            android:tint="@color/colorDarkGray" />
 
         <TextView
             android:id="@+id/text_temp_number"
@@ -72,7 +72,7 @@
             android:layout_alignParentRight="true"
             android:padding="@dimen/padding_10dp"
             android:text=""
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/image_social_media"
@@ -83,7 +83,7 @@
             android:layout_toLeftOf="@+id/image_3dots_call_log"
             android:contentDescription="@string/str_content_description"
             android:src="@drawable/ic_arrow_bottom"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/button_invite"
@@ -99,7 +99,7 @@
             android:textAllCaps="false"
             android:textColor="@color/colorWhite"
             android:textSize="@dimen/text_size_12sp"
-            android:visibility="invisible"/>
+            android:visibility="invisible" />
 
         <!-- <View
              android:id="@+id/divider_all_contact"
@@ -133,7 +133,7 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:singleLine="true"
-                    tools:text="Aniruddh"/>
+                    tools:text="Aniruddh" />
 
                 <TextView
                     android:id="@+id/text_cloud_contact_name"
@@ -141,7 +141,7 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:singleLine="true"
-                    tools:text=" (Aniruddh Pal)"/>
+                    tools:text=" (Aniruddh Pal)" />
 
             </LinearLayout>
 
@@ -154,14 +154,14 @@
                     android:id="@+id/image_call_type"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_call_outgoing"/>
+                    android:src="@drawable/ic_call_outgoing" />
 
                 <TextView
                     android:id="@+id/textCount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text=""
-                    android:textSize="@dimen/text_size_12sp"/>
+                    android:textSize="@dimen/text_size_12sp" />
 
                 <TextView
                     android:id="@+id/text_contact_number"
@@ -170,7 +170,7 @@
                     android:layout_marginLeft="@dimen/margin_5dp"
                     android:singleLine="true"
                     android:textSize="@dimen/text_size_12sp"
-                    tools:text="+917788951230"/>
+                    tools:text="+917788951230" />
 
                 <TextView
                     android:id="@+id/text_contact_date"
@@ -179,7 +179,7 @@
                     android:layout_marginLeft="@dimen/margin_5dp"
                     android:singleLine="true"
                     android:textSize="@dimen/text_size_12sp"
-                    tools:text="8:45PM"/>
+                    tools:text="8:45PM" />
 
                 <TextView
                     android:id="@+id/text_sim_type"
@@ -189,27 +189,27 @@
                     android:layout_marginLeft="@dimen/margin_5dp"
                     android:text=""
                     android:textColor="@color/vividBlue"
-                    android:visibility="gone"/>
+                    android:visibility="gone" />
 
                 <ImageView
+                    android:id="@+id/image_view_spam"
                     android:layout_width="12dp"
                     android:layout_height="12dp"
-                    android:id="@+id/image_view_spam"
-                    android:layout_marginLeft="@dimen/margin_2dp"
                     android:layout_gravity="center"
                     android:layout_marginBottom="2dp"
+                    android:layout_marginLeft="@dimen/margin_2dp"
                     android:src="@drawable/ico_spam_svg"
-                    android:visibility="gone"/>
+                    android:visibility="gone" />
 
                 <TextView
+                    android:id="@+id/text_spam_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/text_spam_count"
                     android:layout_gravity="center"
-                    tools:text="01"
-                    android:textColor="@color/spamRed"
                     android:layout_marginBottom="2dp"
-                    android:visibility="gone"/>
+                    android:textColor="@color/spamRed"
+                    android:visibility="gone"
+                    tools:text="01" />
 
             </LinearLayout>
 
@@ -227,12 +227,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    tools:text="2008"/>
+                    tools:text="2008" />
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ico_person_svg"/>
+                    android:src="@drawable/ico_person_svg" />
 
                 <RatingBar
                     android:id="@+id/rating_user"
@@ -242,7 +242,7 @@
                     android:layout_gravity="center"
                     android:isIndicator="true"
                     android:stepSize="1"
-                    tools:rating="5"/>
+                    tools:rating="5" />
 
             </LinearLayout>
 

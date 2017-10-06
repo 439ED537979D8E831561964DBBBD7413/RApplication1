@@ -880,14 +880,18 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
                     mobileNumber.setMnmRecordIndexId(arrayListPhoneNumber.get(j).getPhoneId());
 
-                    if (arrayListPBPhoneNumber.size() > 0)
-                        if (arrayListPBPhoneNumber.contains("+" + arrayListPhoneNumber.get(j).getOriginalNumber())) {
-                            mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j).getOriginalNumber());
-                        } else {
-                            mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j).getPhoneNumber());
-                        }
-                    else
-                        mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j).getPhoneNumber());
+                    if (String.valueOf(arrayListPhoneNumber.get(i).getPhonePublic()).equalsIgnoreCase("3")) {
+                        mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(i).getPhoneNumber());
+                    } else {
+                        if (arrayListPBPhoneNumber.size() > 0)
+                            if (arrayListPBPhoneNumber.contains("+" + arrayListPhoneNumber.get(i).getOriginalNumber())) {
+                                mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(i).getOriginalNumber());
+                            } else {
+                                mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(i).getPhoneNumber());
+                            }
+                        else
+                            mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(i).getPhoneNumber());
+                    }
 
                     mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(j).getPhoneType());
                     mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber.get(j)

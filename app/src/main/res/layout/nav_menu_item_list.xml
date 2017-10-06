@@ -131,15 +131,13 @@
             android:text="@string/nav_text_rating_history"
             android:textColor="@color/regularFontColor"
             android:textStyle="bold" />
-
     </LinearLayout>
-
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@drawable/drawer_item_bg"
-        android:visibility="gone" />
+        android:visibility="visible" />
 
     <LinearLayout
         android:id="@+id/nav_ll_relation"
@@ -148,14 +146,14 @@
         android:orientation="horizontal"
         android:paddingEnd="0dp"
         android:paddingStart="@dimen/margin_20dp"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <ImageView
             android:id="@+id/nav_img_relation"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:gravity="center"
             android:layout_marginStart="@dimen/margin_5dp"
+            android:gravity="center"
             android:textColor="@color/regularFontColor"
             android:textSize="18sp" />
 
@@ -170,7 +168,6 @@
             android:textStyle="bold" />
 
     </LinearLayout>
-
 
     <View
         android:layout_width="match_parent"

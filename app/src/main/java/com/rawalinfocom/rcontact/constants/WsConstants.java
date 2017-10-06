@@ -61,8 +61,8 @@ public class WsConstants {
      */
     //<editor-fold desc="QA">
     // API ROOT
-//    public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
-//    public static final String WS_ROOT_V2 = "http://apiqa.rcontacts.in/api/v2/";
+    public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
+    public static final String WS_ROOT_V2 = "http://apiqa.rcontacts.in/api/v2/";
     // TERMS-CONDITIONS URL
     public static final String URL_TERMS_CONDITIONS = "http://webqa.rcontacts.in/global/terms";
     // FAQ URL
@@ -86,8 +86,8 @@ public class WsConstants {
 //    public static final String WS_ROOT = "http://10.0.21.163/api/v1/";
 
     // Aniruddh
-    public static final String WS_ROOT = "http://10.0.21.122/api/v1/";
-    public static final String WS_ROOT_V2 = "http://10.0.21.122/api/v2/";
+//    public static final String WS_ROOT = "http://10.0.21.122/api/v1/";
+//    public static final String WS_ROOT_V2 = "http://10.0.21.122/api/v2/";
 
     // Hardik
 //    public static final String WS_ROOT = "http://10.0.30.11/api/v1/";
@@ -115,9 +115,12 @@ public class WsConstants {
     public static final String URL_PRIVACY_POLICY = "https://www.rcontacts" +
             ".in/global/privacy-policy";
 
-
     public static final String WS_FACEBOOK_URL = "https://www.facebook.com/RContacts/";
     public static final String WS_TWITTER_URL = "https://twitter.com/RContactsApp";
+    public static final String WS_LINKEDIN_URL = "https://www.linkedin.com/showcase/13388776/";
+    public static final String WS_PINTEREST_URL = "https://in.pinterest.com/RContactsApp/";
+    public static final String WS_YOUTUBE_URL = "https://www.youtube.com/channel/UCeFoqQHdxf-s003EXZ0r7rQ";
+    public static final String WS_GOOGLE_URL = "https://plus.google.com/109948771947024347418";
 
 
     public static final String RESPONSE_STATUS_TRUE = "true";

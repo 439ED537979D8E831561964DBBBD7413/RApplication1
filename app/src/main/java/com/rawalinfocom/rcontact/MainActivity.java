@@ -419,7 +419,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 break;
 
             case R.id.nav_ll_relation:
-//                startActivityIntent(MainActivity.this, RelationRecommendationActivity.class, null);
+                startActivityIntent(MainActivity.this, RelationRecommendationActivity.class, null);
                 break;
         }
 
@@ -1230,7 +1230,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         TextView nav_txt_about = navigationView.findViewById(R.id.nav_txt_about);
         TextView nav_txt_export = navigationView.findViewById(R.id.nav_txt_export);
         TextView nav_txt_feedback = navigationView.findViewById(R.id.nav_txt_feedback);
-        ImageView nav_img_relation =  navigationView.findViewById(R.id.nav_img_relation);
+        ImageView nav_img_relation = navigationView.findViewById(R.id.nav_img_relation);
 
         LinearLayout nav_ll_account = navigationView.findViewById(R.id.nav_ll_account);
         LinearLayout nav_ll_timeline = navigationView.findViewById(R.id.nav_ll_timeline);
@@ -1511,14 +1511,18 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                         MobileNumber mobileNumber = new MobileNumber();
                         mobileNumber.setMnmRecordIndexId(arrayListPhoneNumber.get(j).getPhoneId());
 
-                        if (arrayListPBPhoneNumber.size() > 0)
-                            if (arrayListPBPhoneNumber.contains("+" + arrayListPhoneNumber.get(j).getOriginalNumber())) {
-                                mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j).getOriginalNumber());
-                            } else {
-                                mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j).getPhoneNumber());
-                            }
-                        else
-                            mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j).getPhoneNumber());
+                        if (String.valueOf(arrayListPhoneNumber.get(i).getPhonePublic()).equalsIgnoreCase("3")) {
+                            mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(i).getPhoneNumber());
+                        } else {
+                            if (arrayListPBPhoneNumber.size() > 0)
+                                if (arrayListPBPhoneNumber.contains("+" + arrayListPhoneNumber.get(i).getOriginalNumber())) {
+                                    mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(i).getOriginalNumber());
+                                } else {
+                                    mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(i).getPhoneNumber());
+                                }
+                            else
+                                mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(i).getPhoneNumber());
+                        }
 
                         mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(j).getPhoneType());
                         mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber.get(j)
