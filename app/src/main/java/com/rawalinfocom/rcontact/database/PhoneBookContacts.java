@@ -857,14 +857,18 @@ public class PhoneBookContacts {
     public void saveRawIdsToPref() {
         Set<String> arrayListNewContactId = new HashSet<>();
         Cursor contactNameCursor = getAllContactRawId();
-        while (contactNameCursor.moveToNext()) {
-            arrayListNewContactId.add(contactNameCursor.getString(contactNameCursor
-                    .getColumnIndex(ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID)));
+        if(contactNameCursor != null && contactNameCursor.getCount()>0){
+            while (contactNameCursor.moveToNext()) {
+                arrayListNewContactId.add(contactNameCursor.getString(contactNameCursor
+                        .getColumnIndex(ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID)));
+            }
+            contactNameCursor.close();
+            if(arrayListNewContactId != null && arrayListNewContactId.size()>0){
+                ArrayList<String> firstTimeList = new ArrayList<>(arrayListNewContactId);
+                Utils.setArrayListPreference(context, AppConstants.PREF_CONTACT_ID_SET,
+                        firstTimeList);
+            }
         }
-        contactNameCursor.close();
-        ArrayList<String> firstTimeList = new ArrayList<>(arrayListNewContactId);
-        Utils.setArrayListPreference(context, AppConstants.PREF_CONTACT_ID_SET,
-                firstTimeList);
     }
 
     public ArrayList<ContactPackage> getContactStorageAccounts() {

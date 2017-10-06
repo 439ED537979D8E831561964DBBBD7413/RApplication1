@@ -49,7 +49,7 @@ public class TableEmailMaster {
             " " + COLUMN_EM_ID + " integer NOT NULL CONSTRAINT rc_email_master_pk PRIMARY KEY," +
             " " + COLUMN_EM_EMAIL_ADDRESS + " text NOT NULL," +
             " " + COLUMN_EM_EMAIL_TYPE + " text," +
-            " " + COLUMN_EM_SOCIAL_TYPE + " text," +
+            /*" " + COLUMN_EM_SOCIAL_TYPE + " text," +*/
             " " + COLUMN_EM_RECORD_INDEX_ID + " text," +
             " " + COLUMN_EM_EMAIL_PRIVACY + " integer DEFAULT 2," +
             " " + COLUMN_EM_IS_VERIFIED + " integer," +

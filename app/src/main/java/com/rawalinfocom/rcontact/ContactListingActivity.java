@@ -411,10 +411,17 @@ public class ContactListingActivity extends BaseActivity implements RippleView
             }
         }
 
-        if (filterType.equals("sms"))
-            phoneBookContactListAdapter.updateList(arrayListNumberUserProfile);
-        else
-            phoneBookContactListAdapter.updateList(arrayListEmailUserProfile);
+        if (filterType.equals("sms")) {
+            if (arrayListNumberUserProfile != null && arrayListNumberUserProfile.size() > 0) {
+                phoneBookContactListAdapter.updateList(arrayListNumberUserProfile);
+
+            }
+        } else {
+            if (arrayListEmailUserProfile != null && arrayListEmailUserProfile.size() > 0) {
+                phoneBookContactListAdapter.updateList(arrayListEmailUserProfile);
+
+            }
+        }
     }
 
     @Override

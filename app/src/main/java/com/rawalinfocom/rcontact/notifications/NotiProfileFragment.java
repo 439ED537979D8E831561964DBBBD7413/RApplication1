@@ -603,6 +603,7 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
                                 refreshAllList();
                             }
                             Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+//                            Utils.showSuccessSnackBar(getActivity(),);
                         } else {
                             Toast.makeText(getActivity(), getResources().getString(R.string
                                     .msg_try_later), Toast.LENGTH_SHORT).show();

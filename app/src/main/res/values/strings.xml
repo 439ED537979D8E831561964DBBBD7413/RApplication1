@@ -163,6 +163,7 @@
     <string name="nav_text_events">Events</string>
     <string name="nav_text_rating_history">Rating History</string>
     <string name="nav_text_invite_contact">Invite contacts</string>
+    <string name="nav_text_relation_recommendation">Relation Recommendation</string>
     <string name="nav_text_share_rcontact">Share RContacts App</string>
     <string name="nav_text_settings">Settings</string>
     <string name="nav_text_block_contact">Block Contact List</string>
@@ -464,7 +465,7 @@
     <string name="str_email">Email</string>
     <string name="str_small_cap_email">email</string>
     <string name="str_website">Website</string>
-    <string name="str_address">Address</string>
+    <string name="str_address">Postal Address</string>
     <string name="str_link">Link</string>
     <!--<string name="str_account_name">Account Name</string>-->
     <string name="str_choose_date">Choose date</string>
@@ -708,4 +709,25 @@
     <string name="error_no_social_app_found">Please install Facebook or LinkedIn or Twitter app to share information.</string>
     <string name="org_list">Organizations List</string>
 
+    <!-- Relation -->
+    <string name="toolbar_title">Relation Recommendation</string>
+    <string name="search_here">Search...</string>
+    <string name="str_no_relation_found">No Relation Found</string>
+    <string name="relation_toolbar_title">Existing Relation</string>
+    <string name="add_relation_toolbar_title">Add Relation</string>
+    <string name="str_add_name">Add Name</string>
+    <string name="choose_relation">Choose Relation</string>
+    <string name="choose_name">Choose Name</string>
+    <string name="business_relation">Business Relation</string>
+    <string name="family_relation">Family Relation</string>
+    <string name="friend_relation">Friend Relation</string>
+    <string name="str_friend">Friend</string>
+    <string name="str_back">Back</string>
+    <string name="str_next">Next</string>
+    <string name="str_hint_add_organization">Please add organization to add Business Relation</string>
+    <string name="str_hint_add_family">Please set your gender to add Family Relation</string>
+
+    <!-- Force update -->
+    <string name="youAreNotUpdatedTitle">Update Available</string>
+    <string name="youAreNotUpdatedMessage">A new version of RContacts Application is available. Please update to latest version\s</string>
 </resources>

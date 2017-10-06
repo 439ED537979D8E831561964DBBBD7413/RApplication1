@@ -153,6 +153,9 @@ class WebServicePost {
                             .REQ_THROTTLING_HEADER);
                     String responseString = "{\"message\":\"Retry after " + header + " seconds\"}";
                     response = getMapper().readValue(responseString, responseType);
+                } else if (statusCode == 426) {
+                    String responseString = "{\"message\":\"force update\"}";
+                    response = getMapper().readValue(responseString, responseType);
                 } else if (statusCode == HttpsURLConnection.HTTP_INTERNAL_ERROR) {
 //                    Log.e("Status Code: ", HttpsURLConnection.HTTP_INTERNAL_ERROR + " : Internal " +
 //                            "Server Error : Due to any unhandled error on server");

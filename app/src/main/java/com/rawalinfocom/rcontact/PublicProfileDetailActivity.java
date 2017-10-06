@@ -38,14 +38,15 @@ import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.adapters.OrganizationListAdapter;
-import com.rawalinfocom.rcontact.adapters.ProfileDetailAdapter;
 import com.rawalinfocom.rcontact.adapters.PublicProfileDetailAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
+import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
@@ -191,6 +192,7 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
     public String callNumber = "";
 
     AsyncWebServiceCall asyncGetProfileDetails;
+    private boolean hasNumber;
 
     //<editor-fold desc="Override Methods">
 
@@ -286,6 +288,28 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
             }
             //</editor-fold>
 
+            // <editor-fold desc="REQ_PROFILE_PRIVACY_REQUEST">
+            if (serviceType.equalsIgnoreCase(WsConstants.REQ_PROFILE_PRIVACY_REQUEST)) {
+                WsResponseObject editProfileResponse = (WsResponseObject) data;
+
+                Utils.hideProgressDialog();
+
+                if (editProfileResponse != null && StringUtils.equalsIgnoreCase
+                        (editProfileResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+//                    Utils.showSuccessSnackBar(this, relativeRootProfileDetail, editProfileResponse.getMessage());
+                    Toast.makeText(this, editProfileResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                } else {
+                    if (editProfileResponse != null)
+                        Toast.makeText(this, editProfileResponse.getMessage(), Toast.LENGTH_SHORT).show();
+
+//                        Utils.showErrorSnackBar(this, relativeRootProfileDetail, editProfileResponse.getMessage());
+                    else
+                        Toast.makeText(this, getString(R.string.str_request_sending_fail), Toast.LENGTH_SHORT).show();
+
+//                        Utils.showErrorSnackBar(this, relativeRootProfileDetail, getString(R.string.str_request_sending_fail));
+                }
+            }
+            //</editor-fold>
         } else {
             Utils.hideProgressDialog();
             Utils.showErrorSnackBar(this, relativeRootProfileDetail, "" + error
@@ -299,6 +323,10 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
 
     private void getIntentDetails(Intent intent) {
         if (intent != null) {
+
+            if (intent.hasExtra(AppConstants.PREF_USER_NUMBER)) {
+                hasNumber = intent.getBooleanExtra(AppConstants.PREF_USER_NUMBER, false);
+            }
 
             if (intent.hasExtra(AppConstants.EXTRA_PM_ID)) {
                 pmId = intent.getStringExtra(AppConstants.EXTRA_PM_ID);
@@ -446,7 +474,7 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                 @Override
                 public void onClick(View view) {
                     if (StringUtils.length(profileDetail.getPbProfilePhoto()) > 0) {
-                    zoomImageFromThumb(imageProfile, profileDetail.getPbProfilePhoto());
+                        zoomImageFromThumb(imageProfile, profileDetail.getPbProfilePhoto());
                     }
                 }
             });
@@ -538,6 +566,11 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                 linearPhone.setVisibility(View.VISIBLE);
                 phoneDetailAdapter = new PublicProfileDetailAdapter(this,
                         tempPhoneNumber, AppConstants.PHONE_NUMBER, pmId);
+                if (hasNumber) {
+                    phoneDetailAdapter.setShowNumber(true);
+                } else {
+                    phoneDetailAdapter.setShowNumber(false);
+                }
                 recyclerViewContactNumber.setAdapter(phoneDetailAdapter);
             } else {
                 linearPhone.setVisibility(View.GONE);
@@ -550,7 +583,7 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
             ArrayList<ProfileDataOperationEmail> arrayListEmail = new ArrayList<>();
             ArrayList<String> arrayListCloudEmail = new ArrayList<>();
             if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEmailId
-                                ())) {
+                    ())) {
                 arrayListEmail.addAll(profileDetail.getPbEmailId());
 //                for (int i = 0; i < arrayListEmail.size(); i++) {
 //                    arrayListCloudEmail.add(arrayListEmail.get(i).getEmEmailId());
@@ -562,7 +595,7 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                 tempEmail.addAll(arrayListEmail);
 //                tempEmail.addAll(arrayListCloudEmail);
                 linearEmail.setVisibility(View.VISIBLE);
-               PublicProfileDetailAdapter emailDetailAdapter = new PublicProfileDetailAdapter(this, tempEmail,
+                PublicProfileDetailAdapter emailDetailAdapter = new PublicProfileDetailAdapter(this, tempEmail,
                         AppConstants.EMAIL, pmId);
                 recyclerViewEmail.setAdapter(emailDetailAdapter);
             } else {
@@ -584,7 +617,7 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                 tempWebsite.addAll(arrayListWebsite);
 
                 linearWebsite.setVisibility(View.VISIBLE);
-               PublicProfileDetailAdapter websiteDetailAdapter = new PublicProfileDetailAdapter(this,
+                PublicProfileDetailAdapter websiteDetailAdapter = new PublicProfileDetailAdapter(this,
                         tempWebsite, AppConstants.WEBSITE, pmId);
                 recyclerViewWebsite.setAdapter(websiteDetailAdapter);
             } else {
@@ -605,8 +638,8 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                 ArrayList<Object> tempAddress = new ArrayList<>();
                 tempAddress.addAll(arrayListAddress);
                 linearAddress.setVisibility(View.VISIBLE);
-               PublicProfileDetailAdapter addressDetailAdapter = new PublicProfileDetailAdapter(this,
-                        tempAddress, AppConstants.ADDRESS,pmId);
+                PublicProfileDetailAdapter addressDetailAdapter = new PublicProfileDetailAdapter(this,
+                        tempAddress, AppConstants.ADDRESS, pmId);
                 recyclerViewAddress.setAdapter(addressDetailAdapter);
             } else {
                 linearAddress.setVisibility(View.GONE);
@@ -626,7 +659,7 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                 ArrayList<Object> tempImAccount = new ArrayList<>();
                 tempImAccount.addAll(arrayListImAccount);
                 linearSocialContact.setVisibility(View.VISIBLE);
-               PublicProfileDetailAdapter imAccountDetailAdapter = new PublicProfileDetailAdapter(this,
+                PublicProfileDetailAdapter imAccountDetailAdapter = new PublicProfileDetailAdapter(this,
                         tempImAccount, AppConstants.IM_ACCOUNT, pmId);
                 recyclerViewSocialContact.setAdapter(imAccountDetailAdapter);
             } else {
@@ -655,7 +688,7 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                 ArrayList<Object> tempEvent = new ArrayList<>();
                 tempEvent.addAll(arrayListEvent);
                 linearEvent.setVisibility(View.VISIBLE);
-               PublicProfileDetailAdapter eventDetailAdapter = new PublicProfileDetailAdapter(this, tempEvent,
+                PublicProfileDetailAdapter eventDetailAdapter = new PublicProfileDetailAdapter(this, tempEvent,
                         AppConstants.EVENT, pmId);
                 recyclerViewEvent.setAdapter(eventDetailAdapter);
             } else {
@@ -778,7 +811,7 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                         StringUtils.startsWithIgnoreCase(((PublicProfileDetailAdapter
                                 .ProfileDetailViewHolder) viewHolder).textMain.getText()
                                 .toString(), "" +
-                                "XX") ) {
+                                "XX")) {
                     return 0;
                 }
                 return super.getSwipeDirs(recyclerView, viewHolder);

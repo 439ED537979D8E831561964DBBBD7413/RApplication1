@@ -1,0 +1,52 @@
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:background="@color/colorPrimary"
+    android:elevation="4dp"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+    app:contentInsetLeft="0dp"
+    app:contentInsetStart="0dp"
+    tools:ignore="UnusedAttribute">
+
+    <RelativeLayout
+        android:id="@+id/relative_action_back"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true">
+
+        <ImageView
+            android:id="@+id/image_action_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/description_action_back"
+            android:padding="@dimen/activity_half_horizontal_margin"
+            android:src="@drawable/ic_action_back" />
+
+        <TextView
+            android:id="@+id/text_toolbar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/image_action_back"
+            android:layout_toStartOf="@id/linear_action_right"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:textColor="@color/colorWhite"
+            tools:text="@string/str_title" />
+
+        <ImageView
+            android:id="@+id/image_add_new"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="@string/str_content_description"
+            android:padding="@dimen/padding_10dp"
+            android:src="@drawable/ico_add_svg" />
+
+    </RelativeLayout>
+
+</android.support.v7.widget.Toolbar>
