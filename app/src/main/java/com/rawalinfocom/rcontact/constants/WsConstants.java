@@ -122,7 +122,6 @@ public class WsConstants {
     public static final String WS_YOUTUBE_URL = "https://www.youtube.com/channel/UCeFoqQHdxf-s003EXZ0r7rQ";
     public static final String WS_GOOGLE_URL = "https://plus.google.com/109948771947024347418";
 
-
     public static final String RESPONSE_STATUS_TRUE = "true";
 
     public static final String REQ_GOOGLE_TEXT_BY_LOCATIONS = "https://maps.googleapis" +

@@ -288,6 +288,7 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
             }
             //</editor-fold>
 
+            // <editor-fold desc="REQ_PROFILE_PRIVACY_REQUEST">
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_PROFILE_PRIVACY_REQUEST)) {
                 WsResponseObject editProfileResponse = (WsResponseObject) data;
 
@@ -295,15 +296,20 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
 
                 if (editProfileResponse != null && StringUtils.equalsIgnoreCase
                         (editProfileResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
-                    Utils.showSuccessSnackBar(this, relativeRootProfileDetail, editProfileResponse.getMessage());
+//                    Utils.showSuccessSnackBar(this, relativeRootProfileDetail, editProfileResponse.getMessage());
+                    Toast.makeText(this, editProfileResponse.getMessage(), Toast.LENGTH_SHORT).show();
                 } else {
                     if (editProfileResponse != null)
-                        Utils.showErrorSnackBar(this, relativeRootProfileDetail, editProfileResponse.getMessage());
+                        Toast.makeText(this, editProfileResponse.getMessage(), Toast.LENGTH_SHORT).show();
+
+//                        Utils.showErrorSnackBar(this, relativeRootProfileDetail, editProfileResponse.getMessage());
                     else
-                        Utils.showErrorSnackBar(this, relativeRootProfileDetail, getString(R.string.str_request_sending_fail));
+                        Toast.makeText(this, getString(R.string.str_request_sending_fail), Toast.LENGTH_SHORT).show();
+
+//                        Utils.showErrorSnackBar(this, relativeRootProfileDetail, getString(R.string.str_request_sending_fail));
                 }
             }
-
+            //</editor-fold>
         } else {
             Utils.hideProgressDialog();
             Utils.showErrorSnackBar(this, relativeRootProfileDetail, "" + error

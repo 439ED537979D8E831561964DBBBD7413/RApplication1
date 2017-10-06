@@ -66,7 +66,8 @@
                 app:rv_alpha="@integer/alpha_ripple"
                 app:rv_centered="true"
                 app:rv_color="@color/colorWhite"
-                app:rv_rippleDuration="@integer/duration_ripple">
+                app:rv_rippleDuration="@integer/duration_ripple"
+                android:visibility="gone">
 
                 <ImageView
                     android:id="@+id/image_relation"
