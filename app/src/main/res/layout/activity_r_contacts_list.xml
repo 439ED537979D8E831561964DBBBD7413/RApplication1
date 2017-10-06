@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relative_root_r_contacts"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/main_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentTop="true"
+        android:background="@color/colorPrimary"
+        android:elevation="4dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/relative_action_back"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:layout_marginEnd="@dimen/margin_8dp"
+            android:layout_marginStart="@dimen/margin_8dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/back_rounded_corner">
+
+            <ImageView
+                android:id="@+id/image_action_back"
+                android:layout_width="48dp"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/description_action_back"
+                android:src="@drawable/back_vector" />
+
+            <EditText
+                android:id="@+id/input_search"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@null"
+                android:ellipsize="end"
+                android:gravity="center|start"
+                android:hint="@string/choose_name"
+                android:inputType="text"
+                android:textAppearance="?android:textAppearanceSmall"
+                android:textColor="@color/darkGray"
+                android:textColorHint="@color/darkGray" />
+
+            <ImageView
+                android:id="@+id/imgClose"
+                android:layout_width="48dp"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/close_vector" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <com.rawalinfocom.rcontact.helper.alphabetsIndexFastScrollRecycler.IndexFastScrollRecyclerView
+        android:id="@+id/recycler_view_contact_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/main_toolbar"
+        android:layout_marginTop="@dimen/margin_5dp"
+        tools:listitem="@layout/list_item_all_contacts" />
+
+</RelativeLayout>

@@ -14,7 +14,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     // All Static variables
     // Database Version
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;  //update to 4 for production/staging // For QA 5
 
     // Database Name
     public static final String DATABASE_NAME = "RContact.db";
@@ -26,13 +26,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-//        System.out.println("RContact db create --> ");
+        System.out.println("RContact db create --> ");
 
         // creating required tables
         db.execSQL(TableCountryMaster.CREATE_TABLE_RC_COUNTRY_MASTER);
         db.execSQL(TableOtpLogDetails.CREATE_TABLE_OTP_LOG_DETAILS);
         db.execSQL(TableProfileMaster.CREATE_TABLE_RC_PROFILE_MASTER);
-        db.execSQL(TableEmailMaster.CREATE_TABLE_RC_EMAIL_MASTER);
+        db.execSQL(TableEmailMaster.CREATE_TABLE_RC_EMAIL_MASTER_1);
+//        db.execSQL(TableEmailMaster.CREATE_TABLE_RC_EMAIL_MASTER);
         db.execSQL(TableMobileMaster.CREATE_TABLE_RC_MOBILE_NUMBER_MASTER);
         db.execSQL(TableProfileMobileMapping.CREATE_TABLE_PB_PROFILE_MOBILE_MAPPING);
         db.execSQL(TableProfileEmailMapping.CREATE_TABLE_PB_PROFILE_EMAIL_MAPPING);
@@ -50,27 +51,20 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL(TableRCContactRequest.CREATE_TABLE_RC_CONTACT_REQUEST);
         db.execSQL(TableNotificationStateMaster.CREATE_TABLE_NOTIFICATION_STATE_MASTER);
         db.execSQL(TableSpamDetailMaster.CREATE_TABLE_SPAM_DETAIL_MASTER);
+
+        db.execSQL("ALTER TABLE " + TableEmailMaster.TABLE_RC_EMAIL_MASTER_TEMP
+                + " RENAME TO " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + ";");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
+        System.out.println("RContact db upgrade --> ");
+
         // on upgrade drop older tables
-        /*if(newVersion > oldVersion){
-
-            db.execSQL("ALTER TABLE " + TableRCContactRequest.TABLE_RC_CONTACT_ACCESS_REQUEST +
-                    " ADD COLUMN " +  TableRCContactRequest.COLUMN_CAR_IMG  + " text ") ;
-
-            db.execSQL("ALTER TABLE " + TableRCContactRequest.TABLE_RC_CONTACT_ACCESS_REQUEST +
-                    " ADD COLUMN " +  TableRCContactRequest.COLUMN_CAR_PROFILE_DETAILS  + " text
-                    ") ;
-
-            // create new tables
-            onCreate(db);
-        }*/
-
         switch (oldVersion) {
             case 1:
+                System.out.println("RContact db upgrade case 1 --> ");
                 // For version 2
                 db.execSQL("ALTER TABLE " + TableRCContactRequest.TABLE_RC_CONTACT_ACCESS_REQUEST +
                         " ADD COLUMN " + TableRCContactRequest.COLUMN_CAR_IMG + " text ");
@@ -79,24 +73,26 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                         + " ADD COLUMN " + TableRCContactRequest.COLUMN_CAR_PROFILE_DETAILS + " " +
                         "text ");
             case 2:
+                System.out.println("RContact db upgrade case 2 --> ");
                 // For version 3
                 db.execSQL("ALTER TABLE " + TableProfileMaster.TABLE_RC_PROFILE_MASTER + " ADD "
                         + "COLUMN " + TableProfileMaster.COLUMN_PM_BADGE + " text ");
             case 3:
+                System.out.println("RContact db upgrade case 3 r-contact --> ");
                 // For version 4
-                db.execSQL("ALTER TABLE " + TableRCNotificationUpdates
-                        .TABLE_RC_NOTIFICATION_UPDATES + " ADD "
+                db.execSQL("ALTER TABLE " + TableRCNotificationUpdates.TABLE_RC_NOTIFICATION_UPDATES + " ADD "
                         + "COLUMN " + TableRCNotificationUpdates.COLUMN_NU_TYPE + " text ");
-                db.execSQL("ALTER TABLE " + TableRCNotificationUpdates
-                        .TABLE_RC_NOTIFICATION_UPDATES + " ADD "
+                db.execSQL("ALTER TABLE " + TableRCNotificationUpdates.TABLE_RC_NOTIFICATION_UPDATES + " ADD "
                         + "COLUMN " + TableRCNotificationUpdates.COLUMN_NU_URL + " text ");
 
+                System.out.println("RContact db upgrade case 3 organization --> ");
                 // For Organization
                 db.execSQL("ALTER TABLE " + TableOrganizationMaster.TABLE_RC_ORGANIZATION_MASTER + " ADD "
                         + "COLUMN " + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_FROM_DATE + " text ");
                 db.execSQL("ALTER TABLE " + TableOrganizationMaster.TABLE_RC_ORGANIZATION_MASTER + " ADD "
                         + "COLUMN " + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_TO_DATE + " text ");
 
+                System.out.println("RContact db upgrade case 3 im account --> ");
                 // For IM Account
                 db.execSQL("ALTER TABLE " + TableImMaster.TABLE_RC_IM_MASTER + " ADD "
                         + "COLUMN " + TableImMaster.COLUMN_IM_FIRST_NAME + " text ");
@@ -105,13 +101,34 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 db.execSQL("ALTER TABLE " + TableImMaster.TABLE_RC_IM_MASTER + " ADD "
                         + "COLUMN " + TableImMaster.COLUMN_IM_PROFILE_IMAGE + " text ");
 
+                /*System.out.println("RContact db upgrade case 3 email --> ");
                 // For Email
-                db.execSQL("ALTER TABLE " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + " ADD "
+                db.execSQL(TableEmailMaster.CREATE_TABLE_RC_EMAIL_MASTER_1);
+                db.execSQL("INSERT INTO " + TableEmailMaster.TABLE_RC_EMAIL_MASTER_TEMP + "(em_id,em_email_address," +
+                        "em_email_type,em_record_index_id,em_email_privacy,em_is_private,em_is_verified,rc_profile_master_pm_id)" +
+                        " SELECT em_id,em_email_address,em_email_type,em_record_index_id,em_email_privacy,em_is_private," +
+                        "em_is_verified,rc_profile_master_pm_id FROM " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + ";");
+                db.execSQL("DROP TABLE IF EXISTS '" + TableEmailMaster.TABLE_RC_EMAIL_MASTER + "'");
+                db.execSQL("ALTER TABLE " + TableEmailMaster.TABLE_RC_EMAIL_MASTER_TEMP
+                        + " RENAME TO " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + ";");*/
+
+            case 4:
+                System.out.println("RContact db upgrade case 4 email --> ");
+                // For version 5
+                db.execSQL(TableEmailMaster.CREATE_TABLE_RC_EMAIL_MASTER_1);
+                db.execSQL("INSERT INTO " + TableEmailMaster.TABLE_RC_EMAIL_MASTER_TEMP + "(em_id,em_email_address," +
+                        "em_email_type,em_record_index_id,em_email_privacy,em_is_private,em_is_verified,rc_profile_master_pm_id)" +
+                        " SELECT em_id,em_email_address,em_email_type,em_record_index_id,em_email_privacy,em_is_private," +
+                        "em_is_verified,rc_profile_master_pm_id FROM " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + ";");
+                db.execSQL("DROP TABLE IF EXISTS '" + TableEmailMaster.TABLE_RC_EMAIL_MASTER + "'");
+                db.execSQL("ALTER TABLE " + TableEmailMaster.TABLE_RC_EMAIL_MASTER_TEMP
+                        + " RENAME TO " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + ";");
+               /* db.execSQL("ALTER TABLE " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + " ADD "
                         + "COLUMN " + TableEmailMaster.COLUMN_EM_SOCIAL_TYPE + " text ");
 
                 // For Country
                 db.execSQL("ALTER TABLE " + TableCountryMaster.TABLE_RC_COUNTRY_MASTER + " ADD "
-                        + "COLUMN " + TableCountryMaster.COLUMN_CM_MIN_DIGITS + " integer ");
+                        + "COLUMN " + TableCountryMaster.COLUMN_CM_MIN_DIGITS + " integer ");*/
             /*case 4:
                 // For version 5
                 db.execSQL("ALTER TABLE " + TableCountryMaster.TABLE_RC_COUNTRY_MASTER + " ADD "
@@ -119,7 +136,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
 
         // create new tables
-        onCreate(db);
+//        onCreate(db);
     }
 
     public void clearAllData() {

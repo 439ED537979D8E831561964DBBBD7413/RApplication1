@@ -426,18 +426,18 @@ public class TableProfileMaster {
         return isUpdated;
     }
 
-    public int getRcpIdCount(int rcpId) {
-        int count = 0;
+    public String getUserGender(int rcpId) {
+        String gender = "";
         SQLiteDatabase db = databaseHandler.getReadableDatabase();
-        Cursor mCount = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_RC_PROFILE_MASTER + " WHERE " +
+        Cursor mCount = db.rawQuery("SELECT " + COLUMN_PM_GENDER + " FROM " + TABLE_RC_PROFILE_MASTER + " WHERE " +
                 COLUMN_PM_RCP_ID + " = " + rcpId, null);
         if (mCount != null) {
             mCount.moveToFirst();
-            count = mCount.getInt(0);
+            gender = mCount.getString(0);
             mCount.close();
         }
         db.close();
-        return count;
+        return gender;
     }
 
     public String getRawIdFromRcpId(int rcpId) {
@@ -509,6 +509,46 @@ public class TableProfileMaster {
 
         // return user profile list
         return arrayListRawId;
+    }
+
+
+    public ArrayList<String> getAllRcpIds() {
+
+        ArrayList<String> arrayListRcpId = new ArrayList<>();
+        SQLiteDatabase db = null;
+        // Select All Query
+
+        try {
+
+            String selectQuery = "SELECT " + COLUMN_PM_RCP_ID + " FROM " + TABLE_RC_PROFILE_MASTER;
+
+            db = databaseHandler.getWritableDatabase();
+            Cursor cursor = db.rawQuery(selectQuery, null);
+
+            // looping through all rows and adding to list
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    do {
+                        UserProfile userProfile = new UserProfile();
+                        userProfile.setPmRcpId(cursor.getString(cursor.getColumnIndex
+                                (COLUMN_PM_RCP_ID)));
+                        arrayListRcpId.add(userProfile.getPmRcpId());
+
+                    } while (cursor.moveToNext());
+                }
+                cursor.close();
+            }
+
+            db.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (db != null) {
+                db.close();
+            }
+        }
+
+        // return user profile list
+        return arrayListRcpId;
     }
 
     public String getNameFromRawId(String rawId) {

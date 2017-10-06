@@ -131,6 +131,41 @@
             android:text="@string/nav_text_rating_history"
             android:textColor="@color/regularFontColor"
             android:textStyle="bold" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/drawer_item_bg"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/nav_ll_relation"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:orientation="horizontal"
+        android:paddingEnd="0dp"
+        android:paddingStart="@dimen/margin_20dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/nav_img_relation"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/margin_5dp"
+            android:gravity="center"
+            android:textColor="@color/regularFontColor"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/nav_txt_relation_recommendation"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/margin_16dp"
+            android:gravity="center|start"
+            android:text="@string/nav_text_relation_recommendation"
+            android:textColor="@color/regularFontColor"
+            android:textStyle="bold" />
 
     </LinearLayout>
 

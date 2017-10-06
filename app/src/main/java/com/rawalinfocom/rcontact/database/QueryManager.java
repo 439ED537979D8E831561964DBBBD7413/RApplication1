@@ -35,9 +35,10 @@ public class QueryManager {
         this.databaseHandler = databaseHandler;
     }
 
-    public ProfileDataOperation getRcProfileDetail(Context context, String rcpId) {
+    public ProfileDataOperation getRcProfileDetail(Context context, String rcpId1) {
 
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        String rcpId = rcpId1;
 
         ProfileDataOperation profileDataOperation = new ProfileDataOperation();
 
@@ -59,29 +60,32 @@ public class QueryManager {
         Cursor cursor = db.rawQuery(profileDetailQuery, null);
 
         // looping through all rows and adding to list
-        if (cursor.moveToFirst()) {
+        if(cursor != null && cursor.getCount() > 0){
+            if (cursor.moveToFirst()) {
 
-            profileDataOperation.setRcpPmId(rcpId);
+                profileDataOperation.setRcpPmId(rcpId);
 //            profileDataOperation.setPbNamePrefix(StringUtils.defaultString(cursor.getString
 //                    (cursor.getColumnIndex(TableProfileMaster.COLUMN_PM_PREFIX))));
-            profileDataOperation.setPbNameFirst(StringUtils.defaultString(cursor.getString(cursor
-                    .getColumnIndex(TableProfileMaster.COLUMN_PM_FIRST_NAME))));
+                profileDataOperation.setPbNameFirst(StringUtils.defaultString(cursor.getString(cursor
+                        .getColumnIndexOrThrow(TableProfileMaster.COLUMN_PM_FIRST_NAME))));
 //            profileDataOperation.setPbNameMiddle(StringUtils.defaultString(cursor.getString
 //                    (cursor.getColumnIndex(TableProfileMaster.COLUMN_PM_MIDDLE_NAME))));
-            profileDataOperation.setPbNameLast(StringUtils.defaultString(cursor.getString(cursor
-                    .getColumnIndex(TableProfileMaster.COLUMN_PM_LAST_NAME))));
-            profileDataOperation.setPbGender(StringUtils.defaultString(cursor.getString(cursor
-                    .getColumnIndex(TableProfileMaster.COLUMN_PM_GENDER))));
-            profileDataOperation.setIsFavourite(StringUtils.defaultString(cursor.getString(cursor
-                    .getColumnIndex(TableProfileMaster.COLUMN_PM_IS_FAVOURITE))));
-            profileDataOperation.setProfileRating(StringUtils.defaultString(cursor.getString
-                    (cursor.getColumnIndex(TableProfileMaster.COLUMN_PM_PROFILE_RATING)), "0"));
-            profileDataOperation.setTotalProfileRateUser(StringUtils.defaultString(cursor
-                    .getString(cursor.getColumnIndex(TableProfileMaster
-                            .COLUMN_PM_PROFILE_RATE_USER)), "0"));
+                profileDataOperation.setPbNameLast(StringUtils.defaultString(cursor.getString(cursor
+                        .getColumnIndexOrThrow(TableProfileMaster.COLUMN_PM_LAST_NAME))));
+                profileDataOperation.setPbGender(StringUtils.defaultString(cursor.getString(cursor
+                        .getColumnIndexOrThrow(TableProfileMaster.COLUMN_PM_GENDER))));
+                profileDataOperation.setIsFavourite(StringUtils.defaultString(cursor.getString(cursor
+                        .getColumnIndexOrThrow(TableProfileMaster.COLUMN_PM_IS_FAVOURITE))));
+                profileDataOperation.setProfileRating(StringUtils.defaultString(cursor.getString
+                        (cursor.getColumnIndexOrThrow(TableProfileMaster.COLUMN_PM_PROFILE_RATING)), "0"));
+                profileDataOperation.setTotalProfileRateUser(StringUtils.defaultString(cursor
+                        .getString(cursor.getColumnIndexOrThrow(TableProfileMaster
+                                .COLUMN_PM_PROFILE_RATE_USER)), "0"));
 
-            cursor.close();
+                cursor.close();
+            }
         }
+
         //</editor-fold>
 
         //<editor-fold desc="Phone Number">
@@ -99,32 +103,41 @@ public class QueryManager {
         ArrayList<ProfileDataOperationPhoneNumber> arrayListPhoneNumber = new ArrayList<>();
 
         // looping through all rows and adding to list
-        if (mobileNumberCursor.moveToFirst()) {
-            do {
-                ProfileDataOperationPhoneNumber phoneNumber = new ProfileDataOperationPhoneNumber();
-                phoneNumber.setPhoneNumber(StringUtils.defaultString(mobileNumberCursor.getString
-                        (mobileNumberCursor.getColumnIndex(TableMobileMaster
-                                .COLUMN_MNM_MOBILE_NUMBER))));
-                phoneNumber.setPhoneType(StringUtils.defaultString(mobileNumberCursor.getString
-                        (mobileNumberCursor.getColumnIndex(TableMobileMaster
-                                .COLUMN_MNM_NUMBER_TYPE))));
-                phoneNumber.setPbRcpType(Integer.parseInt(mobileNumberCursor.getString
-                        (mobileNumberCursor.getColumnIndex(TableMobileMaster
-                                .COLUMN_MNM_IS_PRIMARY))));
-                phoneNumber.setPhonePublic(Integer.parseInt(StringUtils.defaultString
-                        (mobileNumberCursor.getString(mobileNumberCursor.getColumnIndex
-                                (TableMobileMaster.COLUMN_MNM_NUMBER_PRIVACY)), "0")));
-                phoneNumber.setIsPrivate(Integer.parseInt(StringUtils.defaultString
-                        (mobileNumberCursor.getString(mobileNumberCursor.getColumnIndex
-                                (TableMobileMaster.COLUMN_MNM_IS_PRIVATE)), "0")));
-                phoneNumber.setPhoneId(StringUtils.defaultString(mobileNumberCursor.getString
-                        (mobileNumberCursor.getColumnIndex(TableMobileMaster
-                                .COLUMN_MNM_RECORD_INDEX_ID))));
-                arrayListPhoneNumber.add(phoneNumber);
-            } while (mobileNumberCursor.moveToNext());
-            mobileNumberCursor.close();
+        if (mobileNumberCursor != null && mobileNumberCursor.getCount() > 0) {
+            if (mobileNumberCursor.moveToFirst()) {
+                do {
+                    ProfileDataOperationPhoneNumber phoneNumber = new ProfileDataOperationPhoneNumber();
+                    phoneNumber.setPhoneNumber(StringUtils.defaultString(mobileNumberCursor.getString
+                            (mobileNumberCursor.getColumnIndexOrThrow(TableMobileMaster
+                                    .COLUMN_MNM_MOBILE_NUMBER))));
+                    phoneNumber.setPhoneType(StringUtils.defaultString(mobileNumberCursor.getString
+                            (mobileNumberCursor.getColumnIndexOrThrow(TableMobileMaster
+                                    .COLUMN_MNM_NUMBER_TYPE))));
+                    if (mobileNumberCursor.getString
+                            (mobileNumberCursor.getColumnIndexOrThrow(TableMobileMaster
+                                    .COLUMN_MNM_IS_PRIMARY)) != null) {
+                        phoneNumber.setPbRcpType(Integer.parseInt(mobileNumberCursor.getString
+                                (mobileNumberCursor.getColumnIndexOrThrow(TableMobileMaster
+                                        .COLUMN_MNM_IS_PRIMARY))));
+                    } else {
+                        phoneNumber.setPbRcpType(2);
+                    }
+
+                    phoneNumber.setPhonePublic(Integer.parseInt(StringUtils.defaultString
+                            (mobileNumberCursor.getString(mobileNumberCursor.getColumnIndexOrThrow
+                                    (TableMobileMaster.COLUMN_MNM_NUMBER_PRIVACY)), "0")));
+                    phoneNumber.setIsPrivate(Integer.parseInt(StringUtils.defaultString
+                            (mobileNumberCursor.getString(mobileNumberCursor.getColumnIndexOrThrow
+                                    (TableMobileMaster.COLUMN_MNM_IS_PRIVATE)), "0")));
+                    phoneNumber.setPhoneId(StringUtils.defaultString(mobileNumberCursor.getString
+                            (mobileNumberCursor.getColumnIndexOrThrow(TableMobileMaster
+                                    .COLUMN_MNM_RECORD_INDEX_ID))));
+                    arrayListPhoneNumber.add(phoneNumber);
+                } while (mobileNumberCursor.moveToNext());
+                mobileNumberCursor.close();
+            }
+            profileDataOperation.setPbPhoneNumber(arrayListPhoneNumber);
         }
-        profileDataOperation.setPbPhoneNumber(arrayListPhoneNumber);
         //</editor-fold>
 
         //<editor-fold desc="EmailId">
@@ -142,31 +155,34 @@ public class QueryManager {
         ArrayList<ProfileDataOperationEmail> arrayListEmail = new ArrayList<>();
 
         // looping through all rows and adding to list
-        if (emailIdCursor.moveToFirst()) {
-            do {
-                ProfileDataOperationEmail email = new ProfileDataOperationEmail();
-                email.setEmEmailId(StringUtils.defaultString(emailIdCursor.getString
-                        (emailIdCursor.getColumnIndex(TableEmailMaster.COLUMN_EM_EMAIL_ADDRESS))));
-                email.setEmType(StringUtils.defaultString(emailIdCursor.getString(emailIdCursor
-                        .getColumnIndex(TableEmailMaster.COLUMN_EM_EMAIL_TYPE))));
-                email.setEmSocialType(StringUtils.defaultString(emailIdCursor.getString(emailIdCursor
-                        .getColumnIndex(TableEmailMaster.COLUMN_EM_SOCIAL_TYPE))));
-                email.setEmPublic(Integer.parseInt(StringUtils.defaultString(emailIdCursor
-                        .getString(emailIdCursor.getColumnIndex(TableEmailMaster
-                                .COLUMN_EM_EMAIL_PRIVACY)), "0")));
-                email.setEmIsPrivate(Integer.parseInt(StringUtils.defaultString(emailIdCursor
-                        .getString(emailIdCursor.getColumnIndex(TableEmailMaster
-                                .COLUMN_EM_IS_PRIVATE)), "0")));
-                email.setEmId(StringUtils.defaultString(emailIdCursor.getString(emailIdCursor
-                        .getColumnIndex(TableEmailMaster.COLUMN_EM_RECORD_INDEX_ID))));
-                email.setEmRcpType(Integer.parseInt(emailIdCursor.getString
-                        (emailIdCursor.getColumnIndex(TableEmailMaster
-                                .COLUMN_EM_IS_VERIFIED))));
-                arrayListEmail.add(email);
-            } while (emailIdCursor.moveToNext());
-            emailIdCursor.close();
+        if (emailIdCursor != null && emailIdCursor.getCount() > 0) {
+            if (emailIdCursor.moveToFirst()) {
+                do {
+                    ProfileDataOperationEmail email = new ProfileDataOperationEmail();
+                    email.setEmEmailId(StringUtils.defaultString(emailIdCursor.getString
+                            (emailIdCursor.getColumnIndexOrThrow(TableEmailMaster.COLUMN_EM_EMAIL_ADDRESS))));
+                    email.setEmType(StringUtils.defaultString(emailIdCursor.getString(emailIdCursor
+                            .getColumnIndexOrThrow(TableEmailMaster.COLUMN_EM_EMAIL_TYPE))));
+                    email.setEmSocialType(StringUtils.defaultString(emailIdCursor.getString(emailIdCursor
+                            .getColumnIndexOrThrow(TableEmailMaster.COLUMN_EM_SOCIAL_TYPE))));
+                    email.setEmPublic(Integer.parseInt(StringUtils.defaultString(emailIdCursor
+                            .getString(emailIdCursor.getColumnIndexOrThrow(TableEmailMaster
+                                    .COLUMN_EM_EMAIL_PRIVACY)), "0")));
+                    email.setEmIsPrivate(Integer.parseInt(StringUtils.defaultString(emailIdCursor
+                            .getString(emailIdCursor.getColumnIndexOrThrow(TableEmailMaster
+                                    .COLUMN_EM_IS_PRIVATE)), "0")));
+                    email.setEmId(StringUtils.defaultString(emailIdCursor.getString(emailIdCursor
+                            .getColumnIndexOrThrow(TableEmailMaster.COLUMN_EM_RECORD_INDEX_ID))));
+                    email.setEmRcpType(Integer.parseInt(emailIdCursor.getString
+                            (emailIdCursor.getColumnIndexOrThrow(TableEmailMaster
+                                    .COLUMN_EM_IS_VERIFIED))));
+                    arrayListEmail.add(email);
+                } while (emailIdCursor.moveToNext());
+                emailIdCursor.close();
+            }
+            profileDataOperation.setPbEmailId(arrayListEmail);
         }
-        profileDataOperation.setPbEmailId(arrayListEmail);
+
         //</editor-fold>
 
         // <editor-fold desc="Organization">
@@ -184,29 +200,32 @@ public class QueryManager {
         ArrayList<ProfileDataOperationOrganization> arrayListOrganization = new ArrayList<>();
 
         // looping through all rows and adding to list
-        if (organizationCursor.moveToFirst()) {
-            do {
-                ProfileDataOperationOrganization organization = new
-                        ProfileDataOperationOrganization();
-                organization.setOrgName(StringUtils.defaultString(organizationCursor.getString
-                        (organizationCursor.getColumnIndex(TableOrganizationMaster
-                                .COLUMN_OM_ORGANIZATION_COMPANY))));
-                organization.setOrgJobTitle(StringUtils.defaultString(organizationCursor
-                        .getString(organizationCursor.getColumnIndex(TableOrganizationMaster
-                                .COLUMN_OM_ORGANIZATION_DESIGNATION))));
-                organization.setOrgFromDate(StringUtils.defaultString(organizationCursor.getString
-                        (organizationCursor.getColumnIndex(TableOrganizationMaster
-                                .COLUMN_OM_ORGANIZATION_FROM_DATE))));
-                organization.setOrgToDate(StringUtils.defaultString(organizationCursor.getString
-                        (organizationCursor.getColumnIndex(TableOrganizationMaster
-                                .COLUMN_OM_ORGANIZATION_TO_DATE))));
-                organization.setOrgRcpType(String.valueOf(IntegerConstants
-                        .RCP_TYPE_CLOUD_PHONE_BOOK));
-                arrayListOrganization.add(organization);
-            } while (organizationCursor.moveToNext());
-            organizationCursor.close();
+        if (organizationCursor != null && organizationCursor.getCount() > 0) {
+            if (organizationCursor.moveToFirst()) {
+                do {
+                    ProfileDataOperationOrganization organization = new
+                            ProfileDataOperationOrganization();
+                    organization.setOrgName(StringUtils.defaultString(organizationCursor.getString
+                            (organizationCursor.getColumnIndexOrThrow(TableOrganizationMaster
+                                    .COLUMN_OM_ORGANIZATION_COMPANY))));
+                    organization.setOrgJobTitle(StringUtils.defaultString(organizationCursor
+                            .getString(organizationCursor.getColumnIndexOrThrow(TableOrganizationMaster
+                                    .COLUMN_OM_ORGANIZATION_DESIGNATION))));
+                    organization.setOrgFromDate(StringUtils.defaultString(organizationCursor.getString
+                            (organizationCursor.getColumnIndexOrThrow(TableOrganizationMaster
+                                    .COLUMN_OM_ORGANIZATION_FROM_DATE))));
+                    organization.setOrgToDate(StringUtils.defaultString(organizationCursor.getString
+                            (organizationCursor.getColumnIndexOrThrow(TableOrganizationMaster
+                                    .COLUMN_OM_ORGANIZATION_TO_DATE))));
+                    organization.setOrgRcpType(String.valueOf(IntegerConstants
+                            .RCP_TYPE_CLOUD_PHONE_BOOK));
+                    arrayListOrganization.add(organization);
+                } while (organizationCursor.moveToNext());
+                organizationCursor.close();
+            }
+            profileDataOperation.setPbOrganization(arrayListOrganization);
         }
-        profileDataOperation.setPbOrganization(arrayListOrganization);
+
         //</editor-fold>
 
         // <editor-fold desc="Event">
@@ -223,30 +242,33 @@ public class QueryManager {
         ArrayList<ProfileDataOperationEvent> arrayListEvent = new ArrayList<>();
 
         // looping through all rows and adding to list
-        if (eventCursor.moveToFirst()) {
-            do {
-                ProfileDataOperationEvent event = new ProfileDataOperationEvent();
-                event.setEventDateTime(StringUtils.defaultString(eventCursor.getString(eventCursor
-                        .getColumnIndex(TableEventMaster.COLUMN_EVM_START_DATE))));
-                event.setEventType(StringUtils.defaultString(eventCursor.getString(eventCursor
-                        .getColumnIndex(TableEventMaster.COLUMN_EVM_EVENT_TYPE))));
-                event.setEventId(StringUtils.defaultString(eventCursor.getString(eventCursor
-                        .getColumnIndex(TableEventMaster.COLUMN_EVM_RECORD_INDEX_ID))));
-                event.setEventPublic(Integer.parseInt(StringUtils.defaultString(eventCursor
-                        .getString(eventCursor.getColumnIndex(TableEventMaster
-                                .COLUMN_EVM_EVENT_PRIVACY)), "0")));
-                event.setIsPrivate(Integer.parseInt(StringUtils.defaultString(eventCursor
-                        .getString(eventCursor.getColumnIndex(TableEventMaster
-                                .COLUMN_EVM_IS_PRIVATE)), "0")));
-                event.setIsYearHidden(Integer.parseInt(StringUtils.defaultString(eventCursor
-                        .getString(eventCursor.getColumnIndex(TableEventMaster
-                                .COLUMN_EVM_IS_YEAR_HIDDEN)), "0")));
-                event.setEventRcType(String.valueOf(IntegerConstants.RCP_TYPE_CLOUD_PHONE_BOOK));
-                arrayListEvent.add(event);
-            } while (eventCursor.moveToNext());
-            eventCursor.close();
+        if (eventCursor != null && eventCursor.getCount() > 0) {
+            if (eventCursor.moveToFirst()) {
+                do {
+                    ProfileDataOperationEvent event = new ProfileDataOperationEvent();
+                    event.setEventDateTime(StringUtils.defaultString(eventCursor.getString(eventCursor
+                            .getColumnIndexOrThrow(TableEventMaster.COLUMN_EVM_START_DATE))));
+                    event.setEventType(StringUtils.defaultString(eventCursor.getString(eventCursor
+                            .getColumnIndexOrThrow(TableEventMaster.COLUMN_EVM_EVENT_TYPE))));
+                    event.setEventId(StringUtils.defaultString(eventCursor.getString(eventCursor
+                            .getColumnIndexOrThrow(TableEventMaster.COLUMN_EVM_RECORD_INDEX_ID))));
+                    event.setEventPublic(Integer.parseInt(StringUtils.defaultString(eventCursor
+                            .getString(eventCursor.getColumnIndexOrThrow(TableEventMaster
+                                    .COLUMN_EVM_EVENT_PRIVACY)), "0")));
+                    event.setIsPrivate(Integer.parseInt(StringUtils.defaultString(eventCursor
+                            .getString(eventCursor.getColumnIndexOrThrow(TableEventMaster
+                                    .COLUMN_EVM_IS_PRIVATE)), "0")));
+                    event.setIsYearHidden(Integer.parseInt(StringUtils.defaultString(eventCursor
+                            .getString(eventCursor.getColumnIndexOrThrow(TableEventMaster
+                                    .COLUMN_EVM_IS_YEAR_HIDDEN)), "0")));
+                    event.setEventRcType(String.valueOf(IntegerConstants.RCP_TYPE_CLOUD_PHONE_BOOK));
+                    arrayListEvent.add(event);
+                } while (eventCursor.moveToNext());
+                eventCursor.close();
+            }
+            profileDataOperation.setPbEvent(arrayListEvent);
         }
-        profileDataOperation.setPbEvent(arrayListEvent);
+
         //</editor-fold>
 
         // <editor-fold desc="Im Account">
@@ -265,41 +287,44 @@ public class QueryManager {
         ArrayList<ProfileDataOperationImAccount> arrayListImAccount = new ArrayList<>();
 
         // looping through all rows and adding to list
-        if (imAccountCursor.moveToFirst()) {
-            do {
-                ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
-                imAccount.setIMAccountProtocol(StringUtils.defaultString(imAccountCursor
-                        .getString(imAccountCursor.getColumnIndex(TableImMaster
-                                .COLUMN_IM_PROTOCOL))));
-                imAccount.setIMAccountDetails(StringUtils.defaultString(imAccountCursor
-                        .getString(imAccountCursor.getColumnIndex(TableImMaster
-                                .COLUMN_IM_DETAIL))));
-                imAccount.setIMAccountFirstName(StringUtils.defaultString(imAccountCursor
-                        .getString(imAccountCursor.getColumnIndex(TableImMaster
-                                .COLUMN_IM_FIRST_NAME))));
-                imAccount.setIMAccountLastName(StringUtils.defaultString(imAccountCursor
-                        .getString(imAccountCursor.getColumnIndex(TableImMaster
-                                .COLUMN_IM_LAST_NAME))));
-                imAccount.setIMId(StringUtils.defaultString(imAccountCursor
-                        .getString(imAccountCursor.getColumnIndex(TableImMaster
-                                .COLUMN_IM_RECORD_INDEX_ID))));
-                imAccount.setIMAccountProtocol(StringUtils.defaultString(imAccountCursor
-                        .getString(imAccountCursor.getColumnIndex(TableImMaster
-                                .COLUMN_IM_PROTOCOL))));
-                imAccount.setIMAccountPublic(Integer.parseInt(StringUtils.defaultString
-                        (imAccountCursor
-                                .getString(imAccountCursor.getColumnIndex(TableImMaster
-                                        .COLUMN_IM_PRIVACY)), "0")));
-                imAccount.setIMAccountIsPrivate(Integer.parseInt(StringUtils.defaultString
-                        (imAccountCursor
-                                .getString(imAccountCursor.getColumnIndex(TableImMaster
-                                        .COLUMN_IM_IS_PRIVATE)), "0")));
-                imAccount.setIMRcpType(String.valueOf(IntegerConstants.RCP_TYPE_CLOUD_PHONE_BOOK));
-                arrayListImAccount.add(imAccount);
-            } while (imAccountCursor.moveToNext());
-            imAccountCursor.close();
+        if (imAccountCursor != null && imAccountCursor.getCount() > 0) {
+            if (imAccountCursor.moveToFirst()) {
+                do {
+                    ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
+                    imAccount.setIMAccountProtocol(StringUtils.defaultString(imAccountCursor
+                            .getString(imAccountCursor.getColumnIndexOrThrow(TableImMaster
+                                    .COLUMN_IM_PROTOCOL))));
+                    imAccount.setIMAccountDetails(StringUtils.defaultString(imAccountCursor
+                            .getString(imAccountCursor.getColumnIndexOrThrow(TableImMaster
+                                    .COLUMN_IM_DETAIL))));
+                    imAccount.setIMAccountFirstName(StringUtils.defaultString(imAccountCursor
+                            .getString(imAccountCursor.getColumnIndexOrThrow(TableImMaster
+                                    .COLUMN_IM_FIRST_NAME))));
+                    imAccount.setIMAccountLastName(StringUtils.defaultString(imAccountCursor
+                            .getString(imAccountCursor.getColumnIndexOrThrow(TableImMaster
+                                    .COLUMN_IM_LAST_NAME))));
+                    imAccount.setIMId(StringUtils.defaultString(imAccountCursor
+                            .getString(imAccountCursor.getColumnIndexOrThrow(TableImMaster
+                                    .COLUMN_IM_RECORD_INDEX_ID))));
+                    imAccount.setIMAccountProtocol(StringUtils.defaultString(imAccountCursor
+                            .getString(imAccountCursor.getColumnIndexOrThrow(TableImMaster
+                                    .COLUMN_IM_PROTOCOL))));
+                    imAccount.setIMAccountPublic(Integer.parseInt(StringUtils.defaultString
+                            (imAccountCursor
+                                    .getString(imAccountCursor.getColumnIndex(TableImMaster
+                                            .COLUMN_IM_PRIVACY)), "0")));
+                    imAccount.setIMAccountIsPrivate(Integer.parseInt(StringUtils.defaultString
+                            (imAccountCursor
+                                    .getString(imAccountCursor.getColumnIndexOrThrow(TableImMaster
+                                            .COLUMN_IM_IS_PRIVATE)), "0")));
+                    imAccount.setIMRcpType(String.valueOf(IntegerConstants.RCP_TYPE_CLOUD_PHONE_BOOK));
+                    arrayListImAccount.add(imAccount);
+                } while (imAccountCursor.moveToNext());
+                imAccountCursor.close();
+            }
+            profileDataOperation.setPbIMAccounts(arrayListImAccount);
         }
-        profileDataOperation.setPbIMAccounts(arrayListImAccount);
+
         //</editor-fold>
 
         // <editor-fold desc="Address">
@@ -318,37 +343,40 @@ public class QueryManager {
         ArrayList<ProfileDataOperationAddress> arrayListAddress = new ArrayList<>();
 
         // looping through all rows and adding to list
-        if (addressCursor.moveToFirst()) {
-            do {
-                ProfileDataOperationAddress address = new ProfileDataOperationAddress();
-                address.setFormattedAddress(StringUtils.defaultString(addressCursor.getString
-                        (addressCursor.getColumnIndex(TableAddressMaster
-                                .COLUMN_AM_FORMATTED_ADDRESS))));
-                address.setAddressType(StringUtils.defaultString(addressCursor.getString
-                        (addressCursor.getColumnIndex(TableAddressMaster.COLUMN_AM_ADDRESS_TYPE))));
-                address.setAddPublic(Integer.parseInt(StringUtils.defaultString(addressCursor
-                        .getString(addressCursor.getColumnIndex(TableAddressMaster
-                                .COLUMN_AM_ADDRESS_PRIVACY)), "0")));
-                address.setIsPrivate(Integer.parseInt(StringUtils.defaultString(addressCursor
-                        .getString(addressCursor.getColumnIndex(TableAddressMaster
-                                .COLUMN_AM_IS_PRIVATE)), "0")));
-                address.setAddId(StringUtils.defaultString(addressCursor.getString
-                        (addressCursor.getColumnIndex(TableAddressMaster
-                                .COLUMN_AM_RECORD_INDEX_ID))));
-                ArrayList<String> arrayListLatLng = new ArrayList<>();
-                arrayListLatLng.add(StringUtils.defaultString(addressCursor.getString
-                        (addressCursor.getColumnIndex(TableAddressMaster
-                                .COLUMN_AM_GOOGLE_LONGITUDE)), "0.0"));
-                arrayListLatLng.add(StringUtils.defaultString(addressCursor.getString
-                        (addressCursor.getColumnIndex(TableAddressMaster
-                                .COLUMN_AM_GOOGLE_LATITUDE)), "0.0"));
-                address.setGoogleLatLong(arrayListLatLng);
-                address.setRcpType(String.valueOf(IntegerConstants.RCP_TYPE_CLOUD_PHONE_BOOK));
-                arrayListAddress.add(address);
-            } while (addressCursor.moveToNext());
-            addressCursor.close();
+        if (addressCursor != null && addressCursor.getCount() > 0) {
+            if (addressCursor.moveToFirst()) {
+                do {
+                    ProfileDataOperationAddress address = new ProfileDataOperationAddress();
+                    address.setFormattedAddress(StringUtils.defaultString(addressCursor.getString
+                            (addressCursor.getColumnIndexOrThrow(TableAddressMaster
+                                    .COLUMN_AM_FORMATTED_ADDRESS))));
+                    address.setAddressType(StringUtils.defaultString(addressCursor.getString
+                            (addressCursor.getColumnIndexOrThrow(TableAddressMaster.COLUMN_AM_ADDRESS_TYPE))));
+                    address.setAddPublic(Integer.parseInt(StringUtils.defaultString(addressCursor
+                            .getString(addressCursor.getColumnIndexOrThrow(TableAddressMaster
+                                    .COLUMN_AM_ADDRESS_PRIVACY)), "0")));
+                    address.setIsPrivate(Integer.parseInt(StringUtils.defaultString(addressCursor
+                            .getString(addressCursor.getColumnIndexOrThrow(TableAddressMaster
+                                    .COLUMN_AM_IS_PRIVATE)), "0")));
+                    address.setAddId(StringUtils.defaultString(addressCursor.getString
+                            (addressCursor.getColumnIndexOrThrow(TableAddressMaster
+                                    .COLUMN_AM_RECORD_INDEX_ID))));
+                    ArrayList<String> arrayListLatLng = new ArrayList<>();
+                    arrayListLatLng.add(StringUtils.defaultString(addressCursor.getString
+                            (addressCursor.getColumnIndexOrThrow(TableAddressMaster
+                                    .COLUMN_AM_GOOGLE_LONGITUDE)), "0.0"));
+                    arrayListLatLng.add(StringUtils.defaultString(addressCursor.getString
+                            (addressCursor.getColumnIndexOrThrow(TableAddressMaster
+                                    .COLUMN_AM_GOOGLE_LATITUDE)), "0.0"));
+                    address.setGoogleLatLong(arrayListLatLng);
+                    address.setRcpType(String.valueOf(IntegerConstants.RCP_TYPE_CLOUD_PHONE_BOOK));
+                    arrayListAddress.add(address);
+                } while (addressCursor.moveToNext());
+                addressCursor.close();
+            }
+            profileDataOperation.setPbAddress(arrayListAddress);
         }
-        profileDataOperation.setPbAddress(arrayListAddress);
+
         //</editor-fold>
 
         // <editor-fold desc="Website">
@@ -360,21 +388,24 @@ public class QueryManager {
 
         ArrayList<ProfileDataOperationWebAddress> arrayListWebsite = new ArrayList<>();
         // looping through all rows and adding to list
-        if (websiteCursor.moveToFirst()) {
-            do {
-                ProfileDataOperationWebAddress webAddress = new ProfileDataOperationWebAddress();
-                webAddress.setWebAddress(StringUtils.defaultString(websiteCursor.getString
-                        (websiteCursor.getColumnIndex(TableWebsiteMaster.COLUMN_WM_WEBSITE_URL))));
-                webAddress.setWebRcpType(String.valueOf(IntegerConstants
-                        .RCP_TYPE_CLOUD_PHONE_BOOK));
+        if (websiteCursor != null && websiteCursor.getCount() > 0) {
+            if (websiteCursor.moveToFirst()) {
+                do {
+                    ProfileDataOperationWebAddress webAddress = new ProfileDataOperationWebAddress();
+                    webAddress.setWebAddress(StringUtils.defaultString(websiteCursor.getString
+                            (websiteCursor.getColumnIndexOrThrow(TableWebsiteMaster.COLUMN_WM_WEBSITE_URL))));
+                    webAddress.setWebRcpType(String.valueOf(IntegerConstants
+                            .RCP_TYPE_CLOUD_PHONE_BOOK));
                /* arrayListWebsite.add(StringUtils.defaultString(websiteCursor.getString
                         (websiteCursor.getColumnIndex(TableWebsiteMaster.COLUMN_WM_WEBSITE_URL)))
                         );*/
-                arrayListWebsite.add(webAddress);
-            } while (websiteCursor.moveToNext());
-            websiteCursor.close();
+                    arrayListWebsite.add(webAddress);
+                } while (websiteCursor.moveToNext());
+                websiteCursor.close();
+            }
+            profileDataOperation.setPbWebAddress(arrayListWebsite);
         }
-        profileDataOperation.setPbWebAddress(arrayListWebsite);
+
         //</editor-fold>
 
         db.close();
@@ -496,14 +527,14 @@ public class QueryManager {
         if (cursor.moveToFirst()) {
             do {
                 ProfileData profileData = new ProfileData();
-                profileData.setTempRcpName(cursor.getString(cursor.getColumnIndex
+                profileData.setTempRcpName(cursor.getString(cursor.getColumnIndexOrThrow
                         (TableProfileMaster.COLUMN_PM_FIRST_NAME)) + " " + cursor.getString
-                        (cursor.getColumnIndex(TableProfileMaster.COLUMN_PM_LAST_NAME)));
-                profileData.setTempNumber(cursor.getString(cursor.getColumnIndex
+                        (cursor.getColumnIndexOrThrow(TableProfileMaster.COLUMN_PM_LAST_NAME)));
+                profileData.setTempNumber(cursor.getString(cursor.getColumnIndexOrThrow
                         (TableProfileMobileMapping.COLUMN_MPM_MOBILE_NUMBER)));
-                profileData.setTempEmail(cursor.getString(cursor.getColumnIndex
+                profileData.setTempEmail(cursor.getString(cursor.getColumnIndexOrThrow
                         (TableProfileEmailMapping.COLUMN_EPM_EMAIL_ID)));
-                profileData.setTempRcpId(cursor.getString(cursor.getColumnIndex
+                profileData.setTempRcpId(cursor.getString(cursor.getColumnIndexOrThrow
                         (TableProfileMaster.COLUMN_PM_RCP_ID)));
                 profileData.setTempIsRcp(true);
                 arrayListProfileData.add(profileData);

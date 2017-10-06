@@ -163,6 +163,7 @@
     <string name="nav_text_events">इवेंट्स</string>
     <string name="nav_text_rating_history">रेटिंग इतिहास</string>
     <string name="nav_text_invite_contact">अपने संपर्कों को आमंत्रित करें</string>
+    <string name="nav_text_relation_recommendation">संबंध सिफारिश</string>
     <string name="nav_text_share_rcontact">RContacts ऐप शेयर करें</string>
     <string name="nav_text_settings">सेटिंग्स</string>
     <string name="nav_text_block_contact">ब्लॉक किये गए सम्पर्को की सूचि</string>
@@ -411,7 +412,7 @@
     <string name="str_unread_notification_hint_2">अपठित सूचना(एं) है</string>
     <string name="str_unread_notification_hint_3">आपके पास कोई अपठित सूचना(एं) नहीं है</string>
     <string name="str_comment_reply">आपकी टिप्पणी सफलतापूर्वक भेजी गई</string>
-    <string name="str_rating_comment_hint_1">%1$s ने आपकी रेटिंग और टिप्पणी पर आपको उत्तर दिया</string>
+    <string name="str_rating_comment_hint_1">%1$s ने आपको उत्तर दिया</string>
     <string name="str_rating_comment_hint_2">%1$s को आपने रेटिंग दी और उनके लिए टिपण्णी लिखी</string>
     <string name="str_rating_comment_hint_3">%1$s से आपको रेटिंग प्राप्त हुई</string>
     <string name="str_view_more">अधिक देखें</string>
@@ -464,7 +465,7 @@
     <string name="str_email">ईमेल</string>
     <string name="str_small_cap_email">ईमेल</string>
     <string name="str_website">वेबसाइट</string>
-    <string name="str_address">पता</string>
+    <string name="str_address">पोस्टल पता</string>
     <string name="str_link">लिंक</string>
     <!--<string name="str_account_name">खाते का नाम</string>-->
     <string name="str_choose_date">दिनांक चुनें</string>
@@ -707,6 +708,9 @@
     <string name="my_profile_share">प्रोफ़ाइल शेयर करें</string>
     <string name="share_rating_via_social_media">सोशल मीडिया द्वारा रेटिंग शेयर  करें</string>
     <string name="error_no_social_app_found">जानकारी साझा करने के लिए कृपया फेसबुक या लिंक्डइन या ट्विटर ऐप इंस्टॉल करें।</string>
+    <string name="org_list">Organizations List</string>
 
+    <!--Relation Recommendation-->
+    <string name="toolbar_title">संबंध सिफारिश</string>
 
 </resources>

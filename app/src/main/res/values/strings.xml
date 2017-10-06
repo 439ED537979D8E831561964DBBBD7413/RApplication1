@@ -163,6 +163,7 @@
     <string name="nav_text_events">Events</string>
     <string name="nav_text_rating_history">Rating History</string>
     <string name="nav_text_invite_contact">Invite contacts</string>
+    <string name="nav_text_relation_recommendation">Relation Recommendation</string>
     <string name="nav_text_share_rcontact">Share RContacts App</string>
     <string name="nav_text_settings">Settings</string>
     <string name="nav_text_block_contact">Block Contact List</string>
@@ -183,7 +184,7 @@
     <string name="text_on">\u0020on\u0020</string>
     <string name="text_you_wrote_on_timeline">You wrote on %1$s\'s Timeline</string>
     <string name="text_reply_you_on_your">%1$s replied to your message</string>
-    <string name="text_rate_you">Rate you</string>
+    <string name="text_rate_you">Rated you</string>
     <string name="text_rating_done">Given</string>
     <string name="text_rating_receive">Received</string>
     <string name="text_tab_profile">Profile</string>
@@ -291,7 +292,7 @@
     <string name="copy_to_clipboard">Copy to clip board</string>
     <string name="view_profile">View Profile</string>
     <string name="view_reply">View Reply</string>
-    <string name="text_reply_you">Reply</string>
+    <string name="text_reply_you">\'s reply</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
     <string name="clear_call_log">Clear Call Log</string>
@@ -406,12 +407,12 @@
 
     <!-- Comment & Notification-->
     <string name="str_view_reply">VIEW REPLY</string>
-    <string name="str_reply_you">Reply You</string>
+    <string name="str_reply_you"> \'s reply</string>
     <string name="str_unread_notification_hint_1">You have</string>
     <string name="str_unread_notification_hint_2">unread notification</string>
     <string name="str_unread_notification_hint_3">You have no unread Notifications</string>
     <string name="str_comment_reply">Your comment sent successfully</string>
-    <string name="str_rating_comment_hint_1">%1$s replied you for your Rating</string>
+    <string name="str_rating_comment_hint_1">%1$s replied you</string>
     <string name="str_rating_comment_hint_2">You Rated %1$s</string>
     <string name="str_rating_comment_hint_3">%1$s rated you</string>
     <string name="str_view_more">View More</string>
@@ -464,7 +465,7 @@
     <string name="str_email">Email</string>
     <string name="str_small_cap_email">email</string>
     <string name="str_website">Website</string>
-    <string name="str_address">Address</string>
+    <string name="str_address">Postal Address</string>
     <string name="str_link">Link</string>
     <!--<string name="str_account_name">Account Name</string>-->
     <string name="str_choose_date">Choose date</string>
@@ -708,4 +709,25 @@
     <string name="error_no_social_app_found">Please install Facebook or LinkedIn or Twitter app to share information.</string>
     <string name="org_list">Organizations List</string>
 
+    <!-- Relation -->
+    <string name="toolbar_title">Relation Recommendation</string>
+    <string name="search_here">Search...</string>
+    <string name="str_no_relation_found">No Relation Found</string>
+    <string name="relation_toolbar_title">Existing Relation</string>
+    <string name="add_relation_toolbar_title">Add Relation</string>
+    <string name="str_add_name">Add Name</string>
+    <string name="choose_relation">Choose Relation</string>
+    <string name="choose_name">Choose Name</string>
+    <string name="business_relation">Business Relation</string>
+    <string name="family_relation">Family Relation</string>
+    <string name="friend_relation">Friend Relation</string>
+    <string name="str_friend">Friend</string>
+    <string name="str_back">Back</string>
+    <string name="str_next">Next</string>
+    <string name="str_hint_add_organization">Please add organization to add Business Relation</string>
+    <string name="str_hint_add_family">Please set your gender to add Family Relation</string>
+
+    <!-- Force update -->
+    <string name="youAreNotUpdatedTitle">Update Available</string>
+    <string name="youAreNotUpdatedMessage">A new version of RContacts Application is available. Please update to latest version\s</string>
 </resources>

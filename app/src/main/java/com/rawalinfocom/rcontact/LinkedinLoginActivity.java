@@ -357,13 +357,13 @@ public class LinkedinLoginActivity extends AppCompatActivity {
                     intent.putExtra("first_name", finalJsonObject.getString("firstName"));
                     intent.putExtra("last_name", finalJsonObject.getString("lastName"));
 
-                    JSONObject pictureUrls = finalJsonObject.getJSONObject("pictureUrls");
-                    JSONArray jsonArray = pictureUrls.getJSONArray("values");
-                    if (jsonArray.length() > 0) {
-                        intent.putExtra("profileImage", jsonArray.get(0).toString());
-                    } else {
-                        intent.putExtra("profileImage", finalJsonObject.getString("pictureUrl"));
-                    }
+//                    JSONObject pictureUrls = finalJsonObject.getJSONObject("pictureUrls");
+//                    JSONArray jsonArray = pictureUrls.optJSONArray("values");
+//                    if (jsonArray.length() > 0) {
+//                        intent.putExtra("profileImage", jsonArray.opt(0).toString());
+//                    } else {
+                        intent.putExtra("profileImage", finalJsonObject.optString("pictureUrl"));
+//                    }
 
                     intent.putExtra("email", finalJsonObject.getString("emailAddress"));
                     intent.putExtra("isBack", "0");

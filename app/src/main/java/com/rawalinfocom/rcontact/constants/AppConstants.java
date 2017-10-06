@@ -40,6 +40,14 @@ public class AppConstants {
 
     //</editor-fold>
 
+    //<editor-fold desc="Calendar Date Formate">
+    public static String EVENT_GENERAL_DATE_FORMAT = "dd'th' MMMM, yyyy";
+    public static String EVENT_ST_DATE_FORMAT = "dd'st' MMMM, yyyy";
+    public static String EVENT_ND_DATE_FORMAT = "dd'nd' MMMM, yyyy";
+    public static String EVENT_RD_DATE_FORMAT = "dd'rd' MMMM, yyyy";
+
+    //</editor-fold>
+
     //<editor-fold desc="GCM Constants">
 
     public static final String GCM_SERVER_KEY = "AIzaSyBv-bFhNJmIhNW4_8jROcy46_axuK3Fl6g";
@@ -55,6 +63,25 @@ public class AppConstants {
     public static boolean isBackgroundProcessStopped = false;
 
     //</editor-fold>
+
+    //<editor-fold desc="Business Relation">
+
+    public static String RELATION_COWORKER = "Co-Worker";
+    public static String RELATION_SUPPLIER = "Supplier";
+    public static String RELATION_COMPETITOR = "Competitor";
+    public static String RELATION_CUSTOMER = "Customer";
+
+    //<editor-fold">
+
+    //<editor-fold desc="Family Relation">
+
+    public static String[] FAMILY_RELATION = {"Father", "Father-in-law", "Step Father", "Grand father", "Son", "Son-in-law",
+            "Step-son", "Grand son", "Brother", "Brother-in-law", "Cousin brother", "Step brother", "Uncle", "Maternal Uncle",
+            "Nephew", "Husband", "Mother", "Mother-in-law", "Step mother", "Grand mother", "Daughter", "Daughter-in-law",
+            "Granddaughter", "Step daughter", "Sister", "Step sister", "Cousin sister", "Sister-in-law", "Aunt", "Maternal Aunt",
+            "Niece", "Wife"};
+
+    //<editor-fold">
 
     //<editor-fold desc="Request Codes">
 
@@ -215,6 +242,11 @@ public class AppConstants {
     public static String KEY_IS_FIRST_TIME = "key_is_first_time";
     public static String KEY_IS_RESTORE_DONE = "key_is_restore_done";
 
+    public static String KEY_API_CALL_TIME_STAMP_RCP = "key_api_call_time_stamp_rcp";
+    public static String KEY_API_CALL_TIME_STAMP_RATING = "key_api_call_time_stamp_rating";
+    public static String KEY_API_CALL_TIME_STAMP_PROFILE = "key_api_call_time_stamp_profile";
+    public static String KEY_API_CALL_TIME_STAMP_COMMENT = "key_api_call_time_stamp_comment";
+
     public static String PREF_DISABLE_PUSH = "pref_disable_push";
     public static String PREF_DISABLE_POPUP = "pref_disable_popup";
     public static String PREF_DISABLE_EVENT_PUSH = "pref_disable_event_push";
@@ -269,6 +301,7 @@ public class AppConstants {
     public static String PREF_IS_CALL_UPLOAD_CONTACT = "pref_is_call_upload_contact";
     public static String PREF_LATEST_CALL_DATE_TIME = "pref_latest_call_date_time";
     public static String PREF_LATEST_CALL_RAW_ID = "pref_latest_call_raw_id";
+
 
 
     public static String[] arrayPrefKeys = {PREF_SELECTED_COUNTRY_OBJECT, PREF_DEVICE_TOKEN_ID,

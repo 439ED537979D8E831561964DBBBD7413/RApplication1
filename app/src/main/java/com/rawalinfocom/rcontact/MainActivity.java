@@ -2,6 +2,7 @@ package com.rawalinfocom.rcontact;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
@@ -115,6 +116,7 @@ import com.rawalinfocom.rcontact.notifications.NotificationsActivity;
 import com.rawalinfocom.rcontact.notifications.RatingHistory;
 import com.rawalinfocom.rcontact.notifications.TimelineActivity;
 import com.rawalinfocom.rcontact.receivers.NetworkConnectionReceiver;
+import com.rawalinfocom.rcontact.relation.RelationRecommendationActivity;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -180,6 +182,9 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     int tabPosition = -1;
     private final int CONTACT_CHUNK = 50;
     int lastSyncedData = 0;
+
+    private ArrayList<Object> arrayListPBPhoneNumber;
+    private ArrayList<Object> arrayListPBEmailAddress;
 
     public Toolbar getToolbar() {
         return this.toolbar;
@@ -411,6 +416,10 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                             .show();
                 }
 
+                break;
+
+            case R.id.nav_ll_relation:
+                startActivityIntent(MainActivity.this, RelationRecommendationActivity.class, null);
                 break;
         }
 
@@ -1221,6 +1230,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         TextView nav_txt_about = navigationView.findViewById(R.id.nav_txt_about);
         TextView nav_txt_export = navigationView.findViewById(R.id.nav_txt_export);
         TextView nav_txt_feedback = navigationView.findViewById(R.id.nav_txt_feedback);
+        ImageView nav_img_relation = navigationView.findViewById(R.id.nav_img_relation);
 
         LinearLayout nav_ll_account = navigationView.findViewById(R.id.nav_ll_account);
         LinearLayout nav_ll_timeline = navigationView.findViewById(R.id.nav_ll_timeline);
@@ -1233,6 +1243,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         LinearLayout nav_ll_about = navigationView.findViewById(R.id.nav_ll_about);
         LinearLayout nav_ll_export = navigationView.findViewById(R.id.nav_ll_export);
         LinearLayout nav_ll_feedback = navigationView.findViewById(R.id.nav_ll_feedback);
+        LinearLayout nav_ll_relation = navigationView.findViewById(R.id.nav_ll_relation);
 
         nav_ll_account.setOnClickListener(this);
         nav_ll_timeline.setOnClickListener(this);
@@ -1245,6 +1256,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         nav_ll_about.setOnClickListener(this);
         nav_ll_export.setOnClickListener(this);
         nav_ll_feedback.setOnClickListener(this);
+        nav_ll_relation.setOnClickListener(this);
 
         nav_txt_export.setVisibility(View.GONE);
 
@@ -1270,6 +1282,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         nav_txt_export.setText(R.string.im_icon_about_help);
         nav_txt_feedback.setTypeface(Utils.typefaceIcons(this));
         nav_txt_feedback.setText(R.string.im_icon_about_help);
+        nav_img_relation.setImageResource(R.drawable.ico_nav_relation_svg);
+
     }
 
     @TargetApi(Build.VERSION_CODES.M)
@@ -1441,8 +1455,12 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 for (int j = 0; j < mapping.get(i).getRcpPmId().size(); j++) {
                     String phonebookRawId;
                     if (mapLocalRcpId.containsKey(mapping.get(i).getRcpPmId().get(j))) {
-                        phonebookRawId = mapLocalRcpId.get(mapping.get(i).getRcpPmId().get(j)) +
-                                "," + mapping.get(i).getLocalPhoneBookId();
+                        if (!StringUtils.isBlank(mapping.get(i).getLocalPhoneBookId())) {
+                            phonebookRawId = mapLocalRcpId.get(mapping.get(i).getRcpPmId().get(j)) +
+                                    "," + mapping.get(i).getLocalPhoneBookId();
+                        } else {
+                            phonebookRawId = mapping.get(i).getLocalPhoneBookId();
+                        }
                     } else {
                         phonebookRawId = mapping.get(i).getLocalPhoneBookId();
                     }
@@ -1488,10 +1506,24 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     ArrayList<MobileNumber> arrayListMobileNumber = new ArrayList<>();
                     for (int j = 0; j < arrayListPhoneNumber.size(); j++) {
 
+                        getUserData(arrayListPhoneNumber.get(j).getPhoneId());
+
                         MobileNumber mobileNumber = new MobileNumber();
                         mobileNumber.setMnmRecordIndexId(arrayListPhoneNumber.get(j).getPhoneId());
-                        mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j)
-                                .getPhoneNumber());
+
+                        if (String.valueOf(arrayListPhoneNumber.get(j).getPhonePublic()).equalsIgnoreCase("3")) {
+                            mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j).getPhoneNumber());
+                        } else {
+                            if (arrayListPBPhoneNumber.size() > 0)
+                                if (arrayListPBPhoneNumber.contains("+" + arrayListPhoneNumber.get(j).getOriginalNumber())) {
+                                    mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j).getOriginalNumber());
+                                } else {
+                                    mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j).getPhoneNumber());
+                                }
+                            else
+                                mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j).getPhoneNumber());
+                        }
+
                         mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(j).getPhoneType());
                         mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber.get(j)
                                 .getPhonePublic()));
@@ -1521,7 +1553,16 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                         ArrayList<Email> arrayListEmail = new ArrayList<>();
                         for (int j = 0; j < arrayListEmailId.size(); j++) {
                             Email email = new Email();
-                            email.setEmEmailAddress(arrayListEmailId.get(j).getEmEmailId());
+
+                            if (arrayListPBEmailAddress.size() > 0)
+                                if (arrayListPBEmailAddress.contains(arrayListEmailId.get(j).getOriginalEmail())) {
+                                    email.setEmEmailAddress(arrayListEmailId.get(j).getOriginalEmail());
+                                } else {
+                                    email.setEmEmailAddress(arrayListEmailId.get(j).getEmEmailId());
+                                }
+                            else
+                                email.setEmEmailAddress(arrayListEmailId.get(j).getEmEmailId());
+
                             email.setEmSocialType(arrayListEmailId.get(j).getEmSocialType());
                             email.setEmRecordIndexId(arrayListEmailId.get(j).getEmId());
                             email.setEmEmailType(arrayListEmailId.get(j).getEmType());
@@ -1698,27 +1739,36 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                                 .getRcpPmId()))) {
                             return;
                         } else {
-                            String newRawIds = existingRawId + "," + mapLocalRcpId.get(profileData
-                                    .get(i)
-                                    .getRcpPmId());
-                            tableProfileMaster.updateRawIds(Integer.parseInt(userProfile
-                                            .getPmRcpId()),
-                                    newRawIds);
+
+                            if (!StringUtils.isBlank(mapLocalRcpId.get(profileData.get(i).getRcpPmId()))) {
+                                String newRawIds = existingRawId + "," + mapLocalRcpId.get(profileData
+                                        .get(i)
+                                        .getRcpPmId());
+                                tableProfileMaster.updateRawIds(Integer.parseInt(userProfile
+                                                .getPmRcpId()),
+                                        newRawIds);
+                            } else {
+                                return;
+                            }
                         }
                     } else {
                         if (existingRawId.equals(mapLocalRcpId.get(profileData.get(i)
                                 .getRcpPmId())))
                             return;
                         else {
-                            String newRawIds = existingRawId + "," + mapLocalRcpId.get(profileData
-                                    .get(i)
-                                    .getRcpPmId());
-                            tableProfileMaster.updateRawIds(Integer.parseInt(userProfile
-                                            .getPmRcpId()),
-                                    newRawIds);
+
+                            if (!StringUtils.isBlank(mapLocalRcpId.get(profileData.get(i).getRcpPmId()))) {
+                                String newRawIds = existingRawId + "," + mapLocalRcpId.get(profileData
+                                        .get(i)
+                                        .getRcpPmId());
+                                tableProfileMaster.updateRawIds(Integer.parseInt(userProfile
+                                                .getPmRcpId()),
+                                        newRawIds);
+                            } else {
+                                return;
+                            }
                         }
                     }
-
                 }
             }
         } catch (Exception e) {
@@ -3801,6 +3851,49 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     }
 
     //</editor-fold>
+
+    private void getUserData(String phoneBookId) {
+
+        arrayListPBPhoneNumber = new ArrayList<>();
+        arrayListPBEmailAddress = new ArrayList<>();
+
+        // From PhoneBook
+        Cursor contactNumberCursor = phoneBookContacts.getContactNumbers(phoneBookId);
+
+        if (contactNumberCursor != null && contactNumberCursor.getCount() > 0) {
+            while (contactNumberCursor.moveToNext()) {
+
+                ProfileDataOperationPhoneNumber phoneNumber = new
+                        ProfileDataOperationPhoneNumber();
+                ProfileDataOperationPhoneNumber phoneNumberOperation = new
+                        ProfileDataOperationPhoneNumber();
+
+                arrayListPBPhoneNumber.add(Utils.getFormattedNumber(MainActivity.this,
+                        contactNumberCursor.getString(contactNumberCursor.getColumnIndex
+                                (ContactsContract.CommonDataKinds.Phone.NUMBER))));
+
+            }
+            contactNumberCursor.close();
+        }
+
+        //</editor-fold>
+
+        // <editor-fold desc="Email Id">
+
+        // From PhoneBook
+        Cursor contactEmailCursor = phoneBookContacts.getContactEmail(phoneBookId);
+
+        if (contactEmailCursor != null && contactEmailCursor.getCount() > 0) {
+            while (contactEmailCursor.moveToNext()) {
+                arrayListPBEmailAddress.add(contactEmailCursor.getString(contactEmailCursor
+                        .getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)));
+            }
+            contactEmailCursor.close();
+        }
+
+        //</editor-fold>
+    }
+
 
      /*private BroadcastReceiver localBroadCastReceiverRecentSMS = new BroadcastReceiver() {
         @Override

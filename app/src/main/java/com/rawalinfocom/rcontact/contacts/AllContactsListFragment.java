@@ -27,6 +27,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.util.LongSparseArray;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -98,6 +99,7 @@ import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -118,8 +120,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     TextView textTotalContacts;
 
     public static ArrayList<Object> arrayListPhoneBookContacts;
-    public static ArrayList<Object> arrayListPhoneBookContactsTemp;
-    public static ArrayList<ProfileData> arrayListContacts;
+    //    public static ArrayList<Object> arrayListPhoneBookContactsTemp;
+//    public static ArrayList<ProfileData> arrayListContacts;
     ArrayList<ProfileData> arrayListSyncUserContact = new ArrayList<>();
     ArrayList<String> arrayListFavouriteContacts;
 
@@ -130,6 +132,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     PhoneBookContacts phoneBookContacts;
 
     AllContactAdapter allContactListAdapter;
+    @BindView(R.id.swipe_refresh_layout)
+    SwipeRefreshLayout swipeRefreshLayout;
+    Unbinder unbinder;
 
     private View rootView;
     private boolean isReload = false;
@@ -140,6 +145,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     int settingRequestPermission = 0;
     public String callNumber = "";
     private SyncingTask syncingTask;
+    private ArrayList<String> arrayListPBPhoneNumber;
+    private ArrayList<String> arrayListPBEmailAddress;
 
     //<editor-fold desc="Constructors">
 
@@ -180,7 +187,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         if (isFromSettings) {
             isFromSettings = false;
             if (settingRequestPermission == AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS) {
-                if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission
+                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission
                         .READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
                     if (!isReload) {
                         init();
@@ -228,21 +235,40 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             rootView = inflater.inflate(R.layout.fragment_all_contacts, container, false);
             ButterKnife.bind(this, rootView);
         }
+        unbinder = ButterKnife.bind(this, rootView);
         return rootView;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission
                 .READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{android.Manifest.permission.READ_CONTACTS},
+            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS},
                     AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS);
         } else {
             if (!isReload) {
                 init();
             }
         }
+
+        // implement setOnRefreshListener event on SwipeRefreshLayout
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+                swipeRefreshLayout.setRefreshing(true);
+                if (arrayListPhoneBookContacts != null && arrayListPhoneBookContacts.size() > 0)
+                    loadData();
+            }
+        });
+    }
+
+    private void loadData() {
+        array.clear();
+        arrayListPhoneBookContacts = null;
+        progressAllContact.setVisibility(View.VISIBLE);
+        getLoaderManager().restartLoader(0, null, this);
     }
 
     @Override
@@ -498,8 +524,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         if (arrayListPhoneBookContacts == null) {
 
             arrayListPhoneBookContacts = new ArrayList<>();
-            arrayListPhoneBookContactsTemp = new ArrayList<>();
-            arrayListContacts = new ArrayList<>();
+//            arrayListPhoneBookContactsTemp = new ArrayList<>();
+//            arrayListContacts = new ArrayList<>();
             arrayListFavouriteContacts = new ArrayList<>();
 
             phoneBookContacts = new PhoneBookContacts(getActivity());
@@ -532,6 +558,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance
                 (getActivity());
         myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+
+        if (swipeRefreshLayout != null)
+            swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
@@ -582,23 +611,29 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
      */
     public void setRecyclerViewLayoutManager() {
 
-        if (Utils.getStringPreference(getActivity(), AppConstants.PREF_SHORT_BY_CONTACT, "0")
-                .equalsIgnoreCase("0")) {
-
-            if (arrayListPhoneBookContacts.size() == 0) {
-                arrayListPhoneBookContacts.addAll(arrayListPhoneBookContactsTemp);
-            } else {
-                arrayListPhoneBookContactsTemp.addAll(arrayListPhoneBookContacts);
-            }
-        } else {
-            Collections.sort(arrayListContacts, new CustomComparator());
-            arrayListPhoneBookContacts.clear();
-            arrayListPhoneBookContacts.addAll(arrayListContacts);
-        }
+//        if (Utils.getStringPreference(getActivity(), AppConstants.PREF_SHORT_BY_CONTACT, "0")
+//                .equalsIgnoreCase("0")) {
+//
+//            if (arrayListPhoneBookContacts.size() == 0) {
+//                arrayListPhoneBookContacts.addAll(arrayListPhoneBookContactsTemp);
+//            } else {
+//                arrayListPhoneBookContactsTemp.addAll(arrayListPhoneBookContacts);
+//            }
+//        } else {
+//            Collections.sort(arrayListContacts, new CustomComparator());
+//            arrayListPhoneBookContacts.clear();
+//            arrayListPhoneBookContacts.addAll(arrayListContacts);
+//        }
 
         allContactListAdapter = new AllContactAdapter(this, arrayListPhoneBookContacts, null);
         recyclerViewContactList.setAdapter(allContactListAdapter);
         rContactApplication.setArrayListAllPhoneBookContacts(arrayListPhoneBookContacts);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 
     public class CustomComparator implements Comparator<ProfileData> {
@@ -697,7 +732,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     profileData = new ProfileData();
                     array.put(id, profileData);
                     arrayListPhoneBookContacts.add(profileData);
-                    arrayListContacts.add(profileData);
+//                    arrayListContacts.add(profileData);
                 }
 
                 profileData.setLocalPhoneBookId(data.getString(rawIdIdx));
@@ -839,10 +874,25 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 ArrayList<MobileNumber> arrayListMobileNumber = new ArrayList<>();
                 for (int j = 0; j < arrayListPhoneNumber.size(); j++) {
 
+                    getUserData(arrayListPhoneNumber.get(j).getPhoneId());
+
                     MobileNumber mobileNumber = new MobileNumber();
+
                     mobileNumber.setMnmRecordIndexId(arrayListPhoneNumber.get(j).getPhoneId());
-                    mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j)
-                            .getPhoneNumber());
+
+                    if (String.valueOf(arrayListPhoneNumber.get(j).getPhonePublic()).equalsIgnoreCase("3")) {
+                        mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j).getPhoneNumber());
+                    } else {
+                        if (arrayListPBPhoneNumber.size() > 0)
+                            if (arrayListPBPhoneNumber.contains("+" + arrayListPhoneNumber.get(j).getOriginalNumber())) {
+                                mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j).getOriginalNumber());
+                            } else {
+                                mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j).getPhoneNumber());
+                            }
+                        else
+                            mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j).getPhoneNumber());
+                    }
+
                     mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(j).getPhoneType());
                     mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber.get(j)
                             .getPhonePublic()));
@@ -872,8 +922,18 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                             .getPbEmailId();
                     ArrayList<Email> arrayListEmail = new ArrayList<>();
                     for (int j = 0; j < arrayListEmailId.size(); j++) {
+
                         Email email = new Email();
-                        email.setEmEmailAddress(arrayListEmailId.get(j).getEmEmailId());
+
+                        if (arrayListPBEmailAddress.size() > 0)
+                            if (arrayListPBEmailAddress.contains(arrayListEmailId.get(j).getOriginalEmail())) {
+                                email.setEmEmailAddress(arrayListEmailId.get(j).getOriginalEmail());
+                            } else {
+                                email.setEmEmailAddress(arrayListEmailId.get(j).getEmEmailId());
+                            }
+                        else
+                            email.setEmEmailAddress(arrayListEmailId.get(j).getEmEmailId());
+
                         email.setEmSocialType(arrayListEmailId.get(j).getEmSocialType());
                         email.setEmRecordIndexId(arrayListEmailId.get(j).getEmId());
                         email.setEmEmailType(arrayListEmailId.get(j).getEmType());
@@ -1069,6 +1129,48 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         }
     }
 
+    private void getUserData(String phoneBookId) {
+
+        arrayListPBPhoneNumber = new ArrayList<>();
+        arrayListPBEmailAddress = new ArrayList<>();
+
+        // From PhoneBook
+        Cursor contactNumberCursor = phoneBookContacts.getContactNumbers(phoneBookId);
+
+        if (contactNumberCursor != null && contactNumberCursor.getCount() > 0) {
+            while (contactNumberCursor.moveToNext()) {
+
+                ProfileDataOperationPhoneNumber phoneNumber = new
+                        ProfileDataOperationPhoneNumber();
+                ProfileDataOperationPhoneNumber phoneNumberOperation = new
+                        ProfileDataOperationPhoneNumber();
+
+                arrayListPBPhoneNumber.add(Utils.getFormattedNumber(getActivity(),
+                        contactNumberCursor.getString(contactNumberCursor.getColumnIndex
+                                (ContactsContract.CommonDataKinds.Phone.NUMBER))));
+
+            }
+            contactNumberCursor.close();
+        }
+
+        //</editor-fold>
+
+        // <editor-fold desc="Email Id">
+
+        // From PhoneBook
+        Cursor contactEmailCursor = phoneBookContacts.getContactEmail(phoneBookId);
+
+        if (contactEmailCursor != null && contactEmailCursor.getCount() > 0) {
+            while (contactEmailCursor.moveToNext()) {
+                arrayListPBEmailAddress.add(contactEmailCursor.getString(contactEmailCursor
+                        .getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)));
+            }
+            contactEmailCursor.close();
+        }
+
+        //</editor-fold>
+    }
+
     private void initSwipe() {
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper
                 .SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -1183,7 +1285,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     }
 
     private void swipeToCall() {
-        if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest
                 .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission
                     .CALL_PHONE}, AppConstants
