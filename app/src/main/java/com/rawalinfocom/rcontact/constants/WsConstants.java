@@ -7,14 +7,13 @@ package com.rawalinfocom.rcontact.constants;
  */
 
 public class WsConstants {
-
     /**
      * Production
      */
     //<editor-fold desc="Production">
 
-    // API ROOT
-    /*public static final String WS_ROOT = "https://api.rcontacts.in/api/v1/";
+    /*// API ROOT
+    public static final String WS_ROOT = "https://api.rcontacts.in/api/v1/";
     public static final String WS_ROOT_V2 = "https://api.rcontacts.in/api/v2/";
     // TERMS-CONDITIONS URL
     public static final String URL_TERMS_CONDITIONS = "https://www.rcontacts.in/global/terms";
@@ -115,10 +114,12 @@ public class WsConstants {
     public static final String URL_PRIVACY_POLICY = "https://www.rcontacts" +
             ".in/global/privacy-policy";
 
-
     public static final String WS_FACEBOOK_URL = "https://www.facebook.com/RContacts/";
     public static final String WS_TWITTER_URL = "https://twitter.com/RContactsApp";
-
+    public static final String WS_LINKEDIN_URL = "https://www.linkedin.com/showcase/13388776/";
+    public static final String WS_PINTEREST_URL = "https://in.pinterest.com/RContactsApp/";
+    public static final String WS_YOUTUBE_URL = "https://www.youtube.com/channel/UCeFoqQHdxf-s003EXZ0r7rQ";
+    public static final String WS_GOOGLE_URL = "https://plus.google.com/109948771947024347418";
 
     public static final String RESPONSE_STATUS_TRUE = "true";
 
@@ -173,4 +174,5 @@ public class WsConstants {
     public static final String REQ_GET_RATING_DETAILS = "get-rating-details";
     public static final String REQ_GET_COMMENT_DETAILS = "get-comment-details";
     public static final String REQ_GET_RCP_CONTACT = "get-rcp-contact";
+    public static final String REQ_GET_CHECK_VERSION = "check-version";
 }

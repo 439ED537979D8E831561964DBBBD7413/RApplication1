@@ -128,8 +128,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     TextView textTotalContacts;
 
     public static ArrayList<Object> arrayListPhoneBookContacts;
-    public static ArrayList<Object> arrayListPhoneBookContactsTemp;
-    public static ArrayList<ProfileData> arrayListContacts;
+    //    public static ArrayList<Object> arrayListPhoneBookContactsTemp;
+//    public static ArrayList<ProfileData> arrayListContacts;
     ArrayList<ProfileData> arrayListSyncUserContact = new ArrayList<>();
     ArrayList<String> arrayListFavouriteContacts;
 
@@ -295,7 +295,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     }
 
     private void loadData() {
-        arrayListPhoneBookContacts.clear();
+        array.clear();
+        arrayListPhoneBookContacts = null;
         progressAllContact.setVisibility(View.VISIBLE);
         getLoaderManager().restartLoader(0, null, this);
     }
@@ -553,8 +554,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         if (arrayListPhoneBookContacts == null) {
 
             arrayListPhoneBookContacts = new ArrayList<>();
-            arrayListPhoneBookContactsTemp = new ArrayList<>();
-            arrayListContacts = new ArrayList<>();
+//            arrayListPhoneBookContactsTemp = new ArrayList<>();
+//            arrayListContacts = new ArrayList<>();
             arrayListFavouriteContacts = new ArrayList<>();
 
             phoneBookContacts = new PhoneBookContacts(getActivity());
@@ -666,19 +667,19 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
      */
     public void setRecyclerViewLayoutManager() {
 
-        if (Utils.getStringPreference(getActivity(), AppConstants.PREF_SHORT_BY_CONTACT, "0")
-                .equalsIgnoreCase("0")) {
-
-            if (arrayListPhoneBookContacts.size() == 0) {
-                arrayListPhoneBookContacts.addAll(arrayListPhoneBookContactsTemp);
-            } else {
-                arrayListPhoneBookContactsTemp.addAll(arrayListPhoneBookContacts);
-            }
-        } else {
-            Collections.sort(arrayListContacts, new CustomComparator());
-            arrayListPhoneBookContacts.clear();
-            arrayListPhoneBookContacts.addAll(arrayListContacts);
-        }
+//        if (Utils.getStringPreference(getActivity(), AppConstants.PREF_SHORT_BY_CONTACT, "0")
+//                .equalsIgnoreCase("0")) {
+//
+//            if (arrayListPhoneBookContacts.size() == 0) {
+//                arrayListPhoneBookContacts.addAll(arrayListPhoneBookContactsTemp);
+//            } else {
+//                arrayListPhoneBookContactsTemp.addAll(arrayListPhoneBookContacts);
+//            }
+//        } else {
+//            Collections.sort(arrayListContacts, new CustomComparator());
+//            arrayListPhoneBookContacts.clear();
+//            arrayListPhoneBookContacts.addAll(arrayListContacts);
+//        }
 
         allContactListAdapter = new AllContactAdapter(this, arrayListPhoneBookContacts, null);
         recyclerViewContactList.setAdapter(allContactListAdapter);
@@ -787,7 +788,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     profileData = new ProfileData();
                     array.put(id, profileData);
                     arrayListPhoneBookContacts.add(profileData);
-                    arrayListContacts.add(profileData);
+//                    arrayListContacts.add(profileData);
                 }
 
                 profileData.setLocalPhoneBookId(data.getString(rawIdIdx));
@@ -935,18 +936,18 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
                     mobileNumber.setMnmRecordIndexId(arrayListPhoneNumber.get(j).getPhoneId());
 
-                    if (arrayListPBPhoneNumber.size() > 0)
-                        if (arrayListPBPhoneNumber.contains("+" + arrayListPhoneNumber.get(j)
-                                .getOriginalNumber())) {
-                            mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j)
-                                    .getOriginalNumber());
-                        } else {
-                            mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j)
-                                    .getPhoneNumber());
-                        }
-                    else
-                        mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j)
-                                .getPhoneNumber());
+                    if (String.valueOf(arrayListPhoneNumber.get(j).getPhonePublic()).equalsIgnoreCase("3")) {
+                        mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j).getPhoneNumber());
+                    } else {
+                        if (arrayListPBPhoneNumber.size() > 0)
+                            if (arrayListPBPhoneNumber.contains("+" + arrayListPhoneNumber.get(j).getOriginalNumber())) {
+                                mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j).getOriginalNumber());
+                            } else {
+                                mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j).getPhoneNumber());
+                            }
+                        else
+                            mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j).getPhoneNumber());
+                    }
 
                     mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(j).getPhoneType());
                     mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber.get(j)
@@ -981,8 +982,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         Email email = new Email();
 
                         if (arrayListPBEmailAddress.size() > 0)
-                            if (arrayListPBEmailAddress.contains(arrayListEmailId.get(j)
-                                    .getOriginalEmail())) {
+                            if (arrayListPBEmailAddress.contains(arrayListEmailId.get(j).getOriginalEmail())) {
                                 email.setEmEmailAddress(arrayListEmailId.get(j).getOriginalEmail());
                             } else {
                                 email.setEmEmailAddress(arrayListEmailId.get(j).getEmEmailId());

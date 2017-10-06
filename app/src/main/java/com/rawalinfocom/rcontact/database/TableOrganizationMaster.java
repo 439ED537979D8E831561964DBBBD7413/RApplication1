@@ -5,7 +5,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.google.common.base.MoreObjects;
+import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.model.Organization;
+import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
+import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 
@@ -18,6 +23,7 @@ import java.util.ArrayList;
 public class TableOrganizationMaster {
 
     private DatabaseHandler databaseHandler;
+    private int pmId;
 
     public TableOrganizationMaster(DatabaseHandler databaseHandler) {
         this.databaseHandler = databaseHandler;
@@ -213,6 +219,7 @@ public class TableOrganizationMaster {
 
     // Getting All Organizations from Profile Master Id
     public ArrayList<Organization> getOrganizationsFromPmId(int pmId) {
+        this.pmId = pmId;
         ArrayList<Organization> arrayListOrganization = new ArrayList<>();
         // Select All Query
         String selectQuery = "SELECT DISTINCT " + COLUMN_OM_RECORD_INDEX_ID + ", " +
@@ -265,6 +272,63 @@ public class TableOrganizationMaster {
         // return organization list
         return arrayListOrganization;
     }
+
+    // Getting All Organizations from Profile Master Id
+    public ArrayList<ProfileDataOperationOrganization> getAllOrganizationsFromPmId(int pmId) {
+        this.pmId = pmId;
+        ArrayList<ProfileDataOperationOrganization> arrayListOrganization = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT DISTINCT " + COLUMN_OM_RECORD_INDEX_ID + ", " +
+                COLUMN_OM_ORGANIZATION_COMPANY + ", " +
+                COLUMN_OM_ORGANIZATION_DESIGNATION + ", " +
+                COLUMN_OM_ORGANIZATION_FROM_DATE + ", " +
+                COLUMN_OM_ORGANIZATION_TO_DATE + ", " +
+                COLUMN_OM_ORGANIZATION_IS_CURRENT + ", " +
+                COLUMN_OM_ORGANIZATION_IS_PRIVATE + ", " +
+                COLUMN_OM_ORGANIZATION_PRIVACY + ", " +
+                COLUMN_RC_PROFILE_MASTER_PM_ID + " FROM " +
+                TABLE_RC_ORGANIZATION_MASTER + " WHERE " +
+                COLUMN_RC_PROFILE_MASTER_PM_ID + " = " + pmId;
+
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                ProfileDataOperationOrganization organization = new ProfileDataOperationOrganization();
+
+                organization.setOrgId(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_OM_RECORD_INDEX_ID)));
+                organization.setOrgName(StringUtils.defaultString(cursor.getString
+                        (cursor.getColumnIndexOrThrow(TableOrganizationMaster
+                                .COLUMN_OM_ORGANIZATION_COMPANY))));
+                organization.setOrgJobTitle(StringUtils.defaultString(cursor
+                        .getString(cursor.getColumnIndexOrThrow(TableOrganizationMaster
+                                .COLUMN_OM_ORGANIZATION_DESIGNATION))));
+                organization.setOrgFromDate(StringUtils.defaultString(cursor.getString
+                        (cursor.getColumnIndexOrThrow(TableOrganizationMaster
+                                .COLUMN_OM_ORGANIZATION_FROM_DATE))));
+                organization.setOrgToDate(StringUtils.defaultString(cursor.getString
+                        (cursor.getColumnIndexOrThrow(TableOrganizationMaster
+                                .COLUMN_OM_ORGANIZATION_TO_DATE))));
+                organization.setOrgRcpType(String.valueOf(IntegerConstants
+                        .RCP_TYPE_CLOUD_PHONE_BOOK));
+
+                // Adding organization to list
+                arrayListOrganization.add(organization);
+            } while (cursor.moveToNext());
+
+            cursor.close();
+
+        }
+
+        db.close();
+
+        // return organization list
+        return arrayListOrganization;
+    }
+
 
     // Getting All Organizations
     public ArrayList<Organization> getAllOrganizations() {

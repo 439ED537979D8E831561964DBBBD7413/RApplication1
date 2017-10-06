@@ -163,6 +163,7 @@
     <string name="nav_text_events">ઈવેન્ટ્સ</string>
     <string name="nav_text_rating_history">રેટિંગ ઇતિહાસ</string>
     <string name="nav_text_invite_contact">તમારા સંપર્કોને આમંત્રિત કરો</string>
+    <string name="nav_text_relation_recommendation">સંબંધ ભલામણ</string>
     <string name="nav_text_share_rcontact">RContacts એપ શેર કરો</string>
     <string name="nav_text_settings">સેટિંગ્સ</string>
     <string name="nav_text_block_contact">બ્લોક કરેલા સંપર્કો ની સૂચિ</string>
@@ -464,7 +465,7 @@
     <string name="str_email">ઇમેઇલ</string>
     <string name="str_small_cap_email">ઇમેઇલ</string>
     <string name="str_website">વેબસાઈટ</string>
-    <string name="str_address">એડ્રેસ</string>
+    <string name="str_address">પોસ્ટલ એડ્રેસ</string>
     <string name="str_link">લિંક</string>
     <!--<string name="str_account_name">ખાતાનું નામ</string>-->
     <string name="str_choose_date">તારીખ પસંદ કરો</string>
@@ -711,5 +712,7 @@
     <string name="str_complete_profile">તમારી પ્રોફાઈલ પૂર્ણ કરો</string>
     <string name="str_complete_profile_description">તમારી ડિજિટલ વિગતોના 360° પૂર્ણ કરવા માટે તમારું %1$s ભરો.</string>
 
+    <!--Relation Recommendation-->
+    <string name="toolbar_title">સંબંધ ભલામણ</string>
 
 </resources>

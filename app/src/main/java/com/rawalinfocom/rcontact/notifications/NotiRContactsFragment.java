@@ -123,7 +123,7 @@ public class NotiRContactsFragment extends BaseNotificationFragment implements W
             }
         }, 800);
 
-        getAllRContactUpdates(this);
+        getAllRContactUpdates();
         getImageFromVideo();
     }
 
@@ -158,14 +158,14 @@ public class NotiRContactsFragment extends BaseNotificationFragment implements W
 
     }
 
-    private void getAllRContactUpdates(Fragment fragment) {
+    private void getAllRContactUpdates() {
 
         WsRequestObject allUpdatesObject = new WsRequestObject();
         allUpdatesObject.setTimeStamp(Utils.getStringPreference(getActivity(),
                 AppConstants.KEY_RCONTACTS_API_CALL_TIME_STAMP, ""));
 
         if (Utils.isNetworkAvailable(getActivity())) {
-            new AsyncWebServiceCall(fragment, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     allUpdatesObject, null, WsResponseObject.class, WsConstants
                     .REQ_GET_RCONTACT_UPDATES, "Getting updates..", true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
                     WsConstants.WS_ROOT_V2 + WsConstants.REQ_GET_RCONTACT_UPDATES);
@@ -185,8 +185,10 @@ public class NotiRContactsFragment extends BaseNotificationFragment implements W
 
                     ArrayList<NotificationData> updatesData = wsResponseObject.getRcontactUpdate();
                     saveUpdatesToDb(updatesData);
-                    Utils.setStringPreference(getActivity(), AppConstants.KEY_RCONTACTS_API_CALL_TIME_STAMP,
-                            wsResponseObject.getTimestamp());
+
+                    if (wsResponseObject.getTimestamp() != null)
+                        Utils.setStringPreference(getActivity(), AppConstants.KEY_RCONTACTS_API_CALL_TIME_STAMP,
+                                String.valueOf(wsResponseObject.getTimestamp()));
                 }
 
                 Utils.hideProgressDialog();
@@ -218,7 +220,7 @@ public class NotiRContactsFragment extends BaseNotificationFragment implements W
 
     private boolean checkPermission() {
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             int readPermission = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE);
             int writePermission = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
@@ -231,8 +233,7 @@ public class NotiRContactsFragment extends BaseNotificationFragment implements W
             }
 
             if (!listPermissionsNeeded.isEmpty()) {
-                ActivityCompat.requestPermissions(getActivity(), listPermissionsNeeded.toArray(
-                        new String[listPermissionsNeeded.size()]), 1);
+                requestPermissions(listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), 1);
                 return false;
             } else {
                 return true;

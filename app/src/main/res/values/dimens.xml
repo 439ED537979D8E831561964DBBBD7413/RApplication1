@@ -45,6 +45,7 @@
     <dimen name="margin_10dp">10dp</dimen>
     <dimen name="margin_8dp">8dp</dimen>
     <dimen name="margin_15dp">15dp</dimen>
+    <dimen name="margin_16dp">16dp</dimen>
     <dimen name="padding_15dp">15dp</dimen>
     <dimen name="padding_20dp">20dp</dimen>
     <dimen name="margin_2dp">2dp</dimen>
@@ -61,6 +62,7 @@
     <!--call dialer-->
     <dimen name="padding_12dp">12dp</dimen>
     <dimen name="padding_11dp">11dp</dimen>
+    <dimen name="text_size_26sp">26sp</dimen>
     <dimen name="text_size_32sp">32sp</dimen>
     <dimen name="text_size_45sp">45sp</dimen>
     <dimen name="text_size_25sp">25sp</dimen>
@@ -91,5 +93,8 @@
     <dimen name="defaultMenuTextPaddingRight">32dp</dimen>
     <dimen name="defaultMenuLayoutMargin">4dp</dimen>
     <dimen name="defaultMenuCornerRadius">2dp</dimen>
+
+    <!--Relation Recommendation-->
+    <dimen name="margin_30dp">30dp</dimen>
 
 </resources>

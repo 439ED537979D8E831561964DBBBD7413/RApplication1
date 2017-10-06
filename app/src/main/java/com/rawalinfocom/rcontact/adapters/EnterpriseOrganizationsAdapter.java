@@ -1,7 +1,6 @@
 package com.rawalinfocom.rcontact.adapters;
 
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,16 +13,11 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.R;
-import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.model.OrganizationData;
-import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
-
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,7 +26,7 @@ import butterknife.ButterKnife;
  * Created by Monal on 21/10/16.
  */
 
-public class OrganizationSearchListAdapter extends RecyclerView.Adapter<OrganizationSearchListAdapter
+public class EnterpriseOrganizationsAdapter extends RecyclerView.Adapter<EnterpriseOrganizationsAdapter
         .OrganizationViewHolder> implements Filterable {
 
     private Context context;
@@ -40,7 +34,6 @@ public class OrganizationSearchListAdapter extends RecyclerView.Adapter<Organiza
     private ArrayList<OrganizationData> filteredList;
     private OnClickListener clickListener;
 
-    //    private ArrayList<OrganizationData> filteredList;
     private CustomFilter mFilter;
 
     @Override
@@ -52,14 +45,14 @@ public class OrganizationSearchListAdapter extends RecyclerView.Adapter<Organiza
         void onClick(String organizationName);
     }
 
-    public OrganizationSearchListAdapter(Context context, ArrayList<OrganizationData>
+    public EnterpriseOrganizationsAdapter(Context context, ArrayList<OrganizationData>
             arrayListOrganization, OnClickListener clickListener) {
         this.context = context;
         this.clickListener = clickListener;
         this.arrayListOrganization = arrayListOrganization;
         this.filteredList = new ArrayList<>();
         this.filteredList.addAll(arrayListOrganization);
-        mFilter = new CustomFilter(OrganizationSearchListAdapter.this);
+        mFilter = new CustomFilter(EnterpriseOrganizationsAdapter.this);
     }
 
     @Override
@@ -125,9 +118,9 @@ public class OrganizationSearchListAdapter extends RecyclerView.Adapter<Organiza
     }
 
     private class CustomFilter extends Filter {
-        private OrganizationSearchListAdapter mAdapter;
+        private EnterpriseOrganizationsAdapter mAdapter;
 
-        private CustomFilter(OrganizationSearchListAdapter mAdapter) {
+        private CustomFilter(EnterpriseOrganizationsAdapter mAdapter) {
             super();
             this.mAdapter = mAdapter;
         }

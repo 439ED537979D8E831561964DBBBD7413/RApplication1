@@ -397,7 +397,6 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                             textNoRecords.setTypeface(Utils.typefaceRegular(this));
                         }
 
-
                     } else {
                         if (globalSearchTypeArrayListMain != null &&
                                 globalSearchTypeArrayListMain.size() > 0) {
@@ -545,6 +544,9 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                             Bundle bundle = new Bundle();
                             bundle.putString(AppConstants.EXTRA_PM_ID,
                                     globalSearchType.getRcpPmId());
+                            if (!StringUtils.isBlank(globalSearchType.getMobileNumber())) {
+                                bundle.putBoolean(AppConstants.PREF_USER_NUMBER, true);
+                            }
                             Intent intent = new Intent(SearchActivity.this,
                                     PublicProfileDetailActivity.class);
                             intent.putExtras(bundle);
@@ -597,14 +599,13 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
             }
         }
 
-        String ownProfileNumber  =  Utils.getStringPreference(this, AppConstants.PREF_USER_NUMBER, "");
-        if((!StringUtils.isEmpty(ownProfileNumber)))
-        {
-            if(!StringUtils.startsWith(ownProfileNumber,"+")){
-                ownProfileNumber =  "+" + ownProfileNumber;
+        String ownProfileNumber = Utils.getStringPreference(this, AppConstants.PREF_USER_NUMBER, "");
+        if ((!StringUtils.isEmpty(ownProfileNumber))) {
+            if (!StringUtils.startsWith(ownProfileNumber, "+")) {
+                ownProfileNumber = "+" + ownProfileNumber;
             }
 
-            if(!arrayListRCPNumber.contains(ownProfileNumber)){
+            if (!arrayListRCPNumber.contains(ownProfileNumber)) {
                 arrayListRCPNumber.add(ownProfileNumber);
             }
         }
@@ -778,7 +779,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                                             recycleViewPbContact.setAdapter(smsListAdapter);*/
                                                 }
                                             }
-                                        }else{
+                                        } else {
                                             rlTitle.setVisibility(View.VISIBLE);
                                             textNoRecordsLocal.setVisibility(View.VISIBLE);
                                             recycleViewPbContact.setAdapter(allContactAdapter);

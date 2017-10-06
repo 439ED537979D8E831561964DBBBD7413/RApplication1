@@ -68,7 +68,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.common.base.MoreObjects;
-import com.linkedin.platform.LISessionManager;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.LinkedinLoginActivity;
 import com.rawalinfocom.rcontact.R;
@@ -617,12 +616,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         if (IntegerConstants.REGISTRATION_VIA == IntegerConstants.REGISTRATION_VIA_FACEBOOK) {
             // Facebook Callback
             callbackManager.onActivityResult(requestCode, resultCode, data);
-        } else if (IntegerConstants.REGISTRATION_VIA == IntegerConstants
-                .REGISTRATION_VIA_LINED_IN) {
-            // LinkedIn Callback
-            LISessionManager.getInstance(getApplicationContext()).onActivityResult(this,
-                    requestCode, resultCode, data);
         }
+//        else if (IntegerConstants.REGISTRATION_VIA == IntegerConstants
+//                .REGISTRATION_VIA_LINED_IN) {
+//            // LinkedIn Callback
+//            LISessionManager.getInstance(getApplicationContext()).onActivityResult(this,
+//                    requestCode, resultCode, data);
+//        }
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
@@ -723,17 +723,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     private void prepareToLoginUsingSocialMedia(int requestCode) {
         switch (requestCode) {
             case FACEBOOK_LOGIN_PERMISSION:
-
-                // Facebook Initialization
-                FacebookSdk.sdkInitialize(getApplicationContext());
-                callbackManager = CallbackManager.Factory.create();
-
-                // Callback registration
-                registerFacebookCallback();
-
-                LoginManager.getInstance().logInWithReadPermissions(EditProfileActivity
-                        .this, Arrays.asList(getString(R.string.str_public_profile),
-                        getString(R.string.str_small_cap_email)));
+                facebookLogin();
                 break;
             case GOOGLE_LOGIN_PERMISSION:
                 googleSignIn();
@@ -742,6 +732,19 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 linkedInSignIn();
                 break;
         }
+    }
+
+    private void facebookLogin() {
+        // Facebook Initialization
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        callbackManager = CallbackManager.Factory.create();
+
+        // Callback registration
+        registerFacebookCallback();
+
+        LoginManager.getInstance().logInWithReadPermissions(EditProfileActivity
+                .this, Arrays.asList(getString(R.string.str_public_profile),
+                getString(R.string.str_small_cap_email)));
     }
 
     private void registerFacebookCallback() {
@@ -1227,10 +1230,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         linkedInSignIn();
                     }
 
-                } else if (socialName.equalsIgnoreCase(getString(R.string.custom))) {
+                } else if (socialName.equalsIgnoreCase("Custom") || socialName.equalsIgnoreCase("કસ્ટમ")
+                        || socialName.equalsIgnoreCase("कस्टम")) {
                     showCustomTypeDialogForSocial();
                 } else {
-//                    checkBeforeSocialViewAdd(socialName);
                     addSocialConnectView(null, socialName);
                 }
             }
@@ -3486,6 +3489,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         TextView textIsVerified = view.findViewById(R.id.text_is_verified);
         TextView textProtocol = view.findViewById(R.id.input_protocol);
         TextView imAccountProfileImage = view.findViewById(R.id.text_profile_image);
+        TextView textIsPublic = view.findViewById(R.id.text_is_public);
 
         textIsVerified.setText(R.string.verify_now);
         textIsVerified.setVisibility(View.GONE);
@@ -3506,6 +3510,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             textProtocol.setText(imAccount.getIMAccountProtocol());
             textFirstName.setText(imAccount.getIMAccountFirstName());
             textLastName.setText(imAccount.getIMAccountLastName());
+            textIsPublic.setText(String.valueOf(imAccount.getIMAccountPublic()));
 
             if (imAccount.getIMAccountProtocol().equalsIgnoreCase(getString(R.string.facebook))
                     || imAccount.getIMAccountProtocol().equalsIgnoreCase(getString(R.string
@@ -4107,8 +4112,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             }
 
             if (!listPermissionsNeeded.isEmpty()) {
-                ActivityCompat.requestPermissions(EditProfileActivity.this,
-                        listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), 2);
+                requestPermissions(listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), 2);
                 return false;
             } else {
                 return true;
@@ -4165,7 +4169,18 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     // required permissions granted, start crop image activity
                     startCropImageActivity(fileUri);
                 }
+                break;
 
+            case FACEBOOK_LOGIN_PERMISSION:
+                facebookLogin();
+                break;
+
+            case GOOGLE_LOGIN_PERMISSION:
+                googleSignIn();
+                break;
+
+            case LINKEDIN_LOGIN_PERMISSION:
+                linkedInSignIn();
                 break;
         }
     }
