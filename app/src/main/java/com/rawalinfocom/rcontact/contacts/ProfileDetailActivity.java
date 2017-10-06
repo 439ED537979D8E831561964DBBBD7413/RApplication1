@@ -1904,8 +1904,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         rippleActionRightRight = ButterKnife.findById(includeToolbar, R.id
                 .ripple_action_right_right);
 
-//        rippleActionRelation.setVisibility(View.GONE);
-//
         Utils.setRoundedCornerBackground(buttonInvite, ContextCompat.getColor
                 (ProfileDetailActivity.this, R.color.colorAccent), 5, 0, ContextCompat.getColor
                 (ProfileDetailActivity.this, R.color.colorAccent));
@@ -1937,7 +1935,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         textFullScreenText.setSelected(true);
         rippleViewMore.setOnRippleCompleteListener(this);
         rippleActionBack.setOnRippleCompleteListener(this);
-//        rippleActionRelation.setOnRippleCompleteListener(this);
+        rippleActionRelation.setOnRippleCompleteListener(this);
         rippleActionRightLeft.setOnRippleCompleteListener(this);
         rippleActionRightCenter.setOnRippleCompleteListener(this);
         rippleActionRightRight.setOnRippleCompleteListener(this);
@@ -4260,14 +4258,18 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 mobileNumber.setMnmRecordIndexId(arrayListPhoneNumber.get(i).getPhoneId());
                 mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(i).getPhoneType());
 
-                if (arrayListPBPhoneNumber.size() > 0)
-                    if (arrayListPBPhoneNumber.contains("+" + arrayListPhoneNumber.get(i).getOriginalNumber())) {
-                        mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(i).getOriginalNumber());
-                    } else {
-                        mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(i).getPhoneNumber());
-                    }
-                else
+                if (String.valueOf(arrayListPhoneNumber.get(i).getPhonePublic()).equalsIgnoreCase("3")) {
                     mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(i).getPhoneNumber());
+                } else {
+                    if (arrayListPBPhoneNumber.size() > 0)
+                        if (arrayListPBPhoneNumber.contains("+" + arrayListPhoneNumber.get(i).getOriginalNumber())) {
+                            mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(i).getOriginalNumber());
+                        } else {
+                            mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(i).getPhoneNumber());
+                        }
+                    else
+                        mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(i).getPhoneNumber());
+                }
 
                 mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber.get(i)
                         .getPhonePublic()));

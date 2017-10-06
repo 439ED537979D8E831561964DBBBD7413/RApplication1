@@ -165,7 +165,7 @@ public class NotiRContactsFragment extends BaseNotificationFragment implements W
                 AppConstants.KEY_RCONTACTS_API_CALL_TIME_STAMP, ""));
 
         if (Utils.isNetworkAvailable(getActivity())) {
-            new AsyncWebServiceCall(getActivity(), WSRequestType.REQUEST_TYPE_JSON.getValue(),
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     allUpdatesObject, null, WsResponseObject.class, WsConstants
                     .REQ_GET_RCONTACT_UPDATES, "Getting updates..", true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
                     WsConstants.WS_ROOT_V2 + WsConstants.REQ_GET_RCONTACT_UPDATES);

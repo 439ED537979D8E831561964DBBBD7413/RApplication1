@@ -241,7 +241,6 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
             holder.textMain.setText("+" + holder.textMain.getText());
         }
 
-
         if (showNumber == false) {
             if (pbRcpType == IntegerConstants.RCP_TYPE_PRIMARY) {
                 holder.textMain.setText(StringUtils.replacePattern(holder.textMain.getText().toString(), "[0-9]", "X"));

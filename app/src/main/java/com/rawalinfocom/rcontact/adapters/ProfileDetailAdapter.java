@@ -260,7 +260,6 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 holder.llPrivacy.setVisibility(View.GONE);
                 if ((MoreObjects.firstNonNull(phoneNumber.getIsPrivate(), 0)) == IntegerConstants
                         .IS_PRIVATE) {
-//                    holder.imageView2.setVisibility(View.GONE);
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                     holder.imgActionType.setVisibility(View.GONE);
                     holder.imgActionWhatsapp.setVisibility(View.GONE);
@@ -740,10 +739,10 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                         } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
                                 ("pinterest")) {
                             url = "https://www.pinterest.com/" + imAccount.getIMAccountDetails();
-                        }else if(StringUtils.lowerCase(imAccount.getIMAccountDetails()).startsWith("https://")
+                        } else if (StringUtils.lowerCase(imAccount.getIMAccountDetails()).startsWith("https://")
                                 || StringUtils.lowerCase(imAccount.getIMAccountDetails()).startsWith("http://")
-                                || StringUtils.lowerCase(imAccount.getIMAccountDetails()).startsWith("www.")){
-                            url =  imAccount.getIMAccountDetails();
+                                || StringUtils.lowerCase(imAccount.getIMAccountDetails()).startsWith("www.")) {
+                            url = imAccount.getIMAccountDetails();
                         }
 
                         if (url != null) {

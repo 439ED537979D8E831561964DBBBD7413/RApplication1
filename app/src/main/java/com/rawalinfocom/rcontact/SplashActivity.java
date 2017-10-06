@@ -196,8 +196,7 @@ public class SplashActivity extends BaseActivity implements WsResponseListener {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(themedContext);
 
         alertDialogBuilder.setTitle(activity.getString(R.string.youAreNotUpdatedTitle));
-        alertDialogBuilder.setMessage(activity.getString(R.string.youAreNotUpdatedMessage) + " " +
-                String.valueOf(BuildConfig.VERSION_CODE) + activity.getString(R.string.youAreNotUpdatedMessage1));
+        alertDialogBuilder.setMessage(activity.getString(R.string.youAreNotUpdatedMessage));
         alertDialogBuilder.setCancelable(false);
         alertDialogBuilder.setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {

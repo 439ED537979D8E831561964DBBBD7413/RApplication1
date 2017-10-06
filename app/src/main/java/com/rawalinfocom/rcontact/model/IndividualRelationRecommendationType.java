@@ -9,26 +9,27 @@ import java.util.ArrayList;
 
 public class IndividualRelationRecommendationType implements Serializable {
 
-    String relationName;
-    Integer relationType;
-    String organization;
+    private Integer relationType;
 
-//    ArrayList<String> coWorkerList;
+    private String relationName;
+    private String organizationName;
+    private String FamilyName;
+    private boolean isFriendRelation;
 
-   /* public ArrayList<String> getCoWorkerList() {
-        return coWorkerList;
+    public String getOrganizationName() {
+        return organizationName;
     }
 
-    public void setCoWorkerList(ArrayList<String> coWorkerList) {
-        this.coWorkerList = coWorkerList;
-    }*/
-
-    public String getOrganization() {
-        return organization;
+    public void setOrganizationName(String organizationName) {
+        this.organizationName = organizationName;
     }
 
-    public void setOrganization(String organization) {
-        this.organization = organization;
+    public Integer getRelationType() {
+        return relationType;
+    }
+
+    public void setRelationType(Integer relationType) {
+        this.relationType = relationType;
     }
 
     public String getRelationName() {
@@ -39,11 +40,20 @@ public class IndividualRelationRecommendationType implements Serializable {
         this.relationName = relationName;
     }
 
-    public Integer getRelationType() {
-        return relationType;
+    public String getFamilyName() {
+        return FamilyName;
     }
 
-    public void setRelationType(Integer relationType) {
-        this.relationType = relationType;
+    public void setFamilyName(String FamilyName) {
+        this.FamilyName = FamilyName;
+    }
+
+
+    public boolean getIsFriendRelation() {
+        return isFriendRelation;
+    }
+
+    public void setIsFriendRelation(boolean isFriendRelation) {
+        this.isFriendRelation = isFriendRelation;
     }
 }
