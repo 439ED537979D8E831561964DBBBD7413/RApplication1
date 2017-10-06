@@ -137,7 +137,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@drawable/drawer_item_bg"
-        android:visibility="visible" />
+        android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/nav_ll_relation"
@@ -146,7 +146,7 @@
         android:orientation="horizontal"
         android:paddingEnd="0dp"
         android:paddingStart="@dimen/margin_20dp"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/nav_img_relation"
