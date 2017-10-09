@@ -2,10 +2,16 @@ package com.rawalinfocom.rcontact.adapters;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.TextAppearanceSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,6 +64,7 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private ArrayList<Integer> mSectionPositions;
     private int searchCount;
+    private String searchChar;
 
     //<editor-fold desc="Constructor">
     public RContactListAdapter(Fragment fragment, ArrayList<Object> arrayListUserProfile,
@@ -228,6 +235,40 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             holder.textContactNumber.setText(userProfile.getEmailId());
         }
 
+
+        if(!StringUtils.isBlank(searchChar)){
+            Pattern numberPat = Pattern.compile("\\d+");
+            Matcher matcher1 = numberPat.matcher(searchChar);
+            if (matcher1.find()) {
+                int startPos =  holder.textContactNumber.getText().toString().toLowerCase(Locale.US).indexOf(searchChar
+                        .toLowerCase(Locale.US));
+                int endPos = startPos + searchChar.length();
+                if (startPos != -1) {
+                    Spannable spannable = new SpannableString(holder.textContactNumber.getText().toString());
+                    ColorStateList blueColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.RED});
+                    TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.BOLD, -1, blueColor, null);
+                    spannable.setSpan(highlightSpan, startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    holder.textContactNumber.setText(spannable);
+                } else {
+                    holder.textContactNumber.setText(holder.textContactNumber.getText().toString());
+                }
+            }else{
+                int startPos =  holder.textContactName.getText().toString().toLowerCase(Locale.US).indexOf(searchChar
+                        .toLowerCase(Locale.US));
+                int endPos = startPos + searchChar.length();
+
+                if (startPos != -1) {
+                    Spannable spannable = new SpannableString(holder.textContactName.getText().toString());
+                    ColorStateList blueColor =  new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.RED}) ;
+                    TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, blueColor, null);
+                    spannable.setSpan(highlightSpan, startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    holder.textContactName.setText(spannable);
+                } else {
+                    holder.textContactName.setText(holder.textContactName.getText().toString());
+                }
+            }
+
+        }
         if (StringUtils.length(userProfile.getPmProfileImage()) > 0) {
             Glide.with(activity)
                     .load(userProfile.getPmProfileImage())
@@ -431,7 +472,7 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 }
             }
         }
-
+        searchChar = charText;
         setSearchCount(arrayListUserProfile.size());
         notifyDataSetChanged();
     }

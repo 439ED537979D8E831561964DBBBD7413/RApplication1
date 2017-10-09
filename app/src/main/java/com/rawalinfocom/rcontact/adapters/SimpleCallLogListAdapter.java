@@ -2,9 +2,15 @@ package com.rawalinfocom.rcontact.adapters;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.style.TextAppearanceSpan;
 import android.util.SparseBooleanArray;
 import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
@@ -75,6 +81,7 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
     private static int currentSelectedIndex = -1;
 
     private ArrayList<CallLogType> arrayListToDelete;
+    private String searchChar;
 
     public ArrayList<CallLogType> getArrayListToDelete() {
         return arrayListToDelete;
@@ -375,6 +382,25 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
             }
         }
 
+        if(!StringUtils.isBlank(searchChar)){
+            Pattern numberPat = Pattern.compile("\\d+");
+            Matcher matcher1 = numberPat.matcher(searchChar);
+            if (matcher1.find()) {
+                int startPos =  formattedNumber.toLowerCase(Locale.US).indexOf(searchChar
+                        .toLowerCase(Locale.US));
+                int endPos = startPos + searchChar.length();
+                if (startPos != -1) {
+                    Spannable spannable = new SpannableString(formattedNumber);
+                    ColorStateList blueColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.RED});
+                    TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.BOLD, -1, blueColor, null);
+                    spannable.setSpan(highlightSpan, startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    holder.textContactNumber.setText(spannable);
+                    holder.textContactName.setText(spannable);
+                } else {
+                    holder.textContactNumber.setText(formattedNumber);
+                }
+            }
+        }
 
         final long date = callLogType.getDate();
 //        long logDate1 = callLogType.getDate();
@@ -845,6 +871,7 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
             setArrayListCallLogs(arrayListCallLogs);
         }
 
+        searchChar =  charText;
         notifyDataSetChanged();
     }
 
