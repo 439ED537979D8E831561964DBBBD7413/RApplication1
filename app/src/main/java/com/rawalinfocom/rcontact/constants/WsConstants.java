@@ -145,6 +145,8 @@ public class WsConstants {
     public static final String REQ_CHECK_LOGIN = "check-login";
     public static final String REQ_LOGIN_WITH_SOCIAL_MEDIA = "login-with-social-media";
     public static final String REQ_COUNTRY_CODE_DETAIL = "country-code-detail";
+    public static final String REQ_STATE_DETAILS = "state-details";
+    public static final String REQ_CITY_DETAILS = "city-details";
     public static final String REQ_MSP_DELIVERY_TIME = "msp-delivery-time";
     public static final String REQ_STORE_DEVICE_DETAILS = "store-device-details";
     public static final String REQ_UPLOAD_CONTACTS = "uploadContacts";
