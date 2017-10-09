@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/margin_5dp"
     android:background="@color/colorWhite"
     android:orientation="vertical">
 
@@ -18,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:drawableStart="@drawable/ico_male_svg"
+            android:drawablePadding="@dimen/margin_5dp"
             android:gravity="center"
             android:textColor="@color/grey_hex_ac"
             android:textSize="@dimen/text_size_12sp" />
@@ -36,7 +35,7 @@
                 android:layout_height="wrap_content"
                 android:text="at"
                 android:textColor="@color/grey_hex_ac"
-                android:textSize="@dimen/text_size_14sp" />
+                android:textSize="@dimen/text_size_12sp" />
 
             <TextView
                 android:id="@+id/text_organization_name"
@@ -44,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_5dp"
                 android:textColor="@color/grey_hex_75"
-                android:textSize="@dimen/text_size_16sp"
+                android:textSize="@dimen/text_size_14sp"
                 android:textStyle="bold" />
 
         </LinearLayout>
@@ -53,7 +52,6 @@
             android:id="@+id/ll_other_relation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_20dp"
             android:baselineAligned="false"
             android:orientation="horizontal"
             android:padding="@dimen/padding_5dp">
@@ -62,6 +60,7 @@
                 android:id="@+id/ll_family_relation"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/margin_5dp"
                 android:layout_weight="1"
                 android:gravity="center">
 
@@ -70,7 +69,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:drawableStart="@drawable/ico_male_svg"
+                    android:drawablePadding="@dimen/margin_5dp"
                     android:gravity="center"
                     android:textColor="@color/grey_hex_ac"
                     android:textSize="@dimen/text_size_12sp" />
@@ -80,6 +79,7 @@
                 android:id="@+id/ll_friend_relation"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/margin_5dp"
                 android:layout_weight="1"
                 android:gravity="center">
 
@@ -88,7 +88,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:drawableStart="@drawable/ico_male_svg"
+                    android:drawablePadding="@dimen/margin_5dp"
                     android:gravity="center"
                     android:textColor="@color/grey_hex_ac"
                     android:textSize="@dimen/text_size_12sp" />

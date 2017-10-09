@@ -70,6 +70,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.LinkedinLoginActivity;
+import com.rawalinfocom.rcontact.OrganizationListActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.adapters.SocialConnectListAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
@@ -3642,7 +3643,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 //        inputCompanyName.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
-//                startActivity(new Intent(EditProfileActivity.this, \OrganizationListActivity.class));
+//                startActivity(new Intent(EditProfileActivity.this, OrganizationListActivity.class));
 //            }
 //        });
 

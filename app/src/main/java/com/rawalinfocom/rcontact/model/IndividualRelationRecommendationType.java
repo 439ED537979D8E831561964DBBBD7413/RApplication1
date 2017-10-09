@@ -10,10 +10,10 @@ import java.util.ArrayList;
 public class IndividualRelationRecommendationType implements Serializable {
 
     private Integer relationType;
-
     private String relationName;
     private String organizationName;
     private String FamilyName;
+    private String relationDate;
     private boolean isFriendRelation;
 
     public String getOrganizationName() {
@@ -46,6 +46,14 @@ public class IndividualRelationRecommendationType implements Serializable {
 
     public void setFamilyName(String FamilyName) {
         this.FamilyName = FamilyName;
+    }
+
+    public String getRelationDate() {
+        return relationDate;
+    }
+
+    public void setRelationDate(String relationDate) {
+        this.relationDate = relationDate;
     }
 
 

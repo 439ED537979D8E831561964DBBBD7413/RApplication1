@@ -204,12 +204,17 @@
         <!-- Start : Relation -->
         <activity
             android:name=".relation.ExistingRelationActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".relation.AddNewRelationActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".relation.RelationRecommendationActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".relation.RCPExistingRelationActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".relation.RContactsListActivity"

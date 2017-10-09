@@ -181,6 +181,7 @@ public class SplashActivity extends BaseActivity implements WsResponseListener {
         } else {
             Utils.showErrorSnackBar(this, relativeRootSplash, getResources()
                     .getString(R.string.msg_no_network));
+            redirectToActivity();
         }
     }
 

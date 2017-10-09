@@ -179,8 +179,8 @@ public class RContactsListAdapter extends RecyclerView.Adapter<RContactsListAdap
             } else {
                 final String filterPattern = constraint.toString().toLowerCase().trim();
                 for (final UserProfile userProfile : filteredList) {
-                    if (userProfile.getPmFirstName().toLowerCase().startsWith(filterPattern)
-                            || userProfile.getPmLastName().toLowerCase().startsWith(filterPattern)) {
+                    if (userProfile.getPmFirstName().toLowerCase().contains(filterPattern)
+                            || userProfile.getPmLastName().toLowerCase().contains(filterPattern)) {
                         arrayListUserProfile.add(userProfile);
                     }
                 }

@@ -6,6 +6,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -14,6 +16,7 @@ import android.widget.TextView;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.model.IndividualRelationRecommendationType;
 import com.rawalinfocom.rcontact.model.RelationRecommendationType;
+import com.rawalinfocom.rcontact.model.UserProfile;
 
 import java.util.ArrayList;
 
@@ -24,11 +27,13 @@ import butterknife.ButterKnife;
  * Created by Aniruddh on 04/10/17.
  */
 
-class RelationRecommendationListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+class RelationRecommendationListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 
 
     private ArrayList<RelationRecommendationType> arrayListRelationType;
-    Activity mActivity;
+    private ArrayList<RelationRecommendationType> filteredList;
+    private Activity activity;
+    private CustomFilter mFilter;
 
     @Override
     public RelationRecommendationViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -38,7 +43,11 @@ class RelationRecommendationListAdapter extends RecyclerView.Adapter<RecyclerVie
 
     RelationRecommendationListAdapter(Activity activity, ArrayList<RelationRecommendationType> list) {
         this.arrayListRelationType = list;
-        this.mActivity = activity;
+        this.activity = activity;
+
+        this.filteredList = new ArrayList<>();
+        this.filteredList.addAll(list);
+        mFilter = new CustomFilter(RelationRecommendationListAdapter.this);
 
     }
 
@@ -54,9 +63,10 @@ class RelationRecommendationListAdapter extends RecyclerView.Adapter<RecyclerVie
                 getIndividualRelationRecommendationTypeArrayList();
         if (list.size() > 0) {
 
-            IndividualRelationRecommendationListAdapter adapter = new IndividualRelationRecommendationListAdapter(mActivity, list);
+            IndividualRelationRecommendationListAdapter adapter = new IndividualRelationRecommendationListAdapter(activity,
+                    list, "recommendation");
 
-            viewHolder.recycleIndividualRelationList.setLayoutManager(new LinearLayoutManager(mActivity));
+            viewHolder.recycleIndividualRelationList.setLayoutManager(new LinearLayoutManager(activity));
             viewHolder.recycleIndividualRelationList.setAdapter(adapter);
         }
     }
@@ -64,6 +74,80 @@ class RelationRecommendationListAdapter extends RecyclerView.Adapter<RecyclerVie
     @Override
     public int getItemCount() {
         return arrayListRelationType.size();
+    }
+
+    @Override
+    public Filter getFilter() {
+        return mFilter;
+    }
+
+    private class CustomFilter extends Filter {
+        private RelationRecommendationListAdapter mAdapter;
+
+        private CustomFilter(RelationRecommendationListAdapter mAdapter) {
+            super();
+            this.mAdapter = mAdapter;
+        }
+
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            arrayListRelationType.clear();
+            final FilterResults results = new FilterResults();
+            if (constraint.length() == 0) {
+                arrayListRelationType.addAll(filteredList);
+            } else {
+
+                String finalString = constraint.toString().toLowerCase().trim();
+
+                if (finalString.contains(" ")) {
+
+                    String[] splitString = finalString.split("\\s+");
+
+                    if (splitString.length == 2) {
+
+                        for (final RelationRecommendationType recommendationType : filteredList) {
+                            if ((recommendationType.getFirstName().toLowerCase().startsWith(splitString[0])
+                                    || recommendationType.getLastName().toLowerCase().startsWith(splitString[0]))
+                                    && (recommendationType.getFirstName().toLowerCase().startsWith(splitString[1])
+                                    || recommendationType.getLastName().toLowerCase().startsWith(splitString[1]))) {
+                                arrayListRelationType.add(recommendationType);
+                            }
+                        }
+
+                    } else {
+
+                        for (final RelationRecommendationType recommendationType : filteredList) {
+                            if (recommendationType.getFirstName().toLowerCase().contains(splitString[0])
+                                    || recommendationType.getLastName().toLowerCase().contains(splitString[0])
+                                    || recommendationType.getFirstName().toLowerCase().contains(splitString[1])
+                                    || recommendationType.getLastName().toLowerCase().contains(splitString[1])) {
+                                arrayListRelationType.add(recommendationType);
+                            }
+                        }
+                    }
+
+                } else {
+
+                    final String filterPattern = constraint.toString().toLowerCase().trim();
+                    for (final RelationRecommendationType recommendationType : filteredList) {
+                        if (recommendationType.getFirstName().toLowerCase().contains(filterPattern)
+                                || recommendationType.getLastName().toLowerCase().contains(filterPattern)
+                                || recommendationType.getNumber().toLowerCase().contains(filterPattern)) {
+                            arrayListRelationType.add(recommendationType);
+                        }
+                    }
+                }
+            }
+            System.out.println("RContacts Count Number " + arrayListRelationType.size());
+            results.values = arrayListRelationType;
+            results.count = arrayListRelationType.size();
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            this.mAdapter.notifyDataSetChanged();
+        }
     }
 
     class RelationRecommendationViewHolder extends RecyclerView.ViewHolder {

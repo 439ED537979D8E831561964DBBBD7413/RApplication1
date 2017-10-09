@@ -726,6 +726,7 @@
     <string name="str_next">Next</string>
     <string name="str_hint_add_organization">Please add organization to add Business Relation</string>
     <string name="str_hint_add_family">Please set your gender to add Family Relation</string>
+    <string name="str_establish_relation">Established Relation</string>
 
     <!-- Force update -->
     <string name="youAreNotUpdatedTitle">Update Available</string>
