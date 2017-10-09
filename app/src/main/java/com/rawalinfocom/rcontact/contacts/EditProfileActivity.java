@@ -439,12 +439,15 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         TableCountryMaster tableCountryMaster = new TableCountryMaster(databaseHandler);
         if (tableCountryMaster.getCountryCount() <= 0) {
             getCountryList();
+            init(false);
+        } else {
+            init(true);
         }
 
 //        SocialEmailList = new ArrayList<>();
         arrayListOldEmailAccount = new ArrayList<>();
 
-        init();
+
 
         /*btnShare.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -681,7 +684,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
                             email.setEmIsSocial(2);
                             if (!operationEmail.getEmSocialType().equalsIgnoreCase("")) {
-                                email.setEmSocialType(operationEmail.getEmSocialType() + ",linkedin");
+                                email.setEmSocialType(operationEmail.getEmSocialType() + "," +
+                                        "linkedin");
                                 email.setEmId(operationEmail.getEmId());
                                 email.setEmRcpType(operationEmail.getEmRcpType());
                             } else {
@@ -797,7 +801,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                                 ("last_name"));
 
                                         imAccount.setIMAccountProtocol("Facebook");
-                                        imAccount.setIMAccountProfileImage("https://graph.facebook" +
+                                        imAccount.setIMAccountProfileImage("https://graph" +
+                                                ".facebook" +
                                                 ".com/" + socialId +
                                                 "/picture?width=200&height=150");
                                         imAccount.setIMAccountPublic(IntegerConstants
@@ -806,20 +811,28 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                         arrayListSocialContactObject.add(imAccount);
 
                                         for (int i = 0; i < arrayListEmailObject.size(); i++) {
-                                            ProfileDataOperationEmail operationEmail = (ProfileDataOperationEmail)
-                                                    arrayListEmailObject.get(i);
+                                            ProfileDataOperationEmail operationEmail =
+                                                    (ProfileDataOperationEmail)
+                                                            arrayListEmailObject.get(i);
                                             if (operationEmail.getEmEmailId().equalsIgnoreCase(
-                                                    StringUtils.trim(jsonObject.getString("email")))) {
+                                                    StringUtils.trim(jsonObject.getString
+                                                            ("email")))) {
 
-                                                ProfileDataOperationEmail email = new ProfileDataOperationEmail();
-                                                email.setEmEmailId(StringUtils.trim(jsonObject.getString("email")));
+                                                ProfileDataOperationEmail email = new
+                                                        ProfileDataOperationEmail();
+                                                email.setEmEmailId(StringUtils.trim(jsonObject
+                                                        .getString("email")));
                                                 email.setEmType("Work");
-                                                email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
+                                                email.setEmPublic(IntegerConstants
+                                                        .PRIVACY_MY_CONTACT);
                                                 email.setEmIsSocial(2);
-                                                if (!operationEmail.getEmSocialType().equalsIgnoreCase("")) {
-                                                    email.setEmSocialType(operationEmail.getEmSocialType() + ",facebook");
+                                                if (!operationEmail.getEmSocialType()
+                                                        .equalsIgnoreCase("")) {
+                                                    email.setEmSocialType(operationEmail
+                                                            .getEmSocialType() + ",facebook");
                                                     email.setEmId(operationEmail.getEmId());
-                                                    email.setEmRcpType(operationEmail.getEmRcpType());
+                                                    email.setEmRcpType(operationEmail
+                                                            .getEmRcpType());
                                                 } else {
                                                     email.setEmSocialType("facebook");
                                                 }
@@ -835,8 +848,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                         }
 
                                         if (isAdd) {
-                                            ProfileDataOperationEmail email = new ProfileDataOperationEmail();
-                                            email.setEmEmailId(StringUtils.trim(jsonObject.getString("email")));
+                                            ProfileDataOperationEmail email = new
+                                                    ProfileDataOperationEmail();
+                                            email.setEmEmailId(StringUtils.trim(jsonObject
+                                                    .getString("email")));
                                             email.setEmType("Work");
                                             email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
                                             email.setEmIsSocial(2);
@@ -853,7 +868,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                                 , "");
                                     } else {
                                         Utils.showErrorSnackBar(EditProfileActivity.this,
-                                                relativeRootEditProfile, "Email address not found!!");
+                                                relativeRootEditProfile, "Email address not " +
+                                                        "found!!");
                                     }
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -1115,6 +1131,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         tableCountryMaster.addArrayCountry(arrayListCountry);
                     }
 
+                    addressDetails();
 
                 } else {
                     if (countryCodeResponse != null) {
@@ -1185,8 +1202,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                 if (positionSplit.length > 3) {
                                     cityName = positionSplit[3];
                                 }*/
-                                getCityList(stateList.get(i - 1).getStateId(), String.valueOf
-                                        (position));
+                                String stateId = stateList.get(i - 1).getStateId();
+                                spinnerState.setTag(R.id.spinner_state_id, stateId);
+                                /*getCityList(stateId, String.valueOf
+                                        (position));*/
                             }
                         }
 
@@ -1254,6 +1273,23 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             spinnerCity.setSelection(0);
                         }
                     }*/
+
+                    spinnerCity.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener
+                            () {
+                        @Override
+                        public void onItemSelected(AdapterView<?> adapterView, View view, int i,
+                                                   long l) {
+                            if (i != 0) {
+                                String cityId = cityList.get(i - 1).getCityId();
+                                spinnerCity.setTag(R.id.spinner_city_id, cityId);
+                            }
+                        }
+
+                        @Override
+                        public void onNothingSelected(AdapterView<?> adapterView) {
+
+                        }
+                    });
 
                 } else {
                     if (cityResponse != null) {
@@ -1447,7 +1483,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         linkedInSignIn();
                     }
 
-                } else if (socialName.equalsIgnoreCase("Custom") || socialName.equalsIgnoreCase("કસ્ટમ")
+                } else if (socialName.equalsIgnoreCase("Custom") || socialName.equalsIgnoreCase
+                        ("કસ્ટમ")
                         || socialName.equalsIgnoreCase("कस्टम")) {
                     showCustomTypeDialogForSocial();
                 } else {
@@ -1819,15 +1856,17 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     organization.setIsCurrent(checkboxOrganization.isChecked() ? 1 : 0);
                     organization.setOrgPublic(IntegerConstants.PRIVACY_EVERYONE);
 
-                    ColorStateList colorStateList = ColorStateList.valueOf(ContextCompat.getColor(EditProfileActivity
-                            .this, R.color.colorDarkGray));
+                    ColorStateList colorStateList = ColorStateList.valueOf(ContextCompat.getColor
+                            (EditProfileActivity
+                                    .this, R.color.colorDarkGray));
                     ViewCompat.setBackgroundTintList(inputFromDate, colorStateList);
                     ViewCompat.setBackgroundTintList(inputToDate, colorStateList);
 
                     if (checkboxOrganization.isChecked()) {
 
-                        ColorStateList colorState = ColorStateList.valueOf(ContextCompat.getColor(EditProfileActivity
-                                .this, R.color.grayishMagenta));
+                        ColorStateList colorState = ColorStateList.valueOf(ContextCompat.getColor
+                                (EditProfileActivity
+                                        .this, R.color.grayishMagenta));
                         ViewCompat.setBackgroundTintList(inputToDate, colorState);
                     }
 
@@ -1859,11 +1898,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             } else if (StringUtils.isBlank(organization.getOrgFromDate())) {
                                 Utils.showErrorSnackBar(this, relativeRootEditProfile,
                                         getString(R.string.error_required_org_from_date));
-//                                inputFromDate.setHighlightColor(ContextCompat.getColor(EditProfileActivity
+//                                inputFromDate.setHighlightColor(ContextCompat.getColor
+// (EditProfileActivity
 //                                        .this, R.color.colorSnackBarNegative));
 
-                                ColorStateList colorStateList1 = ColorStateList.valueOf(ContextCompat.getColor(EditProfileActivity
-                                        .this, R.color.colorSnackBarNegative));
+                                ColorStateList colorStateList1 = ColorStateList.valueOf
+                                        (ContextCompat.getColor(EditProfileActivity
+                                                .this, R.color.colorSnackBarNegative));
                                 ViewCompat.setBackgroundTintList(inputFromDate, colorStateList1);
 
                                 isValid = false;
@@ -1872,11 +1913,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                     (organization.getOrgToDate())) {
                                 Utils.showErrorSnackBar(this, relativeRootEditProfile,
                                         getString(R.string.error_required_org_to_date));
-//                                inputToDate.setHighlightColor(ContextCompat.getColor(EditProfileActivity
+//                                inputToDate.setHighlightColor(ContextCompat.getColor
+// (EditProfileActivity
 //                                        .this, R.color.colorSnackBarNegative));
 
-                                ColorStateList colorStateList1 = ColorStateList.valueOf(ContextCompat.getColor(EditProfileActivity
-                                        .this, R.color.colorSnackBarNegative));
+                                ColorStateList colorStateList1 = ColorStateList.valueOf
+                                        (ContextCompat.getColor(EditProfileActivity
+                                                .this, R.color.colorSnackBarNegative));
                                 ViewCompat.setBackgroundTintList(inputToDate, colorStateList1);
 
                                 isValid = false;
@@ -2046,6 +2089,20 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     address.setCountry(countryName);
                     address.setState(stateName);
                     address.setCity(cityName);
+
+                    if (country.getTag(R.id.spinner_country_id) != null) {
+                        address.setCountryId(Integer.valueOf(country.getTag(R.id
+                                .spinner_country_id).toString()));
+                    }
+                    if (state.getTag(R.id.spinner_state_id) != null) {
+                        address.setStateId(Integer.valueOf(state.getTag(R.id.spinner_state_id)
+                                .toString()));
+                    }
+                    if (city.getTag(R.id.spinner_city_id) != null) {
+                        address.setCityId(Integer.valueOf(city.getTag(R.id.spinner_city_id).toString
+                                ()));
+                    }
+
                     address.setStreet(streetName);
                     address.setNeighborhood(neighborhoodName);
                     address.setPostCode(pinCodeName);
@@ -2288,7 +2345,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
     //<editor-fold desc="Private Methods">
 
-    private void init() {
+    private void init(boolean showAddress) {
 
         initToolbar();
         setFonts();
@@ -2297,7 +2354,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         emailDetails();
         organizationDetails();
         websiteDetails();
-        addressDetails();
+        if (showAddress) {
+            addressDetails();
+        }
         socialContactDetails();
         eventDetails();
         genderDetails();
@@ -3199,8 +3258,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             for (int i = 0; i < arrayListOrganizationObject.size(); i++) {
                 addOrganizationView(arrayListOrganizationObject.get(i));
             }
-            EditText inputCompanyName = linearOrganizationDetails.findViewById(R.id.input_company_name);
-            EditText inputDesignationName = linearOrganizationDetails.findViewById(R.id.input_designation_name);
+            EditText inputCompanyName = linearOrganizationDetails.findViewById(R.id
+                    .input_company_name);
+            EditText inputDesignationName = linearOrganizationDetails.findViewById(R.id
+                    .input_designation_name);
             inputCompanyName.addTextChangedListener(valueTextWatcher);
             inputDesignationName.addTextChangedListener(valueTextWatcher);
         } else {
@@ -3217,8 +3278,11 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         for (int i = 0; i < arrayListAddress.size(); i++) {
             ProfileDataOperationAddress address = new ProfileDataOperationAddress();
             address.setCountry(arrayListAddress.get(i).getAmCountry());
+            address.setCountryId(arrayListAddress.get(i).getAmCountryId());
             address.setState(arrayListAddress.get(i).getAmState());
+            address.setStateId(arrayListAddress.get(i).getAmStateId());
             address.setCity(arrayListAddress.get(i).getAmCity());
+            address.setCityId(arrayListAddress.get(i).getAmCityId());
             address.setStreet(arrayListAddress.get(i).getAmStreet());
             address.setFormattedAddress(arrayListAddress.get(i).getAmFormattedAddress());
             address.setNeighborhood(arrayListAddress.get(i).getAmNeighborhood());
@@ -3484,9 +3548,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                        /* inputValue.setText(String.format("%s %s", email.getEmEmailId(),
                                 getString(R.string.im_icon_verify)));*/
 
-                        String s = Utils.setMultipleTypeface(EditProfileActivity.this, email.getEmEmailId() + " <font color" +
-                                "='#00bfff'>" + getString(R.string.im_icon_verify) + "</font>", 0, (StringUtils.length
-                                (email.getEmEmailId()) + 1), ((StringUtils.length(email.getEmEmailId()) + 1) + 1)).toString();
+                        String s = Utils.setMultipleTypeface(EditProfileActivity.this, email
+                                        .getEmEmailId() + " <font color" +
+                                        "='#00bfff'>" + getString(R.string.im_icon_verify) +
+                                        "</font>",
+                                0, (StringUtils.length
+                                        (email.getEmEmailId()) + 1), ((StringUtils.length(email
+                                        .getEmEmailId()) + 1) + 1)).toString();
 
                         inputValue.setText(Html.fromHtml(s));
                     } else {
@@ -3794,14 +3862,17 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 if (linearSocialContactDetails.getChildCount() > 1) {
                     linearSocialContactDetails.removeView(relativeRowEditProfileSocial);
 
-                    TextView textProtocol = relativeRowEditProfileSocial.findViewById(R.id.input_protocol);
+                    TextView textProtocol = relativeRowEditProfileSocial.findViewById(R.id
+                            .input_protocol);
 
                     if (textProtocol != null) {
                         if (textProtocol.getText().toString().trim().equalsIgnoreCase("Facebook")) {
                             socialTypeList.add("Facebook");
-                        } else if (textProtocol.getText().toString().trim().equalsIgnoreCase("GooglePlus")) {
+                        } else if (textProtocol.getText().toString().trim().equalsIgnoreCase
+                                ("GooglePlus")) {
                             socialTypeList.add("GooglePlus");
-                        } else if (textProtocol.getText().toString().trim().equalsIgnoreCase("LinkedIn")) {
+                        } else if (textProtocol.getText().toString().trim().equalsIgnoreCase
+                                ("LinkedIn")) {
                             socialTypeList.add("LinkedIn");
                         }
                     }
@@ -3815,9 +3886,11 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     if (textProtocol != null) {
                         if (textProtocol.getText().toString().trim().equalsIgnoreCase("Facebook")) {
                             socialTypeList.add("Facebook");
-                        } else if (textProtocol.getText().toString().trim().equalsIgnoreCase("GooglePlus")) {
+                        } else if (textProtocol.getText().toString().trim().equalsIgnoreCase
+                                ("GooglePlus")) {
                             socialTypeList.add("GooglePlus");
-                        } else if (textProtocol.getText().toString().trim().equalsIgnoreCase("LinkedIn")) {
+                        } else if (textProtocol.getText().toString().trim().equalsIgnoreCase
+                                ("LinkedIn")) {
                             socialTypeList.add("LinkedIn");
                         }
                     }
@@ -3867,7 +3940,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 //        inputCompanyName.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
-//                startActivity(new Intent(EditProfileActivity.this, \OrganizationListActivity.class));
+//                startActivity(new Intent(EditProfileActivity.this, \OrganizationListActivity
+// .class));
 //                startActivity(new Intent(EditProfileActivity.this, OrganizationListActivity
 // .class));
 //            }
@@ -4080,13 +4154,16 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             int countryPosition = 0;
             if (countryList.contains(StringUtils.defaultString(address.getCountry()))) {
                 countryPosition = countrySpinnerAdapter.getPosition(address.getCountry());
+                spinnerCountry.setTag(R.id.spinner_country_id, address.getCountryId());
             }
             spinnerCountry.setSelection(countryPosition);
 
             arrayListState.add(address.getState());
+            spinnerState.setTag(R.id.spinner_state_id, address.getStateId());
             spinnerState.setSelection(stateSpinnerAdapter.getPosition(address.getState()));
 
             arrayListCity.add(address.getCity());
+            spinnerCity.setTag(R.id.spinner_city_id, address.getCityId());
             spinnerCity.setSelection(citySpinnerAdapter.getPosition(address.getCity()));
 
             inputStreet.setText(address.getStreet());
@@ -4132,9 +4209,11 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         state = address.getState();
                         city = address.getCity();
                     }*/
-                    getStateList(tableCountryMaster.getCountryIdFromName(spinnerCountry
-                            .getSelectedItem().toString()).getCountryId(), String.valueOf
-                            (spinnerCountry.getTag(R.id.spinner_country_position)));
+                    String countryId = tableCountryMaster.getCountryIdFromName(spinnerCountry
+                            .getSelectedItem().toString()).getCountryId();
+                    spinnerCountry.setTag(R.id.spinner_country_id, countryId);
+                    /*getStateList(countryId, String.valueOf(spinnerCountry.getTag(R.id
+                            .spinner_country_position)));*/
                 }
             }
 
@@ -4162,10 +4241,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                    if (spinnerCountry.getSelectedItemPosition() != 0) {
-                        getCityList(tableCountryMaster.getCountryIdFromName(spinnerCountry
-                                .getSelectedItem().toString()).getCountryId(), String.valueOf
-                                (spinnerCountry.getTag(R.id.spinner_country_position)));
+                    if (spinnerState.getSelectedItemPosition() != 0) {
+                        getCityList(String.valueOf(spinnerState.getTag(R.id.spinner_state_id)),
+                                String.valueOf(spinnerCountry.getTag(R.id
+                                        .spinner_country_position)));
                     }
                 }
                 return false;
@@ -4420,7 +4499,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             }
 
             if (!listPermissionsNeeded.isEmpty()) {
-                requestPermissions(listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), 2);
+                requestPermissions(listPermissionsNeeded.toArray(new String[listPermissionsNeeded
+                        .size()]), 2);
                 return false;
             } else {
                 return true;
@@ -4566,7 +4646,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 calendar.set(Calendar.YEAR, year);
                 calendar.set(Calendar.MONTH, monthOfYear);
                 calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                SimpleDateFormat sdf = new SimpleDateFormat(AppConstants.EVENT_GENERAL_DATE_FORMAT, Locale.US);
+                SimpleDateFormat sdf = new SimpleDateFormat(AppConstants
+                        .EVENT_GENERAL_DATE_FORMAT, Locale.US);
                 editText.setText(sdf.format(calendar.getTime()));
             }
 
@@ -4965,8 +5046,11 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 address.setAmRecordIndexId(arrayListAddress.get(j).getAddId());
                 address.setAmAddressPrivacy(String.valueOf(arrayListAddress.get(j).getAddPublic()));
                 address.setAmState(arrayListAddress.get(j).getState());
+                address.setAmStateId(arrayListAddress.get(j).getStateId());
                 address.setAmCity(arrayListAddress.get(j).getCity());
+                address.setAmCityId(arrayListAddress.get(j).getCityId());
                 address.setAmCountry(arrayListAddress.get(j).getCountry());
+                address.setAmCountryId(arrayListAddress.get(j).getCountryId());
                 address.setAmFormattedAddress(arrayListAddress.get(j).getFormattedAddress());
                 address.setAmNeighborhood(arrayListAddress.get(j).getNeighborhood());
                 address.setAmPostCode(arrayListAddress.get(j).getPostCode());
@@ -5124,10 +5208,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), null, null,
-                    WsResponseObject.class, WsConstants.REQ_COUNTRY_CODE_DETAIL, getString(R
-                    .string.msg_please_wait), false).executeOnExecutor(AsyncTask
-                    .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT_V2 + WsConstants
-                    .REQ_COUNTRY_CODE_DETAIL);
+                    WsResponseObject.class, WsConstants.REQ_COUNTRY_CODE_DETAIL, getString(R.string
+                    .msg_please_wait), false).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                    WsConstants.WS_ROOT_V2 + WsConstants.REQ_COUNTRY_CODE_DETAIL);
         } else {
             Utils.showErrorSnackBar(this, relativeRootEditProfile, getResources()
                     .getString(R.string.msg_no_network));

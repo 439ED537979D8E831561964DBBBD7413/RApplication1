@@ -10,4 +10,6 @@
     <item name="spinner_state_id" type="id"/>
     <item name="spinner_state_position" type="id"/>
 
+    <item name="spinner_city_id" type="id"/>
+
 </resources>
