@@ -664,7 +664,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     isAdd = true;
 
                     ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
-                    imAccount.setIMAccountProtocol("LinkedIn");
+                    imAccount.setIMAccountProtocol(getString(R.string.linked_in));
                     imAccount.setIMAccountFirstName(data.getStringExtra("first_name"));
                     imAccount.setIMAccountLastName(data.getStringExtra("last_name"));
                     imAccount.setIMAccountProfileImage(data.getStringExtra("profileImage"));
@@ -714,7 +714,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         arrayListOldEmailAccount.add(email);
                     }
 
-                    socialTypeList.remove("LinkedIn");
+                    socialTypeList.remove(getString(R.string.linked_in));
 
                     addSocialConnectView(arrayListSocialContactObject.get
                             (arrayListSocialContactObject.size() - 1), "");
@@ -800,7 +800,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                         imAccount.setIMAccountLastName(jsonObject.getString
                                                 ("last_name"));
 
-                                        imAccount.setIMAccountProtocol("Facebook");
+                                        imAccount.setIMAccountProtocol(getString(R.string
+                                                .facebook));
                                         imAccount.setIMAccountProfileImage("https://graph" +
                                                 ".facebook" +
                                                 ".com/" + socialId +
@@ -861,7 +862,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                             arrayListOldEmailAccount.add(email);
                                         }
 
-                                        socialTypeList.remove("Facebook");
+                                        socialTypeList.remove(getString(R.string.facebook));
 
                                         addSocialConnectView(arrayListSocialContactObject.get
                                                         (arrayListSocialContactObject.size() - 1)
@@ -917,7 +918,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 isAdd = true;
 
                 ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
-                imAccount.setIMAccountProtocol("GooglePlus");
+                imAccount.setIMAccountProtocol(getString(R.string.google_plus));
 
                 imAccount.setIMAccountFirstName(acct.getGivenName());
                 imAccount.setIMAccountLastName(acct.getFamilyName());
@@ -967,7 +968,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     arrayListOldEmailAccount.add(email);
                 }
 
-                socialTypeList.remove("GooglePlus");
+                socialTypeList.remove(getString(R.string.google_plus));
 
                 addSocialConnectView(arrayListSocialContactObject.get
                         (arrayListSocialContactObject.size() - 1), "");
@@ -1427,7 +1428,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 .dialog_social_list, null);
         dialog.setContentView(dialogView);
 
-        TextView txtTitle = (TextView) dialogView.findViewById(R.id.tvDialogTitle);
+        TextView txtTitle = dialogView.findViewById(R.id.tvDialogTitle);
         txtTitle.setText(getString(R.string.str_social_connect));
 
         RecyclerView recycleViewSocialList = dialogView.findViewById(R.id.recycle_view_social_list);
@@ -1441,7 +1442,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                 dialog.dismiss();
 
-                if (socialName.equalsIgnoreCase("Facebook")) {
+                if (socialName.equalsIgnoreCase(getString(R.string.facebook))) {
 
                     IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_FACEBOOK;
 
@@ -1462,7 +1463,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                     }
 
-                } else if (socialName.equalsIgnoreCase("GooglePlus")) {
+                } else if (socialName.equalsIgnoreCase(getString(R.string.google_plus))) {
 
                     IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_GOOGLE;
 
@@ -1512,19 +1513,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             case R.id.button_name_update:
                 String firstName = inputFirstName.getText().toString().trim();
                 String lastName = inputLastName.getText().toString().trim();
-                /*if (!StringUtils.isBlank(firstName) && !StringUtils.isBlank(lastName)) {
-                    profileDataOperation.setPbNameFirst(firstName);
-                    profileDataOperation.setPbNameLast(lastName);
-                    editProfile(profileDataOperation, AppConstants.NAME);
-                } else {
-                    if (StringUtils.isBlank(firstName)) {
-                        Utils.showErrorSnackBar(this, relativeRootEditProfile, getString(R.string
-                                .error_required_first_name));
-                    } else {
-                        Utils.showErrorSnackBar(this, relativeRootEditProfile, getString(R.string
-                                .error_required_last_name));
-                    }
-                }*/
                 if (StringUtils.length(firstName) > 2 && StringUtils.length(firstName) < 51 &&
                         isNameValid(firstName)) {
                     if (StringUtils.length(lastName) > 2 && StringUtils.length(lastName) < 51 &&
@@ -3155,9 +3143,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     .getImImPrivacy()));
             arrayListSocialContactObject.add(imAccount);
 
-            if (arrayListImAccount.get(i).getImImProtocol().equalsIgnoreCase("Facebook")
-                    || arrayListImAccount.get(i).getImImProtocol().equalsIgnoreCase("GooglePlus")
-                    || arrayListImAccount.get(i).getImImProtocol().equalsIgnoreCase("LinkedIn")) {
+            if (arrayListImAccount.get(i).getImImProtocol().equalsIgnoreCase(getString(R.string
+                    .facebook))
+                    || arrayListImAccount.get(i).getImImProtocol().equalsIgnoreCase(getString(R
+                    .string.google_plus))
+                    || arrayListImAccount.get(i).getImImProtocol().equalsIgnoreCase(getString(R
+                    .string.linked_in))) {
                 socialTypeList.remove(arrayListImAccount.get(i).getImImProtocol());
             }
         }
@@ -3784,9 +3775,11 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             textLastName.setText(imAccount.getIMAccountLastName());
             textIsPublic.setText(String.valueOf(imAccount.getIMAccountPublic()));
 
-            if (imAccount.getIMAccountProtocol().equalsIgnoreCase("Facebook")
-                    || imAccount.getIMAccountProtocol().equalsIgnoreCase("GooglePlus")
-                    || imAccount.getIMAccountProtocol().equalsIgnoreCase("LinkedIn")) {
+            if (imAccount.getIMAccountProtocol().equalsIgnoreCase(getString(R.string.facebook))
+                    || imAccount.getIMAccountProtocol().equalsIgnoreCase(getString(R.string
+                    .google_plus))
+                    || imAccount.getIMAccountProtocol().equalsIgnoreCase(getString(R.string
+                    .linked_in))) {
 
                 inputValue.setEnabled(false);
                 linearContent.setVisibility(View.GONE);
@@ -3805,21 +3798,26 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 linearContent.setVisibility(View.VISIBLE);
             }
 
-            if (imAccount.getIMAccountProtocol().equalsIgnoreCase("Facebook")) {
+            if (imAccount.getIMAccountProtocol().equalsIgnoreCase(getString(R.string.facebook))) {
                 imageViewSocialIcon.setImageResource(R.drawable.ico_facebook_svg);
-            } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("GooglePlus")) {
+            } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase(getString(R.string
+                    .google_plus))) {
                 imageViewSocialIcon.setImageResource(R.drawable.ico_google_plus_svg);
-            } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("LinkedIn")) {
+            } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase(getString(R.string
+                    .linked_in))) {
                 imageViewSocialIcon.setImageResource(R.drawable.ico_linkedin_svg);
-            } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("Twitter")) {
+            } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase(getString(R.string
+                    .twitter))) {
                 imageViewSocialIcon.setImageResource(R.drawable.ico_twitter_svg);
-            } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("Instagram")) {
+            } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase(getString(R.string
+                    .instagram))) {
                 imageViewSocialIcon.setImageResource(R.drawable.ico_instagram_svg);
-            } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("Pinterest")) {
+            } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase(getString(R.string
+                    .pinterest))) {
                 imageViewSocialIcon.setImageResource(R.drawable.ico_pinterest_svg);
-            } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("Other")) {
+            } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase(getString(R.string.other))) {
                 imageViewSocialIcon.setImageResource(R.drawable.ico_other_svg);
-            } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("Custom")) {
+            } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase(getString(R.string.custom))) {
                 imageViewSocialIcon.setImageResource(R.drawable.ico_other_svg);
             } else {
                 imageViewSocialIcon.setImageResource(R.drawable.ico_other_svg);
@@ -3832,21 +3830,21 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             imAccountProfileImage.setText("");
             imageViewSocialProfile.setVisibility(View.GONE);
 
-            if (imAccountProtocol.equalsIgnoreCase("Facebook")) {
+            if (imAccountProtocol.equalsIgnoreCase(getString(R.string.facebook))) {
                 imageViewSocialIcon.setImageResource(R.drawable.ico_facebook_svg);
-            } else if (imAccountProtocol.equalsIgnoreCase("GooglePlus")) {
+            } else if (imAccountProtocol.equalsIgnoreCase(getString(R.string.google_plus))) {
                 imageViewSocialIcon.setImageResource(R.drawable.ico_google_plus_svg);
-            } else if (imAccountProtocol.equalsIgnoreCase("LinkedIn")) {
+            } else if (imAccountProtocol.equalsIgnoreCase(getString(R.string.linked_in))) {
                 imageViewSocialIcon.setImageResource(R.drawable.ico_linkedin_svg);
-            } else if (imAccountProtocol.equalsIgnoreCase("Twitter")) {
+            } else if (imAccountProtocol.equalsIgnoreCase(getString(R.string.twitter))) {
                 imageViewSocialIcon.setImageResource(R.drawable.ico_twitter_svg);
-            } else if (imAccountProtocol.equalsIgnoreCase("Instagram")) {
+            } else if (imAccountProtocol.equalsIgnoreCase(getString(R.string.instagram))) {
                 imageViewSocialIcon.setImageResource(R.drawable.ico_instagram_svg);
-            } else if (imAccountProtocol.equalsIgnoreCase("Pinterest")) {
+            } else if (imAccountProtocol.equalsIgnoreCase(getString(R.string.pinterest))) {
                 imageViewSocialIcon.setImageResource(R.drawable.ico_pinterest_svg);
-            } else if (imAccountProtocol.equalsIgnoreCase("Other")) {
+            } else if (imAccountProtocol.equalsIgnoreCase(getString(R.string.other))) {
                 imageViewSocialIcon.setImageResource(R.drawable.ico_other_svg);
-            } else if (imAccountProtocol.equalsIgnoreCase("Custom")) {
+            } else if (imAccountProtocol.equalsIgnoreCase(getString(R.string.custom))) {
                 imageViewSocialIcon.setImageResource(R.drawable.ico_other_svg);
             } else {
                 imageViewSocialIcon.setImageResource(R.drawable.ico_other_svg);
@@ -3866,14 +3864,15 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             .input_protocol);
 
                     if (textProtocol != null) {
-                        if (textProtocol.getText().toString().trim().equalsIgnoreCase("Facebook")) {
-                            socialTypeList.add("Facebook");
+                        if (textProtocol.getText().toString().trim().equalsIgnoreCase(getString(R
+                                .string.facebook))) {
+                            socialTypeList.add(getString(R.string.facebook));
                         } else if (textProtocol.getText().toString().trim().equalsIgnoreCase
-                                ("GooglePlus")) {
-                            socialTypeList.add("GooglePlus");
+                                (getString(R.string.google_plus))) {
+                            socialTypeList.add(getString(R.string.google_plus));
                         } else if (textProtocol.getText().toString().trim().equalsIgnoreCase
-                                ("LinkedIn")) {
-                            socialTypeList.add("LinkedIn");
+                                (getString(R.string.linked_in))) {
+                            socialTypeList.add(getString(R.string.linked_in));
                         }
                     }
 
@@ -3884,14 +3883,15 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     TextView textProtocol = view.findViewById(R.id.input_protocol);
 
                     if (textProtocol != null) {
-                        if (textProtocol.getText().toString().trim().equalsIgnoreCase("Facebook")) {
-                            socialTypeList.add("Facebook");
+                        if (textProtocol.getText().toString().trim().equalsIgnoreCase(getString(R
+                                .string.facebook))) {
+                            socialTypeList.add(getString(R.string.facebook));
                         } else if (textProtocol.getText().toString().trim().equalsIgnoreCase
-                                ("GooglePlus")) {
-                            socialTypeList.add("GooglePlus");
+                                (getString(R.string.google_plus))) {
+                            socialTypeList.add(getString(R.string.google_plus));
                         } else if (textProtocol.getText().toString().trim().equalsIgnoreCase
-                                ("LinkedIn")) {
-                            socialTypeList.add("LinkedIn");
+                                (getString(R.string.linked_in))) {
+                            socialTypeList.add(getString(R.string.linked_in));
                         }
                     }
                 }
