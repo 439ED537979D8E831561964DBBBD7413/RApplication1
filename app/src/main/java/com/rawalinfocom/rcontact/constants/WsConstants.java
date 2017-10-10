@@ -13,7 +13,7 @@ public class WsConstants {
      */
     //<editor-fold desc="Production">
 
-    // API ROOT
+    /*// API ROOT
     public static final String WS_ROOT = "https://api.rcontacts.in/api/v1/";
     public static final String WS_ROOT_V2 = "https://api.rcontacts.in/api/v2/";
     // TERMS-CONDITIONS URL
@@ -28,7 +28,7 @@ public class WsConstants {
     // AVERAGE RATING SHARE
     public static final String WS_AVG_RATING_SHARE_BADGE_ROOT = "http://rcrc.ac/r/";
     //PLAY STORE LINK
-    public static String PLAY_STORE_LINK = "http://rcrc.ac/a/";
+    public static String PLAY_STORE_LINK = "http://rcrc.ac/a/";*/
 
     //</editor-fold>
 
@@ -37,7 +37,7 @@ public class WsConstants {
      */
     //<editor-fold desc="Staging">
 
-   /* // API ROOT
+    // API ROOT
     public static final String WS_ROOT = "http://apistaging.rcontacts.in/api/v1/";
     public static final String WS_ROOT_V2 = "http://apistaging.rcontacts.in/api/v2/";
     // TERMS-CONDITIONS URL
@@ -53,14 +53,14 @@ public class WsConstants {
     // AVERAGE RATING SHARE
     public static final String WS_AVG_RATING_SHARE_BADGE_ROOT = "http://staging.rcrc.ac/r/";
     //PLAY STORE LINK
-    public static String PLAY_STORE_LINK = "http://staging.rcrc.ac/a/";*/
+    public static String PLAY_STORE_LINK = "http://staging.rcrc.ac/a/";
     //</editor-fold>
 
     /**
      * QA
      */
     //<editor-fold desc="QA">
-   /* // API ROOT
+    /*// API ROOT
     public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
     public static final String WS_ROOT_V2 = "http://apiqa.rcontacts.in/api/v2/";
     // TERMS-CONDITIONS URL

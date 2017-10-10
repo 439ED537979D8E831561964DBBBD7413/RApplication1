@@ -136,19 +136,18 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
             @TargetApi(Build.VERSION_CODES.M)
             @Override
             public void onClick(View view) {
-
-                if (!number.contains("xx") && !number.contains("XX")) {
+                if (!holder.textMain.getText().toString().contains("xx") && !holder.textMain.getText().toString().contains("XX")) {
 
                     if (ContextCompat.checkSelfPermission(activity, android.Manifest
                             .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                         activity.requestPermissions(new String[]{Manifest.permission
                                 .CALL_PHONE}, AppConstants
                                 .MY_PERMISSIONS_REQUEST_PHONE_CALL);
-                        if (activity instanceof ProfileDetailActivity) {
-                            ((ProfileDetailActivity) activity).callNumber = number;
+                        if (activity instanceof PublicProfileDetailActivity) {
+                            ((PublicProfileDetailActivity) activity).callNumber = number;
                         }
                     } else {
-                        if (!number.contains("xx") && !number.contains("XX"))
+                        if (!holder.textMain.getText().toString().contains("xx") && !holder.textMain.getText().toString().contains("XX"))
                             Utils.callIntent(activity, number);
                     }
                 }
@@ -175,17 +174,17 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
         holder.textMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!number.contains("xx") && !number.contains("XX")) {
+                if (!holder.textMain.getText().toString().contains("xx") && !holder.textMain.getText().toString().contains("XX")) {
                     if (ContextCompat.checkSelfPermission(activity, android.Manifest
                             .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                         activity.requestPermissions(new String[]{Manifest.permission
                                 .CALL_PHONE}, AppConstants
                                 .MY_PERMISSIONS_REQUEST_PHONE_CALL);
-                        if (activity instanceof ProfileDetailActivity) {
-                            ((ProfileDetailActivity) activity).callNumber = number;
+                        if (activity instanceof PublicProfileDetailActivity) {
+                            ((PublicProfileDetailActivity) activity).callNumber = number;
                         }
                     } else {
-                        if (!number.contains("xx") && !number.contains("XX"))
+                        if (!holder.textMain.getText().toString().contains("xx") && !holder.textMain.getText().toString().contains("XX"))
                             Utils.callIntent(activity, number);
                     }
                 }
@@ -197,9 +196,9 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
             public boolean onLongClick(View view) {
                 Utils.copyToClipboard(activity, activity.getString(R.string.str_copy_number), (
                         (TextView) view).getText().toString());
-                if (activity instanceof ProfileDetailActivity) {
-                    Utils.showSuccessSnackBar(activity, ((ProfileDetailActivity) activity)
-                            .getRelativeRootProfileDetail(), activity.getString(R.string
+                if (activity instanceof PublicProfileDetailActivity) {
+                    Utils.showSuccessSnackBar(activity, ((PublicProfileDetailActivity) activity)
+                            .getRootRelativeLayout(), activity.getString(R.string
                             .str_copy_number_clip_board));
                 }
                 return true;
@@ -258,6 +257,15 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
 
                 holder.buttonRequest.setVisibility(View.GONE);
             }
+        }
+
+        if (StringUtils.contains(holder.textMain.getText().toString(), "X") ||
+                StringUtils.contains(holder.textMain.getText().toString(), "x")) {
+            holder.imgActionType.setClickable(false);
+            holder.textMain.setClickable(false);
+        }else{
+            holder.imgActionType.setClickable(true);
+            holder.textMain.setClickable(true);
         }
 
         if (StringUtils.contains(holder.textMain.getText().toString(), "X") ||

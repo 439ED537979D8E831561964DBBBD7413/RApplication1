@@ -318,6 +318,9 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
 
     //<editor-fold desc="Private Methods">
 
+    public RelativeLayout getRootRelativeLayout() {
+        return relativeRootProfileDetail;
+    }
     private void getIntentDetails(Intent intent) {
         if (intent != null) {
 
