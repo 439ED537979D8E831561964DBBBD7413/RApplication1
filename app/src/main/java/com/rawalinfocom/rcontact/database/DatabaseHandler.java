@@ -14,7 +14,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     // All Static variables
     // Database Version
-    private static final int DATABASE_VERSION= 5;  //update to 4 for production/staging // For QA 5
+    private static final int DATABASE_VERSION= 4;  //update to 4 for production/staging // For QA 5
 
     // Database Name
     public static final String DATABASE_NAME = "RContact.db";
@@ -101,7 +101,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 db.execSQL("ALTER TABLE " + TableImMaster.TABLE_RC_IM_MASTER + " ADD "
                         + "COLUMN " + TableImMaster.COLUMN_IM_PROFILE_IMAGE + " text ");
 
-                /*System.out.println("RContact db upgrade case 3 email --> ");
+                System.out.println("RContact db upgrade case 3 email --> ");
                 // For Email
                 db.execSQL(TableEmailMaster.CREATE_TABLE_RC_EMAIL_MASTER_1);
                 db.execSQL("INSERT INTO " + TableEmailMaster.TABLE_RC_EMAIL_MASTER_TEMP + "(em_id,em_email_address," +
@@ -110,9 +110,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                         "em_is_verified,rc_profile_master_pm_id FROM " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + ";");
                 db.execSQL("DROP TABLE IF EXISTS '" + TableEmailMaster.TABLE_RC_EMAIL_MASTER + "'");
                 db.execSQL("ALTER TABLE " + TableEmailMaster.TABLE_RC_EMAIL_MASTER_TEMP
-                        + " RENAME TO " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + ";");*/
+                        + " RENAME TO " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + ";");
 
-            case 4:
+           /* case 4:
                 System.out.println("RContact db upgrade case 4 email --> ");
                 // For version 5
                 db.execSQL(TableEmailMaster.CREATE_TABLE_RC_EMAIL_MASTER_1);
@@ -122,7 +122,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                         "em_is_verified,rc_profile_master_pm_id FROM " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + ";");
                 db.execSQL("DROP TABLE IF EXISTS '" + TableEmailMaster.TABLE_RC_EMAIL_MASTER + "'");
                 db.execSQL("ALTER TABLE " + TableEmailMaster.TABLE_RC_EMAIL_MASTER_TEMP
-                        + " RENAME TO " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + ";");
+                        + " RENAME TO " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + ";");*/
         }
 
         // create new tables
