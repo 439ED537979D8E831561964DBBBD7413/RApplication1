@@ -23,6 +23,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.text.style.TextAppearanceSpan;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -381,11 +382,11 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         holder.textContactNumber.setText(Utils.getFormattedNumber(activity, profileData
                 .getTempNumber()));
 
-        if(!StringUtils.isBlank(searchChar)){
+        if (!StringUtils.isBlank(searchChar)) {
             Pattern numberPat = Pattern.compile("\\d+");
             Matcher matcher1 = numberPat.matcher(searchChar);
             if (matcher1.find()) {
-                int startPos =  holder.textContactNumber.getText().toString().toLowerCase(Locale.US).indexOf(searchChar
+                int startPos = holder.textContactNumber.getText().toString().toLowerCase(Locale.US).indexOf(searchChar
                         .toLowerCase(Locale.US));
                 int endPos = startPos + searchChar.length();
                 if (startPos != -1) {
@@ -397,24 +398,71 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 } else {
                     holder.textContactNumber.setText(holder.textContactNumber.getText().toString());
                 }
-            }else{
-                int startPos =  holder.textContactName.getText().toString().toLowerCase(Locale.US).indexOf(searchChar
-                        .toLowerCase(Locale.US));
-                int endPos = startPos + searchChar.length();
-                if (startPos != -1) {
-                    Spannable spannable = new SpannableString(holder.textContactName.getText().toString());
-                    ColorStateList blueColor;
-                    if (showPineGreen){
-                        blueColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.RED});
-                    }else {
-                        blueColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.RED});
+            } else {
+                if (searchChar.contains(" ")) {
+                    String originalString = holder.textContactName.getText().toString();
+                    String[] separated = searchChar.split(" ");
+                    String firstPart = separated[0];
+                    String secondPart = separated[1];
+                    SpannableStringBuilder builder = new SpannableStringBuilder(originalString);
+                    if (!StringUtils.isBlank(firstPart)) {
+                        int startPos1 = originalString.toLowerCase(Locale.US).indexOf(firstPart
+                                .toLowerCase(Locale.US));
+                        int endPos1 = startPos1 + firstPart.length();
+                        if (startPos1 != -1) {
+//                            Spannable spannable = new SpannableString(originalString);
+                            ColorStateList hightlightColor;
+                            if (showPineGreen) {
+                                hightlightColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.RED});
+                            } else {
+                                hightlightColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.RED});
+                            }
+                            TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, hightlightColor, null);
+                            builder.setSpan(highlightSpan, startPos1, endPos1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//                            builder.append(spannable);
+//                            holder.textContactName.setText(spannable);
+                        }
                     }
-                    TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, blueColor, null);
-                    spannable.setSpan(highlightSpan, startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    holder.textContactName.setText(spannable);
+
+                    if (!StringUtils.isBlank(secondPart)) {
+                        int startPos2 = originalString.toLowerCase(Locale.US).indexOf(secondPart
+                                .toLowerCase(Locale.US));
+                        int endPos2 = startPos2 + secondPart.length();
+                        if (startPos2 != -1) {
+//                            Spannable spannable = new SpannableString(originalString);
+                            ColorStateList hightlightColor;
+                            if (showPineGreen) {
+                                hightlightColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.RED});
+                            } else {
+                                hightlightColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.RED});
+                            }
+                            TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, hightlightColor, null);
+                            builder.setSpan(highlightSpan, startPos2, endPos2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//                            builder.append(spannable);
+                        }
+                    }
+                    holder.textContactName.setText(builder,TextView.BufferType.SPANNABLE);
                 } else {
-                    holder.textContactName.setText(holder.textContactName.getText().toString());
+                    int startPos = holder.textContactName.getText().toString().toLowerCase(Locale.US).indexOf(searchChar
+                            .toLowerCase(Locale.US));
+                    int endPos = startPos + searchChar.length();
+                    if (startPos != -1) {
+                        Spannable spannable = new SpannableString(holder.textContactName.getText().toString());
+                        ColorStateList blueColor;
+                        if (showPineGreen) {
+                            blueColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.RED});
+                        } else {
+                            blueColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.RED});
+                        }
+                        TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, blueColor, null);
+                        spannable.setSpan(highlightSpan, startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        holder.textContactName.setText(spannable);
+                    } else {
+                        holder.textContactName.setText(holder.textContactName.getText().toString());
+                    }
                 }
+
+
             }
 
         }
@@ -858,11 +906,11 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                             if (profileData.getName().toLowerCase(Locale.getDefault()).contains
                                     (charText)) {
                                 arrayListUserContact.add(profileData);
-                            }else{
+                            } else {
 
-                                if(!StringUtils.isBlank(profileData.getTempFirstName())
-                                        && !StringUtils.isBlank(profileData.getTempLastName())){
-                                    nameFilter(charText,profileData);
+                                if (!StringUtils.isBlank(profileData.getTempFirstName())
+                                        && !StringUtils.isBlank(profileData.getTempLastName())) {
+                                    nameFilter(charText, profileData);
                                 }
 //                                if(firstName.toLowerCase(Locale.getDefault()).equalsIgnoreCase(charText)
 //                                        || !StringUtils.isEmpty(profileData.getTempLastName())
@@ -881,7 +929,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         notifyDataSetChanged();
     }
 
-    private void nameFilter(String charText, ProfileData profileData){
+    private void nameFilter(String charText, ProfileData profileData) {
 
         if (charText.contains(" ")) {
 
@@ -889,12 +937,12 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
             if (splitString.length == 2) {
 
-                    if ((profileData.getTempFirstName().toLowerCase().startsWith(splitString[0])
-                            || profileData.getTempLastName().toLowerCase().startsWith(splitString[0]))
-                            && (profileData.getTempFirstName().toLowerCase().startsWith(splitString[1])
-                            || profileData.getTempLastName().toLowerCase().startsWith(splitString[1]))) {
-                        arrayListUserContact.add(profileData);
-                    }
+                if ((profileData.getTempFirstName().toLowerCase().startsWith(splitString[0])
+                        || profileData.getTempLastName().toLowerCase().startsWith(splitString[0]))
+                        && (profileData.getTempFirstName().toLowerCase().startsWith(splitString[1])
+                        || profileData.getTempLastName().toLowerCase().startsWith(splitString[1]))) {
+                    arrayListUserContact.add(profileData);
+                }
 
             } else {
 
