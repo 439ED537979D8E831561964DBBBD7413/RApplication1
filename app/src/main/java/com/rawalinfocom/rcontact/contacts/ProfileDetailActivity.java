@@ -458,7 +458,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 AppConstants.isFromReceiver = false;
             }
 
-        } else {
+        }
+//        else {
 //            if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase("[Unknown]")) {
 //                fetchAllCallLogHistory(contactName);
 //            } else {
@@ -466,7 +467,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 //                    fetchAllCallLogHistory(profileContactNumber);
 //                }
 //            }
-        }
+//        }
         if (displayOwnProfile) {
             if (pmId != null) {
                 ProfileDataOperation profileDataOperation = queryManager.getRcProfileDetail
@@ -4287,9 +4288,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 Address address = new Address();
                 address.setAmRecordIndexId(arrayListAddress.get(j).getAddId());
                 address.setAmState(arrayListAddress.get(j).getState());
+                address.setAmStateId(arrayListAddress.get(j).getStateId());
                 address.setAmCity(arrayListAddress.get(j).getCity());
+                address.setAmCityId(arrayListAddress.get(j).getCityId());
                 address.setAmAddressPrivacy(String.valueOf(arrayListAddress.get(j).getAddPublic()));
                 address.setAmCountry(arrayListAddress.get(j).getCountry());
+                address.setAmCountryId(arrayListAddress.get(j).getCountryId());
                 address.setAmFormattedAddress(arrayListAddress.get(j).getFormattedAddress());
                 address.setAmNeighborhood(arrayListAddress.get(j).getNeighborhood());
                 address.setAmPostCode(arrayListAddress.get(j).getPostCode());

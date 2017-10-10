@@ -5,14 +5,11 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
-import android.content.res.Configuration;
 import android.support.multidex.MultiDex;
 import android.util.Base64;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
-import com.rawalinfocom.rcontact.constants.AppConstants;
-import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.CallLogType;
 import com.rawalinfocom.rcontact.model.SmsDataType;
 import com.rawalinfocom.rcontact.model.SpamDataType;
@@ -20,9 +17,11 @@ import com.rawalinfocom.rcontact.model.SpamDataType;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Locale;
 
 import io.fabric.sdk.android.Fabric;
+
+/*import io.realm.Realm;
+import io.realm.RealmConfiguration;*/
 
 /**
  * Created by Monal on 20/10/16.
@@ -68,6 +67,10 @@ public class RContactApplication extends Application {
 //         Fabric Initialization
 //        Fabric.with(this, new Crashlytics());
 
+/*        Realm.init(this);
+        RealmConfiguration config = new RealmConfiguration.Builder().name("rcontacts.realm")
+                .schemaVersion(1).build();
+        Realm.setDefaultConfiguration(config);*/
         arrayListAllPhoneBookContacts = new ArrayList<>();
 //        arrayListAllContactHeaders = new ArrayList<>();
         arrayListFavPhoneBookContacts = new ArrayList<>();
@@ -90,7 +93,8 @@ public class RContactApplication extends Application {
             for (Signature signature : info.signatures) {
                 MessageDigest md = MessageDigest.getInstance("SHA");
                 md.update(signature.toByteArray());
-                System.out.println("RContacts KEY HASH --> " + Base64.encodeToString(md.digest(), Base64.DEFAULT));
+                System.out.println("RContacts KEY HASH --> " + Base64.encodeToString(md.digest(),
+                        Base64.DEFAULT));
             }
         } catch (PackageManager.NameNotFoundException e) {
             Log.d("Name not found", e.getMessage(), e);

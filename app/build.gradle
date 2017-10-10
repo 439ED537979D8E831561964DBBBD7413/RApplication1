@@ -26,8 +26,8 @@ android {
         applicationId "com.rawalinfocom.rcontact"
         minSdkVersion 19
         targetSdkVersion 26
-        versionCode 8
-        versionName "1.0.7"
+        versionCode 9
+        versionName "1.0.8"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
@@ -67,8 +67,8 @@ android {
             jni.srcDirs = ["jniLibs"]
         }
     }
-    android {
-        useLibrary 'org.apache.http.legacy'
+    android{
+        useLibrary  'org.apache.http.legacy'
     }
 }
 
@@ -114,7 +114,7 @@ dependencies {
     //    compile 'com.android.support.constraint:constraint-layout:1.0.0'
 
     /* Web View */
-    
+
 
     compile "com.android.support:exifinterface:${SUPPORT_LIBRARY_VERSION}"
     compile'com.google.code.gson:gson:2.8.1'
