@@ -12,6 +12,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.LabeledIntent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
@@ -804,6 +805,19 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 number = StringUtils.substring(number, 1);
                             }
 
+                            /*Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+                            sharingIntent.setType("text/plain");
+                            String shareBody;
+                            if (StringUtils.isBlank(userProfile.getPmBadge())) {
+                                shareBody = WsConstants.WS_PROFILE_VIEW_BADGE_ROOT + number;
+                            } else {
+                                shareBody = WsConstants.WS_PROFILE_VIEW_BADGE_ROOT + userProfile
+                                        .getPmBadge();
+                            }
+                            sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
+                            startActivity(Intent.createChooser(sharingIntent, getString(R.string
+                                    .str_share_contact_via)));*/
+
                             Intent shareIntent = new Intent();
                             shareIntent.setAction(Intent.ACTION_SEND);
                             shareIntent.setType("text/x-vcard");
@@ -827,11 +841,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                     targetedShareIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
                                     targetedShareIntent.setPackage(packageName);
                                     targetedShareIntents.add(targetedShareIntent);
+
                                 }
 
-                                Intent chooserIntent = Intent.createChooser(targetedShareIntents
-                                        .remove(0), getString(R.string.str_share_contact_via));
-
+                                Intent chooserIntent = Intent.createChooser(targetedShareIntents.remove(0),
+                                        getString(R.string.str_share_contact_via));
                                 chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS,
                                         targetedShareIntents.toArray(new
                                                 Parcelable[targetedShareIntents.size()]));
