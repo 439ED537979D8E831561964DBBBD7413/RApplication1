@@ -123,6 +123,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 db.execSQL("DROP TABLE IF EXISTS '" + TableEmailMaster.TABLE_RC_EMAIL_MASTER + "'");
                 db.execSQL("ALTER TABLE " + TableEmailMaster.TABLE_RC_EMAIL_MASTER_TEMP
                         + " RENAME TO " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + ";");
+
+                // For Organization
+                db.execSQL("ALTER TABLE " + TableOrganizationMaster.TABLE_RC_ORGANIZATION_MASTER + " ADD "
+                        + "COLUMN " + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_IS_VERIFIED + " text ");
+                db.execSQL("ALTER TABLE " + TableOrganizationMaster.TABLE_RC_ORGANIZATION_MASTER + " ADD "
+                        + "COLUMN " + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_TYPE + " text ");
+                db.execSQL("ALTER TABLE " + TableOrganizationMaster.TABLE_RC_ORGANIZATION_MASTER + " ADD "
+                        + "COLUMN " + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_ENT_ID + " text ");
+                db.execSQL("ALTER TABLE " + TableOrganizationMaster.TABLE_RC_ORGANIZATION_MASTER + " ADD "
+                        + "COLUMN " + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_IMAGE + " text ");
         }
 
         // create new tables

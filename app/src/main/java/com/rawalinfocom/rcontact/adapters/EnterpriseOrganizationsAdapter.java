@@ -16,6 +16,7 @@ import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.model.OrganizationData;
+import com.rawalinfocom.rcontact.model.VerifiedOrganizationData;
 
 import java.util.ArrayList;
 
@@ -30,8 +31,8 @@ public class EnterpriseOrganizationsAdapter extends RecyclerView.Adapter<Enterpr
         .OrganizationViewHolder> implements Filterable {
 
     private Context context;
-    private ArrayList<OrganizationData> arrayListOrganization;
-    private ArrayList<OrganizationData> filteredList;
+    private ArrayList<VerifiedOrganizationData> arrayListOrganization;
+    private ArrayList<VerifiedOrganizationData> filteredList;
     private OnClickListener clickListener;
 
     private CustomFilter mFilter;
@@ -42,10 +43,10 @@ public class EnterpriseOrganizationsAdapter extends RecyclerView.Adapter<Enterpr
     }
 
     public interface OnClickListener {
-        void onClick(String organizationName);
+        void onClick(String orgId, String organizationName, String organizationType, String logo);
     }
 
-    public EnterpriseOrganizationsAdapter(Context context, ArrayList<OrganizationData>
+    public EnterpriseOrganizationsAdapter(Context context, ArrayList<VerifiedOrganizationData>
             arrayListOrganization, OnClickListener clickListener) {
         this.context = context;
         this.clickListener = clickListener;
@@ -65,13 +66,13 @@ public class EnterpriseOrganizationsAdapter extends RecyclerView.Adapter<Enterpr
     @Override
     public void onBindViewHolder(OrganizationViewHolder holder, int position) {
 
-        OrganizationData organization = arrayListOrganization.get(position);
+        VerifiedOrganizationData organization = arrayListOrganization.get(position);
 
-        holder.textOrganizationName.setText(organization.getOmOrganizationCompany());
-        holder.textOrganizationDetails.setText(organization.getOmOrganizationDesignation());
+        holder.textOrganizationName.setText(organization.getOmOrgName());
+        holder.textOrganizationDetails.setText(organization.getEitType());
 
         Glide.with(context)
-                .load(organization.getOmOrganizationProfileImage())
+                .load(organization.getEomLogoPath())
                 .placeholder(R.drawable.home_screen_profile)
                 .error(R.drawable.home_screen_profile)
                 .bitmapTransform(new CropCircleTransformation(context))
@@ -86,7 +87,8 @@ public class EnterpriseOrganizationsAdapter extends RecyclerView.Adapter<Enterpr
                 int pos = (int) view.getTag();
 
                 if (clickListener != null)
-                    clickListener.onClick(arrayListOrganization.get(pos).getOmOrganizationCompany());
+                    clickListener.onClick(arrayListOrganization.get(pos).getOmOrgId(), arrayListOrganization.get(pos).getOmOrgName()
+                            , arrayListOrganization.get(pos).getEitType(), arrayListOrganization.get(pos).getEomLogoPath());
             }
         });
 
@@ -133,10 +135,10 @@ public class EnterpriseOrganizationsAdapter extends RecyclerView.Adapter<Enterpr
                 arrayListOrganization.addAll(filteredList);
             } else {
                 final String filterPattern = constraint.toString().toLowerCase().trim();
-                for (final OrganizationData mWords : filteredList) {
-                    if (mWords.getOmOrganizationCompany().toLowerCase().startsWith(filterPattern)
-                            || mWords.getOmOrganizationDesignation().toLowerCase().startsWith(filterPattern)) {
-                        arrayListOrganization.add(mWords);
+                for (final VerifiedOrganizationData organizationData : filteredList) {
+                    if (organizationData.getOmOrgName().toLowerCase().startsWith(filterPattern)
+                            || organizationData.getEitType().toLowerCase().startsWith(filterPattern)) {
+                        arrayListOrganization.add(organizationData);
                     }
                 }
             }
@@ -148,7 +150,7 @@ public class EnterpriseOrganizationsAdapter extends RecyclerView.Adapter<Enterpr
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-//            System.out.println("RContacts Count Number 2 " + ((List<OrganizationData>) results.values).size());
+//            System.out.println("RContacts Count Number 2 " + ((List<VerifiedOrganizationData>) results.values).size());
             this.mAdapter.notifyDataSetChanged();
         }
     }

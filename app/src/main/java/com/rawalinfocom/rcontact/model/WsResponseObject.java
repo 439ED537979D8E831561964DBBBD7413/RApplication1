@@ -56,6 +56,7 @@ public class WsResponseObject {
     private UserProfile userProfile;
 
     private ProfileDataOperation profileDetail;
+    private ArrayList<VerifiedOrganizationData> verifiedOrganizationData;
 
     private ArrayList<Country> arrayListCountry;
     private ArrayList<ProfileDataOperation> arrayListUserRcProfile;
@@ -303,6 +304,15 @@ public class WsResponseObject {
 
     public void setProfileDetail(ProfileDataOperation profileDetail) {
         this.profileDetail = profileDetail;
+    }
+
+    @JsonProperty("data")
+    public ArrayList<VerifiedOrganizationData> getVerifiedOrganizationData() {
+        return verifiedOrganizationData;
+    }
+
+    public void setVerifiedOrganizationData(ArrayList<VerifiedOrganizationData> verifiedOrganizationData) {
+        this.verifiedOrganizationData = verifiedOrganizationData;
     }
 
     public Rating getProfileRating() {

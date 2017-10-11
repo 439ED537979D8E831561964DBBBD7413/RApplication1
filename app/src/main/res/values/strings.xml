@@ -731,4 +731,5 @@
     <!-- Force update -->
     <string name="youAreNotUpdatedTitle">Update Available</string>
     <string name="youAreNotUpdatedMessage">A new version of RContacts Application is available. Please update to latest version\s</string>
+    <string name="search_above_to_get_organization_list">Search above to get Organization list</string>
 </resources>

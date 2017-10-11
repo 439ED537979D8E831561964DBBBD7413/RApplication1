@@ -60,7 +60,7 @@ public class QueryManager {
         Cursor cursor = db.rawQuery(profileDetailQuery, null);
 
         // looping through all rows and adding to list
-        if(cursor != null && cursor.getCount() > 0){
+        if (cursor != null && cursor.getCount() > 0) {
             if (cursor.moveToFirst()) {
 
                 profileDataOperation.setRcpPmId(rcpId);
@@ -187,8 +187,12 @@ public class QueryManager {
 
         // <editor-fold desc="Organization">
         String organizationQuery = "SELECT org." + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_COMPANY
+                + ",org." + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_TYPE
+                + ",org." + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_ENT_ID
+                + ",org." + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_IMAGE
                 + ",org." + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_FROM_DATE
                 + ",org." + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_TO_DATE
+                + ",org." + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_IS_VERIFIED
                 + ",org." + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_DESIGNATION
                 + " from " + TableOrganizationMaster
                 .TABLE_RC_ORGANIZATION_MASTER + " org WHERE org." + TableOrganizationMaster
@@ -208,6 +212,15 @@ public class QueryManager {
                     organization.setOrgName(StringUtils.defaultString(organizationCursor.getString
                             (organizationCursor.getColumnIndexOrThrow(TableOrganizationMaster
                                     .COLUMN_OM_ORGANIZATION_COMPANY))));
+                    organization.setOrgIndustryType(StringUtils.defaultString(organizationCursor.getString
+                            (organizationCursor.getColumnIndexOrThrow(TableOrganizationMaster
+                                    .COLUMN_OM_ORGANIZATION_TYPE))));
+                    organization.setOrgEntId(StringUtils.defaultString(organizationCursor.getString
+                            (organizationCursor.getColumnIndexOrThrow(TableOrganizationMaster
+                                    .COLUMN_OM_ORGANIZATION_ENT_ID))));
+                    organization.setOrgLogo(StringUtils.defaultString(organizationCursor.getString
+                            (organizationCursor.getColumnIndexOrThrow(TableOrganizationMaster
+                                    .COLUMN_OM_ORGANIZATION_IMAGE))));
                     organization.setOrgJobTitle(StringUtils.defaultString(organizationCursor
                             .getString(organizationCursor.getColumnIndexOrThrow(TableOrganizationMaster
                                     .COLUMN_OM_ORGANIZATION_DESIGNATION))));
@@ -217,6 +230,9 @@ public class QueryManager {
                     organization.setOrgToDate(StringUtils.defaultString(organizationCursor.getString
                             (organizationCursor.getColumnIndexOrThrow(TableOrganizationMaster
                                     .COLUMN_OM_ORGANIZATION_TO_DATE))));
+                    organization.setIsVerify(Integer.parseInt(organizationCursor.getString
+                            (organizationCursor.getColumnIndexOrThrow(TableOrganizationMaster
+                                    .COLUMN_OM_ORGANIZATION_IS_VERIFIED))));
                     organization.setOrgRcpType(String.valueOf(IntegerConstants
                             .RCP_TYPE_CLOUD_PHONE_BOOK));
                     arrayListOrganization.add(organization);

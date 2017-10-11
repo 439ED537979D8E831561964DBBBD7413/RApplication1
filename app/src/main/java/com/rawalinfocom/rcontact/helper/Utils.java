@@ -67,6 +67,7 @@ import com.google.gson.reflect.TypeToken;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.DatabaseHandler;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
@@ -1158,6 +1159,18 @@ public class Utils {
                 organization.setOmOrganizationToDate(arrayListOrganization.get(i).getOrgToDate());
                 organization.setOmIsCurrent(String.valueOf(arrayListOrganization.get(i)
                         .getIsCurrent()));
+
+                if (arrayListOrganization.get(i).getIsVerify() == IntegerConstants.RCP_TYPE_PRIMARY) {
+                    organization.setOmOrganizationType(arrayListOrganization.get(i).getOrgIndustryType());
+                    organization.setOmEnterpriseOrgId(arrayListOrganization.get(i).getOrgEntId());
+                    organization.setOmOrganizationLogo(arrayListOrganization.get(i).getOrgLogo());
+                } else {
+                    organization.setOmOrganizationType("");
+                    organization.setOmEnterpriseOrgId("");
+                    organization.setOmOrganizationLogo("");
+                }
+
+                organization.setOmIsVerified(String.valueOf(arrayListOrganization.get(i).getIsVerify()));
                 organization.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 organizationList.add(organization);
             }

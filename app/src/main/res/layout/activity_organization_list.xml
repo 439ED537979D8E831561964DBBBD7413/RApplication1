@@ -83,12 +83,26 @@
         android:padding="10dp"
         android:textSize="14sp" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/organization_list"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/search_box"
-        android:layout_centerHorizontal="true"
-        app:layoutManager="LinearLayoutManager" />
+        android:layout_centerHorizontal="true">
 
+        <TextView
+            android:id="@+id/txt_no_org_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:padding="@dimen/padding_10dp"
+            android:text="@string/search_above_to_get_organization_list"
+            android:textSize="@dimen/text_size_25sp" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/organization_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="LinearLayoutManager" />
+
+    </RelativeLayout>
 </RelativeLayout>

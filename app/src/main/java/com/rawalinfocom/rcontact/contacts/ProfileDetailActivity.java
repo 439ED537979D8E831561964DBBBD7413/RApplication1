@@ -184,6 +184,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     TextView textDesignation;
     @BindView(R.id.text_organization)
     TextView textOrganization;
+    @BindView(R.id.text_time)
+    TextView textTime;
     @BindView(R.id.text_view_all_organization)
     TextView textViewAllOrganization;
     @BindView(R.id.linear_basic_detail)
@@ -308,7 +310,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     ProfileDataOperation profileDataOperationVcard;
 
-    String pmId = "", phoneBookId, contactName = "", cloudContactName = null, checkNumberFavourite =
+    String pmId = "", phoneBookId, contactName = "", contactNumber = "", cloudContactName = null, checkNumberFavourite =
             null, thumbnailUrl = "";
     boolean displayOwnProfile = false, isHideFavourite = false, isFromFavourite = false;
     int isFavourite = 0;
@@ -853,6 +855,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                     Intent intent = new Intent(ProfileDetailActivity.this, RCPExistingRelationActivity.class);
                     intent.putExtra(AppConstants.EXTRA_CONTACT_NAME, contactName);
+                    intent.putExtra(AppConstants.EXTRA_CONTACT_NUMBER, contactNumber);
                     intent.putExtra(AppConstants.EXTRA_PROFILE_IMAGE_URL, thumbnailUrl);
                     intent.putExtra(AppConstants.EXTRA_PM_ID, pmId);
                     startActivity(intent);
@@ -1934,6 +1937,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         textName.setTypeface(Utils.typefaceSemiBold(this));
         textDesignation.setTypeface(Utils.typefaceRegular(this));
         textOrganization.setTypeface(Utils.typefaceRegular(this));
+        textTime.setTypeface(Utils.typefaceRegular(this));
         textViewAllOrganization.setTypeface(Utils.typefaceRegular(this));
         textUserRating.setTypeface(Utils.typefaceRegular(this));
 
@@ -2313,8 +2317,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                 if (tempOrganization.size() == 1) {
                     textViewAllOrganization.setVisibility(View.GONE);
+                    textTime.setVisibility(View.VISIBLE);
                 } else {
                     textViewAllOrganization.setVisibility(View.VISIBLE);
+                    textTime.setVisibility(View.GONE);
                 }
 
                 if (arrayListOrganization.size() > 0) {
@@ -2322,14 +2328,37 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             .this, R.color.colorAccent));
                     textOrganization.setTextColor(ContextCompat.getColor(ProfileDetailActivity
                             .this, R.color.colorAccent));
+                    textTime.setTextColor(ContextCompat.getColor(ProfileDetailActivity
+                            .this, R.color.colorAccent));
                 } else {
                     textDesignation.setTextColor(ContextCompat.getColor(ProfileDetailActivity
                             .this, R.color.colorBlack));
                     textOrganization.setTextColor(ContextCompat.getColor(ProfileDetailActivity
                             .this, R.color.colorBlack));
+                    textTime.setVisibility(View.GONE);
                 }
                 textDesignation.setText(tempOrganization.get(0).getOrgJobTitle());
                 textOrganization.setText(tempOrganization.get(0).getOrgName());
+
+                if (StringUtils.equalsIgnoreCase(tempOrganization.get(0).getOrgToDate(), "")) {
+                    if (!StringUtils.isEmpty(tempOrganization.get(0).getOrgFromDate())) {
+                        String formattedFromDate = Utils.convertDateFormat(tempOrganization.get(0).getOrgFromDate(),
+                                "yyyy-MM-dd hh:mm:ss", Utils.getEventDateFormat(tempOrganization.get(0).getOrgFromDate()));
+
+                        textTime.setText(String.format("%s to Present ", formattedFromDate));
+                    } else {
+                        textTime.setVisibility(View.GONE);
+                    }
+                } else {
+                    if (!StringUtils.isEmpty(tempOrganization.get(0).getOrgFromDate()) && !StringUtils.isEmpty(tempOrganization.get(0).getOrgToDate())) {
+                        String formattedFromDate = Utils.convertDateFormat(tempOrganization.get(0).getOrgFromDate(),
+                                "yyyy-MM-dd hh:mm:ss", Utils.getEventDateFormat(tempOrganization.get(0).getOrgFromDate()));
+                        String formattedToDate = Utils.convertDateFormat(tempOrganization.get(0).getOrgToDate(),
+                                "yyyy-MM-dd hh:mm:ss", Utils.getEventDateFormat(tempOrganization.get(0).getOrgToDate()));
+
+                        textTime.setText(String.format("%s to %s ", formattedFromDate, formattedToDate));
+                    }
+                }
 
                 textViewAllOrganization.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -2367,6 +2396,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     String number = Utils.getFormattedNumber(this, arrayListPhoneNumber.get(i)
                             .getPhoneNumber());
                     arrayListCloudNumber.add(number);
+
+                    if (arrayListPhoneNumber.get(i).getPbRcpType() == IntegerConstants.RCP_TYPE_PRIMARY) {
+                        contactNumber = arrayListPhoneNumber.get(i).getPhoneNumber();
+                    }
                 }
             }
 
@@ -4203,6 +4236,18 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         .getOrgFromDate());
                 organization.setOmOrganizationToDate(arrayListOrganization.get(i).getOrgToDate());
                 organization.setOmIsPrivate(arrayListOrganization.get(i).getIsPrivate());
+
+                if (arrayListOrganization.get(i).getIsVerify() == IntegerConstants.RCP_TYPE_PRIMARY) {
+                    organization.setOmOrganizationType(arrayListOrganization.get(i).getOrgIndustryType());
+                    organization.setOmEnterpriseOrgId(arrayListOrganization.get(i).getOrgEntId());
+                    organization.setOmOrganizationLogo(arrayListOrganization.get(i).getOrgLogo());
+                } else {
+                    organization.setOmOrganizationType("");
+                    organization.setOmEnterpriseOrgId("");
+                    organization.setOmOrganizationLogo("");
+                }
+
+                organization.setOmIsVerified(String.valueOf(arrayListOrganization.get(i).getIsVerify()));
                 organization.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 organizationList.add(organization);
             }

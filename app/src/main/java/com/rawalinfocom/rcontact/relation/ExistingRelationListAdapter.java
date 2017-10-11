@@ -13,9 +13,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
-import com.rawalinfocom.rcontact.model.IndividualRelationRecommendationType;
+import com.rawalinfocom.rcontact.model.IndividualRelationType;
 import com.rawalinfocom.rcontact.model.RelationRecommendationType;
-import com.rawalinfocom.rcontact.model.UserProfile;
 
 import java.util.ArrayList;
 
@@ -59,8 +58,7 @@ class ExistingRelationListAdapter extends RecyclerView.Adapter
         holder.textNumber.setText(relationRecommendationType.getNumber());
 //        viewHolder.textDateAndTime.setText(relationRecommendationType.getDateAndTime());
 
-        ArrayList<IndividualRelationRecommendationType> list = relationRecommendationType.
-                getIndividualRelationRecommendationTypeArrayList();
+        ArrayList<IndividualRelationType> list = relationRecommendationType.getIndividualRelationTypeList();
         if (list.size() > 0) {
             IndividualExistingRelationListAdapter adapter = new IndividualExistingRelationListAdapter(mActivity, list);
 

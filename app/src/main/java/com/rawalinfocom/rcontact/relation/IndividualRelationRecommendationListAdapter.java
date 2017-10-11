@@ -8,11 +8,10 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
-import com.rawalinfocom.rcontact.model.IndividualRelationRecommendationType;
+import com.rawalinfocom.rcontact.model.IndividualRelationType;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -29,7 +28,7 @@ class IndividualRelationRecommendationListAdapter extends RecyclerView.Adapter
         <IndividualRelationRecommendationListAdapter.IndividualRelationRecommendationViewHolder> {
 
     private Activity mActivity;
-    private ArrayList<IndividualRelationRecommendationType> individualRelationRecommendationTypeList;
+    private ArrayList<IndividualRelationType> individualRelationRecommendationTypeList;
     private String from;
 
     @Override
@@ -38,7 +37,7 @@ class IndividualRelationRecommendationListAdapter extends RecyclerView.Adapter
         return new IndividualRelationRecommendationViewHolder(v);
     }
 
-    IndividualRelationRecommendationListAdapter(Activity mActivity, ArrayList<IndividualRelationRecommendationType>
+    IndividualRelationRecommendationListAdapter(Activity mActivity, ArrayList<IndividualRelationType>
             individualRelationRecommendationTypeList, String from) {
         this.mActivity = mActivity;
         this.from = from;
@@ -48,7 +47,7 @@ class IndividualRelationRecommendationListAdapter extends RecyclerView.Adapter
     @Override
     public void onBindViewHolder(IndividualRelationRecommendationViewHolder holder, int position) {
 
-        IndividualRelationRecommendationType type = individualRelationRecommendationTypeList.get(position);
+        IndividualRelationType type = individualRelationRecommendationTypeList.get(position);
 
         if (from.equalsIgnoreCase("rcp")) {
             holder.checkboxRelationFriend.setVisibility(View.GONE);

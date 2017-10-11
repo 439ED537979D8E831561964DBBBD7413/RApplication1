@@ -3,7 +3,6 @@ package com.rawalinfocom.rcontact.relation;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
@@ -25,13 +24,14 @@ import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.database.TableOrganizationMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
-import com.rawalinfocom.rcontact.model.IndividualRelationRecommendationType;
+import com.rawalinfocom.rcontact.model.IndividualRelationType;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
 import com.rawalinfocom.rcontact.model.UserProfile;
 
@@ -121,7 +121,7 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
     private Activity activity;
     private IndividualRelationRecommendationListAdapter listAdapter;
 
-    private String contactName = "", thumbnailUrl;
+    private String contactName = "", thumbnailUrl, contactNumber = "";
     private ArrayList<ProfileDataOperationOrganization> arrayListOrganization;
     private String pmId;
 
@@ -141,6 +141,11 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
         initToolbar();
         init();
         getIntentDetails(getIntent());
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         displayRCPUserData();
         makeTempDataAndSetAdapter();
     }
@@ -186,6 +191,9 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
         textUserRating.setTypeface(Utils.typefaceRegular(this));
 
         textFullScreenText.setSelected(true);
+        textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
+
+        Utils.setRatingColor(activity, ratingUser);
 
         textNoRelation.setTypeface(Utils.typefaceRegular(this));
         recycleViewRelation.setVisibility(View.VISIBLE);
@@ -193,7 +201,16 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
         fabAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(activity, AddNewRelationActivity.class));
+
+                Intent intent = new Intent(activity, AddNewRelationActivity.class);
+                intent.putExtra(AppConstants.EXTRA_CONTACT_NAME, contactName);
+                intent.putExtra(AppConstants.EXTRA_CONTACT_NUMBER, contactNumber);
+                intent.putExtra(AppConstants.EXTRA_PROFILE_IMAGE_URL, thumbnailUrl);
+                intent.putExtra(AppConstants.EXTRA_PM_ID, pmId);
+                intent.putExtra(AppConstants.EXTRA_FAMILY_RELATION, "brother");
+                intent.putExtra(AppConstants.EXTRA_FRIEND_RELATION, "Friend");
+                intent.putExtra(AppConstants.EXTRA_IS_FROM, "rcp");
+                startActivity(intent);
             }
         });
 
@@ -215,7 +232,6 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
                     .placeholder(R.drawable.home_screen_profile)
                     .error(R.drawable.home_screen_profile)
                     .bitmapTransform(new CropCircleTransformation(this))
-//                        .override(400, 400)
                     .override(512, 512)
                     .into(imageProfile);
 
@@ -246,6 +262,12 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
                 contactName = intent.getStringExtra(AppConstants.EXTRA_CONTACT_NAME);
             } else {
                 contactName = "";
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_CONTACT_NUMBER)) {
+                contactNumber = intent.getStringExtra(AppConstants.EXTRA_CONTACT_NUMBER);
+            } else {
+                contactNumber = "";
             }
 
             if (intent.hasExtra(AppConstants.EXTRA_PROFILE_IMAGE_URL)) {
@@ -283,87 +305,6 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
                 pmId = "-1";
             }
         }
-//            if (intent.hasExtra(AppConstants.EXTRA_FROM_NOTI_PROFILE)) {
-//                isFromNotification = intent.getBooleanExtra(AppConstants.EXTRA_FROM_NOTI_PROFILE, false);
-//            }
-//            if (intent.hasExtra(AppConstants.EXTRA_DIALOG_CALL_LOG_INSTANCE)) {
-//                isDialogCallLogInstance = intent.getBooleanExtra(AppConstants
-//                        .EXTRA_DIALOG_CALL_LOG_INSTANCE, false);
-//            }
-//
-//            if (intent.hasExtra(AppConstants.EXTRA_RCP_VERIFIED_ID)) {
-//                callLogRcpVerfiedId = intent.getStringExtra(AppConstants.EXTRA_RCP_VERIFIED_ID);
-//            }
-//
-//            if (intent.hasExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER)) {
-//                historyNumber = intent.getStringExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER);
-//            }
-//
-//            if (intent.hasExtra(AppConstants.EXTRA_CALL_HISTORY_NAME)) {
-//                historyName = intent.getStringExtra(AppConstants.EXTRA_CALL_HISTORY_NAME);
-//            }
-//
-//            if (intent.hasExtra(AppConstants.EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE)) {
-//                profileActivityCallInstance = intent.getBooleanExtra(AppConstants
-//                        .EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE, false);
-//            }
-//
-//            if (intent.hasExtra(AppConstants.EXTRA_CALL_HISTORY_DATE)) {
-//                historyDate = intent.getLongExtra(AppConstants.EXTRA_CALL_HISTORY_DATE, 0);
-//            }
-//
-//            if (intent.hasExtra(AppConstants.EXTRA_CALL_UNIQUE_ID)) {
-//                hashMapKey = intent.getStringExtra(AppConstants.EXTRA_CALL_UNIQUE_ID);
-//            }
-//
-//            if (intent.hasExtra(AppConstants.EXTRA_UNIQUE_CONTACT_ID)) {
-//                uniqueContactId = intent.getStringExtra(AppConstants.EXTRA_UNIQUE_CONTACT_ID);
-//            }
-//
-//            if (intent.hasExtra(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE)) {
-//                profileThumbnail = intent.getStringExtra(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE);
-//            }
-//
-//            if (intent.hasExtra(AppConstants.EXTRA_CALL_LOG_CLOUD_NAME)) {
-//                callLogCloudName = intent.getStringExtra(AppConstants.EXTRA_CALL_LOG_CLOUD_NAME);
-//            }
-//
-//            if (intent.hasExtra(AppConstants.EXTRA_IS_RCP_USER)) {
-//                isCallLogRcpUser = intent.getBooleanExtra(AppConstants.EXTRA_IS_RCP_USER, false);
-//            }
-//
-//            if (intent.hasExtra(AppConstants.EXTRA_PHONE_BOOK_ID)) {
-//                phoneBookId = intent.getStringExtra(AppConstants.EXTRA_PHONE_BOOK_ID);
-//            } else {
-//                phoneBookId = "-1";
-//            }
-//            Log.i("phonebookId", phoneBookId);
-//
-//            if (intent.hasExtra(AppConstants.EXTRA_IS_FROM_FAVOURITE)) {
-//                isFromFavourite = intent.getBooleanExtra(AppConstants.EXTRA_IS_FROM_FAVOURITE,
-//                        false);
-//            }
-//
-//
-//            if (intent.hasExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME)) {
-//                cloudContactName = intent.getStringExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME);
-//                cloudContactName = StringUtils.substring(cloudContactName, 2, cloudContactName
-//                        .length() - 1);
-//            }
-//
-//            if (intent.hasExtra(AppConstants.EXTRA_CHECK_NUMBER_FAVOURITE)) {
-//                isHideFavourite = true;
-//                checkNumberFavourite = intent.getStringExtra(AppConstants
-//                        .EXTRA_CHECK_NUMBER_FAVOURITE);
-//            }
-//
-//            if (intent.hasExtra(AppConstants.EXTRA_CONTACT_POSITION)) {
-//                listClickedPosition = intent.getIntExtra(AppConstants.EXTRA_CONTACT_POSITION, -1);
-//            }
-//        }
-//
-//        if (phoneBookId.equals("-1"))
-//            phoneBookId = getStarredStatusFromNumber(historyNumber);
     }
 
     private void getOrganizationsList() {
@@ -389,7 +330,7 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
             textOrganization.setText(arrayListOrganization.get(0).getOrgName());
 
         } else {
-            linearOrganizationDetail.setVisibility(View.GONE);
+            linearOrganizationDetail.setVisibility(View.INVISIBLE);
         }
 
         textViewAllOrganization.setOnClickListener(new View.OnClickListener() {
@@ -477,58 +418,64 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
 
     private void makeTempDataAndSetAdapter() {
 
-        ArrayList<IndividualRelationRecommendationType> arrayList = new ArrayList<>();
+        ArrayList<IndividualRelationType> arrayList = new ArrayList<>();
 
-        IndividualRelationRecommendationType individualRelationRecommendationType;
+        IndividualRelationType individualRelationType;
 
         // All
-        individualRelationRecommendationType = new IndividualRelationRecommendationType();
-        individualRelationRecommendationType.setRelationName("Co-worker");
-        individualRelationRecommendationType.setOrganizationName("Hungama");
-        individualRelationRecommendationType.setFamilyName("");
-        individualRelationRecommendationType.setIsFriendRelation(false);
+        individualRelationType = new IndividualRelationType();
+        individualRelationType.setRelationId("1");
+        individualRelationType.setRelationName("Co-worker");
+        individualRelationType.setOrganizationName("Hungama");
+        individualRelationType.setFamilyName("");
+        individualRelationType.setIsFriendRelation(false);
 
-        arrayList.add(individualRelationRecommendationType);
+        arrayList.add(individualRelationType);
 
-        individualRelationRecommendationType = new IndividualRelationRecommendationType();
-        individualRelationRecommendationType.setRelationName("Co-worker");
-        individualRelationRecommendationType.setOrganizationName("RawalInfocom");
-        individualRelationRecommendationType.setFamilyName("");
-        individualRelationRecommendationType.setIsFriendRelation(false);
+        individualRelationType = new IndividualRelationType();
+        individualRelationType.setRelationId("2");
+        individualRelationType.setRelationName("Co-worker");
+        individualRelationType.setOrganizationName("RawalInfocom");
+        individualRelationType.setFamilyName("");
+        individualRelationType.setIsFriendRelation(false);
 
-        arrayList.add(individualRelationRecommendationType);
+        arrayList.add(individualRelationType);
 
-        individualRelationRecommendationType = new IndividualRelationRecommendationType();
-        individualRelationRecommendationType.setRelationName("Co-worker");
-        individualRelationRecommendationType.setOrganizationName("Peacock Technologies");
-        individualRelationRecommendationType.setFamilyName("");
-        individualRelationRecommendationType.setIsFriendRelation(false);
+        individualRelationType = new IndividualRelationType();
+        individualRelationType.setRelationId("3");
+        individualRelationType.setRelationName("Co-worker");
+        individualRelationType.setOrganizationName("Peacock Technologies");
+        individualRelationType.setFamilyName("");
+        individualRelationType.setIsFriendRelation(false);
 
-        arrayList.add(individualRelationRecommendationType);
+        arrayList.add(individualRelationType);
 
-        individualRelationRecommendationType = new IndividualRelationRecommendationType();
-        individualRelationRecommendationType.setRelationName("");
-        individualRelationRecommendationType.setOrganizationName("");
-        individualRelationRecommendationType.setFamilyName("Brother");
-        individualRelationRecommendationType.setIsFriendRelation(false);
+        individualRelationType = new IndividualRelationType();
+        individualRelationType.setRelationId("4");
+        individualRelationType.setRelationName("");
+        individualRelationType.setOrganizationName("");
+        individualRelationType.setFamilyName("Brother");
+        individualRelationType.setIsFriendRelation(false);
 
-        arrayList.add(individualRelationRecommendationType);
+        arrayList.add(individualRelationType);
 
-        individualRelationRecommendationType = new IndividualRelationRecommendationType();
-        individualRelationRecommendationType.setRelationName("");
-        individualRelationRecommendationType.setOrganizationName("");
-        individualRelationRecommendationType.setFamilyName("Uncle");
-        individualRelationRecommendationType.setIsFriendRelation(false);
+        individualRelationType = new IndividualRelationType();
+        individualRelationType.setRelationId("5");
+        individualRelationType.setRelationName("");
+        individualRelationType.setOrganizationName("");
+        individualRelationType.setFamilyName("Uncle");
+        individualRelationType.setIsFriendRelation(false);
 
-        arrayList.add(individualRelationRecommendationType);
+        arrayList.add(individualRelationType);
 
-        individualRelationRecommendationType = new IndividualRelationRecommendationType();
-        individualRelationRecommendationType.setRelationName("");
-        individualRelationRecommendationType.setOrganizationName("");
-        individualRelationRecommendationType.setFamilyName("");
-        individualRelationRecommendationType.setIsFriendRelation(true);
+        individualRelationType = new IndividualRelationType();
+        individualRelationType.setRelationId("6");
+        individualRelationType.setRelationName("");
+        individualRelationType.setOrganizationName("");
+        individualRelationType.setFamilyName("");
+        individualRelationType.setIsFriendRelation(true);
 
-        arrayList.add(individualRelationRecommendationType);
+        arrayList.add(individualRelationType);
 
         listAdapter = new IndividualRelationRecommendationListAdapter(activity, arrayList, "rcp");
         recycleViewRelation.setLayoutManager(new LinearLayoutManager(this));

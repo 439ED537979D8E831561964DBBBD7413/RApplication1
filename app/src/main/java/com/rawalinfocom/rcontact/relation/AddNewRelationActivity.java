@@ -9,6 +9,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,13 +34,16 @@ import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
+import com.rawalinfocom.rcontact.model.IndividualRelationType;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationImAccount;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
+import com.rawalinfocom.rcontact.model.RelationRecommendationType;
 
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -90,16 +94,23 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
     ImageView imgBusinessClear;
     @BindView(R.id.img_family_clear)
     ImageView imgFamilyClear;
+    @BindView(R.id.input_value_friend)
+    EditText inputValueFriend;
+    @BindView(R.id.img_friend_clear)
+    ImageView imgFriendClear;
+    @BindView(R.id.linear_single_business_relation)
+    LinearLayout linearSingleBusinessRelation;
 
     private Activity activity;
+    private String isFrom = "";
 
     public static int orgPosition = 0;
     public static int businessRelationPosition = 0;
     public static int familyRelationPosition = 0;
 
     private Dialog businessRelationDialog;
-    private String pmId = "", contactName = "", profileImage = "", organizationId = "", organizationName = "",
-            businessRelationName = "", strGender = "", familyRelation = "";
+    private String pmId = "", contactName = "", contactNumber = "", profileImage = "", organizationId = "", organizationName = "",
+            businessRelationName = "", strGender = "", familyRelation = "", friendRelation = "";
     private ArrayList<ProfileDataOperationOrganization> arrayListOrganization;
     private int colorPineGreen;
 
@@ -109,6 +120,7 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
         setContentView(R.layout.activity_add_new_relation);
 
         ButterKnife.bind(this);
+        getIntentDetails(getIntent());
         initToolbar();
         init();
     }
@@ -148,18 +160,23 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
         buttonNameCancel.setTypeface(Utils.typefaceRegular(this));
         buttonNameCancel.setOnClickListener(this);
 
-        inputValueAddName.setFocusable(false);
-        inputValueBusiness.setFocusable(false);
-        inputValueFamily.setFocusable(false);
+        if (isFrom.equalsIgnoreCase("rcp")) {
+            setExistingData();
+        } else {
 
-        Glide.with(activity)
-                .load(R.drawable.home_screen_profile)
-                .bitmapTransform(new CropCircleTransformation(activity))
-                .into(imageProfile);
+            inputValueAddName.setFocusable(false);
+            inputValueBusiness.setFocusable(false);
+            inputValueFamily.setFocusable(false);
 
-        imgClear.setOnClickListener(this);
-        imgBusinessClear.setOnClickListener(this);
-        imgFamilyClear.setOnClickListener(this);
+            imgClear.setOnClickListener(this);
+            imgBusinessClear.setOnClickListener(this);
+            imgFamilyClear.setOnClickListener(this);
+
+            Glide.with(activity)
+                    .load(R.drawable.home_screen_profile)
+                    .bitmapTransform(new CropCircleTransformation(activity))
+                    .into(imageProfile);
+        }
     }
 
     @Override
@@ -286,9 +303,10 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
                     //If everything went Ok, change to another activity.
                     pmId = data.getStringExtra("pmId");
                     contactName = data.getStringExtra("contactName");
+                    contactNumber = data.getStringExtra("contactNumber");
                     profileImage = data.getStringExtra("profileImage");
 
-                    inputValueAddName.setText(contactName);
+                    inputValueAddName.setText(Html.fromHtml("<font color='#00796B'> " + contactName + "</font><br/>" + contactNumber));
 
                     Glide.with(activity)
                             .load(profileImage)
@@ -309,104 +327,215 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
         }
     }
 
-//    private void socialContactDetails() {
-//
-//        socialTypeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
-//                .array.types_social_media)));
-//
-//        TableImMaster tableImMaster = new TableImMaster(databaseHandler);
-//
-//        ArrayList<ImAccount> arrayListImAccount = tableImMaster.getImAccountFromPmId(Integer
-//                .parseInt(getUserPmId()));
-//        arrayListSocialContactObject = new ArrayList<>();
-//        for (int i = 0; i < arrayListImAccount.size(); i++) {
-//            ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
-//            imAccount.setIMAccountProtocol(arrayListImAccount.get(i).getImImProtocol());
-//            imAccount.setIMAccountDetails(arrayListImAccount.get(i).getImImDetail());
-//            imAccount.setIMAccountFirstName(arrayListImAccount.get(i).getImImFirstName());
-//            imAccount.setIMAccountLastName(arrayListImAccount.get(i).getImImLastName());
-//            imAccount.setIMAccountProfileImage(arrayListImAccount.get(i).getImImProfileImage());
-//            imAccount.setIMId(arrayListImAccount.get(i).getImRecordIndexId());
-//            imAccount.setIMAccountPublic(Integer.parseInt(arrayListImAccount.get(i)
-//                    .getImImPrivacy()));
-//            arrayListSocialContactObject.add(imAccount);
-//
-//            if (arrayListImAccount.get(i).getImImProtocol().equalsIgnoreCase("Facebook")
-//                    || arrayListImAccount.get(i).getImImProtocol().equalsIgnoreCase("GooglePlus")
-//                    || arrayListImAccount.get(i).getImImProtocol().equalsIgnoreCase("LinkedIn")) {
-//                socialTypeList.remove(arrayListImAccount.get(i).getImImProtocol());
-//            }
-//        }
-//
-//        if (arrayListSocialContactObject.size() > 0) {
-//            for (int i = 0; i < arrayListSocialContactObject.size(); i++) {
-//                addSocialConnectView(arrayListSocialContactObject.get(i), "");
-//            }
-//            for (int i = 0; i < linearBusinessRelation.getChildCount(); i++) {
-//                View linearSocialContact = linearBusinessRelation.getChildAt(i);
-//                EditText socialContact = linearSocialContact.findViewById(R.id
-//                        .input_value);
-//                socialContact.addTextChangedListener(valueTextWatcher);
-//            }
-//        } else {
-//            addSocialConnectView(arrayListSocialContactObject.get(i), "");
-//        }
-//    }
+    private void getIntentDetails(Intent intent) {
+
+        if (intent != null) {
+
+            if (intent.hasExtra(AppConstants.EXTRA_IS_FROM)) {
+                isFrom = getIntent().getStringExtra(AppConstants.EXTRA_IS_FROM);
+            } else {
+                isFrom = "";
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_FAMILY_RELATION)) {
+                familyRelation = getIntent().getStringExtra(AppConstants.EXTRA_FAMILY_RELATION);
+            } else {
+                familyRelation = "";
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_FRIEND_RELATION)) {
+                friendRelation = getIntent().getStringExtra(AppConstants.EXTRA_FRIEND_RELATION);
+            } else {
+                friendRelation = "";
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_CONTACT_NAME)) {
+                contactName = intent.getStringExtra(AppConstants.EXTRA_CONTACT_NAME);
+            } else {
+                contactName = "";
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_CONTACT_NUMBER)) {
+                contactNumber = intent.getStringExtra(AppConstants.EXTRA_CONTACT_NUMBER);
+            } else {
+                contactNumber = "";
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_PROFILE_IMAGE_URL)) {
+                profileImage = intent.getStringExtra(AppConstants.EXTRA_PROFILE_IMAGE_URL);
+            } else {
+                profileImage = "";
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_PM_ID)) {
+                pmId = intent.getStringExtra(AppConstants.EXTRA_PM_ID);
+                if (!StringUtils.isEmpty(pmId)) {
+                    if (!pmId.equalsIgnoreCase("-1") && !pmId.equalsIgnoreCase(getUserPmId())) {
+                        if (!Utils.isNetworkAvailable(this)) {
+
+                            HashMap<String, String> mapProfileViews = new HashMap<>();
+                            if (Utils.getHashMapPreference(this, AppConstants
+                                    .PREF_PROFILE_VIEWS) != null) {
+                                mapProfileViews.putAll(Utils.getHashMapPreference(this, AppConstants
+                                        .PREF_PROFILE_VIEWS));
+                            }
+                            if (mapProfileViews.containsKey(pmId)) {
+                                int count = Integer.parseInt(mapProfileViews.get(pmId));
+                                mapProfileViews.put(pmId, String.valueOf(++count));
+                            } else {
+                                mapProfileViews.put(pmId, "1");
+                            }
+                            Utils.setHashMapPreference(this, AppConstants.PREF_PROFILE_VIEWS,
+                                    mapProfileViews);
+                        }
+                    }
+                } else {
+                    pmId = "-1";
+                }
+            } else {
+                pmId = "-1";
+            }
+        }
+    }
+
+    private void setExistingData() {
+
+        inputValueAddName.setEnabled(false);
+        inputValueFamily.setEnabled(false);
+        inputValueFriend.setEnabled(false);
+        imgClear.setEnabled(false);
+        imgFamilyClear.setEnabled(false);
+        imgFriendClear.setEnabled(false);
+
+        imgFamilyClear.setVisibility(View.VISIBLE);
+        imgFriendClear.setVisibility(View.VISIBLE);
+
+        inputValueFriend.setVisibility(View.VISIBLE);
+        checkboxFriend.setVisibility(View.GONE);
+
+        linearSingleBusinessRelation.setVisibility(View.GONE);
+        linearBusinessRelation.setVisibility(View.VISIBLE);
+
+        imgClear.setImageResource(R.drawable.ico_relation_lock_svg);
+        imgFamilyClear.setImageResource(R.drawable.ico_relation_lock_svg);
+        imgFriendClear.setImageResource(R.drawable.ico_relation_lock_svg);
+
+        inputValueAddName.setText(Html.fromHtml("<font color='#00796B'> " + contactName + "</font><br/>" + contactNumber));
+        inputValueFamily.setText(familyRelation);
+        inputValueFriend.setText(friendRelation);
+
+        Glide.with(activity)
+                .load(profileImage)
+                .placeholder(R.drawable.home_screen_profile)
+                .error(R.drawable.home_screen_profile)
+                .bitmapTransform(new CropCircleTransformation(activity))
+                .override(512, 512)
+                .into(imageProfile);
+
+        businessRelationDetails();
+
+    }
+
+    private void businessRelationDetails() {
+
+        ArrayList<IndividualRelationType> arrayListData = makeTempData();
+        ArrayList<IndividualRelationType> arrayList = new ArrayList<>();
+
+        for (int i = 0; i < arrayListData.size(); i++) {
+            IndividualRelationType relationType = new IndividualRelationType();
+            relationType.setRelationId(String.valueOf(i));
+            relationType.setRelationName(arrayListData.get(i).getRelationName());
+            relationType.setOrganizationName(arrayListData.get(i).getOrganizationName());
+            relationType.setFamilyName(arrayListData.get(i).getFamilyName());
+            relationType.setIsVerify(arrayListData.get(i).getIsVerify());
+            relationType.setIsFriendRelation(arrayListData.get(i).getIsFriendRelation());
+            arrayList.add(relationType);
+        }
+
+        if (arrayList.size() > 0) {
+            for (int i = 0; i < arrayList.size(); i++) {
+                addBusinessRelationView(arrayList.get(i));
+            }
+            addBusinessRelationView(null);
+        } else {
+            addBusinessRelationView(null);
+        }
+    }
 
     @SuppressLint("InflateParams")
-    private void addSocialConnectView(Object detailObject, String imAccountProtocol) {
+    private void addBusinessRelationView(Object detailObject) {
 
-        View view = LayoutInflater.from(this).inflate(R.layout.list_item_edit_profile_social, null);
-        ImageView imageViewDelete = view.findViewById(R.id.image_delete);
-        ImageView imageViewSocialIcon = view.findViewById(R.id.image_social_icon);
-        ImageView imageViewSocialProfile = view.findViewById(R.id.image_social_profile);
-
-        imageViewSocialProfile.setVisibility(View.GONE);
+        View view = LayoutInflater.from(this).inflate(R.layout.list_item_business_relation_list, null);
+        ImageView imageViewDelete = view.findViewById(R.id.img_business_clear);
         imageViewDelete.setVisibility(View.GONE);
 
-        LinearLayout linearContent = view.findViewById(R.id.linear_content);
+        final EditText inputValueBusiness = view.findViewById(R.id.input_value_business);
+        final TextView textRelationName = view.findViewById(R.id.text_relation_name);
+        final TextView textOrganizationName = view.findViewById(R.id.text_organization_name);
+        final TextView textVerify = view.findViewById(R.id.text_verify);
 
-        final EditText inputValue = view.findViewById(R.id.input_value);
-//        TextView textFirstName = view.findViewById(R.id.text_first_name);
-//        TextView textLastName = view.findViewById(R.id.text_last_name);
-//        TextView textIsVerified = view.findViewById(R.id.text_is_verified);
-//        TextView textProtocol = view.findViewById(R.id.input_protocol);
-//        TextView imAccountProfileImage = view.findViewById(R.id.text_profile_image);
-//        TextView textIsPublic = view.findViewById(R.id.text_is_public);
-
-//        textIsVerified.setText(R.string.verify_now);
-//        textIsVerified.setVisibility(View.GONE);
-
-        final RelativeLayout relativeRowAddNewRelation = view.findViewById(R.id
-                .relative_row_edit_profile_social);
+        final LinearLayout linearRowBusinessRelationItem = view.findViewById(R.id
+                .linear_row_business_relation_item);
 
         imageViewDelete.setTag(AppConstants.IM_ACCOUNT);
-        inputValue.setHint(R.string.hint_account_name);
-        inputValue.setTypeface(Utils.typefaceIcons(activity));
+        inputValueBusiness.setHint(R.string.choose_relation);
+        inputValueBusiness.setTypeface(Utils.typefaceIcons(activity));
+        inputValueBusiness.setInputType(InputType.TYPE_CLASS_TEXT);
+        inputValueBusiness.setFocusable(false);
 
-        inputValue.setInputType(InputType.TYPE_CLASS_TEXT);
         if (detailObject != null) {
-            ProfileDataOperationImAccount imAccount = (ProfileDataOperationImAccount)
-                    detailObject;
 
-            inputValue.setText(imAccount.getIMAccountDetails());
-//            textProtocol.setText(imAccount.getIMAccountProtocol());
-//            textFirstName.setText(imAccount.getIMAccountFirstName());
-//            textLastName.setText(imAccount.getIMAccountLastName());
-//            textIsPublic.setText(String.valueOf(imAccount.getIMAccountPublic()));
+            IndividualRelationType relationType = (IndividualRelationType) detailObject;
 
-            relativeRowAddNewRelation.setTag(imAccount.getIMId());
+            imageViewDelete.setVisibility(View.VISIBLE);
+            inputValueBusiness.setEnabled(false);
 
+            inputValueBusiness.setText(relationType.getRelationName() + " at " + relationType.getOrganizationName());
+            textRelationName.setText(relationType.getRelationName());
+            textOrganizationName.setText(relationType.getOrganizationName());
+            textVerify.setText(relationType.getIsVerify());
+            linearRowBusinessRelationItem.setTag(relationType.getRelationId());
+
+            if (relationType.getIsVerify().equalsIgnoreCase("1")) {
+                imageViewDelete.setEnabled(false);
+                imageViewDelete.setImageResource(R.drawable.ico_relation_lock_svg);
+            } else {
+                imageViewDelete.setEnabled(true);
+                imageViewDelete.setImageResource(R.drawable.close_vector);
+            }
         }
+
+        inputValueBusiness.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (arrayListOrganization.size() > 0) {
+
+                    if (StringUtils.isEmpty(contactName)) {
+                        Utils.showErrorSnackBar(activity, relativeRootNewRelation,
+                                "Please select User to establish relation!!");
+                    } else {
+                        dialogBusinessRelation();
+                    }
+                } else {
+                    startActivityIntent(activity, EditProfileActivity.class, null);
+                }
+            }
+        });
 
         imageViewDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
+                TextView textVerify = linearRowBusinessRelationItem.findViewById(R.id.text_verify);
+
                 if (linearBusinessRelation.getChildCount() > 1) {
-                    linearBusinessRelation.removeView(relativeRowAddNewRelation);
+                    if (!textVerify.getText().toString().trim().equalsIgnoreCase("1")) {
+                        linearBusinessRelation.removeView(linearRowBusinessRelationItem);
+                    }
                 } else if (linearBusinessRelation.getChildCount() == 1) {
-                    inputValue.getText().clear();
+                    if (!textVerify.getText().toString().trim().equalsIgnoreCase("1"))
+                        inputValueBusiness.getText().clear();
                 }
             }
         });
@@ -540,12 +669,25 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
         rippleRight.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
             @Override
             public void onComplete(RippleView rippleView) {
-                if (businessRelationDialog != null & businessRelationDialog.isShowing())
+                if (businessRelationDialog != null && businessRelationDialog.isShowing())
                     businessRelationDialog.dismiss();
                 dialog.dismiss();
 
-                inputValueBusiness.setText(businessRelationName + " at " + organizationName);
-                imgBusinessClear.setVisibility(View.VISIBLE);
+
+                if (isFrom.equalsIgnoreCase("rcp")) {
+                    IndividualRelationType relationType = new IndividualRelationType();
+                    relationType.setRelationId("15");
+                    relationType.setRelationName(businessRelationName);
+                    relationType.setOrganizationName(organizationName);
+                    relationType.setIsVerify("0");
+                    relationType.setFamilyName("'");
+                    relationType.setIsFriendRelation(false);
+
+                    addBusinessRelationView(relationType);
+                } else {
+                    inputValueBusiness.setText(businessRelationName + " at " + organizationName);
+                    imgBusinessClear.setVisibility(View.VISIBLE);
+                }
             }
         });
 
@@ -638,5 +780,35 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
         recyclerViewDialogList.setAdapter(adapter);
 
         familyDialog.show();
+    }
+
+    private ArrayList<IndividualRelationType> makeTempData() {
+
+        ArrayList<IndividualRelationType> arrayList = new ArrayList<>();
+
+        IndividualRelationType individualRelationTypeList;
+
+        // All
+        individualRelationTypeList = new IndividualRelationType();
+        individualRelationTypeList.setRelationId("1");
+        individualRelationTypeList.setRelationName("Co-worker");
+        individualRelationTypeList.setOrganizationName("Hungama");
+        individualRelationTypeList.setIsVerify("1");
+        individualRelationTypeList.setFamilyName("");
+        individualRelationTypeList.setIsFriendRelation(false);
+
+        arrayList.add(individualRelationTypeList);
+
+        individualRelationTypeList = new IndividualRelationType();
+        individualRelationTypeList.setRelationId("2");
+        individualRelationTypeList.setIsVerify("1");
+        individualRelationTypeList.setRelationName("Co-worker");
+        individualRelationTypeList.setOrganizationName("RawalInfocom");
+        individualRelationTypeList.setFamilyName("");
+        individualRelationTypeList.setIsFriendRelation(false);
+
+        arrayList.add(individualRelationTypeList);
+
+        return arrayList;
     }
 }

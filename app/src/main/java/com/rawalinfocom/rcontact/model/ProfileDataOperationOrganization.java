@@ -13,15 +13,18 @@ import java.io.Serializable;
 public class ProfileDataOperationOrganization implements Serializable {
 
     private String orgId;
+    private String orgEntId;
     private String orgJobTitle;
     private String orgName;
+    private String orgIndustryType;
     private Integer isCurrent;
     private Integer orgPublic;
+    private Integer isVerify;
     private Integer isPrivate;
     private String orgFromDate;
     private String orgToDate;
+    private String orgLogo;
 
-//    private String orgDepartment;
 //    private String orgType;
 //    private String orgJobDescription;
 //    private String orgOfficeLocation;
@@ -36,6 +39,15 @@ public class ProfileDataOperationOrganization implements Serializable {
 
     public void setOrgId(String orgId) {
         this.orgId = orgId;
+    }
+
+    @JsonProperty("org_ent_id")
+    public String getOrgEntId() {
+        return orgEntId;
+    }
+
+    public void setOrgEntId(String orgEntId) {
+        this.orgEntId = orgEntId;
     }
 
     @JsonProperty("org_job_title")
@@ -57,41 +69,32 @@ public class ProfileDataOperationOrganization implements Serializable {
         this.orgName = orgName;
     }
 
-//    @JsonProperty("org_department")
-//    public String getOrgDepartment() {
-//        return StringUtils.defaultString(this.orgDepartment);
-//    }
-//
-//    public void setOrgDepartment(String orgDepartment) {
-//        this.orgDepartment = orgDepartment;
-//    }
+    @JsonProperty("org_industry_type")
+    public String getOrgIndustryType() {
+        return StringUtils.defaultString(this.orgIndustryType);
+    }
 
-//    @JsonProperty("org_type")
-//    public String getOrgType() {
-//        return StringUtils.defaultString(orgType);
-//    }
-//
-//    public void setOrgType(String orgType) {
-//        this.orgType = orgType;
-//    }
+    public void setOrgIndustryType(String orgIndustryType) {
+        this.orgIndustryType = orgIndustryType;
+    }
 
-//    @JsonProperty("org_job_description")
-//    public String getOrgJobDescription() {
-//        return StringUtils.defaultString(orgJobDescription);
-//    }
-//
-//    public void setOrgJobDescription(String orgJobDescription) {
-//        this.orgJobDescription = orgJobDescription;
-//    }
+    @JsonProperty("org_logo")
+    public String getOrgLogo() {
+        return StringUtils.defaultString(this.orgLogo);
+    }
 
-//    @JsonProperty("org_office_location")
-//    public String getOrgOfficeLocation() {
-//        return StringUtils.defaultString(orgOfficeLocation);
-//    }
-//
-//    public void setOrgOfficeLocation(String orgOfficeLocation) {
-//        this.orgOfficeLocation = orgOfficeLocation;
-//    }
+    public void setOrgLogo(String orgLogo) {
+        this.orgLogo = orgLogo;
+    }
+
+    @JsonProperty("is_verified")
+    public Integer getIsVerify() {
+        return isVerify;
+    }
+
+    public void setIsVerify(Integer isVerify) {
+        this.isVerify = isVerify;
+    }
 
     @JsonProperty("is_current")
     public Integer getIsCurrent() {

@@ -6,11 +6,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
+import com.rawalinfocom.rcontact.contacts.EditProfileActivity;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
 
 import org.apache.commons.lang3.StringUtils;
@@ -49,8 +54,6 @@ public class OrganizationListAdapter extends RecyclerView.Adapter<OrganizationLi
 
         ProfileDataOperationOrganization organization = arrayListOrganization.get(position);
 
-        holder.textMain.setText(organization.getOrgName());
-
         holder.textSub.setText(organization.getOrgJobTitle());
 
         int orgRcpType = Integer.parseInt(StringUtils.defaultString(organization.getOrgRcpType()
@@ -61,6 +64,27 @@ public class OrganizationListAdapter extends RecyclerView.Adapter<OrganizationLi
         } else {
             holder.textSub.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
         }
+
+        if (MoreObjects.firstNonNull(organization.getIsVerify(), 0) == IntegerConstants.RCP_TYPE_PRIMARY) {
+
+            String s = Utils.setMultipleTypeface(context, organization.getOrgName() + " <font color" +
+                    "='#00796B'>" + context.getString(R.string.im_icon_verify) + "</font>", 0, (StringUtils.length
+                    (organization.getOrgName()) + 1), ((StringUtils.length(organization.getOrgName()) + 1) + 1)).toString();
+
+            holder.textMain.setText(s);
+            holder.textType.setText("(" + organization.getOrgIndustryType() + ")");
+        } else {
+            holder.textMain.setText(organization.getOrgName());
+            holder.textType.setVisibility(View.GONE);
+        }
+
+        Glide.with(context)
+                .load(organization.getOrgLogo())
+                .placeholder(R.drawable.home_screen_profile)
+                .error(R.drawable.home_screen_profile)
+                .bitmapTransform(new CropCircleTransformation(context))
+                .override(120, 120)
+                .into(holder.imageOrgProfile);
 
         if (StringUtils.equalsIgnoreCase(organization.getOrgToDate(), "")) {
             if (!StringUtils.isEmpty(organization.getOrgFromDate())) {
@@ -96,6 +120,10 @@ public class OrganizationListAdapter extends RecyclerView.Adapter<OrganizationLi
         TextView textSub;
         @BindView(R.id.text_time)
         TextView textTime;
+        @BindView(R.id.text_type)
+        TextView textType;
+        @BindView(R.id.image_org_profile)
+        ImageView imageOrgProfile;
 
         OrganizationViewHolder(View itemView) {
             super(itemView);
@@ -104,6 +132,7 @@ public class OrganizationListAdapter extends RecyclerView.Adapter<OrganizationLi
             textMain.setTypeface(Utils.typefaceRegular(context));
             textSub.setTypeface(Utils.typefaceRegular(context));
             textTime.setTypeface(Utils.typefaceRegular(context));
+            textType.setTypeface(Utils.typefaceRegular(context));
 
             textTime.setVisibility(View.VISIBLE);
         }

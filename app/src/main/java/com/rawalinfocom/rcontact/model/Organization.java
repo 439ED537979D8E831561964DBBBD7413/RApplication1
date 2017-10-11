@@ -7,6 +7,7 @@ package com.rawalinfocom.rcontact.model;
 public class Organization {
 
     private String omId;
+    private String omEnterpriseOrgId;
     private String omRecordIndexId;
     private String omOrganizationCompany;
     private String omOrganizationDesignation;
@@ -16,11 +17,12 @@ public class Organization {
     private String rcProfileMasterPmId;
     private String omOrganizationFromDate;
     private String omOrganizationToDate;
+    private String omOrganizationType;
+    private String omOrganizationLogo;
+    private String omIsVerified;
 
-    /*private String omOrganizationType;
-    private String omCustomType;
+    /*private String omCustomType;
     private String omOrganizationTitle;
-    private String omOrganizationDepartment;
     private String omJobDescription;
     private String omOfficeLocation;*/
 
@@ -30,6 +32,14 @@ public class Organization {
 
     public void setOmId(String omId) {
         this.omId = omId;
+    }
+
+    public String getOmEnterpriseOrgId() {
+        return omEnterpriseOrgId;
+    }
+
+    public void setOmEnterpriseOrgId(String omEnterpriseOrgId) {
+        this.omEnterpriseOrgId = omEnterpriseOrgId;
     }
 
     public String getOmOrganizationCompany() {
@@ -103,4 +113,29 @@ public class Organization {
     public void setOmOrganizationToDate(String omOrganizationToDate) {
         this.omOrganizationToDate = omOrganizationToDate;
     }
+
+    public String getOmOrganizationType() {
+        return omOrganizationType;
+    }
+
+    public void setOmOrganizationType(String omOrganizationType) {
+        this.omOrganizationType = omOrganizationType;
+    }
+
+    public String getOmOrganizationLogo() {
+        return omOrganizationLogo;
+    }
+
+    public void setOmOrganizationLogo(String omOrganizationLogo) {
+        this.omOrganizationLogo = omOrganizationLogo;
+    }
+
+    public String getOmIsVerified() {
+        return omIsVerified;
+    }
+
+    public void setOmIsVerified(String omIsVerified) {
+        this.omIsVerified = omIsVerified;
+    }
+
 }

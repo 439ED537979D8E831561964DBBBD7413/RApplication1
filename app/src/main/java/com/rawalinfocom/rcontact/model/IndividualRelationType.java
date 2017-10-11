@@ -7,14 +7,16 @@ import java.util.ArrayList;
  * Created by Aniruddh on 04/10/17.
  */
 
-public class IndividualRelationRecommendationType implements Serializable {
+public class IndividualRelationType implements Serializable {
 
     private Integer relationType;
+    private String relationId;
     private String relationName;
     private String organizationName;
     private String FamilyName;
     private String relationDate;
     private boolean isFriendRelation;
+    private String isVerify;
 
     public String getOrganizationName() {
         return organizationName;
@@ -40,6 +42,22 @@ public class IndividualRelationRecommendationType implements Serializable {
         this.relationName = relationName;
     }
 
+    public String getRelationId() {
+        return relationId;
+    }
+
+    public void setRelationId(String relationId) {
+        this.relationId = relationId;
+    }
+
+    public String getIsVerify() {
+        return isVerify;
+    }
+
+    public void setIsVerify(String isVerify) {
+        this.isVerify = isVerify;
+    }
+
     public String getFamilyName() {
         return FamilyName;
     }
@@ -55,7 +73,6 @@ public class IndividualRelationRecommendationType implements Serializable {
     public void setRelationDate(String relationDate) {
         this.relationDate = relationDate;
     }
-
 
     public boolean getIsFriendRelation() {
         return isFriendRelation;

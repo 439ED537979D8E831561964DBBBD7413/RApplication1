@@ -9,7 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
-import com.rawalinfocom.rcontact.model.IndividualRelationRecommendationType;
+import com.rawalinfocom.rcontact.model.IndividualRelationType;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -26,7 +26,7 @@ class IndividualExistingRelationListAdapter extends RecyclerView.Adapter
         <IndividualExistingRelationListAdapter.IndividualExistingRelationViewHolder> {
 
     private Activity activity;
-    private ArrayList<IndividualRelationRecommendationType> individualRelationRecommendationTypeList;
+    private ArrayList<IndividualRelationType> individualRelationRecommendationTypeList;
 
     @Override
     public IndividualExistingRelationViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -35,7 +35,7 @@ class IndividualExistingRelationListAdapter extends RecyclerView.Adapter
         return new IndividualExistingRelationViewHolder(v);
     }
 
-    IndividualExistingRelationListAdapter(Activity activity, ArrayList<IndividualRelationRecommendationType>
+    IndividualExistingRelationListAdapter(Activity activity, ArrayList<IndividualRelationType>
             individualRelationRecommendationTypeList) {
         this.activity = activity;
         this.individualRelationRecommendationTypeList = individualRelationRecommendationTypeList;
@@ -44,7 +44,7 @@ class IndividualExistingRelationListAdapter extends RecyclerView.Adapter
     @Override
     public void onBindViewHolder(IndividualExistingRelationViewHolder holder, int position) {
 
-        IndividualRelationRecommendationType type = individualRelationRecommendationTypeList.get(position);
+        IndividualRelationType type = individualRelationRecommendationTypeList.get(position);
 
         if (!StringUtils.isEmpty(type.getRelationName())) {
 
