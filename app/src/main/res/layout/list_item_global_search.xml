@@ -109,7 +109,8 @@
                     android:ellipsize="end"
                     android:singleLine="true"
                     android:layout_marginLeft="@dimen/margin_5dp"
-                    tools:text="(Aniruddh Pal)" />
+                    tools:text="(Aniruddh Pal)"
+                    android:visibility="gone"/>
 
             </LinearLayout>
 

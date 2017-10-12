@@ -385,7 +385,7 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
         if(!StringUtils.isBlank(searchChar)){
             Pattern numberPat = Pattern.compile("\\d+");
             Matcher matcher1 = numberPat.matcher(searchChar);
-            if (matcher1.find()) {
+            if (matcher1.find() || searchChar.matches("[+][0-9]+")) {
                 int startPos =  formattedNumber.toLowerCase(Locale.US).indexOf(searchChar
                         .toLowerCase(Locale.US));
                 int endPos = startPos + searchChar.length();

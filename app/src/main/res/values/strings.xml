@@ -87,6 +87,7 @@
     <string name="str_last">Last</string>
     <string name="str_organization">Organization</string>
     <string name="str_company_name">Company Name</string>
+    <string name="str_search_name">Name or Number</string>
 
     <!--<string name="str_designation">Designation</string>-->
 

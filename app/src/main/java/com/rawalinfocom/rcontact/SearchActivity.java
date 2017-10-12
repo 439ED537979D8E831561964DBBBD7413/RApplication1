@@ -156,6 +156,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
     ArrayList<Object> arrayListRContact;
     RContactListAdapter rContactListAdapter;
     ArrayList<String> arrayListRCPNumber;
+    String searchChar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -340,7 +341,6 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                         startAt = startAt + globalSearchTypeArrayList.size();
 
                         //  Removing Local data from global list
-
                         for (int i = 0; i < globalSearchTypeArrayList.size(); i++) {
                             GlobalSearchType globalSearchType = globalSearchTypeArrayList.get(i);
                             String number = globalSearchTypeArrayList.get(i).getMobileNumber();
@@ -441,7 +441,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
     private void setGlobalSearchAdapter() {
         if (globalSearchTypeArrayListMain != null && globalSearchTypeArrayListMain.size() > 0) {
             globalSearchAdapter = new GlobalSearchAdapter(SearchActivity.this,
-                    globalSearchTypeArrayListMain);
+                    globalSearchTypeArrayListMain,search.getText().toString());
             recycleViewGlobalContact.setAdapter(globalSearchAdapter);
         }
     }
@@ -1046,10 +1046,15 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
             if (matcher1.find()) {
                 deviceDetailObject.setType("name");
             } else {
-                deviceDetailObject.setType("phone_number");
-                if (!searchQuery.startsWith("+91"))
-                    searchQuery = "+91" + searchQuery;
-
+                Pattern pattern = Pattern.compile("[0-9]");
+                Matcher matches = pattern.matcher(searchQuery);
+                if(matches.find()){
+                    deviceDetailObject.setType("phone_number");
+                    if (!searchQuery.startsWith("+91"))
+                        searchQuery = "+91" + searchQuery;
+                }else {
+                    deviceDetailObject.setType("name");
+                }
             }
             deviceDetailObject.setSearchQuery(searchQuery);
             deviceDetailObject.setSearchStartAt(startAt);
