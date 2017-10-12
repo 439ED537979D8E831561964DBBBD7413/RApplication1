@@ -14,7 +14,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.rawalinfocom.rcontact.adapters.EnterpriseOrganizationsAdapter;
+import com.rawalinfocom.rcontact.adapters.EnterPriseOrganizationsAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
@@ -37,7 +37,7 @@ import butterknife.ButterKnife;
  * Created by admin on 25/09/17.
  */
 
-public class OrganizationListActivity extends BaseActivity implements RippleView
+public class EnterPriseOrganizationListActivity extends BaseActivity implements RippleView
         .OnRippleCompleteListener, WsResponseListener {
 
     @BindView(R.id.image_action_back)
@@ -71,7 +71,7 @@ public class OrganizationListActivity extends BaseActivity implements RippleView
         setContentView(R.layout.activity_organization_list);
         ButterKnife.bind(this);
 
-        activity = OrganizationListActivity.this;
+        activity = EnterPriseOrganizationListActivity.this;
 
         init();
     }
@@ -79,10 +79,13 @@ public class OrganizationListActivity extends BaseActivity implements RippleView
     private void init() {
 
         rippleActionBack.setOnRippleCompleteListener(this);
-        textToolbarTitle.setText(R.string.org_list);
+        textToolbarTitle.setText(R.string.str_org);
 
         txtNoOrgList.setVisibility(View.VISIBLE);
+        txtNoOrgList.setText(getString(R.string.enter_or_select_your_organisation));
+        txtNoOrgList.setTypeface(Utils.typefaceRegular(activity));
         organizationList.setVisibility(View.GONE);
+        imgDone.setVisibility(View.GONE);
 
         searchBox.addTextChangedListener(new TextWatcher() {
             @Override
@@ -92,14 +95,12 @@ public class OrganizationListActivity extends BaseActivity implements RippleView
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//                adapter.getFilter().filter(charSequence.toString());
                 if (charSequence.toString().length() > 0) {
+                    imgDone.setVisibility(View.VISIBLE);
                     getOrganizationList(charSequence.toString());
                 } else {
-                    verifyArrayListOrganization.clear();
 
-                    txtNoOrgList.setVisibility(View.VISIBLE);
-                    organizationList.setVisibility(View.GONE);
+                    clearData();
                 }
             }
 
@@ -172,29 +173,29 @@ public class OrganizationListActivity extends BaseActivity implements RippleView
 
                             VerifiedOrganizationDetails organizationDetails = organizationData.get(i).getOmOrgDetails();
 
-                            verifiedOrganizationData.setEomLogoPath(organizationDetails.getEomLogoPath() + "/" + organizationDetails.getEomLogoName());
-                            verifiedOrganizationData.setEitType(organizationDetails.getVerifiedIndustryType().getEitType());
-                            verifiedOrganizationData.setEitId(organizationDetails.getVerifiedIndustryType().getEitId());
+                            verifiedOrganizationData.setEomLogoPath(organizationDetails.getEomLogoPath()
 
+                                    + "/" + organizationDetails.getEomLogoName());
+
+                            if (organizationDetails.getVerifiedIndustryType() != null) {
+                                verifiedOrganizationData.setEitType(organizationDetails.getVerifiedIndustryType().getEitType());
+//                                verifiedOrganizationData.setEitId(organizationDetails.getVerifiedIndustryType().getEitId());
+                            }
                             verifyArrayListOrganization.add(verifiedOrganizationData);
                         }
 
-                        setOrganizationListData();
+                        if (searchBox.getText().toString().trim().length() > 0)
+                            setOrganizationListData();
+                        else {
+                            clearData();
+                        }
 
                     } else {
 
-                        VerifiedOrganizationData verifiedOrganizationData = new VerifiedOrganizationData();
-
-                        verifiedOrganizationData.setOmOrgId("");
-                        verifiedOrganizationData.setOmOrgName(searchBox.getText().toString().trim());
-                        verifiedOrganizationData.setOmOrgIsVerify("0");
-                        verifiedOrganizationData.setEomLogoPath("");
-                        verifiedOrganizationData.setEomLogoName("");
-                        verifiedOrganizationData.setEitType("");
-                        verifiedOrganizationData.setEitId("");
-
-                        verifyArrayListOrganization.add(verifiedOrganizationData);
-                        setOrganizationListData();
+                        verifyArrayListOrganization.clear();
+                        txtNoOrgList.setVisibility(View.VISIBLE);
+                        txtNoOrgList.setText(getString(R.string.search_no_organisation));
+                        organizationList.setVisibility(View.GONE);
                     }
                 }
             }
@@ -205,6 +206,15 @@ public class OrganizationListActivity extends BaseActivity implements RippleView
             Utils.hideProgressDialog();
             Utils.showErrorSnackBar(this, relativeRootOrganization, "" + error.getLocalizedMessage());
         }
+    }
+
+    private void clearData() {
+        if (verifyArrayListOrganization != null)
+            verifyArrayListOrganization.clear();
+
+        txtNoOrgList.setVisibility(View.VISIBLE);
+        organizationList.setVisibility(View.GONE);
+        imgDone.setVisibility(View.GONE);
     }
 
     private void getOrganizationList(String name) {
@@ -225,9 +235,9 @@ public class OrganizationListActivity extends BaseActivity implements RippleView
 
     private void setOrganizationListData() {
 
-        EnterpriseOrganizationsAdapter adapter = new EnterpriseOrganizationsAdapter(activity, verifyArrayListOrganization,
+        EnterPriseOrganizationsAdapter adapter = new EnterPriseOrganizationsAdapter(activity, verifyArrayListOrganization,
 
-                new EnterpriseOrganizationsAdapter.OnClickListener() {
+                new EnterPriseOrganizationsAdapter.OnClickListener() {
                     @Override
                     public void onClick(String orgId, String organizationName, String organizationType, String logo) {
 

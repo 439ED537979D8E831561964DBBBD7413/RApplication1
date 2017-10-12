@@ -114,11 +114,15 @@ class RelationRecommendationListAdapter extends RecyclerView.Adapter<RecyclerVie
                     } else {
 
                         for (final RelationRecommendationType recommendationType : filteredList) {
-                            if (recommendationType.getFirstName().toLowerCase().contains(splitString[0])
-                                    || recommendationType.getLastName().toLowerCase().contains(splitString[0])
-                                    || recommendationType.getFirstName().toLowerCase().contains(splitString[1])
-                                    || recommendationType.getLastName().toLowerCase().contains(splitString[1])) {
-                                arrayListRelationType.add(recommendationType);
+
+                            for (int i = 0; i < splitString.length; i++) {
+
+                                if ((recommendationType.getFirstName().toLowerCase().contains(splitString[i])
+                                        || recommendationType.getLastName().toLowerCase().contains(splitString[i]))
+                                        && (recommendationType.getFirstName().toLowerCase().contains(splitString[i + 1])
+                                        || recommendationType.getLastName().toLowerCase().contains(splitString[i + 1]))) {
+                                    arrayListRelationType.add(recommendationType);
+                                }
                             }
                         }
                     }

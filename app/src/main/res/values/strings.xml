@@ -87,6 +87,10 @@
     <string name="str_last">Last</string>
     <string name="str_organization">Organization</string>
     <string name="str_company_name">Company Name</string>
+    <string name="enter_or_select_your_organisation">Enter or Select your organisation</string>
+    <string name="type_here_hint">Type here...</string>
+    <string name="search_no_organisation">Organisation is not verified</string>
+    <string name="str_org">Organizations</string>
 
     <!--<string name="str_designation">Designation</string>-->
 

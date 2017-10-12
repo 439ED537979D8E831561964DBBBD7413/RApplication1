@@ -3,6 +3,7 @@ package com.rawalinfocom.rcontact.adapters;
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,21 +68,25 @@ public class OrganizationListAdapter extends RecyclerView.Adapter<OrganizationLi
 
         if (MoreObjects.firstNonNull(organization.getIsVerify(), 0) == IntegerConstants.RCP_TYPE_PRIMARY) {
 
-            String s = Utils.setMultipleTypeface(context, organization.getOrgName() + " <font color" +
-                    "='#00796B'>" + context.getString(R.string.im_icon_verify) + "</font>", 0, (StringUtils.length
-                    (organization.getOrgName()) + 1), ((StringUtils.length(organization.getOrgName()) + 1) + 1)).toString();
+            String s = Utils.setMultipleTypeface(context, organization.getOrgName() + " <font color" + "='#00796B'>" + context.getString(R.string.im_icon_verify)
+                    + "</font>", 0, (StringUtils.length(organization.getOrgName()) + 1), ((StringUtils.length(organization.getOrgName()) + 1) + 1)).toString();
 
-            holder.textMain.setText(s);
-            holder.textType.setText("(" + organization.getOrgIndustryType() + ")");
+            holder.textMain.setText(Html.fromHtml(s));
+            holder.textType.setText(Html.fromHtml("<small> (" + organization.getOrgIndustryType() + ") </small>"));
         } else {
+
+//            String s = Utils.setMultipleTypeface(context, organization.getOrgName() + " <font color" + "='#00796B'>" + context.getString(R.string.im_icon_verify)
+//                    + "</font>", 0, (StringUtils.length(organization.getOrgName()) + 1), ((StringUtils.length(organization.getOrgName()) + 1) + 1)).toString();
+//            holder.textMain.setText(Html.fromHtml(s));
             holder.textMain.setText(organization.getOrgName());
+            holder.textMain.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ico_relation_single_tick_svg, 0);
             holder.textType.setVisibility(View.GONE);
         }
 
         Glide.with(context)
                 .load(organization.getOrgLogo())
-                .placeholder(R.drawable.home_screen_profile)
-                .error(R.drawable.home_screen_profile)
+                .placeholder(R.drawable.default_org)
+                .error(R.drawable.default_org)
                 .bitmapTransform(new CropCircleTransformation(context))
                 .override(120, 120)
                 .into(holder.imageOrgProfile);
@@ -129,12 +134,13 @@ public class OrganizationListAdapter extends RecyclerView.Adapter<OrganizationLi
             super(itemView);
             ButterKnife.bind(this, itemView);
 
-            textMain.setTypeface(Utils.typefaceRegular(context));
+            textMain.setTypeface(Utils.typefaceIcons(context));
             textSub.setTypeface(Utils.typefaceRegular(context));
             textTime.setTypeface(Utils.typefaceRegular(context));
             textType.setTypeface(Utils.typefaceRegular(context));
 
             textTime.setVisibility(View.VISIBLE);
+            textType.setVisibility(View.VISIBLE);
         }
     }
 }

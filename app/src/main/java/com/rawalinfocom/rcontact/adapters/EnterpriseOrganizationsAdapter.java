@@ -15,7 +15,6 @@ import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
-import com.rawalinfocom.rcontact.model.OrganizationData;
 import com.rawalinfocom.rcontact.model.VerifiedOrganizationData;
 
 import java.util.ArrayList;
@@ -27,7 +26,7 @@ import butterknife.ButterKnife;
  * Created by Monal on 21/10/16.
  */
 
-public class EnterpriseOrganizationsAdapter extends RecyclerView.Adapter<EnterpriseOrganizationsAdapter
+public class EnterPriseOrganizationsAdapter extends RecyclerView.Adapter<EnterPriseOrganizationsAdapter
         .OrganizationViewHolder> implements Filterable {
 
     private Context context;
@@ -46,14 +45,14 @@ public class EnterpriseOrganizationsAdapter extends RecyclerView.Adapter<Enterpr
         void onClick(String orgId, String organizationName, String organizationType, String logo);
     }
 
-    public EnterpriseOrganizationsAdapter(Context context, ArrayList<VerifiedOrganizationData>
+    public EnterPriseOrganizationsAdapter(Context context, ArrayList<VerifiedOrganizationData>
             arrayListOrganization, OnClickListener clickListener) {
         this.context = context;
         this.clickListener = clickListener;
         this.arrayListOrganization = arrayListOrganization;
         this.filteredList = new ArrayList<>();
         this.filteredList.addAll(arrayListOrganization);
-        mFilter = new CustomFilter(EnterpriseOrganizationsAdapter.this);
+        mFilter = new CustomFilter(EnterPriseOrganizationsAdapter.this);
     }
 
     @Override
@@ -73,8 +72,8 @@ public class EnterpriseOrganizationsAdapter extends RecyclerView.Adapter<Enterpr
 
         Glide.with(context)
                 .load(organization.getEomLogoPath())
-                .placeholder(R.drawable.home_screen_profile)
-                .error(R.drawable.home_screen_profile)
+                .placeholder(R.drawable.default_org)
+                .error(R.drawable.default_org)
                 .bitmapTransform(new CropCircleTransformation(context))
                 .override(512, 512)
                 .into(holder.organizationProfileImage);
@@ -120,9 +119,9 @@ public class EnterpriseOrganizationsAdapter extends RecyclerView.Adapter<Enterpr
     }
 
     private class CustomFilter extends Filter {
-        private EnterpriseOrganizationsAdapter mAdapter;
+        private EnterPriseOrganizationsAdapter mAdapter;
 
-        private CustomFilter(EnterpriseOrganizationsAdapter mAdapter) {
+        private CustomFilter(EnterPriseOrganizationsAdapter mAdapter) {
             super();
             this.mAdapter = mAdapter;
         }

@@ -1783,11 +1783,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 imageProfile.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if (StringUtils.length(thumbnailUrl) > 0) {
+                        if (StringUtils.length(userProfile.getPmProfileImage()) > 0) {
                             Utils.zoomImageFromThumb(ProfileDetailActivity.this, imageProfile, userProfile.getPmProfileImage(),
                                     frameImageEnlarge, imageEnlarge, frameContainer);
                         }
-
                     }
                 });
 
@@ -2896,8 +2895,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
 
     private void showAllOrganizations(ArrayList<ProfileDataOperationOrganization>
@@ -4237,11 +4234,17 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 organization.setOmOrganizationToDate(arrayListOrganization.get(i).getOrgToDate());
                 organization.setOmIsPrivate(arrayListOrganization.get(i).getIsPrivate());
 
-                if (arrayListOrganization.get(i).getIsVerify() == IntegerConstants.RCP_TYPE_PRIMARY) {
-                    organization.setOmOrganizationType(arrayListOrganization.get(i).getOrgIndustryType());
-                    organization.setOmEnterpriseOrgId(arrayListOrganization.get(i).getOrgEntId());
-                    organization.setOmOrganizationLogo(arrayListOrganization.get(i).getOrgLogo());
-                } else {
+                if (arrayListOrganization.get(i).getIsVerify() != null)
+                    if (arrayListOrganization.get(i).getIsVerify() == IntegerConstants.RCP_TYPE_PRIMARY) {
+                        organization.setOmOrganizationType(arrayListOrganization.get(i).getOrgIndustryType());
+                        organization.setOmEnterpriseOrgId(arrayListOrganization.get(i).getOrgEntId());
+                        organization.setOmOrganizationLogo(arrayListOrganization.get(i).getOrgLogo());
+                    } else {
+                        organization.setOmOrganizationType("");
+                        organization.setOmEnterpriseOrgId("");
+                        organization.setOmOrganizationLogo("");
+                    }
+                else {
                     organization.setOmOrganizationType("");
                     organization.setOmEnterpriseOrgId("");
                     organization.setOmOrganizationLogo("");

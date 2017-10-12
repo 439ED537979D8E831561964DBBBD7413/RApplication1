@@ -1160,11 +1160,17 @@ public class Utils {
                 organization.setOmIsCurrent(String.valueOf(arrayListOrganization.get(i)
                         .getIsCurrent()));
 
-                if (arrayListOrganization.get(i).getIsVerify() == IntegerConstants.RCP_TYPE_PRIMARY) {
-                    organization.setOmOrganizationType(arrayListOrganization.get(i).getOrgIndustryType());
-                    organization.setOmEnterpriseOrgId(arrayListOrganization.get(i).getOrgEntId());
-                    organization.setOmOrganizationLogo(arrayListOrganization.get(i).getOrgLogo());
-                } else {
+                if (arrayListOrganization.get(i).getIsVerify() != null)
+                    if (arrayListOrganization.get(i).getIsVerify() == IntegerConstants.RCP_TYPE_PRIMARY) {
+                        organization.setOmOrganizationType(arrayListOrganization.get(i).getOrgIndustryType());
+                        organization.setOmEnterpriseOrgId(arrayListOrganization.get(i).getOrgEntId());
+                        organization.setOmOrganizationLogo(arrayListOrganization.get(i).getOrgLogo());
+                    } else {
+                        organization.setOmOrganizationType("");
+                        organization.setOmEnterpriseOrgId("");
+                        organization.setOmOrganizationLogo("");
+                    }
+                else {
                     organization.setOmOrganizationType("");
                     organization.setOmEnterpriseOrgId("");
                     organization.setOmOrganizationLogo("");
@@ -1388,7 +1394,7 @@ public class Utils {
         // Hide the thumbnail and show the zoomed-in view. When the animation
         // begins, it will position the zoomed-in view in the place of the
         // thumbnail.
-        thumbView.setAlpha(0f);
+//        thumbView.setAlpha(0f);
         frameImageEnlarge.setVisibility(View.VISIBLE);
 
         // Set the pivot point for SCALE_X and SCALE_Y transformations

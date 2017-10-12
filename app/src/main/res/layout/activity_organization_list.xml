@@ -79,7 +79,7 @@
         android:layout_marginRight="4dp"
         android:layout_marginTop="@dimen/margin_10dp"
         android:background="@drawable/bottom_border"
-        android:hint="Search here..."
+        android:hint="@string/type_here_hint"
         android:padding="10dp"
         android:textSize="14sp" />
 

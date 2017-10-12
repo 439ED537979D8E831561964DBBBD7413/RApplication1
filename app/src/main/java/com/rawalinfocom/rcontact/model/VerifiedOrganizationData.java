@@ -1,5 +1,7 @@
 package com.rawalinfocom.rcontact.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
@@ -8,7 +10,8 @@ import java.util.ArrayList;
 /**
  * Created by admin on 10/10/17.
  */
-
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class VerifiedOrganizationData implements Serializable {
 
     private String omOrgId;
@@ -19,7 +22,7 @@ public class VerifiedOrganizationData implements Serializable {
     private String eomLogoPath;
     private String eomLogoName;
 
-    private String eitId;
+//    private String eitId;
     private String eitType;
 
     @JsonProperty("organization_detail")
@@ -74,13 +77,13 @@ public class VerifiedOrganizationData implements Serializable {
         this.eomLogoName = eomLogoName;
     }
 
-    public String getEitId() {
-        return eitId;
-    }
+//    public String getEitId() {
+//        return eitId;
+//    }
 
-    public void setEitId(String eitId) {
-        this.eitId = eitId;
-    }
+//    public void setEitId(String eitId) {
+//        this.eitId = eitId;
+//    }
 
     public String getEitType() {
         return eitType;

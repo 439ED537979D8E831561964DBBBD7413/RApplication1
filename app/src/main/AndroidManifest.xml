@@ -198,7 +198,7 @@
             android:name=".LinkedinLoginActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".OrganizationListActivity"
+            android:name=".EnterPriseOrganizationListActivity"
             android:screenOrientation="portrait" />
 
         <!-- Start : Relation -->
