@@ -1,17 +1,18 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/relative_root_profile_detail"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/colorVeryLightGray">
+                xmlns:CircleProgressView="http://schemas.android.com/apk/res-auto"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/relative_root_profile_detail"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/colorVeryLightGray">
 
     <include
         android:id="@+id/include_toolbar"
         layout="@layout/layout_toolbar_profile_detail"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize" />
+        android:layout_height="?attr/actionBarSize"/>
 
     <FrameLayout
         android:id="@+id/frame_container"
@@ -23,7 +24,6 @@
             android:id="@+id/nestedScrollView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             android:scrollbars="none">
 
             <RelativeLayout
@@ -217,62 +217,149 @@
 
                 </RelativeLayout>
 
-                <LinearLayout
-                    android:id="@+id/linear_call_sms"
+                <FrameLayout
+                    android:id="@+id/frame_call_profile"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/relative_basic_detail"
-                    android:background="@color/colorLightGrayishCyan2"
-                    android:orientation="horizontal"
-                    android:padding="@dimen/activity_horizontal_margin">
+                    android:layout_below="@id/relative_basic_detail">
 
-                    <com.rawalinfocom.rcontact.helper.RippleView
-                        android:id="@+id/ripple_call_log"
-                        android:layout_width="0dp"
-                        android:layout_height="@dimen/activity_double_vertical_margin"
-                        android:layout_marginLeft="@dimen/activity_half_horizontal_margin"
-                        android:layout_marginRight="@dimen/activity_half_horizontal_margin"
-                        android:layout_weight="1"
-                        app:rv_alpha="@integer/alpha_ripple"
-                        app:rv_color="@color/colorWhite"
-                        app:rv_rippleDuration="@integer/duration_ripple">
+                    <LinearLayout
+                        android:id="@+id/linear_call_sms"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/colorLightGrayishCyan2"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/activity_horizontal_margin"
+                        tools:visibility="gone">
 
-                        <Button
-                            android:id="@+id/button_call_log"
+                        <com.rawalinfocom.rcontact.helper.RippleView
+                            android:id="@+id/ripple_call_log"
+                            android:layout_width="0dp"
+                            android:layout_height="@dimen/activity_double_vertical_margin"
+                            android:layout_marginLeft="@dimen/activity_half_horizontal_margin"
+                            android:layout_marginRight="@dimen/activity_half_horizontal_margin"
+                            android:layout_weight="1"
+                            app:rv_alpha="@integer/alpha_ripple"
+                            app:rv_color="@color/colorWhite"
+                            app:rv_rippleDuration="@integer/duration_ripple">
+
+                            <Button
+                                android:id="@+id/button_call_log"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/rounded_cornor_green_background"
+                                android:text="@string/call_history"
+                                android:textColor="@color/colorWhite"
+                                android:textSize="@dimen/text_size_12sp"/>
+
+                        </com.rawalinfocom.rcontact.helper.RippleView>
+
+                        <com.rawalinfocom.rcontact.helper.RippleView
+                            android:id="@+id/ripple_sms"
+                            android:layout_width="0dp"
+                            android:layout_height="@dimen/activity_double_vertical_margin"
+                            android:layout_marginLeft="@dimen/activity_half_horizontal_margin"
+                            android:layout_marginRight="@dimen/activity_half_horizontal_margin"
+                            android:layout_weight="1"
+                            app:rv_alpha="@integer/alpha_ripple"
+                            app:rv_color="@color/colorWhite"
+                            app:rv_rippleDuration="@integer/duration_ripple">
+
+                            <Button
+                                android:id="@+id/button_sms"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/rounded_cornor_green_background"
+                                android:text="@string/tab_sms"
+                                android:textColor="@color/colorWhite"
+                                android:textSize="@dimen/text_size_12sp"/>
+
+                        </com.rawalinfocom.rcontact.helper.RippleView>
+
+                    </LinearLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/relative_profile_percentage"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/colorWhite">
+
+                        <include
+                            android:id="@+id/include_elevation_top"
+                            layout="@layout/layout_elevation"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/height_elevation"/>
+
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/rounded_cornor_green_background"
-                            android:text="@string/call_history"
-                            android:textColor="@color/colorWhite"
-                            android:textSize="@dimen/text_size_12sp"/>
+                            android:orientation="horizontal"
+                            android:padding="@dimen/activity_half_horizontal_margin">
 
-                    </com.rawalinfocom.rcontact.helper.RippleView>
+                            <com.rawalinfocom.rcontact.helper.circleprogressview.CircleProgressView
+                                android:id="@+id/progress_percentage"
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginEnd="@dimen/activity_half_horizontal_margin"
+                                CircleProgressView:cpv_autoTextSize="true"
+                                CircleProgressView:cpv_barColor="@color/colorPrimary"
+                                CircleProgressView:cpv_barWidth="5dp"
+                                CircleProgressView:cpv_innerContourSize="0dp"
+                                CircleProgressView:cpv_maxValue="100"
+                                CircleProgressView:cpv_outerContourSize="0dp"
+                                CircleProgressView:cpv_rimColor="#E1E1E1"
+                                CircleProgressView:cpv_rimWidth="5dp"
+                                CircleProgressView:cpv_seekMode="false"
+                                CircleProgressView:cpv_showUnit="true"
+                                CircleProgressView:cpv_spinColor="@color/spamRed"
+                                CircleProgressView:cpv_textColor="@color/colorAccent"
+                                CircleProgressView:cpv_textScale="1"
+                                CircleProgressView:cpv_unit="%"
+                                CircleProgressView:cpv_unitColor="@color/colorAccent"
+                                CircleProgressView:cpv_unitPosition="right_top"
+                                CircleProgressView:cpv_unitScale="1"/>
 
-                    <com.rawalinfocom.rcontact.helper.RippleView
-                        android:id="@+id/ripple_sms"
-                        android:layout_width="0dp"
-                        android:layout_height="@dimen/activity_double_vertical_margin"
-                        android:layout_marginLeft="@dimen/activity_half_horizontal_margin"
-                        android:layout_marginRight="@dimen/activity_half_horizontal_margin"
-                        android:layout_weight="1"
-                        app:rv_alpha="@integer/alpha_ripple"
-                        app:rv_color="@color/colorWhite"
-                        app:rv_rippleDuration="@integer/duration_ripple">
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:orientation="vertical">
 
-                        <Button
-                            android:id="@+id/button_sms"
+                                <TextView
+                                    android:id="@+id/text_complete_profile"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/str_complete_profile"
+                                    android:textColor="@color/dialogTitleTextColor"
+                                    android:textSize="@dimen/text_size_14sp"/>
+
+                                <TextView
+                                    android:id="@+id/text_complete_profile_description"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:lineSpacingExtra="1dp"
+                                    android:lineSpacingMultiplier="0.75"
+                                    android:text="@string/str_complete_profile_description"
+                                    android:textColor="@color/dialer_text_gray"
+                                    android:textSize="@dimen/text_size_12sp"/>
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                        <include
+                            android:id="@+id/include_elevation"
+                            layout="@layout/layout_elevation"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/rounded_cornor_green_background"
-                            android:text="@string/tab_sms"
-                            android:textColor="@color/colorWhite"
-                            android:textSize="@dimen/text_size_12sp"/>
+                            android:layout_height="@dimen/height_elevation"
+                            android:layout_alignParentBottom="true"/>
 
-                    </com.rawalinfocom.rcontact.helper.RippleView>
+                    </RelativeLayout>
 
-                </LinearLayout>
+                </FrameLayout>
 
-                <RelativeLayout
+                <!--<RelativeLayout
                     android:id="@+id/relative_call_history"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -311,35 +398,35 @@
                         android:layout_below="@+id/text_text_call_history"
                         android:visibility="visible"/>
 
-                </RelativeLayout>
+                </RelativeLayout>-->
 
-                <com.rawalinfocom.rcontact.helper.RippleView
-                    android:id="@+id/ripple_view_old_records"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/height_button"
-                    android:layout_below="@+id/relative_call_history"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginBottom="@dimen/margin_10dp"
-                    android:layout_marginTop="@dimen/margin_10dp"
-                    android:visibility="gone"
-                    app:rv_alpha="@integer/alpha_ripple"
-                    app:rv_color="@color/colorWhite"
-                    app:rv_rippleDuration="@integer/duration_ripple">
+                <!-- <com.rawalinfocom.rcontact.helper.RippleView
+                     android:id="@+id/ripple_view_old_records"
+                     android:layout_width="wrap_content"
+                     android:layout_height="@dimen/height_button"
+                     android:layout_below="@+id/relative_call_history"
+                     android:layout_centerHorizontal="true"
+                     android:layout_marginBottom="@dimen/margin_10dp"
+                     android:layout_marginTop="@dimen/margin_10dp"
+                     android:visibility="gone"
+                     app:rv_alpha="@integer/alpha_ripple"
+                     app:rv_color="@color/colorWhite"
+                     app:rv_rippleDuration="@integer/duration_ripple">
 
-                    <Button
-                        android:id="@+id/button_view_old_records"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentTop="true"
-                        android:background="@drawable/rounded_cornor_green_background"
-                        android:padding="@dimen/padding_10dp"
-                        android:text="@string/view_old_records"
-                        android:textColor="@color/colorWhite"/>
+                     <Button
+                         android:id="@+id/button_view_old_records"
+                         android:layout_width="wrap_content"
+                         android:layout_height="wrap_content"
+                         android:layout_alignParentStart="true"
+                         android:layout_alignParentTop="true"
+                         android:background="@drawable/rounded_cornor_green_background"
+                         android:padding="@dimen/padding_10dp"
+                         android:text="@string/view_old_records"
+                         android:textColor="@color/colorWhite"/>
 
-                </com.rawalinfocom.rcontact.helper.RippleView>
+                 </com.rawalinfocom.rcontact.helper.RippleView>-->
 
-                <ProgressBar
+                <!--<ProgressBar
                     android:id="@+id/progressBarLoadCallLogs"
                     style="?android:attr/progressBarStyle"
                     android:layout_width="30dp"
@@ -347,13 +434,13 @@
                     android:layout_below="@+id/relative_call_history"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="@dimen/margin_10dp"
-                    android:visibility="gone"/>
+                    android:visibility="gone"/>-->
 
                 <RelativeLayout
                     android:id="@+id/relative_contact_details"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/linear_call_sms"
+                    android:layout_below="@id/frame_call_profile"
                     android:padding="@dimen/activity_half_horizontal_margin"
                     android:visibility="visible">
 
