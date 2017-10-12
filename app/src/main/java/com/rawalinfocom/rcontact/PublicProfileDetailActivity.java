@@ -948,7 +948,7 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
         // Hide the thumbnail and show the zoomed-in view. When the animation
         // begins, it will position the zoomed-in view in the place of the
         // thumbnail.
-        thumbView.setAlpha(0f);
+//        thumbView.setAlpha(0f);
 //        imageEnlarge.setVisibility(View.VISIBLE);
         frameImageEnlarge.setVisibility(View.VISIBLE);
         frameImageEnlarge.animate()

@@ -400,8 +400,60 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
                 .get(position);
 
         holder.textSub.setVisibility(View.GONE);
+        if (!holder.textMain.getText().toString().startsWith("XX")
+                && !holder.textMain.getText().toString().startsWith("xx")){
+            holder.imgActionType.setImageResource(R.drawable.ico_website_svg);
+        }
+
+        holder.imgActionType.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                String url = holder.textMain.getText().toString();
+                if (!url.startsWith("XX") && !url.startsWith("xx")) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    if (!StringUtils.startsWithIgnoreCase(url, "http://") && !StringUtils
+                            .startsWithIgnoreCase(url, "https://")) {
+                        url = "http://" + url;
+                    }
+                    intent.setData(Uri.parse(url));
+                    activity.startActivity(intent);
+                }
+            }
+        });
+
+        holder.textMain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String url = holder.textMain.getText().toString();
+                if (!url.startsWith("XX") && !url.startsWith("xx")) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    if (!StringUtils.startsWithIgnoreCase(url, "http://") && !StringUtils
+                            .startsWithIgnoreCase(url, "https://")) {
+                        url = "http://" + url;
+                    }
+                    intent.setData(Uri.parse(url));
+                    activity.startActivity(intent);
+                }
+            }
+        });
 
         holder.textMain.setText(webAddress.getWebAddress());
+
+        holder.textMain.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                Utils.copyToClipboard(activity, activity.getString(R.string.str_copy_website), (
+                        (TextView) view).getText()
+                        .toString());
+                Utils.showSuccessSnackBar(activity, ((PublicProfileDetailActivity) activity)
+                        .getRootRelativeLayout(), activity.getString(R.string
+                        .str_copy_website_clip_board));
+                return true;
+            }
+        });
+
 
         int rcpType = Integer.parseInt(StringUtils.defaultIfEmpty(webAddress.getWebRcpType(),
                 String.valueOf(IntegerConstants.RCP_TYPE_SECONDARY)));
@@ -418,6 +470,71 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
         holder.textMain.setText(address.getFormattedAddress());
         holder.textSub.setText(address.getAddressType());
         holder.textSub.setVisibility(View.VISIBLE);
+
+        if (!holder.textMain.getText().toString().startsWith("XX") && !holder.textMain.getText().toString().startsWith("xx")){
+            holder.imgActionType.setImageResource(R.drawable.ico_address_svg);
+        }
+        holder.imgActionType.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                String strAddress = holder.textMain.getText().toString();
+                if (!strAddress.startsWith("XX") && !strAddress.startsWith("xx")) {
+                    if (address.getGoogleLatLong() != null) {
+                        ArrayList<String> arrayListLatLong = new ArrayList<>();
+                        arrayListLatLong.addAll(address.getGoogleLatLong());
+                        String latitude = arrayListLatLong.get(1);
+                        String longitude = arrayListLatLong.get(0);
+                        Intent intent = new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("google.navigation:q=" + latitude + "," + longitude));
+                        activity.startActivity(intent);
+                    } else {
+                        Intent intent = new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("google.navigation:q=" + holder.textMain
+                                        .getText()));
+                        activity.startActivity(intent);
+                    }
+                }
+            }
+        });
+
+        holder.textMain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String strAddress = holder.textMain.getText().toString();
+                if (!strAddress.startsWith("XX") && !strAddress.startsWith("xx")) {
+                    if (address.getGoogleLatLong() != null) {
+                        ArrayList<String> arrayListLatLong = new ArrayList<>();
+                        arrayListLatLong.addAll(address.getGoogleLatLong());
+                        String latitude = arrayListLatLong.get(1);
+                        String longitude = arrayListLatLong.get(0);
+                        Intent intent = new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("google.navigation:q=" + latitude + "," + longitude));
+                        activity.startActivity(intent);
+                    } else {
+                        Intent intent = new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("google.navigation:q=" + holder.textMain
+                                        .getText()));
+                        activity.startActivity(intent);
+                    }
+                }
+            }
+        });
+
+        holder.textMain.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                Utils.copyToClipboard(activity, activity.getString(R.string.str_copy_address), (
+                        (TextView) view).getText()
+                        .toString());
+                Utils.showSuccessSnackBar(activity, ((PublicProfileDetailActivity) activity)
+                        .getRootRelativeLayout(), activity.getString(R.string
+                        .str_copy_address_clip_board));
+                return true;
+            }
+        });
+
 
         int addressRcpType = Integer.parseInt(StringUtils.defaultIfEmpty(address.getRcpType(),
                 String.valueOf(IntegerConstants.RCP_TYPE_SECONDARY)));
@@ -460,6 +577,103 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
             holder.textMain.setText(imAccount.getIMAccountDetails());
 
         holder.textSub.setText(imAccount.getIMAccountProtocol());
+
+        if (!holder.textMain.getText().toString().startsWith("XX")
+                && !holder.textMain.getText().toString().startsWith("xx")){
+
+            if (imAccount.getIMAccountProtocol().equalsIgnoreCase("facebook")) {
+                holder.imgActionType.setImageResource(R.drawable.ico_facebook_svg);
+            } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("twitter")) {
+                holder.imgActionType.setImageResource(R.drawable.ico_twitter_svg);
+            } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("linkedin")) {
+                holder.imgActionType.setImageResource(R.drawable.ico_linkedin_svg);
+            } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains("google")) {
+                holder.imgActionType.setImageResource(R.drawable.ico_google_plus_svg);
+            } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains("skype")) {
+                holder.imgActionType.setImageResource(R.drawable.ico_skype_svg);
+            } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains("whatsapp")) {
+                holder.imgActionType.setImageResource(R.drawable.ico_whatsapp_svg);
+            } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("instagram")) {
+                holder.imgActionType.setImageResource(R.drawable.ico_instagram_svg);
+            } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("pinterest")) {
+                holder.imgActionType.setImageResource(R.drawable.ico_pinterest_svg);
+            } else {
+                holder.imgActionType.setImageResource(R.drawable.ico_other_svg);
+            }
+
+        }
+
+        holder.imgActionType.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                String ima = holder.textMain.getText().toString();
+                if (!ima.startsWith("XX") && !ima.startsWith("xx")) {
+                    if (StringUtils.length(imAccount.getIMAccountDetails()) > 0) {
+                        String url = null;
+
+                        if (imAccount.getIMAccountProtocol().equalsIgnoreCase("facebook")) {
+                            Utils.getOpenFacebookIntent(activity, imAccount.getIMAccountDetails());
+                            return;
+                        } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("twitter")) {
+                            url = "https://twitter.com/" + imAccount.getIMAccountDetails();
+                        } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("linkedin")) {
+                            if (!imAccount.getIMAccountDetails().startsWith("https://www.linkedin.com"))
+                                url = "https://www.linkedin.com/" + imAccount.getIMAccountDetails();
+                            else
+                                url = imAccount.getIMAccountDetails();
+                        } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
+                                ("google")) {
+//                            url = "https://plus.google.com/" + imAccount.getIMAccountDetails();
+                            Utils.openGPlus(activity, imAccount.getIMAccountDetails());
+                            return;
+                        } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
+                                ("skype")) {
+                            url = "https://web.skype.com/" + imAccount.getIMAccountDetails();
+                        } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
+                                ("whatsapp")) {
+                            url = "https://web.whatsapp.com/" + imAccount.getIMAccountDetails();
+                        } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
+                                ("instagram")) {
+                            url = "http://instagram.com/_u/" + imAccount.getIMAccountDetails();
+                        } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
+                                ("pinterest")) {
+                            url = "https://www.pinterest.com/" + imAccount.getIMAccountDetails();
+                        } else if (StringUtils.lowerCase(imAccount.getIMAccountDetails()).startsWith("https://")
+                                || StringUtils.lowerCase(imAccount.getIMAccountDetails()).startsWith("http://")
+                                || StringUtils.lowerCase(imAccount.getIMAccountDetails()).startsWith("www.")) {
+                            url = imAccount.getIMAccountDetails();
+                        }
+
+                        if (url != null) {
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setData(Uri.parse(url));
+                            activity.startActivity(intent);
+                        }
+                    }
+                }
+            }
+        });
+
+        holder.textMain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                holder.imgActionType.performClick();
+            }
+        });
+
+        holder.textMain.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                Utils.copyToClipboard(activity, activity.getString(R.string.str_copy_im_account), (
+                        (TextView) view).getText().toString());
+                Utils.showSuccessSnackBar(activity, ((ProfileDetailActivity) activity)
+                        .getRelativeRootProfileDetail(), activity.getString(R.string
+                        .str_copy_im_account_clip_board));
+                return true;
+            }
+        });
 
 
         int imRcpType = Integer.parseInt(StringUtils.defaultIfEmpty(imAccount.getIMRcpType(),

@@ -122,7 +122,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 db.execSQL("ALTER TABLE " + TableEmailMaster.TABLE_RC_EMAIL_MASTER_TEMP
                         + " RENAME TO " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + ";");
 
-           /* case 4:
+            /*case 4:
                 System.out.println("RContact db upgrade case 4 email --> ");
                 // For version 5
                 db.execSQL(TableEmailMaster.CREATE_TABLE_RC_EMAIL_MASTER_1);

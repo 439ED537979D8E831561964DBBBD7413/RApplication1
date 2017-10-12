@@ -101,7 +101,7 @@
             android:layout_toStartOf="@+id/linear_action_right"
             android:backgroundTint="@color/finestWhite30"
             android:cursorVisible="false"
-            android:hint="Search" />
+            android:hint="@string/str_search_name" />
 
         <ImageView
             android:id="@+id/image_search"

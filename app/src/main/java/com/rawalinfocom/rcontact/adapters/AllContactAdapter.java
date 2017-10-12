@@ -385,84 +385,93 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         if (!StringUtils.isBlank(searchChar)) {
             Pattern numberPat = Pattern.compile("\\d+");
             Matcher matcher1 = numberPat.matcher(searchChar);
-            if (matcher1.find()) {
-                int startPos = holder.textContactNumber.getText().toString().toLowerCase(Locale.US).indexOf(searchChar
-                        .toLowerCase(Locale.US));
-                int endPos = startPos + searchChar.length();
-                if (startPos != -1) {
-                    Spannable spannable = new SpannableString(holder.textContactNumber.getText().toString());
-                    ColorStateList blueColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.RED});
-                    TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.BOLD, -1, blueColor, null);
-                    spannable.setSpan(highlightSpan, startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    holder.textContactNumber.setText(spannable);
-                } else {
-                    holder.textContactNumber.setText(holder.textContactNumber.getText().toString());
-                }
+            if (matcher1.find() || searchChar.matches("[+][0-9]+")) {
+                hightLightSearchedText(holder.textContactNumber.getText().toString(),holder.textContactNumber,false);
             } else {
                 if (searchChar.contains(" ")) {
-                    String originalString = holder.textContactName.getText().toString();
-                    String[] separated = searchChar.split(" ");
-                    String firstPart = separated[0];
-                    String secondPart = separated[1];
-                    SpannableStringBuilder builder = new SpannableStringBuilder(originalString);
-                    if (!StringUtils.isBlank(firstPart)) {
-                        int startPos1 = originalString.toLowerCase(Locale.US).indexOf(firstPart
-                                .toLowerCase(Locale.US));
-                        int endPos1 = startPos1 + firstPart.length();
-                        if (startPos1 != -1) {
-//                            Spannable spannable = new SpannableString(originalString);
-                            ColorStateList hightlightColor;
-                            if (showPineGreen) {
-                                hightlightColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.RED});
-                            } else {
-                                hightlightColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.RED});
+//                    String cloudName =  holder.textCloudContactName.getText().toString();
+//                    if(!StringUtils.isBlank(cloudName)){
+                        String originalStringCloud = holder.textCloudContactName.getText().toString();
+                        String[] separatedCloud = searchChar.split(" ");
+                        String firstPartCloud = separatedCloud[0];
+                        String secondPartCloud = separatedCloud[1];
+                        SpannableStringBuilder builderCloud = new SpannableStringBuilder(originalStringCloud);
+                        if (!StringUtils.isBlank(firstPartCloud)) {
+                            int startPos1 = originalStringCloud.toLowerCase(Locale.US).indexOf(firstPartCloud
+                                    .toLowerCase(Locale.US));
+                            int endPos1 = startPos1 + firstPartCloud.length();
+                            if (startPos1 != -1) {
+                                ColorStateList hightlightColor;
+                                if (showPineGreen) {
+                                    hightlightColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.RED});
+                                } else {
+                                    hightlightColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.RED});
+                                }
+                                TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, hightlightColor, null);
+                                builderCloud.setSpan(highlightSpan, startPos1, endPos1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                             }
-                            TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, hightlightColor, null);
-                            builder.setSpan(highlightSpan, startPos1, endPos1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//                            builder.append(spannable);
-//                            holder.textContactName.setText(spannable);
                         }
-                    }
 
-                    if (!StringUtils.isBlank(secondPart)) {
-                        int startPos2 = originalString.toLowerCase(Locale.US).indexOf(secondPart
-                                .toLowerCase(Locale.US));
-                        int endPos2 = startPos2 + secondPart.length();
-                        if (startPos2 != -1) {
-//                            Spannable spannable = new SpannableString(originalString);
-                            ColorStateList hightlightColor;
-                            if (showPineGreen) {
-                                hightlightColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.RED});
-                            } else {
-                                hightlightColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.RED});
+                        if (!StringUtils.isBlank(secondPartCloud)) {
+                            int startPos2 = originalStringCloud.toLowerCase(Locale.US).indexOf(secondPartCloud
+                                    .toLowerCase(Locale.US));
+                            int endPos2 = startPos2 + secondPartCloud.length();
+                            if (startPos2 != -1) {
+                                ColorStateList hightlightColor;
+                                if (showPineGreen) {
+                                    hightlightColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.RED});
+                                } else {
+                                    hightlightColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.RED});
+                                }
+                                TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, hightlightColor, null);
+                                builderCloud.setSpan(highlightSpan, startPos2, endPos2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                             }
-                            TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, hightlightColor, null);
-                            builder.setSpan(highlightSpan, startPos2, endPos2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//                            builder.append(spannable);
                         }
-                    }
-                    holder.textContactName.setText(builder,TextView.BufferType.SPANNABLE);
+                        holder.textCloudContactName.setText(builderCloud,TextView.BufferType.SPANNABLE);
+
+//                    }else{
+                        String originalString = holder.textContactName.getText().toString();
+                        String[] separated = searchChar.split(" ");
+                        String firstPart = separated[0];
+                        String secondPart = separated[1];
+                        SpannableStringBuilder builder = new SpannableStringBuilder(originalString);
+                        if (!StringUtils.isBlank(firstPart)) {
+                            int startPos1 = originalString.toLowerCase(Locale.US).indexOf(firstPart
+                                    .toLowerCase(Locale.US));
+                            int endPos1 = startPos1 + firstPart.length();
+                            if (startPos1 != -1) {
+                                ColorStateList hightlightColor;
+                                if (showPineGreen) {
+                                    hightlightColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.RED});
+                                } else {
+                                    hightlightColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.RED});
+                                }
+                                TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, hightlightColor, null);
+                                builder.setSpan(highlightSpan, startPos1, endPos1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            }
+                        }
+
+                        if (!StringUtils.isBlank(secondPart)) {
+                            int startPos2 = originalString.toLowerCase(Locale.US).indexOf(secondPart
+                                    .toLowerCase(Locale.US));
+                            int endPos2 = startPos2 + secondPart.length();
+                            if (startPos2 != -1) {
+                                ColorStateList hightlightColor;
+                                if (showPineGreen) {
+                                    hightlightColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.RED});
+                                } else {
+                                    hightlightColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.RED});
+                                }
+                                TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, hightlightColor, null);
+                                builder.setSpan(highlightSpan, startPos2, endPos2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            }
+                        }
+                        holder.textContactName.setText(builder,TextView.BufferType.SPANNABLE);
+//                    }
                 } else {
-                    int startPos = holder.textContactName.getText().toString().toLowerCase(Locale.US).indexOf(searchChar
-                            .toLowerCase(Locale.US));
-                    int endPos = startPos + searchChar.length();
-                    if (startPos != -1) {
-                        Spannable spannable = new SpannableString(holder.textContactName.getText().toString());
-                        ColorStateList blueColor;
-                        if (showPineGreen) {
-                            blueColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.RED});
-                        } else {
-                            blueColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.RED});
-                        }
-                        TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, blueColor, null);
-                        spannable.setSpan(highlightSpan, startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                        holder.textContactName.setText(spannable);
-                    } else {
-                        holder.textContactName.setText(holder.textContactName.getText().toString());
-                    }
+                    hightLightSearchedText(holder.textContactName.getText().toString(),holder.textContactName,showPineGreen);
+                    hightLightSearchedText(holder.textCloudContactName.getText().toString(),holder.textCloudContactName,showPineGreen);
                 }
-
-
             }
 
         }
@@ -568,6 +577,26 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         //</editor-fold>
 
+    }
+
+    private void hightLightSearchedText(String originalText, TextView textView, boolean showPineGreen){
+        int startPos = originalText.toLowerCase(Locale.US).indexOf(searchChar
+                .toLowerCase(Locale.US));
+        int endPos = startPos + searchChar.length();
+        if (startPos != -1) {
+            Spannable spannable = new SpannableString(originalText);
+            ColorStateList blueColor;
+            if (showPineGreen) {
+                blueColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.RED});
+            } else {
+                blueColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.RED});
+            }
+            TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, blueColor, null);
+            spannable.setSpan(highlightSpan, startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            textView.setText(spannable);
+        } else {
+            textView.setText(originalText);
+        }
     }
 
     private void configureHeaderViewHolder(ContactHeaderViewHolder holder, int position) {
@@ -952,6 +981,16 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         || profileData.getTempLastName().toLowerCase().startsWith(splitString[1]))) {
                     arrayListUserContact.add(profileData);
                 }
+
+                /*for (int i = 0; i < splitString.length; i++) {
+
+                    if ((profileData.getTempFirstName().toLowerCase().startsWith(splitString[i])
+                            || profileData.getTempLastName().toLowerCase().startsWith(splitString[i]))
+                            && (profileData.getTempFirstName().toLowerCase().startsWith(splitString[i+1])
+                            || profileData.getTempLastName().toLowerCase().startsWith(splitString[i+1]))) {
+                        arrayListUserContact.add(profileData);
+                    }
+                }*/
             }
 
         } else {

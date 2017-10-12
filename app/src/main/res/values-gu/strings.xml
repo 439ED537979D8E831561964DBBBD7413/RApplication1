@@ -38,6 +38,7 @@
     <string name="str_done">થઈ ગયું</string>
     <string name="str_vcf_done">VCF file generated successfully!!</string>
     <string name="verify_now">હવે ચકાસો</string>
+    <string name="str_search_name">નામ અથવા નંબર</string>
 
     <!--  Other  -->
     <string name="error_facebook_login_cancelled">ફેસબુક લૉગિન નિષ્ફળ!</string>
