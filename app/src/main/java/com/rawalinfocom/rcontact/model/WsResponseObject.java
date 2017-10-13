@@ -56,8 +56,11 @@ public class WsResponseObject {
     private UserProfile userProfile;
 
     private ProfileDataOperation profileDetail;
+    private ArrayList<VerifiedOrganizationData> verifiedOrganizationData;
 
     private ArrayList<Country> arrayListCountry;
+    private ArrayList<State> arrayListState;
+    private ArrayList<City> arrayListCity;
     private ArrayList<ProfileDataOperation> arrayListUserRcProfile;
     private ArrayList<ProfileData> arrayListMapping;
 
@@ -268,6 +271,24 @@ public class WsResponseObject {
         this.arrayListCountry = arrayListCountry;
     }
 
+    @JsonProperty("states")
+    public ArrayList<State> getArrayListState() {
+        return arrayListState;
+    }
+
+    public void setArrayListState(ArrayList<State> arrayListState) {
+        this.arrayListState = arrayListState;
+    }
+
+    @JsonProperty("cities")
+    public ArrayList<City> getArrayListCity() {
+        return arrayListCity;
+    }
+
+    public void setArrayListCity(ArrayList<City> arrayListCity) {
+        this.arrayListCity = arrayListCity;
+    }
+
     @JsonProperty("otp_detail")
     public OtpLog getOtpLog() {
         return otpLog;
@@ -303,6 +324,15 @@ public class WsResponseObject {
 
     public void setProfileDetail(ProfileDataOperation profileDetail) {
         this.profileDetail = profileDetail;
+    }
+
+    @JsonProperty("data")
+    public ArrayList<VerifiedOrganizationData> getVerifiedOrganizationData() {
+        return verifiedOrganizationData;
+    }
+
+    public void setVerifiedOrganizationData(ArrayList<VerifiedOrganizationData> verifiedOrganizationData) {
+        this.verifiedOrganizationData = verifiedOrganizationData;
     }
 
     public Rating getProfileRating() {

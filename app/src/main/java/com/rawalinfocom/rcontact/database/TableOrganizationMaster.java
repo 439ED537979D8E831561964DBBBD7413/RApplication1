@@ -36,10 +36,14 @@ public class TableOrganizationMaster {
     private static final String COLUMN_OM_ID = "om_id";
     private static final String COLUMN_OM_RECORD_INDEX_ID = "om_record_index_id";
     static final String COLUMN_OM_ORGANIZATION_COMPANY = "om_organization_company";
+    static final String COLUMN_OM_ORGANIZATION_ENT_ID = "om_organization_ent_id";
+    static final String COLUMN_OM_ORGANIZATION_IMAGE = "om_organization_image";
     static final String COLUMN_OM_ORGANIZATION_DESIGNATION = "om_organization_designation";
+    static final String COLUMN_OM_ORGANIZATION_TYPE = "column_om_organization_type";
     static final String COLUMN_OM_ORGANIZATION_FROM_DATE = "om_organization_from_date";
     static final String COLUMN_OM_ORGANIZATION_TO_DATE = "om_organization_to_date";
     private static final String COLUMN_OM_ORGANIZATION_PRIVACY = "om_organization_privacy";
+    public static final String COLUMN_OM_ORGANIZATION_IS_VERIFIED = "om_organization_is_verified";
     private static final String COLUMN_OM_ORGANIZATION_IS_PRIVATE = "om_organization_is_private";
     static final String COLUMN_OM_ORGANIZATION_IS_CURRENT = "om_organization_is_current";
     static final String COLUMN_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
@@ -52,9 +56,13 @@ public class TableOrganizationMaster {
             " " + COLUMN_OM_RECORD_INDEX_ID + " text," +
             " " + COLUMN_OM_ORGANIZATION_COMPANY + " text NOT NULL," +
             " " + COLUMN_OM_ORGANIZATION_DESIGNATION + " text," +
+            " " + COLUMN_OM_ORGANIZATION_TYPE + " text," +
+            " " + COLUMN_OM_ORGANIZATION_ENT_ID + " text," +
+            " " + COLUMN_OM_ORGANIZATION_IMAGE + " text," +
             " " + COLUMN_OM_ORGANIZATION_FROM_DATE + " text," +
             " " + COLUMN_OM_ORGANIZATION_TO_DATE + " text," +
             " " + COLUMN_OM_ORGANIZATION_IS_CURRENT + " integer," +
+            " " + COLUMN_OM_ORGANIZATION_IS_VERIFIED + " integer," +
             " " + COLUMN_OM_ORGANIZATION_IS_PRIVATE + " integer," +
             " " + COLUMN_OM_ORGANIZATION_PRIVACY + " integer DEFAULT 1," +
             " " + COLUMN_RC_PROFILE_MASTER_PM_ID + " integer," +
@@ -95,6 +103,12 @@ public class TableOrganizationMaster {
                     .getOmOrganizationCompany());
             values.put(COLUMN_OM_ORGANIZATION_DESIGNATION, arrayListOrganization.get(i)
                     .getOmOrganizationDesignation());
+            values.put(COLUMN_OM_ORGANIZATION_TYPE, arrayListOrganization.get(i)
+                    .getOmOrganizationType());
+            values.put(COLUMN_OM_ORGANIZATION_ENT_ID, arrayListOrganization.get(i)
+                    .getOmEnterpriseOrgId());
+            values.put(COLUMN_OM_ORGANIZATION_IMAGE, arrayListOrganization.get(i)
+                    .getOmOrganizationLogo());
             values.put(COLUMN_OM_ORGANIZATION_FROM_DATE, arrayListOrganization.get(i)
                     .getOmOrganizationFromDate());
             values.put(COLUMN_OM_ORGANIZATION_TO_DATE, arrayListOrganization.get(i)
@@ -103,6 +117,8 @@ public class TableOrganizationMaster {
                     .getOmIsCurrent());
             values.put(COLUMN_OM_ORGANIZATION_IS_PRIVATE, arrayListOrganization.get(i)
                     .getOmIsPrivate());
+            values.put(COLUMN_OM_ORGANIZATION_IS_VERIFIED, arrayListOrganization.get(i)
+                    .getOmIsVerified());
             values.put(COLUMN_OM_ORGANIZATION_PRIVACY, arrayListOrganization.get(i)
                     .getOmOrganizationPrivacy());
             values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListOrganization.get(i)
@@ -139,11 +155,15 @@ public class TableOrganizationMaster {
             values.put(COLUMN_OM_ID, arrayListOrganization.get(i).getOmId());
             values.put(COLUMN_OM_RECORD_INDEX_ID, arrayListOrganization.get(i).getOmRecordIndexId());
             values.put(COLUMN_OM_ORGANIZATION_COMPANY, arrayListOrganization.get(i).getOmOrganizationCompany());
+            values.put(COLUMN_OM_ORGANIZATION_TYPE, arrayListOrganization.get(i).getOmOrganizationType());
+            values.put(COLUMN_OM_ORGANIZATION_ENT_ID, arrayListOrganization.get(i).getOmEnterpriseOrgId());
+            values.put(COLUMN_OM_ORGANIZATION_IMAGE, arrayListOrganization.get(i).getOmOrganizationLogo());
             values.put(COLUMN_OM_ORGANIZATION_FROM_DATE, arrayListOrganization.get(i).getOmOrganizationFromDate());
             values.put(COLUMN_OM_ORGANIZATION_TO_DATE, arrayListOrganization.get(i).getOmOrganizationToDate());
             values.put(COLUMN_OM_ORGANIZATION_DESIGNATION, arrayListOrganization.get(i).getOmOrganizationDesignation());
             values.put(COLUMN_OM_ORGANIZATION_IS_PRIVATE,
                     MoreObjects.firstNonNull(arrayListOrganization.get(i).getOmIsPrivate(), 0));
+            values.put(COLUMN_OM_ORGANIZATION_IS_VERIFIED, arrayListOrganization.get(i).getOmIsVerified());
             values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListOrganization.get(i).getRcProfileMasterPmId());
 
             // Inserting Row
@@ -225,10 +245,14 @@ public class TableOrganizationMaster {
         String selectQuery = "SELECT DISTINCT " + COLUMN_OM_RECORD_INDEX_ID + ", " +
                 COLUMN_OM_ORGANIZATION_COMPANY + ", " +
                 COLUMN_OM_ORGANIZATION_DESIGNATION + ", " +
+                COLUMN_OM_ORGANIZATION_TYPE + ", " +
+                COLUMN_OM_ORGANIZATION_ENT_ID + ", " +
+                COLUMN_OM_ORGANIZATION_IMAGE + ", " +
                 COLUMN_OM_ORGANIZATION_FROM_DATE + ", " +
                 COLUMN_OM_ORGANIZATION_TO_DATE + ", " +
                 COLUMN_OM_ORGANIZATION_IS_CURRENT + ", " +
                 COLUMN_OM_ORGANIZATION_IS_PRIVATE + ", " +
+                COLUMN_OM_ORGANIZATION_IS_VERIFIED + ", " +
                 COLUMN_OM_ORGANIZATION_PRIVACY + ", " +
                 COLUMN_RC_PROFILE_MASTER_PM_ID + " FROM " +
                 TABLE_RC_ORGANIZATION_MASTER + " WHERE " +
@@ -247,6 +271,12 @@ public class TableOrganizationMaster {
                         (COLUMN_OM_ORGANIZATION_COMPANY)));
                 organization.setOmOrganizationDesignation(cursor.getString(cursor.getColumnIndex
                         (COLUMN_OM_ORGANIZATION_DESIGNATION)));
+                organization.setOmOrganizationType(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_OM_ORGANIZATION_TYPE)));
+                organization.setOmEnterpriseOrgId(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_OM_ORGANIZATION_ENT_ID)));
+                organization.setOmOrganizationLogo(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_OM_ORGANIZATION_IMAGE)));
                 organization.setOmOrganizationFromDate(cursor.getString(cursor.getColumnIndex
                         (COLUMN_OM_ORGANIZATION_FROM_DATE)));
                 organization.setOmOrganizationToDate(cursor.getString(cursor.getColumnIndex
@@ -255,6 +285,8 @@ public class TableOrganizationMaster {
                         (COLUMN_OM_ORGANIZATION_IS_CURRENT)));
                 organization.setOmIsPrivate(cursor.getInt(cursor.getColumnIndex
                         (COLUMN_OM_ORGANIZATION_IS_PRIVATE)));
+                organization.setOmIsVerified(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_OM_ORGANIZATION_IS_VERIFIED)));
                 organization.setOmOrganizationPrivacy(cursor.getString(cursor.getColumnIndex
                         (COLUMN_OM_ORGANIZATION_PRIVACY)));
                 organization.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
@@ -281,10 +313,14 @@ public class TableOrganizationMaster {
         String selectQuery = "SELECT DISTINCT " + COLUMN_OM_RECORD_INDEX_ID + ", " +
                 COLUMN_OM_ORGANIZATION_COMPANY + ", " +
                 COLUMN_OM_ORGANIZATION_DESIGNATION + ", " +
+                COLUMN_OM_ORGANIZATION_TYPE + ", " +
+                COLUMN_OM_ORGANIZATION_ENT_ID + ", " +
+                COLUMN_OM_ORGANIZATION_IMAGE + ", " +
                 COLUMN_OM_ORGANIZATION_FROM_DATE + ", " +
                 COLUMN_OM_ORGANIZATION_TO_DATE + ", " +
                 COLUMN_OM_ORGANIZATION_IS_CURRENT + ", " +
                 COLUMN_OM_ORGANIZATION_IS_PRIVATE + ", " +
+                COLUMN_OM_ORGANIZATION_IS_VERIFIED + ", " +
                 COLUMN_OM_ORGANIZATION_PRIVACY + ", " +
                 COLUMN_RC_PROFILE_MASTER_PM_ID + " FROM " +
                 TABLE_RC_ORGANIZATION_MASTER + " WHERE " +
@@ -306,12 +342,24 @@ public class TableOrganizationMaster {
                 organization.setOrgJobTitle(StringUtils.defaultString(cursor
                         .getString(cursor.getColumnIndexOrThrow(TableOrganizationMaster
                                 .COLUMN_OM_ORGANIZATION_DESIGNATION))));
+                organization.setOrgIndustryType(StringUtils.defaultString(cursor
+                        .getString(cursor.getColumnIndexOrThrow(TableOrganizationMaster
+                                .COLUMN_OM_ORGANIZATION_TYPE))));
+                organization.setOrgEntId(StringUtils.defaultString(cursor
+                        .getString(cursor.getColumnIndexOrThrow(TableOrganizationMaster
+                                .COLUMN_OM_ORGANIZATION_ENT_ID))));
+                organization.setOrgLogo(StringUtils.defaultString(cursor
+                        .getString(cursor.getColumnIndexOrThrow(TableOrganizationMaster
+                                .COLUMN_OM_ORGANIZATION_IMAGE))));
                 organization.setOrgFromDate(StringUtils.defaultString(cursor.getString
                         (cursor.getColumnIndexOrThrow(TableOrganizationMaster
                                 .COLUMN_OM_ORGANIZATION_FROM_DATE))));
                 organization.setOrgToDate(StringUtils.defaultString(cursor.getString
                         (cursor.getColumnIndexOrThrow(TableOrganizationMaster
                                 .COLUMN_OM_ORGANIZATION_TO_DATE))));
+                organization.setIsVerify(Integer.parseInt(cursor.getString
+                        (cursor.getColumnIndexOrThrow(TableOrganizationMaster
+                                .COLUMN_OM_ORGANIZATION_IS_VERIFIED))));
                 organization.setOrgRcpType(String.valueOf(IntegerConstants
                         .RCP_TYPE_CLOUD_PHONE_BOOK));
 

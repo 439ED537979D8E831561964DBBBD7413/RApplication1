@@ -14,14 +14,14 @@ public class RelationRecommendationType implements Serializable {
     private String number;
     private String dateAndTime;
 
-    private ArrayList<IndividualRelationRecommendationType> individualRelationRecommendationTypeArrayList;
+    private ArrayList<IndividualRelationType> individualRelationTypeList;
 
-    public ArrayList<IndividualRelationRecommendationType> getIndividualRelationRecommendationTypeArrayList() {
-        return individualRelationRecommendationTypeArrayList;
+    public ArrayList<IndividualRelationType> getIndividualRelationTypeList() {
+        return individualRelationTypeList;
     }
 
-    public void setIndividualRelationRecommendationTypeArrayList(ArrayList<IndividualRelationRecommendationType> individualRelationRecommendationTypeArrayList) {
-        this.individualRelationRecommendationTypeArrayList = individualRelationRecommendationTypeArrayList;
+    public void setIndividualRelationTypeList(ArrayList<IndividualRelationType> individualRelationTypeList) {
+        this.individualRelationTypeList = individualRelationTypeList;
     }
 
     public String getFirstName() {

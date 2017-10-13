@@ -11,12 +11,15 @@ public class Address {
     private String amId;
     private String amRecordIndexId;
     private String amCity;
+    private Integer amCityId;
     private String amCountry;
+    private Integer amCountryId;
     private String amFormattedAddress;
     private String amNeighborhood;
     private String amPostCode;
     private String amPoBox;
     private String amState;
+    private Integer amStateId;
     private String amStreet;
     private Integer amIsPrivate;
     private String amAddressType;
@@ -162,5 +165,29 @@ public class Address {
 
     public void setAmGoogleAddress(String amGoogleAddress) {
         this.amGoogleAddress = amGoogleAddress;
+    }
+
+    public Integer getAmCityId() {
+        return amCityId;
+    }
+
+    public void setAmCityId(Integer amCityId) {
+        this.amCityId = amCityId;
+    }
+
+    public Integer getAmCountryId() {
+        return amCountryId;
+    }
+
+    public void setAmCountryId(Integer amCountryId) {
+        this.amCountryId = amCountryId;
+    }
+
+    public Integer getAmStateId() {
+        return amStateId;
+    }
+
+    public void setAmStateId(Integer amStateId) {
+        this.amStateId = amStateId;
     }
 }

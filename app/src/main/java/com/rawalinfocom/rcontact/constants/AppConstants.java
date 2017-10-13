@@ -116,6 +116,9 @@ public class AppConstants {
     public static String EXTRA_IS_FROM_RE_LOGIN = "extra_is_from_re_login";
     public static String EXTRA_LOCAL_BROADCAST_MESSAGE = "message";
     public static String EXTRA_CONTACT_NAME = "contact_name";
+    public static String EXTRA_CONTACT_NUMBER = "contact_number";
+    public static String EXTRA_FAMILY_RELATION = "family_relation";
+    public static String EXTRA_FRIEND_RELATION = "friend_relation";
     public static String EXTRA_PROFILE_IMAGE_URL = "profile_image_url";
     public static String EXTRA_CLOUD_CONTACT_NAME = "cloud_contact_name";
     public static String EXTRA_CONTACT_POSITION = "contact_position";
@@ -301,6 +304,7 @@ public class AppConstants {
     public static String PREF_IS_CALL_UPLOAD_CONTACT = "pref_is_call_upload_contact";
     public static String PREF_LATEST_CALL_DATE_TIME = "pref_latest_call_date_time";
     public static String PREF_LATEST_CALL_RAW_ID = "pref_latest_call_raw_id";
+    public static String PREF_PROFILE_REMAINING_FIELDS = "pref_profile_remaining_fields";
 
 
 

@@ -8,13 +8,11 @@
     android:background="@color/veryVeryLightGray"
     tools:context="com.rawalinfocom.rcontact.relation.RelationRecommendationActivity">
 
-
     <include
         android:id="@+id/include_toolbar"
         layout="@layout/layout_toolbar_relation_recommendation"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize" />
-
 
     <TextView
         android:id="@+id/no_record_to_display"

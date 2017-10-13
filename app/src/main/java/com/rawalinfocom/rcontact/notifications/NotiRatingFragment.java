@@ -143,7 +143,6 @@ public class NotiRatingFragment extends BaseNotificationFragment implements WsRe
         tableCommentMaster = new TableCommentMaster(getDatabaseHandler());
         initData();
         // getAllRatingComment(this);
-
     }
 
     private void initData() {
