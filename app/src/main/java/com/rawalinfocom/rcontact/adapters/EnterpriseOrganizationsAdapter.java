@@ -26,7 +26,7 @@ import butterknife.ButterKnife;
  * Created by Monal on 21/10/16.
  */
 
-public class EnterPriseOrganizationsAdapter extends RecyclerView.Adapter<EnterPriseOrganizationsAdapter
+public class EnterpriseOrganizationsAdapter extends RecyclerView.Adapter<EnterpriseOrganizationsAdapter
         .OrganizationViewHolder> implements Filterable {
 
     private Context context;
@@ -45,14 +45,14 @@ public class EnterPriseOrganizationsAdapter extends RecyclerView.Adapter<EnterPr
         void onClick(String orgId, String organizationName, String organizationType, String logo);
     }
 
-    public EnterPriseOrganizationsAdapter(Context context, ArrayList<VerifiedOrganizationData>
+    public EnterpriseOrganizationsAdapter(Context context, ArrayList<VerifiedOrganizationData>
             arrayListOrganization, OnClickListener clickListener) {
         this.context = context;
         this.clickListener = clickListener;
         this.arrayListOrganization = arrayListOrganization;
         this.filteredList = new ArrayList<>();
         this.filteredList.addAll(arrayListOrganization);
-        mFilter = new CustomFilter(EnterPriseOrganizationsAdapter.this);
+        mFilter = new CustomFilter(EnterpriseOrganizationsAdapter.this);
     }
 
     @Override
@@ -119,9 +119,9 @@ public class EnterPriseOrganizationsAdapter extends RecyclerView.Adapter<EnterPr
     }
 
     private class CustomFilter extends Filter {
-        private EnterPriseOrganizationsAdapter mAdapter;
+        private EnterpriseOrganizationsAdapter mAdapter;
 
-        private CustomFilter(EnterPriseOrganizationsAdapter mAdapter) {
+        private CustomFilter(EnterpriseOrganizationsAdapter mAdapter) {
             super();
             this.mAdapter = mAdapter;
         }

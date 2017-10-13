@@ -180,8 +180,8 @@ public class SplashActivity extends BaseActivity implements WsResponseListener {
                     .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants
                             .REQ_GET_CHECK_VERSION);
         } else {
-            Utils.showErrorSnackBar(this, relativeRootSplash, getResources()
-                    .getString(R.string.msg_no_network));
+//            Utils.showErrorSnackBar(this, relativeRootSplash, getResources()
+//                    .getString(R.string.msg_no_network));
             redirectToActivity();
         }
     }

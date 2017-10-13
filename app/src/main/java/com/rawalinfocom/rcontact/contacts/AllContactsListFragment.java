@@ -1044,11 +1044,11 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         organization.setOmIsCurrent(String.valueOf(arrayListOrganization.get(j)
                                 .getIsCurrent()));
 
-                        if (arrayListOrganization.get(i).getIsVerify() != null)
-                            if (arrayListOrganization.get(i).getIsVerify() == IntegerConstants.RCP_TYPE_PRIMARY) {
-                                organization.setOmOrganizationType(arrayListOrganization.get(i).getOrgIndustryType());
-                                organization.setOmEnterpriseOrgId(arrayListOrganization.get(i).getOrgEntId());
-                                organization.setOmOrganizationLogo(arrayListOrganization.get(i).getOrgLogo());
+                        if (arrayListOrganization.get(j).getIsVerify() != null)
+                            if (arrayListOrganization.get(j).getIsVerify() == IntegerConstants.RCP_TYPE_PRIMARY) {
+                                organization.setOmOrganizationType(arrayListOrganization.get(j).getOrgIndustryType());
+                                organization.setOmEnterpriseOrgId(arrayListOrganization.get(j).getOrgEntId());
+                                organization.setOmOrganizationLogo(arrayListOrganization.get(j).getOrgLogo());
                             } else {
                                 organization.setOmOrganizationType("");
                                 organization.setOmEnterpriseOrgId("");
@@ -1060,7 +1060,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                             organization.setOmOrganizationLogo("");
                         }
 
-                        organization.setOmIsVerified(String.valueOf(arrayListOrganization.get(i).getIsVerify()));
+                        organization.setOmIsVerified(String.valueOf(arrayListOrganization.get(j).getIsVerify()));
                         organization.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
                         organizationList.add(organization);
                     }
@@ -1459,8 +1459,18 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbIMAccounts())) {
                 ArrayList<String> savedImAccount = new ArrayList<>();
                 for (int i = 0; i < profileDetail.getPbIMAccounts().size(); i++) {
-                    savedImAccount.add(profileDetail.getPbIMAccounts().get(i)
-                            .getIMAccountProtocol());
+//                    savedImAccount.add(profileDetail.getPbIMAccounts().get(i)
+//                            .getIMAccountProtocol());
+                    String protocol = profileDetail.getPbIMAccounts().get(i)
+                            .getIMAccountProtocol();
+                    if (protocol.contains(getString(R.string.facebook)) || protocol.contains
+                            (getString(R.string.google_plus)) || protocol.contains(getString(R
+                            .string.linked_in))) {
+                        savedImAccount.add(protocol);
+                    } else {
+                        savedImAccount.add("Other");
+                    }
+
                 }
                 if (savedImAccount.contains(getString(R.string.facebook))) {
                     percentage += 5;
@@ -1471,9 +1481,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 if (savedImAccount.contains(getString(R.string.linked_in))) {
                     percentage += 5;
                 }
-                if (!(savedImAccount.contains(getString(R.string.facebook))) && !(savedImAccount
-                        .contains(getString(R.string.google_plus))) && !(savedImAccount.contains
-                        (getString(R.string.linked_in)))) {
+                if (savedImAccount.contains("Other"))  {
                     percentage += 5;
                 }
                 if (arrayListRemainingFields.contains(getString(R.string.str_social_contact))) {

@@ -58,7 +58,7 @@
 
             <EditText
                 android:id="@+id/input_company_name"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin_5dp"
                 android:layout_toEndOf="@+id/image_org_profile"

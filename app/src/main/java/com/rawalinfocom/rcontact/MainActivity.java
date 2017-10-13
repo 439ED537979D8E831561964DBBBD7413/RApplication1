@@ -419,7 +419,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 break;
 
             case R.id.nav_ll_relation:
-                startActivityIntent(MainActivity.this, RelationRecommendationActivity.class, null);
+//                startActivityIntent(MainActivity.this, RelationRecommendationActivity.class, null);
                 break;
         }
 
@@ -1619,11 +1619,11 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                             organization.setOmIsCurrent(String.valueOf(arrayListOrganization.get(j)
                                     .getIsCurrent()));
 
-                            if (arrayListOrganization.get(i).getIsVerify() != null)
-                                if (arrayListOrganization.get(i).getIsVerify() == IntegerConstants.RCP_TYPE_PRIMARY) {
-                                    organization.setOmOrganizationType(arrayListOrganization.get(i).getOrgIndustryType());
-                                    organization.setOmEnterpriseOrgId(arrayListOrganization.get(i).getOrgEntId());
-                                    organization.setOmOrganizationLogo(arrayListOrganization.get(i).getOrgLogo());
+                            if (arrayListOrganization.get(j).getIsVerify() != null)
+                                if (arrayListOrganization.get(j).getIsVerify() == IntegerConstants.RCP_TYPE_PRIMARY) {
+                                    organization.setOmOrganizationType(arrayListOrganization.get(j).getOrgIndustryType());
+                                    organization.setOmEnterpriseOrgId(arrayListOrganization.get(j).getOrgEntId());
+                                    organization.setOmOrganizationLogo(arrayListOrganization.get(j).getOrgLogo());
                                 } else {
                                     organization.setOmOrganizationType("");
                                     organization.setOmEnterpriseOrgId("");
@@ -1635,7 +1635,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                                 organization.setOmOrganizationLogo("");
                             }
 
-                            organization.setOmIsVerified(String.valueOf(arrayListOrganization.get(i).getIsVerify()));
+                            organization.setOmIsVerified(String.valueOf(arrayListOrganization.get(j).getIsVerify()));
                             organization.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
                             organizationList.add(organization);
                         }

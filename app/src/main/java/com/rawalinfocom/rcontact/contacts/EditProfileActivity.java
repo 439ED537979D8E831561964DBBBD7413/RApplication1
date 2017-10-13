@@ -4118,6 +4118,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
             } else {
                 inputCompanyName.setText(Html.fromHtml("<font color='#00796B'> " + organization.getOrgName() + "</font>"));
+//                inputCompanyName.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ico_relation_single_tick_svg, 0);
                 textIsVerified.setText(String.valueOf(0));
             }
 

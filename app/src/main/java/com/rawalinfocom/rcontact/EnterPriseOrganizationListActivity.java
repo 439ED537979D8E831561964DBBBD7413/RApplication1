@@ -14,7 +14,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.rawalinfocom.rcontact.adapters.EnterPriseOrganizationsAdapter;
+import com.rawalinfocom.rcontact.adapters.EnterpriseOrganizationsAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
@@ -235,9 +235,9 @@ public class EnterPriseOrganizationListActivity extends BaseActivity implements 
 
     private void setOrganizationListData() {
 
-        EnterPriseOrganizationsAdapter adapter = new EnterPriseOrganizationsAdapter(activity, verifyArrayListOrganization,
+        EnterpriseOrganizationsAdapter adapter = new EnterpriseOrganizationsAdapter(activity, verifyArrayListOrganization,
 
-                new EnterPriseOrganizationsAdapter.OnClickListener() {
+                new EnterpriseOrganizationsAdapter.OnClickListener() {
                     @Override
                     public void onClick(String orgId, String organizationName, String organizationType, String logo) {
 

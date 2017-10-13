@@ -2224,7 +2224,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             @Override
             public void onClick(View view) {
                 if (StringUtils.length(profileThumbnail) > 0) {
-                    Utils.zoomImageFromThumb(ProfileDetailActivity.this, imageProfile, userProfile.getPmProfileImage(),
+                    Utils.zoomImageFromThumb(ProfileDetailActivity.this, imageProfile,profileThumbnail,
                             frameImageEnlarge, imageEnlarge, frameContainer);
                 }
 
@@ -3047,8 +3047,18 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbIMAccounts())) {
                 ArrayList<String> savedImAccount = new ArrayList<>();
                 for (int i = 0; i < profileDetail.getPbIMAccounts().size(); i++) {
-                    savedImAccount.add(profileDetail.getPbIMAccounts().get(i)
-                            .getIMAccountProtocol());
+//                    savedImAccount.add(profileDetail.getPbIMAccounts().get(i)
+//                            .getIMAccountProtocol());
+                    String protocol = profileDetail.getPbIMAccounts().get(i)
+                            .getIMAccountProtocol();
+                    if (protocol.contains(getString(R.string.facebook)) || protocol.contains
+                            (getString(R.string.google_plus)) || protocol.contains(getString(R
+                            .string.linked_in))) {
+                        savedImAccount.add(protocol);
+                    } else {
+                        savedImAccount.add("Other");
+                    }
+
                 }
                 if (savedImAccount.contains(getString(R.string.facebook))) {
                     percentage += 5;
@@ -3059,9 +3069,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 if (savedImAccount.contains(getString(R.string.linked_in))) {
                     percentage += 5;
                 }
-                if (!(savedImAccount.contains(getString(R.string.facebook))) && !(savedImAccount
-                        .contains(getString(R.string.google_plus))) && !(savedImAccount.contains
-                        (getString(R.string.linked_in)))) {
+                if (savedImAccount.contains("Other"))  {
                     percentage += 5;
                 }
                 if (arrayListRemainingFields.contains(getString(R.string.str_social_contact))) {
