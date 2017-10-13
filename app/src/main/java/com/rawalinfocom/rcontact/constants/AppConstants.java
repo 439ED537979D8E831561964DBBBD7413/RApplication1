@@ -304,6 +304,7 @@ public class AppConstants {
     public static String PREF_IS_CALL_UPLOAD_CONTACT = "pref_is_call_upload_contact";
     public static String PREF_LATEST_CALL_DATE_TIME = "pref_latest_call_date_time";
     public static String PREF_LATEST_CALL_RAW_ID = "pref_latest_call_raw_id";
+    public static String PREF_PROFILE_REMAINING_FIELDS = "pref_profile_remaining_fields";
 
 
 

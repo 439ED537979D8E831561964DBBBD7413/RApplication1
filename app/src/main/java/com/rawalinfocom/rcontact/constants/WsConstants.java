@@ -60,9 +60,9 @@ public class WsConstants {
      * QA
      */
     //<editor-fold desc="QA">
-    // API ROOT
-//    public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
-//    public static final String WS_ROOT_V2 = "http://apiqa.rcontacts.in/api/v2/";
+    /*// API ROOT
+    public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
+    public static final String WS_ROOT_V2 = "http://apiqa.rcontacts.in/api/v2/";
     // TERMS-CONDITIONS URL
     public static final String URL_TERMS_CONDITIONS = "http://webqa.rcontacts.in/global/terms";
     // FAQ URL
@@ -75,7 +75,7 @@ public class WsConstants {
     // AVERAGE RATING SHARE
     public static final String WS_AVG_RATING_SHARE_BADGE_ROOT = "http://qa.rcrc.ac/r/";
     //PLAY STORE LINK
-    public static String PLAY_STORE_LINK = "http://qa.rcrc.ac/a/";
+    public static String PLAY_STORE_LINK = "http://qa.rcrc.ac/a/";*/
     //</editor-fold>
 
     /**
@@ -145,6 +145,8 @@ public class WsConstants {
     public static final String REQ_CHECK_LOGIN = "check-login";
     public static final String REQ_LOGIN_WITH_SOCIAL_MEDIA = "login-with-social-media";
     public static final String REQ_COUNTRY_CODE_DETAIL = "country-code-detail";
+    public static final String REQ_STATE_DETAILS = "state-details";
+    public static final String REQ_CITY_DETAILS = "city-details";
     public static final String REQ_MSP_DELIVERY_TIME = "msp-delivery-time";
     public static final String REQ_STORE_DEVICE_DETAILS = "store-device-details";
     public static final String REQ_UPLOAD_CONTACTS = "uploadContacts";

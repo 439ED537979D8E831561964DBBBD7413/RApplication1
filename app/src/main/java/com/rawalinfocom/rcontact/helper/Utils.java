@@ -14,7 +14,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -70,7 +69,6 @@ import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.DatabaseHandler;
-import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.database.TableAddressMaster;
 import com.rawalinfocom.rcontact.database.TableEmailMaster;
 import com.rawalinfocom.rcontact.database.TableEventMaster;
@@ -120,8 +118,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static com.thefinestartist.utils.content.ContextUtil.startActivity;
 
 /**
  * Created by Monal on 10/10/16.
@@ -461,6 +457,12 @@ public class Utils {
         return gson.fromJson(json, type);
     }
 
+    public static boolean hasSharedPreference(Context context, String key) {
+        SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
+                .KEY_PREFERENCES, Context.MODE_PRIVATE);
+        return sharedpreferences.contains(key);
+    }
+
 
     public static ArrayList<Object> getArrayListCallLogPreference(Context context, String key) {
         SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
@@ -716,7 +718,8 @@ public class Utils {
         context.startActivity(intent);
     }
 
-    public static void callIntentWithSimPreference(Context context, String number, String simPreference) {
+    public static void callIntentWithSimPreference(Context context, String number, String
+            simPreference) {
         String unicodeNumber = number.replace("*", Uri.encode("*")).replace("#", Uri.encode("#"));
         Intent intent = new Intent(Intent.ACTION_CALL).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("com.android.phone.force.slot", true);
@@ -1155,7 +1158,8 @@ public class Utils {
                         ());
                 organization.setOmOrganizationDesignation(arrayListOrganization.get(i)
                         .getOrgJobTitle());
-                organization.setOmOrganizationFromDate(arrayListOrganization.get(i).getOrgFromDate());
+                organization.setOmOrganizationFromDate(arrayListOrganization.get(i)
+                        .getOrgFromDate());
                 organization.setOmOrganizationToDate(arrayListOrganization.get(i).getOrgToDate());
                 organization.setOmIsCurrent(String.valueOf(arrayListOrganization.get(i)
                         .getIsCurrent()));
@@ -1215,8 +1219,11 @@ public class Utils {
                 Address address = new Address();
                 address.setAmRecordIndexId(arrayListAddress.get(j).getAddId());
                 address.setAmCity(arrayListAddress.get(j).getCity());
+                address.setAmCityId(arrayListAddress.get(j).getCityId());
                 address.setAmState(arrayListAddress.get(j).getState());
+                address.setAmStateId(arrayListAddress.get(j).getStateId());
                 address.setAmCountry(arrayListAddress.get(j).getCountry());
+                address.setAmCountryId(arrayListAddress.get(j).getCountryId());
                 address.setAmFormattedAddress(arrayListAddress.get(j).getFormattedAddress());
                 address.setAmNeighborhood(arrayListAddress.get(j).getNeighborhood());
                 address.setAmPostCode(arrayListAddress.get(j).getPostCode());
@@ -1315,10 +1322,12 @@ public class Utils {
             String url = "https://www.facebook.com/" + fbId;
 
             context.startActivity(new Intent(Intent.ACTION_VIEW,
-                    Uri.parse("fb://facewebmodal/f?href=" + url)));//Trys to make intent with FB's URI
+                    Uri.parse("fb://facewebmodal/f?href=" + url)));//Trys to make intent with
+            // FB's URI
         } catch (Exception e) {
             context.startActivity(new Intent(Intent.ACTION_VIEW,
-                    Uri.parse("https://www.facebook.com/" + fbId)));//catches and opens a url to the desired page
+                    Uri.parse("https://www.facebook.com/" + fbId)));//catches and opens a url to
+            // the desired page
         }
     }
 
@@ -1330,7 +1339,8 @@ public class Utils {
             intent.putExtra("customAppUri", profile);
             activity.startActivity(intent);
         } catch (ActivityNotFoundException e) {
-            activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://plus.google.com/" + profile)));
+            activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://plus.google" +
+                    ".com/" + profile)));
         }
     }
 

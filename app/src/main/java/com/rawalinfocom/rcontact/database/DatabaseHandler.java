@@ -14,7 +14,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     // All Static variables
     // Database Version
-    private static final int DATABASE_VERSION = 5;  //update to 4 for production/staging // For QA 5
+    private static final int DATABASE_VERSION = 5;  //update to 5 for production/staging // For QA 6
 
     // Database Name
     public static final String DATABASE_NAME = "RContact.db";
@@ -80,17 +80,23 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             case 3:
                 System.out.println("RContact db upgrade case 3 r-contact --> ");
                 // For version 4
-                db.execSQL("ALTER TABLE " + TableRCNotificationUpdates.TABLE_RC_NOTIFICATION_UPDATES + " ADD "
+                db.execSQL("ALTER TABLE " + TableRCNotificationUpdates
+                        .TABLE_RC_NOTIFICATION_UPDATES + " ADD "
                         + "COLUMN " + TableRCNotificationUpdates.COLUMN_NU_TYPE + " text ");
-                db.execSQL("ALTER TABLE " + TableRCNotificationUpdates.TABLE_RC_NOTIFICATION_UPDATES + " ADD "
+                db.execSQL("ALTER TABLE " + TableRCNotificationUpdates
+                        .TABLE_RC_NOTIFICATION_UPDATES + " ADD "
                         + "COLUMN " + TableRCNotificationUpdates.COLUMN_NU_URL + " text ");
 
                 System.out.println("RContact db upgrade case 3 organization --> ");
                 // For Organization
-                db.execSQL("ALTER TABLE " + TableOrganizationMaster.TABLE_RC_ORGANIZATION_MASTER + " ADD "
-                        + "COLUMN " + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_FROM_DATE + " text ");
-                db.execSQL("ALTER TABLE " + TableOrganizationMaster.TABLE_RC_ORGANIZATION_MASTER + " ADD "
-                        + "COLUMN " + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_TO_DATE + " text ");
+                db.execSQL("ALTER TABLE " + TableOrganizationMaster.TABLE_RC_ORGANIZATION_MASTER
+                        + " ADD "
+                        + "COLUMN " + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_FROM_DATE +
+                        " text ");
+                db.execSQL("ALTER TABLE " + TableOrganizationMaster.TABLE_RC_ORGANIZATION_MASTER
+                        + " ADD "
+                        + "COLUMN " + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_TO_DATE + " " +
+                        "text ");
 
                 System.out.println("RContact db upgrade case 3 im account --> ");
                 // For IM Account
@@ -101,27 +107,53 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 db.execSQL("ALTER TABLE " + TableImMaster.TABLE_RC_IM_MASTER + " ADD "
                         + "COLUMN " + TableImMaster.COLUMN_IM_PROFILE_IMAGE + " text ");
 
-                /*System.out.println("RContact db upgrade case 3 email --> ");
+                System.out.println("RContact db upgrade case 3 email --> ");
                 // For Email
                 db.execSQL(TableEmailMaster.CREATE_TABLE_RC_EMAIL_MASTER_1);
-                db.execSQL("INSERT INTO " + TableEmailMaster.TABLE_RC_EMAIL_MASTER_TEMP + "(em_id,em_email_address," +
-                        "em_email_type,em_record_index_id,em_email_privacy,em_is_private,em_is_verified,rc_profile_master_pm_id)" +
-                        " SELECT em_id,em_email_address,em_email_type,em_record_index_id,em_email_privacy,em_is_private," +
-                        "em_is_verified,rc_profile_master_pm_id FROM " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + ";");
+                db.execSQL("INSERT INTO " + TableEmailMaster.TABLE_RC_EMAIL_MASTER_TEMP + "" +
+                        "(em_id,em_email_address," +
+                        "em_email_type,em_record_index_id,em_email_privacy,em_is_private," +
+                        "em_is_verified,rc_profile_master_pm_id)" +
+                        " SELECT em_id,em_email_address,em_email_type,em_record_index_id," +
+                        "em_email_privacy,em_is_private," +
+                        "em_is_verified,rc_profile_master_pm_id FROM " + TableEmailMaster
+                        .TABLE_RC_EMAIL_MASTER + ";");
+                db.execSQL("DROP TABLE IF EXISTS '" + TableEmailMaster.TABLE_RC_EMAIL_MASTER + "'");
+                db.execSQL("ALTER TABLE " + TableEmailMaster.TABLE_RC_EMAIL_MASTER_TEMP
+                        + " RENAME TO " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + ";");
+
+            /*case 4:
+                System.out.println("RContact db upgrade case 4 email --> ");
+                // For version 5
+                db.execSQL(TableEmailMaster.CREATE_TABLE_RC_EMAIL_MASTER_1);
+                db.execSQL("INSERT INTO " + TableEmailMaster.TABLE_RC_EMAIL_MASTER_TEMP + "
+                (em_id,em_email_address," +
+                        "em_email_type,em_record_index_id,em_email_privacy,em_is_private,
+                        em_is_verified,rc_profile_master_pm_id)" +
+                        " SELECT em_id,em_email_address,em_email_type,em_record_index_id,
+                        em_email_privacy,em_is_private," +
+                        "em_is_verified,rc_profile_master_pm_id FROM " + TableEmailMaster
+                        .TABLE_RC_EMAIL_MASTER + ";");
                 db.execSQL("DROP TABLE IF EXISTS '" + TableEmailMaster.TABLE_RC_EMAIL_MASTER + "'");
                 db.execSQL("ALTER TABLE " + TableEmailMaster.TABLE_RC_EMAIL_MASTER_TEMP
                         + " RENAME TO " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + ";");*/
 
+               /* db.execSQL("ALTER TABLE " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + " ADD "
+                        + "COLUMN " + TableEmailMaster.COLUMN_EM_SOCIAL_TYPE + " text ");
+
+                // For Country
+                db.execSQL("ALTER TABLE " + TableCountryMaster.TABLE_RC_COUNTRY_MASTER + " ADD "
+                        + "COLUMN " + TableCountryMaster.COLUMN_CM_MIN_DIGITS + " integer ");*/
             case 4:
-                System.out.println("RContact db upgrade case 4 email --> ");
                 // For version 5
-                db.execSQL(TableEmailMaster.CREATE_TABLE_RC_EMAIL_MASTER_1);
-                db.execSQL("INSERT INTO " + TableEmailMaster.TABLE_RC_EMAIL_MASTER_TEMP + "(em_id,em_email_address," +
-                        "em_email_type,em_record_index_id,em_email_privacy,em_is_private,em_is_verified,rc_profile_master_pm_id)" +
-                        " SELECT em_id,em_email_address,em_email_type,em_record_index_id,em_email_privacy,em_is_private," +
-                        "em_is_verified,rc_profile_master_pm_id FROM " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + ";");
-                db.execSQL("DROP TABLE IF EXISTS '" + TableEmailMaster.TABLE_RC_EMAIL_MASTER + "'");
-                db.execSQL("ALTER TABLE " + TableEmailMaster.TABLE_RC_EMAIL_MASTER_TEMP
+                db.execSQL("ALTER TABLE " + TableCountryMaster.TABLE_RC_COUNTRY_MASTER + " ADD "
+                        + "COLUMN " + TableCountryMaster.COLUMN_CM_MIN_DIGITS + " integer ");
+                db.execSQL("ALTER TABLE " + TableAddressMaster.TABLE_RC_ADDRESS_MASTER + " ADD "
+                        + "COLUMN " + TableAddressMaster.COLUMN_AM_CITY_ID + " intger ");
+                db.execSQL("ALTER TABLE " + TableAddressMaster.TABLE_RC_ADDRESS_MASTER + " ADD "
+                        + "COLUMN " + TableAddressMaster.COLUMN_AM_STATE_ID + " text ");
+                db.execSQL("ALTER TABLE " + TableAddressMaster.TABLE_RC_ADDRESS_MASTER + " ADD "
+                        + "COLUMN " + TableAddressMaster.COLUMN_AM_COUNTRY_ID + " text ");
                         + " RENAME TO " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + ";");
 
                 // For Organization
@@ -162,7 +194,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             db.execSQL("delete from " + TableCommentMaster.TABLE_RC_COMMENT_MASTER);
             db.execSQL("delete from " + TableRCNotificationUpdates.TABLE_RC_NOTIFICATION_UPDATES);
             db.execSQL("delete from " + TableRCContactRequest.TABLE_RC_CONTACT_ACCESS_REQUEST);
-            db.execSQL("delete from " + TableNotificationStateMaster.TABLE_NOTIFICATION_STATE_MASTER);
+            db.execSQL("delete from " + TableNotificationStateMaster
+                    .TABLE_NOTIFICATION_STATE_MASTER);
             db.execSQL("delete from " + TableSpamDetailMaster.TABLE_SPAM_DETAIL_MASTER);
         } catch (Exception e) {
             System.out.println("RContacts table clear error");

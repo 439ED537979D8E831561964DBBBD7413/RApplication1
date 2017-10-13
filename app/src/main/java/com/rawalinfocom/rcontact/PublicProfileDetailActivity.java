@@ -149,21 +149,18 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
     LinearLayout linearOrganizationDetail;
     @BindView(R.id.rating_user)
     RatingBar ratingUser;
-    @BindView(R.id.linear_call_sms)
+    @BindView(R.id.relative_profile_percentage)
+    RelativeLayout relativeProfilePercentage;
+     @BindView(R.id.linear_call_sms)
     LinearLayout linearCallSms;
-    @BindView(R.id.relative_call_history)
+   /*@BindView(R.id.relative_call_history)
     RelativeLayout relativeCallHistory;
     @BindView(R.id.recycler_call_history)
-    RecyclerView recyclerCallHistory;
+    RecyclerView recyclerCallHistory;*/
 
     @BindView(R.id.ripple_invite)
     RippleView rippleInvite;
 
-    @BindView(R.id.ripple_view_old_records)
-    RippleView rippleViewOldRecords;
-
-    @BindView(R.id.button_view_old_records)
-    Button buttonViewOldRecords;
 
     @BindView(R.id.image_enlarge)
     ImageView imageEnlarge;
@@ -321,6 +318,9 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
 
     //<editor-fold desc="Private Methods">
 
+    public RelativeLayout getRootRelativeLayout() {
+        return relativeRootProfileDetail;
+    }
     private void getIntentDetails(Intent intent) {
         if (intent != null) {
 
@@ -417,17 +417,15 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
         textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color
                 .colorAccent));
 
+        relativeProfilePercentage.setVisibility(View.GONE);
+
         textFullScreenText.setSelected(true);
         rippleViewMore.setOnRippleCompleteListener(this);
         rippleActionBack.setOnRippleCompleteListener(this);
 
-        buttonViewOldRecords.setTypeface(Utils.typefaceRegular(this));
-        rippleViewOldRecords.setVisibility(View.GONE);
-        rippleViewOldRecords.setOnRippleCompleteListener(this);
-
         mLinearLayoutManager = new LinearLayoutManager(this);
-        recyclerCallHistory.setLayoutManager(mLinearLayoutManager);
-        recyclerCallHistory.setNestedScrollingEnabled(false);
+        /*recyclerCallHistory.setLayoutManager(mLinearLayoutManager);
+        recyclerCallHistory.setNestedScrollingEnabled(false);*/
 
         Utils.setRatingColor(PublicProfileDetailActivity.this, ratingUser);
 
@@ -808,7 +806,8 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                 if (viewHolder instanceof PublicProfileDetailAdapter.ProfileDetailViewHolder &&
                         StringUtils.startsWithIgnoreCase(((PublicProfileDetailAdapter
                                 .ProfileDetailViewHolder) viewHolder).textMain.getText()
-                                .toString(), "+XX") || viewHolder instanceof PublicProfileDetailAdapter.ProfileDetailViewHolder &&
+                                .toString(), "+XX") || viewHolder instanceof
+                        PublicProfileDetailAdapter.ProfileDetailViewHolder &&
                         StringUtils.startsWithIgnoreCase(((PublicProfileDetailAdapter
                                 .ProfileDetailViewHolder) viewHolder).textMain.getText()
                                 .toString(), "" +

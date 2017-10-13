@@ -74,6 +74,9 @@ public class QueryManager {
                         .getColumnIndexOrThrow(TableProfileMaster.COLUMN_PM_LAST_NAME))));
                 profileDataOperation.setPbGender(StringUtils.defaultString(cursor.getString(cursor
                         .getColumnIndexOrThrow(TableProfileMaster.COLUMN_PM_GENDER))));
+                profileDataOperation.setPbProfilePhoto(StringUtils.defaultString(cursor.getString
+                        (cursor.getColumnIndexOrThrow(TableProfileMaster.COLUMN_PM_PROFILE_IMAGE)
+                        )));
                 profileDataOperation.setIsFavourite(StringUtils.defaultString(cursor.getString(cursor
                         .getColumnIndexOrThrow(TableProfileMaster.COLUMN_PM_IS_FAVOURITE))));
                 profileDataOperation.setProfileRating(StringUtils.defaultString(cursor.getString

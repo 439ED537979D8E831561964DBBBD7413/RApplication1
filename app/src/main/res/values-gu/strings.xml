@@ -38,6 +38,7 @@
     <string name="str_done">થઈ ગયું</string>
     <string name="str_vcf_done">VCF file generated successfully!!</string>
     <string name="verify_now">હવે ચકાસો</string>
+    <string name="str_search_name">નામ અથવા નંબર</string>
 
     <!--  Other  -->
     <string name="error_facebook_login_cancelled">ફેસબુક લૉગિન નિષ્ફળ!</string>
@@ -709,8 +710,34 @@
     <string name="share_rating_via_social_media">સોશ્યિલ મીડિયા દ્વારા રેટિંગ શેર કરો</string>
     <string name="error_no_social_app_found">કૃપા કરીને માહિતી શેર કરવા માટે ફેસબુક અથવા લિન્ક્ડઇન અથવા ટ્વિટર એપ્લિકેશન ઇન્સ્ટોલ કરો</string>
     <string name="org_list">Organizations List</string>
+    <string name="str_complete_profile">તમારી પ્રોફાઈલ પૂર્ણ કરો</string>
+    <string name="str_complete_profile_description">તમારી ડિજિટલ વિગતોના 360° પૂર્ણ કરવા માટે તમારું %1$s ભરો.</string>
 
     <!--Relation Recommendation-->
     <string name="toolbar_title">સંબંધ ભલામણ</string>
+
+    <!-- Relation -->
+    <!--<string name="toolbar_title">Relation Recommendation</string>-->
+    <string name="search_here">Search...</string>
+    <string name="str_no_relation_found">No Relation Found</string>
+    <string name="relation_toolbar_title">Existing Relation</string>
+    <string name="add_relation_toolbar_title">Add Relation</string>
+    <string name="str_add_name">Add Name</string>
+    <string name="choose_relation">Choose Relation</string>
+    <string name="choose_name">Choose Name</string>
+    <string name="business_relation">Business Relation</string>
+    <string name="family_relation">Family Relation</string>
+    <string name="friend_relation">Friend Relation</string>
+    <string name="str_friend">Friend</string>
+    <string name="str_back">Back</string>
+    <string name="str_next">Next</string>
+    <string name="str_hint_add_organization">Please add organization to add Business Relation</string>
+    <string name="str_hint_add_family">Please set your gender to add Family Relation</string>
+
+    <!-- Force update -->
+    <string name="youAreNotUpdatedTitle">Update Available</string>
+    <string name="youAreNotUpdatedMessage">A new version of RContacts Application is available. Please update to version\s</string>
+    <string name="youAreNotUpdatedMessage1">\s now</string>
+
 
 </resources>
