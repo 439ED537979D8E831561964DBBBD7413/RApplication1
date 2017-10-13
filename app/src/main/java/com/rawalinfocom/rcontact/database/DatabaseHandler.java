@@ -154,7 +154,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                         + "COLUMN " + TableAddressMaster.COLUMN_AM_STATE_ID + " text ");
                 db.execSQL("ALTER TABLE " + TableAddressMaster.TABLE_RC_ADDRESS_MASTER + " ADD "
                         + "COLUMN " + TableAddressMaster.COLUMN_AM_COUNTRY_ID + " text ");
-                        + " RENAME TO " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + ";");
 
                 // For Organization
                 db.execSQL("ALTER TABLE " + TableOrganizationMaster.TABLE_RC_ORGANIZATION_MASTER + " ADD "
