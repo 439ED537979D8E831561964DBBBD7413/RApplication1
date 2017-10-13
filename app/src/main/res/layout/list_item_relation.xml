@@ -36,6 +36,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorAccent"
+                android:textSize="@dimen/text_size_14sp"
                 android:textStyle="bold"
                 tools:text="Aniruddh Pal" />
 
@@ -43,6 +44,7 @@
                 android:id="@+id/text_number"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_12sp"
                 tools:text="+91 8888888877" />
 
             <TextView
@@ -50,6 +52,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/lightGrey"
+                android:textSize="@dimen/text_size_12sp"
                 tools:text="16 Sep, 17" />
 
         </LinearLayout>
@@ -63,22 +66,22 @@
 
             <ImageView
                 android:id="@+id/image_view_delete"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center|end"
                 android:layout_marginEnd="@dimen/margin_5dp"
                 android:contentDescription="@string/app_name"
-                android:padding="5dp"
-                android:src="@drawable/ic_delete" />
+                android:padding="8dp"
+                android:src="@drawable/ico_relation_delete_svg" />
 
             <ImageView
                 android:id="@+id/image_view_correct"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:layout_marginEnd="@dimen/margin_10dp"
                 android:contentDescription="@string/app_name"
-                android:padding="5dp"
+                android:padding="8dp"
                 android:src="@drawable/ico_correct_svg" />
 
         </LinearLayout>

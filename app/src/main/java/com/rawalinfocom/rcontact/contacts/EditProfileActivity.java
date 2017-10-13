@@ -70,6 +70,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.BaseActivity;
+import com.rawalinfocom.rcontact.EnterPriseOrganizationListActivity;
 import com.rawalinfocom.rcontact.LinkedinLoginActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.adapters.RSpinnerAdapter;
@@ -397,6 +398,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     private ArrayList<String> socialTypeList;
     private SocialConnectListAdapter socialConnectListAdapter;
     private String socialId = "";
+    int organisationPosition;
     private TextView organizationDateView;
     //    ArrayList<ProfileDataOperationEmail> SocialEmailList;
     ArrayList<ProfileDataOperationEmail> arrayListOldEmailAccount;
@@ -724,6 +726,61 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 }
             } else {
                 Utils.showErrorSnackBar(this, relativeRootEditProfile, "Login cancelled!");
+            }
+        }
+        if (resultCode == RESULT_OK && requestCode == 201) {
+            if (data != null) {
+                if (data.getStringExtra("isBack").equalsIgnoreCase("0")) {
+                    //If everything went Ok, change to another activity.
+
+                    ProfileDataOperationOrganization organization = new ProfileDataOperationOrganization();
+                    if (organisationPosition == (arrayListOrganizationObject.size())) {
+                        organization.setOrgName(data.getStringExtra("organizationName"));
+                        organization.setOrgIndustryType(data.getStringExtra("organizationType"));
+                        organization.setOrgLogo(data.getStringExtra("logo"));
+                        organization.setOrgFromDate("");
+                        organization.setOrgToDate("");
+                        organization.setOrgJobTitle("");
+                        organization.setOrgId("");
+                        organization.setIsVerify(0);
+                        organization.setOrgEntId(data.getStringExtra("orgId"));
+                        organization.setIsCurrent(1);
+
+                        arrayListOrganizationObject.add(organization);
+
+                    } else {
+
+                        ProfileDataOperationOrganization operationOrganization = (ProfileDataOperationOrganization)
+                                arrayListOrganizationObject.get(organisationPosition);
+
+                        organization.setOrgName(data.getStringExtra("organizationName"));
+                        organization.setOrgIndustryType(data.getStringExtra("organizationType"));
+                        organization.setOrgLogo(data.getStringExtra("logo"));
+                        organization.setOrgFromDate(operationOrganization.getOrgFromDate());
+                        organization.setOrgToDate(operationOrganization.getOrgToDate());
+                        organization.setOrgJobTitle(operationOrganization.getOrgJobTitle());
+                        organization.setOrgId(operationOrganization.getOrgId());
+                        organization.setOrgEntId(data.getStringExtra("orgId"));
+//                        if (!data.getStringExtra("organizationType").equalsIgnoreCase(""))
+//                            organization.setIsVerify(operationOrganization.getIsVerify());
+//                        else
+                        organization.setIsVerify(0);
+                        organization.setIsCurrent(operationOrganization.getIsCurrent());
+
+                        arrayListOrganizationObject.set(organisationPosition, organization);
+                    }
+
+                    linearOrganizationDetails.removeAllViews();
+
+                    for (int i = 0; i < arrayListOrganizationObject.size(); i++) {
+                        addOrganizationView(i, arrayListOrganizationObject.get(i));
+                    }
+
+                } else {
+                    Utils.showErrorSnackBar(this, relativeRootEditProfile, "You didn't select any Organization!");
+                }
+            } else {
+                Utils.showErrorSnackBar(this, relativeRootEditProfile, "You didn't select any Organization!");
             }
         }
     }
@@ -1817,6 +1874,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 break;
             //</editor-fold>
 
+            // TODO : Hardik
             // <editor-fold desc="button_organization_update">
             case R.id.button_organization_update:
                 ArrayList<ProfileDataOperationOrganization> arrayListNewOrganization = new
@@ -1831,6 +1889,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     EditText inputDesignationName = linearOrganization.findViewById(R.id
                             .input_designation_name);
 
+                    // TextView textOrgLogo = linearOrganization.findViewById(R.id.text_org_logo);
+                    TextView textEnterpriseOrgId = linearOrganization.findViewById(R.id.text_enterprise_org_id);
+                    TextView textOrgName = linearOrganization.findViewById(R.id.text_org_name);
+
                     EditText inputFromDate = linearOrganization.findViewById(R.id.input_from_date);
                     EditText inputToDate = linearOrganization.findViewById(R.id.input_to_date);
 
@@ -1838,11 +1900,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             .findViewById(R.id.relative_row_edit_profile);
                     CheckBox checkboxOrganization = linearOrganization.findViewById(R
                             .id.checkbox_organization);
-                    organization.setOrgName(inputCompanyName.getText().toString().trim());
+                    organization.setOrgName(textOrgName.getText().toString().trim());
                     organization.setOrgJobTitle(inputDesignationName.getText().toString().trim());
                     organization.setOrgId((String) relativeRowEditProfile.getTag());
                     organization.setIsCurrent(checkboxOrganization.isChecked() ? 1 : 0);
                     organization.setOrgPublic(IntegerConstants.PRIVACY_EVERYONE);
+                    organization.setOrgEntId(textEnterpriseOrgId.getText().toString().trim());
+                    // organization.setOrgLogo(textOrgLogo.getText().toString().trim());
 
                     ColorStateList colorStateList = ColorStateList.valueOf(ContextCompat.getColor
                             (EditProfileActivity
@@ -3237,17 +3301,26 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
             organization.setOrgFromDate(formattedFromDate);
             organization.setOrgToDate(formattedToDate);
-            organization.setOrgJobTitle(arrayListOrganization.get(i).getOmOrganizationDesignation
-                    ());
+            organization.setOrgJobTitle(arrayListOrganization.get(i).getOmOrganizationDesignation());
             organization.setOrgId(arrayListOrganization.get(i).getOmRecordIndexId());
-            organization.setIsCurrent(Integer.parseInt(arrayListOrganization.get(i)
-                    .getOmIsCurrent()));
+            organization.setOrgEntId(arrayListOrganization.get(i).getOmEnterpriseOrgId());
+            organization.setOrgLogo(arrayListOrganization.get(i).getOmOrganizationLogo());
+            organization.setOrgRcpType(arrayListOrganization.get(i).getOmOrganizationLogo());
+            organization.setIsCurrent(Integer.parseInt(arrayListOrganization.get(i).getOmIsCurrent()));
+            organization.setOrgIndustryType(arrayListOrganization.get(i).getOmOrganizationType());
+
+            if (StringUtils.length(arrayListOrganization.get(i).getOmIsVerified()) > 0) {
+                organization.setIsVerify(Integer.parseInt(arrayListOrganization.get(i).getOmIsVerified()));
+            } else {
+                organization.setIsVerify(0);
+            }
+
             arrayListOrganizationObject.add(organization);
         }
 
         if (arrayListOrganizationObject.size() > 0) {
             for (int i = 0; i < arrayListOrganizationObject.size(); i++) {
-                addOrganizationView(arrayListOrganizationObject.get(i));
+                addOrganizationView(i, arrayListOrganizationObject.get(i));
             }
             EditText inputCompanyName = linearOrganizationDetails.findViewById(R.id
                     .input_company_name);
@@ -3256,7 +3329,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             inputCompanyName.addTextChangedListener(valueTextWatcher);
             inputDesignationName.addTextChangedListener(valueTextWatcher);
         } else {
-            addOrganizationView(null);
+            addOrganizationView((arrayListOrganizationObject.size()), null);
         }
     }
 
@@ -3382,7 +3455,70 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         }
         if (toAdd) {
             isUpdated = true;
-            addOrganizationView(null);
+            addOrganizationDetailsToList();
+            addOrganizationView((arrayListOrganizationObject.size()), null);
+        }
+    }
+
+    // TODO : Hardik
+    private void addOrganizationDetailsToList() {
+
+        arrayListOrganizationObject.clear();
+
+        for (int i = 0; i < linearOrganizationDetails.getChildCount(); i++) {
+            ProfileDataOperationOrganization organization = new ProfileDataOperationOrganization();
+
+            View linearOrganization = linearOrganizationDetails.getChildAt(i);
+            EditText inputCompanyName = linearOrganization.findViewById(R.id
+                    .input_company_name);
+            EditText inputDesignationName = linearOrganization.findViewById(R.id
+                    .input_designation_name);
+
+            TextView textOrgLogo = linearOrganization.findViewById(R.id.text_org_logo);
+            TextView textEnterpriseOrgId = linearOrganization.findViewById(R.id.text_enterprise_org_id);
+            TextView textIsVerified = linearOrganization.findViewById(R.id.text_is_verified);
+            TextView textOrgName = linearOrganization.findViewById(R.id.text_org_name);
+            TextView textOrgType = linearOrganization.findViewById(R.id.text_org_type);
+
+            EditText inputFromDate = linearOrganization.findViewById(R.id.input_from_date);
+            EditText inputToDate = linearOrganization.findViewById(R.id.input_to_date);
+
+            RelativeLayout relativeRowEditProfile = linearOrganization
+                    .findViewById(R.id.relative_row_edit_profile);
+            CheckBox checkboxOrganization = linearOrganization.findViewById(R
+                    .id.checkbox_organization);
+
+            organization.setOrgIndustryType(textOrgType.getText().toString().trim());
+            organization.setOrgName(textOrgName.getText().toString().trim());
+            organization.setOrgJobTitle(inputDesignationName.getText().toString().trim());
+            organization.setOrgEntId(textEnterpriseOrgId.getText().toString().trim());
+            organization.setOrgLogo(textOrgLogo.getText().toString().trim());
+
+            if (StringUtils.length(textIsVerified.getText().toString()) > 0) {
+                organization.setIsVerify(Integer.parseInt(textIsVerified.getText()
+                        .toString().trim()));
+            } else {
+                organization.setIsVerify(0);
+            }
+
+            organization.setOrgId((String) relativeRowEditProfile.getTag());
+            organization.setIsCurrent(checkboxOrganization.isChecked() ? 1 : 0);
+            organization.setOrgPublic(IntegerConstants.PRIVACY_EVERYONE);
+
+            if (!StringUtils.isBlank(inputToDate.getText().toString().trim())) {
+                organization.setOrgToDate(inputToDate.getText().toString().trim());
+
+            } else {
+                organization.setOrgToDate("");
+            }
+
+            if (!StringUtils.isBlank(inputFromDate.getText().toString().trim())) {
+                organization.setOrgFromDate(inputFromDate.getText().toString().trim());
+            } else {
+                organization.setOrgFromDate("");
+            }
+
+            arrayListOrganizationObject.add(organization);
         }
     }
 
@@ -3903,7 +4039,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     }
 
     @SuppressLint("InflateParams")
-    private void addOrganizationView(Object detailObject) {
+    private void addOrganizationView(int position, Object detailObject) {
         View view = LayoutInflater.from(this).inflate(R.layout
                 .list_item_my_profile_edit_organization, null);
         ImageView deleteOrganization = view.findViewById(R.id.deleteOrganization);
@@ -3911,6 +4047,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         final EditText inputDesignationName = view.findViewById(R.id.input_designation_name);
         final CheckBox checkboxOrganization = view.findViewById(R.id
                 .checkbox_organization);
+
+        final ImageView imageOrgProfile = view.findViewById(R.id.image_org_profile);
+        final TextView textOrgLogo = view.findViewById(R.id.text_org_logo);
+        final TextView textEnterpriseOrgId = view.findViewById(R.id.text_enterprise_org_id);
+        TextView textIsVerified = view.findViewById(R.id.text_is_verified);
+        TextView textOrgName = view.findViewById(R.id.text_org_name);
+        TextView textOrgType = view.findViewById(R.id.text_org_type);
 
         final EditText inputFromDate = view.findViewById(R.id.input_from_date);
         final EditText inputToDate = view.findViewById(R.id.input_to_date);
@@ -3934,27 +4077,57 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         inputDesignationName.setInputType(InputType.TYPE_CLASS_TEXT | InputType
                 .TYPE_TEXT_FLAG_CAP_WORDS);
 
-        inputCompanyName.setTypeface(Utils.typefaceRegular(this));
+        inputCompanyName.setTypeface(Utils.typefaceIcons(this));
         inputDesignationName.setTypeface(Utils.typefaceRegular(this));
+        inputCompanyName.setFocusable(false);
 
-//        inputCompanyName.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                startActivity(new Intent(EditProfileActivity.this, \OrganizationListActivity
-// .class));
-//                startActivity(new Intent(EditProfileActivity.this, OrganizationListActivity
-// .class));
-//            }
-//        });
+        inputCompanyName.setTag(position);
+        inputCompanyName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                organisationPosition = (int) view.getTag();
+                addOrganizationDetailsToList();
+
+                Intent intent = new Intent(EditProfileActivity.this, EnterPriseOrganizationListActivity.class);
+                startActivityForResult(intent, 201);// Activity is started with requestCode
+            }
+        });
 
         ProfileDataOperationOrganization organization = (ProfileDataOperationOrganization)
                 detailObject;
 
         if (detailObject != null) {
+
             relativeRowEditProfile.setTag(organization.getOrgId());
-            inputCompanyName.setText(organization.getOrgName());
+            textOrgName.setText(organization.getOrgName());
+            textOrgType.setText(organization.getOrgIndustryType());
             inputDesignationName.setText(organization.getOrgJobTitle());
             checkboxOrganization.setChecked(organization.getIsCurrent() == 1);
+            textOrgLogo.setText(organization.getOrgLogo());
+            textEnterpriseOrgId.setText(organization.getOrgEntId());
+
+            if (MoreObjects.firstNonNull(organization.getIsVerify(), 0) == IntegerConstants.RCP_TYPE_PRIMARY) {
+
+                String s = Utils.setMultipleTypeface(EditProfileActivity.this, organization.getOrgName() + " <font color" +
+                        "='#00796B'>" + getString(R.string.im_icon_verify) + "</font><br>", 0, (StringUtils.length
+                        (organization.getOrgName()) + 1), ((StringUtils.length(organization.getOrgName()) + 1) + 1)).toString();
+
+                inputCompanyName.setText(Html.fromHtml(s));
+                textIsVerified.setText(String.valueOf(organization.getIsVerify()));
+
+            } else {
+                inputCompanyName.setText(Html.fromHtml("<font color='#00796B'> " + organization.getOrgName() + "</font>"));
+                textIsVerified.setText(String.valueOf(0));
+            }
+
+            Glide.with(EditProfileActivity.this)
+                    .load(organization.getOrgLogo())
+                    .placeholder(R.drawable.default_org)
+                    .error(R.drawable.default_org)
+                    .bitmapTransform(new CropCircleTransformation(EditProfileActivity.this))
+                    .override(120, 120)
+                    .into(imageOrgProfile);
 
             if (organization.getIsCurrent() == 1) {
                 inputToDate.setEnabled(false);
@@ -4003,12 +4176,14 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 isUpdated = true;
                 if (linearOrganizationDetails.getChildCount() > 1) {
                     linearOrganizationDetails.removeView(relativeRowEditProfile);
+                    addOrganizationDetailsToList();
                 } else if (linearOrganizationDetails.getChildCount() == 1) {
                     inputCompanyName.getText().clear();
                     inputDesignationName.getText().clear();
                     inputFromDate.getText().clear();
                     inputToDate.getText().clear();
                     checkboxOrganization.setChecked(true);
+                    addOrganizationDetailsToList();
                 }
             }
         });
@@ -4999,6 +5174,23 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 organization.setOmOrganizationToDate(arrayListOrganization.get(i).getOrgToDate());
                 organization.setOmIsCurrent(String.valueOf(arrayListOrganization.get(i)
                         .getIsCurrent()));
+                if (arrayListOrganization.get(i).getIsVerify() != null)
+                    if (arrayListOrganization.get(i).getIsVerify() == IntegerConstants.RCP_TYPE_PRIMARY) {
+                        organization.setOmOrganizationType(arrayListOrganization.get(i).getOrgIndustryType());
+                        organization.setOmEnterpriseOrgId(arrayListOrganization.get(i).getOrgEntId());
+                        organization.setOmOrganizationLogo(arrayListOrganization.get(i).getOrgLogo());
+                    } else {
+                        organization.setOmOrganizationType("");
+                        organization.setOmEnterpriseOrgId("");
+                        organization.setOmOrganizationLogo("");
+                    }
+                else {
+                    organization.setOmOrganizationType("");
+                    organization.setOmEnterpriseOrgId("");
+                    organization.setOmOrganizationLogo("");
+                }
+                organization.setOmIsVerified(String.valueOf(arrayListOrganization.get(i)
+                        .getIsVerify()));
                 organization.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 organizationList.add(organization);
             }

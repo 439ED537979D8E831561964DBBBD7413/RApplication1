@@ -29,6 +29,16 @@
             android:paddingStart="8dp"
             android:textSize="@dimen/text_size_14sp" />
 
+        <ImageView
+            android:id="@+id/img_clear"
+            android:layout_width="42dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginEnd="4dp"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/close_vector"
+            android:visibility="gone" />
+
         <View
             android:layout_width="1dp"
             android:layout_height="wrap_content"

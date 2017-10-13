@@ -90,6 +90,8 @@ public class WsRequestObject {
     private String toDate;
     private String timeStamp;
 
+    private String omName;
+
     private String password;
     private String password_confirmation;
 
@@ -215,6 +217,15 @@ public class WsRequestObject {
 
     public void setOtp(String otp) {
         this.otp = otp;
+    }
+
+    @JsonProperty("om_name")
+    public String getOmName() {
+        return omName;
+    }
+
+    public void setOmName(String omName) {
+        this.omName = omName;
     }
 
     @JsonProperty("otp_generation_time")

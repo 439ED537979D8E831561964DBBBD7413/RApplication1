@@ -24,22 +24,24 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_5dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="3dp">
 
             <TextView
                 android:id="@+id/text_organization_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
-                android:padding="3dp"
-                android:singleLine="true" />
+                android:singleLine="true"
+                android:textSize="@dimen/text_size_14sp"
+                android:textColor="@color/colorBlack" />
 
             <TextView
                 android:id="@+id/text_organization_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_12sp"
                 android:ellipsize="end"
-                android:padding="3dp"
                 android:singleLine="true" />
 
         </LinearLayout>

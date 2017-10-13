@@ -49,7 +49,7 @@
                         android:scrollHorizontally="true"
                         android:singleLine="true"
                         android:textAppearance="?android:textAppearanceMedium"
-                        tools:text="Hello World"/>
+                        tools:text="Hello World" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -62,7 +62,7 @@
                             android:layout_height="80dp"
                             android:layout_gravity="center_vertical"
                             android:contentDescription="@string/str_content_description"
-                            android:src="@drawable/home_screen_profile"/>
+                            android:src="@drawable/home_screen_profile" />
 
                         <LinearLayout
                             android:id="@+id/linear_basic_detail"
@@ -85,7 +85,7 @@
                                     android:singleLine="true"
                                     android:textAppearance="?android:textAppearanceMedium"
                                     android:textColor="@color/colorAccent"
-                                    tools:text="Monal Godiwala"/>
+                                    tools:text="Monal Godiwala" />
 
                             </HorizontalScrollView>
 
@@ -108,7 +108,7 @@
                                         android:layout_height="wrap_content"
                                         android:singleLine="true"
                                         android:textColor="@color/colorAccent"
-                                        tools:text="Managing Director"/>
+                                        tools:text="Managing Director" />
 
                                     <TextView
                                         android:id="@+id/text_organization"
@@ -116,7 +116,13 @@
                                         android:layout_height="wrap_content"
                                         android:singleLine="true"
                                         android:textColor="@color/colorAccent"
-                                        tools:text="Blazze Apps"/>
+                                        tools:text="Blazze Apps" />
+
+                                    <TextView
+                                        android:id="@+id/text_time"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:textSize="@dimen/text_size_12sp" />
 
                                     <TextView
                                         android:id="@+id/text_view_all_organization"
@@ -126,7 +132,7 @@
                                         android:textColor="@color/colorTextHeader"
                                         android:visibility="gone"
                                         tools:text="@string/str_view_all_organizations"
-                                        tools:visibility="visible"/>
+                                        tools:visibility="visible" />
 
                                 </LinearLayout>
 
@@ -159,7 +165,7 @@
                                             android:paddingTop="@dimen/margin_small"
                                             android:text="@string/str_invite"
                                             android:textAllCaps="false"
-                                            android:textColor="@color/colorWhite"/>
+                                            android:textColor="@color/colorWhite" />
 
                                     </com.rawalinfocom.rcontact.helper.RippleView>
 
@@ -183,7 +189,7 @@
                                                 android:gravity="center_vertical"
                                                 android:textColor="@color/colorAccent"
                                                 android:textSize="@dimen/text_size_14sp"
-                                                tools:text="225"/>
+                                                tools:text="225" />
 
                                             <ImageView
                                                 android:id="@+id/img_user_rating"
@@ -193,7 +199,7 @@
                                                 android:layout_marginBottom="@dimen/margin_tiny"
                                                 android:layout_marginTop="@dimen/margin_tiny"
                                                 android:contentDescription="@string/app_name"
-                                                android:src="@drawable/ico_user_rating_svg"/>
+                                                android:src="@drawable/ico_user_rating_svg" />
 
                                         </TableRow>
 
@@ -203,7 +209,7 @@
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
                                             android:isIndicator="true"
-                                            android:stepSize="1"/>
+                                            android:stepSize="1" />
 
                                     </LinearLayout>
 
@@ -475,7 +481,7 @@
                                     android:layout_margin="@dimen/margin_tiny"
                                     android:contentDescription="@string/str_content_description"
                                     android:src="@drawable/ico_call_svg"
-                                    android:tint="@color/iconColor"/>
+                                    android:tint="@color/iconColor" />
 
                                 <LinearLayout
                                     android:layout_width="match_parent"
@@ -489,7 +495,7 @@
                                         android:layout_marginStart="@dimen/margin_tiny"
                                         android:layout_marginTop="@dimen/margin_small_tiny"
                                         android:text="@string/str_phone"
-                                        android:textColor="@color/dialogButtonTextColor"/>
+                                        android:textColor="@color/dialogButtonTextColor" />
 
                                     <android.support.v7.widget.RecyclerView
                                         android:id="@+id/recycler_view_contact_number"
@@ -497,7 +503,7 @@
                                         android:layout_height="wrap_content"
                                         android:layout_marginStart="@dimen/margin_tiny"
                                         android:layout_marginTop="@dimen/margin_tiny"
-                                        android:overScrollMode="never"/>
+                                        android:overScrollMode="never" />
 
                                 </LinearLayout>
 
@@ -518,7 +524,7 @@
                                     android:layout_margin="@dimen/margin_tiny"
                                     android:contentDescription="@string/str_content_description"
                                     android:src="@drawable/ico_envelop_svg"
-                                    android:tint="@color/iconColor"/>
+                                    android:tint="@color/iconColor" />
 
                                 <LinearLayout
                                     android:layout_width="match_parent"
@@ -532,7 +538,7 @@
                                         android:layout_marginStart="@dimen/margin_tiny"
                                         android:layout_marginTop="@dimen/margin_small_tiny"
                                         android:text="@string/str_email"
-                                        android:textColor="@color/dialogButtonTextColor"/>
+                                        android:textColor="@color/dialogButtonTextColor" />
 
                                     <android.support.v7.widget.RecyclerView
                                         android:id="@+id/recycler_view_email"
@@ -540,7 +546,7 @@
                                         android:layout_height="wrap_content"
                                         android:layout_marginStart="@dimen/margin_tiny"
                                         android:layout_marginTop="@dimen/margin_tiny"
-                                        android:overScrollMode="never"/>
+                                        android:overScrollMode="never" />
 
                                 </LinearLayout>
 
@@ -566,7 +572,7 @@
                                         android:layout_margin="@dimen/margin_tiny"
                                         android:contentDescription="@string/str_content_description"
                                         android:src="@drawable/ico_website_svg"
-                                        android:tint="@color/iconColor"/>
+                                        android:tint="@color/iconColor" />
 
                                     <LinearLayout
                                         android:layout_width="match_parent"
@@ -580,7 +586,7 @@
                                             android:layout_marginStart="@dimen/margin_tiny"
                                             android:layout_marginTop="@dimen/margin_small_tiny"
                                             android:text="@string/str_website"
-                                            android:textColor="@color/dialogButtonTextColor"/>
+                                            android:textColor="@color/dialogButtonTextColor" />
 
                                         <android.support.v7.widget.RecyclerView
                                             android:id="@+id/recycler_view_website"
@@ -588,7 +594,7 @@
                                             android:layout_height="wrap_content"
                                             android:layout_marginStart="@dimen/margin_tiny"
                                             android:layout_marginTop="@dimen/margin_tiny"
-                                            android:overScrollMode="never"/>
+                                            android:overScrollMode="never" />
 
                                     </LinearLayout>
 
@@ -608,7 +614,7 @@
                                         android:layout_margin="@dimen/margin_tiny"
                                         android:contentDescription="@string/str_content_description"
                                         android:src="@drawable/ico_address_svg"
-                                        android:tint="@color/iconColor"/>
+                                        android:tint="@color/iconColor" />
 
                                     <LinearLayout
                                         android:layout_width="match_parent"
@@ -622,7 +628,7 @@
                                             android:layout_marginStart="@dimen/margin_tiny"
                                             android:layout_marginTop="@dimen/margin_small_tiny"
                                             android:text="@string/str_address"
-                                            android:textColor="@color/dialogButtonTextColor"/>
+                                            android:textColor="@color/dialogButtonTextColor" />
 
                                         <android.support.v7.widget.RecyclerView
                                             android:id="@+id/recycler_view_address"
@@ -630,7 +636,7 @@
                                             android:layout_height="wrap_content"
                                             android:layout_marginStart="@dimen/margin_tiny"
                                             android:layout_marginTop="@dimen/margin_tiny"
-                                            android:overScrollMode="never"/>
+                                            android:overScrollMode="never" />
 
                                     </LinearLayout>
 
@@ -650,7 +656,7 @@
                                         android:layout_margin="@dimen/margin_tiny"
                                         android:contentDescription="@string/str_content_description"
                                         android:src="@drawable/ico_social_svg"
-                                        android:tint="@color/iconColor"/>
+                                        android:tint="@color/iconColor" />
 
                                     <LinearLayout
                                         android:layout_width="match_parent"
@@ -664,7 +670,7 @@
                                             android:layout_marginStart="@dimen/margin_tiny"
                                             android:layout_marginTop="@dimen/margin_small_tiny"
                                             android:text="@string/str_social_contact"
-                                            android:textColor="@color/dialogButtonTextColor"/>
+                                            android:textColor="@color/dialogButtonTextColor" />
 
                                         <android.support.v7.widget.RecyclerView
                                             android:id="@+id/recycler_view_social_contact"
@@ -672,7 +678,7 @@
                                             android:layout_height="wrap_content"
                                             android:layout_marginStart="@dimen/margin_tiny"
                                             android:layout_marginTop="@dimen/margin_tiny"
-                                            android:overScrollMode="never"/>
+                                            android:overScrollMode="never" />
 
                                     </LinearLayout>
 
@@ -703,7 +709,7 @@
                                         android:layout_height="wrap_content"
                                         android:contentDescription="@string/str_content_description"
                                         android:padding="0dp"
-                                        android:src="@drawable/ico_arrow_down_svg"/>
+                                        android:src="@drawable/ico_arrow_down_svg" />
 
                                     <Button
                                         android:id="@+id/button_view_more"
@@ -712,7 +718,7 @@
                                         android:background="@null"
                                         android:gravity="center"
                                         android:text="@string/str_view_more"
-                                        android:textColor="@color/dialogButtonTextColor"/>
+                                        android:textColor="@color/dialogButtonTextColor" />
 
                                 </LinearLayout>
 
@@ -758,7 +764,7 @@
                                     android:layout_margin="@dimen/margin_tiny"
                                     android:contentDescription="@string/str_content_description"
                                     android:src="@drawable/ico_events_svg"
-                                    android:tint="@color/iconColor"/>
+                                    android:tint="@color/iconColor" />
 
                                 <LinearLayout
                                     android:layout_width="match_parent"
@@ -772,7 +778,7 @@
                                         android:layout_marginStart="@dimen/margin_tiny"
                                         android:layout_marginTop="@dimen/margin_small_tiny"
                                         android:text="@string/str_event"
-                                        android:textColor="@color/dialogButtonTextColor"/>
+                                        android:textColor="@color/dialogButtonTextColor" />
 
                                     <android.support.v7.widget.RecyclerView
                                         android:id="@+id/recycler_view_event"
@@ -780,7 +786,7 @@
                                         android:layout_height="wrap_content"
                                         android:layout_marginStart="@dimen/margin_tiny"
                                         android:layout_marginTop="@dimen/margin_tiny"
-                                        android:overScrollMode="never"/>
+                                        android:overScrollMode="never" />
 
                                 </LinearLayout>
 
@@ -800,7 +806,7 @@
                                     android:layout_margin="@dimen/margin_tiny"
                                     android:contentDescription="@string/str_content_description"
                                     android:src="@drawable/ico_gender_svg"
-                                    android:tint="@color/iconColor"/>
+                                    android:tint="@color/iconColor" />
 
                                 <LinearLayout
                                     android:layout_width="match_parent"
@@ -814,7 +820,7 @@
                                         android:layout_marginStart="@dimen/margin_tiny"
                                         android:layout_marginTop="@dimen/margin_small_tiny"
                                         android:text="@string/str_gender"
-                                        android:textColor="@color/dialogButtonTextColor"/>
+                                        android:textColor="@color/dialogButtonTextColor" />
 
                                     <RelativeLayout
                                         android:layout_width="match_parent"
@@ -827,7 +833,7 @@
                                             android:layout_height="18dp"
                                             android:layout_alignParentEnd="true"
                                             android:layout_margin="@dimen/activity_half_horizontal_margin"
-                                            android:contentDescription="@string/str_content_description"/>
+                                            android:contentDescription="@string/str_content_description" />
 
                                         <TextView
                                             android:id="@+id/text_gender"
@@ -836,7 +842,7 @@
                                             android:layout_centerVertical="true"
                                             android:layout_toStartOf="@id/image_icon_gender"
                                             android:text="@string/str_female"
-                                            android:textColor="@color/colorAccent"/>
+                                            android:textColor="@color/colorAccent" />
 
                                     </RelativeLayout>
 
@@ -866,8 +872,7 @@
                 android:id="@+id/image_enlarge"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:contentDescription="@string/str_content_description"
-                />
+                android:contentDescription="@string/str_content_description" />
 
         </FrameLayout>
 

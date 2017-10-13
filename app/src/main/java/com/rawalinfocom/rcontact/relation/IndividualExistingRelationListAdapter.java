@@ -9,7 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
-import com.rawalinfocom.rcontact.model.IndividualRelationRecommendationType;
+import com.rawalinfocom.rcontact.model.IndividualRelationType;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -26,7 +26,7 @@ class IndividualExistingRelationListAdapter extends RecyclerView.Adapter
         <IndividualExistingRelationListAdapter.IndividualExistingRelationViewHolder> {
 
     private Activity activity;
-    private ArrayList<IndividualRelationRecommendationType> individualRelationRecommendationTypeList;
+    private ArrayList<IndividualRelationType> individualRelationRecommendationTypeList;
 
     @Override
     public IndividualExistingRelationViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -35,7 +35,7 @@ class IndividualExistingRelationListAdapter extends RecyclerView.Adapter
         return new IndividualExistingRelationViewHolder(v);
     }
 
-    IndividualExistingRelationListAdapter(Activity activity, ArrayList<IndividualRelationRecommendationType>
+    IndividualExistingRelationListAdapter(Activity activity, ArrayList<IndividualRelationType>
             individualRelationRecommendationTypeList) {
         this.activity = activity;
         this.individualRelationRecommendationTypeList = individualRelationRecommendationTypeList;
@@ -43,28 +43,47 @@ class IndividualExistingRelationListAdapter extends RecyclerView.Adapter
 
     @Override
     public void onBindViewHolder(IndividualExistingRelationViewHolder holder, int position) {
-        IndividualRelationRecommendationType type = individualRelationRecommendationTypeList.get(position);
+
+        IndividualRelationType type = individualRelationRecommendationTypeList.get(position);
 
         if (!StringUtils.isEmpty(type.getRelationName())) {
+
+            holder.llRelationOrganization.setVisibility(View.VISIBLE);
+            holder.textBusinessRelationName.setVisibility(View.VISIBLE);
+
             holder.textBusinessRelationName.setText(type.getRelationName());
+            holder.textBusinessRelationName.setCompoundDrawablesWithIntrinsicBounds
+                    (R.drawable.ico_relation_business_svg, 0, R.drawable.ico_relation_double_tick_svg, 0);
             holder.textOrganizationName.setText(type.getOrganizationName());
+
         } else {
+
             holder.llRelationOrganization.setVisibility(View.GONE);
             holder.textBusinessRelationName.setVisibility(View.GONE);
 
-            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) holder.llOtherRelation.getLayoutParams();
-            layoutParams.setMargins(0, 10, 0, 0);
-            holder.llOtherRelation.setLayoutParams(layoutParams);
+//            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) holder.llOtherRelation.getLayoutParams();
+//            layoutParams.setMargins(0, 0, 0, 0);
+//            holder.llOtherRelation.setLayoutParams(layoutParams);
         }
 
         if (!StringUtils.isEmpty(type.getFamilyName())) {
+
+            holder.llFamilyRelation.setVisibility(View.VISIBLE);
+
             holder.textFamilyName.setText(type.getFamilyName());
+            holder.textFamilyName.setCompoundDrawablesWithIntrinsicBounds
+                    (R.drawable.ico_realtion_family_svg, 0, R.drawable.ico_relation_single_tick_svg, 0);
         } else {
             holder.llFamilyRelation.setVisibility(View.GONE);
         }
 
         if (type.getIsFriendRelation()) {
+
+            holder.llFriendRelation.setVisibility(View.VISIBLE);
+
             holder.textFriendName.setText(activity.getString(R.string.str_friend));
+            holder.textFriendName.setCompoundDrawablesWithIntrinsicBounds
+                    (R.drawable.ico_relation_friend_svg, 0, R.drawable.ico_relation_single_tick_svg, 0);
         } else {
             holder.llFriendRelation.setVisibility(View.GONE);
         }
@@ -100,10 +119,10 @@ class IndividualExistingRelationListAdapter extends RecyclerView.Adapter
             super(itemView);
             ButterKnife.bind(this, itemView);
 
-//            llRelationOrganization.setVisibility(View.GONE);
-//            textBusinessRelationName.setVisibility(View.GONE);
-//            llFamilyRelation.setVisibility(View.GONE);
-//            llFriendRelation.setVisibility(View.GONE);
+            llRelationOrganization.setVisibility(View.GONE);
+            textBusinessRelationName.setVisibility(View.GONE);
+            llFamilyRelation.setVisibility(View.GONE);
+            llFriendRelation.setVisibility(View.GONE);
         }
     }
 }

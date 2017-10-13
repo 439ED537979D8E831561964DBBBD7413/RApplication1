@@ -87,6 +87,10 @@
     <string name="str_last">Last</string>
     <string name="str_organization">Organization</string>
     <string name="str_company_name">Company Name</string>
+    <string name="enter_or_select_your_organisation">Enter or Select your organisation</string>
+    <string name="type_here_hint">Type here...</string>
+    <string name="search_no_organisation">Organisation is not verified</string>
+    <string name="str_org">Organizations</string>
     <string name="str_search_name">Name or Number</string>
 
     <!--<string name="str_designation">Designation</string>-->
@@ -739,8 +743,10 @@
     <string name="str_next">Next</string>
     <string name="str_hint_add_organization">Please add organization to add Business Relation</string>
     <string name="str_hint_add_family">Please set your gender to add Family Relation</string>
+    <string name="str_establish_relation">Established Relation</string>
 
     <!-- Force update -->
     <string name="youAreNotUpdatedTitle">Update Available</string>
     <string name="youAreNotUpdatedMessage">A new version of RContacts Application is available. Please update to latest version\s</string>
+    <string name="search_above_to_get_organization_list">Search above to get Organization list</string>
 </resources>
