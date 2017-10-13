@@ -83,4 +83,7 @@
     <color name="colorTextSub">#666666</color>
     <color name="bg_circle_default">#666666</color>
 
+    <color name="grey_hex_75">#757575</color>
+
+
 </resources>

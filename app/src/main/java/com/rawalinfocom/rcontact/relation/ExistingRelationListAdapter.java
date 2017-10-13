@@ -6,12 +6,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
-import com.rawalinfocom.rcontact.model.IndividualRelationRecommendationType;
+import com.rawalinfocom.rcontact.model.IndividualRelationType;
 import com.rawalinfocom.rcontact.model.RelationRecommendationType;
 
 import java.util.ArrayList;
@@ -24,10 +26,13 @@ import butterknife.ButterKnife;
  */
 
 class ExistingRelationListAdapter extends RecyclerView.Adapter
-        <ExistingRelationListAdapter.ExistingRelationViewHolder> {
+        <ExistingRelationListAdapter.ExistingRelationViewHolder> implements Filterable {
 
     private ArrayList<RelationRecommendationType> arrayListRelationType;
     private Activity mActivity;
+    private ArrayList<RelationRecommendationType> filteredList;
+    private Activity activity;
+    private CustomFilter mFilter;
 
     @Override
     public ExistingRelationViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -37,8 +42,11 @@ class ExistingRelationListAdapter extends RecyclerView.Adapter
     }
 
     ExistingRelationListAdapter(Activity activity, ArrayList<RelationRecommendationType> list) {
-        this.arrayListRelationType = list;
         this.mActivity = activity;
+        this.arrayListRelationType = list;
+        this.filteredList = new ArrayList<>();
+        this.filteredList.addAll(list);
+        mFilter = new CustomFilter(ExistingRelationListAdapter.this);
     }
 
     @Override
@@ -50,8 +58,7 @@ class ExistingRelationListAdapter extends RecyclerView.Adapter
         holder.textNumber.setText(relationRecommendationType.getNumber());
 //        viewHolder.textDateAndTime.setText(relationRecommendationType.getDateAndTime());
 
-        ArrayList<IndividualRelationRecommendationType> list = relationRecommendationType.
-                getIndividualRelationRecommendationTypeArrayList();
+        ArrayList<IndividualRelationType> list = relationRecommendationType.getIndividualRelationTypeList();
         if (list.size() > 0) {
             IndividualExistingRelationListAdapter adapter = new IndividualExistingRelationListAdapter(mActivity, list);
 
@@ -63,6 +70,80 @@ class ExistingRelationListAdapter extends RecyclerView.Adapter
     @Override
     public int getItemCount() {
         return arrayListRelationType.size();
+    }
+
+    @Override
+    public Filter getFilter() {
+        return mFilter;
+    }
+
+    private class CustomFilter extends Filter {
+        private ExistingRelationListAdapter mAdapter;
+
+        private CustomFilter(ExistingRelationListAdapter mAdapter) {
+            super();
+            this.mAdapter = mAdapter;
+        }
+
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            arrayListRelationType.clear();
+            final FilterResults results = new FilterResults();
+            if (constraint.length() == 0) {
+                arrayListRelationType.addAll(filteredList);
+            } else {
+
+                String finalString = constraint.toString().toLowerCase().trim();
+
+                if (finalString.contains(" ")) {
+
+                    String[] splitString = finalString.split("\\s+");
+
+                    if (splitString.length == 2) {
+
+                        for (final RelationRecommendationType recommendationType : filteredList) {
+                            if ((recommendationType.getFirstName().toLowerCase().startsWith(splitString[0])
+                                    || recommendationType.getLastName().toLowerCase().startsWith(splitString[0]))
+                                    && (recommendationType.getFirstName().toLowerCase().startsWith(splitString[1])
+                                    || recommendationType.getLastName().toLowerCase().startsWith(splitString[1]))) {
+                                arrayListRelationType.add(recommendationType);
+                            }
+                        }
+
+                    } else {
+
+                        for (final RelationRecommendationType recommendationType : filteredList) {
+                            if (recommendationType.getFirstName().toLowerCase().contains(splitString[0])
+                                    || recommendationType.getLastName().toLowerCase().contains(splitString[0])
+                                    || recommendationType.getFirstName().toLowerCase().contains(splitString[1])
+                                    || recommendationType.getLastName().toLowerCase().contains(splitString[1])) {
+                                arrayListRelationType.add(recommendationType);
+                            }
+                        }
+                    }
+
+                } else {
+
+                    final String filterPattern = constraint.toString().toLowerCase().trim();
+                    for (final RelationRecommendationType recommendationType : filteredList) {
+                        if (recommendationType.getFirstName().toLowerCase().contains(filterPattern)
+                                || recommendationType.getLastName().toLowerCase().contains(filterPattern)
+                                || recommendationType.getNumber().toLowerCase().contains(filterPattern)) {
+                            arrayListRelationType.add(recommendationType);
+                        }
+                    }
+                }
+            }
+            System.out.println("RContacts Count Number " + arrayListRelationType.size());
+            results.values = arrayListRelationType;
+            results.count = arrayListRelationType.size();
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            this.mAdapter.notifyDataSetChanged();
+        }
     }
 
     class ExistingRelationViewHolder extends RecyclerView.ViewHolder {

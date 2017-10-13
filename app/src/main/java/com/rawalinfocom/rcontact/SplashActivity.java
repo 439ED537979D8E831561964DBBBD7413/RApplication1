@@ -86,7 +86,8 @@ public class SplashActivity extends BaseActivity implements WsResponseListener {
 
                 if (checkVersionResponse != null && StringUtils.equalsIgnoreCase
                         (checkVersionResponse.getMessage(), "force update")) {
-                    showForceUpdateDialog();
+//                    showForceUpdateDialog();
+                    redirectToActivity();
                 } else {
                     redirectToActivity();
                 }

@@ -760,39 +760,6 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             public void onClick(View v) {
 
                 holder.imgActionType.performClick();
-                /*String ima = holder.textMain.getText().toString();
-                if (!ima.startsWith("XX") && !ima.startsWith("xx")) {
-                    if (StringUtils.length(imAccount.getIMAccountDetails()) > 0) {
-                        String url = null;
-                        if (imAccount.getIMAccountProtocol().equalsIgnoreCase("facebook")) {
-                            Utils.getOpenFacebookIntent(activity, imAccount.getIMAccountDetails());
-                            return;
-                        } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("twitter")) {
-                            url = "https://twitter.com/" + imAccount.getIMAccountDetails();
-                        } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("linkedin")) {
-                            if (!imAccount.getIMAccountDetails().startsWith("https://www.linkedin.com"))
-                                url = "https://www.linkedin.com/" + imAccount.getIMAccountDetails();
-                            else
-                                url = imAccount.getIMAccountDetails();
-                        } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
-                                ("google")) {
-                            Utils.openGPlus(activity, imAccount.getIMAccountDetails());
-                            return;
-                        } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
-                                ("skype")) {
-                            url = "https://web.skype.com/" + imAccount.getIMAccountDetails();
-                        } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
-                                ("whatsapp")) {
-                            url = "https://web.whatsapp.com/" + imAccount.getIMAccountDetails();
-                        }
-
-                        if (url != null) {
-                            Intent intent = new Intent(Intent.ACTION_VIEW);
-                            intent.setData(Uri.parse(url));
-                            activity.startActivity(intent);
-                        }
-                    }
-                }*/
             }
         });
 

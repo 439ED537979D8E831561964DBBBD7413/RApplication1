@@ -44,16 +44,16 @@ public class TableProfileMaster {
 //    private static final String COLUMN_PM_SIGNUP_SOCIAL_MEDIA_TYPE =
 // "pm_signup_social_media_type";
 
-    static final String COLUMN_PM_RCP_ID = "pm_rcp_id";
-    static final String COLUMN_PM_RAW_ID = "pm_raw_id";
-    static final String COLUMN_PM_FIRST_NAME = "pm_first_name";
-    static final String COLUMN_PM_LAST_NAME = "pm_last_name";
-    static final String COLUMN_PM_PROFILE_IMAGE = "pm_profile_image";
-    static final String COLUMN_PM_GENDER = "pm_gender";
-    static final String COLUMN_PM_GENDER_PRIVACY = "pm_gender_privacy";
-    static final String COLUMN_PM_PROFILE_RATING = "pm_profile_rating";
-    static final String COLUMN_PM_PROFILE_RATE_USER = "pm_total_user_rating";
-    static final String COLUMN_PM_IS_FAVOURITE = "pm_is_favourite";
+    public static final String COLUMN_PM_RCP_ID = "pm_rcp_id";
+    public static final String COLUMN_PM_RAW_ID = "pm_raw_id";
+    public static final String COLUMN_PM_FIRST_NAME = "pm_first_name";
+    public static final String COLUMN_PM_LAST_NAME = "pm_last_name";
+    public static final String COLUMN_PM_PROFILE_IMAGE = "pm_profile_image";
+    public static final String COLUMN_PM_GENDER = "pm_gender";
+    public static final String COLUMN_PM_GENDER_PRIVACY = "pm_gender_privacy";
+    public static final String COLUMN_PM_PROFILE_RATING = "pm_profile_rating";
+    public static final String COLUMN_PM_PROFILE_RATE_USER = "pm_total_user_rating";
+    public static final String COLUMN_PM_IS_FAVOURITE = "pm_is_favourite";
     private static final String COLUMN_PM_NOSQL_MASTER_ID = "pm_nosql_master_id";
     static final String COLUMN_PM_BADGE = "pm_badge";
     private static final String COLUMN_PM_JOINING_DATE = "pm_joining_date";
@@ -229,7 +229,7 @@ public class TableProfileMaster {
         return userProfile;
     }
 
-    // get login user profile
+    // get rcp user profile
     public UserProfile getProfileFromPmId(int cloudPmd) {
         UserProfile userProfile = new UserProfile();
 
@@ -237,8 +237,8 @@ public class TableProfileMaster {
             SQLiteDatabase db = databaseHandler.getReadableDatabase();
 
             Cursor cursor = db.query(TABLE_RC_PROFILE_MASTER, new String[]{COLUMN_PM_RAW_ID,
-                    COLUMN_PM_FIRST_NAME, COLUMN_PM_LAST_NAME, COLUMN_PM_PROFILE_IMAGE,
-                    COLUMN_PM_RCP_ID,}, COLUMN_PM_RCP_ID
+                    COLUMN_PM_FIRST_NAME, COLUMN_PM_LAST_NAME, COLUMN_PM_PROFILE_IMAGE, COLUMN_PM_PROFILE_RATE_USER,
+                    COLUMN_PM_PROFILE_RATING, COLUMN_PM_RCP_ID,}, COLUMN_PM_RCP_ID
                     + "=?", new String[]{String.valueOf(cloudPmd)}, null, null, null, null);
             if (cursor != null)
                 cursor.moveToFirst();
@@ -251,7 +251,10 @@ public class TableProfileMaster {
                         (COLUMN_PM_LAST_NAME)));
                 userProfile.setPmProfileImage(cursor.getString(cursor.getColumnIndex
                         (COLUMN_PM_PROFILE_IMAGE)));
-
+                userProfile.setProfileRating(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_PM_PROFILE_RATING)));
+                userProfile.setTotalProfileRateUser(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_PM_PROFILE_RATE_USER)));
                 cursor.close();
             }
             db.close();

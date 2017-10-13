@@ -3,6 +3,10 @@ package com.rawalinfocom.rcontact.relation;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -13,7 +17,7 @@ import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
-import com.rawalinfocom.rcontact.model.IndividualRelationRecommendationType;
+import com.rawalinfocom.rcontact.model.IndividualRelationType;
 import com.rawalinfocom.rcontact.model.RelationRecommendationType;
 
 import java.util.ArrayList;
@@ -43,6 +47,17 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
     @BindView(R.id.recycle_view_relation)
     RecyclerView recycleViewRelation;
 
+    @BindView(R.id.image_back)
+    ImageView imageBack;
+    @BindView(R.id.input_search)
+    EditText inputSearch;
+    @BindView(R.id.imgClose)
+    ImageView imgClose;
+    @BindView(R.id.relative_back)
+    LinearLayout relativeBack;
+
+    private RelationRecommendationListAdapter listAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +79,10 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
                 break;
 
             case R.id.ripple_action_search:
+
+                relativeBack.setVisibility(View.VISIBLE);
+                relativeActionBack.setVisibility(View.GONE);
+
                 break;
         }
     }
@@ -78,6 +97,41 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
         rippleActionSearch.setOnRippleCompleteListener(this);
         textToolbarTitle.setTypeface(Utils.typefaceSemiBold(this));
         textToolbarTitle.setText(R.string.toolbar_title);
+
+        inputSearch.setTypeface(Utils.typefaceRegular(this));
+
+        imageBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                relativeBack.setVisibility(View.GONE);
+                relativeActionBack.setVisibility(View.VISIBLE);
+                listAdapter.getFilter().filter("");
+            }
+        });
+
+        inputSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                listAdapter.getFilter().filter(charSequence.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        imgClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listAdapter.getFilter().filter("");
+            }
+        });
     }
 
     private void makeTempDataAndSetAdapter() {
@@ -87,120 +141,141 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
         for (int i = 0; i < 5; i++) {
             RelationRecommendationType relationRecommendationType = new RelationRecommendationType();
 
-            ArrayList<IndividualRelationRecommendationType> arrayList = new ArrayList<>();
+            ArrayList<IndividualRelationType> arrayList = new ArrayList<>();
 
-            relationRecommendationType.setFirstName("Aniruddh");
-            relationRecommendationType.setLastName("Pal");
-            relationRecommendationType.setNumber("+91 886638723");
-
-            IndividualRelationRecommendationType individualRelationRecommendationType;
+            IndividualRelationType individualRelationType;
 
             if (i == 0) {
 
+                relationRecommendationType.setFirstName("Aniruddh");
+                relationRecommendationType.setLastName("Pal");
+                relationRecommendationType.setNumber("+91 886638723");
+                relationRecommendationType.setDateAndTime("02 Oct, 17");
+
                 // All
-                individualRelationRecommendationType = new IndividualRelationRecommendationType();
-                individualRelationRecommendationType.setRelationName("Co-worker");
-                individualRelationRecommendationType.setOrganizationName("Hungama");
-                individualRelationRecommendationType.setFamilyName("");
-                individualRelationRecommendationType.setIsFriendRelation(false);
+                individualRelationType = new IndividualRelationType();
+                individualRelationType.setRelationName("Co-worker");
+                individualRelationType.setOrganizationName("Hungama");
+                individualRelationType.setFamilyName("");
+                individualRelationType.setIsFriendRelation(false);
 
-                arrayList.add(individualRelationRecommendationType);
+                arrayList.add(individualRelationType);
 
-                individualRelationRecommendationType = new IndividualRelationRecommendationType();
-                individualRelationRecommendationType.setRelationName("Co-worker");
-                individualRelationRecommendationType.setOrganizationName("RawalInfocom");
-                individualRelationRecommendationType.setFamilyName("");
-                individualRelationRecommendationType.setIsFriendRelation(false);
+                individualRelationType = new IndividualRelationType();
+                individualRelationType.setRelationName("Co-worker");
+                individualRelationType.setOrganizationName("RawalInfocom");
+                individualRelationType.setFamilyName("");
+                individualRelationType.setIsFriendRelation(false);
 
-                arrayList.add(individualRelationRecommendationType);
+                arrayList.add(individualRelationType);
 
-                individualRelationRecommendationType = new IndividualRelationRecommendationType();
-                individualRelationRecommendationType.setRelationName("");
-                individualRelationRecommendationType.setOrganizationName("");
-                individualRelationRecommendationType.setFamilyName("Brother");
-                individualRelationRecommendationType.setIsFriendRelation(false);
+                individualRelationType = new IndividualRelationType();
+                individualRelationType.setRelationName("");
+                individualRelationType.setOrganizationName("");
+                individualRelationType.setFamilyName("Brother");
+                individualRelationType.setIsFriendRelation(true);
 
-                arrayList.add(individualRelationRecommendationType);
+                arrayList.add(individualRelationType);
 
-                individualRelationRecommendationType = new IndividualRelationRecommendationType();
-                individualRelationRecommendationType.setRelationName("");
-                individualRelationRecommendationType.setOrganizationName("");
-                individualRelationRecommendationType.setFamilyName("");
-                individualRelationRecommendationType.setIsFriendRelation(true);
-
-                arrayList.add(individualRelationRecommendationType);
+//                individualRelationType = new IndividualRelationType();
+//                individualRelationType.setRelationName("");
+//                individualRelationType.setOrganizationName("");
+//                individualRelationType.setFamilyName("");
+//                individualRelationType.setIsFriendRelation(true);
+//
+//                arrayList.add(individualRelationType);
             }
 
             if (i == 1) {
 
+                relationRecommendationType.setFirstName("Darshan");
+                relationRecommendationType.setLastName("Gajera");
+                relationRecommendationType.setNumber("+91 9712978901");
+                relationRecommendationType.setDateAndTime("05 Oct, 17");
+
                 // Business and Family
-                individualRelationRecommendationType = new IndividualRelationRecommendationType();
-                individualRelationRecommendationType.setRelationName("Co-worker");
-                individualRelationRecommendationType.setOrganizationName("RawalInfocom");
-                individualRelationRecommendationType.setFamilyName("");
-                individualRelationRecommendationType.setIsFriendRelation(false);
+                individualRelationType = new IndividualRelationType();
+                individualRelationType.setRelationName("Co-worker");
+                individualRelationType.setOrganizationName("RawalInfocom");
+                individualRelationType.setFamilyName("");
+                individualRelationType.setIsFriendRelation(false);
 
-                arrayList.add(individualRelationRecommendationType);
+                arrayList.add(individualRelationType);
 
-                individualRelationRecommendationType = new IndividualRelationRecommendationType();
-                individualRelationRecommendationType.setRelationName("");
-                individualRelationRecommendationType.setOrganizationName("");
-                individualRelationRecommendationType.setFamilyName("Brother");
-                individualRelationRecommendationType.setIsFriendRelation(false);
+                individualRelationType = new IndividualRelationType();
+                individualRelationType.setRelationName("");
+                individualRelationType.setOrganizationName("");
+                individualRelationType.setFamilyName("Brother");
+                individualRelationType.setIsFriendRelation(false);
 
-                arrayList.add(individualRelationRecommendationType);
+                arrayList.add(individualRelationType);
             }
 
             if (i == 2) {
 
+                relationRecommendationType.setFirstName("Manish");
+                relationRecommendationType.setLastName("Bhikadiya");
+                relationRecommendationType.setNumber("+91 9123457859");
+                relationRecommendationType.setDateAndTime("07 Oct, 17");
+
                 // Family and Friend
-                individualRelationRecommendationType = new IndividualRelationRecommendationType();
-                individualRelationRecommendationType.setRelationName("");
-                individualRelationRecommendationType.setOrganizationName("");
-                individualRelationRecommendationType.setFamilyName("Uncle");
-                individualRelationRecommendationType.setIsFriendRelation(false);
+                individualRelationType = new IndividualRelationType();
+                individualRelationType.setRelationName("");
+                individualRelationType.setOrganizationName("");
+                individualRelationType.setFamilyName("Uncle");
+                individualRelationType.setIsFriendRelation(true);
 
-                arrayList.add(individualRelationRecommendationType);
+                arrayList.add(individualRelationType);
 
-                individualRelationRecommendationType = new IndividualRelationRecommendationType();
-                individualRelationRecommendationType.setRelationName("");
-                individualRelationRecommendationType.setOrganizationName("");
-                individualRelationRecommendationType.setFamilyName("");
-                individualRelationRecommendationType.setIsFriendRelation(true);
-
-                arrayList.add(individualRelationRecommendationType);
+//                individualRelationType = new IndividualRelationType();
+//                individualRelationType.setRelationName("");
+//                individualRelationType.setOrganizationName("");
+//                individualRelationType.setFamilyName("");
+//                individualRelationType.setIsFriendRelation(true);
+//
+//                arrayList.add(individualRelationType);
             }
 
             if (i == 3) {
 
-                // Friend
-                individualRelationRecommendationType = new IndividualRelationRecommendationType();
-                individualRelationRecommendationType.setRelationName("");
-                individualRelationRecommendationType.setOrganizationName("");
-                individualRelationRecommendationType.setFamilyName("");
-                individualRelationRecommendationType.setIsFriendRelation(true);
+                relationRecommendationType.setFirstName("Viraj");
+                relationRecommendationType.setLastName("Kakadiya");
+                relationRecommendationType.setNumber("+91 9879879870");
+                relationRecommendationType.setDateAndTime("07 Oct, 17");
 
-                arrayList.add(individualRelationRecommendationType);
+                // Friend
+                individualRelationType = new IndividualRelationType();
+                individualRelationType.setRelationName("");
+                individualRelationType.setOrganizationName("");
+                individualRelationType.setFamilyName("");
+                individualRelationType.setIsFriendRelation(true);
+
+                arrayList.add(individualRelationType);
             }
 
             if (i == 4) {
 
-                // Family
-                individualRelationRecommendationType = new IndividualRelationRecommendationType();
-                individualRelationRecommendationType.setRelationName("");
-                individualRelationRecommendationType.setOrganizationName("");
-                individualRelationRecommendationType.setFamilyName("Father");
-                individualRelationRecommendationType.setIsFriendRelation(false);
+                relationRecommendationType.setFirstName("Ashish");
+                relationRecommendationType.setLastName("Dungrani");
+                relationRecommendationType.setNumber("+91 9876549871");
+                relationRecommendationType.setDateAndTime("07 Oct, 17");
 
-                arrayList.add(individualRelationRecommendationType);
+                // Family
+                individualRelationType = new IndividualRelationType();
+                individualRelationType.setRelationName("");
+                individualRelationType.setOrganizationName("");
+                individualRelationType.setFamilyName("Father");
+                individualRelationType.setIsFriendRelation(false);
+
+                arrayList.add(individualRelationType);
             }
 
-            relationRecommendationType.setIndividualRelationRecommendationTypeArrayList(arrayList);
+            relationRecommendationType.setIndividualRelationTypeList(arrayList);
             recommendationRelationList.add(relationRecommendationType);
         }
 
         if (recommendationRelationList.size() > 0) {
-            RelationRecommendationListAdapter listAdapter = new RelationRecommendationListAdapter(this, recommendationRelationList);
+            listAdapter = new RelationRecommendationListAdapter(this, recommendationRelationList);
             recycleViewRelation.setLayoutManager(new LinearLayoutManager(this));
             recycleViewRelation.setAdapter(listAdapter);
         }

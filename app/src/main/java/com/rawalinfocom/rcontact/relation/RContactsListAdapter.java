@@ -105,6 +105,7 @@ public class RContactsListAdapter extends RecyclerView.Adapter<RContactsListAdap
                 Intent intent = new Intent();
                 intent.putExtra("pmId", arrayListUserProfile.get(pos).getPmId());
                 intent.putExtra("contactName", textName.getText().toString());
+                intent.putExtra("contactNumber", arrayListUserProfile.get(pos).getMobileNumber());
                 intent.putExtra("profileImage", arrayListUserProfile.get(pos).getPmProfileImage());
                 intent.putExtra("isBack", "0");
                 activity.setResult(Activity.RESULT_OK, intent);
@@ -179,8 +180,8 @@ public class RContactsListAdapter extends RecyclerView.Adapter<RContactsListAdap
             } else {
                 final String filterPattern = constraint.toString().toLowerCase().trim();
                 for (final UserProfile userProfile : filteredList) {
-                    if (userProfile.getPmFirstName().toLowerCase().startsWith(filterPattern)
-                            || userProfile.getPmLastName().toLowerCase().startsWith(filterPattern)) {
+                    if (userProfile.getPmFirstName().toLowerCase().contains(filterPattern)
+                            || userProfile.getPmLastName().toLowerCase().contains(filterPattern)) {
                         arrayListUserProfile.add(userProfile);
                     }
                 }

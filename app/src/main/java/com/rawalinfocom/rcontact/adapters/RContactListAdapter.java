@@ -2,10 +2,17 @@ package com.rawalinfocom.rcontact.adapters;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.style.TextAppearanceSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,6 +65,7 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private ArrayList<Integer> mSectionPositions;
     private int searchCount;
+    private String searchChar;
 
     //<editor-fold desc="Constructor">
     public RContactListAdapter(Fragment fragment, ArrayList<Object> arrayListUserProfile,
@@ -228,6 +236,73 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             holder.textContactNumber.setText(userProfile.getEmailId());
         }
 
+
+        if(!StringUtils.isBlank(searchChar)){
+            Pattern numberPat = Pattern.compile("\\d+");
+            Matcher matcher1 = numberPat.matcher(searchChar);
+            if (matcher1.find() || searchChar.matches("[+][0-9]+")) {
+                int startPos =  holder.textContactNumber.getText().toString().toLowerCase(Locale.US).indexOf(searchChar
+                        .toLowerCase(Locale.US));
+                int endPos = startPos + searchChar.length();
+                if (startPos != -1) {
+                    Spannable spannable = new SpannableString(holder.textContactNumber.getText().toString());
+                    ColorStateList blueColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.RED});
+                    TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.BOLD, -1, blueColor, null);
+                    spannable.setSpan(highlightSpan, startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    holder.textContactNumber.setText(spannable);
+                } else {
+                    holder.textContactNumber.setText(holder.textContactNumber.getText().toString());
+                }
+            }else{
+                if (searchChar.contains(" ")) {
+                    String originalString = holder.textContactName.getText().toString();
+                    String[] separated = searchChar.split(" ");
+                    String firstPart = separated[0];
+                    String secondPart = separated[1];
+                    SpannableStringBuilder builder = new SpannableStringBuilder(originalString);
+                    if (!StringUtils.isBlank(firstPart)) {
+                        int startPos1 = originalString.toLowerCase(Locale.US).indexOf(firstPart
+                                .toLowerCase(Locale.US));
+                        int endPos1 = startPos1 + firstPart.length();
+                        if (startPos1 != -1) {
+                            ColorStateList hightlightColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.RED});
+                            TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, hightlightColor, null);
+                            builder.setSpan(highlightSpan, startPos1, endPos1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        }
+                    }
+
+                    if (!StringUtils.isBlank(secondPart)) {
+                        int startPos2 = originalString.toLowerCase(Locale.US).indexOf(secondPart
+                                .toLowerCase(Locale.US));
+                        int endPos2 = startPos2 + secondPart.length();
+                        if (startPos2 != -1) {
+                            ColorStateList hightlightColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.RED});
+                            TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, hightlightColor, null);
+                            builder.setSpan(highlightSpan, startPos2, endPos2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        }
+                    }
+                    holder.textContactName.setText(builder,TextView.BufferType.SPANNABLE);
+
+                }else{
+
+                    int startPos =  holder.textContactName.getText().toString().toLowerCase(Locale.US).indexOf(searchChar
+                            .toLowerCase(Locale.US));
+                    int endPos = startPos + searchChar.length();
+
+                    if (startPos != -1) {
+                        Spannable spannable = new SpannableString(holder.textContactName.getText().toString());
+                        ColorStateList blueColor =  new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.RED}) ;
+                        TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, blueColor, null);
+                        spannable.setSpan(highlightSpan, startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        holder.textContactName.setText(spannable);
+                    } else {
+                        holder.textContactName.setText(holder.textContactName.getText().toString());
+                    }
+                }
+
+            }
+
+        }
         if (StringUtils.length(userProfile.getPmProfileImage()) > 0) {
             Glide.with(activity)
                     .load(userProfile.getPmProfileImage())
@@ -420,19 +495,62 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 for (int i = 0; i < arraylist.size(); i++) {
                     if (arraylist.get(i) instanceof UserProfile) {
                         UserProfile profileData = (UserProfile) arraylist.get(i);
-                        String name =  profileData.getPmFirstName() + " " + profileData.getPmLastName() ;
+                        String name =  profileData.getPmFirstName() + " " + profileData.getPmFirstName() ;
                         if (!StringUtils.isEmpty(name)) {
                             if (name.toLowerCase(Locale.getDefault()).contains
                                     (charText)) {
                                 arrayListUserProfile.add(profileData);
+                            }else {
+                                if (!StringUtils.isBlank(profileData.getPmFirstName())
+                                        && !StringUtils.isBlank(profileData.getPmLastName())) {
+                                    nameFilter(charText, profileData);
+                                }
                             }
                         }
                     }
                 }
             }
         }
-
+        searchChar = charText;
         setSearchCount(arrayListUserProfile.size());
         notifyDataSetChanged();
     }
+
+    private void nameFilter(String charText, UserProfile profileData) {
+
+        if (charText.contains(" ")) {
+
+            String[] splitString = charText.split("\\s+");
+
+            if (splitString.length == 2) {
+
+                if ((profileData.getPmFirstName().toLowerCase().startsWith(splitString[0])
+                        || profileData.getPmLastName().toLowerCase().startsWith(splitString[0]))
+                        && (profileData.getPmFirstName().toLowerCase().startsWith(splitString[1])
+                        || profileData.getPmLastName().toLowerCase().startsWith(splitString[1]))) {
+                    arrayListUserProfile.add(profileData);
+                }
+
+            } else {
+
+                if ((profileData.getPmFirstName().toLowerCase().startsWith(splitString[0])
+                        || profileData.getPmLastName().toLowerCase().startsWith(splitString[0]))
+                        && (profileData.getPmFirstName().toLowerCase().startsWith(splitString[1])
+                        || profileData.getPmLastName().toLowerCase().startsWith(splitString[1]))) {
+                    arrayListUserProfile.add(profileData);
+                }
+            }
+
+        } else {
+
+            if ((profileData.getPmFirstName().toLowerCase().startsWith(charText)
+                    || profileData.getPmLastName().toLowerCase().startsWith(charText))
+                    && (profileData.getPmFirstName().toLowerCase().startsWith(charText)
+                    || profileData.getPmLastName().toLowerCase().startsWith(charText))) {
+                arrayListUserProfile.add(profileData);
+            }
+        }
+
+    }
+
 }

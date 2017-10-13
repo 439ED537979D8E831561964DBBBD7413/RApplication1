@@ -12,12 +12,14 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.LabeledIntent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -94,6 +96,7 @@ import com.rawalinfocom.rcontact.helper.MyProfileShareDialog;
 import com.rawalinfocom.rcontact.helper.ProfileMenuOptionDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.helper.circleprogressview.CircleProgressView;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.Address;
@@ -121,6 +124,7 @@ import com.rawalinfocom.rcontact.model.Website;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 import com.rawalinfocom.rcontact.relation.ExistingRelationActivity;
+import com.rawalinfocom.rcontact.relation.RCPExistingRelationActivity;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -134,6 +138,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -183,6 +188,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     TextView textDesignation;
     @BindView(R.id.text_organization)
     TextView textOrganization;
+    @BindView(R.id.text_time)
+    TextView textTime;
     @BindView(R.id.text_view_all_organization)
     TextView textViewAllOrganization;
     @BindView(R.id.linear_basic_detail)
@@ -272,18 +279,22 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     Button buttonCallLog;
     @BindView(R.id.button_sms)
     Button buttonSms;
+    @Nullable
     @BindView(R.id.relative_call_history)
     RelativeLayout relativeCallHistory;
     /* @BindView(R.id.text_icon_history)
      TextView textIconHistory;*/
+    @Nullable
     @BindView(R.id.recycler_call_history)
     RecyclerView recyclerCallHistory;
     @BindView(R.id.ripple_call_log)
     RippleView rippleCallLog;
     @BindView(R.id.ripple_sms)
     RippleView rippleSms;
+    @Nullable
     @BindView(R.id.text_no_history_to_show)
     TextView textNoHistoryToShow;
+    @Nullable
     @BindView(R.id.text_text_call_history)
     TextView textCallHistory;
     @BindView(R.id.ripple_invite)
@@ -299,6 +310,23 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     @BindView(R.id.frame_container)
     FrameLayout frameContainer;
 
+    @Nullable
+    @BindView(R.id.relative_profile_percentage)
+    RelativeLayout relativeProfilePercentage;
+    @Nullable
+    @BindView(R.id.text_complete_profile)
+    TextView textCompleteProfile;
+    @Nullable
+    @BindView(R.id.text_complete_profile_description)
+    TextView textCompleteProfileDescription;
+    @Nullable
+    @BindView(R.id.progress_percentage)
+    CircleProgressView progressPercentage;
+    @BindView(R.id.include_elevation)
+    View includeElevation;
+    @BindView(R.id.include_elevation_top)
+    View includeElevationTop;
+
     String callLogCloudName;
     boolean isCallLogRcpUser, isRatingUpdate = false;
     boolean isDialogCallLogInstance;
@@ -307,10 +335,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     ProfileDataOperation profileDataOperationVcard;
 
-    private Animator mCurrentAnimator;
-    private int mShortAnimationDuration;
-
-    String pmId = "", phoneBookId, contactName = "", cloudContactName = null, checkNumberFavourite =
+    String pmId = "", phoneBookId, contactName = "", contactNumber = "", cloudContactName = null, checkNumberFavourite =
             null, thumbnailUrl = "";
     boolean displayOwnProfile = false, isHideFavourite = false, isFromFavourite = false;
     int isFavourite = 0;
@@ -336,10 +361,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     String profileContactNumber;
     String hashMapKey = "";
     String uniqueContactId = "";
+    @Nullable
     @BindView(R.id.ripple_view_old_records)
     RippleView rippleViewOldRecords;
+    @Nullable
     @BindView(R.id.progressBarLoadCallLogs)
     ProgressBar progressBarLoadCallLogs;
+    @Nullable
     @BindView(R.id.button_view_old_records)
     Button buttonViewOldRecords;
     LinearLayoutManager mLinearLayoutManager;
@@ -431,7 +459,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 AppConstants.isFromReceiver = false;
             }
 
-        } else {
+        }
+//        else {
 //            if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase("[Unknown]")) {
 //                fetchAllCallLogHistory(contactName);
 //            } else {
@@ -439,7 +468,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 //                    fetchAllCallLogHistory(profileContactNumber);
 //                }
 //            }
-        }
+//        }
         if (displayOwnProfile) {
             if (pmId != null) {
                 ProfileDataOperation profileDataOperation = queryManager.getRcProfileDetail
@@ -528,7 +557,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         Intent smsIntent = new Intent(Intent.ACTION_SENDTO);
                         smsIntent.addCategory(Intent.CATEGORY_DEFAULT);
                         smsIntent.setType("vnd.android-dir/mms-sms");
-                        smsIntent.putExtra("sms_body", AppConstants.PLAY_STORE_LINK + getPackageName());
+                        smsIntent.putExtra("sms_body", AppConstants.PLAY_STORE_LINK +
+                                getPackageName());
                         smsIntent.setData(Uri.parse("sms:" + phoneNumbers.get(0).getPhoneNumber()));
                         startActivity(smsIntent);
 
@@ -804,6 +834,19 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 number = StringUtils.substring(number, 1);
                             }
 
+                            /*Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+                            sharingIntent.setType("text/plain");
+                            String shareBody;
+                            if (StringUtils.isBlank(userProfile.getPmBadge())) {
+                                shareBody = WsConstants.WS_PROFILE_VIEW_BADGE_ROOT + number;
+                            } else {
+                                shareBody = WsConstants.WS_PROFILE_VIEW_BADGE_ROOT + userProfile
+                                        .getPmBadge();
+                            }
+                            sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
+                            startActivity(Intent.createChooser(sharingIntent, getString(R.string
+                                    .str_share_contact_via)));*/
+
                             Intent shareIntent = new Intent();
                             shareIntent.setAction(Intent.ACTION_SEND);
                             shareIntent.setType("text/x-vcard");
@@ -827,11 +870,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                     targetedShareIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
                                     targetedShareIntent.setPackage(packageName);
                                     targetedShareIntents.add(targetedShareIntent);
+
                                 }
 
-                                Intent chooserIntent = Intent.createChooser(targetedShareIntents
-                                        .remove(0), getString(R.string.str_share_contact_via));
-
+                                Intent chooserIntent = Intent.createChooser(targetedShareIntents.remove(0),
+                                        getString(R.string.str_share_contact_via));
                                 chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS,
                                         targetedShareIntents.toArray(new
                                                 Parcelable[targetedShareIntents.size()]));
@@ -852,7 +895,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 if (displayOwnProfile) {
                     startActivity(new Intent(ProfileDetailActivity.this, ExistingRelationActivity.class));
                 } else {
-                    startActivity(new Intent(ProfileDetailActivity.this, ExistingRelationActivity.class));
+
+                    Intent intent = new Intent(ProfileDetailActivity.this, RCPExistingRelationActivity.class);
+                    intent.putExtra(AppConstants.EXTRA_CONTACT_NAME, contactName);
+                    intent.putExtra(AppConstants.EXTRA_CONTACT_NUMBER, contactNumber);
+                    intent.putExtra(AppConstants.EXTRA_PROFILE_IMAGE_URL, thumbnailUrl);
+                    intent.putExtra(AppConstants.EXTRA_PM_ID, pmId);
+                    startActivity(intent);
                 }
 
                 break;
@@ -1038,12 +1087,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             rawId = checkNumberFavourite;
                         }
 
-                        if(isFromNotification){
-                            if(!StringUtils.isBlank(contactName)){
-                                if(contactName.startsWith("+91")){
-                                    String contactNumber =  contactName.substring(0,13);
-                                    String isContactName =  getNameFromNumber(contactNumber);
-                                    if(StringUtils.isBlank(isContactName)){
+                        if (isFromNotification) {
+                            if (!StringUtils.isBlank(contactName)) {
+                                if (contactName.startsWith("+91")) {
+                                    String contactNumber = contactName.substring(0, 13);
+                                    String isContactName = getNameFromNumber(contactNumber);
+                                    if (StringUtils.isBlank(isContactName)) {
                                         ArrayList<String> arrayListNumber = new ArrayList<>(Arrays.asList
                                                 (this.getString(R.string.add_to_contact),
                                                         this.getString(R.string.add_to_existing_contact)));
@@ -1054,7 +1103,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                                 "", "");
                                         profileMenuOptionDialog.showDialog();
                                     }
-                                }else{
+                                } else {
                                     OptionMenuDialog optionMenu = new OptionMenuDialog(ProfileDetailActivity
                                             .this, rawId, menuType, isFavourite == 1, isFromFavourite,
                                             isCallLogRcpUser);
@@ -1063,7 +1112,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 }
 
                             }
-                        }else{
+                        } else {
                             OptionMenuDialog optionMenu = new OptionMenuDialog(ProfileDetailActivity
                                     .this, rawId, menuType, isFavourite == 1, isFromFavourite,
                                     isCallLogRcpUser);
@@ -1716,15 +1765,34 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     private void layoutVisibility() {
         if (profileActivityCallInstance) {
 //            new GetRCPNameAndProfileImage().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+            if (buttonViewOldRecords != null) {
+                buttonViewOldRecords.setTypeface(Utils.typefaceRegular(this));
+            }
+
+            if (rippleViewOldRecords != null) {
+                rippleViewOldRecords.setVisibility(View.GONE);
+                rippleViewOldRecords.setOnRippleCompleteListener(this);
+            }
+
+            if (recyclerCallHistory != null) {
+                recyclerCallHistory.setLayoutManager(mLinearLayoutManager);
+                recyclerCallHistory.setNestedScrollingEnabled(false);
+            }
+
             relativeContactDetails.setVisibility(View.GONE);
-            relativeCallHistory.setVisibility(View.VISIBLE);
+            if (relativeCallHistory != null) {
+                relativeCallHistory.setVisibility(View.VISIBLE);
+            }
             rippleCallLog.setVisibility(View.GONE);
             setCallLogHistoryDetails();
 
         } else {
 
             relativeContactDetails.setVisibility(View.VISIBLE);
-            relativeCallHistory.setVisibility(View.GONE);
+            if (relativeCallHistory != null) {
+                relativeCallHistory.setVisibility(View.GONE);
+            }
 
             if (displayOwnProfile) {
                 TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
@@ -1751,7 +1819,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     @Override
                     public void onClick(View view) {
                         if (StringUtils.length(userProfile.getPmProfileImage()) > 0) {
-                            zoomImageFromThumb(imageProfile, userProfile.getPmProfileImage());
+                            Utils.zoomImageFromThumb(ProfileDetailActivity.this, imageProfile, userProfile.getPmProfileImage(),
+                                    frameImageEnlarge, imageEnlarge, frameContainer);
                         }
 
                     }
@@ -1776,10 +1845,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 imageProfile.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if (StringUtils.length(thumbnailUrl) > 0) {
-                            zoomImageFromThumb(imageProfile, thumbnailUrl);
+                        if (StringUtils.length(userProfile.getPmProfileImage()) > 0) {
+                            Utils.zoomImageFromThumb(ProfileDetailActivity.this, imageProfile, userProfile.getPmProfileImage(),
+                                    frameImageEnlarge, imageEnlarge, frameContainer);
                         }
-
                     }
                 });
 
@@ -1878,6 +1947,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             if (displayOwnProfile) {
                 textToolbarTitle.setText(getString(R.string.title_my_profile));
                 linearCallSms.setVisibility(View.GONE);
+                relativeProfilePercentage.setVisibility(View.VISIBLE);
                 imageRightLeft.setImageResource(R.drawable.ic_action_edit);
                 rippleActionRightRight.setVisibility(View.GONE);
                 imageRightLeft.setTag(TAG_IMAGE_EDIT);
@@ -1885,6 +1955,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             } else {
                 textToolbarTitle.setText(getString(R.string.str_profile_deails));
                 linearCallSms.setVisibility(View.VISIBLE);
+                relativeProfilePercentage.setVisibility(View.GONE);
             }
 
         }
@@ -1929,6 +2000,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         textName.setTypeface(Utils.typefaceSemiBold(this));
         textDesignation.setTypeface(Utils.typefaceRegular(this));
         textOrganization.setTypeface(Utils.typefaceRegular(this));
+        textTime.setTypeface(Utils.typefaceRegular(this));
         textViewAllOrganization.setTypeface(Utils.typefaceRegular(this));
         textUserRating.setTypeface(Utils.typefaceRegular(this));
 
@@ -1943,16 +2015,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         rippleSms.setOnRippleCompleteListener(this);
         rippleInvite.setOnRippleCompleteListener(this);
 
-        buttonViewOldRecords.setTypeface(Utils.typefaceRegular(this));
+
         buttonInvite.setTypeface(Utils.typefaceRegular(this));
-        rippleViewOldRecords.setVisibility(View.GONE);
-        rippleViewOldRecords.setOnRippleCompleteListener(this);
 
         mLinearLayoutManager = new LinearLayoutManager(this);
-        recyclerCallHistory.setLayoutManager(mLinearLayoutManager);
-        recyclerCallHistory.setNestedScrollingEnabled(false);
-
-        mShortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
         Utils.setRatingColor(ProfileDetailActivity.this, ratingUser);
 
@@ -2003,146 +2069,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         initSwipe();
 
-    }
-
-    private void zoomImageFromThumb(final View thumbView, String imageUrl) {
-        // If there's an animation in progress, cancel it
-        // immediately and proceed with this one.
-        if (mCurrentAnimator != null) {
-            mCurrentAnimator.cancel();
-        }
-
-        // Load the high-resolution "zoomed-in" image.
-        Glide.with(this)
-                .load(imageUrl)
-                .placeholder(R.drawable.home_screen_profile)
-                .bitmapTransform(new CropCircleTransformation(this))
-                .error(R.drawable.home_screen_profile)
-                .into(imageEnlarge);
-
-        // Calculate the starting and ending bounds for the zoomed-in image.
-        // This step involves lots of math. Yay, math.
-        final Rect startBounds = new Rect();
-        final Rect finalBounds = new Rect();
-        final Point globalOffset = new Point();
-
-        // The start bounds are the global visible rectangle of the thumbnail,
-        // and the final bounds are the global visible rectangle of the container
-        // view. Also set the container view's offset as the origin for the
-        // bounds, since that's the origin for the positioning animation
-        // properties (X, Y).
-        thumbView.getGlobalVisibleRect(startBounds);
-        frameContainer.getGlobalVisibleRect(finalBounds, globalOffset);
-        startBounds.offset(-globalOffset.x, -globalOffset.y);
-        finalBounds.offset(-globalOffset.x, -globalOffset.y);
-
-        // Adjust the start bounds to be the same aspect ratio as the final
-        // bounds using the "center crop" technique. This prevents undesirable
-        // stretching during the animation. Also calculate the start scaling
-        // factor (the end scaling factor is always 1.0).
-        float startScale;
-        if ((float) finalBounds.width() / finalBounds.height()
-                > (float) startBounds.width() / startBounds.height()) {
-            // Extend start bounds horizontally
-            startScale = (float) startBounds.height() / finalBounds.height();
-            float startWidth = startScale * finalBounds.width();
-            float deltaWidth = (startWidth - startBounds.width()) / 2;
-            startBounds.left -= deltaWidth;
-            startBounds.right += deltaWidth;
-        } else {
-            // Extend start bounds vertically
-            startScale = (float) startBounds.width() / finalBounds.width();
-            float startHeight = startScale * finalBounds.height();
-            float deltaHeight = (startHeight - startBounds.height()) / 2;
-            startBounds.top -= deltaHeight;
-            startBounds.bottom += deltaHeight;
-        }
-
-        // Hide the thumbnail and show the zoomed-in view. When the animation
-        // begins, it will position the zoomed-in view in the place of the
-        // thumbnail.
-        thumbView.setAlpha(0f);
-        frameImageEnlarge.setVisibility(View.VISIBLE);
-
-        // Set the pivot point for SCALE_X and SCALE_Y transformations
-        // to the top-left corner of the zoomed-in view (the default
-        // is the center of the view).
-        imageEnlarge.setPivotX(0f);
-        imageEnlarge.setPivotY(0f);
-
-        // Construct and run the parallel animation of the four translation and
-        // scale properties (X, Y, SCALE_X, and SCALE_Y).
-        AnimatorSet set = new AnimatorSet();
-        set
-                .play(ObjectAnimator.ofFloat(imageEnlarge, View.X,
-                        startBounds.left, finalBounds.left))
-                .with(ObjectAnimator.ofFloat(imageEnlarge, View.Y,
-                        startBounds.top, finalBounds.top))
-                .with(ObjectAnimator.ofFloat(imageEnlarge, View.SCALE_X,
-                        startScale, 1f)).with(ObjectAnimator.ofFloat(imageEnlarge,
-                View.SCALE_Y, startScale, 1f));
-        set.setDuration(mShortAnimationDuration);
-        set.setInterpolator(new DecelerateInterpolator());
-        set.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                mCurrentAnimator = null;
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-                mCurrentAnimator = null;
-            }
-        });
-        set.start();
-        mCurrentAnimator = set;
-
-        // Upon clicking the zoomed-in image, it should zoom back down
-        // to the original bounds and show the thumbnail instead of
-        // the expanded image.
-        final float startScaleFinal = startScale;
-        imageEnlarge.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mCurrentAnimator != null) {
-                    mCurrentAnimator.cancel();
-                }
-
-                // Animate the four positioning/sizing properties in parallel,
-                // back to their original values.
-                AnimatorSet set = new AnimatorSet();
-                set.play(ObjectAnimator
-                        .ofFloat(imageEnlarge, View.X, startBounds.left))
-                        .with(ObjectAnimator
-                                .ofFloat(imageEnlarge,
-                                        View.Y, startBounds.top))
-                        .with(ObjectAnimator
-                                .ofFloat(imageEnlarge,
-                                        View.SCALE_X, startScaleFinal))
-                        .with(ObjectAnimator
-                                .ofFloat(imageEnlarge,
-                                        View.SCALE_Y, startScaleFinal));
-                set.setDuration(mShortAnimationDuration);
-                set.setInterpolator(new DecelerateInterpolator());
-                set.addListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        thumbView.setAlpha(1f);
-                        frameImageEnlarge.setVisibility(View.GONE);
-                        mCurrentAnimator = null;
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-                        thumbView.setAlpha(1f);
-                        frameImageEnlarge.setVisibility(View.GONE);
-                        mCurrentAnimator = null;
-                    }
-                });
-                set.start();
-                mCurrentAnimator = set;
-            }
-        });
     }
 
     private void getDataFromDB() {
@@ -2298,7 +2224,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             @Override
             public void onClick(View view) {
                 if (StringUtils.length(profileThumbnail) > 0) {
-                    zoomImageFromThumb(imageProfile, profileThumbnail);
+                    Utils.zoomImageFromThumb(ProfileDetailActivity.this, imageProfile,profileThumbnail,
+                            frameImageEnlarge, imageEnlarge, frameContainer);
                 }
 
             }
@@ -2449,8 +2376,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                 if (tempOrganization.size() == 1) {
                     textViewAllOrganization.setVisibility(View.GONE);
+                    textTime.setVisibility(View.VISIBLE);
                 } else {
                     textViewAllOrganization.setVisibility(View.VISIBLE);
+                    textTime.setVisibility(View.GONE);
                 }
 
                 if (arrayListOrganization.size() > 0) {
@@ -2458,14 +2387,37 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             .this, R.color.colorAccent));
                     textOrganization.setTextColor(ContextCompat.getColor(ProfileDetailActivity
                             .this, R.color.colorAccent));
+                    textTime.setTextColor(ContextCompat.getColor(ProfileDetailActivity
+                            .this, R.color.colorAccent));
                 } else {
                     textDesignation.setTextColor(ContextCompat.getColor(ProfileDetailActivity
                             .this, R.color.colorBlack));
                     textOrganization.setTextColor(ContextCompat.getColor(ProfileDetailActivity
                             .this, R.color.colorBlack));
+                    textTime.setVisibility(View.GONE);
                 }
                 textDesignation.setText(tempOrganization.get(0).getOrgJobTitle());
                 textOrganization.setText(tempOrganization.get(0).getOrgName());
+
+                if (StringUtils.equalsIgnoreCase(tempOrganization.get(0).getOrgToDate(), "")) {
+                    if (!StringUtils.isEmpty(tempOrganization.get(0).getOrgFromDate())) {
+                        String formattedFromDate = Utils.convertDateFormat(tempOrganization.get(0).getOrgFromDate(),
+                                "yyyy-MM-dd hh:mm:ss", Utils.getEventDateFormat(tempOrganization.get(0).getOrgFromDate()));
+
+                        textTime.setText(String.format("%s to Present ", formattedFromDate));
+                    } else {
+                        textTime.setVisibility(View.GONE);
+                    }
+                } else {
+                    if (!StringUtils.isEmpty(tempOrganization.get(0).getOrgFromDate()) && !StringUtils.isEmpty(tempOrganization.get(0).getOrgToDate())) {
+                        String formattedFromDate = Utils.convertDateFormat(tempOrganization.get(0).getOrgFromDate(),
+                                "yyyy-MM-dd hh:mm:ss", Utils.getEventDateFormat(tempOrganization.get(0).getOrgFromDate()));
+                        String formattedToDate = Utils.convertDateFormat(tempOrganization.get(0).getOrgToDate(),
+                                "yyyy-MM-dd hh:mm:ss", Utils.getEventDateFormat(tempOrganization.get(0).getOrgToDate()));
+
+                        textTime.setText(String.format("%s to %s ", formattedFromDate, formattedToDate));
+                    }
+                }
 
                 textViewAllOrganization.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -2503,6 +2455,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     String number = Utils.getFormattedNumber(this, arrayListPhoneNumber.get(i)
                             .getPhoneNumber());
                     arrayListCloudNumber.add(number);
+
+                    if (arrayListPhoneNumber.get(i).getPbRcpType() == IntegerConstants.RCP_TYPE_PRIMARY) {
+                        contactNumber = arrayListPhoneNumber.get(i).getPhoneNumber();
+                    }
                 }
             }
 
@@ -2996,11 +2952,161 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
 
 
+            if (displayOwnProfile && profileDetail != null) {
+                showProfilePercentage(profileDetail);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
+    private void showProfilePercentage(ProfileDataOperation profileDetail) {
+        if (progressPercentage != null) {
+            progressPercentage.setBarColor(Color.parseColor("#CCE4E1"), Color.parseColor
+                    ("#00796B"));
 
+            int percentage = 5;
+            ArrayList<String> arrayListRemainingFields = new ArrayList<>();
+            if (Utils.hasSharedPreference(ProfileDetailActivity.this, AppConstants
+                    .PREF_PROFILE_REMAINING_FIELDS)) {
+                arrayListRemainingFields.addAll(Utils.getArrayListPreference(ProfileDetailActivity
+                        .this, AppConstants.PREF_PROFILE_REMAINING_FIELDS));
+            }
+
+            if (!StringUtils.isBlank(profileDetail.getPbGender())) {
+                percentage += 5;
+                if (arrayListRemainingFields.contains(getString(R.string.str_gender))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_gender));
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_gender));
+            }
+
+            if (!StringUtils.isBlank(profileDetail.getPbProfilePhoto())) {
+                percentage += 5;
+                if (arrayListRemainingFields.contains(getString(R.string.str_profile_photo))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_profile_photo));
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_profile_photo));
+            }
+
+            if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbOrganization())) {
+                percentage += 15;
+                if (arrayListRemainingFields.contains(getString(R.string.str_organization))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_organization));
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_organization));
+            }
+
+            if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbWebAddress())) {
+                percentage += 5;
+                if (arrayListRemainingFields.contains(getString(R.string.str_website))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_website));
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_website));
+            }
+
+            if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbAddress())) {
+                percentage += 20;
+                if (arrayListRemainingFields.contains(getString(R.string.str_address))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_address));
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_address));
+            }
+
+            if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEvent())) {
+                percentage += 5;
+                if (arrayListRemainingFields.contains(getString(R.string.str_event))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_event));
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_event));
+            }
+
+            if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEmailId())) {
+                percentage += 5;
+                for (int i = 0; i < profileDetail.getPbEmailId().size(); i++) {
+                    if (profileDetail.getPbEmailId().get(i).getEmRcpType() == IntegerConstants
+                            .RCP_TYPE_PRIMARY) {
+                        percentage += 15;
+                        break;
+                    }
+                }
+                if (arrayListRemainingFields.contains(getString(R.string.str_email))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_email));
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_email));
+            }
+
+            if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbIMAccounts())) {
+                ArrayList<String> savedImAccount = new ArrayList<>();
+                for (int i = 0; i < profileDetail.getPbIMAccounts().size(); i++) {
+//                    savedImAccount.add(profileDetail.getPbIMAccounts().get(i)
+//                            .getIMAccountProtocol());
+                    String protocol = profileDetail.getPbIMAccounts().get(i)
+                            .getIMAccountProtocol();
+                    if (protocol.contains(getString(R.string.facebook)) || protocol.contains
+                            (getString(R.string.google_plus)) || protocol.contains(getString(R
+                            .string.linked_in))) {
+                        savedImAccount.add(protocol);
+                    } else {
+                        savedImAccount.add("Other");
+                    }
+
+                }
+                if (savedImAccount.contains(getString(R.string.facebook))) {
+                    percentage += 5;
+                }
+                if (savedImAccount.contains(getString(R.string.google_plus))) {
+                    percentage += 5;
+                }
+                if (savedImAccount.contains(getString(R.string.linked_in))) {
+                    percentage += 5;
+                }
+                if (savedImAccount.contains("Other"))  {
+                    percentage += 5;
+                }
+                if (arrayListRemainingFields.contains(getString(R.string.str_social_contact))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_social_contact));
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_social_contact));
+            }
+
+            Utils.setArrayListPreference(ProfileDetailActivity.this, AppConstants
+                    .PREF_PROFILE_REMAINING_FIELDS, arrayListRemainingFields);
+
+            if (percentage < 100) {
+                relativeProfilePercentage.setVisibility(View.VISIBLE);
+
+                textCompleteProfile.setTypeface(Utils.typefaceSemiBold(ProfileDetailActivity.this));
+                textCompleteProfileDescription.setTypeface(Utils.typefaceRegular
+                        (ProfileDetailActivity.this));
+
+                includeElevation.setRotation(180);
+                includeElevation.setAlpha(0.6f);
+                includeElevationTop.setAlpha(0.6f);
+
+                progressPercentage.setValueAnimated(percentage);
+
+                if (arrayListRemainingFields.size() > 0) {
+                    Random random = new Random();
+
+                    textCompleteProfileDescription.setText(String.format(getString(R.string
+                            .str_complete_profile_description), arrayListRemainingFields.get
+                            (random.nextInt(arrayListRemainingFields.size()))));
+                }
+
+            } else {
+                relativeProfilePercentage.setVisibility(View.GONE);
+            }
+        }
     }
 
     private void showAllOrganizations(ArrayList<ProfileDataOperationOrganization>
@@ -3017,13 +3123,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
 
-        TextView textDialogTitle = (TextView) dialog.findViewById(R.id.text_dialog_title);
+        TextView textDialogTitle = dialog.findViewById(R.id.text_dialog_title);
         textDialogTitle.setText(getString(R.string.title_all_organizations));
         textDialogTitle.setTypeface(Utils.typefaceSemiBold(this));
 
-        Button buttonRight = (Button) dialog.findViewById(R.id.button_right);
-        RippleView rippleRight = (RippleView) dialog.findViewById(R.id.ripple_right);
-        RippleView rippleLeft = (RippleView) dialog.findViewById(R.id.ripple_left);
+        Button buttonRight = dialog.findViewById(R.id.button_right);
+        RippleView rippleRight = dialog.findViewById(R.id.ripple_right);
+        RippleView rippleLeft = dialog.findViewById(R.id.ripple_left);
 
         rippleLeft.setVisibility(View.GONE);
 
@@ -3037,7 +3143,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
         });
 
-        RecyclerView recyclerViewDialogList = (RecyclerView) dialog.findViewById(R.id
+        RecyclerView recyclerViewDialogList = dialog.findViewById(R.id
                 .recycler_view_dialog_list);
         recyclerViewDialogList.setLayoutManager(new LinearLayoutManager(this));
 
@@ -3795,7 +3901,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
 //    @SuppressWarnings("unused")
 //    private void selectContactDialog(String contactName,
-//                                     final ArrayList<ProfileDataOperationPhoneNumber> phoneNumbers,
+//                                     final ArrayList<ProfileDataOperationPhoneNumber>
+// phoneNumbers,
 //                                     ArrayList<ProfileDataOperationEmail> emailIds) {
 //
 //        final ArrayList<Object> arrayList = new ArrayList<>();
@@ -4097,9 +4204,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 Address address = new Address();
                 address.setAmRecordIndexId(arrayListAddress.get(j).getAddId());
                 address.setAmState(arrayListAddress.get(j).getState());
+                address.setAmStateId(arrayListAddress.get(j).getStateId());
                 address.setAmCity(arrayListAddress.get(j).getCity());
+                address.setAmCityId(arrayListAddress.get(j).getCityId());
                 address.setAmAddressPrivacy(String.valueOf(arrayListAddress.get(j).getAddPublic()));
                 address.setAmCountry(arrayListAddress.get(j).getCountry());
+                address.setAmCountryId(arrayListAddress.get(j).getCountryId());
                 address.setAmFormattedAddress(arrayListAddress.get(j).getFormattedAddress());
                 address.setAmNeighborhood(arrayListAddress.get(j).getNeighborhood());
                 address.setAmPostCode(arrayListAddress.get(j).getPostCode());
@@ -4297,7 +4407,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 email.setEmRecordIndexId(arrayListEmailId.get(i).getEmId());
 
                 if (arrayListPBEmailAddress.size() > 0)
-                    if (arrayListPBEmailAddress.contains(arrayListEmailId.get(i).getOriginalEmail())) {
+                    if (arrayListPBEmailAddress.contains(arrayListEmailId.get(i).getOriginalEmail
+                            ())) {
                         email.setEmEmailAddress(arrayListEmailId.get(i).getOriginalEmail());
                     } else {
                         email.setEmEmailAddress(arrayListEmailId.get(i).getEmEmailId());
@@ -4339,6 +4450,24 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         .getOrgFromDate());
                 organization.setOmOrganizationToDate(arrayListOrganization.get(i).getOrgToDate());
                 organization.setOmIsPrivate(arrayListOrganization.get(i).getIsPrivate());
+
+                if (arrayListOrganization.get(i).getIsVerify() != null)
+                    if (arrayListOrganization.get(i).getIsVerify() == IntegerConstants.RCP_TYPE_PRIMARY) {
+                        organization.setOmOrganizationType(arrayListOrganization.get(i).getOrgIndustryType());
+                        organization.setOmEnterpriseOrgId(arrayListOrganization.get(i).getOrgEntId());
+                        organization.setOmOrganizationLogo(arrayListOrganization.get(i).getOrgLogo());
+                    } else {
+                        organization.setOmOrganizationType("");
+                        organization.setOmEnterpriseOrgId("");
+                        organization.setOmOrganizationLogo("");
+                    }
+                else {
+                    organization.setOmOrganizationType("");
+                    organization.setOmEnterpriseOrgId("");
+                    organization.setOmOrganizationLogo("");
+                }
+
+                organization.setOmIsVerified(String.valueOf(arrayListOrganization.get(i).getIsVerify()));
                 organization.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 organizationList.add(organization);
             }
