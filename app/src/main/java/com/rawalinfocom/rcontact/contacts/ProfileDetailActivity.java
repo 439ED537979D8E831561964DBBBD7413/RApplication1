@@ -322,8 +322,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     @Nullable
     @BindView(R.id.progress_percentage)
     CircleProgressView progressPercentage;
+    @Nullable
     @BindView(R.id.include_elevation)
     View includeElevation;
+    @Nullable
     @BindView(R.id.include_elevation_top)
     View includeElevationTop;
 
@@ -1845,8 +1847,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 imageProfile.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if (StringUtils.length(userProfile.getPmProfileImage()) > 0) {
-                            Utils.zoomImageFromThumb(ProfileDetailActivity.this, imageProfile, userProfile.getPmProfileImage(),
+                        if (StringUtils.length(thumbnailUrl) > 0) {
+                            Utils.zoomImageFromThumb(ProfileDetailActivity.this, imageProfile, thumbnailUrl,
                                     frameImageEnlarge, imageEnlarge, frameContainer);
                         }
                     }
