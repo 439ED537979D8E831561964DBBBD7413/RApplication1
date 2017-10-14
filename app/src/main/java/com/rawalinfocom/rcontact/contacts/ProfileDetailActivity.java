@@ -2226,7 +2226,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             @Override
             public void onClick(View view) {
                 if (StringUtils.length(profileThumbnail) > 0) {
-                    Utils.zoomImageFromThumb(ProfileDetailActivity.this, imageProfile,profileThumbnail,
+                    Utils.zoomImageFromThumb(ProfileDetailActivity.this, imageProfile, profileThumbnail,
                             frameImageEnlarge, imageEnlarge, frameContainer);
                 }
 
@@ -3071,7 +3071,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 if (savedImAccount.contains(getString(R.string.linked_in))) {
                     percentage += 5;
                 }
-                if (savedImAccount.contains("Other"))  {
+                if (savedImAccount.contains("Other")) {
                     percentage += 5;
                 }
                 if (arrayListRemainingFields.contains(getString(R.string.str_social_contact))) {
