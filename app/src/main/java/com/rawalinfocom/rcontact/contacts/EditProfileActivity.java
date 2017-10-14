@@ -97,7 +97,6 @@ import com.rawalinfocom.rcontact.helper.imgcrop.CropImage;
 import com.rawalinfocom.rcontact.helper.imgcrop.CropImageView;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.Address;
-import com.rawalinfocom.rcontact.model.City;
 import com.rawalinfocom.rcontact.model.Country;
 import com.rawalinfocom.rcontact.model.Email;
 import com.rawalinfocom.rcontact.model.Event;
@@ -733,7 +732,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 if (data.getStringExtra("isBack").equalsIgnoreCase("0")) {
                     //If everything went Ok, change to another activity.
 
-                    ProfileDataOperationOrganization organization = new ProfileDataOperationOrganization();
+                    ProfileDataOperationOrganization organization = new
+                            ProfileDataOperationOrganization();
                     if (organisationPosition == (arrayListOrganizationObject.size())) {
                         organization.setOrgName(data.getStringExtra("organizationName"));
                         organization.setOrgIndustryType(data.getStringExtra("organizationType"));
@@ -750,8 +750,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                     } else {
 
-                        ProfileDataOperationOrganization operationOrganization = (ProfileDataOperationOrganization)
-                                arrayListOrganizationObject.get(organisationPosition);
+                        ProfileDataOperationOrganization operationOrganization =
+                                (ProfileDataOperationOrganization)
+                                        arrayListOrganizationObject.get(organisationPosition);
 
                         organization.setOrgName(data.getStringExtra("organizationName"));
                         organization.setOrgIndustryType(data.getStringExtra("organizationType"));
@@ -777,10 +778,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     }
 
                 } else {
-                    Utils.showErrorSnackBar(this, relativeRootEditProfile, "You didn't select any Organization!");
+                    Utils.showErrorSnackBar(this, relativeRootEditProfile, "You didn't select any" +
+                            " Organization!");
                 }
             } else {
-                Utils.showErrorSnackBar(this, relativeRootEditProfile, "You didn't select any Organization!");
+                Utils.showErrorSnackBar(this, relativeRootEditProfile, "You didn't select any " +
+                        "Organization!");
             }
         }
     }
@@ -1223,13 +1226,29 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     View linearAddress = linearAddressDetails.getChildAt(position);
                     final Spinner spinnerState = linearAddress.findViewById(R.id.spinner_state);
                     final EditText street = linearAddress.findViewById(R.id.input_street);
+                    final TextView textImageMapMarker = linearAddress.findViewById(R.id
+                            .text_image_map_marker);
+                    final TextView inputIsAddressModified = linearAddress.findViewById(R.id
+                            .input_is_address_modified);
 
                     final ArrayList<State> stateList = stateResponse.getArrayListState();
 
                     final ArrayList<String> arrayListState = new ArrayList<>();
+                    final ArrayList<String> arrayListStateId = new ArrayList<>();
                     arrayListState.add(getString(R.string.hint_state_required));
                     for (int i = 0; i < stateList.size(); i++) {
                         arrayListState.add(stateList.get(i).getStateName());
+                        arrayListStateId.add(stateList.get(i).getStateId());
+                    }
+
+                    int selectedIndex = 0;
+                    if (spinnerState.getTag(R.id.spinner_state_id) != null && !StringUtils
+                            .isEmpty(spinnerState.getTag(R.id.spinner_state_id).toString())) {
+                        if (arrayListStateId.contains(spinnerState.getTag(R.id.spinner_state_id)
+                                .toString())) {
+                            selectedIndex = arrayListStateId.indexOf(spinnerState.getTag(R.id
+                                    .spinner_state_id).toString());
+                        }
                     }
 
                     RSpinnerAdapter stateSpinnerAdapter = new RSpinnerAdapter(this, R.layout
@@ -1240,6 +1259,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             .list_item_spinner_call_log);
                     stateSpinnerAdapter.setHintColor(street.getHintTextColors());
                     spinnerState.setAdapter(stateSpinnerAdapter);
+
+                    spinnerState.setSelection(selectedIndex + 1);
 
                    /* if (!StringUtils.isBlank(stateName)) {
                         int statePosition = stateSpinnerAdapter.getPosition(stateName);
@@ -1256,14 +1277,22 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         public void onItemSelected(AdapterView<?> adapterView, View view, int i,
                                                    long l) {
                             if (i != 0) {
-                               /* String cityName = "";
-                                if (positionSplit.length > 3) {
-                                    cityName = positionSplit[3];
-                                }*/
+
                                 String stateId = stateList.get(i - 1).getStateId();
+
+                                if (spinnerState.getTag(R.id.spinner_state_id) != null
+                                        && !StringUtils.equalsAnyIgnoreCase(spinnerState.getTag(R.id
+                                        .spinner_state_id).toString(), stateId)) {
+                                    textImageMapMarker.setTextColor(defaultMarkerColor);
+                                    inputIsAddressModified.setText("true");
+                                    isUpdated = true;
+                                }
+
+
                                 spinnerState.setTag(R.id.spinner_state_id, stateId);
                                 /*getCityList(stateId, String.valueOf
                                         (position));*/
+
                             }
                         }
 
@@ -1289,7 +1318,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             //</editor-fold>
 
             // <editor-fold desc="REQ_CITY_DETAILS">
-            if (serviceType.contains(WsConstants.REQ_CITY_DETAILS)) {
+            /*if (serviceType.contains(WsConstants.REQ_CITY_DETAILS)) {
                 Utils.hideProgressDialog();
                 WsResponseObject cityResponse = (WsResponseObject) data;
                 if (cityResponse != null && StringUtils.equalsIgnoreCase
@@ -1297,13 +1326,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                     String[] positionSplit = serviceType.split(":");
                     final int position = Integer.parseInt(positionSplit[1]);
-                    /*String cityName = "";
+                    *//*String cityName = "";
                     if (positionSplit.length > 2) {
                         cityName = positionSplit[2];
-                    }*/
+                    }*//*
 
                     View linearAddress = linearAddressDetails.getChildAt(position);
-                    final Spinner spinnerCity = linearAddress.findViewById(R.id.spinner_city);
+//                    final Spinner spinnerCity = linearAddress.findViewById(R.id.spinner_city);
                     final EditText street = linearAddress.findViewById(R.id.input_street);
 
                     final ArrayList<City> cityList = cityResponse.getArrayListCity();
@@ -1323,16 +1352,16 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     citySpinnerAdapter.setHintColor(street.getHintTextColors());
                     spinnerCity.setAdapter(citySpinnerAdapter);
 
-                    /*if (!StringUtils.isBlank(cityName)) {
+                    *//*if (!StringUtils.isBlank(cityName)) {
                         int cityPosition = citySpinnerAdapter.getPosition(cityName);
                         if (cityPosition != -1) {
                             spinnerCity.setSelection(cityPosition);
                         } else {
                             spinnerCity.setSelection(0);
                         }
-                    }*/
+                    }*//*
 
-                    spinnerCity.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener
+                    *//*spinnerCity.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener
                             () {
                         @Override
                         public void onItemSelected(AdapterView<?> adapterView, View view, int i,
@@ -1347,7 +1376,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         public void onNothingSelected(AdapterView<?> adapterView) {
 
                         }
-                    });
+                    });*//*
 
                 } else {
                     if (cityResponse != null) {
@@ -1360,7 +1389,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                 .string.msg_try_later));
                     }
                 }
-            }
+            }*/
             //</editor-fold>
 
         } else {
@@ -1890,7 +1919,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             .input_designation_name);
 
                     // TextView textOrgLogo = linearOrganization.findViewById(R.id.text_org_logo);
-                    TextView textEnterpriseOrgId = linearOrganization.findViewById(R.id.text_enterprise_org_id);
+                    TextView textEnterpriseOrgId = linearOrganization.findViewById(R.id
+                            .text_enterprise_org_id);
                     TextView textOrgName = linearOrganization.findViewById(R.id.text_org_name);
 
                     EditText inputFromDate = linearOrganization.findViewById(R.id.input_from_date);
@@ -2111,11 +2141,11 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                    /* EditText country = linearAddress.findViewById(R.id
                             .input_country);
-                    EditText state = linearAddress.findViewById(R.id.input_state);
-                    EditText city = linearAddress.findViewById(R.id.input_city);*/
+                    EditText state = linearAddress.findViewById(R.id.input_state);*/
+                    EditText city = linearAddress.findViewById(R.id.input_city);
                     Spinner country = linearAddress.findViewById(R.id.spinner_country);
                     Spinner state = linearAddress.findViewById(R.id.spinner_state);
-                    Spinner city = linearAddress.findViewById(R.id.spinner_city);
+//                    Spinner city = linearAddress.findViewById(R.id.spinner_city);
                     EditText street = linearAddress.findViewById(R.id.input_street);
                     EditText neighborhood = linearAddress.findViewById(R.id.input_neighborhood);
                     EditText pinCode = linearAddress.findViewById(R.id.input_pin_code);
@@ -2133,7 +2163,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                     String countryName = country.getSelectedItem().toString().trim();
                     String stateName = state.getSelectedItem().toString().trim();
-                    String cityName = city.getSelectedItem().toString().trim();
+                    String cityName = city.getText().toString().trim();
                     String streetName = street.getText().toString().trim();
                     String neighborhoodName = neighborhood.getText().toString().trim();
                     String pinCodeName = pinCode.getText().toString().trim();
@@ -2150,10 +2180,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         address.setStateId(Integer.valueOf(state.getTag(R.id.spinner_state_id)
                                 .toString()));
                     }
-                    if (city.getTag(R.id.spinner_city_id) != null) {
+                    /*if (city.getTag(R.id.spinner_city_id) != null) {
                         address.setCityId(Integer.valueOf(city.getTag(R.id.spinner_city_id).toString
                                 ()));
-                    }
+                    }*/
 
                     address.setStreet(streetName);
                     address.setNeighborhood(neighborhoodName);
@@ -2175,11 +2205,11 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     }
 
                     if (country.getSelectedItemPosition() != 0 || state.getSelectedItemPosition()
-                            != 0 || city.getSelectedItemPosition() != 0
+                            != 0 || !StringUtils.isBlank(address.getCity())
                             || !StringUtils.isBlank(address.getStreet())) {
                         if (country.getSelectedItemPosition() != 0) {
                             if (state.getSelectedItemPosition() != 0) {
-                                if (city.getSelectedItemPosition() != 0) {
+                                if (!StringUtils.isBlank(address.getCity())) {
                                     if (!StringUtils.isBlank(address.getStreet())) {
                                         if (!StringUtils.isBlank(address.getGoogleLatLong().get(0))
                                                 && !StringUtils.isBlank(address.getGoogleLatLong
@@ -3301,16 +3331,19 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
             organization.setOrgFromDate(formattedFromDate);
             organization.setOrgToDate(formattedToDate);
-            organization.setOrgJobTitle(arrayListOrganization.get(i).getOmOrganizationDesignation());
+            organization.setOrgJobTitle(arrayListOrganization.get(i).getOmOrganizationDesignation
+                    ());
             organization.setOrgId(arrayListOrganization.get(i).getOmRecordIndexId());
             organization.setOrgEntId(arrayListOrganization.get(i).getOmEnterpriseOrgId());
             organization.setOrgLogo(arrayListOrganization.get(i).getOmOrganizationLogo());
             organization.setOrgRcpType(arrayListOrganization.get(i).getOmOrganizationLogo());
-            organization.setIsCurrent(Integer.parseInt(arrayListOrganization.get(i).getOmIsCurrent()));
+            organization.setIsCurrent(Integer.parseInt(arrayListOrganization.get(i)
+                    .getOmIsCurrent()));
             organization.setOrgIndustryType(arrayListOrganization.get(i).getOmOrganizationType());
 
             if (StringUtils.length(arrayListOrganization.get(i).getOmIsVerified()) > 0) {
-                organization.setIsVerify(Integer.parseInt(arrayListOrganization.get(i).getOmIsVerified()));
+                organization.setIsVerify(Integer.parseInt(arrayListOrganization.get(i)
+                        .getOmIsVerified()));
             } else {
                 organization.setIsVerify(0);
             }
@@ -3372,8 +3405,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             for (int i = 0; i < linearAddressDetails.getChildCount(); i++) {
                 View linearAddress = linearAddressDetails.getChildAt(i);
                 /*EditText inputCountry = linearAddress.findViewById(R.id.input_country);
-                EditText inputState = linearAddress.findViewById(R.id.input_state);
-                EditText inputCity = linearAddress.findViewById(R.id.input_city);*/
+                EditText inputState = linearAddress.findViewById(R.id.input_state);*/
+                EditText inputCity = linearAddress.findViewById(R.id.input_city);
                 EditText inputStreet = linearAddress.findViewById(R.id.input_street);
                 EditText inputNeighborhood = linearAddress.findViewById(R.id.input_neighborhood);
                 EditText inputPinCode = linearAddress.findViewById(R.id.input_pin_code);
@@ -3382,8 +3415,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 TextView textImageMapMarker = linearAddress.findViewById(R.id
                         .text_image_map_marker);
                 /*setAddressTextWatcher(inputCountry, textImageMapMarker, inputIsAddressModified);
-                setAddressTextWatcher(inputState, textImageMapMarker, inputIsAddressModified);
-                setAddressTextWatcher(inputCity, textImageMapMarker, inputIsAddressModified);*/
+                setAddressTextWatcher(inputState, textImageMapMarker, inputIsAddressModified);*/
+                setAddressTextWatcher(inputCity, textImageMapMarker, inputIsAddressModified);
                 setAddressTextWatcher(inputStreet, textImageMapMarker, inputIsAddressModified);
                 setAddressTextWatcher(inputNeighborhood, textImageMapMarker,
                         inputIsAddressModified);
@@ -3399,13 +3432,15 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         for (int i = 0; i < linearAddressDetails.getChildCount(); i++) {
             View linearView = linearAddressDetails.getChildAt(i);
             /*EditText inputCountry = linearView.findViewById(R.id.input_country);
-            EditText inputState = linearView.findViewById(R.id.input_state);
-            EditText inputCity = linearView.findViewById(R.id.input_city);*/
+            EditText inputState = linearView.findViewById(R.id.input_state);*/
+            EditText inputCity = linearView.findViewById(R.id.input_city);
             EditText inputStreet = linearView.findViewById(R.id.input_street);
             TextView inputLatitude = linearView.findViewById(R.id.input_latitude);
             TextView inputLongitude = linearView.findViewById(R.id.input_longitude);
-            if (StringUtils.length(StringUtils.trimToEmpty(inputStreet.getText().toString()))
+            if (StringUtils.length(StringUtils.trimToEmpty(inputCity.getText().toString()))
                     < 1 ||
+                    StringUtils.length(StringUtils.trimToEmpty(inputStreet.getText().toString()))
+                            < 1 ||
                     StringUtils.length(StringUtils.trimToEmpty(inputLatitude.getText().toString()))
                             < 1 ||
                     StringUtils.length(StringUtils.trimToEmpty(inputLongitude.getText().toString()))
@@ -3475,7 +3510,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     .input_designation_name);
 
             TextView textOrgLogo = linearOrganization.findViewById(R.id.text_org_logo);
-            TextView textEnterpriseOrgId = linearOrganization.findViewById(R.id.text_enterprise_org_id);
+            TextView textEnterpriseOrgId = linearOrganization.findViewById(R.id
+                    .text_enterprise_org_id);
             TextView textIsVerified = linearOrganization.findViewById(R.id.text_is_verified);
             TextView textOrgName = linearOrganization.findViewById(R.id.text_org_name);
             TextView textOrgType = linearOrganization.findViewById(R.id.text_org_type);
@@ -3951,9 +3987,11 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase(getString(R.string
                     .pinterest))) {
                 imageViewSocialIcon.setImageResource(R.drawable.ico_pinterest_svg);
-            } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase(getString(R.string.other))) {
+            } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase(getString(R.string
+                    .other))) {
                 imageViewSocialIcon.setImageResource(R.drawable.ico_other_svg);
-            } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase(getString(R.string.custom))) {
+            } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase(getString(R.string
+                    .custom))) {
                 imageViewSocialIcon.setImageResource(R.drawable.ico_other_svg);
             } else {
                 imageViewSocialIcon.setImageResource(R.drawable.ico_other_svg);
@@ -4089,7 +4127,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 organisationPosition = (int) view.getTag();
                 addOrganizationDetailsToList();
 
-                Intent intent = new Intent(EditProfileActivity.this, EnterPriseOrganizationListActivity.class);
+                Intent intent = new Intent(EditProfileActivity.this,
+                        EnterPriseOrganizationListActivity.class);
                 startActivityForResult(intent, 201);// Activity is started with requestCode
             }
         });
@@ -4107,18 +4146,25 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             textOrgLogo.setText(organization.getOrgLogo());
             textEnterpriseOrgId.setText(organization.getOrgEntId());
 
-            if (MoreObjects.firstNonNull(organization.getIsVerify(), 0) == IntegerConstants.RCP_TYPE_PRIMARY) {
+            if (MoreObjects.firstNonNull(organization.getIsVerify(), 0) == IntegerConstants
+                    .RCP_TYPE_PRIMARY) {
 
-                String s = Utils.setMultipleTypeface(EditProfileActivity.this, organization.getOrgName() + " <font color" +
-                        "='#00796B'>" + getString(R.string.im_icon_verify) + "</font><br>", 0, (StringUtils.length
-                        (organization.getOrgName()) + 1), ((StringUtils.length(organization.getOrgName()) + 1) + 1)).toString();
+                String s = Utils.setMultipleTypeface(EditProfileActivity.this, organization
+                                .getOrgName() + " <font color" +
+                                "='#00796B'>" + getString(R.string.im_icon_verify) +
+                                "</font><br>", 0,
+                        (StringUtils.length
+                                (organization.getOrgName()) + 1), ((StringUtils.length(organization
+                                .getOrgName()) + 1) + 1)).toString();
 
                 inputCompanyName.setText(Html.fromHtml(s));
                 textIsVerified.setText(String.valueOf(organization.getIsVerify()));
 
             } else {
-                inputCompanyName.setText(Html.fromHtml("<font color='#00796B'> " + organization.getOrgName() + "</font>"));
-//                inputCompanyName.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ico_relation_single_tick_svg, 0);
+                inputCompanyName.setText(Html.fromHtml("<font color='#00796B'> " + organization
+                        .getOrgName() + "</font>"));
+//                inputCompanyName.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable
+// .ico_relation_single_tick_svg, 0);
                 textIsVerified.setText(String.valueOf(0));
             }
 
@@ -4223,7 +4269,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         final EditText inputState = view.findViewById(R.id.input_state);
         final Spinner spinnerState = view.findViewById(R.id.spinner_state);
         final EditText inputCity = view.findViewById(R.id.input_city);
-        final Spinner spinnerCity = view.findViewById(R.id.spinner_city);
+//        final Spinner spinnerCity = view.findViewById(R.id.spinner_city);
         final EditText inputStreet = view.findViewById(R.id.input_street);
         final EditText inputNeighborhood = view.findViewById(R.id.input_neighborhood);
         final EditText inputPinCode = view.findViewById(R.id.input_pin_code);
@@ -4238,6 +4284,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         final RelativeLayout relativeRowEditProfile = view.findViewById(R.id
                 .relative_row_edit_profile);
 
+        inputCity.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
         inputStreet.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
         inputNeighborhood.setInputType(InputType.TYPE_CLASS_TEXT | InputType
                 .TYPE_TEXT_FLAG_CAP_WORDS);
@@ -4251,10 +4298,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
 //        inputCountry.setHint(R.string.hint_country_required);
 //        inputState.setHint(R.string.hint_state_required);
-//        inputCity.setHint(R.string.hint_city_town_required);
+        inputCity.setHint(R.string.hint_city_town_required);
         spinnerCountry.setPromptId(R.string.hint_country_required);
         spinnerState.setPromptId(R.string.hint_state_required);
-        spinnerCity.setPromptId(R.string.hint_city_town_required);
+//        spinnerCity.setPromptId(R.string.hint_city_town_required);
         inputStreet.setHint(R.string.hint_address_line_1_required);
         inputNeighborhood.setHint(R.string.hint_address_line_2_optional);
         inputPinCode.setHint(R.string.hint_pincode_optional);
@@ -4307,7 +4354,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         stateSpinnerAdapter.setHintColor(inputStreet.getHintTextColors());
         spinnerState.setAdapter(stateSpinnerAdapter);
 
-        final ArrayList<String> arrayListCity = new ArrayList<>();
+        /*final ArrayList<String> arrayListCity = new ArrayList<>();
         arrayListCity.add(getString(R.string.hint_city_town_required));
 
         RSpinnerAdapter citySpinnerAdapter = new RSpinnerAdapter(this, R.layout
@@ -4316,13 +4363,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 .regularFontColor));
         citySpinnerAdapter.setDropDownViewResource(R.layout.list_item_spinner_call_log);
         citySpinnerAdapter.setHintColor(inputStreet.getHintTextColors());
-        spinnerCity.setAdapter(citySpinnerAdapter);
+        spinnerCity.setAdapter(citySpinnerAdapter);*/
 
         if (detailObject != null) {
             ProfileDataOperationAddress address = (ProfileDataOperationAddress) detailObject;
 //            inputCountry.setText(address.getCountry());
 //            inputState.setText(address.getState());
-//            inputCity.setText(address.getCity());
+            inputCity.setText(address.getCity());
 
             ArrayList<String> countryList = new ArrayList<>();
             countryList.addAll(tableCountryMaster.getAllCountryName());
@@ -4338,9 +4385,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             spinnerState.setTag(R.id.spinner_state_id, address.getStateId());
             spinnerState.setSelection(stateSpinnerAdapter.getPosition(address.getState()));
 
-            arrayListCity.add(address.getCity());
-            spinnerCity.setTag(R.id.spinner_city_id, address.getCityId());
-            spinnerCity.setSelection(citySpinnerAdapter.getPosition(address.getCity()));
+//            arrayListCity.add(address.getCity());
+//            spinnerCity.setTag(R.id.spinner_city_id, address.getCityId());
+//            spinnerCity.setSelection(citySpinnerAdapter.getPosition(address.getCity()));
 
             inputStreet.setText(address.getStreet());
             inputNeighborhood.setText(address.getNeighborhood());
@@ -4367,7 +4414,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         } else {
 //            setAddressTextWatcher(inputCountry, textImageMapMarker, inputIsAddressModified);
 //            setAddressTextWatcher(inputState, textImageMapMarker, inputIsAddressModified);
-//            setAddressTextWatcher(inputCity, textImageMapMarker, inputIsAddressModified);
+            setAddressTextWatcher(inputCity, textImageMapMarker, inputIsAddressModified);
             setAddressTextWatcher(inputStreet, textImageMapMarker, inputIsAddressModified);
             setAddressTextWatcher(inputNeighborhood, textImageMapMarker, inputIsAddressModified);
             setAddressTextWatcher(inputPinCode, textImageMapMarker, inputIsAddressModified);
@@ -4390,6 +4437,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     spinnerCountry.setTag(R.id.spinner_country_id, countryId);
                     /*getStateList(countryId, String.valueOf(spinnerCountry.getTag(R.id
                             .spinner_country_position)));*/
+                    textImageMapMarker.setTextColor(defaultMarkerColor);
+                    inputIsAddressModified.setText("true");
+                    isUpdated = true;
                 }
             }
 
@@ -4402,7 +4452,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         spinnerState.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
                     if (spinnerCountry.getSelectedItemPosition() != 0) {
                         getStateList(tableCountryMaster.getCountryIdFromName(spinnerCountry
                                 .getSelectedItem().toString()).getCountryId(), String.valueOf
@@ -4413,7 +4463,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             }
         });
 
-        spinnerCity.setOnTouchListener(new View.OnTouchListener() {
+        /*spinnerCity.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
@@ -4425,7 +4475,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 }
                 return false;
             }
-        });
+        });*/
 
         imageViewDelete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -4435,11 +4485,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     linearAddressDetails.removeView(relativeRowEditProfile);
                 } else if (linearAddressDetails.getChildCount() == 1) {
                    /* inputCountry.getText().clear();
-                    inputState.getText().clear();
-                    inputCity.getText().clear();*/
+                    inputState.getText().clear();*/
+                    inputCity.getText().clear();
                     spinnerCountry.setSelection(0);
                     spinnerState.setSelection(0);
-                    spinnerCity.setSelection(0);
                     inputStreet.getText().clear();
                     inputNeighborhood.getText().clear();
                     inputPinCode.getText().clear();
@@ -4456,18 +4505,18 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 TextView textLatitude = view.findViewById(R.id.input_latitude);
                 TextView textLongitude = view.findViewById(R.id.input_longitude);
                 /*EditText country = view.findViewById(R.id.input_country);
-                EditText state = view.findViewById(R.id.input_state);
-                EditText city = view.findViewById(R.id.input_city);*/
+                EditText state = view.findViewById(R.id.input_state);*/
+                EditText city = view.findViewById(R.id.input_city);
                 Spinner country = view.findViewById(R.id.spinner_country);
                 Spinner state = view.findViewById(R.id.spinner_state);
-                Spinner city = view.findViewById(R.id.spinner_city);
+//                Spinner city = view.findViewById(R.id.spinner_city);
                 EditText street = view.findViewById(R.id.input_street);
                 EditText neighborhood = view.findViewById(R.id.input_neighborhood);
                 EditText pinCode = view.findViewById(R.id.input_pin_code);
 
                 String countryName = country.getSelectedItem().toString();
                 String stateName = state.getSelectedItem().toString();
-                String cityName = city.getSelectedItem().toString();
+                String cityName = city.getText().toString();
                 String streetName = street.getText().toString();
                 String neighborhoodName = neighborhood.getText().toString();
                 String pinCodeName = pinCode.getText().toString();
@@ -5176,10 +5225,14 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 organization.setOmIsCurrent(String.valueOf(arrayListOrganization.get(i)
                         .getIsCurrent()));
                 if (arrayListOrganization.get(i).getIsVerify() != null)
-                    if (arrayListOrganization.get(i).getIsVerify() == IntegerConstants.RCP_TYPE_PRIMARY) {
-                        organization.setOmOrganizationType(arrayListOrganization.get(i).getOrgIndustryType());
-                        organization.setOmEnterpriseOrgId(arrayListOrganization.get(i).getOrgEntId());
-                        organization.setOmOrganizationLogo(arrayListOrganization.get(i).getOrgLogo());
+                    if (arrayListOrganization.get(i).getIsVerify() == IntegerConstants
+                            .RCP_TYPE_PRIMARY) {
+                        organization.setOmOrganizationType(arrayListOrganization.get(i)
+                                .getOrgIndustryType());
+                        organization.setOmEnterpriseOrgId(arrayListOrganization.get(i)
+                                .getOrgEntId());
+                        organization.setOmOrganizationLogo(arrayListOrganization.get(i)
+                                .getOrgLogo());
                     } else {
                         organization.setOmOrganizationType("");
                         organization.setOmEnterpriseOrgId("");
@@ -5426,7 +5479,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
     }
 
-    private void getCityList(String stateId, String position) {
+    /*private void getCityList(String stateId, String position) {
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), null, null,
@@ -5440,7 +5493,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     .getString(R.string.msg_no_network));
         }
 
-    }
+    }*/
 
     //</editor-fold>
 
