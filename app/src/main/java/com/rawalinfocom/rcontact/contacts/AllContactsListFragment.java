@@ -469,9 +469,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     } else {
                         startSync();
                     }
-
-                } else {
-                    startSync();
                 }
                 //</editor-fold>
             } else {
