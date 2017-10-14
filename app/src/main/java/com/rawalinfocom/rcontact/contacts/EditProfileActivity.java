@@ -1742,29 +1742,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                 ArrayList<ProfileDataOperationEmail> arrayListFinalEmailAccount = new ArrayList<>();
 
-//                TableEmailMaster tableEmailMaster = new TableEmailMaster(databaseHandler);
-
-//                ArrayList<Email> arrayListEmail = tableEmailMaster.getEmailsFromPmId(Integer
-// .parseInt
-//                        (getUserPmId()));
-//                ArrayList<ProfileDataOperationEmail> arrayListNewEmailAccount = new ArrayList<>();
-//
-//                for (int i = 0; i < arrayListEmail.size(); i++) {
-//
-//                    if (!SocialEmailList.contains(arrayListEmail.get(i).getEmEmailAddress())) {
-//                        ProfileDataOperationEmail email = new ProfileDataOperationEmail();
-//                        email.setEmEmailId(arrayListEmail.get(i).getEmEmailAddress());
-//                        email.setEmType(arrayListEmail.get(i).getEmEmailType());
-//                        email.setEmId(arrayListEmail.get(i).getEmRecordIndexId());
-//                        email.setEmPublic(Integer.parseInt(arrayListEmail.get(i)
-// .getEmEmailPrivacy()));
-//                        email.setEmRcpType(Integer.parseInt(arrayListEmail.get(i)
-// .getEmIsVerified()));
-//
-//                        arrayListNewEmailAccount.add(email);
-//                    }
-//                }
-
                 ArrayList<ProfileDataOperationImAccount> arrayListNewImAccount = new ArrayList<>();
                 isValid = true;
                 for (int i = 0; i < linearSocialContactDetails.getChildCount(); i++) {
@@ -1906,7 +1883,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             .findViewById(R.id.relative_row_edit_profile);
                     CheckBox checkboxOrganization = linearOrganization.findViewById(R
                             .id.checkbox_organization);
-                    organization.setOrgName(textOrgName.getText().toString().trim());
+                    organization.setOrgName(inputCompanyName.getText().toString().trim());
                     organization.setOrgJobTitle(inputDesignationName.getText().toString().trim());
                     organization.setOrgId((String) relativeRowEditProfile.getTag());
                     organization.setIsCurrent(checkboxOrganization.isChecked() ? 1 : 0);
@@ -3295,13 +3272,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             if (!StringUtils.isEmpty(arrayListOrganization.get(i).getOmOrganizationFromDate())) {
                 formattedFromDate = Utils.convertDateFormat(arrayListOrganization.get(i)
                                 .getOmOrganizationFromDate(),
-                        "yyyy-MM-dd hh:mm:ss", getEventDateFormat(arrayListOrganization.get(i)
+                        "yyyy-MM-dd", getEventDateFormat(arrayListOrganization.get(i)
                                 .getOmOrganizationFromDate()));
             }
             if (!StringUtils.isEmpty(arrayListOrganization.get(i).getOmOrganizationToDate())) {
                 formattedToDate = Utils.convertDateFormat(arrayListOrganization.get(i)
                                 .getOmOrganizationToDate(),
-                        "yyyy-MM-dd hh:mm:ss", getEventDateFormat(arrayListOrganization.get(i)
+                        "yyyy-MM-dd", getEventDateFormat(arrayListOrganization.get(i)
                                 .getOmOrganizationToDate()));
             }
 
@@ -4165,6 +4142,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             checkboxOrganization.setChecked(true);
             inputToDate.setEnabled(false);
             imageToDate.setEnabled(false);
+
+            Glide.with(EditProfileActivity.this)
+                    .load(R.drawable.default_org)
+                    .bitmapTransform(new CropCircleTransformation(EditProfileActivity.this))
+                    .override(120, 120)
+                    .into(imageOrgProfile);
         }
 
         checkboxOrganization.setOnCheckedChangeListener(new CompoundButton
@@ -4206,7 +4189,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     inputFromDate.getText().clear();
                     inputToDate.getText().clear();
                     checkboxOrganization.setChecked(true);
-                    addOrganizationDetailsToList();
+//                    arrayListOrganizationObject.clear();
                 }
             }
         });

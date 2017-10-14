@@ -571,8 +571,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         if (arrayListPhoneBookContacts == null) {
 
             arrayListPhoneBookContacts = new ArrayList<>();
-//            arrayListPhoneBookContactsTemp = new ArrayList<>();
-//            arrayListContacts = new ArrayList<>();
             arrayListFavouriteContacts = new ArrayList<>();
 
             phoneBookContacts = new PhoneBookContacts(getActivity());
@@ -591,10 +589,10 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         textTotalContacts.setVisibility(View.GONE);
         progressAllContact.setVisibility(View.GONE);
 
-        checkVersion();
-
         if (swipeRefreshLayout != null)
             swipeRefreshLayout.setRefreshing(false);
+
+        checkVersion();
     }
 
     @Override
