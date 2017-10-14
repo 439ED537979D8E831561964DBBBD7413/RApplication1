@@ -173,14 +173,21 @@ public class EnterPriseOrganizationListActivity extends BaseActivity implements 
 
                             VerifiedOrganizationDetails organizationDetails = organizationData.get(i).getOmOrgDetails();
 
-                            verifiedOrganizationData.setEomLogoPath(organizationDetails.getEomLogoPath()
+                            if (organizationData.get(i).getOmOrgDetails() != null) {
 
-                                    + "/" + organizationDetails.getEomLogoName());
+                                if (organizationDetails.getEomLogoPath() != null && organizationDetails.getEomLogoName() != null) {
+                                    verifiedOrganizationData.setEomLogoPath(organizationDetails.getEomLogoPath()
+                                            + "/" + organizationDetails.getEomLogoName());
+                                } else {
+                                    verifiedOrganizationData.setEomLogoPath("");
+                                }
 
-                            if (organizationDetails.getVerifiedIndustryType() != null) {
-                                verifiedOrganizationData.setEitType(organizationDetails.getVerifiedIndustryType().getEitType());
+                                if (organizationDetails.getVerifiedIndustryType() != null) {
+                                    verifiedOrganizationData.setEitType(organizationDetails.getVerifiedIndustryType().getEitType());
 //                                verifiedOrganizationData.setEitId(organizationDetails.getVerifiedIndustryType().getEitId());
+                                }
                             }
+
                             verifyArrayListOrganization.add(verifiedOrganizationData);
                         }
 

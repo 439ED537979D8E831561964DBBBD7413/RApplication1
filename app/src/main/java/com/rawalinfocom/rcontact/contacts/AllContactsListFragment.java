@@ -5,6 +5,7 @@ import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -16,6 +17,7 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.ContactsContract;
@@ -31,10 +33,12 @@ import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.util.LongSparseArray;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +48,8 @@ import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.BaseFragment;
+import com.rawalinfocom.rcontact.BuildConfig;
+import com.rawalinfocom.rcontact.MobileNumberRegistrationActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.AllContactAdapter;
@@ -458,6 +464,19 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 }
                 //</editor-fold>
 
+                //<editor-fold desc="REQ_GET_CHECK_VERSION">
+                if (serviceType.contains(WsConstants.REQ_GET_CHECK_VERSION)) {
+                    WsResponseObject checkVersionResponse = (WsResponseObject) data;
+
+                    if (checkVersionResponse != null && StringUtils.equalsIgnoreCase
+                            (checkVersionResponse.getMessage(), "force update")) {
+//                        Utils.showForceUpdateDialog(getActivity());
+                        showForceUpdateDialog();
+                    } else {
+                        startSync();
+                    }
+                }
+                //</editor-fold>
             } else {
                 progressAllContact.setVisibility(View.GONE);
                 Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, "" + (error !=
@@ -468,8 +487,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
 
     @Override
@@ -574,20 +591,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         textTotalContacts.setVisibility(View.GONE);
         progressAllContact.setVisibility(View.GONE);
 
-        if (!Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CONTACT_SYNCED, false)) {
-
-//            if (syncingTask != null && syncingTask.getStatus() == AsyncTask.Status.RUNNING) {
-//                System.out.println("RContact syncCallLogAsyncTask ---> running");
-//            } else {
-            syncingTask = new SyncingTask();
-            syncingTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-//            }
-        }
-        Intent localBroadcastIntent = new Intent(AppConstants
-                .ACTION_LOCAL_BROADCAST_CONTACT_DISPLAYED);
-        LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance
-                (getActivity());
-        myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+        checkVersion();
 
         if (swipeRefreshLayout != null)
             swipeRefreshLayout.setRefreshing(false);
@@ -690,6 +694,20 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
+    }
+
+    private void startSync() {
+
+        if (!Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CONTACT_SYNCED, false)) {
+            syncingTask = new SyncingTask();
+            syncingTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        } else {
+            Intent localBroadcastIntent = new Intent(AppConstants
+                    .ACTION_LOCAL_BROADCAST_CONTACT_DISPLAYED);
+            LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance
+                    (getActivity());
+            myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+        }
     }
 
     public class CustomComparator implements Comparator<ProfileData> {
@@ -1481,7 +1499,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 if (savedImAccount.contains(getString(R.string.linked_in))) {
                     percentage += 5;
                 }
-                if (savedImAccount.contains("Other"))  {
+                if (savedImAccount.contains("Other")) {
                     percentage += 5;
                 }
                 if (arrayListRemainingFields.contains(getString(R.string.str_social_contact))) {
@@ -2118,5 +2136,52 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         }
     }
 
+    private void checkVersion() {
+
+        WsRequestObject checkVersionObject = new WsRequestObject();
+        checkVersionObject.setAppVersion(String.valueOf(BuildConfig.VERSION_CODE));
+        checkVersionObject.setAppPlatform("android");
+
+        if (Utils.isNetworkAvailable(getActivity())) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), checkVersionObject, null,
+                    WsResponseObject.class, WsConstants.REQ_GET_CHECK_VERSION, null, true)
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants
+                            .REQ_GET_CHECK_VERSION);
+        } else {
+            Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, getResources().getString(R.string.msg_no_network));
+        }
+    }
+
     //</editor-fold>
+
+    public void showForceUpdateDialog() {
+
+        ContextThemeWrapper themedContext;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            themedContext = new ContextThemeWrapper(getActivity(), android.R.style.Theme_Holo_Light_Dialog_NoActionBar);
+        } else {
+            themedContext = new ContextThemeWrapper(getActivity(), android.R.style.Theme_Light_NoTitleBar);
+        }
+
+        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(themedContext);
+
+        alertDialogBuilder.setTitle(getActivity().getString(R.string.youAreNotUpdatedTitle));
+        alertDialogBuilder.setMessage(getActivity().getString(R.string.youAreNotUpdatedMessage));
+        alertDialogBuilder.setCancelable(false);
+        alertDialogBuilder.setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+                startSync();
+//                finish();
+//                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getPackageName())));
+            }
+        });
+        alertDialogBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int i) {
+                getActivity().finish();
+            }
+        });
+        alertDialogBuilder.show();
+    }
 }
