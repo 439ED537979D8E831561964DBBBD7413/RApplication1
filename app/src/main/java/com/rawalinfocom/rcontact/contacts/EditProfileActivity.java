@@ -752,9 +752,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         organization.setOrgJobTitle(operationOrganization.getOrgJobTitle());
                         organization.setOrgId(operationOrganization.getOrgId());
                         organization.setOrgEntId(data.getStringExtra("orgId"));
-//                        if (!data.getStringExtra("organizationType").equalsIgnoreCase(""))
-//                            organization.setIsVerify(operationOrganization.getIsVerify());
-//                        else
                         organization.setIsVerify(0);
                         organization.setIsCurrent(operationOrganization.getIsCurrent());
 
