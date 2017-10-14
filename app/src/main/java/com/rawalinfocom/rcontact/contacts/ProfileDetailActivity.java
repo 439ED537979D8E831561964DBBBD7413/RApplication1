@@ -322,8 +322,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     @Nullable
     @BindView(R.id.progress_percentage)
     CircleProgressView progressPercentage;
+    @Nullable
     @BindView(R.id.include_elevation)
     View includeElevation;
+    @Nullable
     @BindView(R.id.include_elevation_top)
     View includeElevationTop;
 
