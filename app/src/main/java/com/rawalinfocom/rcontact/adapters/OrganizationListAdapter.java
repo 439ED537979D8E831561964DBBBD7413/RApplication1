@@ -61,9 +61,12 @@ public class OrganizationListAdapter extends RecyclerView.Adapter<OrganizationLi
                 , String.valueOf(IntegerConstants.RCP_TYPE_CLOUD_PHONE_BOOK)));
 
         if (orgRcpType == IntegerConstants.RCP_TYPE_LOCAL_PHONE_BOOK) {
+            holder.textMain.setTextColor(ContextCompat.getColor(context, R.color.colorBlack));
             holder.textSub.setTextColor(ContextCompat.getColor(context, R.color.colorBlack));
         } else {
+            holder.textMain.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
             holder.textSub.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
+            holder.textType.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
         }
 
         if (MoreObjects.firstNonNull(organization.getIsVerify(), 0) == IntegerConstants.RCP_TYPE_PRIMARY) {
@@ -94,7 +97,7 @@ public class OrganizationListAdapter extends RecyclerView.Adapter<OrganizationLi
         if (StringUtils.equalsIgnoreCase(organization.getOrgToDate(), "")) {
             if (!StringUtils.isEmpty(organization.getOrgFromDate())) {
                 String formattedFromDate = Utils.convertDateFormat(organization.getOrgFromDate(),
-                        "yyyy-MM-dd hh:mm:ss", Utils.getEventDateFormat(organization.getOrgFromDate()));
+                        "yyyy-MM-dd", Utils.getEventDateFormat(organization.getOrgFromDate()));
 
                 holder.textTime.setText(String.format("%s to Present ", formattedFromDate));
             } else {
@@ -103,9 +106,9 @@ public class OrganizationListAdapter extends RecyclerView.Adapter<OrganizationLi
         } else {
             if (!StringUtils.isEmpty(organization.getOrgFromDate()) && !StringUtils.isEmpty(organization.getOrgToDate())) {
                 String formattedFromDate = Utils.convertDateFormat(organization.getOrgFromDate(),
-                        "yyyy-MM-dd hh:mm:ss", Utils.getEventDateFormat(organization.getOrgFromDate()));
+                        "yyyy-MM-dd", Utils.getEventDateFormat(organization.getOrgFromDate()));
                 String formattedToDate = Utils.convertDateFormat(organization.getOrgToDate(),
-                        "yyyy-MM-dd hh:mm:ss", Utils.getEventDateFormat(organization.getOrgToDate()));
+                        "yyyy-MM-dd", Utils.getEventDateFormat(organization.getOrgToDate()));
 
                 holder.textTime.setText(String.format("%s to %s ", formattedFromDate, formattedToDate));
             }
