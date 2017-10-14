@@ -475,7 +475,7 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                 @Override
                 public void onClick(View view) {
                     if (StringUtils.length(profileDetail.getPbProfilePhoto()) > 0) {
-                        Utils.zoomImageFromThumb(PublicProfileDetailActivity.this, imageProfile, userProfile.getPmProfileImage(),
+                        Utils.zoomImageFromThumb(PublicProfileDetailActivity.this, imageProfile, profileDetail.getPbProfilePhoto(),
                                 frameImageEnlarge, imageEnlarge, frameContainer);
                     }
                 }

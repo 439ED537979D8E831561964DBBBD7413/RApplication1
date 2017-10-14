@@ -438,6 +438,14 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
 //        SocialEmailList = new ArrayList<>();
         arrayListSocialEmail = new ArrayList<>();
+
+        TableCountryMaster tableCountryMaster = new TableCountryMaster(databaseHandler);
+        if (tableCountryMaster.getCountryCount() <= 0) {
+            getCountryList();
+            init(false);
+        } else {
+            init(true);
+        }
     }
 
 
@@ -519,18 +527,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         openInChooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, extraIntents);
         startActivity(openInChooser);
     }*/
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        TableCountryMaster tableCountryMaster = new TableCountryMaster(databaseHandler);
-        if (tableCountryMaster.getCountryCount() <= 0) {
-            getCountryList();
-            init(false);
-        } else {
-            init(true);
-        }
-    }
 
     @Override
     @SuppressLint("NewApi")

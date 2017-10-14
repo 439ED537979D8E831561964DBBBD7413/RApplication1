@@ -61,9 +61,12 @@ public class OrganizationListAdapter extends RecyclerView.Adapter<OrganizationLi
                 , String.valueOf(IntegerConstants.RCP_TYPE_CLOUD_PHONE_BOOK)));
 
         if (orgRcpType == IntegerConstants.RCP_TYPE_LOCAL_PHONE_BOOK) {
+            holder.textMain.setTextColor(ContextCompat.getColor(context, R.color.colorBlack));
             holder.textSub.setTextColor(ContextCompat.getColor(context, R.color.colorBlack));
         } else {
+            holder.textMain.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
             holder.textSub.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
+            holder.textType.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
         }
 
         if (MoreObjects.firstNonNull(organization.getIsVerify(), 0) == IntegerConstants.RCP_TYPE_PRIMARY) {
