@@ -128,7 +128,7 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
                         relativeRootMobileRegistration, getString(R.string
                                 .error_invalid_number));
             } else {
-                sendOtp();
+                checkVersion();
             }
 
         }
@@ -175,6 +175,21 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
     @Override
     public void onDeliveryResponse(String serviceType, Object data, Exception error) {
         if (error == null) {
+
+            //<editor-fold desc="REQ_GET_CHECK_VERSION">
+            if (serviceType.contains(WsConstants.REQ_GET_CHECK_VERSION)) {
+                WsResponseObject checkVersionResponse = (WsResponseObject) data;
+
+                if (checkVersionResponse != null && StringUtils.equalsIgnoreCase
+                        (checkVersionResponse.getMessage(), "force update")) {
+                    Utils.showForceUpdateDialog(MobileNumberRegistrationActivity.this);
+                } else {
+                    sendOtp();
+                }
+
+            } else {
+                sendOtp();
+            }
 
             //<editor-fold desc="REQ_SEND_OTP">
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_CHECK_NUMBER)) {
@@ -287,5 +302,22 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
                     .getString(R.string.msg_no_network));
         }
     }
+
+    private void checkVersion() {
+
+        WsRequestObject checkVersionObject = new WsRequestObject();
+        checkVersionObject.setAppVersion(String.valueOf(BuildConfig.VERSION_CODE));
+        checkVersionObject.setAppPlatform("android");
+
+        if (Utils.isNetworkAvailable(MobileNumberRegistrationActivity.this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), checkVersionObject, null,
+                    WsResponseObject.class, WsConstants.REQ_GET_CHECK_VERSION, getString(R.string.msg_please_wait), false)
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants
+                            .REQ_GET_CHECK_VERSION);
+        } else {
+            Utils.showErrorSnackBar(this, relativeRootMobileRegistration, getResources().getString(R.string.msg_no_network));
+        }
+    }
+
     //</editor-fold>
 }
