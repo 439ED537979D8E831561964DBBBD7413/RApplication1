@@ -2,14 +2,19 @@ package com.rawalinfocom.rcontact;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -182,7 +187,8 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
 
                 if (checkVersionResponse != null && StringUtils.equalsIgnoreCase
                         (checkVersionResponse.getMessage(), "force update")) {
-                    Utils.showForceUpdateDialog(MobileNumberRegistrationActivity.this);
+                    Utils.hideProgressDialog();
+                    showForceUpdateDialog();
                 } else {
                     sendOtp();
                 }
@@ -290,8 +296,7 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), otpObject,
-                    null, WsResponseObject.class, WsConstants.REQ_CHECK_NUMBER, getString(R.string
-                    .msg_please_wait), false)
+                    null, WsResponseObject.class, WsConstants.REQ_CHECK_NUMBER, getString(R.string.msg_please_wait), false)
                     .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT +
                             WsConstants.REQ_CHECK_NUMBER);
         } else {
@@ -317,4 +322,35 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
     }
 
     //</editor-fold>
+
+    public void showForceUpdateDialog() {
+
+        ContextThemeWrapper themedContext;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            themedContext = new ContextThemeWrapper(MobileNumberRegistrationActivity.this, android.R.style.Theme_Holo_Light_Dialog_NoActionBar);
+        } else {
+            themedContext = new ContextThemeWrapper(MobileNumberRegistrationActivity.this, android.R.style.Theme_Light_NoTitleBar);
+        }
+
+        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(themedContext);
+
+        alertDialogBuilder.setTitle(MobileNumberRegistrationActivity.this.getString(R.string.youAreNotUpdatedTitle));
+        alertDialogBuilder.setMessage(MobileNumberRegistrationActivity.this.getString(R.string.youAreNotUpdatedMessage));
+        alertDialogBuilder.setCancelable(false);
+        alertDialogBuilder.setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+                sendOtp();
+//                finish();
+//                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getPackageName())));
+            }
+        });
+        alertDialogBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int i) {
+                finish();
+            }
+        });
+        alertDialogBuilder.show();
+    }
 }
