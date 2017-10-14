@@ -171,13 +171,12 @@
                 android:id="@+id/input_city"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:cursorVisible="false"
                 android:textColor="@color/colorAccent"
                 android:textSize="16sp"
                 tools:ignore="TextFields"/>
             <!--android:textColorHint="@color/darkCyan"-->
 
-            <Spinner
+            <!--<Spinner
                 android:id="@+id/spinner_city"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -188,7 +187,7 @@
                 android:textColor="@color/colorAccent"
                 android:textSize="16sp"
                 tools:ignore="TextFields"
-                tools:text="India"/>
+                tools:text="India"/>-->
 
         </FrameLayout>
 

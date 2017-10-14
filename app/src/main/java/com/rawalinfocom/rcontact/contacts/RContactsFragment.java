@@ -458,16 +458,16 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
 
     private void RCPContactServiceCall(String timestamp, String url) {
 
+        WsRequestObject deviceDetailObject = new WsRequestObject();
+        deviceDetailObject.setTimeStamp(timestamp);
+
         if (Utils.isNetworkAvailable(getActivity())) {
-
-            WsRequestObject deviceDetailObject = new WsRequestObject();
-            deviceDetailObject.setTimeStamp(timestamp);
-
-            if (Utils.isNetworkAvailable(getActivity())) {
-                new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), deviceDetailObject, null,
-                        WsResponseObject.class, url, getResources().getString(R.string.msg_please_wait), true)
-                        .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + url);
-            }
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), deviceDetailObject, null,
+                    WsResponseObject.class, url, getResources().getString(R.string.msg_please_wait), true)
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + url);
+        } else {
+            Utils.showErrorSnackBar(getActivity(), relativeRootRcontacts, getResources().getString(R.string.msg_no_network));
+            swipeRefreshLayout.setRefreshing(false);
         }
     }
 

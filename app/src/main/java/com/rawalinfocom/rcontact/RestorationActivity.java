@@ -462,17 +462,15 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
 
     private void pullMechanismServiceCall(String fromDate, String toDate, String url) {
 
-        if (Utils.isNetworkAvailable(RestorationActivity.this)) {
-            WsRequestObject deviceDetailObject = new WsRequestObject();
+        WsRequestObject deviceDetailObject = new WsRequestObject();
 
-            deviceDetailObject.setFromDate(fromDate);
-            deviceDetailObject.setToDate(toDate);
+        deviceDetailObject.setFromDate(fromDate);
+        deviceDetailObject.setToDate(toDate);
 
-            if (Utils.isNetworkAvailable(this)) {
-                new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
-                        deviceDetailObject, null, WsResponseObject.class, url, null, true).executeOnExecutor(AsyncTask
-                        .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + url);
-            }
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    deviceDetailObject, null, WsResponseObject.class, url, null, true).executeOnExecutor(AsyncTask
+                    .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + url);
         }
     }
 }
