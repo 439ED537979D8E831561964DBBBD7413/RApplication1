@@ -233,9 +233,16 @@ public class QueryManager {
                     organization.setOrgToDate(StringUtils.defaultString(organizationCursor.getString
                             (organizationCursor.getColumnIndexOrThrow(TableOrganizationMaster
                                     .COLUMN_OM_ORGANIZATION_TO_DATE))));
-                    organization.setIsVerify(Integer.parseInt(organizationCursor.getString
+                    if(!StringUtils.isBlank(organizationCursor.getString
                             (organizationCursor.getColumnIndexOrThrow(TableOrganizationMaster
-                                    .COLUMN_OM_ORGANIZATION_IS_VERIFIED))));
+                                    .COLUMN_OM_ORGANIZATION_IS_VERIFIED)))){
+                        organization.setIsVerify(Integer.parseInt(organizationCursor.getString
+                                (organizationCursor.getColumnIndexOrThrow(TableOrganizationMaster
+                                        .COLUMN_OM_ORGANIZATION_IS_VERIFIED))));
+                    }else{
+                        organization.setIsVerify(0);
+                    }
+
                     organization.setOrgRcpType(String.valueOf(IntegerConstants
                             .RCP_TYPE_CLOUD_PHONE_BOOK));
                     arrayListOrganization.add(organization);
