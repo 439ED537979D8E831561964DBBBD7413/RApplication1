@@ -321,7 +321,6 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             } catch (Exception e) {
                     e.printStackTrace();
             }
-
             return null;
         }
     }
