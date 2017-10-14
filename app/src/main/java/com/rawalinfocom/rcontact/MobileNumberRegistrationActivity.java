@@ -186,9 +186,6 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
                 } else {
                     sendOtp();
                 }
-
-            } else {
-                sendOtp();
             }
 
             //<editor-fold desc="REQ_SEND_OTP">
