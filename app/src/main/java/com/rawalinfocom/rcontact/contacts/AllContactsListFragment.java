@@ -5,6 +5,7 @@ import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -16,6 +17,7 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.ContactsContract;
@@ -31,10 +33,12 @@ import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.util.LongSparseArray;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +49,7 @@ import android.widget.TextView;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.BuildConfig;
+import com.rawalinfocom.rcontact.MobileNumberRegistrationActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.AllContactAdapter;
@@ -465,7 +470,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
                     if (checkVersionResponse != null && StringUtils.equalsIgnoreCase
                             (checkVersionResponse.getMessage(), "force update")) {
-                        Utils.showForceUpdateDialog(getActivity());
+//                        Utils.showForceUpdateDialog(getActivity());
+                        showForceUpdateDialog();
                     } else {
                         startSync();
                     }
@@ -2147,4 +2153,35 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     }
 
     //</editor-fold>
+
+    public void showForceUpdateDialog() {
+
+        ContextThemeWrapper themedContext;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            themedContext = new ContextThemeWrapper(getActivity(), android.R.style.Theme_Holo_Light_Dialog_NoActionBar);
+        } else {
+            themedContext = new ContextThemeWrapper(getActivity(), android.R.style.Theme_Light_NoTitleBar);
+        }
+
+        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(themedContext);
+
+        alertDialogBuilder.setTitle(getActivity().getString(R.string.youAreNotUpdatedTitle));
+        alertDialogBuilder.setMessage(getActivity().getString(R.string.youAreNotUpdatedMessage));
+        alertDialogBuilder.setCancelable(false);
+        alertDialogBuilder.setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+                startSync();
+//                finish();
+//                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getPackageName())));
+            }
+        });
+        alertDialogBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int i) {
+                getActivity().finish();
+            }
+        });
+        alertDialogBuilder.show();
+    }
 }
