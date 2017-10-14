@@ -1402,6 +1402,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         AppConstants.PREF_PROFILE_REMAINING_FIELDS));
             }
 
+            //<editor-fold desc="Gender">
             if (!StringUtils.isBlank(profileDetail.getPbGender())) {
                 percentage += 5;
                 if (arrayListRemainingFields.contains(getString(R.string.str_gender))) {
@@ -1410,7 +1411,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             } else {
                 arrayListRemainingFields.add(getString(R.string.str_gender));
             }
+            //</editor-fold>
 
+            //<editor-fold desc="Profile Photo">
             if (!StringUtils.isBlank(profileDetail.getPbProfilePhoto())) {
                 percentage += 5;
                 if (arrayListRemainingFields.contains(getString(R.string.str_profile_photo))) {
@@ -1419,7 +1422,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             } else {
                 arrayListRemainingFields.add(getString(R.string.str_profile_photo));
             }
+            //</editor-fold>
 
+            //<editor-fold desc="Organization">
             if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbOrganization())) {
                 percentage += 15;
                 if (arrayListRemainingFields.contains(getString(R.string.str_organization))) {
@@ -1428,7 +1433,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             } else {
                 arrayListRemainingFields.add(getString(R.string.str_organization));
             }
+            //</editor-fold>
 
+            //<editor-fold desc="Web Address">
             if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbWebAddress())) {
                 percentage += 5;
                 if (arrayListRemainingFields.contains(getString(R.string.str_website))) {
@@ -1437,7 +1444,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             } else {
                 arrayListRemainingFields.add(getString(R.string.str_website));
             }
+            //</editor-fold>
 
+            //<editor-fold desc="Address">
             if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbAddress())) {
                 percentage += 20;
                 if (arrayListRemainingFields.contains(getString(R.string.str_address))) {
@@ -1446,7 +1455,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             } else {
                 arrayListRemainingFields.add(getString(R.string.str_address));
             }
+            //</editor-fold>
 
+            //<editor-fold desc="Event">
             if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEvent())) {
                 percentage += 5;
                 if (arrayListRemainingFields.contains(getString(R.string.str_event))) {
@@ -1455,24 +1466,40 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             } else {
                 arrayListRemainingFields.add(getString(R.string.str_event));
             }
+            //</editor-fold>
 
+            //<editor-fold desc="Email Id">
             if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEmailId())) {
                 percentage += 5;
+                if (arrayListRemainingFields.contains(getString(R.string.str_email))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_email));
+                }
+                boolean hasVerifiedEmail = false;
                 for (int i = 0; i < profileDetail.getPbEmailId().size(); i++) {
                     if (profileDetail.getPbEmailId().get(i).getEmRcpType() == IntegerConstants
                             .RCP_TYPE_PRIMARY) {
                         percentage += 15;
+                        hasVerifiedEmail = true;
                         break;
                     }
                 }
-                if (arrayListRemainingFields.contains(getString(R.string.str_email))) {
-                    arrayListRemainingFields.remove(getString(R.string.str_email));
+                if (hasVerifiedEmail) {
+                    if (arrayListRemainingFields.contains("Verified Email")) {
+                        arrayListRemainingFields.remove("Verified Email");
+                    }
+                } else {
+                    arrayListRemainingFields.add("Verified Email");
                 }
             } else {
                 arrayListRemainingFields.add(getString(R.string.str_email));
             }
+            //</editor-fold>
 
+            //<editor-fold desc="Im Account">
             if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbIMAccounts())) {
+                if (arrayListRemainingFields.contains(getString(R.string.str_social_contact))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_social_contact));
+                }
                 ArrayList<String> savedImAccount = new ArrayList<>();
                 for (int i = 0; i < profileDetail.getPbIMAccounts().size(); i++) {
 //                    savedImAccount.add(profileDetail.getPbIMAccounts().get(i)
@@ -1490,22 +1517,41 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 }
                 if (savedImAccount.contains(getString(R.string.facebook))) {
                     percentage += 5;
+                    if (arrayListRemainingFields.contains("Facebook Account")) {
+                        arrayListRemainingFields.remove("Facebook Account");
+                    }
+                } else {
+                    arrayListRemainingFields.add("Facebook Account");
                 }
                 if (savedImAccount.contains(getString(R.string.google_plus))) {
                     percentage += 5;
+                    if (arrayListRemainingFields.contains("Google Plus Account")) {
+                        arrayListRemainingFields.remove("Google Plus Account");
+                    }
+                } else {
+                    arrayListRemainingFields.add("Google Plus Account");
                 }
                 if (savedImAccount.contains(getString(R.string.linked_in))) {
                     percentage += 5;
+                    if (arrayListRemainingFields.contains("Linked In Account")) {
+                        arrayListRemainingFields.remove("Linked In Account");
+                    }
+                } else {
+                    arrayListRemainingFields.add("Linked In Account");
                 }
                 if (savedImAccount.contains("Other")) {
                     percentage += 5;
+                    if (arrayListRemainingFields.contains(getString(R.string.str_social_contact))) {
+                        arrayListRemainingFields.remove(getString(R.string.str_social_contact));
+                    }
+                } else {
+                    arrayListRemainingFields.add(getString(R.string.str_social_contact));
                 }
-                if (arrayListRemainingFields.contains(getString(R.string.str_social_contact))) {
-                    arrayListRemainingFields.remove(getString(R.string.str_social_contact));
-                }
+
             } else {
                 arrayListRemainingFields.add(getString(R.string.str_social_contact));
             }
+            //</editor-fold>
 
             Utils.setArrayListPreference(getActivity(), AppConstants
                     .PREF_PROFILE_REMAINING_FIELDS, arrayListRemainingFields);
