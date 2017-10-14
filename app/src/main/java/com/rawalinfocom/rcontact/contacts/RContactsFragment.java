@@ -467,6 +467,8 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
                 new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), deviceDetailObject, null,
                         WsResponseObject.class, url, getResources().getString(R.string.msg_please_wait), true)
                         .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + url);
+            }else{
+                swipeRefreshLayout.setRefreshing(false);
             }
         }
     }
