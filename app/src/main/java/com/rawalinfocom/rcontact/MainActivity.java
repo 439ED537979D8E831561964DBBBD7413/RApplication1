@@ -319,10 +319,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 }
 
             } catch (Exception e) {
-//                System.out.println("RContact PullMechanismService call error --> " + e
-// .getMessage());
+                    e.printStackTrace();
             }
-
             return null;
         }
     }
@@ -3838,37 +3836,30 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
     private void pullMechanismServiceCall(String fromDate, String toDate, String url) {
 
-        if (Utils.isNetworkAvailable(MainActivity.this)) {
-            WsRequestObject deviceDetailObject = new WsRequestObject();
+        WsRequestObject deviceDetailObject = new WsRequestObject();
 
-            deviceDetailObject.setFromDate(fromDate);
-            deviceDetailObject.setToDate(toDate);
+        deviceDetailObject.setFromDate(fromDate);
+        deviceDetailObject.setToDate(toDate);
 
-            if (Utils.isNetworkAvailable(this)) {
-                new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
-                        deviceDetailObject, null, WsResponseObject.class, url, null, true)
-                        .executeOnExecutor(AsyncTask
-                                .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + url);
-            }
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    deviceDetailObject, null, WsResponseObject.class, url, null, true)
+                    .executeOnExecutor(AsyncTask
+                            .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + url);
         }
-
     }
 
     private void RCPContactServiceCall(String timestamp, String url) {
 
-        if (Utils.isNetworkAvailable(MainActivity.this)) {
+        WsRequestObject deviceDetailObject = new WsRequestObject();
+        deviceDetailObject.setTimeStamp(timestamp);
 
-            WsRequestObject deviceDetailObject = new WsRequestObject();
-            deviceDetailObject.setTimeStamp(timestamp);
-
-            if (Utils.isNetworkAvailable(this)) {
-                new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
-                        deviceDetailObject, null, WsResponseObject.class, url, null, true)
-                        .executeOnExecutor(AsyncTask
-                                .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + url);
-            }
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    deviceDetailObject, null, WsResponseObject.class, url, null, true)
+                    .executeOnExecutor(AsyncTask
+                            .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + url);
         }
-
     }
 
     //</editor-fold>

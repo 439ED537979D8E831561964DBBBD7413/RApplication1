@@ -5,6 +5,7 @@ import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -16,6 +17,7 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.ContactsContract;
@@ -31,10 +33,12 @@ import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.util.LongSparseArray;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +48,8 @@ import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.BaseFragment;
+import com.rawalinfocom.rcontact.BuildConfig;
+import com.rawalinfocom.rcontact.MobileNumberRegistrationActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.AllContactAdapter;
@@ -458,6 +464,19 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 }
                 //</editor-fold>
 
+                //<editor-fold desc="REQ_GET_CHECK_VERSION">
+                if (serviceType.contains(WsConstants.REQ_GET_CHECK_VERSION)) {
+                    WsResponseObject checkVersionResponse = (WsResponseObject) data;
+
+                    if (checkVersionResponse != null && StringUtils.equalsIgnoreCase
+                            (checkVersionResponse.getMessage(), "force update")) {
+//                        Utils.showForceUpdateDialog(getActivity());
+                        showForceUpdateDialog();
+                    } else {
+                        startSync();
+                    }
+                }
+                //</editor-fold>
             } else {
                 progressAllContact.setVisibility(View.GONE);
                 Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, "" + (error !=
@@ -468,8 +487,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
 
     @Override
@@ -554,8 +571,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         if (arrayListPhoneBookContacts == null) {
 
             arrayListPhoneBookContacts = new ArrayList<>();
-//            arrayListPhoneBookContactsTemp = new ArrayList<>();
-//            arrayListContacts = new ArrayList<>();
             arrayListFavouriteContacts = new ArrayList<>();
 
             phoneBookContacts = new PhoneBookContacts(getActivity());
@@ -574,23 +589,10 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         textTotalContacts.setVisibility(View.GONE);
         progressAllContact.setVisibility(View.GONE);
 
-        if (!Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CONTACT_SYNCED, false)) {
-
-//            if (syncingTask != null && syncingTask.getStatus() == AsyncTask.Status.RUNNING) {
-//                System.out.println("RContact syncCallLogAsyncTask ---> running");
-//            } else {
-            syncingTask = new SyncingTask();
-            syncingTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-//            }
-        }
-        Intent localBroadcastIntent = new Intent(AppConstants
-                .ACTION_LOCAL_BROADCAST_CONTACT_DISPLAYED);
-        LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance
-                (getActivity());
-        myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
-
         if (swipeRefreshLayout != null)
             swipeRefreshLayout.setRefreshing(false);
+
+        checkVersion();
     }
 
     @Override
@@ -690,6 +692,20 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
+    }
+
+    private void startSync() {
+
+        if (!Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CONTACT_SYNCED, false)) {
+            syncingTask = new SyncingTask();
+            syncingTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        } else {
+            Intent localBroadcastIntent = new Intent(AppConstants
+                    .ACTION_LOCAL_BROADCAST_CONTACT_DISPLAYED);
+            LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance
+                    (getActivity());
+            myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+        }
     }
 
     public class CustomComparator implements Comparator<ProfileData> {
@@ -1386,6 +1402,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         AppConstants.PREF_PROFILE_REMAINING_FIELDS));
             }
 
+            //<editor-fold desc="Gender">
             if (!StringUtils.isBlank(profileDetail.getPbGender())) {
                 percentage += 5;
                 if (arrayListRemainingFields.contains(getString(R.string.str_gender))) {
@@ -1394,7 +1411,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             } else {
                 arrayListRemainingFields.add(getString(R.string.str_gender));
             }
+            //</editor-fold>
 
+            //<editor-fold desc="Profile Photo">
             if (!StringUtils.isBlank(profileDetail.getPbProfilePhoto())) {
                 percentage += 5;
                 if (arrayListRemainingFields.contains(getString(R.string.str_profile_photo))) {
@@ -1403,7 +1422,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             } else {
                 arrayListRemainingFields.add(getString(R.string.str_profile_photo));
             }
+            //</editor-fold>
 
+            //<editor-fold desc="Organization">
             if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbOrganization())) {
                 percentage += 15;
                 if (arrayListRemainingFields.contains(getString(R.string.str_organization))) {
@@ -1412,7 +1433,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             } else {
                 arrayListRemainingFields.add(getString(R.string.str_organization));
             }
+            //</editor-fold>
 
+            //<editor-fold desc="Web Address">
             if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbWebAddress())) {
                 percentage += 5;
                 if (arrayListRemainingFields.contains(getString(R.string.str_website))) {
@@ -1421,7 +1444,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             } else {
                 arrayListRemainingFields.add(getString(R.string.str_website));
             }
+            //</editor-fold>
 
+            //<editor-fold desc="Address">
             if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbAddress())) {
                 percentage += 20;
                 if (arrayListRemainingFields.contains(getString(R.string.str_address))) {
@@ -1430,7 +1455,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             } else {
                 arrayListRemainingFields.add(getString(R.string.str_address));
             }
+            //</editor-fold>
 
+            //<editor-fold desc="Event">
             if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEvent())) {
                 percentage += 5;
                 if (arrayListRemainingFields.contains(getString(R.string.str_event))) {
@@ -1439,24 +1466,40 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             } else {
                 arrayListRemainingFields.add(getString(R.string.str_event));
             }
+            //</editor-fold>
 
+            //<editor-fold desc="Email Id">
             if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEmailId())) {
                 percentage += 5;
+                if (arrayListRemainingFields.contains(getString(R.string.str_email))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_email));
+                }
+                boolean hasVerifiedEmail = false;
                 for (int i = 0; i < profileDetail.getPbEmailId().size(); i++) {
                     if (profileDetail.getPbEmailId().get(i).getEmRcpType() == IntegerConstants
                             .RCP_TYPE_PRIMARY) {
                         percentage += 15;
+                        hasVerifiedEmail = true;
                         break;
                     }
                 }
-                if (arrayListRemainingFields.contains(getString(R.string.str_email))) {
-                    arrayListRemainingFields.remove(getString(R.string.str_email));
+                if (hasVerifiedEmail) {
+                    if (arrayListRemainingFields.contains("Verified Email")) {
+                        arrayListRemainingFields.remove("Verified Email");
+                    }
+                } else {
+                    arrayListRemainingFields.add("Verified Email");
                 }
             } else {
                 arrayListRemainingFields.add(getString(R.string.str_email));
             }
+            //</editor-fold>
 
+            //<editor-fold desc="Im Account">
             if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbIMAccounts())) {
+                if (arrayListRemainingFields.contains(getString(R.string.str_social_contact))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_social_contact));
+                }
                 ArrayList<String> savedImAccount = new ArrayList<>();
                 for (int i = 0; i < profileDetail.getPbIMAccounts().size(); i++) {
 //                    savedImAccount.add(profileDetail.getPbIMAccounts().get(i)
@@ -1474,22 +1517,41 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 }
                 if (savedImAccount.contains(getString(R.string.facebook))) {
                     percentage += 5;
+                    if (arrayListRemainingFields.contains("Facebook Account")) {
+                        arrayListRemainingFields.remove("Facebook Account");
+                    }
+                } else {
+                    arrayListRemainingFields.add("Facebook Account");
                 }
                 if (savedImAccount.contains(getString(R.string.google_plus))) {
                     percentage += 5;
+                    if (arrayListRemainingFields.contains("Google Plus Account")) {
+                        arrayListRemainingFields.remove("Google Plus Account");
+                    }
+                } else {
+                    arrayListRemainingFields.add("Google Plus Account");
                 }
                 if (savedImAccount.contains(getString(R.string.linked_in))) {
                     percentage += 5;
+                    if (arrayListRemainingFields.contains("Linked In Account")) {
+                        arrayListRemainingFields.remove("Linked In Account");
+                    }
+                } else {
+                    arrayListRemainingFields.add("Linked In Account");
                 }
-                if (savedImAccount.contains("Other"))  {
+                if (savedImAccount.contains("Other")) {
                     percentage += 5;
+                    if (arrayListRemainingFields.contains(getString(R.string.str_social_contact))) {
+                        arrayListRemainingFields.remove(getString(R.string.str_social_contact));
+                    }
+                } else {
+                    arrayListRemainingFields.add(getString(R.string.str_social_contact));
                 }
-                if (arrayListRemainingFields.contains(getString(R.string.str_social_contact))) {
-                    arrayListRemainingFields.remove(getString(R.string.str_social_contact));
-                }
+
             } else {
                 arrayListRemainingFields.add(getString(R.string.str_social_contact));
             }
+            //</editor-fold>
 
             Utils.setArrayListPreference(getActivity(), AppConstants
                     .PREF_PROFILE_REMAINING_FIELDS, arrayListRemainingFields);
@@ -2118,5 +2180,52 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         }
     }
 
+    private void checkVersion() {
+
+        WsRequestObject checkVersionObject = new WsRequestObject();
+        checkVersionObject.setAppVersion(String.valueOf(BuildConfig.VERSION_CODE));
+        checkVersionObject.setAppPlatform("android");
+
+        if (Utils.isNetworkAvailable(getActivity())) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), checkVersionObject, null,
+                    WsResponseObject.class, WsConstants.REQ_GET_CHECK_VERSION, null, true)
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants
+                            .REQ_GET_CHECK_VERSION);
+        } else {
+            Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, getResources().getString(R.string.msg_no_network));
+        }
+    }
+
     //</editor-fold>
+
+    public void showForceUpdateDialog() {
+
+        ContextThemeWrapper themedContext;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            themedContext = new ContextThemeWrapper(getActivity(), android.R.style.Theme_Holo_Light_Dialog_NoActionBar);
+        } else {
+            themedContext = new ContextThemeWrapper(getActivity(), android.R.style.Theme_Light_NoTitleBar);
+        }
+
+        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(themedContext);
+
+        alertDialogBuilder.setTitle(getActivity().getString(R.string.youAreNotUpdatedTitle));
+        alertDialogBuilder.setMessage(getActivity().getString(R.string.youAreNotUpdatedMessage));
+        alertDialogBuilder.setCancelable(false);
+        alertDialogBuilder.setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+                startSync();
+//                finish();
+//                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getPackageName())));
+            }
+        });
+        alertDialogBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int i) {
+                getActivity().finish();
+            }
+        });
+        alertDialogBuilder.show();
+    }
 }

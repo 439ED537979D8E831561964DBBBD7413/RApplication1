@@ -10,6 +10,7 @@ import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -41,6 +42,7 @@ import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
@@ -48,6 +50,7 @@ import android.text.Spanned;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
@@ -1486,5 +1489,36 @@ public class Utils {
                 mCurrentAnimator = set;
             }
         });
+    }
+
+    public static void showForceUpdateDialog(final Activity activity) {
+
+        ContextThemeWrapper themedContext;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            themedContext = new ContextThemeWrapper(activity, android.R.style.Theme_Holo_Light_Dialog_NoActionBar);
+        } else {
+            themedContext = new ContextThemeWrapper(activity, android.R.style.Theme_Light_NoTitleBar);
+        }
+
+        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(themedContext);
+
+        alertDialogBuilder.setTitle(activity.getString(R.string.youAreNotUpdatedTitle));
+        alertDialogBuilder.setMessage(activity.getString(R.string.youAreNotUpdatedMessage));
+        alertDialogBuilder.setCancelable(false);
+        alertDialogBuilder.setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+                activity.finish();
+                activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + activity.getPackageName())));
+            }
+        });
+        alertDialogBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int i) {
+                dialog.cancel();
+//                activity.finish();
+            }
+        });
+        alertDialogBuilder.show();
     }
 }
