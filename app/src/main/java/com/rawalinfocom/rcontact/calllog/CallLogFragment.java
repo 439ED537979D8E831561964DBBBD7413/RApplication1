@@ -124,6 +124,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     TextView textGrantPermission;
     TextView textNoCallsFound;
     private ArrayList<CallLogType> callLogTypeArrayList;
+    ArrayList<CallLogType> filteredList;
 
     private SimpleCallLogListAdapter simpleCallLogListAdapter;
 
@@ -207,7 +208,17 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             enableActionMode(position);
         } else {
 
-            CallLogType selectedCallLogData = callLogTypeArrayList.get(position);
+            CallLogType selectedCallLogData;
+            if (!selectedCallType.equalsIgnoreCase(CALL_LOG_ALL_CALLS)){
+                selectedCallLogData  = filteredList.get(position);
+            }else{
+                selectedCallLogData = callLogTypeArrayList.get(position);
+            }
+
+            if(selectedCallLogData != null){
+                if(simpleCallLogListAdapter != null)
+                    simpleCallLogListAdapter.setSelectedCallLogData(selectedCallLogData);
+            }
             String key = "";
             key = selectedCallLogData.getLocalPbRowId();
             if (key.equalsIgnoreCase(" ")) {
@@ -393,6 +404,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 int value = getActivity().getContentResolver().delete(CallLog.Calls.CONTENT_URI, where,
                         selectionArguments);
                 if (value > 0) {
+                    if (!selectedCallType.equalsIgnoreCase(CALL_LOG_ALL_CALLS)) {
+                        filteredList.remove(callLogType);
+                    }
                     callLogTypeArrayList.remove(callLogType);
                     rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
                     simpleCallLogListAdapter.resetCurrentIndex();
@@ -1149,7 +1163,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
         System.out.println("RContact callLogTypeArrayList size --> " + callLogTypeArrayList.size());
 
-        ArrayList<CallLogType> filteredList = new ArrayList<>();
+        filteredList = new ArrayList<>();
 
         try {
             if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0) {
@@ -2044,22 +2058,25 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     if (clearLogs) {
                         if (simpleCallLogListAdapter != null) {
                             // when data was loaded everytime
-
                             // updated on 19/04/2017, when data are loading from arraylist
-                            CallLogType callDataToUpdate = simpleCallLogListAdapter
-                                    .getSelectedCallLogData();
-                            String number = callDataToUpdate.getNumber();
-                            for (int i = 0; i < callLogTypeArrayList.size(); i++) {
-                                CallLogType callLogType = callLogTypeArrayList.get(i);
-                                String numberToDelete = callLogType.getNumber();
-                                if (numberToDelete.equalsIgnoreCase(number)) {
-                                    callLogTypeArrayList.remove(callLogType);
-                                    rContactApplication.setArrayListCallLogType
-                                            (callLogTypeArrayList);
-                                    simpleCallLogListAdapter.notifyDataSetChanged();
+                            CallLogType callDataToUpdate = simpleCallLogListAdapter.getSelectedCallLogData();
+                            if(callDataToUpdate != null){
+                                String number = callDataToUpdate.getNumber();
+                                if(!number.startsWith("+91"))
+                                    number =  Utils.getFormattedNumber(getActivity(),number);
+                                for (int i = 0; i < callLogTypeArrayList.size(); i++) {
+                                    CallLogType callLogType = callLogTypeArrayList.get(i);
+                                    String numberToDelete = callLogType.getNumber();
+                                    if(!numberToDelete.startsWith("+91"))
+                                        numberToDelete =  Utils.getFormattedNumber(getActivity(),numberToDelete);
+                                    if (numberToDelete.equalsIgnoreCase(number)) {
+                                        callLogTypeArrayList.remove(callLogType);
+                                        rContactApplication.setArrayListCallLogType
+                                                (callLogTypeArrayList);
+                                        simpleCallLogListAdapter.notifyDataSetChanged();
+                                    }
                                 }
                             }
-
                             clearLogs = false;
                         }
                     } else {
@@ -2071,9 +2088,13 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                                 CallLogType callDataToUpdate = simpleCallLogListAdapter
                                         .getSelectedCallLogData();
                                 String number = callDataToUpdate.getNumber();
+                                if(!number.startsWith("+91"))
+                                    number =  Utils.getFormattedNumber(getActivity(),number);
                                 for (int i = 0; i < callLogTypeArrayList.size(); i++) {
                                     CallLogType callLogType = callLogTypeArrayList.get(i);
                                     String numberToDelete = callLogType.getNumber();
+                                    if(!numberToDelete.startsWith("+91"))
+                                        numberToDelete =  Utils.getFormattedNumber(getActivity(),numberToDelete);
                                     if (numberToDelete.equalsIgnoreCase(number)) {
                                         callLogTypeArrayList.remove(callLogType);
                                         rContactApplication.setArrayListCallLogType

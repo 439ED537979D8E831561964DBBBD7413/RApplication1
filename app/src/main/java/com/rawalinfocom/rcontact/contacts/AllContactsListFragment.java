@@ -695,6 +695,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     }
 
     private void startSync() {
+        if(getActivity() == null)
+            return;
 
         if (!Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CONTACT_SYNCED, false)) {
             syncingTask = new SyncingTask();

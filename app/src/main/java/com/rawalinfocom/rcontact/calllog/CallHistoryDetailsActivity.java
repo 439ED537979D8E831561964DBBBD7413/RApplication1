@@ -916,6 +916,11 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                                         profileContactNumber);
 //                                showCallConfirmationDialog(profileContactNumber);
                             }
+                        }else{
+                            if(!StringUtils.isBlank(historyNumber)){
+                                Utils.callIntent(CallHistoryDetailsActivity.this,
+                                        historyNumber);
+                            }
                         }
                     }
 
