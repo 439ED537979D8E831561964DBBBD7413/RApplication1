@@ -390,8 +390,13 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                             } else {
                                 globalSearchAdapter.notifyDataSetChanged();
                             }
-
-                            initSwipeForGlobal();
+                            if (search.getText().toString().length() > 0){
+                                Pattern numberPat = Pattern.compile(".*[a-zA-Z].*");
+                                Matcher matcher1 = numberPat.matcher(search.getText().toString());
+                                if(!matcher1.find()){
+                                    initSwipeForGlobal();
+                                }
+                            }
                         } else {
                             textNoRecords.setVisibility(View.VISIBLE);
                             textNoRecords.setTypeface(Utils.typefaceRegular(this));
