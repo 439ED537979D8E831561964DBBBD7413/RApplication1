@@ -471,7 +471,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     if (checkVersionResponse != null && StringUtils.equalsIgnoreCase
                             (checkVersionResponse.getMessage(), "force update")) {
 //                        Utils.showForceUpdateDialog(getActivity());
-                        showForceUpdateDialog();
+//                        showForceUpdateDialog();
+                        startSync();
                     } else {
                         startSync();
                     }

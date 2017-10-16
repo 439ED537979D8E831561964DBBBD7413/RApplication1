@@ -127,6 +127,9 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
     TextView textOrganization;
     @BindView(R.id.text_view_all_organization)
     TextView textViewAllOrganization;
+    @BindView(R.id.text_time)
+    TextView textTime;
+
     @BindView(R.id.linear_organization_detail)
     LinearLayout linearOrganizationDetail;
     @BindView(R.id.linear_basic_detail)
@@ -1223,6 +1226,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         textOrganization.setTypeface(Utils.typefaceRegular(this));
         textViewAllOrganization.setTypeface(Utils.typefaceRegular(this));
         textUserRating.setTypeface(Utils.typefaceRegular(this));
+        textTime.setTypeface(Utils.typefaceRegular(this));
 
         textFullScreenText.setSelected(true);
         rippleActionBack.setOnRippleCompleteListener(this);
@@ -1807,8 +1811,10 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
             if (tempOrganization.size() == 1) {
                 textViewAllOrganization.setVisibility(View.GONE);
+                textTime.setVisibility(View.VISIBLE);
             } else {
                 textViewAllOrganization.setVisibility(View.VISIBLE);
+                textTime.setVisibility(View.GONE);
             }
 
             if (arrayListOrganization.size() > 0) {
@@ -1816,15 +1822,45 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                         .this, R.color.colorAccent));
                 textOrganization.setTextColor(ContextCompat.getColor(CallHistoryDetailsActivity
                         .this, R.color.colorAccent));
+                textTime.setTextColor(ContextCompat.getColor(CallHistoryDetailsActivity
+                        .this, R.color.colorAccent));
             } else {
                 textDesignation.setTextColor(ContextCompat.getColor(CallHistoryDetailsActivity
                         .this, R.color.colorBlack));
                 textOrganization.setTextColor(ContextCompat.getColor(CallHistoryDetailsActivity
                         .this, R.color.colorBlack));
+                textTime.setVisibility(View.GONE);
             }
-
             textDesignation.setText(tempOrganization.get(0).getOrgJobTitle());
             textOrganization.setText(tempOrganization.get(0).getOrgName());
+
+            if (StringUtils.equalsIgnoreCase(tempOrganization.get(0).getOrgToDate(), "")) {
+                if (!StringUtils.isEmpty(tempOrganization.get(0).getOrgFromDate())) {
+                    String formattedFromDate = Utils.convertDateFormat(tempOrganization.get
+                                    (0).getOrgFromDate(),
+                            "yyyy-MM-dd hh:mm:ss", Utils.getEventDateFormat(tempOrganization
+                                    .get(0).getOrgFromDate()));
+
+                    textTime.setText(String.format("%s to Present ", formattedFromDate));
+                } else {
+                    textTime.setVisibility(View.GONE);
+                }
+            } else {
+                if (!StringUtils.isEmpty(tempOrganization.get(0).getOrgFromDate()) &&
+                        !StringUtils.isEmpty(tempOrganization.get(0).getOrgToDate())) {
+                    String formattedFromDate = Utils.convertDateFormat(tempOrganization.get
+                                    (0).getOrgFromDate(),
+                            "yyyy-MM-dd hh:mm:ss", Utils.getEventDateFormat(tempOrganization
+                                    .get(0).getOrgFromDate()));
+                    String formattedToDate = Utils.convertDateFormat(tempOrganization.get(0)
+                                    .getOrgToDate(),
+                            "yyyy-MM-dd hh:mm:ss", Utils.getEventDateFormat(tempOrganization
+                                    .get(0).getOrgToDate()));
+
+                    textTime.setText(String.format("%s to %s ", formattedFromDate,
+                            formattedToDate));
+                }
+            }
 
             textViewAllOrganization.setOnClickListener(new View.OnClickListener() {
                 @Override

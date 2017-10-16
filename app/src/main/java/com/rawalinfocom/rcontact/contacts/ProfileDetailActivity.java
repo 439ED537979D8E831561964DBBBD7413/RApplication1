@@ -2005,7 +2005,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         textFullScreenText.setTypeface(Utils.typefaceSemiBold(this));
         textName.setTypeface(Utils.typefaceSemiBold(this));
         textDesignation.setTypeface(Utils.typefaceRegular(this));
-        textOrganization.setTypeface(Utils.typefaceRegular(this));
+        textOrganization.setTypeface(Utils.typefaceIcons(this));
         textTime.setTypeface(Utils.typefaceRegular(this));
         textViewAllOrganization.setTypeface(Utils.typefaceRegular(this));
         textUserRating.setTypeface(Utils.typefaceRegular(this));
@@ -2072,7 +2072,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 setUpView(null);
             }
         }
-
 
 
         initSwipe();
