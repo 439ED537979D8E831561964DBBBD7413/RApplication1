@@ -475,7 +475,7 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                 @Override
                 public void onClick(View view) {
                     if (StringUtils.length(profileDetail.getPbProfilePhoto()) > 0) {
-                        Utils.zoomImageFromThumb(PublicProfileDetailActivity.this, imageProfile, userProfile.getPmProfileImage(),
+                        Utils.zoomImageFromThumb(PublicProfileDetailActivity.this, imageProfile, profileDetail.getPbProfilePhoto(),
                                 frameImageEnlarge, imageEnlarge, frameContainer);
                     }
                 }
@@ -536,7 +536,7 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                 if (StringUtils.equalsIgnoreCase(tempOrganization.get(0).getOrgToDate(), "")) {
                     if (!StringUtils.isEmpty(tempOrganization.get(0).getOrgFromDate())) {
                         String formattedFromDate = Utils.convertDateFormat(tempOrganization.get(0).getOrgFromDate(),
-                                "yyyy-MM-dd hh:mm:ss", Utils.getEventDateFormat(tempOrganization.get(0).getOrgFromDate()));
+                                "yyyy-MM-dd", Utils.getEventDateFormat(tempOrganization.get(0).getOrgFromDate()));
 
                         textTime.setText(String.format("%s to Present ", formattedFromDate));
                     } else {
@@ -545,9 +545,9 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                 } else {
                     if (!StringUtils.isEmpty(tempOrganization.get(0).getOrgFromDate()) && !StringUtils.isEmpty(tempOrganization.get(0).getOrgToDate())) {
                         String formattedFromDate = Utils.convertDateFormat(tempOrganization.get(0).getOrgFromDate(),
-                                "yyyy-MM-dd hh:mm:ss", Utils.getEventDateFormat(tempOrganization.get(0).getOrgFromDate()));
+                                "yyyy-MM-dd", Utils.getEventDateFormat(tempOrganization.get(0).getOrgFromDate()));
                         String formattedToDate = Utils.convertDateFormat(tempOrganization.get(0).getOrgToDate(),
-                                "yyyy-MM-dd hh:mm:ss", Utils.getEventDateFormat(tempOrganization.get(0).getOrgToDate()));
+                                "yyyy-MM-dd", Utils.getEventDateFormat(tempOrganization.get(0).getOrgToDate()));
 
                         textTime.setText(String.format("%s to %s ", formattedFromDate, formattedToDate));
                     }

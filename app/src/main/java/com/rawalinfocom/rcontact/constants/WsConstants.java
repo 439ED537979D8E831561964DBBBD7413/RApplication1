@@ -37,7 +37,7 @@ public class WsConstants {
      */
     //<editor-fold desc="Staging">
 
-    /*// API ROOT
+   /* // API ROOT
     public static final String WS_ROOT = "http://apistaging.rcontacts.in/api/v1/";
     public static final String WS_ROOT_V2 = "http://apistaging.rcontacts.in/api/v2/";
     // TERMS-CONDITIONS URL
