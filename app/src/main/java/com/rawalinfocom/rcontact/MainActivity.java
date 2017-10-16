@@ -2928,7 +2928,17 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     }
 
     private void prepareForDeletion(ArrayList<String> list) {
+
+        QueryManager queryManager = new QueryManager(databaseHandler);
+
         for (String deletedRawId : list) {
+
+            TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
+            String rcpId = tableProfileMaster.getRCPIdFromRawId(deletedRawId);
+
+            if (!StringUtils.isEmpty(rcpId)) {
+                queryManager.updateRcProfileDetail(MainActivity.this, Integer.parseInt(rcpId), deletedRawId);
+            }
 
             ProfileData profileData = new ProfileData();
             profileData.setLocalPhoneBookId(deletedRawId);

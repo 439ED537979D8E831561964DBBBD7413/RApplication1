@@ -693,7 +693,7 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
             public void onClick(View v) {
 
                 selectedPosition = (int) v.getTag();
-                selectedCallLogData = callLogType;
+                selectedCallLogData = arrayListCallLogs.get(selectedPosition);
                 String key = "";
                 key = callLogType.getLocalPbRowId();
                 if (key.equalsIgnoreCase(" ")) {
