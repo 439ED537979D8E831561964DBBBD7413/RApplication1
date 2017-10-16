@@ -172,6 +172,7 @@ class OptionMenuDialog {
 
         Intent intent;
         Uri lookupUri, res;
+        QueryManager queryManager = new QueryManager(((BaseActivity) context).databaseHandler);
 
         switch (position) {
 
@@ -191,7 +192,7 @@ class OptionMenuDialog {
 
             // <editor-fold desc="Delete">
             case 1:
-                showDeleteConfirmationDialog(ALL_CONTACT_NON_RCP);
+                showDeleteConfirmationDialog(queryManager, ALL_CONTACT_NON_RCP);
                /* PhoneBookContacts phoneBookContacts = new PhoneBookContacts(context);
                 phoneBookContacts.deleteContact(rawId);
                 IS_CONTACT_DELETED = true;
@@ -262,8 +263,6 @@ class OptionMenuDialog {
 
             // <editor-fold desc="Delete">
             case 3:
-                queryManager.updateRcProfileDetail(context, Integer.parseInt(
-                        ((ProfileDetailActivity) context).pmId), rawId);
                 /*TableProfileMaster tableProfileMaster = new TableProfileMaster(((BaseActivity)
                         context).databaseHandler);
                 String rawIdFromRcpId = tableProfileMaster.getRawIdFromRcpId(Integer.parseInt(
@@ -286,7 +285,7 @@ class OptionMenuDialog {
                         queryManager.deleteRcProfileDetail(((ProfileDetailActivity) context).pmId);
                     }
                 }*/
-                showDeleteConfirmationDialog(ALL_CONTACT_RCP);
+                showDeleteConfirmationDialog(queryManager, ALL_CONTACT_RCP);
                /* phoneBookContacts.deleteContact(rawId);
                 if (context instanceof ProfileDetailActivity) {
                     ((ProfileDetailActivity) context).onBackPressed();
@@ -362,8 +361,6 @@ class OptionMenuDialog {
 
             // <editor-fold desc="Delete">
             case 3:
-                queryManager.updateRcProfileDetail(context, Integer.parseInt(
-                        ((ProfileDetailActivity) context).pmId), rawId);
                 /*TableProfileMaster tableProfileMaster = new TableProfileMaster(((BaseActivity)
                         context).databaseHandler);
                 String rawIdFromRcpId = tableProfileMaster.getRawIdFromRcpId(Integer.parseInt(
@@ -387,7 +384,7 @@ class OptionMenuDialog {
                     }
                 }*/
 
-                showDeleteConfirmationDialog(R_CONTACT_RCP);
+                showDeleteConfirmationDialog(queryManager, R_CONTACT_RCP);
                /* phoneBookContacts.deleteContact(rawId);
                 if (context instanceof ProfileDetailActivity) {
                     ((ProfileDetailActivity) context).onBackPressed();
@@ -406,7 +403,7 @@ class OptionMenuDialog {
 
     //<editor-fold desc="Private Methods">
 
-    private void showDeleteConfirmationDialog(final int deleteFrom) {
+    private void showDeleteConfirmationDialog(final QueryManager queryManager, final int deleteFrom) {
 
         RippleView.OnRippleCompleteListener cancelListener = new RippleView
                 .OnRippleCompleteListener() {
@@ -442,6 +439,10 @@ class OptionMenuDialog {
                                 break;
 
                             case ALL_CONTACT_RCP:
+
+                                queryManager.updateRcProfileDetail(context, Integer.parseInt(
+                                        ((ProfileDetailActivity) context).pmId), rawId);
+
                                 phoneBookContacts.deleteContact(rawId);
                                 if (context instanceof ProfileDetailActivity) {
                                     ((ProfileDetailActivity) context).onBackPressed();
@@ -457,6 +458,10 @@ class OptionMenuDialog {
                                 break;
 
                             case R_CONTACT_RCP:
+
+                                queryManager.updateRcProfileDetail(context, Integer.parseInt(
+                                        ((ProfileDetailActivity) context).pmId), rawId);
+
                                 phoneBookContacts.deleteContact(rawId);
                                 if (context instanceof ProfileDetailActivity) {
                                     ((ProfileDetailActivity) context).onBackPressed();
