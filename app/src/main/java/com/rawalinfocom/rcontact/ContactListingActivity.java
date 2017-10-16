@@ -1,5 +1,6 @@
 package com.rawalinfocom.rcontact;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -16,6 +17,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
@@ -153,8 +155,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
 
                 if (inputSearch.getVisibility() == View.VISIBLE) {
 
-                    Utils.hideKeyBoard(ContactListingActivity.this);
-
+                    inputSearch.getText().clear();
                     inputSearch.setVisibility(View.GONE);
                     textToolbarTitle.setVisibility(View.VISIBLE);
                     recyclerViewContacts.setVisibility(View.VISIBLE);
@@ -167,8 +168,12 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                         setFilterList();
                     }
 
+                    InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    mgr.hideSoftInputFromWindow(inputSearch.getWindowToken(), 0);
+
                 } else {
 
+                    inputSearch.getText().clear();
                     textToolbarTitle.setVisibility(View.GONE);
                     inputSearch.setVisibility(View.VISIBLE);
                     inputSearch.requestFocus();
