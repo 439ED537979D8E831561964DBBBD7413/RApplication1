@@ -319,10 +319,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 }
 
             } catch (Exception e) {
-//                System.out.println("RContact PullMechanismService call error --> " + e
-// .getMessage());
+                    e.printStackTrace();
             }
-
             return null;
         }
     }
