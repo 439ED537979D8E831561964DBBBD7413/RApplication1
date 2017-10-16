@@ -378,16 +378,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         simpleCallLogListAdapter.resetAnimationIndex();
         List<Integer> selectedItemPositions =
                 simpleCallLogListAdapter.getSelectedItems();
-        /*for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
-//            simpleCallLogListAdapter.removeData(selectedItemPositions.get(i));
-            int itemIndexToRemove =  selectedItemPositions.get(i);
-            callLogTypeArrayList.remove(itemIndexToRemove);
-            rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
-            simpleCallLogListAdapter.resetCurrentIndex();
-            simpleCallLogListAdapter.notifyItemRemoved(itemIndexToRemove);
-            simpleCallLogListAdapter.notifyItemRangeChanged(itemIndexToRemove,
-                    simpleCallLogListAdapter.getItemCount());
-        }*/
 
         ArrayList<CallLogType> listToDelete = simpleCallLogListAdapter.getArrayListToDelete();
         if (listToDelete.size() > 0) {
@@ -413,7 +403,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             }
             simpleCallLogListAdapter.notifyDataSetChanged();
         }
-//        simpleCallLogListAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -987,18 +976,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             }
         });
     }
-
-//    private ArrayList<CallLogType> divideCallLogByChunck() {
-//        callLogsListbyChunck = new ArrayList<>();
-//        for (ArrayList<CallLogType> partition : choppedCallLog(callLogTypeArrayList,
-// LIST_PARTITION_COUNT)) {
-//            // do something with partition
-//            callLogsListbyChunck.addAll(partition);
-////            callLogTypeArrayList.removeAll(partition);
-//            break;
-//        }
-//        return callLogsListbyChunck;
-//    }
 
     private void fetchCallLogs() {
 
