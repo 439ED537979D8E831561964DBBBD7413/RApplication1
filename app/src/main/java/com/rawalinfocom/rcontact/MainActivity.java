@@ -357,7 +357,6 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 startActivityIntent(MainActivity.this, ContactListingActivity.class, null);
                 break;
             case R.id.nav_ll_share:
-
                 Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                 sharingIntent.setType("text/plain");
                /* QueryManager queryManager = new QueryManager(databaseHandler);
