@@ -781,4 +781,28 @@ public class TableProfileMaster {
 
         return rcpIds;
     }
+
+    public String getRCPIdFromRawId(String rawId) {
+
+        String rcpID = "";
+
+        String selectQuery = "SELECT " + COLUMN_PM_RCP_ID + " FROM " + TABLE_RC_PROFILE_MASTER + " WHERE " +
+                COLUMN_PM_RAW_ID + " LIKE '%" + rawId + "%'";
+
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor != null) {
+
+            if (cursor.moveToFirst()) {
+                do {
+                    rcpID = cursor.getString(cursor.getColumnIndex(COLUMN_PM_RCP_ID));
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
+
+        return rcpID;
+
+    }
 }

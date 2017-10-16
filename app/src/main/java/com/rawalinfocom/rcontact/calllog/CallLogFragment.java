@@ -124,6 +124,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     TextView textGrantPermission;
     TextView textNoCallsFound;
     private ArrayList<CallLogType> callLogTypeArrayList;
+    private ArrayList<CallLogType> filteredList;
 
     private SimpleCallLogListAdapter simpleCallLogListAdapter;
 
@@ -207,7 +208,14 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             enableActionMode(position);
         } else {
 
-            CallLogType selectedCallLogData = callLogTypeArrayList.get(position);
+            CallLogType selectedCallLogData;
+
+            if (!selectedCallType.equalsIgnoreCase(CALL_LOG_ALL_CALLS)) {
+                selectedCallLogData = filteredList.get(position);
+            } else {
+                selectedCallLogData = callLogTypeArrayList.get(position);
+            }
+
             String key = "";
             key = selectedCallLogData.getLocalPbRowId();
             if (key.equalsIgnoreCase(" ")) {
@@ -393,6 +401,11 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 int value = getActivity().getContentResolver().delete(CallLog.Calls.CONTENT_URI, where,
                         selectionArguments);
                 if (value > 0) {
+
+                    if (!selectedCallType.equalsIgnoreCase(CALL_LOG_ALL_CALLS)) {
+                        filteredList.remove(callLogType);
+                    }
+
                     callLogTypeArrayList.remove(callLogType);
                     rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
                     simpleCallLogListAdapter.resetCurrentIndex();
@@ -1149,7 +1162,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
         System.out.println("RContact callLogTypeArrayList size --> " + callLogTypeArrayList.size());
 
-        ArrayList<CallLogType> filteredList = new ArrayList<>();
+        filteredList = new ArrayList<>();
 
         try {
             if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0) {
