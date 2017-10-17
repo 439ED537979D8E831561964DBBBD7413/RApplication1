@@ -36,14 +36,15 @@
                     android:textColor="@color/colorAccent"
                     android:textSize="14sp" />
 
-                <TextView
-                    android:id="@+id/text_tic"
+                <ImageView
+                    android:id="@+id/img_tic"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
+                    android:contentDescription="@string/app_name"
                     android:gravity="center|start"
-                    android:textColor="@color/textColorBlue"
-                    android:visibility="visible" />
+                    android:src="@drawable/ico_double_tick_svg"
+                    android:visibility="gone" />
 
             </LinearLayout>
 
