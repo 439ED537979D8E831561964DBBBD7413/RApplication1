@@ -236,6 +236,7 @@ public class AppConstants {
 
     public static String KEY_PREFERENCES = "pref_rcontact";
     public static String PREF_APP_LANGUAGE = "pref_app_language";
+    public static String PREF_PERCENTAGE_VIEW = "pref_percentage_view";
     public static String PREF_SHORT_BY_CONTACT = "pref_short_by_contact";
     public static String PREF_EXPORT_CONTACT = "pref_export_contact";
 
