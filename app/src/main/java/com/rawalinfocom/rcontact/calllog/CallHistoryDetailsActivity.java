@@ -28,6 +28,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -46,6 +47,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
@@ -127,6 +129,9 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
     TextView textOrganization;
     @BindView(R.id.text_view_all_organization)
     TextView textViewAllOrganization;
+    @BindView(R.id.text_time)
+    TextView textTime;
+
     @BindView(R.id.linear_organization_detail)
     LinearLayout linearOrganizationDetail;
     @BindView(R.id.linear_basic_detail)
@@ -475,7 +480,15 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 if (intent.getStringExtra("action").equals("delete")) {
                     arrayListHistory.clear();
                     recyclerCallHistory.setVisibility(View.GONE);
+                    Intent localBroadcastIntent2 = new Intent(AppConstants.ACTION_LOCAL_BROADCAST);
+                    LocalBroadcastManager myLocalBroadcastManager2 = LocalBroadcastManager
+                            .getInstance(context);
+                    localBroadcastIntent2.putExtra("number", intent.getStringExtra("number"));
+                    localBroadcastIntent2.putExtra("from", "clearCallLog");
+                    myLocalBroadcastManager2.sendBroadcast(localBroadcastIntent2);
                     setHistoryAdapter();
+
+
                 }
             }
         }
@@ -916,6 +929,11 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                                         profileContactNumber);
 //                                showCallConfirmationDialog(profileContactNumber);
                             }
+                        } else {
+                            if (!StringUtils.isBlank(historyNumber)) {
+                                Utils.callIntent(CallHistoryDetailsActivity.this,
+                                        historyNumber);
+                            }
                         }
                     }
 
@@ -1033,8 +1051,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                     }
                 } else {
 
-                    if (isRcpVerifiedUser.equalsIgnoreCase("0") || isRcpVerifiedUser
-                            .equalsIgnoreCase("1")) {
+                    if (StringUtils.equalsIgnoreCase(isRcpVerifiedUser, "0") ||
+                            StringUtils.equalsIgnoreCase(isRcpVerifiedUser, "1")) {
                         if (!TextUtils.isEmpty(historyNumber)) {
                             ArrayList<String> arrayListNumber = new ArrayList<>(Arrays.asList
                                     (this.getString(R.string.add_to_contact),
@@ -1218,6 +1236,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         textOrganization.setTypeface(Utils.typefaceRegular(this));
         textViewAllOrganization.setTypeface(Utils.typefaceRegular(this));
         textUserRating.setTypeface(Utils.typefaceRegular(this));
+        textTime.setTypeface(Utils.typefaceRegular(this));
 
         textFullScreenText.setSelected(true);
         rippleActionBack.setOnRippleCompleteListener(this);
@@ -1802,8 +1821,10 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
             if (tempOrganization.size() == 1) {
                 textViewAllOrganization.setVisibility(View.GONE);
+                textTime.setVisibility(View.VISIBLE);
             } else {
                 textViewAllOrganization.setVisibility(View.VISIBLE);
+                textTime.setVisibility(View.GONE);
             }
 
             if (arrayListOrganization.size() > 0) {
@@ -1811,15 +1832,57 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                         .this, R.color.colorAccent));
                 textOrganization.setTextColor(ContextCompat.getColor(CallHistoryDetailsActivity
                         .this, R.color.colorAccent));
+                textTime.setTextColor(ContextCompat.getColor(CallHistoryDetailsActivity
+                        .this, R.color.colorAccent));
             } else {
                 textDesignation.setTextColor(ContextCompat.getColor(CallHistoryDetailsActivity
                         .this, R.color.colorBlack));
                 textOrganization.setTextColor(ContextCompat.getColor(CallHistoryDetailsActivity
                         .this, R.color.colorBlack));
+                textTime.setVisibility(View.GONE);
+            }
+
+            if (MoreObjects.firstNonNull(tempOrganization.get(0).getIsVerify(), 0) == IntegerConstants.RCP_TYPE_PRIMARY) {
+
+                String s = Utils.setMultipleTypeface(CallHistoryDetailsActivity.this, tempOrganization.get(0).getOrgName() + " <font color" + "='#00796B'>" +
+                                getString(R.string.im_icon_verify) + "</font>", 0, (StringUtils.length(tempOrganization.get(0).getOrgName()) + 1),
+                        ((StringUtils.length(tempOrganization.get(0).getOrgName()) + 1) + 1)).toString();
+
+                textOrganization.setText(Html.fromHtml(s));
+
+            } else {
+                textOrganization.setText(tempOrganization.get(0).getOrgName());
             }
 
             textDesignation.setText(tempOrganization.get(0).getOrgJobTitle());
-            textOrganization.setText(tempOrganization.get(0).getOrgName());
+
+            if (StringUtils.equalsIgnoreCase(tempOrganization.get(0).getOrgToDate(), "")) {
+                if (!StringUtils.isEmpty(tempOrganization.get(0).getOrgFromDate())) {
+                    String formattedFromDate = Utils.convertDateFormat(tempOrganization.get
+                                    (0).getOrgFromDate(),
+                            "yyyy-MM-dd", Utils.getEventDateFormat(tempOrganization
+                                    .get(0).getOrgFromDate()));
+
+                    textTime.setText(String.format("%s to Present ", formattedFromDate));
+                } else {
+                    textTime.setVisibility(View.GONE);
+                }
+            } else {
+                if (!StringUtils.isEmpty(tempOrganization.get(0).getOrgFromDate()) &&
+                        !StringUtils.isEmpty(tempOrganization.get(0).getOrgToDate())) {
+                    String formattedFromDate = Utils.convertDateFormat(tempOrganization.get
+                                    (0).getOrgFromDate(),
+                            "yyyy-MM-dd", Utils.getEventDateFormat(tempOrganization
+                                    .get(0).getOrgFromDate()));
+                    String formattedToDate = Utils.convertDateFormat(tempOrganization.get(0)
+                                    .getOrgToDate(),
+                            "yyyy-MM-dd", Utils.getEventDateFormat(tempOrganization
+                                    .get(0).getOrgToDate()));
+
+                    textTime.setText(String.format("%s to %s ", formattedFromDate,
+                            formattedToDate));
+                }
+            }
 
             textViewAllOrganization.setOnClickListener(new View.OnClickListener() {
                 @Override

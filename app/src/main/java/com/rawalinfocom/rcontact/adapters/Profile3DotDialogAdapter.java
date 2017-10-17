@@ -554,6 +554,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
 
     private void deleteCallHistoryByNumber(String number) {
         try {
+            number =  Utils.getFormattedNumber(context,number);
             String where = CallLog.Calls.NUMBER + " =?";
             String[] selectionArguments = new String[]{number};
             int value = context.getContentResolver().delete(CallLog.Calls.CONTENT_URI, where,
@@ -580,6 +581,8 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
 
                 Intent localBroadcastIntent2 = new Intent(AppConstants
                         .ACTION_LOCAL_BROADCAST_CALL_HISTORY_ACTIVITY);
+                localBroadcastIntent2.putExtra("action", "delete");
+                localBroadcastIntent2.putExtra("number", number);
                 LocalBroadcastManager myLocalBroadcastManager2 = LocalBroadcastManager
                         .getInstance(context);
                 myLocalBroadcastManager2.sendBroadcast(localBroadcastIntent2);
@@ -675,7 +678,12 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
     }
 
     private long callLogHistory(String number) {
-        Cursor cursor = getCallHistoryDataByNumber(number);
+        Cursor cursor;
+        cursor = getCallHistoryDataByNumber(number);
+        if(cursor.getCount()==0){
+            number = Utils.getFormattedNumber(context,number);
+            cursor =  getCallHistoryDataByNumber(number);
+        }
         long callDateToDelete = 0;
         try {
             if (cursor != null && cursor.getCount() > 0) {

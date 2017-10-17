@@ -1883,7 +1883,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             .findViewById(R.id.relative_row_edit_profile);
                     CheckBox checkboxOrganization = linearOrganization.findViewById(R
                             .id.checkbox_organization);
-                    organization.setOrgName(inputCompanyName.getText().toString().trim());
+                    organization.setOrgName(textOrgName.getText().toString().trim());
                     organization.setOrgJobTitle(inputDesignationName.getText().toString().trim());
                     organization.setOrgId((String) relativeRowEditProfile.getTag());
                     organization.setIsCurrent(checkboxOrganization.isChecked() ? 1 : 0);
@@ -4043,7 +4043,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         final TextView textOrgLogo = view.findViewById(R.id.text_org_logo);
         final TextView textEnterpriseOrgId = view.findViewById(R.id.text_enterprise_org_id);
         TextView textIsVerified = view.findViewById(R.id.text_is_verified);
-        TextView textOrgName = view.findViewById(R.id.text_org_name);
+        final TextView textOrgName = view.findViewById(R.id.text_org_name);
         TextView textOrgType = view.findViewById(R.id.text_org_type);
 
         final EditText inputFromDate = view.findViewById(R.id.input_from_date);
@@ -4188,6 +4188,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     inputDesignationName.getText().clear();
                     inputFromDate.getText().clear();
                     inputToDate.getText().clear();
+                    textOrgName.setText("");
                     checkboxOrganization.setChecked(true);
 //                    arrayListOrganizationObject.clear();
                 }

@@ -39,6 +39,12 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Utils.setBooleanPreference(this, AppConstants.PREF_PERCENTAGE_VIEW, true);
+    }
+
     public void startActivityIntent(Context packageContext, Class cls, Bundle extras) {
         Intent intent = new Intent(packageContext, cls);
         if (extras != null) {
@@ -61,7 +67,7 @@ public class BaseActivity extends AppCompatActivity {
         return Utils.getStringPreference(this, AppConstants.PREF_USER_PM_ID, "0");
     }
 
-    public String getPmBadge(){
+    public String getPmBadge() {
         return Utils.getStringPreference(this, AppConstants.PREF_USER_PM_BADGE, "0");
     }
 

@@ -535,16 +535,17 @@ public class QueryManager {
         ArrayList<ProfileData> arrayListProfileData = new ArrayList<>();
         // Select All Query
         String selectQuery = "SELECT DISTINCT " + TableProfileMaster.COLUMN_PM_RCP_ID + ", " +
-                TableProfileMaster.COLUMN_PM_FIRST_NAME + ", " + TableProfileMaster
-                .COLUMN_PM_LAST_NAME + ", " + TableProfileMobileMapping.COLUMN_MPM_MOBILE_NUMBER
-                + ", " + TableProfileEmailMapping.COLUMN_EPM_EMAIL_ID + " FROM " +
-                TableProfileMaster.TABLE_RC_PROFILE_MASTER + " LEFT JOIN " +
-                TableProfileMobileMapping.TABLE_PB_PROFILE_MOBILE_MAPPING + " ON " +
-                TableProfileMaster.COLUMN_PM_RCP_ID + " = " + TableProfileMobileMapping
-                .COLUMN_MPM_CLOUD_PM_ID + " LEFT JOIN " + TableProfileEmailMapping
-                .TABLE_PB_PROFILE_EMAIL_MAPPING + " ON " + TableProfileMaster.COLUMN_PM_RCP_ID +
-                " = " + TableProfileEmailMapping.COLUMN_EPM_CLOUD_PM_ID + " WHERE " +
-                TableProfileMaster.COLUMN_PM_RCP_ID + " IN (" + cloudPmIds + ")";
+                TableProfileMaster.COLUMN_PM_PROFILE_IMAGE + ", " + TableProfileMaster
+                .COLUMN_PM_FIRST_NAME + ", " + TableProfileMaster.COLUMN_PM_LAST_NAME + ", " +
+                TableProfileMobileMapping.COLUMN_MPM_MOBILE_NUMBER + ", " +
+                TableProfileEmailMapping.COLUMN_EPM_EMAIL_ID + " FROM " + TableProfileMaster
+                .TABLE_RC_PROFILE_MASTER + " LEFT JOIN " + TableProfileMobileMapping
+                .TABLE_PB_PROFILE_MOBILE_MAPPING + " ON " + TableProfileMaster.COLUMN_PM_RCP_ID +
+                " = " + TableProfileMobileMapping.COLUMN_MPM_CLOUD_PM_ID + " LEFT JOIN " +
+                TableProfileEmailMapping.TABLE_PB_PROFILE_EMAIL_MAPPING + " ON " +
+                TableProfileMaster.COLUMN_PM_RCP_ID + " = " + TableProfileEmailMapping
+                .COLUMN_EPM_CLOUD_PM_ID + " WHERE " + TableProfileMaster.COLUMN_PM_RCP_ID + " IN " +
+                "(" + cloudPmIds + ")";
 
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -562,6 +563,8 @@ public class QueryManager {
                         (TableProfileEmailMapping.COLUMN_EPM_EMAIL_ID)));
                 profileData.setTempRcpId(cursor.getString(cursor.getColumnIndexOrThrow
                         (TableProfileMaster.COLUMN_PM_RCP_ID)));
+                profileData.setTempRcpImageURL(cursor.getString(cursor.getColumnIndexOrThrow
+                        (TableProfileMaster.COLUMN_PM_PROFILE_IMAGE)));
                 profileData.setTempIsRcp(true);
                 arrayListProfileData.add(profileData);
             } while (cursor.moveToNext());
