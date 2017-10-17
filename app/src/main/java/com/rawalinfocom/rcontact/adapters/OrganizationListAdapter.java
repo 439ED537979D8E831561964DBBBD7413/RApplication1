@@ -14,7 +14,6 @@ import com.bumptech.glide.Glide;
 import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
-import com.rawalinfocom.rcontact.contacts.EditProfileActivity;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
@@ -33,6 +32,7 @@ import butterknife.ButterKnife;
 public class OrganizationListAdapter extends RecyclerView.Adapter<OrganizationListAdapter
         .OrganizationViewHolder> {
 
+    private final int colorPineGreen;
     private Context context;
     private ArrayList<ProfileDataOperationOrganization> arrayListOrganization;
 
@@ -41,6 +41,7 @@ public class OrganizationListAdapter extends RecyclerView.Adapter<OrganizationLi
             arrayListOrganization) {
         this.context = context;
         this.arrayListOrganization = arrayListOrganization;
+        colorPineGreen = ContextCompat.getColor(context, R.color.colorAccent);
     }
 
     @Override
@@ -52,6 +53,9 @@ public class OrganizationListAdapter extends RecyclerView.Adapter<OrganizationLi
 
     @Override
     public void onBindViewHolder(OrganizationViewHolder holder, int position) {
+
+        holder.imgTic.setVisibility(View.VISIBLE);
+        holder.imgTic.setColorFilter(colorPineGreen);
 
         ProfileDataOperationOrganization organization = arrayListOrganization.get(position);
 
@@ -71,18 +75,18 @@ public class OrganizationListAdapter extends RecyclerView.Adapter<OrganizationLi
 
         if (MoreObjects.firstNonNull(organization.getIsVerify(), 0) == IntegerConstants.RCP_TYPE_PRIMARY) {
 
-            String s = Utils.setMultipleTypeface(context, organization.getOrgName() + " <font color" + "='#00796B'>" + context.getString(R.string.im_icon_verify)
-                    + "</font>", 0, (StringUtils.length(organization.getOrgName()) + 1), ((StringUtils.length(organization.getOrgName()) + 1) + 1)).toString();
-
-            holder.textMain.setText(Html.fromHtml(s));
-            holder.textType.setText(Html.fromHtml("<small> (" + organization.getOrgIndustryType() + ") </small>"));
-        } else {
-
 //            String s = Utils.setMultipleTypeface(context, organization.getOrgName() + " <font color" + "='#00796B'>" + context.getString(R.string.im_icon_verify)
 //                    + "</font>", 0, (StringUtils.length(organization.getOrgName()) + 1), ((StringUtils.length(organization.getOrgName()) + 1) + 1)).toString();
+
 //            holder.textMain.setText(Html.fromHtml(s));
             holder.textMain.setText(organization.getOrgName());
-            holder.textMain.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ico_relation_single_tick_svg, 0);
+            holder.textType.setText(Html.fromHtml("<small> (" + organization.getOrgIndustryType() + ") </small>"));
+            holder.imgTic.setImageResource(R.drawable.ico_double_tick_svg);
+
+        } else {
+
+            holder.textMain.setText(organization.getOrgName());
+            holder.imgTic.setImageResource(R.drawable.ico_relation_single_tick_svg);
             holder.textType.setVisibility(View.GONE);
         }
 
@@ -132,18 +136,22 @@ public class OrganizationListAdapter extends RecyclerView.Adapter<OrganizationLi
         TextView textType;
         @BindView(R.id.image_org_profile)
         ImageView imageOrgProfile;
+        @BindView(R.id.img_tic)
+        ImageView imgTic;
 
         OrganizationViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
 
-            textMain.setTypeface(Utils.typefaceIcons(context));
+            textMain.setTypeface(Utils.typefaceRegular(context));
             textSub.setTypeface(Utils.typefaceRegular(context));
             textTime.setTypeface(Utils.typefaceRegular(context));
             textType.setTypeface(Utils.typefaceRegular(context));
 
             textTime.setVisibility(View.VISIBLE);
             textType.setVisibility(View.VISIBLE);
+
+            imgTic.setVisibility(View.GONE);
         }
     }
 }

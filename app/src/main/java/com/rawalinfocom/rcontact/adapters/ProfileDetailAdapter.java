@@ -90,7 +90,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
     @Override
     public void onBindViewHolder(ProfileDetailViewHolder holder, int position) {
         holder.llPrivacy.setVisibility(View.GONE);
-        holder.textTic.setVisibility(View.GONE);
+        holder.imageViewTic.setVisibility(View.GONE);
 //        if (isOwnProfile) {
 //            holder.viewOtherProfile.setVisibility(View.GONE);
 //        } else {
@@ -356,19 +356,24 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
         int emRcpType = email.getEmRcpType();
         if (emRcpType == IntegerConstants.RCP_TYPE_PRIMARY) {
-            holder.textMain.setText(Utils.setMultipleTypeface(activity, emailId + " " + activity
-                            .getString(R.string.im_icon_verify), 0,
-                    (StringUtils.length(emailId) + 1), (
-                            (StringUtils.length(emailId) + 1) + 1)));
+
+            holder.textMain.setText(emailId);
+
+//            holder.textMain.setText(Utils.setMultipleTypeface(activity, emailId + " " + activity
+//                            .getString(R.string.im_icon_verify), 0,
+//                    (StringUtils.length(emailId) + 1), (
+//                            (StringUtils.length(emailId) + 1) + 1)));
+
             holder.textMain.setTextColor(colorPineGreen);
+            holder.imageViewTic.setVisibility(View.VISIBLE);
+            holder.imageViewTic.setColorFilter(colorPineGreen);
+
             if (isOwnProfile)
-//                holder.llPrivacy.setVisibility(View.INVISIBLE);
                 holder.llPrivacy.setVisibility(View.GONE);
             else {
                 holder.llPrivacy.setVisibility(View.GONE);
                 if ((MoreObjects.firstNonNull(email.getEmIsPrivate(), 0)) == IntegerConstants
                         .IS_PRIVATE) {
-//                    holder.imageView2.setVisibility(View.GONE);
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                     holder.imgActionType.setVisibility(View.GONE);
                 }
@@ -378,20 +383,21 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             if (isOwnProfile || emRcpType == IntegerConstants.RCP_TYPE_SECONDARY) {
                 if (!email.getEmSocialType().equalsIgnoreCase("")) {
 
-                    holder.textMain.setTypeface(Utils.typefaceIcons(activity));
+//                    holder.textMain.setTypeface(Utils.typefaceIcons(activity));
 //                    String s = Utils.setMultipleTypeface(activity, email.getEmEmailId() + " <font color" +
 //                            "='#00bfff'>" + activity.getString(R.string.im_icon_verify) + "</font>", 0, (StringUtils.length
 //                            (email.getEmEmailId()) + 1), ((StringUtils.length(email.getEmEmailId()) + 1) + 1)).toString();
 
-                    String s = Utils.setMultipleTypeface(activity, email.getEmEmailId() + " <font color" +
-                            "='#00bfff'>" + activity.getString(R.string.im_icon_verify) + "</font>", 0, (StringUtils.length
-                            (email.getEmEmailId()) + 1), ((StringUtils.length(email.getEmEmailId()) + 1) + 1)).toString();
+//                    String s = Utils.setMultipleTypeface(activity, email.getEmEmailId() + " <font color" +
+//                            "='#00bfff'>" + activity.getString(R.string.im_icon_verify) + "</font>", 0, (StringUtils.length
+//                            (email.getEmEmailId()) + 1), ((StringUtils.length(email.getEmEmailId()) + 1) + 1)).toString();
 
-                    holder.textTic.setVisibility(View.GONE);
-                    holder.textMain.setText(Html.fromHtml(s));
-                    holder.textTic.setText(activity.getString(R.string.im_icon_verify));
+                    holder.imageViewTic.setVisibility(View.VISIBLE);
+//                    holder.textMain.setText(Html.fromHtml(s));
+                    holder.textMain.setText(email.getEmEmailId());
                     holder.textMain.setTextColor(colorPineGreen);
                 } else {
+                    holder.imageViewTic.setVisibility(View.GONE);
                     holder.textMain.setText(emailId);
                     holder.textMain.setTextColor(colorPineGreen);
                 }
@@ -422,7 +428,6 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 holder.llPrivacy.setVisibility(View.GONE);
                 if ((MoreObjects.firstNonNull(email.getEmIsPrivate(), 0)) == IntegerConstants
                         .IS_PRIVATE) {
-//                    holder.imageView2.setVisibility(View.GONE);
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                     holder.imgActionType.setVisibility(View.GONE);
                 }
@@ -449,31 +454,6 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 }
             });
         }
-//        else {
-//
-//            holder.textMain.setText(emailId);
-//
-//            if (isOwnProfile) {
-//                holder.llPrivacy.setVisibility(View.VISIBLE);
-//                holder.textMain.setTextColor(colorPineGreen);
-//            } else {
-//                holder.llPrivacy.setVisibility(View.GONE);
-//                holder.textMain.setTextColor(colorBlack);
-//            }
-//
-//            holder.llPrivacy.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    PrivacySettingPopupDialog privacySettingPopupDialog = new
-//                            PrivacySettingPopupDialog(holder, activity, listner, AppConstants
-//                            .EMAIL,
-//                            position, email.getEmPublic(), email.getEmId());
-//                    privacySettingPopupDialog.setDialogTitle(activity.getResources().getString(R
-//                            .string.privacy_dialog_title));
-//                    privacySettingPopupDialog.showDialog();
-//                }
-//            });
-//        }
     }
 
     private void displayWebsite(final ProfileDetailViewHolder holder, final int position) {
@@ -1080,8 +1060,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         ImageView imgActionWhatsapp;
         @BindView(R.id.text_main)
         public TextView textMain;
-        @BindView(R.id.text_tic)
-        TextView textTic;
+        @BindView(R.id.img_tic)
+        ImageView imageViewTic;
         @BindView(R.id.text_sub)
         TextView textSub;
         @BindView(R.id.button_privacy)
@@ -1100,7 +1080,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             textMain.setTypeface(Utils.typefaceRegular(activity));
             textSub.setTypeface(Utils.typefaceRegular(activity));
             imgActionWhatsapp.setVisibility(View.GONE);
-            textTic.setVisibility(View.GONE);
+            imageViewTic.setVisibility(View.GONE);
         }
     }
 }
