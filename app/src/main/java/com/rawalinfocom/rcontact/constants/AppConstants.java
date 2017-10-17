@@ -236,6 +236,7 @@ public class AppConstants {
 
     public static String KEY_PREFERENCES = "pref_rcontact";
     public static String PREF_APP_LANGUAGE = "pref_app_language";
+    public static String PREF_PERCENTAGE_VIEW = "pref_percentage_view";
     public static String PREF_SHORT_BY_CONTACT = "pref_short_by_contact";
     public static String PREF_EXPORT_CONTACT = "pref_export_contact";
 
@@ -307,7 +308,6 @@ public class AppConstants {
     public static String PREF_PROFILE_REMAINING_FIELDS = "pref_profile_remaining_fields";
 
 
-
     public static String[] arrayPrefKeys = {PREF_SELECTED_COUNTRY_OBJECT, PREF_DEVICE_TOKEN_ID,
             PREF_LAUNCH_SCREEN_INT, PREF_REGS_USER_OBJECT, PREF_REGS_MOBILE_NUMBER,
             PREF_USER_PM_ID, PREF_ACCESS_TOKEN,
@@ -352,6 +352,7 @@ public class AppConstants {
     public static boolean isComposingSMS = false;
     public static boolean isFromSearchActivity = false;
     public static boolean isFromSettingActivity = false;
+    public static boolean isFromClearCallLogActivity = false;
 
     //<editor-fold desc="Call-log constants">
     public static final int READ_LOGS = 725;

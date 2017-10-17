@@ -478,7 +478,15 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 if (intent.getStringExtra("action").equals("delete")) {
                     arrayListHistory.clear();
                     recyclerCallHistory.setVisibility(View.GONE);
+                    Intent localBroadcastIntent2 = new Intent(AppConstants.ACTION_LOCAL_BROADCAST);
+                    LocalBroadcastManager myLocalBroadcastManager2 = LocalBroadcastManager
+                            .getInstance(context);
+                    localBroadcastIntent2.putExtra("number", intent.getStringExtra("number"));
+                    localBroadcastIntent2.putExtra("from", "clearCallLog");
+                    myLocalBroadcastManager2.sendBroadcast(localBroadcastIntent2);
                     setHistoryAdapter();
+
+
                 }
             }
         }
@@ -919,8 +927,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                                         profileContactNumber);
 //                                showCallConfirmationDialog(profileContactNumber);
                             }
-                        }else{
-                            if(!StringUtils.isBlank(historyNumber)){
+                        } else {
+                            if (!StringUtils.isBlank(historyNumber)) {
                                 Utils.callIntent(CallHistoryDetailsActivity.this,
                                         historyNumber);
                             }
@@ -1041,8 +1049,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                     }
                 } else {
 
-                    if (isRcpVerifiedUser.equalsIgnoreCase("0") || isRcpVerifiedUser
-                            .equalsIgnoreCase("1")) {
+                    if (StringUtils.equalsIgnoreCase(isRcpVerifiedUser, "0") ||
+                            StringUtils.equalsIgnoreCase(isRcpVerifiedUser, "1")) {
                         if (!TextUtils.isEmpty(historyNumber)) {
                             ArrayList<String> arrayListNumber = new ArrayList<>(Arrays.asList
                                     (this.getString(R.string.add_to_contact),
@@ -1838,7 +1846,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 if (!StringUtils.isEmpty(tempOrganization.get(0).getOrgFromDate())) {
                     String formattedFromDate = Utils.convertDateFormat(tempOrganization.get
                                     (0).getOrgFromDate(),
-                            "yyyy-MM-dd hh:mm:ss", Utils.getEventDateFormat(tempOrganization
+                            "yyyy-MM-dd", Utils.getEventDateFormat(tempOrganization
                                     .get(0).getOrgFromDate()));
 
                     textTime.setText(String.format("%s to Present ", formattedFromDate));
@@ -1850,11 +1858,11 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                         !StringUtils.isEmpty(tempOrganization.get(0).getOrgToDate())) {
                     String formattedFromDate = Utils.convertDateFormat(tempOrganization.get
                                     (0).getOrgFromDate(),
-                            "yyyy-MM-dd hh:mm:ss", Utils.getEventDateFormat(tempOrganization
+                            "yyyy-MM-dd", Utils.getEventDateFormat(tempOrganization
                                     .get(0).getOrgFromDate()));
                     String formattedToDate = Utils.convertDateFormat(tempOrganization.get(0)
                                     .getOrgToDate(),
-                            "yyyy-MM-dd hh:mm:ss", Utils.getEventDateFormat(tempOrganization
+                            "yyyy-MM-dd", Utils.getEventDateFormat(tempOrganization
                                     .get(0).getOrgToDate()));
 
                     textTime.setText(String.format("%s to %s ", formattedFromDate,
