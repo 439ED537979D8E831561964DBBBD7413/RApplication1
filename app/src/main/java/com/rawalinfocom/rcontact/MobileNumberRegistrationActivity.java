@@ -188,7 +188,7 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
                 if (checkVersionResponse != null && StringUtils.equalsIgnoreCase
                         (checkVersionResponse.getMessage(), "force update")) {
                     Utils.hideProgressDialog();
-                    showForceUpdateDialog();
+                    Utils.showForceUpdateDialog(MobileNumberRegistrationActivity.this);
                 } else {
                     sendOtp();
                 }
