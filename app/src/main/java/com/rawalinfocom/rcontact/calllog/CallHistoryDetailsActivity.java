@@ -1851,7 +1851,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 textOrganization.setText(Html.fromHtml(s));
 
             } else {
-                textDesignation.setText(tempOrganization.get(0).getOrgJobTitle());
+                textOrganization.setText(tempOrganization.get(0).getOrgName());
             }
 
             textDesignation.setText(tempOrganization.get(0).getOrgJobTitle());
