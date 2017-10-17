@@ -478,7 +478,15 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 if (intent.getStringExtra("action").equals("delete")) {
                     arrayListHistory.clear();
                     recyclerCallHistory.setVisibility(View.GONE);
+                    Intent localBroadcastIntent2 = new Intent(AppConstants.ACTION_LOCAL_BROADCAST);
+                    LocalBroadcastManager myLocalBroadcastManager2 = LocalBroadcastManager
+                            .getInstance(context);
+                    localBroadcastIntent2.putExtra("number", intent.getStringExtra("number"));
+                    localBroadcastIntent2.putExtra("from", "clearCallLog");
+                    myLocalBroadcastManager2.sendBroadcast(localBroadcastIntent2);
                     setHistoryAdapter();
+
+
                 }
             }
         }
@@ -1041,8 +1049,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                     }
                 } else {
 
-                    if (isRcpVerifiedUser.equalsIgnoreCase("0") || isRcpVerifiedUser
-                            .equalsIgnoreCase("1")) {
+                    if (StringUtils.equalsIgnoreCase(isRcpVerifiedUser, "0") ||
+                            StringUtils.equalsIgnoreCase(isRcpVerifiedUser, "1")) {
                         if (!TextUtils.isEmpty(historyNumber)) {
                             ArrayList<String> arrayListNumber = new ArrayList<>(Arrays.asList
                                     (this.getString(R.string.add_to_contact),

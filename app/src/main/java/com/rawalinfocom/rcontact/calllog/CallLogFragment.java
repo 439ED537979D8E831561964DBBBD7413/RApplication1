@@ -209,14 +209,14 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         } else {
 
             CallLogType selectedCallLogData;
-            if (!selectedCallType.equalsIgnoreCase(CALL_LOG_ALL_CALLS)){
-                selectedCallLogData  = filteredList.get(position);
-            }else{
+            if (!selectedCallType.equalsIgnoreCase(CALL_LOG_ALL_CALLS)) {
+                selectedCallLogData = filteredList.get(position);
+            } else {
                 selectedCallLogData = callLogTypeArrayList.get(position);
             }
 
-            if(selectedCallLogData != null){
-                if(simpleCallLogListAdapter != null)
+            if (selectedCallLogData != null) {
+                if (simpleCallLogListAdapter != null)
                     simpleCallLogListAdapter.setSelectedCallLogData(selectedCallLogData);
             }
             String key = "";
@@ -599,7 +599,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         super.onDestroy();
         unregisterLocalBroadcast();
 //        AppConstants.setIsFirstTime(true);
-        simpleCallLogListAdapter = null;
+//        simpleCallLogListAdapter = null;
     }
 
     private void registerLocalBroadcast() {
@@ -646,9 +646,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     }
 
     private void unregisterLocalBroadcast() {
-        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance
-                (getActivity());
-        localBroadcastManager.unregisterReceiver(localBroadcastReceiver);
+//        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance
+//                (getActivity());
+//        localBroadcastManager.unregisterReceiver(localBroadcastReceiver);
 
         LocalBroadcastManager localBroadcastManagerDeleteLogs = LocalBroadcastManager.getInstance
                 (getActivity());
@@ -663,7 +663,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 .getInstance(getActivity());
         localBroadcastManagerProfileBlock.unregisterReceiver(localBroadcastReceiverBlock);
 
-        localBroadcastManager.unregisterReceiver(localBroadcastReceiverRecentCalls);
+        LocalBroadcastManager localBroadcastManagerRecentCalls = LocalBroadcastManager
+                .getInstance(getActivity());
+        localBroadcastManagerRecentCalls.unregisterReceiver(localBroadcastReceiverRecentCalls);
 
     }
 
@@ -2045,7 +2047,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     boolean clearLogsFromContacts;
     private BroadcastReceiver localBroadcastReceiver = new BroadcastReceiver() {
         @Override
-        public void onReceive(Context context, Intent intent) {
+        public void onReceive(Context context, final Intent intent) {
             // Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
             clearLogs = intent.getBooleanExtra(AppConstants.EXTRA_CLEAR_CALL_LOGS, false);
             clearLogsFromContacts = intent.getBooleanExtra(AppConstants
@@ -2055,58 +2057,82 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    if (clearLogs) {
-                        if (simpleCallLogListAdapter != null) {
-                            // when data was loaded everytime
-                            // updated on 19/04/2017, when data are loading from arraylist
-                            CallLogType callDataToUpdate = simpleCallLogListAdapter.getSelectedCallLogData();
-                            if(callDataToUpdate != null){
-                                String number = callDataToUpdate.getNumber();
-                                if(!number.startsWith("+91"))
-                                    number =  Utils.getFormattedNumber(getActivity(),number);
-                                for (int i = 0; i < callLogTypeArrayList.size(); i++) {
-                                    CallLogType callLogType = callLogTypeArrayList.get(i);
-                                    String numberToDelete = callLogType.getNumber();
-                                    if(!numberToDelete.startsWith("+91"))
-                                        numberToDelete =  Utils.getFormattedNumber(getActivity(),numberToDelete);
-                                    if (numberToDelete.equalsIgnoreCase(number)) {
-                                        callLogTypeArrayList.remove(callLogType);
-                                        rContactApplication.setArrayListCallLogType
-                                                (callLogTypeArrayList);
-                                        simpleCallLogListAdapter.notifyDataSetChanged();
+                    if(intent.hasExtra("from")){
+                        if(intent.getStringExtra("from").equalsIgnoreCase("clearCallLog")){
+                            if (intent.hasExtra("number")) {
+                                String number = intent.getStringExtra("number");
+                                if (!StringUtils.isBlank(number)) {
+                                    if (!number.startsWith("+91"))
+                                        number = Utils.getFormattedNumber(getActivity(), number);
+                                    for (int i = 0; i < callLogTypeArrayList.size(); i++) {
+                                        CallLogType callLogType = callLogTypeArrayList.get(i);
+                                        String numberToDelete = callLogType.getNumber();
+                                        if (!numberToDelete.startsWith("+91"))
+                                            numberToDelete = Utils.getFormattedNumber(getActivity(), numberToDelete);
+                                        if (numberToDelete.equalsIgnoreCase(number)) {
+                                            callLogTypeArrayList.remove(callLogType);
+                                            rContactApplication.setArrayListCallLogType
+                                                    (callLogTypeArrayList);
+                                            simpleCallLogListAdapter.notifyDataSetChanged();
+                                        }
                                     }
                                 }
                             }
-                            clearLogs = false;
                         }
-                    } else {
-                        if (clearLogsFromContacts) {
+                    }else {
+                        if (clearLogs) {
                             if (simpleCallLogListAdapter != null) {
                                 // when data was loaded everytime
-
                                 // updated on 19/04/2017, when data are loading from arraylist
-                                CallLogType callDataToUpdate = simpleCallLogListAdapter
-                                        .getSelectedCallLogData();
-                                String number = callDataToUpdate.getNumber();
-                                if(!number.startsWith("+91"))
-                                    number =  Utils.getFormattedNumber(getActivity(),number);
-                                for (int i = 0; i < callLogTypeArrayList.size(); i++) {
-                                    CallLogType callLogType = callLogTypeArrayList.get(i);
-                                    String numberToDelete = callLogType.getNumber();
-                                    if(!numberToDelete.startsWith("+91"))
-                                        numberToDelete =  Utils.getFormattedNumber(getActivity(),numberToDelete);
-                                    if (numberToDelete.equalsIgnoreCase(number)) {
-                                        callLogTypeArrayList.remove(callLogType);
-                                        rContactApplication.setArrayListCallLogType
-                                                (callLogTypeArrayList);
-                                        simpleCallLogListAdapter.notifyDataSetChanged();
+                                CallLogType callDataToUpdate = simpleCallLogListAdapter.getSelectedCallLogData();
+                                if (callDataToUpdate != null) {
+                                    String number = callDataToUpdate.getNumber();
+                                    if (!number.startsWith("+91"))
+                                        number = Utils.getFormattedNumber(getActivity(), number);
+                                    for (int i = 0; i < callLogTypeArrayList.size(); i++) {
+                                        CallLogType callLogType = callLogTypeArrayList.get(i);
+                                        String numberToDelete = callLogType.getNumber();
+                                        if (!numberToDelete.startsWith("+91"))
+                                            numberToDelete = Utils.getFormattedNumber(getActivity(), numberToDelete);
+                                        if (numberToDelete.equalsIgnoreCase(number)) {
+                                            callLogTypeArrayList.remove(callLogType);
+                                            rContactApplication.setArrayListCallLogType
+                                                    (callLogTypeArrayList);
+                                            simpleCallLogListAdapter.notifyDataSetChanged();
+                                        }
                                     }
                                 }
-                                clearLogsFromContacts = false;
+                                clearLogs = false;
+                            }
+                        } else {
+                            if (clearLogsFromContacts) {
+                                if (simpleCallLogListAdapter != null) {
+                                    // when data was loaded everytime
+                                    // updated on 19/04/2017, when data are loading from arraylist
+                                    CallLogType callDataToUpdate = simpleCallLogListAdapter
+                                            .getSelectedCallLogData();
+                                    if (callDataToUpdate != null) {
+                                        String number = callDataToUpdate.getNumber();
+                                        if (!number.startsWith("+91"))
+                                            number = Utils.getFormattedNumber(getActivity(), number);
+                                        for (int i = 0; i < callLogTypeArrayList.size(); i++) {
+                                            CallLogType callLogType = callLogTypeArrayList.get(i);
+                                            String numberToDelete = callLogType.getNumber();
+                                            if (!numberToDelete.startsWith("+91"))
+                                                numberToDelete = Utils.getFormattedNumber(getActivity(), numberToDelete);
+                                            if (numberToDelete.equalsIgnoreCase(number)) {
+                                                callLogTypeArrayList.remove(callLogType);
+                                                rContactApplication.setArrayListCallLogType
+                                                        (callLogTypeArrayList);
+                                                simpleCallLogListAdapter.notifyDataSetChanged();
+                                            }
+                                        }
+                                    }
+                                    clearLogsFromContacts = false;
+                                }
                             }
                         }
                     }
-
                 }
             }, 1000);
         }
