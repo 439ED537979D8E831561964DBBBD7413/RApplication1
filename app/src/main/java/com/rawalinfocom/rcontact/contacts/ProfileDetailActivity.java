@@ -38,6 +38,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -56,6 +57,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.BuildConfig;
 import com.rawalinfocom.rcontact.ContactListingActivity;
@@ -2396,8 +2398,20 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             .this, R.color.colorBlack));
                     textTime.setVisibility(View.GONE);
                 }
+
+                if (MoreObjects.firstNonNull(tempOrganization.get(0).getIsVerify(), 0) == IntegerConstants.RCP_TYPE_PRIMARY) {
+
+                    String s = Utils.setMultipleTypeface(ProfileDetailActivity.this, tempOrganization.get(0).getOrgName() + " <font color" + "='#00796B'>" +
+                                    getString(R.string.im_icon_verify) + "</font>", 0, (StringUtils.length(tempOrganization.get(0).getOrgName()) + 1),
+                            ((StringUtils.length(tempOrganization.get(0).getOrgName()) + 1) + 1)).toString();
+
+                    textOrganization.setText(Html.fromHtml(s));
+
+                } else {
+                    textDesignation.setText(tempOrganization.get(0).getOrgJobTitle());
+                }
+
                 textDesignation.setText(tempOrganization.get(0).getOrgJobTitle());
-                textOrganization.setText(tempOrganization.get(0).getOrgName());
 
                 if (StringUtils.equalsIgnoreCase(tempOrganization.get(0).getOrgToDate(), "")) {
                     if (!StringUtils.isEmpty(tempOrganization.get(0).getOrgFromDate())) {
@@ -3062,6 +3076,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         percentage += 15;
                         hasVerifiedEmail = true;
                         break;
+                    } else if (profileDetail.getPbEmailId().get(i).getEmRcpType() == IntegerConstants
+                            .RCP_TYPE_SECONDARY) {
+                        if (!profileDetail.getPbEmailId().get(i).getEmSocialType().equalsIgnoreCase("")) {
+                            percentage += 15;
+                            hasVerifiedEmail = true;
+                            break;
+                        }
                     }
                 }
                 if (hasVerifiedEmail) {
