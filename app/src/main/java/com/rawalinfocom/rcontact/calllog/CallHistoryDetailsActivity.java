@@ -28,6 +28,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -46,6 +47,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
@@ -1839,8 +1841,20 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                         .this, R.color.colorBlack));
                 textTime.setVisibility(View.GONE);
             }
+
+            if (MoreObjects.firstNonNull(tempOrganization.get(0).getIsVerify(), 0) == IntegerConstants.RCP_TYPE_PRIMARY) {
+
+                String s = Utils.setMultipleTypeface(CallHistoryDetailsActivity.this, tempOrganization.get(0).getOrgName() + " <font color" + "='#00796B'>" +
+                                getString(R.string.im_icon_verify) + "</font>", 0, (StringUtils.length(tempOrganization.get(0).getOrgName()) + 1),
+                        ((StringUtils.length(tempOrganization.get(0).getOrgName()) + 1) + 1)).toString();
+
+                textOrganization.setText(Html.fromHtml(s));
+
+            } else {
+                textOrganization.setText(tempOrganization.get(0).getOrgName());
+            }
+
             textDesignation.setText(tempOrganization.get(0).getOrgJobTitle());
-            textOrganization.setText(tempOrganization.get(0).getOrgName());
 
             if (StringUtils.equalsIgnoreCase(tempOrganization.get(0).getOrgToDate(), "")) {
                 if (!StringUtils.isEmpty(tempOrganization.get(0).getOrgFromDate())) {
