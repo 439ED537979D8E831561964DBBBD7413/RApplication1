@@ -248,9 +248,9 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
                         (StringUtils.length(holder.textMain.getText()) + 1), ((StringUtils.length(holder.textMain.getText()) + 1) + 1)));
                 holder.buttonRequest.setVisibility(View.VISIBLE);
             }
-        }else{
+        } else {
             if (pbRcpType == IntegerConstants.RCP_TYPE_PRIMARY) {
-                String numberToShow =  "+" + phoneNumber.getOriginalNumber();
+                String numberToShow = "+" + phoneNumber.getOriginalNumber();
                 holder.textMain.setText(Utils.setMultipleTypeface(activity, numberToShow + " " + activity
                                 .getString(R.string.im_icon_verify), 0,
                         (StringUtils.length(numberToShow) + 1), ((StringUtils.length(numberToShow) + 1) + 1)));
@@ -263,7 +263,7 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
                 StringUtils.contains(holder.textMain.getText().toString(), "x")) {
             holder.imgActionType.setClickable(false);
             holder.textMain.setClickable(false);
-        }else{
+        } else {
             holder.imgActionType.setClickable(true);
             holder.textMain.setClickable(true);
         }
@@ -401,7 +401,7 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
 
         holder.textSub.setVisibility(View.GONE);
         if (!holder.textMain.getText().toString().startsWith("XX")
-                && !holder.textMain.getText().toString().startsWith("xx")){
+                && !holder.textMain.getText().toString().startsWith("xx")) {
             holder.imgActionType.setImageResource(R.drawable.ico_website_svg);
         }
 
@@ -471,7 +471,7 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
         holder.textSub.setText(address.getAddressType());
         holder.textSub.setVisibility(View.VISIBLE);
 
-        if (!holder.textMain.getText().toString().startsWith("XX") && !holder.textMain.getText().toString().startsWith("xx")){
+        if (!holder.textMain.getText().toString().startsWith("XX") && !holder.textMain.getText().toString().startsWith("xx")) {
             holder.imgActionType.setImageResource(R.drawable.ico_address_svg);
         }
         holder.imgActionType.setOnClickListener(new View.OnClickListener() {
@@ -579,7 +579,7 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
         holder.textSub.setText(imAccount.getIMAccountProtocol());
 
         if (!holder.textMain.getText().toString().startsWith("XX")
-                && !holder.textMain.getText().toString().startsWith("xx")){
+                && !holder.textMain.getText().toString().startsWith("xx")) {
 
             if (imAccount.getIMAccountProtocol().equalsIgnoreCase("facebook")) {
                 holder.imgActionType.setImageResource(R.drawable.ico_facebook_svg);
@@ -852,8 +852,8 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
         ImageView imgActionWhatsapp;
         @BindView(R.id.text_main)
         public TextView textMain;
-        @BindView(R.id.text_tic)
-        public TextView textTic;
+        @BindView(R.id.img_tic)
+        ImageView imageViewTic;
         @BindView(R.id.text_sub)
         TextView textSub;
         @BindView(R.id.button_privacy)
@@ -872,7 +872,7 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
             textMain.setTypeface(Utils.typefaceRegular(activity));
             textSub.setTypeface(Utils.typefaceRegular(activity));
             imgActionWhatsapp.setVisibility(View.GONE);
-            textTic.setVisibility(View.GONE);
+            imageViewTic.setVisibility(View.GONE);
             imgActionType.setVisibility(View.VISIBLE);
             buttonPrivacy.setVisibility(View.GONE);
         }

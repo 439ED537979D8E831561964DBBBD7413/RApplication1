@@ -27,13 +27,30 @@
             android:gravity="center|start"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/text_main"
-                android:layout_width="wrap_content"
+            <TableRow
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawablePadding="@dimen/margin_5dp"
-                android:padding="2dp"
-                tools:text="Big Labs Pvt. Ltd." />
+                android:gravity="center|start">
+
+                <TextView
+                    android:id="@+id/text_main"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="@dimen/margin_5dp"
+                    android:padding="2dp"
+                    tools:text="Big Labs Pvt. Ltd." />
+
+                <ImageView
+                    android:id="@+id/img_tic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:contentDescription="@string/app_name"
+                    android:gravity="center|start"
+                    android:src="@drawable/ico_double_tick_svg"
+                    android:visibility="gone" />
+
+            </TableRow>
 
             <TextView
                 android:id="@+id/text_type"

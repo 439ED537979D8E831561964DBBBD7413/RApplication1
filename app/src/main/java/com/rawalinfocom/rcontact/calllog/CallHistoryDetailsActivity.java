@@ -1233,7 +1233,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         textFullScreenText.setTypeface(Utils.typefaceSemiBold(this));
         textName.setTypeface(Utils.typefaceSemiBold(this));
         textDesignation.setTypeface(Utils.typefaceRegular(this));
-        textOrganization.setTypeface(Utils.typefaceRegular(this));
+        textOrganization.setTypeface(Utils.typefaceIcons(this));
         textViewAllOrganization.setTypeface(Utils.typefaceRegular(this));
         textUserRating.setTypeface(Utils.typefaceRegular(this));
         textTime.setTypeface(Utils.typefaceRegular(this));

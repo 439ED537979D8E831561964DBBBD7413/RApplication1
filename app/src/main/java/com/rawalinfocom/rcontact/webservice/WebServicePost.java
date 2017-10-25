@@ -147,6 +147,10 @@ class WebServicePost {
                     inputStream = new BufferedInputStream(urlConnection.getErrorStream());
                     String responseString = convertInputStreamToString(inputStream);
                     response = getMapper().readValue(responseString, responseType);
+                /*} else if (statusCode == 503) {
+                    inputStream = new BufferedInputStream(urlConnection.getErrorStream());
+                    String responseString = convertInputStreamToString(inputStream);
+                    response = getMapper().readValue(responseString, responseType);*/
                 } else if (statusCode == 429) {
 //                    Log.e("Status Code: ", ": Due to throttling");
                     final String header = urlConnection.getHeaderField(WsConstants

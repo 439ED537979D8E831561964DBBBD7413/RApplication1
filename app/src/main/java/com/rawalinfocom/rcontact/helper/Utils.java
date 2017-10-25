@@ -1516,7 +1516,7 @@ public class Utils {
             @Override
             public void onClick(DialogInterface dialog, int i) {
                 dialog.cancel();
-//                activity.finish();
+                activity.finish();
             }
         });
         alertDialogBuilder.show();

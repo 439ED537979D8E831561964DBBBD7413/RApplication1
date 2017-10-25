@@ -470,9 +470,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
                     if (checkVersionResponse != null && StringUtils.equalsIgnoreCase
                             (checkVersionResponse.getMessage(), "force update")) {
-//                        Utils.showForceUpdateDialog(getActivity());
+                        Utils.showForceUpdateDialog(getActivity());
 //                        showForceUpdateDialog();
-                        startSync();
                     } else {
                         startSync();
                     }
@@ -678,20 +677,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
      * Set RecyclerView's LayoutManager
      */
     public void setRecyclerViewLayoutManager() {
-
-//        if (Utils.getStringPreference(getActivity(), AppConstants.PREF_SHORT_BY_CONTACT, "0")
-//                .equalsIgnoreCase("0")) {
-//
-//            if (arrayListPhoneBookContacts.size() == 0) {
-//                arrayListPhoneBookContacts.addAll(arrayListPhoneBookContactsTemp);
-//            } else {
-//                arrayListPhoneBookContactsTemp.addAll(arrayListPhoneBookContacts);
-//            }
-//        } else {
-//            Collections.sort(arrayListContacts, new CustomComparator());
-//            arrayListPhoneBookContacts.clear();
-//            arrayListPhoneBookContacts.addAll(arrayListContacts);
-//        }
 
         allContactListAdapter = new AllContactAdapter(this, arrayListPhoneBookContacts, null);
         recyclerViewContactList.setAdapter(allContactListAdapter);

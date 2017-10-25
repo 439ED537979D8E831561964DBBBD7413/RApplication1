@@ -631,7 +631,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
         if (IntegerConstants.REGISTRATION_VIA == IntegerConstants.REGISTRATION_VIA_FACEBOOK) {
             // Facebook Callback
-            callbackManager.onActivityResult(requestCode, resultCode, data);
+            if (callbackManager != null)
+                callbackManager.onActivityResult(requestCode, resultCode, data);
         }
 //        else if (IntegerConstants.REGISTRATION_VIA == IntegerConstants
 //                .REGISTRATION_VIA_LINED_IN) {
