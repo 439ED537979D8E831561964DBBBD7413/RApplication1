@@ -116,10 +116,10 @@ public class PhoneBookContactListAdapter extends RecyclerView.Adapter<PhoneBookC
 
                 if (onClickListener != null) {
 
-                    if (StringUtils.length(arrayListUserProfile.get(pos).getMobileNumber()) <= 0) {
-                        onClickListener.onClick("", arrayListUserProfile.get(pos).getEmailId());
+                    if (StringUtils.length(arrayListTempUserProfile.get(pos).getMobileNumber()) <= 0) {
+                        onClickListener.onClick("", arrayListTempUserProfile.get(pos).getEmailId());
                     } else {
-                        onClickListener.onClick(arrayListUserProfile.get(pos).getMobileNumber(), "");
+                        onClickListener.onClick(arrayListTempUserProfile.get(pos).getMobileNumber(), "");
                     }
 
                 }

@@ -99,6 +99,10 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
         return selectedCallLogData;
     }
 
+    public void setSelectedCallLogData(CallLogType selectedCallLogData) {
+        this.selectedCallLogData = selectedCallLogData;
+    }
+
     public long getSelectedLogDate() {
         return selectedLogDate;
     }
@@ -693,7 +697,8 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
             public void onClick(View v) {
 
                 selectedPosition = (int) v.getTag();
-                selectedCallLogData = callLogType;
+                selectedCallLogData = arrayListCallLogs.get(selectedPosition);
+                setSelectedCallLogData(selectedCallLogData);
                 String key = "";
                 key = callLogType.getLocalPbRowId();
                 if (key.equalsIgnoreCase(" ")) {

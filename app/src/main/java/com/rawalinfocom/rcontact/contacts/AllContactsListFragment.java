@@ -470,8 +470,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
                     if (checkVersionResponse != null && StringUtils.equalsIgnoreCase
                             (checkVersionResponse.getMessage(), "force update")) {
-//                        Utils.showForceUpdateDialog(getActivity());
-                        showForceUpdateDialog();
+                        Utils.showForceUpdateDialog(getActivity());
+//                        showForceUpdateDialog();
                     } else {
                         startSync();
                     }
@@ -596,6 +596,20 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+
+        if (Utils.getBooleanPreference(getActivity(), AppConstants.PREF_PERCENTAGE_VIEW, true)) {
+            queryManager = new QueryManager(((BaseActivity) getActivity()).getDatabaseHandler());
+            ProfileDataOperation profileDataOperation = queryManager.getRcProfileDetail
+                    (getActivity(), ((BaseActivity) getActivity()).getUserPmId());
+            showProfilePercentage(profileDataOperation);
+        } else {
+            relativeProfilePercentage.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
     }
@@ -636,10 +650,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 .getColor(getActivity(), R.color.colorVeryLightGray), 0.7f);
         recyclerViewContactList.addItemDecoration(decoration);
 
-        queryManager = new QueryManager(((BaseActivity) getActivity()).getDatabaseHandler());
-        ProfileDataOperation profileDataOperation = queryManager.getRcProfileDetail
-                (getActivity(), ((BaseActivity) getActivity()).getUserPmId());
-
         final SwipeDismissBehavior swipeDismissBehavior = new SwipeDismissBehavior();
         swipeDismissBehavior.setSwipeDirection(SwipeDismissBehavior.SWIPE_DIRECTION_START_TO_END);
         CoordinatorLayout.LayoutParams layoutParams =
@@ -650,6 +660,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             @Override
             public void onDismiss(View view) {
                 clSwipeDismiss.setVisibility(View.GONE);
+                Utils.setBooleanPreference(getActivity(), AppConstants.PREF_PERCENTAGE_VIEW, false);
             }
 
             @Override
@@ -659,8 +670,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 }*/
             }
         });
-
-        showProfilePercentage(profileDataOperation);
     }
 
 
@@ -668,20 +677,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
      * Set RecyclerView's LayoutManager
      */
     public void setRecyclerViewLayoutManager() {
-
-//        if (Utils.getStringPreference(getActivity(), AppConstants.PREF_SHORT_BY_CONTACT, "0")
-//                .equalsIgnoreCase("0")) {
-//
-//            if (arrayListPhoneBookContacts.size() == 0) {
-//                arrayListPhoneBookContacts.addAll(arrayListPhoneBookContactsTemp);
-//            } else {
-//                arrayListPhoneBookContactsTemp.addAll(arrayListPhoneBookContacts);
-//            }
-//        } else {
-//            Collections.sort(arrayListContacts, new CustomComparator());
-//            arrayListPhoneBookContacts.clear();
-//            arrayListPhoneBookContacts.addAll(arrayListContacts);
-//        }
 
         allContactListAdapter = new AllContactAdapter(this, arrayListPhoneBookContacts, null);
         recyclerViewContactList.setAdapter(allContactListAdapter);
@@ -695,6 +690,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     }
 
     private void startSync() {
+        if (getActivity() == null)
+            return;
 
         if (!Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CONTACT_SYNCED, false)) {
             syncingTask = new SyncingTask();
@@ -1481,6 +1478,13 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         percentage += 15;
                         hasVerifiedEmail = true;
                         break;
+                    } else if (profileDetail.getPbEmailId().get(i).getEmRcpType() == IntegerConstants
+                            .RCP_TYPE_SECONDARY) {
+                        if (!profileDetail.getPbEmailId().get(i).getEmSocialType().equalsIgnoreCase("")) {
+                            percentage += 15;
+                            hasVerifiedEmail = true;
+                            break;
+                        }
                     }
                 }
                 if (hasVerifiedEmail) {

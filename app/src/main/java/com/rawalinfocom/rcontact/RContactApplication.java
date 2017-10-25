@@ -56,7 +56,6 @@ public class RContactApplication extends Application {
     ArrayList<SpamDataType> arrayListSpamDataType;
 //    ArrayList<String> arrayListSmsLogsHeaders;
 
-
     @Override
     public void onCreate() {
         super.onCreate();
