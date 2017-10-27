@@ -18,7 +18,8 @@ public class TutorialPagerAdapter extends PagerAdapter {
 
     Context context;
     private int images[] = {R.drawable.tutorial_1, R.drawable.tutorial_2,
-            R.drawable.tutorial_3, R.drawable.tutorial_4, R.drawable.tutorial_5};
+            R.drawable.tutorial_3, R.drawable.tutorial_4, R.drawable.tutorial_5, R.drawable
+            .tutorial_6};
     private LayoutInflater layoutInflater;
 
     public TutorialPagerAdapter(Context context) {

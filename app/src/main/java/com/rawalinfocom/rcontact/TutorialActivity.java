@@ -35,7 +35,7 @@ import butterknife.ButterKnife;
 
 public class TutorialActivity extends BaseActivity {
 
-    private final int TUTORIAL_SCREENS = 5;
+    private final int TUTORIAL_SCREENS = 6;
 
     @BindView(R.id.text_tutorial_header)
     TextView textTutorialHeader;
@@ -61,12 +61,14 @@ public class TutorialActivity extends BaseActivity {
     ImageView imageTutorial4;
     @BindView(R.id.image_tutorial_5)
     ImageView imageTutorial5;
+    @BindView(R.id.image_tutorial_6)
+    ImageView imageTutorial6;
     @BindView(R.id.switcher_tutorial_content)
     TextSwitcher switcherTutorialContent;
 
-    Integer[] tutorialContents = {R.string.tutorial_content_1, R.string
-            .tutorial_content_2, R.string.tutorial_content_3, R.string
-            .tutorial_content_4, R.string.tutorial_content_5};
+    Integer[] tutorialContents = {R.string.tutorial_content_1, R.string.tutorial_content_2, R
+            .string.tutorial_content_3, R.string.tutorial_content_4, R.string.tutorial_content_5,
+            R.string.tutorial_content_6};
 
 
     TutorialPagerAdapter tutorialPagerAdapter;
@@ -98,7 +100,8 @@ public class TutorialActivity extends BaseActivity {
                     // Permission Denied
                     boolean showRationale = false;
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        showRationale = shouldShowRequestPermissionRationale(Manifest.permission.READ_CONTACTS);
+                        showRationale = shouldShowRequestPermissionRationale(Manifest.permission
+                                .READ_CONTACTS);
                     }
 
                     if (!showRationale) {
@@ -214,6 +217,12 @@ public class TutorialActivity extends BaseActivity {
 
                     case 4:
                         textTutorialHeader.setText(getString(R.string.tutorial_header_5));
+                        textNext.setText(R.string.tutorial_and);
+                        textSkip.setVisibility(View.VISIBLE);
+                        break;
+
+                    case 5:
+                        textTutorialHeader.setText(getString(R.string.tutorial_header_5));
                         textNext.setText(R.string.tutorial_lets_go);
                         textSkip.setVisibility(View.GONE);
                         break;
@@ -257,7 +266,7 @@ public class TutorialActivity extends BaseActivity {
 
     private void setIndicatorSelection(int selection) {
         ImageView[] tutorialImages = {imageTutorial1, imageTutorial2, imageTutorial3,
-                imageTutorial4, imageTutorial5};
+                imageTutorial4, imageTutorial5, imageTutorial6};
         for (int i = 0; i < tutorialImages.length; i++) {
             if (i == selection) {
                 tutorialImages[i].setColorFilter(new PorterDuffColorFilter(ContextCompat.getColor
