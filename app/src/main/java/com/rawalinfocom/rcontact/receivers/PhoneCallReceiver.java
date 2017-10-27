@@ -688,7 +688,8 @@ public class PhoneCallReceiver extends BroadcastReceiver {
 
         }
 
-        incomingDialog.show();
+        if(context != null )
+            incomingDialog.show();
     }
 
     private void initializeEndCallDialog() {

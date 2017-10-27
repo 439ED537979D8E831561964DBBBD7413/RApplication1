@@ -88,7 +88,6 @@ public class ContactListExpandAdapter extends RecyclerView.Adapter<RecyclerView.
             holder.textContactNumber.setText(contact.getTempNumber());
         }
 
-
        /* holder.textCloudContactName.setVisibility(View.VISIBLE);
         holder.textCloudContactName.setText(contact.getTempRcpName());*/
         /*if (StringUtils.contains(contact.getTempRcpName(), ",")) {
