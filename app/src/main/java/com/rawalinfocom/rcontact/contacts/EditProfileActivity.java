@@ -440,7 +440,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         arrayListSocialEmail = new ArrayList<>();
 
         TableCountryMaster tableCountryMaster = new TableCountryMaster(databaseHandler);
-        if (tableCountryMaster.getCountryCount() <= 0) {
+        if (tableCountryMaster.getCountryCount() <= 0 || databaseHandler.getWritableDatabase()
+                .getVersion() < 5) {
             getCountryList();
             init(false);
         } else {

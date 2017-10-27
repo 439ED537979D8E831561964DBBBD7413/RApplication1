@@ -117,6 +117,15 @@
                 android:src="@drawable/ic_filled_indicator"
                 tools:tint="@color/lightGrey" />
 
+            <ImageView
+                android:id="@+id/image_tutorial_6"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_marginStart="@dimen/margin_tiny"
+                android:contentDescription="@string/str_content_description"
+                android:src="@drawable/ic_filled_indicator"
+                tools:tint="@color/lightGrey" />
+
         </LinearLayout>
 
         <TextView
