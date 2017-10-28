@@ -533,6 +533,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     @SuppressLint("NewApi")
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
+        //<editor-fold desc="Image Camera">
         // handle result of pick image chooser
         if (requestCode == CAMERA_CAPTURE_IMAGE_REQUEST_CODE && resultCode == RESULT_OK) {
 
@@ -547,7 +548,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 startCropImageActivity(fileUri);
             }
         }
+        //</editor-fold>
 
+        //<editor-fold desc="Image Gallery">
         if (requestCode == GALLERY_IMAGE_REQUEST_CODE && resultCode == RESULT_OK) {
 
             fileUri = data.getData();
@@ -563,7 +566,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 startCropImageActivity(fileUri);
             }
         }
+        //</editor-fold>
 
+        //<editor-fold desc="Image Crop">
         // handle result of CropImageActivity
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
@@ -598,7 +603,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         result.getError(), Toast.LENGTH_LONG).show();
             }
         }
+        //</editor-fold>
 
+        //<editor-fold desc="Map Location">
         if (requestCode == AppConstants.REQUEST_CODE_MAP_LOCATION_SELECTION) {
             if (data != null) {
 //                String locationString = data.getStringExtra(AppConstants.EXTRA_OBJECT_LOCATION);
@@ -629,12 +636,16 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
             }
         }
+        //</editor-fold>
 
+        //<editor-fold desc="Facebook">
         if (IntegerConstants.REGISTRATION_VIA == IntegerConstants.REGISTRATION_VIA_FACEBOOK) {
             // Facebook Callback
             if (callbackManager != null)
                 callbackManager.onActivityResult(requestCode, resultCode, data);
         }
+        //</editor-fold>
+
 //        else if (IntegerConstants.REGISTRATION_VIA == IntegerConstants
 //                .REGISTRATION_VIA_LINED_IN) {
 //            // LinkedIn Callback
@@ -643,11 +654,14 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 //        }
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        //<editor-fold desc="Sign In">
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
         }
+        //</editor-fold>
 
+        //<editor-fold desc="Linked In">
         if (resultCode == RESULT_OK && requestCode == RC_LINKEDIN_SIGN_IN) {
 
             if (data != null) {
@@ -716,6 +730,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 Utils.showErrorSnackBar(this, relativeRootEditProfile, "Login cancelled!");
             }
         }
+        //</editor-fold>
+
+        //<editor-fold desc="Organization">
         if (resultCode == RESULT_OK && requestCode == 201) {
             if (data != null) {
                 if (data.getStringExtra("isBack").equalsIgnoreCase("0")) {
@@ -772,6 +789,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         "Organization!");
             }
         }
+        //</editor-fold>
     }
 
     @TargetApi(Build.VERSION_CODES.M)

@@ -26,7 +26,8 @@ import butterknife.ButterKnife;
  * Created by Monal on 21/10/16.
  */
 
-public class EnterpriseOrganizationsAdapter extends RecyclerView.Adapter<EnterpriseOrganizationsAdapter
+public class EnterpriseOrganizationsAdapter extends RecyclerView
+        .Adapter<EnterpriseOrganizationsAdapter
         .OrganizationViewHolder> implements Filterable {
 
     private Context context;
@@ -86,8 +87,10 @@ public class EnterpriseOrganizationsAdapter extends RecyclerView.Adapter<Enterpr
                 int pos = (int) view.getTag();
 
                 if (clickListener != null)
-                    clickListener.onClick(arrayListOrganization.get(pos).getOmOrgId(), arrayListOrganization.get(pos).getOmOrgName()
-                            , arrayListOrganization.get(pos).getEitType(), arrayListOrganization.get(pos).getEomLogoPath());
+                    clickListener.onClick(arrayListOrganization.get(pos).getOmOrgId(),
+                            arrayListOrganization.get(pos).getOmOrgName(), arrayListOrganization
+                                    .get(pos).getEitType(), arrayListOrganization.get(pos)
+                                    .getEomLogoPath());
             }
         });
 
@@ -136,7 +139,8 @@ public class EnterpriseOrganizationsAdapter extends RecyclerView.Adapter<Enterpr
                 final String filterPattern = constraint.toString().toLowerCase().trim();
                 for (final VerifiedOrganizationData organizationData : filteredList) {
                     if (organizationData.getOmOrgName().toLowerCase().startsWith(filterPattern)
-                            || organizationData.getEitType().toLowerCase().startsWith(filterPattern)) {
+                            || organizationData.getEitType().toLowerCase().startsWith
+                            (filterPattern)) {
                         arrayListOrganization.add(organizationData);
                     }
                 }
@@ -149,7 +153,8 @@ public class EnterpriseOrganizationsAdapter extends RecyclerView.Adapter<Enterpr
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-//            System.out.println("RContacts Count Number 2 " + ((List<VerifiedOrganizationData>) results.values).size());
+//            System.out.println("RContacts Count Number 2 " + ((List<VerifiedOrganizationData>)
+// results.values).size());
             this.mAdapter.notifyDataSetChanged();
         }
     }
