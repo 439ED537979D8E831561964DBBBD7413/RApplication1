@@ -13,8 +13,8 @@ public class WsConstants {
      */
     //<editor-fold desc="Production">
 
-    // API ROOT
-    /*public static final String WS_ROOT = "https://api.rcontacts.in/api/v1/";
+    /*// API ROOT
+    public static final String WS_ROOT = "https://api.rcontacts.in/api/v1/";
     public static final String WS_ROOT_V2 = "https://api.rcontacts.in/api/v2/";
     // TERMS-CONDITIONS URL
     public static final String URL_TERMS_CONDITIONS = "https://www.rcontacts.in/global/terms";

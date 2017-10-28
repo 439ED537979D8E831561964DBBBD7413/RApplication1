@@ -137,8 +137,16 @@ public class DeleteCallLogListAdapter extends RecyclerView.Adapter<DeleteCallLog
             }
         }
 
-        String duration = callLogType.getHistroyCoolDuration();
-        holder.textHistroyDurationValue.setText(duration);
+//        String duration = callLogType.getHistroyCoolDuration();
+//        holder.textHistroyDurationValue.setText(duration);
+
+        if (!StringUtils.isEmpty(callLogType.getWebDuration())) {
+            String duration = callLogType.getWebDuration();
+            holder.textHistroyDurationValue.setText(duration);
+        } else {
+            String duration = callLogType.getHistroyCoolDuration();
+            holder.textHistroyDurationValue.setText(duration);
+        }
 
         Date historyDate = new Date(callLogType.getHistoryDate());
         String callTime = new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(historyDate);

@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -16,6 +17,7 @@ import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -45,11 +47,15 @@ import com.rawalinfocom.rcontact.contacts.AllContactsListFragment;
 import com.rawalinfocom.rcontact.contacts.FavoritesFragment;
 import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.database.QueryManager;
+import com.rawalinfocom.rcontact.database.TableProfileMaster;
+import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.RecyclerItemDecoration;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.model.ProfileData;
+import com.rawalinfocom.rcontact.model.ProfileMobileMapping;
+import com.rawalinfocom.rcontact.model.UserProfile;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -280,11 +286,49 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     //<editor-fold desc="Private Methods">
 
+    private String getPhotoUrlFromNumber(String phoneNumber) {
+        String photoThumbUrl = "";
+        Cursor cursor = null;
+        try {
+
+            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri
+                    .encode(phoneNumber));
+
+            String[] projection = new String[]{ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI};
+            cursor = activity.getContentResolver().query(uri, projection, null, null, null);
+
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    photoThumbUrl = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract
+                            .PhoneLookup.PHOTO_THUMBNAIL_URI));
+                }
+                cursor.close();
+            }
+
+        } catch (Exception e) {
+            if (cursor != null)
+                cursor.close();
+            e.printStackTrace();
+        }
+
+        return photoThumbUrl;
+    }
+
     private void configureAllContactViewHolder(final AllContactViewHolder holder, final int
             position) {
 
         final ProfileData profileData = (ProfileData) arrayListUserContact.get(position);
         final String thumbnailUrl = profileData.getProfileUrl();
+
+        Glide.with(activity)
+                .load(profileData.getTempRcpImageURL())
+                .placeholder(R.drawable.home_screen_profile)
+                .error(R.drawable.home_screen_profile)
+                .bitmapTransform(new CropCircleTransformation(activity))
+                .override(300, 300)
+                .into(holder.imageProfile);
+
+
         if (StringUtils.length(thumbnailUrl) > 0) {
             Glide.with(activity)
                     .load(thumbnailUrl)
@@ -295,7 +339,43 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     .into(holder.imageProfile);
 
         } else {
-            holder.imageProfile.setImageResource(R.drawable.home_screen_profile);
+            String imageUrl =  getPhotoUrlFromNumber(Utils.getFormattedNumber(activity,profileData.getTempNumber()));
+            if(!StringUtils.isEmpty(imageUrl)){
+                Glide.with(activity)
+                        .load(imageUrl)
+                        .placeholder(R.drawable.home_screen_profile)
+                        .error(R.drawable.home_screen_profile)
+                        .bitmapTransform(new CropCircleTransformation(activity))
+                        .override(300, 300)
+                        .into(holder.imageProfile);
+            }else{
+
+                TableProfileMaster tableProfileMaster =  new TableProfileMaster(((BaseActivity)activity).getDatabaseHandler());
+                TableProfileMobileMapping tableProfileMobileMapping =  new TableProfileMobileMapping(((BaseActivity)activity).getDatabaseHandler());
+                ProfileMobileMapping profileMobileMapping =
+                        tableProfileMobileMapping
+                                .getCloudPmIdFromProfileMappingFromNumber(Utils.getFormattedNumber(activity,profileData.getTempNumber()));
+                if (profileMobileMapping != null) {
+                    String cloudPmId = profileMobileMapping.getMpmCloudPmId();
+                    if (!StringUtils.isEmpty(cloudPmId)) {
+                        UserProfile userProfile = tableProfileMaster
+                                .getRCPProfileFromPmId(Integer.parseInt(cloudPmId));
+                        String rcpImageUrl  = userProfile.getPmProfileImage();
+
+                        if(!StringUtils.isEmpty(rcpImageUrl)){
+                            Glide.with(activity)
+                                    .load(rcpImageUrl)
+                                    .placeholder(R.drawable.home_screen_profile)
+                                    .error(R.drawable.home_screen_profile)
+                                    .bitmapTransform(new CropCircleTransformation(activity))
+                                    .override(300, 300)
+                                    .into(holder.imageProfile);
+                        }else{
+                            holder.imageProfile.setImageResource(R.drawable.home_screen_profile);
+                        }
+                    }
+                }
+            }
         }
 
         holder.textContactName.setTag(position);
@@ -341,13 +421,6 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 }
             }
 
-            Glide.with(activity)
-                    .load(profileData.getTempRcpImageURL())
-                    .placeholder(R.drawable.home_screen_profile)
-                    .error(R.drawable.home_screen_profile)
-                    .bitmapTransform(new CropCircleTransformation(activity))
-                    .override(300, 300)
-                    .into(holder.imageProfile);
 
             holder.relativeRowAllContact.setTag(profileData.getTempRcpId());
 
