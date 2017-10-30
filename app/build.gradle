@@ -19,6 +19,12 @@ repositories {
     }
 }
 
+def getProps(path) {
+    Properties props = new Properties()
+    props.load(new FileInputStream(file(path)))
+    return props
+}
+
 android {
     compileSdkVersion 26
     buildToolsVersion '26.0.1'
@@ -54,6 +60,29 @@ android {
             minifyEnabled false
         }
     }
+
+    productFlavors {
+        qa {
+            applicationIdSuffix ".free"
+            //packageName "com.rawalinfocom.rcontact.staging"
+            getProps('./config/qa.props').each { p ->
+                buildConfigField 'String', p.key, p.value
+            }
+
+        }
+        staging {
+            //packageName "com.rawalinfocom.rcontact"
+            getProps('./config/staging.props').each { p ->
+                buildConfigField 'String', p.key, p.value
+            }
+        }
+        production {
+            getProps('./config/production.props').each { p ->
+                buildConfigField 'String', p.key, p.value
+            }
+        }
+    }
+
     lintOptions {
         abortOnError false
     }
