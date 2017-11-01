@@ -67,6 +67,7 @@
     <string name="action_register">Register</string>
     <string name="action_continue">Continue</string>
     <string name="hint_first_name">First Name</string>
+    <string name="hint_aadhar_number">Aadhar Number</string>
     <string name="hint_last_name">Last Name</string>
     <string name="hint_email_id">Email ID</string>
     <string name="text_or">or</string>
@@ -93,7 +94,9 @@
     <string name="str_org">Organizations</string>
     <string name="str_search_name">Name or Number</string>
     <string name="str_rate_app">RATE APP</string>
-    <string name="str_later">LATER</string>
+    <string name="str_later">ASK ME LATER</string>
+    <string name="str_like_this_application">LIKE THIS APPLICATION</string>
+    <string name="str_rate_app_body">If you like our app, please take a moment to rate us!</string>
 
 
     <!--<string name="str_designation">Designation</string>-->
@@ -484,6 +487,7 @@
     <string name="str_small_cap_email">email</string>
     <string name="str_website">Website</string>
     <string name="str_address">Postal Address</string>
+    <string name="str_aadhar_number">Aadhar Number</string>
     <string name="str_link">Link</string>
     <!--<string name="str_account_name">Account Name</string>-->
     <string name="str_choose_date">Choose date</string>

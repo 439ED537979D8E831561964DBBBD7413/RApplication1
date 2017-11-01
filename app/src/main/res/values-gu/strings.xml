@@ -68,6 +68,7 @@
     <string name="action_register">રજિસ્ટર</string>
     <string name="action_continue">જારી રાખો</string>
     <string name="hint_first_name">પ્રથમ નામ</string>
+    <string name="hint_aadhar_number">Aadhar Number</string>
     <string name="hint_last_name">છેલ્લું નામ</string>
     <string name="hint_email_id">ઇમેઇલ આઈડી</string>
     <string name="text_or">અથવા</string>
@@ -467,6 +468,7 @@
     <string name="str_small_cap_email">ઇમેઇલ</string>
     <string name="str_website">વેબસાઈટ</string>
     <string name="str_address">પોસ્ટલ એડ્રેસ</string>
+    <string name="str_aadhar_number">Aadhar Number</string>
     <string name="str_link">લિંક</string>
     <!--<string name="str_account_name">ખાતાનું નામ</string>-->
     <string name="str_choose_date">તારીખ પસંદ કરો</string>
