@@ -40,6 +40,7 @@ public class AppRater {
         if (System.currentTimeMillis() >= date_firstLaunch +
                 (DAYS_UNTIL_PROMPT * 24 * 60 * 60 * 1000)) {
             showRateDialog(mContext);
+
         }
     }
 

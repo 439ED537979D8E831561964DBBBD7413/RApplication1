@@ -1070,9 +1070,6 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         Utils.setBooleanPreference(this, AppConstants
                 .PREF_SMS_LOG_STARTS_FIRST_TIME, true);
 
-//        Utils.setBooleanPreference(this,AppConstants.PREF_DONTSHOWAGAIN_POPUP, false);
-
-
         super.onDestroy();
     }
 
