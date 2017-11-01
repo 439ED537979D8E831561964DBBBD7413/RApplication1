@@ -21,9 +21,6 @@ import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 
-
-
-
 /**
  * Created by Aniruddh on 31/10/17.
  */
