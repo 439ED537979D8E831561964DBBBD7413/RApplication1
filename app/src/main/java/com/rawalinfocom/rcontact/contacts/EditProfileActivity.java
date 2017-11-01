@@ -349,6 +349,24 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     boolean isStorageFromSettings = false, isCameraFromSettings = false;
 
     Bitmap selectedBitmap = null;
+    @BindView(R.id.text_label_aadhar_number)
+    TextView textLabelAadharNumber;
+    @BindView(R.id.image_aadhar_expand)
+    ImageView imageAadharExpand;
+    @BindView(R.id.relativeAadharNumber)
+    RelativeLayout relativeAadharNumber;
+    @BindView(R.id.input_aadhar_number)
+    EditText inputAadharNumber;
+    @BindView(R.id.linear_aadhar_details)
+    LinearLayout linearAadharDetails;
+    @BindView(R.id.button_aadhar_update)
+    Button buttonAadharUpdate;
+    @BindView(R.id.button_aadhar_cancel)
+    Button buttonAadharCancel;
+    @BindView(R.id.linearAadharButtons)
+    LinearLayout linearAadharButtons;
+    @BindView(R.id.linear_aadhar_number)
+    LinearLayout linearAadharNumber;
 
     private File mFileTemp;
     private Uri fileUri;
@@ -2478,6 +2496,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         textFemale.setTypeface(Utils.typefaceRegular(this));
         inputFirstName.setTypeface(Utils.typefaceRegular(this));
         inputLastName.setTypeface(Utils.typefaceRegular(this));
+        inputAadharNumber.setTypeface(Utils.typefaceRegular(this));
+        textLabelAadharNumber.setTypeface(Utils.typefaceRegular(this));
 
     }
 
@@ -2546,6 +2566,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 imageEmailExpand.setImageResource(R.drawable.ic_arrow_bottom);
                 imageWebsiteExpand.setImageResource(R.drawable.ic_arrow_bottom);
                 imageAddressExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                imageAadharExpand.setImageResource(R.drawable.ic_arrow_bottom);
                 imageSocialContactExpand.setImageResource(R.drawable.ic_arrow_bottom);
                 imageEventExpand.setImageResource(R.drawable.ic_arrow_bottom);
                 imageGenderExpand.setImageResource(R.drawable.ic_arrow_bottom);
@@ -2562,6 +2583,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 linearWebsiteButtons.setVisibility(View.GONE);
                 linearAddressDetails.setVisibility(View.GONE);
                 linearAddressButtons.setVisibility(View.GONE);
+                linearAadharDetails.setVisibility(View.GONE);
+                linearAadharButtons.setVisibility(View.GONE);
                 linearSocialContactDetails.setVisibility(View.GONE);
                 linearSocialButtons.setVisibility(View.GONE);
                 linearEventDetails.setVisibility(View.GONE);
@@ -2591,6 +2614,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 imageEmailExpand.setImageResource(R.drawable.ic_arrow_bottom);
                 imageWebsiteExpand.setImageResource(R.drawable.ic_arrow_bottom);
                 imageAddressExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                imageAadharExpand.setImageResource(R.drawable.ic_arrow_bottom);
                 imageSocialContactExpand.setImageResource(R.drawable.ic_arrow_bottom);
                 imageEventExpand.setImageResource(R.drawable.ic_arrow_bottom);
                 imageGenderExpand.setImageResource(R.drawable.ic_arrow_bottom);
@@ -2608,6 +2632,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 linearWebsiteButtons.setVisibility(View.GONE);
                 linearAddressDetails.setVisibility(View.GONE);
                 linearAddressButtons.setVisibility(View.GONE);
+                linearAadharDetails.setVisibility(View.GONE);
+                linearAadharButtons.setVisibility(View.GONE);
                 linearSocialContactDetails.setVisibility(View.GONE);
                 linearSocialButtons.setVisibility(View.GONE);
                 linearEventDetails.setVisibility(View.GONE);
@@ -2636,6 +2662,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 imagePhoneExpand.setImageResource(R.drawable.ic_arrow_bottom);
                 imageWebsiteExpand.setImageResource(R.drawable.ic_arrow_bottom);
                 imageAddressExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                imageAadharExpand.setImageResource(R.drawable.ic_arrow_bottom);
                 imageSocialContactExpand.setImageResource(R.drawable.ic_arrow_bottom);
                 imageEventExpand.setImageResource(R.drawable.ic_arrow_bottom);
                 imageGenderExpand.setImageResource(R.drawable.ic_arrow_bottom);
@@ -2653,6 +2680,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 linearWebsiteButtons.setVisibility(View.GONE);
                 linearAddressDetails.setVisibility(View.GONE);
                 linearAddressButtons.setVisibility(View.GONE);
+                linearAadharDetails.setVisibility(View.GONE);
+                linearAadharButtons.setVisibility(View.GONE);
                 linearSocialContactDetails.setVisibility(View.GONE);
                 linearSocialButtons.setVisibility(View.GONE);
                 linearEventDetails.setVisibility(View.GONE);
@@ -2680,6 +2709,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 imagePhoneExpand.setImageResource(R.drawable.ic_arrow_bottom);
                 imageEmailExpand.setImageResource(R.drawable.ic_arrow_bottom);
                 imageAddressExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                imageAadharExpand.setImageResource(R.drawable.ic_arrow_bottom);
                 imageSocialContactExpand.setImageResource(R.drawable.ic_arrow_bottom);
                 imageEventExpand.setImageResource(R.drawable.ic_arrow_bottom);
                 imageGenderExpand.setImageResource(R.drawable.ic_arrow_bottom);
@@ -2697,6 +2727,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 linearWebsiteButtons.setVisibility(View.VISIBLE);
                 linearAddressDetails.setVisibility(View.GONE);
                 linearAddressButtons.setVisibility(View.GONE);
+                linearAadharDetails.setVisibility(View.GONE);
+                linearAadharButtons.setVisibility(View.GONE);
                 linearSocialContactDetails.setVisibility(View.GONE);
                 linearSocialButtons.setVisibility(View.GONE);
                 linearEventDetails.setVisibility(View.GONE);
@@ -2724,6 +2756,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 imagePhoneExpand.setImageResource(R.drawable.ic_arrow_bottom);
                 imageEmailExpand.setImageResource(R.drawable.ic_arrow_bottom);
                 imageWebsiteExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                imageAadharExpand.setImageResource(R.drawable.ic_arrow_bottom);
                 imageSocialContactExpand.setImageResource(R.drawable.ic_arrow_bottom);
                 imageEventExpand.setImageResource(R.drawable.ic_arrow_bottom);
                 imageGenderExpand.setImageResource(R.drawable.ic_arrow_bottom);
@@ -2741,6 +2774,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 linearWebsiteButtons.setVisibility(View.GONE);
                 linearAddressDetails.setVisibility(View.VISIBLE);
                 linearAddressButtons.setVisibility(View.VISIBLE);
+                linearAadharDetails.setVisibility(View.GONE);
+                linearAadharButtons.setVisibility(View.GONE);
                 linearSocialContactDetails.setVisibility(View.GONE);
                 linearSocialButtons.setVisibility(View.GONE);
                 linearEventDetails.setVisibility(View.GONE);
@@ -2752,6 +2787,54 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
             }
         });
+
+        relativeAadharNumber.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                /*if(isExpanded){
+                    isExpanded = false;
+                    imageAddressExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    linearAddressDetails.setVisibility(View.GONE);
+                    linearAddressButtons.setVisibility(View.GONE);
+                }else{*/
+                imageOrganizationExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                imageNameExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                imagePhoneExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                imageEmailExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                imageWebsiteExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                imageSocialContactExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                imageEventExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                imageGenderExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                imageAddressExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                imageAadharExpand.setImageResource(R.drawable.ic_arrow_up);
+//                linearName.setVisibility(View.GONE);
+                relativeNameDetails.setVisibility(View.GONE);
+                linearNameBottom.setVisibility(View.GONE);
+                linearOrganizationDetails.setVisibility(View.GONE);
+                linearOrganizationButtons.setVisibility(View.GONE);
+                linearPhoneDetails.setVisibility(View.GONE);
+                linearPhoneButtons.setVisibility(View.GONE);
+                linearEmailDetails.setVisibility(View.GONE);
+                linearEmailButtons.setVisibility(View.GONE);
+                linearWebsiteDetails.setVisibility(View.GONE);
+                linearWebsiteButtons.setVisibility(View.GONE);
+                linearAddressDetails.setVisibility(View.GONE);
+                linearAddressButtons.setVisibility(View.GONE);
+                linearAadharDetails.setVisibility(View.VISIBLE);
+                linearAadharButtons.setVisibility(View.VISIBLE);
+                linearSocialContactDetails.setVisibility(View.GONE);
+                linearSocialButtons.setVisibility(View.GONE);
+                linearEventDetails.setVisibility(View.GONE);
+                linearEventButtons.setVisibility(View.GONE);
+                linearGenderDetails.setVisibility(View.GONE);
+                linearGenderButtons.setVisibility(View.GONE);
+//                    isExpanded = true;
+//                }
+
+            }
+        });
+
 
         relativeSocialConnect.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -2769,6 +2852,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 imageEmailExpand.setImageResource(R.drawable.ic_arrow_bottom);
                 imageWebsiteExpand.setImageResource(R.drawable.ic_arrow_bottom);
                 imageAddressExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                imageAadharExpand.setImageResource(R.drawable.ic_arrow_bottom);
                 imageEventExpand.setImageResource(R.drawable.ic_arrow_bottom);
                 imageGenderExpand.setImageResource(R.drawable.ic_arrow_bottom);
                 imageSocialContactExpand.setImageResource(R.drawable.ic_arrow_up);
@@ -2785,6 +2869,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 linearWebsiteButtons.setVisibility(View.GONE);
                 linearAddressDetails.setVisibility(View.GONE);
                 linearAddressButtons.setVisibility(View.GONE);
+                linearAadharDetails.setVisibility(View.GONE);
+                linearAadharButtons.setVisibility(View.GONE);
                 linearSocialContactDetails.setVisibility(View.VISIBLE);
                 linearSocialButtons.setVisibility(View.VISIBLE);
                 linearEventDetails.setVisibility(View.GONE);
@@ -2813,6 +2899,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 imageEmailExpand.setImageResource(R.drawable.ic_arrow_bottom);
                 imageWebsiteExpand.setImageResource(R.drawable.ic_arrow_bottom);
                 imageAddressExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                imageAadharExpand.setImageResource(R.drawable.ic_arrow_bottom);
                 imageSocialContactExpand.setImageResource(R.drawable.ic_arrow_bottom);
                 imageGenderExpand.setImageResource(R.drawable.ic_arrow_bottom);
                 imageEventExpand.setImageResource(R.drawable.ic_arrow_up);
@@ -2829,6 +2916,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 linearWebsiteButtons.setVisibility(View.GONE);
                 linearAddressDetails.setVisibility(View.GONE);
                 linearAddressButtons.setVisibility(View.GONE);
+                linearAadharDetails.setVisibility(View.GONE);
+                linearAadharButtons.setVisibility(View.GONE);
                 linearSocialContactDetails.setVisibility(View.GONE);
                 linearSocialButtons.setVisibility(View.GONE);
                 linearEventDetails.setVisibility(View.VISIBLE);
@@ -2857,6 +2946,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 imageEmailExpand.setImageResource(R.drawable.ic_arrow_bottom);
                 imageWebsiteExpand.setImageResource(R.drawable.ic_arrow_bottom);
                 imageAddressExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                imageAadharExpand.setImageResource(R.drawable.ic_arrow_bottom);
                 imageSocialContactExpand.setImageResource(R.drawable.ic_arrow_bottom);
                 imageEventExpand.setImageResource(R.drawable.ic_arrow_bottom);
                 imageGenderExpand.setImageResource(R.drawable.ic_arrow_up);
@@ -2873,6 +2963,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 linearWebsiteButtons.setVisibility(View.GONE);
                 linearAddressDetails.setVisibility(View.GONE);
                 linearAddressButtons.setVisibility(View.GONE);
+                linearAadharDetails.setVisibility(View.GONE);
+                linearAadharButtons.setVisibility(View.GONE);
                 linearSocialContactDetails.setVisibility(View.GONE);
                 linearSocialButtons.setVisibility(View.GONE);
                 linearEventDetails.setVisibility(View.GONE);
@@ -2898,6 +2990,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         imageSocialContactExpand.setImageResource(R.drawable.ic_arrow_bottom);
         imageEventExpand.setImageResource(R.drawable.ic_arrow_bottom);
         imageGenderExpand.setImageResource(R.drawable.ic_arrow_bottom);
+        imageAadharExpand.setImageResource(R.drawable.ic_arrow_bottom);
 
         linearOrganizationDetails.setVisibility(View.GONE);
         linearOrganizationButtons.setVisibility(View.GONE);
@@ -2915,6 +3008,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         linearEventButtons.setVisibility(View.GONE);
         linearGenderDetails.setVisibility(View.GONE);
         linearGenderButtons.setVisibility(View.GONE);
+        linearAadharDetails.setVisibility(View.GONE);
+        linearAadharButtons.setVisibility(View.GONE);
     }
 
     private void clickEvents() {

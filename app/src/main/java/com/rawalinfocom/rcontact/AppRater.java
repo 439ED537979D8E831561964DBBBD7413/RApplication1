@@ -21,13 +21,16 @@ import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 
+
+
+
 /**
  * Created by Aniruddh on 31/10/17.
  */
 
 public class AppRater {
 
-    private final static int DAYS_UNTIL_PROMPT = 5;//Min number of days
+    private final static int DAYS_UNTIL_PROMPT = 5 ;//Min number of days
 
     public static void app_launched(Context mContext) {
         if (Utils.getBooleanPreference(mContext, AppConstants.PREF_DONTSHOWAGAIN_POPUP, false)) {
@@ -67,10 +70,10 @@ public class AppRater {
         btnLeft.setTypeface(Utils.typefaceRegular(mContext));
         btnRight.setTypeface(Utils.typefaceRegular(mContext));
 
-        tvDialogTitle.setText("LIKE THIS APPLICATION");
+        tvDialogTitle.setText(mContext.getResources().getString(R.string.str_like_this_application));
         tvDialogTitle.setTextColor(mContext.getResources().getColor(R.color.colorAccent));
 
-        tvDialogBody.setText("Please rate to support future updates!");
+        tvDialogBody.setText(mContext.getResources().getString(R.string.str_rate_app_body));
         btnLeft.setText(mContext.getResources().getString(R.string.str_later));
         btnRight.setText(mContext.getResources().getString(R.string.str_rate_app));
 
