@@ -378,9 +378,6 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     holder.imageProfile.setImageResource(R.drawable.home_screen_profile);
                 }
             }
-
-
-
         }
 
         holder.textContactName.setTag(position);
