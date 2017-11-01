@@ -383,6 +383,21 @@ public class Utils {
         editor.apply();
     }
 
+
+    public static void setLongPreference(Context context, String key, long value) {
+        SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
+                .KEY_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+        editor.putLong(key, value);
+        editor.apply();
+    }
+
+    public static Long getLongPreference(Context context, String key, long defaultValue) {
+        SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
+                .KEY_PREFERENCES, Context.MODE_PRIVATE);
+        return sharedpreferences.getLong(key, defaultValue);
+    }
+
     public static int getIntegerPreference(Context context, String key, int defaultValue) {
         SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
                 .KEY_PREFERENCES, Context.MODE_PRIVATE);
@@ -1521,4 +1536,6 @@ public class Utils {
         });
         alertDialogBuilder.show();
     }
+
+
 }

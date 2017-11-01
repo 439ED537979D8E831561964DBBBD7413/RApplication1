@@ -306,6 +306,8 @@ public class AppConstants {
     public static String PREF_LATEST_CALL_DATE_TIME = "pref_latest_call_date_time";
     public static String PREF_LATEST_CALL_RAW_ID = "pref_latest_call_raw_id";
     public static String PREF_PROFILE_REMAINING_FIELDS = "pref_profile_remaining_fields";
+    public static String PREF_DONTSHOWAGAIN_POPUP = "pref_dontshowagain_popup";
+    public static String PREF_RATE_APP_DATE = "pref_rate_app_date";
 
 
     public static String[] arrayPrefKeys = {PREF_SELECTED_COUNTRY_OBJECT, PREF_DEVICE_TOKEN_ID,

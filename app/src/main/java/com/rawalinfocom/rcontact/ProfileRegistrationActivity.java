@@ -426,6 +426,8 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                     Utils.setObjectPreference(ProfileRegistrationActivity.this,
                             AppConstants.PREF_REGS_USER_OBJECT, userProfileRegistered);
 
+                    Long date_firstLaunch = System.currentTimeMillis();
+                    Utils.setLongPreference(this,AppConstants.PREF_RATE_APP_DATE, date_firstLaunch);
 //                    if (userProfileRegistered != null) {
 //                        Utils.setStringPreference(this, AppConstants.PREF_USER_PM_ID,
 //                                userProfileRegistered.getPmId());

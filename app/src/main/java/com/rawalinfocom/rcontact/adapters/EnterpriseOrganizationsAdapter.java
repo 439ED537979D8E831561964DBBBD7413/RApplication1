@@ -114,6 +114,7 @@ public class EnterpriseOrganizationsAdapter extends RecyclerView.Adapter<Enterpr
             ButterKnife.bind(this, itemView);
 
             textOrganizationName.setTypeface(Utils.typefaceRegular(context));
+            textOrganizationName.setTextColor(context.getResources().getColor(R.color.colorAccent));
             textOrganizationDetails.setTypeface(Utils.typefaceRegular(context));
         }
     }
