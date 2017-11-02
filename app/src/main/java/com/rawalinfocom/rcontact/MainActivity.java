@@ -209,6 +209,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         networkConnectionReceiver = new NetworkConnectionReceiver();
+        AppRater.app_launched(this);
         init();
         registerBroadcastReceiver();
         registerLocalBroadCastReceiver();
