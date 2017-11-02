@@ -66,8 +66,9 @@ public class QueryManager {
                 profileDataOperation.setRcpPmId(rcpId);
 //            profileDataOperation.setPbNamePrefix(StringUtils.defaultString(cursor.getString
 //                    (cursor.getColumnIndex(TableProfileMaster.COLUMN_PM_PREFIX))));
-                profileDataOperation.setPbNameFirst(StringUtils.defaultString(cursor.getString(cursor
-                        .getColumnIndexOrThrow(TableProfileMaster.COLUMN_PM_FIRST_NAME))));
+                profileDataOperation.setPbNameFirst(StringUtils.defaultString(cursor.getString
+                        (cursor
+                                .getColumnIndexOrThrow(TableProfileMaster.COLUMN_PM_FIRST_NAME))));
 //            profileDataOperation.setPbNameMiddle(StringUtils.defaultString(cursor.getString
 //                    (cursor.getColumnIndex(TableProfileMaster.COLUMN_PM_MIDDLE_NAME))));
                 profileDataOperation.setPbNameLast(StringUtils.defaultString(cursor.getString(cursor
@@ -77,10 +78,11 @@ public class QueryManager {
                 profileDataOperation.setPbProfilePhoto(StringUtils.defaultString(cursor.getString
                         (cursor.getColumnIndexOrThrow(TableProfileMaster.COLUMN_PM_PROFILE_IMAGE)
                         )));
-                profileDataOperation.setIsFavourite(StringUtils.defaultString(cursor.getString(cursor
-                        .getColumnIndexOrThrow(TableProfileMaster.COLUMN_PM_IS_FAVOURITE))));
+                profileDataOperation.setIsFavourite(StringUtils.defaultString(cursor.getString
+                        (cursor.getColumnIndexOrThrow(TableProfileMaster.COLUMN_PM_IS_FAVOURITE))));
                 profileDataOperation.setProfileRating(StringUtils.defaultString(cursor.getString
-                        (cursor.getColumnIndexOrThrow(TableProfileMaster.COLUMN_PM_PROFILE_RATING)), "0"));
+                        (cursor.getColumnIndexOrThrow(TableProfileMaster
+                                .COLUMN_PM_PROFILE_RATING)), "0"));
                 profileDataOperation.setTotalProfileRateUser(StringUtils.defaultString(cursor
                         .getString(cursor.getColumnIndexOrThrow(TableProfileMaster
                                 .COLUMN_PM_PROFILE_RATE_USER)), "0"));
@@ -109,10 +111,12 @@ public class QueryManager {
         if (mobileNumberCursor != null && mobileNumberCursor.getCount() > 0) {
             if (mobileNumberCursor.moveToFirst()) {
                 do {
-                    ProfileDataOperationPhoneNumber phoneNumber = new ProfileDataOperationPhoneNumber();
-                    phoneNumber.setPhoneNumber(StringUtils.defaultString(mobileNumberCursor.getString
-                            (mobileNumberCursor.getColumnIndexOrThrow(TableMobileMaster
-                                    .COLUMN_MNM_MOBILE_NUMBER))));
+                    ProfileDataOperationPhoneNumber phoneNumber = new
+                            ProfileDataOperationPhoneNumber();
+                    phoneNumber.setPhoneNumber(StringUtils.defaultString(mobileNumberCursor
+                            .getString
+                                    (mobileNumberCursor.getColumnIndexOrThrow(TableMobileMaster
+                                            .COLUMN_MNM_MOBILE_NUMBER))));
                     phoneNumber.setPhoneType(StringUtils.defaultString(mobileNumberCursor.getString
                             (mobileNumberCursor.getColumnIndexOrThrow(TableMobileMaster
                                     .COLUMN_MNM_NUMBER_TYPE))));
@@ -163,11 +167,14 @@ public class QueryManager {
                 do {
                     ProfileDataOperationEmail email = new ProfileDataOperationEmail();
                     email.setEmEmailId(StringUtils.defaultString(emailIdCursor.getString
-                            (emailIdCursor.getColumnIndexOrThrow(TableEmailMaster.COLUMN_EM_EMAIL_ADDRESS))));
+                            (emailIdCursor.getColumnIndexOrThrow(TableEmailMaster
+                                    .COLUMN_EM_EMAIL_ADDRESS))));
                     email.setEmType(StringUtils.defaultString(emailIdCursor.getString(emailIdCursor
                             .getColumnIndexOrThrow(TableEmailMaster.COLUMN_EM_EMAIL_TYPE))));
-                    email.setEmSocialType(StringUtils.defaultString(emailIdCursor.getString(emailIdCursor
-                            .getColumnIndexOrThrow(TableEmailMaster.COLUMN_EM_SOCIAL_TYPE))));
+                    email.setEmSocialType(StringUtils.defaultString(emailIdCursor.getString
+                            (emailIdCursor
+                                    .getColumnIndexOrThrow(TableEmailMaster
+                                            .COLUMN_EM_SOCIAL_TYPE))));
                     email.setEmPublic(Integer.parseInt(StringUtils.defaultString(emailIdCursor
                             .getString(emailIdCursor.getColumnIndexOrThrow(TableEmailMaster
                                     .COLUMN_EM_EMAIL_PRIVACY)), "0")));
@@ -189,18 +196,20 @@ public class QueryManager {
         //</editor-fold>
 
         // <editor-fold desc="Organization">
-        String organizationQuery = "SELECT org." + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_COMPANY
-                + ",org." + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_TYPE
-                + ",org." + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_ENT_ID
-                + ",org." + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_IMAGE
-                + ",org." + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_FROM_DATE
-                + ",org." + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_TO_DATE
-                + ",org." + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_IS_VERIFIED
-                + ",org." + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_DESIGNATION
-                + " from " + TableOrganizationMaster
+        String organizationQuery = "SELECT org." + TableOrganizationMaster
+                .COLUMN_OM_ORGANIZATION_COMPANY + ",org." + TableOrganizationMaster
+                .COLUMN_OM_ORGANIZATION_TYPE + ",org." + TableOrganizationMaster
+                .COLUMN_OM_ORGANIZATION_ENT_ID + ",org." + TableOrganizationMaster
+                .COLUMN_OM_ORGANIZATION_IMAGE + ",org." + TableOrganizationMaster
+                .COLUMN_OM_ORGANIZATION_FROM_DATE + ",org." + TableOrganizationMaster
+                .COLUMN_OM_ORGANIZATION_TO_DATE + ",org." + TableOrganizationMaster
+                .COLUMN_OM_ORGANIZATION_IS_VERIFIED + ",org." + TableOrganizationMaster
+                .COLUMN_OM_ORGANIZATION_IS_CURRENT + ",org." + TableOrganizationMaster
+                .COLUMN_OM_ORGANIZATION_DESIGNATION + " from " + TableOrganizationMaster
                 .TABLE_RC_ORGANIZATION_MASTER + " org WHERE org." + TableOrganizationMaster
-                .COLUMN_RC_PROFILE_MASTER_PM_ID + " IN (" + rcpId + ") ORDER BY org." +
-                TableOrganizationMaster.COLUMN_OM_ORGANIZATION_IS_CURRENT + " DESC";
+                .COLUMN_RC_PROFILE_MASTER_PM_ID + " = " + rcpId + " ORDER BY org." +
+                TableOrganizationMaster.COLUMN_OM_ORGANIZATION_IS_CURRENT + " DESC, date(org." +
+                TableOrganizationMaster.COLUMN_OM_ORGANIZATION_FROM_DATE + ") DESC";
 
         Cursor organizationCursor = db.rawQuery(organizationQuery, null);
 
@@ -215,9 +224,9 @@ public class QueryManager {
                     organization.setOrgName(StringUtils.defaultString(organizationCursor.getString
                             (organizationCursor.getColumnIndexOrThrow(TableOrganizationMaster
                                     .COLUMN_OM_ORGANIZATION_COMPANY))));
-                    organization.setOrgIndustryType(StringUtils.defaultString(organizationCursor.getString
-                            (organizationCursor.getColumnIndexOrThrow(TableOrganizationMaster
-                                    .COLUMN_OM_ORGANIZATION_TYPE))));
+                    organization.setOrgIndustryType(StringUtils.defaultString(organizationCursor
+                            .getString(organizationCursor.getColumnIndexOrThrow
+                                    (TableOrganizationMaster.COLUMN_OM_ORGANIZATION_TYPE))));
                     organization.setOrgEntId(StringUtils.defaultString(organizationCursor.getString
                             (organizationCursor.getColumnIndexOrThrow(TableOrganizationMaster
                                     .COLUMN_OM_ORGANIZATION_ENT_ID))));
@@ -225,21 +234,27 @@ public class QueryManager {
                             (organizationCursor.getColumnIndexOrThrow(TableOrganizationMaster
                                     .COLUMN_OM_ORGANIZATION_IMAGE))));
                     organization.setOrgJobTitle(StringUtils.defaultString(organizationCursor
-                            .getString(organizationCursor.getColumnIndexOrThrow(TableOrganizationMaster
-                                    .COLUMN_OM_ORGANIZATION_DESIGNATION))));
-                    organization.setOrgFromDate(StringUtils.defaultString(organizationCursor.getString
-                            (organizationCursor.getColumnIndexOrThrow(TableOrganizationMaster
-                                    .COLUMN_OM_ORGANIZATION_FROM_DATE))));
+                            .getString(organizationCursor.getColumnIndexOrThrow
+                                    (TableOrganizationMaster
+                                            .COLUMN_OM_ORGANIZATION_DESIGNATION))));
+                    organization.setOrgFromDate(StringUtils.defaultString(organizationCursor
+                            .getString
+                                    (organizationCursor.getColumnIndexOrThrow
+                                            (TableOrganizationMaster
+                                                    .COLUMN_OM_ORGANIZATION_FROM_DATE))));
                     organization.setOrgToDate(StringUtils.defaultString(organizationCursor.getString
                             (organizationCursor.getColumnIndexOrThrow(TableOrganizationMaster
                                     .COLUMN_OM_ORGANIZATION_TO_DATE))));
-                    if(!StringUtils.isBlank(organizationCursor.getString
+                    organization.setIsCurrent(organizationCursor.getInt((organizationCursor
+                            .getColumnIndexOrThrow(TableOrganizationMaster
+                                    .COLUMN_OM_ORGANIZATION_IS_CURRENT))));
+                    if (!StringUtils.isBlank(organizationCursor.getString
                             (organizationCursor.getColumnIndexOrThrow(TableOrganizationMaster
-                                    .COLUMN_OM_ORGANIZATION_IS_VERIFIED)))){
+                                    .COLUMN_OM_ORGANIZATION_IS_VERIFIED)))) {
                         organization.setIsVerify(Integer.parseInt(organizationCursor.getString
                                 (organizationCursor.getColumnIndexOrThrow(TableOrganizationMaster
                                         .COLUMN_OM_ORGANIZATION_IS_VERIFIED))));
-                    }else{
+                    } else {
                         organization.setIsVerify(0);
                     }
 
@@ -272,8 +287,10 @@ public class QueryManager {
             if (eventCursor.moveToFirst()) {
                 do {
                     ProfileDataOperationEvent event = new ProfileDataOperationEvent();
-                    event.setEventDateTime(StringUtils.defaultString(eventCursor.getString(eventCursor
-                            .getColumnIndexOrThrow(TableEventMaster.COLUMN_EVM_START_DATE))));
+                    event.setEventDateTime(StringUtils.defaultString(eventCursor.getString
+                            (eventCursor
+                                    .getColumnIndexOrThrow(TableEventMaster
+                                            .COLUMN_EVM_START_DATE))));
                     event.setEventType(StringUtils.defaultString(eventCursor.getString(eventCursor
                             .getColumnIndexOrThrow(TableEventMaster.COLUMN_EVM_EVENT_TYPE))));
                     event.setEventId(StringUtils.defaultString(eventCursor.getString(eventCursor
@@ -287,7 +304,8 @@ public class QueryManager {
                     event.setIsYearHidden(Integer.parseInt(StringUtils.defaultString(eventCursor
                             .getString(eventCursor.getColumnIndexOrThrow(TableEventMaster
                                     .COLUMN_EVM_IS_YEAR_HIDDEN)), "0")));
-                    event.setEventRcType(String.valueOf(IntegerConstants.RCP_TYPE_CLOUD_PHONE_BOOK));
+                    event.setEventRcType(String.valueOf(IntegerConstants
+                            .RCP_TYPE_CLOUD_PHONE_BOOK));
                     arrayListEvent.add(event);
                 } while (eventCursor.moveToNext());
                 eventCursor.close();
@@ -343,7 +361,8 @@ public class QueryManager {
                             (imAccountCursor
                                     .getString(imAccountCursor.getColumnIndexOrThrow(TableImMaster
                                             .COLUMN_IM_IS_PRIVATE)), "0")));
-                    imAccount.setIMRcpType(String.valueOf(IntegerConstants.RCP_TYPE_CLOUD_PHONE_BOOK));
+                    imAccount.setIMRcpType(String.valueOf(IntegerConstants
+                            .RCP_TYPE_CLOUD_PHONE_BOOK));
                     arrayListImAccount.add(imAccount);
                 } while (imAccountCursor.moveToNext());
                 imAccountCursor.close();
@@ -377,7 +396,8 @@ public class QueryManager {
                             (addressCursor.getColumnIndexOrThrow(TableAddressMaster
                                     .COLUMN_AM_FORMATTED_ADDRESS))));
                     address.setAddressType(StringUtils.defaultString(addressCursor.getString
-                            (addressCursor.getColumnIndexOrThrow(TableAddressMaster.COLUMN_AM_ADDRESS_TYPE))));
+                            (addressCursor.getColumnIndexOrThrow(TableAddressMaster
+                                    .COLUMN_AM_ADDRESS_TYPE))));
                     address.setAddPublic(Integer.parseInt(StringUtils.defaultString(addressCursor
                             .getString(addressCursor.getColumnIndexOrThrow(TableAddressMaster
                                     .COLUMN_AM_ADDRESS_PRIVACY)), "0")));
@@ -417,9 +437,11 @@ public class QueryManager {
         if (websiteCursor != null && websiteCursor.getCount() > 0) {
             if (websiteCursor.moveToFirst()) {
                 do {
-                    ProfileDataOperationWebAddress webAddress = new ProfileDataOperationWebAddress();
+                    ProfileDataOperationWebAddress webAddress = new
+                            ProfileDataOperationWebAddress();
                     webAddress.setWebAddress(StringUtils.defaultString(websiteCursor.getString
-                            (websiteCursor.getColumnIndexOrThrow(TableWebsiteMaster.COLUMN_WM_WEBSITE_URL))));
+                            (websiteCursor.getColumnIndexOrThrow(TableWebsiteMaster
+                                    .COLUMN_WM_WEBSITE_URL))));
                     webAddress.setWebRcpType(String.valueOf(IntegerConstants
                             .RCP_TYPE_CLOUD_PHONE_BOOK));
                /* arrayListWebsite.add(StringUtils.defaultString(websiteCursor.getString

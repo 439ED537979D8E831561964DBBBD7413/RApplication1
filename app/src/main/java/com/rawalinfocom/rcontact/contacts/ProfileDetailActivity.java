@@ -2399,11 +2399,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     textTime.setVisibility(View.GONE);
                 }
 
-                if (MoreObjects.firstNonNull(tempOrganization.get(0).getIsVerify(), 0) == IntegerConstants.RCP_TYPE_PRIMARY) {
+                if (MoreObjects.firstNonNull(tempOrganization.get(0).getIsVerify(), 0) ==
+                        IntegerConstants.RCP_TYPE_PRIMARY) {
 
-                    String s = Utils.setMultipleTypeface(ProfileDetailActivity.this, tempOrganization.get(0).getOrgName() + " <font color" + "='#00796B'>" +
-                                    getString(R.string.im_icon_verify) + "</font>", 0, (StringUtils.length(tempOrganization.get(0).getOrgName()) + 1),
-                            ((StringUtils.length(tempOrganization.get(0).getOrgName()) + 1) + 1)).toString();
+                    String s = Utils.setMultipleTypeface(ProfileDetailActivity.this,
+                            tempOrganization.get(0).getOrgName() + " <font color" + "='#00796B'>" +
+                                    getString(R.string.im_icon_verify) + "</font>", 0,
+                            (StringUtils.length(tempOrganization.get(0).getOrgName()) + 1),
+                            ((StringUtils.length(tempOrganization.get(0).getOrgName()) + 1) + 1))
+                            .toString();
 
                     textOrganization.setText(Html.fromHtml(s));
 
@@ -3076,9 +3080,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         percentage += 15;
                         hasVerifiedEmail = true;
                         break;
-                    } else if (profileDetail.getPbEmailId().get(i).getEmRcpType() == IntegerConstants
-                            .RCP_TYPE_SECONDARY) {
-                        if (!profileDetail.getPbEmailId().get(i).getEmSocialType().equalsIgnoreCase("")) {
+                    } else if (profileDetail.getPbEmailId().get(i).getEmRcpType() ==
+                            IntegerConstants
+                                    .RCP_TYPE_SECONDARY) {
+                        if (!profileDetail.getPbEmailId().get(i).getEmSocialType()
+                                .equalsIgnoreCase("")) {
                             percentage += 15;
                             hasVerifiedEmail = true;
                             break;
@@ -4345,16 +4351,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         .getOrgFromDate());
                 organization.setOmOrganizationToDate(arrayListOrganization.get(i).getOrgToDate());
                 organization.setOmIsPrivate(arrayListOrganization.get(i).getIsPrivate());
+                organization.setOmIsCurrent(String.valueOf(arrayListOrganization.get(i)
+                        .getIsCurrent()));
 
                 if (arrayListOrganization.get(i).getIsVerify() != null)
                     if (arrayListOrganization.get(i).getIsVerify() == IntegerConstants
                             .RCP_TYPE_PRIMARY) {
-                        organization.setOmOrganizationType(arrayListOrganization.get(i)
-                                .getOrgIndustryType());
-                        organization.setOmEnterpriseOrgId(arrayListOrganization.get(i)
-                                .getOrgEntId());
-                        organization.setOmOrganizationLogo(arrayListOrganization.get(i)
-                                .getOrgLogo());
+                        organization.setOmOrganizationType(arrayListOrganization.get(i).getOrgIndustryType());
+                        organization.setOmEnterpriseOrgId(arrayListOrganization.get(i).getOrgEntId());
+                        organization.setOmOrganizationLogo(arrayListOrganization.get(i).getOrgLogo());
                     } else {
                         organization.setOmOrganizationType("");
                         organization.setOmEnterpriseOrgId("");
