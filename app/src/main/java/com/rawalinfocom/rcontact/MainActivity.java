@@ -42,6 +42,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
@@ -144,6 +145,13 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
     @BindView(R.id.relative_root_contacts_main)
     RelativeLayout relativeRootContactsMain;
+    @BindView(R.id.frame_container)
+    public FrameLayout frameContainer;
+    @BindView(R.id.frame_image_enlarge)
+    public FrameLayout frameImageEnlarge;
+    @BindView(R.id.image_enlarge)
+    public ImageView imageEnlarge;
+
     Toolbar toolbar;
     ImageView imageNotification;
     LinearLayout badgeLayout;

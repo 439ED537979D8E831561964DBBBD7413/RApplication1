@@ -80,7 +80,6 @@ import com.rawalinfocom.rcontact.database.TableMobileMaster;
 import com.rawalinfocom.rcontact.database.TableOrganizationMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.database.TableWebsiteMaster;
-import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.model.Address;
 import com.rawalinfocom.rcontact.model.CallLogType;
 import com.rawalinfocom.rcontact.model.Country;
@@ -1362,8 +1361,9 @@ public class Utils {
         }
     }
 
-    public static void zoomImageFromThumb(Activity activity, final View thumbView, String imageUrl, final FrameLayout frameImageEnlarge
-            , final ImageView imageEnlarge, FrameLayout frameContainer) {
+    public static void zoomImageFromThumb(Activity activity, final View thumbView, String
+            imageUrl, final FrameLayout frameImageEnlarge, final ImageView imageEnlarge,
+                                          FrameLayout frameContainer) {
 
         mShortAnimationDuration = activity.getResources().getInteger(android.R.integer.config_shortAnimTime);
 
@@ -1376,9 +1376,9 @@ public class Utils {
         // Load the high-resolution "zoomed-in" image.
         Glide.with(activity)
                 .load(imageUrl)
-                .placeholder(R.drawable.home_screen_profile)
-                .bitmapTransform(new CropCircleTransformation(activity))
-                .error(R.drawable.home_screen_profile)
+                .placeholder(R.drawable.profile_place_holder)
+//                .bitmapTransform(new CropCircleTransformation(activity))
+                .error(R.drawable.profile_place_holder)
                 .into(imageEnlarge);
 
         // Calculate the starting and ending bounds for the zoomed-in image.

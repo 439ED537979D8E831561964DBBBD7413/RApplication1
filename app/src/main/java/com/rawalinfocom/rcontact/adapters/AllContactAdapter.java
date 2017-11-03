@@ -39,6 +39,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.BaseActivity;
+import com.rawalinfocom.rcontact.MainActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.SearchActivity;
 import com.rawalinfocom.rcontact.calldialer.DialerActivity;
@@ -328,6 +329,18 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 .override(300, 300)
                 .into(holder.imageProfile);
 
+        holder.imageProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (StringUtils.length(profileData.getTempRcpImageURL()) > 0) {
+                    Utils.zoomImageFromThumb(activity, holder.imageProfile, profileData
+                            .getTempRcpImageURL(), ((MainActivity) activity).frameImageEnlarge, (
+                                    (MainActivity) activity).imageEnlarge, ((MainActivity)
+                            activity).frameContainer);
+                }
+            }
+        });
+
 
         if (StringUtils.length(thumbnailUrl) > 0) {
             Glide.with(activity)
@@ -337,10 +350,21 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     .bitmapTransform(new CropCircleTransformation(activity))
                     .override(300, 300)
                     .into(holder.imageProfile);
+            holder.imageProfile.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (StringUtils.length(thumbnailUrl) > 0) {
+                        Utils.zoomImageFromThumb(activity, holder.imageProfile, thumbnailUrl, (
+                                (MainActivity) activity).frameImageEnlarge, ((MainActivity)
+                                activity).imageEnlarge, ((MainActivity) activity).frameContainer);
+                    }
+                }
+            });
 
         } else {
-            String imageUrl =  getPhotoUrlFromNumber(Utils.getFormattedNumber(activity,profileData.getTempNumber()));
-            if(!StringUtils.isEmpty(imageUrl)){
+            final String imageUrl = getPhotoUrlFromNumber(Utils.getFormattedNumber(activity,
+                    profileData.getTempNumber()));
+            if (!StringUtils.isEmpty(imageUrl)) {
                 Glide.with(activity)
                         .load(imageUrl)
                         .placeholder(R.drawable.home_screen_profile)
@@ -348,21 +372,34 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         .bitmapTransform(new CropCircleTransformation(activity))
                         .override(300, 300)
                         .into(holder.imageProfile);
-            }else{
+                holder.imageProfile.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (StringUtils.length(imageUrl) > 0) {
+                            Utils.zoomImageFromThumb(activity, holder.imageProfile, imageUrl, (
+                                    (MainActivity) activity).frameImageEnlarge, ((MainActivity)
+                                    activity).imageEnlarge, ((MainActivity) activity).frameContainer);
+                        }
+                    }
+                });
+            } else {
 
-                TableProfileMaster tableProfileMaster =  new TableProfileMaster(((BaseActivity)activity).getDatabaseHandler());
-                TableProfileMobileMapping tableProfileMobileMapping =  new TableProfileMobileMapping(((BaseActivity)activity).getDatabaseHandler());
+                TableProfileMaster tableProfileMaster = new TableProfileMaster(((BaseActivity)
+                        activity).getDatabaseHandler());
+                TableProfileMobileMapping tableProfileMobileMapping = new
+                        TableProfileMobileMapping(((BaseActivity) activity).getDatabaseHandler());
                 ProfileMobileMapping profileMobileMapping =
                         tableProfileMobileMapping
-                                .getCloudPmIdFromProfileMappingFromNumber(Utils.getFormattedNumber(activity,profileData.getTempNumber()));
+                                .getCloudPmIdFromProfileMappingFromNumber(Utils
+                                        .getFormattedNumber(activity, profileData.getTempNumber()));
                 if (profileMobileMapping != null) {
                     String cloudPmId = profileMobileMapping.getMpmCloudPmId();
                     if (!StringUtils.isEmpty(cloudPmId)) {
                         UserProfile userProfile = tableProfileMaster
                                 .getRCPProfileFromPmId(Integer.parseInt(cloudPmId));
-                        String rcpImageUrl  = userProfile.getPmProfileImage();
+                        final String rcpImageUrl = userProfile.getPmProfileImage();
 
-                        if(!StringUtils.isEmpty(rcpImageUrl)){
+                        if (!StringUtils.isEmpty(rcpImageUrl)) {
                             Glide.with(activity)
                                     .load(rcpImageUrl)
                                     .placeholder(R.drawable.home_screen_profile)
@@ -370,11 +407,21 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                     .bitmapTransform(new CropCircleTransformation(activity))
                                     .override(300, 300)
                                     .into(holder.imageProfile);
-                        }else{
+                            holder.imageProfile.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    if (StringUtils.length(rcpImageUrl) > 0) {
+                                        Utils.zoomImageFromThumb(activity, holder.imageProfile, rcpImageUrl, (
+                                                (MainActivity) activity).frameImageEnlarge, ((MainActivity)
+                                                activity).imageEnlarge, ((MainActivity) activity).frameContainer);
+                                    }
+                                }
+                            });
+                        } else {
                             holder.imageProfile.setImageResource(R.drawable.home_screen_profile);
                         }
                     }
-                }else{
+                } else {
                     holder.imageProfile.setImageResource(R.drawable.home_screen_profile);
                 }
             }
@@ -476,7 +523,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     if (!StringUtils.isBlank(firstPartCloud)) {
                         int startPos1 = originalStringCloud.toLowerCase(Locale.US).indexOf
                                 (firstPartCloud
-                                .toLowerCase(Locale.US));
+                                        .toLowerCase(Locale.US));
                         int endPos1 = startPos1 + firstPartCloud.length();
                         if (startPos1 != -1) {
                             ColorStateList hightlightColor;
@@ -497,7 +544,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     if (!StringUtils.isBlank(secondPartCloud)) {
                         int startPos2 = originalStringCloud.toLowerCase(Locale.US).indexOf
                                 (secondPartCloud
-                                .toLowerCase(Locale.US));
+                                        .toLowerCase(Locale.US));
                         int endPos2 = startPos2 + secondPartCloud.length();
                         if (startPos2 != -1) {
                             ColorStateList hightlightColor;
