@@ -34,6 +34,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -137,6 +138,14 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
     ProgressBar progressBar;
     @BindView(R.id.text_no_records_local)
     TextView textNoRecordsLocal;
+    @BindView(R.id.frame_container)
+    public FrameLayout frameContainer;
+    @BindView(R.id.frame_image_enlarge)
+    public FrameLayout frameImageEnlarge;
+    @BindView(R.id.image_enlarge)
+    public ImageView imageEnlarge;
+
+
     private String[] requiredPermissions = {Manifest
             .permission.READ_CALL_LOG/*, Manifest.permission.READ_SMS*/};
     MaterialDialog permissionConfirmationDialog;

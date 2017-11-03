@@ -333,10 +333,18 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             @Override
             public void onClick(View v) {
                 if (StringUtils.length(profileData.getTempRcpImageURL()) > 0) {
-                    Utils.zoomImageFromThumb(activity, holder.imageProfile, profileData
-                            .getTempRcpImageURL(), ((MainActivity) activity).frameImageEnlarge, (
-                            (MainActivity) activity).imageEnlarge, ((MainActivity)
-                            activity).frameContainer);
+                    if (activity instanceof MainActivity) {
+                        Utils.zoomImageFromThumb(activity, holder.imageProfile, profileData
+                                .getTempRcpImageURL(), ((MainActivity) activity)
+                                .frameImageEnlarge, ((MainActivity) activity).imageEnlarge, (
+                                (MainActivity) activity).frameContainer);
+                    } else if (activity instanceof SearchActivity) {
+                        Utils.zoomImageFromThumb(activity, holder.imageProfile, profileData
+                                .getTempRcpImageURL(), ((SearchActivity) activity)
+                                .frameImageEnlarge, ((SearchActivity) activity).imageEnlarge, (
+                                (SearchActivity) activity).frameContainer);
+                    }
+
                 }
             }
         });
@@ -354,9 +362,17 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 @Override
                 public void onClick(View v) {
                     if (StringUtils.length(thumbnailUrl) > 0) {
-                        Utils.zoomImageFromThumb(activity, holder.imageProfile, thumbnailUrl, (
-                                (MainActivity) activity).frameImageEnlarge, ((MainActivity)
-                                activity).imageEnlarge, ((MainActivity) activity).frameContainer);
+                        if (activity instanceof MainActivity) {
+                            Utils.zoomImageFromThumb(activity, holder.imageProfile, thumbnailUrl, (
+                                    (MainActivity) activity).frameImageEnlarge, ((MainActivity)
+                                    activity).imageEnlarge, ((MainActivity) activity)
+                                    .frameContainer);
+                        } else if (activity instanceof SearchActivity) {
+                            Utils.zoomImageFromThumb(activity, holder.imageProfile, thumbnailUrl, (
+                                    (SearchActivity) activity).frameImageEnlarge, ((SearchActivity)
+                                    activity).imageEnlarge, ((SearchActivity) activity)
+                                    .frameContainer);
+                        }
                     }
                 }
             });
@@ -376,10 +392,18 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     @Override
                     public void onClick(View v) {
                         if (StringUtils.length(imageUrl) > 0) {
-                            Utils.zoomImageFromThumb(activity, holder.imageProfile, imageUrl, (
-                                    (MainActivity) activity).frameImageEnlarge, ((MainActivity)
-                                    activity).imageEnlarge, ((MainActivity) activity)
-                                    .frameContainer);
+                            if (activity instanceof MainActivity) {
+                                Utils.zoomImageFromThumb(activity, holder.imageProfile, imageUrl, (
+                                        (MainActivity) activity).frameImageEnlarge, ((MainActivity)
+                                        activity).imageEnlarge, ((MainActivity) activity)
+                                        .frameContainer);
+                            } else if (activity instanceof SearchActivity) {
+                                Utils.zoomImageFromThumb(activity, holder.imageProfile, imageUrl, (
+                                        (SearchActivity) activity).frameImageEnlarge, (
+                                                (SearchActivity)
+                                        activity).imageEnlarge, ((SearchActivity) activity)
+                                        .frameContainer);
+                            }
                         }
                     }
                 });
@@ -412,13 +436,20 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                 @Override
                                 public void onClick(View v) {
                                     if (StringUtils.length(rcpImageUrl) > 0) {
-                                        ((MainActivity) activity).frameContainer.setVisibility
-                                                (View.VISIBLE);
-                                        Utils.zoomImageFromThumb(activity, holder.imageProfile,
-                                                rcpImageUrl, ((MainActivity) activity)
-                                                        .frameImageEnlarge, ((MainActivity)
-                                                        activity).imageEnlarge, ((MainActivity)
-                                                        activity).frameContainer);
+                                        if (activity instanceof MainActivity) {
+                                            Utils.zoomImageFromThumb(activity, holder.imageProfile,
+                                                    rcpImageUrl, ((MainActivity) activity)
+                                                            .frameImageEnlarge, ((MainActivity)
+                                                            activity).imageEnlarge, ((MainActivity)
+                                                            activity).frameContainer);
+                                        } else if (activity instanceof SearchActivity) {
+                                            Utils.zoomImageFromThumb(activity, holder.imageProfile,
+                                                    rcpImageUrl, ((SearchActivity) activity)
+                                                            .frameImageEnlarge, ((SearchActivity)
+                                                            activity).imageEnlarge, (
+                                                                    (SearchActivity)
+                                                            activity).frameContainer);
+                                        }
                                     }
                                 }
                             });
