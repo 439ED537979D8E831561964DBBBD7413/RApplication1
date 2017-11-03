@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/layout_root"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.rawalinfocom.rcontact.notifications.TimelineActivity">
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/layout_root"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context="com.rawalinfocom.rcontact.notifications.TimelineActivity">
 
 
     <include
         android:id="@+id/include_toolbar"
         layout="@layout/layout_toolbar_timeline"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize" />
+        android:layout_height="?attr/actionBarSize"/>
 
     <android.support.v7.widget.SearchView
         android:id="@+id/search_view_timeline"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/include_toolbar" />
+        android:layout_below="@id/include_toolbar"/>
 
     <View
         android:id="@+id/divider_timeline_search"
@@ -25,16 +25,15 @@
         android:layout_height="1dp"
         android:layout_below="@id/search_view_timeline"
         android:layout_gravity="center_vertical"
-        android:background="@color/colorDarkGray" />
+        android:background="@color/colorDarkGray"/>
 
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerviewAll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/divider_timeline_search"
-        android:layout_above="@+id/view_more"/>
-
+        android:layout_above="@+id/view_more"
+        android:layout_below="@id/divider_timeline_search"/>
 
 
     <TextView
@@ -45,8 +44,34 @@
         android:background="@drawable/background_border"
         android:gravity="center"
         android:padding="@dimen/padding_15dp"
-        android:textSize="@dimen/text_size_12sp"
         android:text="@string/footer_timeline_text"
         android:textAllCaps="true"
-        android:textColor="@color/colorWhite" />
+        android:textColor="@color/colorWhite"
+        android:textSize="@dimen/text_size_12sp"/>
+
+
+    <FrameLayout
+        android:id="@+id/frame_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/include_toolbar">
+
+        <FrameLayout
+            android:id="@+id/frame_image_enlarge"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/finestBlack40"
+            android:visibility="gone"
+            tools:visibility="gone">
+
+            <ImageView
+                android:id="@+id/image_enlarge"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/str_content_description" />
+
+        </FrameLayout>
+
+    </FrameLayout>
+
 </RelativeLayout>
