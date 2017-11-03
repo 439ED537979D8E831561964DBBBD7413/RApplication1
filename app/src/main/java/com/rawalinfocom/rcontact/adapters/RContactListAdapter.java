@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.BaseActivity;
+import com.rawalinfocom.rcontact.MainActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.SearchActivity;
 import com.rawalinfocom.rcontact.calldialer.DialerActivity;
@@ -32,7 +33,6 @@ import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
-import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.UserProfile;
 
 import org.apache.commons.lang3.StringUtils;
@@ -315,6 +315,17 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         } else {
             holder.imageProfile.setImageResource(R.drawable.home_screen_profile);
         }
+
+        holder.imageProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (StringUtils.length(userProfile.getPmProfileImage()) > 0)
+                    Utils.zoomImageFromThumb(activity, holder.imageProfile, userProfile
+                            .getPmProfileImage(), ((MainActivity) activity).frameImageEnlarge, (
+                            (MainActivity) activity).imageEnlarge, ((MainActivity)
+                            activity).frameContainer);
+            }
+        });
 
         holder.textRatingUserCount.setText(userProfile.getTotalProfileRateUser());
         holder.ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
