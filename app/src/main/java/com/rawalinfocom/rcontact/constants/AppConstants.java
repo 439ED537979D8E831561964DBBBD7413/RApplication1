@@ -31,6 +31,7 @@ public class AppConstants {
     public static final int ORGANIZATION = 7;
     public static final int PROFILE_IMAGE = 8;
     public static final int NAME = 9;
+    public static final int AADHAR_NUMBER = 10;
     public static boolean isRecentCallFromSMSTab = false;
     //</editor-fold>
 

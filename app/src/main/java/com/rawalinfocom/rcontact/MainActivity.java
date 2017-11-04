@@ -1828,6 +1828,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 //        goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
 //                Intent.FLAG_ACTIVITY_NEW_DOCUMENT |
 //                Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+        Utils.setBooleanPreference(this,AppConstants.PREF_DONTSHOWAGAIN_POPUP, true);
         try {
             startActivity(goToMarket);
         } catch (ActivityNotFoundException e) {
