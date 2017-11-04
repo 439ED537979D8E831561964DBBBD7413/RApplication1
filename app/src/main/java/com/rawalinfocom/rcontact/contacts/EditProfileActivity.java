@@ -79,6 +79,7 @@ import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
+import com.rawalinfocom.rcontact.database.TableAadharMaster;
 import com.rawalinfocom.rcontact.database.TableAddressMaster;
 import com.rawalinfocom.rcontact.database.TableCountryMaster;
 import com.rawalinfocom.rcontact.database.TableEmailMaster;
@@ -104,6 +105,7 @@ import com.rawalinfocom.rcontact.model.ImAccount;
 import com.rawalinfocom.rcontact.model.MobileNumber;
 import com.rawalinfocom.rcontact.model.Organization;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
+import com.rawalinfocom.rcontact.model.ProfileDataOperationAadharNumber;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEvent;
@@ -1102,7 +1104,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     int type = Integer.parseInt(serviceTypes[1]);
                     switch (type) {
                         case AppConstants.NAME:
-                            profileDetails(true, false, false);
+                            profileDetails(true, false, false, false);
                             break;
                         case AppConstants.PHONE_NUMBER:
                             linearPhoneDetails.removeAllViews();
@@ -1135,7 +1137,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             addressDetails();
                             break;
                         case AppConstants.GENDER:
-                            profileDetails(false, true, false);
+                            profileDetails(false, true, false, false);
+                            break;
+
+                        case AppConstants.AADHAR_NUMBER:
+//                            linearAadharDetails.removeAllViews();
+                            profileDetails(false, false, false, true);
                             break;
                     }
 
@@ -1602,7 +1609,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     @OnClick({R.id.button_name_update, R.id.button_phone_update, R.id.button_email_update, R.id
             .button_website_update, R.id.button_social_contact_update, R.id
             .button_organization_update, R.id.button_gender_update, R.id.button_event_update, R
-            .id.button_address_update})
+            .id.button_address_update, R.id.button_aadhar_update})
     public void onUpdateClick(View view) {
 
         ProfileDataOperation profileDataOperation = new ProfileDataOperation();
@@ -2309,6 +2316,36 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 break;
             //</editor-fold>
 
+            //<editor-fold desc="button_aadhar_update">
+            case R.id.button_aadhar_update:
+                ProfileDataOperationAadharNumber profileDataOperationAadharNumber = new ProfileDataOperationAadharNumber();
+                if (!StringUtils.isEmpty(inputAadharNumber.getText().toString().trim())
+                        && inputAadharNumber.getText().toString().trim().length() == 12) {
+                    profileDataOperationAadharNumber.setAadharNumber(Long.parseLong(inputAadharNumber.getText().toString().trim()));
+                    profileDataOperationAadharNumber.setAadharId(1);
+                    profileDataOperationAadharNumber.setAadharIsVerified(0);
+                    TableAadharMaster tableAadharMaster = new TableAadharMaster(getDatabaseHandler());
+                    if (profileDataOperationAadharNumber != null) {
+                        Integer aadharPublic = tableAadharMaster.
+                                getAadharPublicValueFromAadharNumber(profileDataOperationAadharNumber.getAadharNumber());
+                        if (aadharPublic != 3 && aadharPublic != 0) {
+                            profileDataOperationAadharNumber.setAadharPublic(aadharPublic);
+                        } else {
+                            profileDataOperationAadharNumber.setAadharPublic(3);
+                        }
+                    }
+                    profileDataOperation.setPbAadhar(profileDataOperationAadharNumber);
+
+                    editProfile(profileDataOperation, AppConstants.AADHAR_NUMBER);
+
+                } else {
+                    Utils.showErrorSnackBar(this, relativeRootEditProfile, getString(R
+                            .string.error_aadhar_validation));
+
+                }
+                break;
+            //</editor-fold>
+
         }
 
     }
@@ -2316,21 +2353,27 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     @OnClick({R.id.button_name_cancel, R.id.button_phone_cancel, R.id.button_email_cancel, R.id
             .button_website_cancel, R.id.button_social_contact_cancel, R.id
             .button_organization_cancel, R.id.button_gender_cancel, R.id.button_event_cancel, R
-            .id.button_address_cancel})
+            .id.button_address_cancel, R.id.button_aadhar_cancel})
     public void onCancelClick(View view) {
 
         switch (view.getId()) {
 
+            //<editor-fold desc="button_aadhar_cancel">
+            case R.id.button_aadhar_cancel:
+                profileDetails(false, false, false, true);
+                isUpdated = false;
+                break;
+            //</editor-fold>
             //<editor-fold desc="button_name_cancel">
             case R.id.button_name_cancel:
-                profileDetails(true, false, false);
+                profileDetails(true, false, false, false);
                 isUpdated = false;
                 break;
             //</editor-fold>
 
             // <editor-fold desc="button_gender_cancel">
             case R.id.button_gender_cancel:
-                profileDetails(false, true, false);
+                profileDetails(false, true, false, false);
                 isUpdated = false;
                 break;
             //</editor-fold>
@@ -2422,7 +2465,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
         initToolbar();
         setFonts();
-        profileDetails(true, true, true);
+        profileDetails(true, true, true, true);
         phoneNumberDetails();
         emailDetails();
         organizationDetails();
@@ -3149,7 +3192,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
     }
 
-    private void profileDetails(boolean setNames, boolean setGender, boolean setProfileImage) {
+    private void profileDetails(boolean setNames, boolean setGender, boolean setProfileImage, boolean setAadharNumber) {
 
         TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
 
@@ -3178,6 +3221,20 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         .bitmapTransform(new CropCircleTransformation(EditProfileActivity.this))
                         .override(512, 512)
                         .into(imageProfile);
+            }
+
+            if (setAadharNumber) {
+                TableAadharMaster tableAadharMaster = new TableAadharMaster(databaseHandler);
+
+                ProfileDataOperationAadharNumber profileDataOperationAadharNumber = tableAadharMaster.
+                        getAadharDetailFromPmId(Integer.parseInt(getUserPmId()));
+                if (profileDataOperationAadharNumber != null) {
+                    if(profileDataOperationAadharNumber.getAadharNumber() != null){
+                        inputAadharNumber.setText(profileDataOperationAadharNumber.getAadharNumber() + "");
+                    }else{
+                        inputAadharNumber.setText("");
+                    }
+                }
             }
 
         }
@@ -5440,6 +5497,18 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             }
 
             tableEventMaster.addArrayEvent(eventList);
+        }
+        //</editor-fold>
+
+        // <editor-fold desc="Aadhar Details">
+        TableAadharMaster tableAadharMaster = new TableAadharMaster(databaseHandler);
+        // Remove Existing Number
+        tableAadharMaster.deleteAadharDetails(getUserPmId());
+
+        if (profileDetail.getPbAadhar() != null) {
+            ProfileDataOperationAadharNumber profileDataOperationAadharNumber = profileDetail.getPbAadhar();
+            profileDataOperationAadharNumber.setRcProfileMasterPmId(getUserPmId());
+            tableAadharMaster.addAadharDetail(profileDataOperationAadharNumber);
         }
         //</editor-fold>
 

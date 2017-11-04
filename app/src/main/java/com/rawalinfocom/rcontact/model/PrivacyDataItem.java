@@ -24,6 +24,10 @@ public class PrivacyDataItem {
     @JsonProperty("is_hide")
     private Integer isHide;
 
+    @JsonProperty("pb_aadhaar")
+    private ArrayList<PrivacyEntityItem>  pbAadhaar;
+
+
 
     public ArrayList<PrivacyEntityItem> getPbPhoneNumber() {
         return pbPhoneNumber;
@@ -71,5 +75,13 @@ public class PrivacyDataItem {
 
     public void setIsHide(Integer isHide) {
         this.isHide = isHide;
+    }
+
+    public ArrayList<PrivacyEntityItem> getPbAadhaar() {
+        return pbAadhaar;
+    }
+
+    public void setPbAadhaar(ArrayList<PrivacyEntityItem> pbAadhaar) {
+        this.pbAadhaar = pbAadhaar;
     }
 }

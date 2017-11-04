@@ -487,6 +487,7 @@
     <string name="str_small_cap_email">email</string>
     <string name="str_website">Website</string>
     <string name="str_address">Postal Address</string>
+    <string name="str_aadhar_card">Aadhar Card</string>
     <string name="str_aadhar_number">Aadhar Number</string>
     <string name="str_link">Link</string>
     <!--<string name="str_account_name">Account Name</string>-->
@@ -641,6 +642,7 @@
     <string name="str_call_log">Call Log</string>
     <string name="str_duration">Duration :</string>
     <string name="str_request">Request</string>
+    <string name="error_aadhar_validation">Please enter 12 digit aadhar number</string>
 
     <!--Account-->
     <string name="action_bar_title">Account</string>

@@ -468,7 +468,8 @@
     <string name="str_small_cap_email">ईमेल</string>
     <string name="str_website">वेबसाइट</string>
     <string name="str_address">पोस्टल पता</string>
-    <string name="str_aadhar_number">Aadhar Number</string>
+    <string name="str_aadhar_card">आधार कार्ड</string>
+    <string name="str_aadhar_number">आधार नंबर</string>
     <string name="str_link">लिंक</string>
     <!--<string name="str_account_name">खाते का नाम</string>-->
     <string name="str_choose_date">दिनांक चुनें</string>

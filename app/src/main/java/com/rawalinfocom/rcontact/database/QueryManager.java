@@ -8,6 +8,7 @@ import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
+import com.rawalinfocom.rcontact.model.ProfileDataOperationAadharNumber;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEvent;
@@ -233,13 +234,13 @@ public class QueryManager {
                     organization.setOrgToDate(StringUtils.defaultString(organizationCursor.getString
                             (organizationCursor.getColumnIndexOrThrow(TableOrganizationMaster
                                     .COLUMN_OM_ORGANIZATION_TO_DATE))));
-                    if(!StringUtils.isBlank(organizationCursor.getString
+                    if (!StringUtils.isBlank(organizationCursor.getString
                             (organizationCursor.getColumnIndexOrThrow(TableOrganizationMaster
-                                    .COLUMN_OM_ORGANIZATION_IS_VERIFIED)))){
+                                    .COLUMN_OM_ORGANIZATION_IS_VERIFIED)))) {
                         organization.setIsVerify(Integer.parseInt(organizationCursor.getString
                                 (organizationCursor.getColumnIndexOrThrow(TableOrganizationMaster
                                         .COLUMN_OM_ORGANIZATION_IS_VERIFIED))));
-                    }else{
+                    } else {
                         organization.setIsVerify(0);
                     }
 
@@ -401,6 +402,34 @@ public class QueryManager {
                 addressCursor.close();
             }
             profileDataOperation.setPbAddress(arrayListAddress);
+        }
+
+        //</editor-fold>
+
+        // <editor-fold desc="Aadhar Card">
+        String aadharCardQuery = "SELECT " + TableAadharMaster.COLUMN_AADHAR_ID
+                + "," + TableAadharMaster.COLUMN_AADHAR_NUMBER + "," +
+                TableAadharMaster.COLUMN_AADHAR_IS_VARIFIED + "," +
+                TableAadharMaster.COLUMN_AADHAR_PUBLIC + " FROM " + TableAadharMaster
+                .TABLE_AADHAR_MASTER + " WHERE " + TableAadharMaster
+                .COLUMN_RC_PROFILE_MASTER_PM_ID + " IN (" + rcpId + ")";
+
+        Cursor aadharCardCursor = db.rawQuery(aadharCardQuery, null);
+        // looping through all rows and adding to list
+        ProfileDataOperationAadharNumber aadharDetails = new ProfileDataOperationAadharNumber();
+        if (aadharCardCursor != null && aadharCardCursor.getCount() > 0) {
+            if (aadharCardCursor.moveToFirst()) {
+                aadharDetails.setAadharId(aadharCardCursor.getInt(aadharCardCursor.
+                        getColumnIndexOrThrow(TableAadharMaster.COLUMN_AADHAR_ID)));
+                aadharDetails.setAadharNumber(aadharCardCursor.getLong(aadharCardCursor.
+                        getColumnIndexOrThrow(TableAadharMaster.COLUMN_AADHAR_NUMBER)));
+                aadharDetails.setAadharIsVerified(aadharCardCursor.getInt(aadharCardCursor.
+                        getColumnIndexOrThrow(TableAadharMaster.COLUMN_AADHAR_IS_VARIFIED)));
+                aadharDetails.setAadharPublic(aadharCardCursor.getInt(aadharCardCursor.
+                        getColumnIndexOrThrow(TableAadharMaster.COLUMN_AADHAR_PUBLIC)));
+                aadharCardCursor.close();
+            }
+            profileDataOperation.setPbAadhar(aadharDetails);
         }
 
         //</editor-fold>

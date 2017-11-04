@@ -59,6 +59,7 @@ public class ProfileDataOperation implements Serializable {
     private String lookupKey;
     private long id;
     private String callLogId;
+    private ProfileDataOperationAadharNumber pbAadhar;
 
     public ProfileDataOperation() {
     }
@@ -492,5 +493,14 @@ public class ProfileDataOperation implements Serializable {
             pbEvent = new ArrayList<>();
         }
         pbEvent.add(event);
+    }
+
+    @JsonProperty("pb_aadhaar")
+    public ProfileDataOperationAadharNumber getPbAadhar() {
+        return pbAadhar;
+    }
+
+    public void setPbAadhar(ProfileDataOperationAadharNumber pbAadhar) {
+        this.pbAadhar = pbAadhar;
     }
 }
