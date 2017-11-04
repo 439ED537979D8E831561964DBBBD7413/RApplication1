@@ -44,6 +44,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL(TableOfflineBackupMaster.CREATE_TABLE_PB_OFFLINE_BACKUP_MASTER);
         db.execSQL(TableOrganizationMaster.CREATE_TABLE_RC_ORGANIZATION_MASTER);
         db.execSQL(TableRelationMaster.CREATE_TABLE_RC_RELATION_MASTER);
+        db.execSQL(TableRelationMappingMaster.CREATE_TABLE_RC_RCP_RELATION_MAPPING);
         db.execSQL(TableWebsiteMaster.CREATE_TABLE_RC_WEBSITE_MASTER);
         /*db.execSQL(TableContactRatingMaster.CREATE_TABLE_RC_CONTACT_RATING_MASTER);*/
         db.execSQL(TableCommentMaster.CREATE_TABLE_RC_COMMENT_MASTER);
@@ -133,6 +134,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                         + "COLUMN " + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_ENT_ID + " text ");
                 db.execSQL("ALTER TABLE " + TableOrganizationMaster.TABLE_RC_ORGANIZATION_MASTER + " ADD "
                         + "COLUMN " + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_IMAGE + " text ");
+
+            case 5:
+                System.out.println("RContact db upgrade case 5 relation --> ");
+                db.execSQL("DROP TABLE IF EXISTS '" + TableRelationMaster.TABLE_RC_RELATION_MASTER + "'");
+                db.execSQL(TableRelationMaster.CREATE_TABLE_RC_RELATION_MASTER);
+                db.execSQL(TableRelationMappingMaster.CREATE_TABLE_RC_RCP_RELATION_MAPPING);
         }
 
         // create new tables

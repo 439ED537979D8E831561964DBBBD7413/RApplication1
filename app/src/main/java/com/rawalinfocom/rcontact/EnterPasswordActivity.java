@@ -49,6 +49,7 @@ import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
+import com.rawalinfocom.rcontact.database.TableRelationMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
@@ -299,6 +300,9 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
                 if (storeDeviceDetailsResponse != null && StringUtils.equalsIgnoreCase
                         (storeDeviceDetailsResponse
                                 .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+
+                    TableRelationMaster tableRelationMaster = new TableRelationMaster(databaseHandler);
+                    tableRelationMaster.insertData();
 
                     Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME, String
                             .valueOf(System.currentTimeMillis()));

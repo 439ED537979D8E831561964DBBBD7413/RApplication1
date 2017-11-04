@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
+import com.rawalinfocom.rcontact.model.Relation;
 
 import java.util.ArrayList;
 
@@ -25,16 +26,16 @@ public class BusinessRelationListAdapter extends RecyclerView.Adapter<BusinessRe
         .OrganizationViewHolder> {
 
     private Context context;
-    private ArrayList<String> arrayListBusinessRelation;
+    private ArrayList<Relation> arrayListBusinessRelation;
     private String type;
 
     private OnClickListener clickListener;
 
     public interface OnClickListener {
-        void onClick(String relationName);
+        void onClick(String relationName, int id);
     }
 
-    public BusinessRelationListAdapter(Context context, ArrayList<String>
+    public BusinessRelationListAdapter(Context context, ArrayList<Relation>
             arrayListBusinessRelation, OnClickListener clickListener, String type) {
         this.context = context;
         this.type = type;
@@ -52,18 +53,26 @@ public class BusinessRelationListAdapter extends RecyclerView.Adapter<BusinessRe
     @Override
     public void onBindViewHolder(OrganizationViewHolder holder, int position) {
 
-        holder.textMain.setText(arrayListBusinessRelation.get(position));
+        Relation relation = arrayListBusinessRelation.get(position);
+
+        holder.textMain.setText(relation.getRmRelationName());
 
         if (type.equalsIgnoreCase("family")) {
             holder.checkbox.setChecked(position == (AddNewRelationActivity.familyRelationPosition));
-            if (clickListener != null) {
-                clickListener.onClick(arrayListBusinessRelation.get(AddNewRelationActivity.familyRelationPosition));
+
+            if (position == (AddNewRelationActivity.familyRelationPosition)) {
+                if (clickListener != null) {
+                    clickListener.onClick(relation.getRmRelationName(), relation.getRmId());
+                }
             }
 
         } else {
             holder.checkbox.setChecked(position == (AddNewRelationActivity.businessRelationPosition));
-            if (clickListener != null) {
-                clickListener.onClick(arrayListBusinessRelation.get(AddNewRelationActivity.businessRelationPosition));
+
+            if (position == (AddNewRelationActivity.businessRelationPosition)) {
+                if (clickListener != null) {
+                    clickListener.onClick(relation.getRmRelationName(), relation.getRmId());
+                }
             }
         }
     }

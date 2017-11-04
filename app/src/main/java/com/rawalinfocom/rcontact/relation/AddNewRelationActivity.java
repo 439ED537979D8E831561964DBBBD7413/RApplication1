@@ -17,6 +17,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -30,6 +31,7 @@ import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.contacts.EditProfileActivity;
 import com.rawalinfocom.rcontact.database.TableOrganizationMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
+import com.rawalinfocom.rcontact.database.TableRelationMaster;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
@@ -37,6 +39,7 @@ import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.IndividualRelationType;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationImAccount;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
+import com.rawalinfocom.rcontact.model.Relation;
 import com.rawalinfocom.rcontact.model.RelationRecommendationType;
 
 import org.apache.commons.lang3.StringUtils;
@@ -101,6 +104,8 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
     @BindView(R.id.linear_single_business_relation)
     LinearLayout linearSingleBusinessRelation;
 
+    TableRelationMaster tableRelationMaster;
+
     private Activity activity;
     private String isFrom = "";
 
@@ -109,8 +114,10 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
     public static int familyRelationPosition = 0;
 
     private Dialog businessRelationDialog;
-    private String pmId = "", contactName = "", contactNumber = "", profileImage = "", organizationId = "", organizationName = "",
-            businessRelationName = "", strGender = "", familyRelation = "", friendRelation = "";
+    private String pmId = "", contactName = "", contactNumber = "", profileImage = "", organizationId = "",
+            organizationName = "", businessRelationName = "", strGender = "", familyRelation = "",
+            friendRelation = "";
+    private int businessRelationId, familyRelationId, friendRelationId;
     private ArrayList<ProfileDataOperationOrganization> arrayListOrganization;
     private int colorPineGreen;
 
@@ -136,6 +143,8 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
     }
 
     private void init() {
+
+        tableRelationMaster = new TableRelationMaster(databaseHandler);
 
         activity = AddNewRelationActivity.this;
         arrayListOrganization = new ArrayList<>();
@@ -176,6 +185,18 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
                     .load(R.drawable.home_screen_profile)
                     .bitmapTransform(new CropCircleTransformation(activity))
                     .into(imageProfile);
+
+            checkboxFriend.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+
+                    if (b) {
+                        friendRelationId = 1;
+                    } else {
+                        friendRelationId = 0;
+                    }
+                }
+            });
         }
     }
 
@@ -201,12 +222,12 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
                 if (StringUtils.isEmpty(strGender)) {
                     startActivityIntent(activity, EditProfileActivity.class, null);
                 } else {
-                    if (StringUtils.isEmpty(contactName)) {
-                        Utils.showErrorSnackBar(activity, relativeRootNewRelation,
-                                "Please select User to establish relation!!");
-                    } else {
-                        dialogFamilyRelation();
-                    }
+//                    if (StringUtils.isEmpty(contactName)) {
+//                        Utils.showErrorSnackBar(activity, relativeRootNewRelation,
+//                                "Please select User to establish relation!!");
+//                    } else {
+                    dialogFamilyRelation();
+//                    }
                 }
                 break;
 
@@ -218,12 +239,12 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
 
                 if (arrayListOrganization.size() > 0) {
 
-                    if (StringUtils.isEmpty(contactName)) {
-                        Utils.showErrorSnackBar(activity, relativeRootNewRelation,
-                                "Please select User to establish relation!!");
-                    } else {
-                        dialogBusinessRelation();
-                    }
+//                    if (StringUtils.isEmpty(contactName)) {
+//                        Utils.showErrorSnackBar(activity, relativeRootNewRelation,
+//                                "Please select User to establish relation!!");
+//                    } else {
+                    dialogBusinessRelation();
+//                    }
                 } else {
                     startActivityIntent(activity, EditProfileActivity.class, null);
                 }
@@ -420,7 +441,8 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
         imgFamilyClear.setImageResource(R.drawable.ico_relation_lock_svg);
         imgFriendClear.setImageResource(R.drawable.ico_relation_lock_svg);
 
-        inputValueAddName.setText(Html.fromHtml("<font color='#00796B'> " + contactName + "</font><br/>" + contactNumber));
+        inputValueAddName.setText(Html.fromHtml("<font color='#00796B'> " + contactName +
+                "</font><br/>" + contactNumber));
         inputValueFamily.setText(familyRelation);
         inputValueFriend.setText(friendRelation);
 
@@ -574,7 +596,7 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
 
     private void dialogBusinessRelation() {
 
-        ArrayList<String> relationList = new ArrayList<>();
+        ArrayList<Relation> relationList = tableRelationMaster.getRelation(3);
 
         businessRelationDialog = new Dialog(this);
         businessRelationDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -617,10 +639,10 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
             }
         });
 
-        relationList.add(AppConstants.RELATION_COWORKER);
-        relationList.add(AppConstants.RELATION_SUPPLIER);
-        relationList.add(AppConstants.RELATION_COMPETITOR);
-        relationList.add(AppConstants.RELATION_CUSTOMER);
+//        relationList.add(AppConstants.RELATION_COWORKER);
+//        relationList.add(AppConstants.RELATION_SUPPLIER);
+//        relationList.add(AppConstants.RELATION_COMPETITOR);
+//        relationList.add(AppConstants.RELATION_CUSTOMER);
 
         RecyclerView recyclerViewDialogList = (RecyclerView) businessRelationDialog.findViewById(R.id
                 .recycler_view_dialog_list);
@@ -629,8 +651,9 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
         BusinessRelationListAdapter adapter = new BusinessRelationListAdapter(this, relationList,
                 new BusinessRelationListAdapter.OnClickListener() {
                     @Override
-                    public void onClick(String relationName) {
+                    public void onClick(String relationName, int id) {
                         businessRelationName = relationName;
+                        businessRelationId = id;
                     }
                 }, "business");
 
@@ -720,7 +743,7 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
 
     private void dialogFamilyRelation() {
 
-        ArrayList<String> familyRelationList = new ArrayList<String>(Arrays.asList(AppConstants.FAMILY_RELATION));
+        ArrayList<Relation> familyRelationList = tableRelationMaster.getRelation(2);
 
         final Dialog familyDialog = new Dialog(this);
         familyDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -772,9 +795,11 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
         BusinessRelationListAdapter adapter = new BusinessRelationListAdapter(this, familyRelationList,
                 new BusinessRelationListAdapter.OnClickListener() {
                     @Override
-                    public void onClick(String relationName) {
+                    public void onClick(String relationName, int id) {
                         familyRelation = relationName;
+                        familyRelationId = id;
                     }
+
                 }, "family");
 
         recyclerViewDialogList.setAdapter(adapter);
