@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.model.Organization;
-import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
 
 import org.apache.commons.lang3.StringUtils;
@@ -52,7 +51,8 @@ public class TableOrganizationMaster {
     // Table Create Statements
     static final String CREATE_TABLE_RC_ORGANIZATION_MASTER = "CREATE TABLE IF NOT EXISTS " +
             TABLE_RC_ORGANIZATION_MASTER + " (" +
-            " " + COLUMN_OM_ID + " integer NOT NULL CONSTRAINT rc_organization_master_pk PRIMARY " + "KEY," +
+            " " + COLUMN_OM_ID + " integer NOT NULL CONSTRAINT rc_organization_master_pk PRIMARY " +
+            "" + "KEY," +
             " " + COLUMN_OM_RECORD_INDEX_ID + " text," +
             " " + COLUMN_OM_ORGANIZATION_COMPANY + " text NOT NULL," +
             " " + COLUMN_OM_ORGANIZATION_DESIGNATION + " text," +
@@ -141,7 +141,8 @@ public class TableOrganizationMaster {
     }
 
     // Adding or Updating array Org
-    public void addUpdateArrayOrganization(ArrayList<Organization> arrayListOrganization, String RcpPmId) {
+    public void addUpdateArrayOrganization(ArrayList<Organization> arrayListOrganization, String
+            RcpPmId) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
 
         int count = db.delete(TABLE_RC_ORGANIZATION_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
@@ -153,24 +154,37 @@ public class TableOrganizationMaster {
         for (int i = 0; i < arrayListOrganization.size(); i++) {
             ContentValues values = new ContentValues();
             values.put(COLUMN_OM_ID, arrayListOrganization.get(i).getOmId());
-            values.put(COLUMN_OM_RECORD_INDEX_ID, arrayListOrganization.get(i).getOmRecordIndexId());
-            values.put(COLUMN_OM_ORGANIZATION_COMPANY, arrayListOrganization.get(i).getOmOrganizationCompany());
-            values.put(COLUMN_OM_ORGANIZATION_TYPE, arrayListOrganization.get(i).getOmOrganizationType());
-            values.put(COLUMN_OM_ORGANIZATION_ENT_ID, arrayListOrganization.get(i).getOmEnterpriseOrgId());
-            values.put(COLUMN_OM_ORGANIZATION_IMAGE, arrayListOrganization.get(i).getOmOrganizationLogo());
-            values.put(COLUMN_OM_ORGANIZATION_FROM_DATE, arrayListOrganization.get(i).getOmOrganizationFromDate());
-            values.put(COLUMN_OM_ORGANIZATION_TO_DATE, arrayListOrganization.get(i).getOmOrganizationToDate());
-            values.put(COLUMN_OM_ORGANIZATION_DESIGNATION, arrayListOrganization.get(i).getOmOrganizationDesignation());
+            values.put(COLUMN_OM_RECORD_INDEX_ID, arrayListOrganization.get(i).getOmRecordIndexId
+                    ());
+            values.put(COLUMN_OM_ORGANIZATION_COMPANY, arrayListOrganization.get(i)
+                    .getOmOrganizationCompany());
+            values.put(COLUMN_OM_ORGANIZATION_TYPE, arrayListOrganization.get(i)
+                    .getOmOrganizationType());
+            values.put(COLUMN_OM_ORGANIZATION_ENT_ID, arrayListOrganization.get(i)
+                    .getOmEnterpriseOrgId());
+            values.put(COLUMN_OM_ORGANIZATION_IMAGE, arrayListOrganization.get(i)
+                    .getOmOrganizationLogo());
+            values.put(COLUMN_OM_ORGANIZATION_FROM_DATE, arrayListOrganization.get(i)
+                    .getOmOrganizationFromDate());
+            values.put(COLUMN_OM_ORGANIZATION_TO_DATE, arrayListOrganization.get(i)
+                    .getOmOrganizationToDate());
+            values.put(COLUMN_OM_ORGANIZATION_DESIGNATION, arrayListOrganization.get(i)
+                    .getOmOrganizationDesignation());
             values.put(COLUMN_OM_ORGANIZATION_IS_PRIVATE,
                     MoreObjects.firstNonNull(arrayListOrganization.get(i).getOmIsPrivate(), 0));
-            values.put(COLUMN_OM_ORGANIZATION_IS_VERIFIED, arrayListOrganization.get(i).getOmIsVerified());
-            values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListOrganization.get(i).getRcProfileMasterPmId());
+            values.put(COLUMN_OM_ORGANIZATION_IS_CURRENT, arrayListOrganization.get(i)
+                    .getOmIsCurrent());
+            values.put(COLUMN_OM_ORGANIZATION_IS_VERIFIED, arrayListOrganization.get(i)
+                    .getOmIsVerified());
+            values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListOrganization.get(i)
+                    .getRcProfileMasterPmId());
 
             // Inserting Row
             db.insert(TABLE_RC_ORGANIZATION_MASTER, null, values);
 
 //            int count = 0;
-//            Cursor mCount = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_RC_ORGANIZATION_MASTER + " " +
+//            Cursor mCount = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_RC_ORGANIZATION_MASTER
+// + " " +
 //                    "WHERE " + COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
 //                    arrayListOrganization.get(i).getRcProfileMasterPmId(), null);
 //            if (mCount != null) {
@@ -181,7 +195,8 @@ public class TableOrganizationMaster {
 //
 //            if (count > 0) {
 //                // Update if already exists
-//                db.update(TABLE_RC_ORGANIZATION_MASTER, values, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
+//                db.update(TABLE_RC_ORGANIZATION_MASTER, values, COLUMN_RC_PROFILE_MASTER_PM_ID
+// + " = " +
 //                        arrayListOrganization.get(i).getRcProfileMasterPmId(), null);
 //            } else {
 //                // Inserting Row
@@ -332,7 +347,8 @@ public class TableOrganizationMaster {
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
-                ProfileDataOperationOrganization organization = new ProfileDataOperationOrganization();
+                ProfileDataOperationOrganization organization = new
+                        ProfileDataOperationOrganization();
 
                 organization.setOrgId(cursor.getString(cursor.getColumnIndex
                         (COLUMN_OM_RECORD_INDEX_ID)));

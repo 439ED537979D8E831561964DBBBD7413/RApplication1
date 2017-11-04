@@ -236,6 +236,7 @@ public class AboutHelpActivity extends BaseActivity implements RippleView
                                     .getAbsolutePath(), exportedFileName);
                             Uri path = Uri.fromFile(fileLocation);
                             Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                            emailIntent.putExtra(Intent.EXTRA_EMAIL  , new String[]{"monal.godiwala@rawalinfocom.com"});
                             emailIntent.setType("vnd.android.cursor.dir/email");
                             emailIntent.putExtra(Intent.EXTRA_STREAM, path);
                             emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Database");
