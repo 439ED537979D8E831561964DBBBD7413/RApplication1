@@ -1390,7 +1390,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         if (progressPercentage != null) {
             progressPercentage.setBarColor(Color.parseColor("#CCE4E1"), Color.parseColor
                     ("#00796B"));
-
             int percentage = 5;
             ArrayList<String> arrayListRemainingFields = new ArrayList<>();
             if (Utils.hasSharedPreference(getActivity(), AppConstants
