@@ -1,5 +1,6 @@
 package com.rawalinfocom.rcontact.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -16,6 +17,7 @@ import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.notifications.NotificationPopupDialog;
 import com.rawalinfocom.rcontact.model.NotiCommentsItem;
+import com.rawalinfocom.rcontact.notifications.NotificationsDetailActivity;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -77,7 +79,7 @@ public class NotiCommentsAdapter extends RecyclerView.Adapter<NotiCommentsAdapte
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
+    public void onBindViewHolder(final MyViewHolder holder, int position) {
         final NotiCommentsItem item = list.get(position);
         holder.textCommenterName.setText(item.getCommenterName());
         holder.textCommentDetailInfo.setText(item.getCommenterInfo());
@@ -110,6 +112,19 @@ public class NotiCommentsAdapter extends RecyclerView.Adapter<NotiCommentsAdapte
         } else {
             holder.imageCommenter.setImageResource(R.drawable.home_screen_profile);
         }
+
+        holder.imageCommenter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!StringUtils.isBlank(item.getCommenterImage())) {
+                    Utils.zoomImageFromThumb((Activity) context, holder.imageCommenter, item
+                            .getCommenterImage(), ((NotificationsDetailActivity) context)
+                            .frameImageEnlarge, ((NotificationsDetailActivity) context)
+                            .imageEnlarge, ((NotificationsDetailActivity) context).frameContainer);
+                }
+            }
+        });
+
         holder.buttonCommentViewReply.setText(context.getString(R.string.str_view_reply));
         holder.buttonCommentViewReply.setOnClickListener(new View.OnClickListener() {
             @Override
