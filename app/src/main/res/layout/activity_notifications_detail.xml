@@ -30,4 +30,29 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/tab_notifications" />
+
+    <FrameLayout
+        android:id="@+id/frame_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/include_toolbar">
+
+        <FrameLayout
+            android:id="@+id/frame_image_enlarge"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/finestBlack40"
+            android:visibility="gone"
+            tools:visibility="gone">
+
+            <ImageView
+                android:id="@+id/image_enlarge"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/str_content_description" />
+
+        </FrameLayout>
+
+    </FrameLayout>
+
 </RelativeLayout>

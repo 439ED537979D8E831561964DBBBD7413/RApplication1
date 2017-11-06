@@ -26,6 +26,7 @@ import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransforma
 import com.rawalinfocom.rcontact.model.NotiProfileItem;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
+import com.rawalinfocom.rcontact.notifications.NotificationsDetailActivity;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -46,7 +47,8 @@ public class NotiProfileAdapter extends RecyclerView.Adapter<NotiProfileAdapter.
     private List<NotiProfileItem> list;
 //    private int recyclerPosition;
 
-    public NotiProfileAdapter(Fragment activity, List<NotiProfileItem> list/*, int recyclerPosition*/) {
+    public NotiProfileAdapter(Fragment activity, List<NotiProfileItem> list/*, int
+    recyclerPosition*/) {
         this.activity = activity;
         this.list = list;
 //        this.recyclerPosition = recyclerPosition;
@@ -86,7 +88,7 @@ public class NotiProfileAdapter extends RecyclerView.Adapter<NotiProfileAdapter.
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
+    public void onBindViewHolder(final MyViewHolder holder, int position) {
         final NotiProfileItem item = list.get(position);
         holder.textRequesterName.setText(item.getPersonName());
         holder.textRequestDetailInfo.setText(item.getNotiInfo());
@@ -100,20 +102,22 @@ public class NotiProfileAdapter extends RecyclerView.Adapter<NotiProfileAdapter.
             holder.buttonRequestReject.setVisibility(View.GONE);
         }
 //        if (recyclerPosition == 1) {
-//            holder.textRequestNotiTime.setText(Utils.formatDateTime(item.getNotiRequestTime(), "dd MMM, hh:mm a"));
+//            holder.textRequestNotiTime.setText(Utils.formatDateTime(item.getNotiRequestTime(),
+// "dd MMM, hh:mm a"));
 //        } else {
-//            holder.textRequestNotiTime.setText(Utils.formatDateTime(item.getNotiRequestTime(), "hh:mm a"));
+//            holder.textRequestNotiTime.setText(Utils.formatDateTime(item.getNotiRequestTime(),
+// "hh:mm a"));
 //        }
 
-        String notiTime =  item.getNotiRequestTime();
-        String date =  Utils.formatDateTime(notiTime,"yyyy-MM-dd");
+        String notiTime = item.getNotiRequestTime();
+        String date = Utils.formatDateTime(notiTime, "yyyy-MM-dd");
         Calendar c = Calendar.getInstance();
         SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
         String current = s.format(c.getTime());
-        if(StringUtils.equalsIgnoreCase(current,date)){
-            holder.textRequestNotiTime.setText(Utils.formatDateTime(notiTime,"hh:mm a"));
-        }else{
-            holder.textRequestNotiTime.setText(Utils.formatDateTime(notiTime,"dd MMM, yy"));
+        if (StringUtils.equalsIgnoreCase(current, date)) {
+            holder.textRequestNotiTime.setText(Utils.formatDateTime(notiTime, "hh:mm a"));
+        } else {
+            holder.textRequestNotiTime.setText(Utils.formatDateTime(notiTime, "dd MMM, yy"));
         }
 
         if (!TextUtils.isEmpty(item.getPersonImage())) {
@@ -128,6 +132,21 @@ public class NotiProfileAdapter extends RecyclerView.Adapter<NotiProfileAdapter.
         } else {
             holder.imageRequester.setImageResource(R.drawable.home_screen_profile);
         }
+
+        holder.imageRequester.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!StringUtils.isBlank(item.getPersonImage())) {
+                    Utils.zoomImageFromThumb(activity.getActivity(), holder.imageRequester, item
+                            .getPersonImage(), ((NotificationsDetailActivity) (activity
+                            .getActivity())).frameImageEnlarge, (((NotificationsDetailActivity)
+                            (activity.getActivity())).imageEnlarge), ((
+                                    (NotificationsDetailActivity) (activity.getActivity()))
+                            .frameContainer));
+                }
+            }
+        });
+
         holder.buttonRequestConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -144,7 +163,8 @@ public class NotiProfileAdapter extends RecyclerView.Adapter<NotiProfileAdapter.
                     bundle.putBoolean(AppConstants.EXTRA_FROM_NOTI_PROFILE, true);
                     bundle.putBoolean(AppConstants.EXTRA_IS_RCP_USER, true);
                     bundle.putString(AppConstants.EXTRA_PROFILE_IMAGE_URL, item.getPersonImage());
-                    ((BaseActivity) (activity.getActivity())).startActivityIntent(activity.getActivity(), ProfileDetailActivity
+                    ((BaseActivity) (activity.getActivity())).startActivityIntent(activity
+                            .getActivity(), ProfileDetailActivity
                             .class, bundle);
                 }
             }
@@ -166,11 +186,14 @@ public class NotiProfileAdapter extends RecyclerView.Adapter<NotiProfileAdapter.
         if (Utils.isNetworkAvailable(activity.getActivity())) {
             new AsyncWebServiceCall(activity, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     requestObj, null, WsResponseObject.class, WsConstants
-                    .REQ_PROFILE_PRIVACY_REQUEST, activity.getResources().getString(R.string.msg_please_wait), true)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants.REQ_PROFILE_PRIVACY_REQUEST);
+                    .REQ_PROFILE_PRIVACY_REQUEST, activity.getResources().getString(R.string
+                    .msg_please_wait), true)
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT +
+                            WsConstants.REQ_PROFILE_PRIVACY_REQUEST);
         } else {
             //show no net
-            Toast.makeText(activity.getActivity(), activity.getResources().getString(R.string.msg_no_network), Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity.getActivity(), activity.getResources().getString(R.string
+                    .msg_no_network), Toast.LENGTH_SHORT).show();
         }
     }
 
