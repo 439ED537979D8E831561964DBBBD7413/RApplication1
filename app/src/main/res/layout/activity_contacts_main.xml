@@ -48,7 +48,7 @@
             </android.support.v4.widget.NestedScrollView>
         </android.support.design.widget.NavigationView>
 
-        <FrameLayout
+        <!--<FrameLayout
             android:id="@+id/frame_tutorial"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -147,9 +147,112 @@
                 android:textColor="@color/dialogButtonTextColor"
                 tools:text="Tap to continue"/>
 
-        </FrameLayout>
+        </FrameLayout>-->
 
     </android.support.v4.widget.DrawerLayout>
+
+    <FrameLayout
+        android:id="@+id/frame_tutorial"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/include_toolbar"
+        android:layout_marginTop="@dimen/padding_around_content_area"
+        android:background="@drawable/background_walk_through"
+        android:clickable="true"
+        android:focusable="true">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/linear_action_right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:orientation="horizontal"
+                android:padding="@dimen/margin_small">
+
+                <ImageView
+                    android:id="@+id/image_tutorial_notification"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/str_content_description"
+                    android:padding="@dimen/margin_small"
+                    android:src="@drawable/ic_action_notification"
+                    android:visibility="invisible"/>
+
+                <ImageView
+                    android:id="@+id/image_tutorial_add_contact"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/str_content_description"
+                    android:padding="@dimen/margin_small"
+                    android:src="@drawable/ic_add_new_contact"
+                    android:visibility="invisible"/>
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/image_tutorial_drawer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:contentDescription="@string/str_content_description"
+                android:padding="@dimen/activity_half_horizontal_margin"
+                android:src="@drawable/ic_action_drawer"
+                android:visibility="invisible"/>
+
+            <LinearLayout
+                android:id="@+id/linear_tutorial_search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/image_tutorial_drawer"
+                android:layout_toStartOf="@+id/linear_action_right"
+                android:orientation="horizontal"
+                android:paddingTop="@dimen/margin_small"
+                android:visibility="invisible">
+
+                <ImageView
+                    android:id="@+id/image_search"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:contentDescription="@string/str_content_description"
+                    android:paddingBottom="@dimen/margin_small"
+                    android:paddingEnd="@dimen/margin_small"
+                    android:paddingStart="@dimen/margin_tiny"
+                    android:paddingTop="@dimen/margin_small"
+                    android:src="@drawable/ic_search"/>
+
+                <EditText
+                    android:id="@+id/input_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="@dimen/margin_5dp"
+                    android:backgroundTint="@color/finestWhite30"
+                    android:cursorVisible="false"
+                    android:hint="@string/str_search_name"
+                    android:paddingBottom="@dimen/margin_small"
+                    android:textColorHint="@color/finestWhite30"/>
+
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/text_tap_continue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:padding="@dimen/activity_horizontal_margin"
+            android:textColor="@color/dialogButtonTextColor"
+            tools:text="Tap to continue"/>
+
+    </FrameLayout>
 
     <FrameLayout
         android:id="@+id/frame_container"

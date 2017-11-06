@@ -122,7 +122,7 @@ public class ContactsFragment extends BaseFragment {
 
     private void init() {
 
-//        ((MainActivity) getActivity()).frameTutorial.setVisibility(View.GONE);
+        ((MainActivity) getActivity()).frameTutorial.setVisibility(View.GONE);
 
         tutorialViews = new ArrayList<>();
 
@@ -257,6 +257,11 @@ public class ContactsFragment extends BaseFragment {
             public void onClick(View view) {
                 if (view.getVisibility() == View.VISIBLE) {
                     ((MainActivity) getActivity()).drawer.openDrawer(GravityCompat.START);
+                    ((MainActivity) getActivity()).imageTutorialDrawer.setVisibility(View.GONE);
+                    textHeader.setText("Your Profile");
+                    textDescription.setText("Click to view your profile");
+                    ((MainActivity) getActivity()).textTapContinue.setText("TAP ANYWHERE ON YOUR " +
+                            "DETAILS");
                 }
             }
         });
