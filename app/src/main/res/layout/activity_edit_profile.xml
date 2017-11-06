@@ -42,12 +42,6 @@
                 android:layout_marginTop="@dimen/margin_tiny"
                 android:text="@string/str_change_profile_picture" />
 
-            <!--<Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/btn_share"
-                android:text="share"/>-->
-
             <LinearLayout
                 android:id="@+id/linear_name"
                 android:layout_width="match_parent"
@@ -626,7 +620,7 @@
 
             <LinearLayout
                 android:id="@+id/linear_social_contact"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/linear_address"
                 android:layout_marginTop="@dimen/margin_tiny"

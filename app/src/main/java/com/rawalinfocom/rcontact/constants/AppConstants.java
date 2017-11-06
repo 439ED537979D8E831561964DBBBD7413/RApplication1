@@ -45,6 +45,10 @@ public class AppConstants {
     public static String CONSUMER_SECRET = "2IXb9rLPJxvYqYkeJFRAgvqBpBTTvAGZLv0wYGFFmt150nIi9G";
     //</editor-fold>
 
+    // <editor-fold desc="Pinterest Section">
+    public static String appID = "4932442687895776973";
+    //</editor-fold>
+
     //<editor-fold desc="App Specific final constants">
 
     public static final String OTP_CONFIRMED_STATUS = "2";

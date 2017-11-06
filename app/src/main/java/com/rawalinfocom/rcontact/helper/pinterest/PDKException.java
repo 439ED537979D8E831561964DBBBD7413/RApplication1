@@ -1,4 +1,4 @@
-package com.pinterest.android.pdk;
+package com.rawalinfocom.rcontact.helper.pinterest;
 
 import com.android.volley.VolleyError;
 

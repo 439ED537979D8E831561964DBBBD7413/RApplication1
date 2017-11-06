@@ -105,6 +105,11 @@ import com.rawalinfocom.rcontact.helper.instagram.Instagram;
 import com.rawalinfocom.rcontact.helper.instagram.InstagramSession;
 import com.rawalinfocom.rcontact.helper.instagram.InstagramUser;
 import com.rawalinfocom.rcontact.helper.instagram.util.StringUtil;
+import com.rawalinfocom.rcontact.helper.pinterest.PDKCallback;
+import com.rawalinfocom.rcontact.helper.pinterest.PDKClient;
+import com.rawalinfocom.rcontact.helper.pinterest.PDKException;
+import com.rawalinfocom.rcontact.helper.pinterest.PDKResponse;
+import com.rawalinfocom.rcontact.helper.pinterest.PDKUser;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.Address;
 import com.rawalinfocom.rcontact.model.Country;
@@ -417,6 +422,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     private static final int LINKEDIN_LOGIN_PERMISSION = 23;
     private static final int INSTAGRAM_LOGIN_PERMISSION = 24;
     private static final int TWITTER_LOGIN_PERMISSION = 25;
+    private static final int PINTEREST_LOGIN_PERMISSION = 26;
     // Facebook Callback Manager
     CallbackManager callbackManager;
 
@@ -433,8 +439,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     private Dialog auth_dialog;
     private WebView web;
     private ProgressDialog progress;
-    // End
 
+    // Pinterest
+    private PDKClient pdkClient;
+    // End
     private ArrayList<String> socialTypeList;
     private SocialConnectListAdapter socialConnectListAdapter;
     private String socialId = "";
@@ -461,6 +469,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         mInstagram = new Instagram(this, AppConstants.CLIENT_ID, AppConstants.CLIENT_SECRET,
                 AppConstants.REDIRECT_URI);
         mInstagramSession = mInstagram.getSession();
+        // Call configureInstance() method with context and App Id
+        pdkClient = PDKClient.configureInstance(this, AppConstants.appID);
+
+        // Call onConnect() method to make link between App id and Pinterest SDK
+        pdkClient.onConnect(this);
+        pdkClient.setDebugMode(true);
 
         twitter = new TwitterFactory().getInstance();
         twitter.setOAuthConsumer(AppConstants.CONSUMER_KEY, AppConstants.CONSUMER_SECRET);
@@ -493,6 +507,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         } else {
             init(true);
         }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        System.out.println("RContacts onNewIntent ");
     }
 
 
@@ -691,11 +711,11 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 callbackManager.onActivityResult(requestCode, resultCode, data);
         }
 
-        if (IntegerConstants.REGISTRATION_VIA == IntegerConstants.REGISTRATION_VIA_TWITTER) {
+        if (IntegerConstants.REGISTRATION_VIA == IntegerConstants.REGISTRATION_VIA_PINTEREST) {
 //            // Twitter Callback
-//            LISessionManager.getInstance(getApplicationContext()).onActivityResult(this,
-//                    requestCode, resultCode, data);
+            pdkClient.onOauthResponse(requestCode, resultCode, data);
         }
+
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         //<editor-fold desc="Sign In">
@@ -869,6 +889,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 break;
             case TWITTER_LOGIN_PERMISSION:
                 twitterSignIn();
+                break;
+            case PINTEREST_LOGIN_PERMISSION:
+                pinterestLogin();
                 break;
         }
     }
@@ -1273,6 +1296,96 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 e.printStackTrace();
             }
         }
+    }
+
+    private void pinterestLogin() {
+
+        List scopes = new ArrayList<String>();
+        scopes.add(PDKClient.PDKCLIENT_PERMISSION_READ_PUBLIC);
+        scopes.add(PDKClient.PDKCLIENT_PERMISSION_WRITE_PUBLIC);
+        scopes.add(PDKClient.PDKCLIENT_PERMISSION_READ_RELATIONSHIPS);
+        scopes.add(PDKClient.PDKCLIENT_PERMISSION_WRITE_RELATIONSHIPS);
+        scopes.add(PDKClient.PDKCLIENT_PERMISSION_READ_PRIVATE);
+        scopes.add(PDKClient.PDKCLIENT_PERMISSION_WRITE_PRIVATE);
+
+        pdkClient.login(this, scopes, new PDKCallback() {
+
+            /**
+             * It called, when Authentication success
+             * @param response
+             */
+            @Override
+            public void onSuccess(PDKResponse response) {
+
+                Log.e(getClass().getName(), response.getData().toString());
+
+                try {
+                    getUserDetails(new JSONObject(response.getData().toString()));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            /**
+             * It called, when Authentication failed
+             * @param exception
+             */
+            @Override
+            public void onFailure(PDKException exception) {
+                Log.e(getClass().getName(), exception.getDetailMessage());
+            }
+        });
+    }
+
+
+    private final String USER_FIELDS = "id,image,counts,created_at,first_name,last_name,bio";
+
+    private void getUserDetails(final JSONObject jsonObject) {
+
+        PDKClient.getInstance().getMe(USER_FIELDS, new PDKCallback() {
+
+            /**
+             * It called, when successfully retrieve details of user.
+             * @param response
+             */
+            @Override
+            public void onSuccess(PDKResponse response) {
+                PDKUser user = response.getUser();
+
+                if (user != null) {
+
+                    socialId = jsonObject.optString("url");
+                    isAdd = true;
+
+                    ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
+                    imAccount.setIMAccountProtocol("Pinterest");
+                    imAccount.setIMAccountFirstName(user.getFirstName());
+                    imAccount.setIMAccountLastName(user.getLastName());
+
+                    imAccount.setIMAccountPublic(IntegerConstants.PRIVACY_MY_CONTACT);
+                    imAccount.setIMAccountProfileImage(String.valueOf(user.getImageUrl()));
+                    imAccount.setIMAccountDetails(socialId);
+                    arrayListSocialContactObject.add(imAccount);
+
+                    socialTypeList.remove("Pinterest");
+
+                    addSocialConnectView(arrayListSocialContactObject.get
+                            (arrayListSocialContactObject.size() - 1), "");
+
+                    relativeSocialConnect.performClick();
+                }
+            }
+
+            /**
+             * It called , when request to get user details failed
+             * @param exception
+             */
+            @Override
+            public void onFailure(PDKException exception) {
+                Log.e("Exception", exception.getDetailMessage());
+                Toast.makeText(EditProfileActivity.this, "/me Request failed", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -1817,6 +1930,17 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         checkPermissionToExecute(requiredPermissions, TWITTER_LOGIN_PERMISSION);
                     } else {
                         twitterSignIn();
+                    }
+
+                } else if (socialName.equalsIgnoreCase("Pinterest")) {
+
+
+                    IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_PINTEREST;
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        checkPermissionToExecute(requiredPermissions, PINTEREST_LOGIN_PERMISSION);
+                    } else {
+                        pinterestLogin();
                     }
 
                 } else if (socialName.equalsIgnoreCase("Custom") || socialName.equalsIgnoreCase
@@ -4174,6 +4298,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     || imAccount.getIMAccountProtocol().equalsIgnoreCase("GooglePlus")
                     || imAccount.getIMAccountProtocol().equalsIgnoreCase("Instagram")
                     || imAccount.getIMAccountProtocol().equalsIgnoreCase("Twitter")
+                    || imAccount.getIMAccountProtocol().equalsIgnoreCase("Pinterest")
                     || imAccount.getIMAccountProtocol().equalsIgnoreCase("LinkedIn")) {
 
                 inputValue.setEnabled(false);
@@ -4278,6 +4403,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             socialTypeList.add("Instagram");
                         } else if (textProtocol.getText().toString().trim().equalsIgnoreCase("Twitter")) {
                             socialTypeList.add("Twitter");
+                        } else if (textProtocol.getText().toString().trim().equalsIgnoreCase("Pinterest")) {
+                            socialTypeList.add("Pinterest");
                         }
                     }
 
@@ -4298,6 +4425,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             socialTypeList.add("Instagram");
                         } else if (textProtocol.getText().toString().trim().equalsIgnoreCase("Twitter")) {
                             socialTypeList.add("Twitter");
+                        } else if (textProtocol.getText().toString().trim().equalsIgnoreCase("Pinterest")) {
+                            socialTypeList.add("Pinterest");
                         }
                     }
                 }
@@ -5041,6 +5170,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
             case TWITTER_LOGIN_PERMISSION:
                 twitterSignIn();
+                break;
+
+            case PINTEREST_LOGIN_PERMISSION:
+                pinterestLogin();
                 break;
         }
     }

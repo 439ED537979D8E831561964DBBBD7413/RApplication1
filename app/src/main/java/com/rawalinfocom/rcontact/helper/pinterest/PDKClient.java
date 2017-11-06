@@ -1,4 +1,4 @@
-package com.pinterest.android.pdk;
+package com.rawalinfocom.rcontact.helper.pinterest;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -18,7 +18,6 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;

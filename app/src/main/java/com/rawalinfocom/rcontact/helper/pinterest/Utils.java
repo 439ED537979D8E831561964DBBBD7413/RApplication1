@@ -1,10 +1,9 @@
-package com.pinterest.android.pdk;
+package com.rawalinfocom.rcontact.helper.pinterest;
 
 import android.util.Log;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
-
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

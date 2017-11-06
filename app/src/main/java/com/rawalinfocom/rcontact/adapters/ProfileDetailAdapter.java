@@ -657,7 +657,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 .get(position);
 
         if (!imAccount.getIMAccountFirstName().equalsIgnoreCase(""))
-            holder.textMain.setText(imAccount.getIMAccountFirstName() + " " + imAccount.getIMAccountLastName());
+            holder.textMain.setText(String.format("%s %s", imAccount.getIMAccountFirstName(),
+                    imAccount.getIMAccountLastName()));
         else
             holder.textMain.setText(imAccount.getIMAccountDetails());
 
@@ -718,7 +719,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                             url = "http://instagram.com/_u/" + imAccount.getIMAccountDetails();
                         } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
                                 ("pinterest")) {
-                            url = "https://www.pinterest.com/" + imAccount.getIMAccountDetails();
+                            url = "https://www.in.pinterest.com/" + imAccount.getIMAccountDetails();
                         } else if (StringUtils.lowerCase(imAccount.getIMAccountDetails()).startsWith("https://")
                                 || StringUtils.lowerCase(imAccount.getIMAccountDetails()).startsWith("http://")
                                 || StringUtils.lowerCase(imAccount.getIMAccountDetails()).startsWith("www.")) {

@@ -1,4 +1,4 @@
-package com.rawalinfocom.rcontact.helper.instagram;
+package com.rawalinfocom.rcontact.helper.pinterest;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -31,26 +31,26 @@ import com.rawalinfocom.rcontact.R;
  *
  */
 @SuppressLint({ "NewApi", "SetJavaScriptEnabled" })
-public class InstagramDialog extends Dialog {
+public class PDKDialog extends Dialog {
 	private ProgressDialog mSpinner;
 	private WebView mWebView;
 	private LinearLayout mContent;
 	private TextView mTitle;
-	
+
 	private String mAuthUrl;
 	private String mRedirectUri;
-	
-	private InstagramDialogListener mListener;
-	
+
+	private PDKDialogListener mListener;
+
 	static final FrameLayout.LayoutParams FILL = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
 			ViewGroup.LayoutParams.MATCH_PARENT);
-	
+
 	static final int MARGIN = 8;
 	static final int PADDING = 2;
-	
+
 	static final String TAG = "Instagram-Android";
-	
-	public InstagramDialog(Context context, String authUrl, String redirectUri, InstagramDialogListener listener) {
+
+	public PDKDialog(Context context, String authUrl, String redirectUri, PDKDialogListener listener) {
 		super(context);
 		
 		mAuthUrl		= authUrl;
@@ -146,12 +146,12 @@ public class InstagramDialog extends Dialog {
 		mWebView.clearHistory();
 		mWebView.clearFormData();
 	}
-	
+
 	@Override
 	public void onBackPressed() {
 		super.onBackPressed();
 		mListener.onCancel();
-		
+
 	}
 	private class InstagramWebViewClient extends WebViewClient {
 
@@ -170,7 +170,7 @@ public class InstagramDialog extends Dialog {
 					mListener.onError(temp[temp.length-1]);
 				}
 	        		
-	        	InstagramDialog.this.dismiss();
+	        	PDKDialog.this.dismiss();
 	        		
 	        	return true;
 			}
@@ -184,7 +184,7 @@ public class InstagramDialog extends Dialog {
 	      
 			mListener.onError(description);
 	            
-			InstagramDialog.this.dismiss();
+			PDKDialog.this.dismiss();
 			
 			Log.d(TAG, "Page error: " + description);
 		}
@@ -212,7 +212,7 @@ public class InstagramDialog extends Dialog {
 		}
 	}
 	
-	public interface InstagramDialogListener {
+	public interface PDKDialogListener {
 		public abstract void onSuccess(String code);
 		public abstract void onCancel();
 		public abstract void onError(String error);
