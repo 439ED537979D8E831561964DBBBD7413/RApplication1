@@ -5,7 +5,11 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
@@ -39,6 +43,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -95,6 +101,10 @@ import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.helper.imgcrop.CropImage;
 import com.rawalinfocom.rcontact.helper.imgcrop.CropImageView;
+import com.rawalinfocom.rcontact.helper.instagram.Instagram;
+import com.rawalinfocom.rcontact.helper.instagram.InstagramSession;
+import com.rawalinfocom.rcontact.helper.instagram.InstagramUser;
+import com.rawalinfocom.rcontact.helper.instagram.util.StringUtil;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.Address;
 import com.rawalinfocom.rcontact.model.Country;
@@ -117,6 +127,17 @@ import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.Website;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
+import com.rawalinfocom.rcontact.relation.RContactsListActivity;
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.Twitter;
+import com.twitter.sdk.android.core.TwitterAuthToken;
+import com.twitter.sdk.android.core.TwitterCore;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.identity.TwitterAuthClient;
+import com.twitter.sdk.android.core.identity.TwitterLoginButton;
+import com.twitter.sdk.android.core.models.User;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
@@ -141,6 +162,9 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import twitter4j.TwitterFactory;
+import twitter4j.auth.AccessToken;
+import twitter4j.auth.RequestToken;
 
 public class EditProfileActivity extends BaseActivity implements WsResponseListener, RippleView
         .OnRippleCompleteListener, GoogleApiClient.OnConnectionFailedListener {
@@ -391,8 +415,24 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     private static final int FACEBOOK_LOGIN_PERMISSION = 21;
     private static final int GOOGLE_LOGIN_PERMISSION = 22;
     private static final int LINKEDIN_LOGIN_PERMISSION = 23;
+    private static final int INSTAGRAM_LOGIN_PERMISSION = 24;
+    private static final int TWITTER_LOGIN_PERMISSION = 25;
     // Facebook Callback Manager
     CallbackManager callbackManager;
+
+    // Instagram
+    private InstagramSession mInstagramSession;
+    private Instagram mInstagram;
+
+    // Twitter
+    private twitter4j.Twitter twitter;
+    private RequestToken requestToken = null;
+    private AccessToken accessToken;
+
+    private String oauth_url, oauth_verifier, profile_url;
+    private Dialog auth_dialog;
+    private WebView web;
+    private ProgressDialog progress;
     // End
 
     private ArrayList<String> socialTypeList;
@@ -418,6 +458,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         arrayListProfile = new ArrayList<>();
 
         FacebookSdk.sdkInitialize(getApplicationContext());
+        mInstagram = new Instagram(this, AppConstants.CLIENT_ID, AppConstants.CLIENT_SECRET,
+                AppConstants.REDIRECT_URI);
+        mInstagramSession = mInstagram.getSession();
+
+        twitter = new TwitterFactory().getInstance();
+        twitter.setOAuthConsumer(AppConstants.CONSUMER_KEY, AppConstants.CONSUMER_SECRET);
 
         // Google+ Registration
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions
@@ -644,14 +690,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             if (callbackManager != null)
                 callbackManager.onActivityResult(requestCode, resultCode, data);
         }
-        //</editor-fold>
 
-//        else if (IntegerConstants.REGISTRATION_VIA == IntegerConstants
-//                .REGISTRATION_VIA_LINED_IN) {
-//            // LinkedIn Callback
+        if (IntegerConstants.REGISTRATION_VIA == IntegerConstants.REGISTRATION_VIA_TWITTER) {
+//            // Twitter Callback
 //            LISessionManager.getInstance(getApplicationContext()).onActivityResult(this,
 //                    requestCode, resultCode, data);
-//        }
+        }
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         //<editor-fold desc="Sign In">
@@ -819,6 +863,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 break;
             case LINKEDIN_LOGIN_PERMISSION:
                 linkedInSignIn();
+                break;
+            case INSTAGRAM_LOGIN_PERMISSION:
+                instagramLogin();
+                break;
+            case TWITTER_LOGIN_PERMISSION:
+                twitterSignIn();
                 break;
         }
     }
@@ -1043,6 +1093,186 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         Intent intent = new Intent(EditProfileActivity.this, LinkedinLoginActivity.class);
         intent.putExtra("from", "profile");
         startActivityForResult(intent, RC_LINKEDIN_SIGN_IN);// Activity is started with requestCode
+    }
+
+    public void instagramLogin() {
+        mInstagram.authorize(mAuthListener);
+    }
+
+    private Instagram.InstagramAuthListener mAuthListener = new Instagram.InstagramAuthListener() {
+        @Override
+        public void onSuccess(InstagramUser user) {
+
+            if (user != null) {
+                socialId = user.username;
+                isAdd = true;
+
+                ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
+                imAccount.setIMAccountProtocol("Instagram");
+
+                String[] temp = user.fullName.split("\\ ");
+                if (temp.length > 1) {
+                    imAccount.setIMAccountFirstName(temp[1]);
+                    imAccount.setIMAccountLastName(temp[0]);
+                } else {
+                    imAccount.setIMAccountFirstName(user.fullName);
+                    imAccount.setIMAccountLastName("");
+                }
+
+                imAccount.setIMAccountPublic(IntegerConstants.PRIVACY_MY_CONTACT);
+                imAccount.setIMAccountProfileImage(String.valueOf(user.profilPicture));
+                imAccount.setIMAccountDetails(socialId);
+                arrayListSocialContactObject.add(imAccount);
+
+                socialTypeList.remove("Instagram");
+
+                mInstagramSession.reset();
+                addSocialConnectView(arrayListSocialContactObject.get
+                        (arrayListSocialContactObject.size() - 1), "");
+            }
+        }
+
+        @Override
+        public void onError(String error) {
+            Utils.showErrorSnackBar(EditProfileActivity.this, relativeRootEditProfile, error);
+            mInstagramSession.reset();
+        }
+
+        @Override
+        public void onCancel() {
+            Utils.showErrorSnackBar(EditProfileActivity.this, relativeRootEditProfile,
+                    "OK. Maybe later?");
+            mInstagramSession.reset();
+        }
+    };
+
+    public void twitterSignIn() {
+        new TokenGet().execute();
+    }
+
+    private class TokenGet extends AsyncTask<String, String, String> {
+
+        @Override
+        protected String doInBackground(String... args) {
+
+            try {
+                requestToken = twitter.getOAuthRequestToken();
+                oauth_url = requestToken.getAuthorizationURL();
+            } catch (twitter4j.TwitterException e) {
+                e.printStackTrace();
+            }
+            return oauth_url;
+        }
+
+        @Override
+        protected void onPostExecute(String oauth_url) {
+            if (oauth_url != null) {
+                auth_dialog = new Dialog(EditProfileActivity.this);
+                auth_dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+                auth_dialog.setContentView(R.layout.auth_dialog);
+                web = (WebView) auth_dialog.findViewById(R.id.webView);
+                web.getSettings().setJavaScriptEnabled(true);
+                web.loadUrl(oauth_url);
+                web.setWebViewClient(new WebViewClient() {
+                    boolean authComplete = false;
+
+                    @Override
+                    public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                        super.onPageStarted(view, url, favicon);
+                    }
+
+                    @Override
+                    public void onPageFinished(WebView view, String url) {
+                        super.onPageFinished(view, url);
+                        if (url.contains("oauth_verifier") && !authComplete) {
+                            authComplete = true;
+                            Log.e("Url", url);
+                            Uri uri = Uri.parse(url);
+                            oauth_verifier = uri.getQueryParameter("oauth_verifier");
+
+                            auth_dialog.dismiss();
+                            new AccessTokenGet().execute();
+                        } else if (url.contains("denied")) {
+                            auth_dialog.dismiss();
+                            Toast.makeText(EditProfileActivity.this, "Sorry !, Permission Denied", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+                auth_dialog.show();
+                auth_dialog.setCancelable(true);
+
+            } else {
+                Toast.makeText(EditProfileActivity.this, "Sorry !, Network Error or Invalid Credentials", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private class AccessTokenGet extends AsyncTask<String, String, Boolean> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progress = new ProgressDialog(EditProfileActivity.this);
+            progress.setMessage("Fetching Data ...");
+            progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progress.setIndeterminate(true);
+            progress.show();
+
+        }
+
+        @Override
+        protected Boolean doInBackground(String... args) {
+
+            try {
+                accessToken = twitter.getOAuthAccessToken(requestToken, oauth_verifier);
+            } catch (twitter4j.TwitterException e) {
+                e.printStackTrace();
+            }
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean response) {
+
+            progress.hide();
+            try {
+                if (response) {
+                    twitter4j.User user = twitter.showUser(accessToken.getUserId());
+
+                    if (user != null) {
+
+                        socialId = user.getScreenName();
+                        isAdd = true;
+
+                        ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
+                        imAccount.setIMAccountProtocol("Twitter");
+
+                        String[] temp = user.getName().split("\\ ");
+                        if (temp.length > 1) {
+                            imAccount.setIMAccountFirstName(temp[1]);
+                            imAccount.setIMAccountLastName(temp[0]);
+                        } else {
+                            imAccount.setIMAccountFirstName(user.getName());
+                            imAccount.setIMAccountLastName("");
+                        }
+
+                        imAccount.setIMAccountPublic(IntegerConstants.PRIVACY_MY_CONTACT);
+                        imAccount.setIMAccountProfileImage(String.valueOf(user.getOriginalProfileImageURL()));
+                        imAccount.setIMAccountDetails(socialId);
+                        arrayListSocialContactObject.add(imAccount);
+
+                        socialTypeList.remove("Twitter");
+
+                        addSocialConnectView(arrayListSocialContactObject.get
+                                (arrayListSocialContactObject.size() - 1), "");
+                    }
+                }
+            } catch (twitter4j.TwitterException e) {
+
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -1565,6 +1795,28 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         checkPermissionToExecute(requiredPermissions, LINKEDIN_LOGIN_PERMISSION);
                     } else {
                         linkedInSignIn();
+                    }
+
+                } else if (socialName.equalsIgnoreCase("Instagram")) {
+
+
+                    IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_INSTAGRAM;
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        checkPermissionToExecute(requiredPermissions, INSTAGRAM_LOGIN_PERMISSION);
+                    } else {
+                        instagramLogin();
+                    }
+
+                } else if (socialName.equalsIgnoreCase("Twitter")) {
+
+
+                    IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_TWITTER;
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        checkPermissionToExecute(requiredPermissions, TWITTER_LOGIN_PERMISSION);
+                    } else {
+                        twitterSignIn();
                     }
 
                 } else if (socialName.equalsIgnoreCase("Custom") || socialName.equalsIgnoreCase
@@ -3210,12 +3462,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     .getImImPrivacy()));
             arrayListSocialContactObject.add(imAccount);
 
-            if (arrayListImAccount.get(i).getImImProtocol().equalsIgnoreCase(getString(R.string
-                    .facebook))
-                    || arrayListImAccount.get(i).getImImProtocol().equalsIgnoreCase(getString(R
-                    .string.google_plus))
-                    || arrayListImAccount.get(i).getImImProtocol().equalsIgnoreCase(getString(R
-                    .string.linked_in))) {
+            if (arrayListImAccount.get(i).getImImProtocol().equalsIgnoreCase("Facebook")
+                    || arrayListImAccount.get(i).getImImProtocol().equalsIgnoreCase("GooglePlus")
+                    || arrayListImAccount.get(i).getImImProtocol().equalsIgnoreCase("Instagram")
+                    || arrayListImAccount.get(i).getImImProtocol().equalsIgnoreCase("LinkedIn")) {
                 socialTypeList.remove(arrayListImAccount.get(i).getImImProtocol());
             }
         }
@@ -3920,14 +4170,21 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             textLastName.setText(imAccount.getIMAccountLastName());
             textIsPublic.setText(String.valueOf(imAccount.getIMAccountPublic()));
 
-            if (imAccount.getIMAccountProtocol().equalsIgnoreCase(getString(R.string.facebook))
-                    || imAccount.getIMAccountProtocol().equalsIgnoreCase(getString(R.string
-                    .google_plus))
-                    || imAccount.getIMAccountProtocol().equalsIgnoreCase(getString(R.string
-                    .linked_in))) {
+            if (imAccount.getIMAccountProtocol().equalsIgnoreCase("Facebook")
+                    || imAccount.getIMAccountProtocol().equalsIgnoreCase("GooglePlus")
+                    || imAccount.getIMAccountProtocol().equalsIgnoreCase("Instagram")
+                    || imAccount.getIMAccountProtocol().equalsIgnoreCase("Twitter")
+                    || imAccount.getIMAccountProtocol().equalsIgnoreCase("LinkedIn")) {
 
                 inputValue.setEnabled(false);
-                linearContent.setVisibility(View.GONE);
+
+                if (!StringUtils.isBlank(imAccount.getIMAccountFirstName()) &&
+                        !StringUtils.isBlank(imAccount.getIMAccountLastName())) {
+                    linearContent.setVisibility(View.GONE);
+                } else {
+                    linearContent.setVisibility(View.VISIBLE);
+                }
+
                 imageViewSocialProfile.setVisibility(View.VISIBLE);
 
                 imAccountProfileImage.setText(imAccount.getIMAccountProfileImage());
@@ -4011,15 +4268,16 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             .input_protocol);
 
                     if (textProtocol != null) {
-                        if (textProtocol.getText().toString().trim().equalsIgnoreCase(getString(R
-                                .string.facebook))) {
-                            socialTypeList.add(getString(R.string.facebook));
-                        } else if (textProtocol.getText().toString().trim().equalsIgnoreCase
-                                (getString(R.string.google_plus))) {
-                            socialTypeList.add(getString(R.string.google_plus));
-                        } else if (textProtocol.getText().toString().trim().equalsIgnoreCase
-                                (getString(R.string.linked_in))) {
-                            socialTypeList.add(getString(R.string.linked_in));
+                        if (textProtocol.getText().toString().trim().equalsIgnoreCase("Facebook")) {
+                            socialTypeList.add("Facebook");
+                        } else if (textProtocol.getText().toString().trim().equalsIgnoreCase("GooglePlus")) {
+                            socialTypeList.add("GooglePlus");
+                        } else if (textProtocol.getText().toString().trim().equalsIgnoreCase("LinkedIn")) {
+                            socialTypeList.add("LinkedIn");
+                        } else if (textProtocol.getText().toString().trim().equalsIgnoreCase("Instagram")) {
+                            socialTypeList.add("Instagram");
+                        } else if (textProtocol.getText().toString().trim().equalsIgnoreCase("Twitter")) {
+                            socialTypeList.add("Twitter");
                         }
                     }
 
@@ -4030,15 +4288,16 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     TextView textProtocol = view.findViewById(R.id.input_protocol);
 
                     if (textProtocol != null) {
-                        if (textProtocol.getText().toString().trim().equalsIgnoreCase(getString(R
-                                .string.facebook))) {
-                            socialTypeList.add(getString(R.string.facebook));
-                        } else if (textProtocol.getText().toString().trim().equalsIgnoreCase
-                                (getString(R.string.google_plus))) {
-                            socialTypeList.add(getString(R.string.google_plus));
-                        } else if (textProtocol.getText().toString().trim().equalsIgnoreCase
-                                (getString(R.string.linked_in))) {
-                            socialTypeList.add(getString(R.string.linked_in));
+                        if (textProtocol.getText().toString().trim().equalsIgnoreCase("Facebook")) {
+                            socialTypeList.add("Facebook");
+                        } else if (textProtocol.getText().toString().trim().equalsIgnoreCase("GooglePlus")) {
+                            socialTypeList.add("GooglePlus");
+                        } else if (textProtocol.getText().toString().trim().equalsIgnoreCase("LinkedIn")) {
+                            socialTypeList.add("LinkedIn");
+                        } else if (textProtocol.getText().toString().trim().equalsIgnoreCase("Instagram")) {
+                            socialTypeList.add("Instagram");
+                        } else if (textProtocol.getText().toString().trim().equalsIgnoreCase("Twitter")) {
+                            socialTypeList.add("Twitter");
                         }
                     }
                 }
@@ -4774,6 +5033,14 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
             case LINKEDIN_LOGIN_PERMISSION:
                 linkedInSignIn();
+                break;
+
+            case INSTAGRAM_LOGIN_PERMISSION:
+                instagramLogin();
+                break;
+
+            case TWITTER_LOGIN_PERMISSION:
+                twitterSignIn();
                 break;
         }
     }

@@ -27,6 +27,7 @@ import com.rawalinfocom.rcontact.database.TableImMaster;
 import com.rawalinfocom.rcontact.database.TableMobileMaster;
 import com.rawalinfocom.rcontact.database.TableOrganizationMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
+import com.rawalinfocom.rcontact.database.TableRelationMaster;
 import com.rawalinfocom.rcontact.database.TableWebsiteMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.RippleView;
@@ -235,6 +236,9 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
                 Utils.hideProgressDialog();
                 if (setPasswordResponse != null && StringUtils.equalsIgnoreCase(setPasswordResponse
                         .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+
+                    TableRelationMaster tableRelationMaster = new TableRelationMaster(databaseHandler);
+                    tableRelationMaster.insertData();
 
                     Utils.setStringPreference(this, AppConstants.EXTRA_LOGIN_TYPE, "password");
 

@@ -18,35 +18,25 @@ public class TableRelationMaster {
 
     private DatabaseHandler databaseHandler;
 
-    public TableRelationMaster(DatabaseHandler databaseHandler) {
-        this.databaseHandler = databaseHandler;
+    public TableRelationMaster(DatabaseHandler dbHandler) {
+        databaseHandler = dbHandler;
     }
 
     // Table Names
-    public static final String TABLE_RC_RELATION_MASTER = "rc_relation_master";
+    static final String TABLE_RC_RELATION_MASTER = "rc_relation_master";
 
     // Column Names
-    private static final String COLUMN_RM_ID = "rm_id";
-    private static final String COLUMN_RM_RELATION_NAME = "rm_relation_name";
-    private static final String COLUMN_RM_RELATION_TYPE = "rm_relation_type";
-    private static final String COLUMN_RM_CUSTOM_TYPE = "rm_custom_type";
-    private static final String COLUMN_RM_RELATED_PM_ID = "rm_related_pm_id";
-    private static final String COLUMN_RM_IS_VALID = "rm_is_valid";
-    private static final String COLUMN_RM_RELATION_PRIVACY = "rm_relation_privacy";
-    private static final String COLUMN_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
+    private static final String COLUMN_ID = "id";
+    private static final String COLUMN_RM_PARTICULAR = "rm_particular";
+    private static final String COLUMN_RM_TYPE = "rm_type";
 
 
     // Table Create Statements
     static final String CREATE_TABLE_RC_RELATION_MASTER = "CREATE TABLE IF NOT EXISTS " +
             TABLE_RC_RELATION_MASTER + " (" +
-            " " + COLUMN_RM_ID + " integer NOT NULL CONSTRAINT rc_relation_master_pk PRIMARY KEY," +
-            " " + COLUMN_RM_RELATION_NAME + " text NOT NULL," +
-            " " + COLUMN_RM_RELATION_TYPE + " text NOT NULL," +
-            " " + COLUMN_RM_CUSTOM_TYPE + " text," +
-            " " + COLUMN_RM_RELATED_PM_ID + " text," +
-            " " + COLUMN_RM_IS_VALID + " integer," +
-            " " + COLUMN_RM_RELATION_PRIVACY + " integer DEFAULT 1," +
-            " " + COLUMN_RC_PROFILE_MASTER_PM_ID + " integer" +
+            " " + COLUMN_ID + " integer NOT NULL CONSTRAINT rc_relation_master_pk PRIMARY KEY," +
+            " " + COLUMN_RM_PARTICULAR + " text NOT NULL," +
+            " " + COLUMN_RM_TYPE + " text NOT NULL" +
             ");";
 
     // Adding new Relation
@@ -54,14 +44,9 @@ public class TableRelationMaster {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(COLUMN_RM_ID, relation.getRmId());
-        values.put(COLUMN_RM_RELATION_NAME, relation.getRmRelationName());
-        values.put(COLUMN_RM_RELATION_TYPE, relation.getRmRelationType());
-        values.put(COLUMN_RM_CUSTOM_TYPE, relation.getRmCustomType());
-        values.put(COLUMN_RM_RELATED_PM_ID, relation.getRmRelatedPmId());
-        values.put(COLUMN_RM_IS_VALID, relation.getRmIsValid());
-        values.put(COLUMN_RM_RELATION_PRIVACY, relation.getRmRelationPrivacy());
-        values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, relation.getRcProfileMasterPmId());
+        values.put(COLUMN_ID, relation.getRmId());
+        values.put(COLUMN_RM_PARTICULAR, relation.getRmRelationName());
+        values.put(COLUMN_RM_TYPE, relation.getRmRelationType());
 
         // Inserting Row
         db.insert(TABLE_RC_RELATION_MASTER, null, values);
@@ -69,36 +54,78 @@ public class TableRelationMaster {
         db.close(); // Closing database connection
     }
 
-    // Getting single Relation
-    public Relation getRelation(int rmId) {
+    // Getting Relation Name
+    public ArrayList<Relation> getRelation(int rmType) {
+
+        ArrayList<Relation> arrayListRelation = new ArrayList<>();
+
         SQLiteDatabase db = databaseHandler.getReadableDatabase();
 
-        Cursor cursor = db.query(TABLE_RC_RELATION_MASTER, new String[]{COLUMN_RM_ID,
-                        COLUMN_RM_RELATION_NAME, COLUMN_RM_RELATION_TYPE, COLUMN_RM_CUSTOM_TYPE,
-                        COLUMN_RM_RELATED_PM_ID, COLUMN_RM_IS_VALID, COLUMN_RM_RELATION_PRIVACY,
-                        COLUMN_RC_PROFILE_MASTER_PM_ID},
-                COLUMN_RM_ID + "=?", new String[]{String.valueOf(rmId)}, null, null, null, null);
-        if (cursor != null)
-            cursor.moveToFirst();
+        Cursor cursor = db.query(TABLE_RC_RELATION_MASTER, new String[]{COLUMN_ID,
+                        COLUMN_RM_PARTICULAR, COLUMN_RM_TYPE},
+                COLUMN_RM_TYPE + "=?", new String[]{String.valueOf(rmType)}, null, null, null, null);
 
-        Relation relation = new Relation();
         if (cursor != null) {
-            relation.setRmId(cursor.getString(0));
-            relation.setRmRelationName(cursor.getString(1));
-            relation.setRmRelationType(cursor.getString(2));
-            relation.setRmCustomType(cursor.getString(3));
-            relation.setRmRelatedPmId(cursor.getString(4));
-            relation.setRmIsValid(cursor.getString(5));
-            relation.setRmRelationPrivacy(cursor.getString(6));
-            relation.setRcProfileMasterPmId(cursor.getString(7));
+            while (cursor.moveToNext()) {
 
+                Relation relation = new Relation();
+                relation.setRmId(cursor.getInt(0));
+                relation.setRmRelationName(cursor.getString(1));
+                relation.setRmRelationType(cursor.getString(2));
+
+                arrayListRelation.add(relation);
+            }
             cursor.close();
         }
 
         db.close();
 
         // return relation
-        return relation;
+        return arrayListRelation;
+    }
+
+    public void insertData() {
+
+        SQLiteDatabase db = databaseHandler.getReadableDatabase();
+        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Friend', 1);");
+        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Father', 2);");
+        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Father-in-law', 2);");
+        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Stepfather', 2);");
+        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Grandfather', 2);");
+        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Son', 2);");
+        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Son-in-law', 2);");
+        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Stepson', 2);");
+        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Grandson', 2);");
+        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Brother', 2);");
+        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Brother-in-law', 2);");
+        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Cousin Brother', 2);");
+        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Stepbrother', 2);");
+        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Uncle', 2);");
+        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Maternal Uncle', 2);");
+        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Nephew', 2);");
+        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Husband', 2);");
+        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Mother', 2);");
+        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Mother-in-law', 2);");
+        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Stepmother', 2);");
+        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Grandmother', 2);");
+        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Daughter', 2);");
+        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Daughter-in-law', 2);");
+        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Granddaughter', 2);");
+        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Stepdaughter', 2);");
+        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Sister', 2);");
+        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Stepsister', 2);");
+        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Cousin Sister', 2);");
+        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Sister-in-law', 2);");
+        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Aunt', 2);");
+        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Maternal Aunt', 2);");
+        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Niece', 2);");
+        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Wife', 2);");
+        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Co-Worker', 3);");
+        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Competitor', 3);");
+        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Supplier', 3);");
+        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Customer', 3);");
+
+        db.close();
     }
 
     // Getting All relations
@@ -114,14 +141,10 @@ public class TableRelationMaster {
         if (cursor.moveToFirst()) {
             do {
                 Relation relation = new Relation();
-                relation.setRmId(cursor.getString(0));
+                relation.setRmId(cursor.getInt(0));
                 relation.setRmRelationName(cursor.getString(1));
                 relation.setRmRelationType(cursor.getString(2));
-                relation.setRmCustomType(cursor.getString(3));
-                relation.setRmRelatedPmId(cursor.getString(4));
-                relation.setRmIsValid(cursor.getString(5));
-                relation.setRmRelationPrivacy(cursor.getString(6));
-                relation.setRcProfileMasterPmId(cursor.getString(7));
+
                 // Adding relation to list
                 arrayListRelation.add(relation);
             } while (cursor.moveToNext());
@@ -155,17 +178,12 @@ public class TableRelationMaster {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(COLUMN_RM_ID, relation.getRmId());
-        values.put(COLUMN_RM_RELATION_NAME, relation.getRmRelationName());
-        values.put(COLUMN_RM_RELATION_TYPE, relation.getRmRelationType());
-        values.put(COLUMN_RM_CUSTOM_TYPE, relation.getRmCustomType());
-        values.put(COLUMN_RM_RELATED_PM_ID, relation.getRmRelatedPmId());
-        values.put(COLUMN_RM_IS_VALID, relation.getRmIsValid());
-        values.put(COLUMN_RM_RELATION_PRIVACY, relation.getRmRelationPrivacy());
-        values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, relation.getRcProfileMasterPmId());
+        values.put(COLUMN_ID, relation.getRmId());
+        values.put(COLUMN_RM_PARTICULAR, relation.getRmRelationName());
+        values.put(COLUMN_RM_TYPE, relation.getRmRelationType());
 
         // updating row
-        int isUpdated = db.update(TABLE_RC_RELATION_MASTER, values, COLUMN_RM_ID + " = ?",
+        int isUpdated = db.update(TABLE_RC_RELATION_MASTER, values, COLUMN_ID + " = ?",
                 new String[]{String.valueOf(relation.getRmId())});
 
         db.close();
@@ -176,7 +194,7 @@ public class TableRelationMaster {
     // Deleting single relation
     public void deleteRelation(Relation relation) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
-        db.delete(TABLE_RC_RELATION_MASTER, COLUMN_RM_ID + " = ?",
+        db.delete(TABLE_RC_RELATION_MASTER, COLUMN_ID + " = ?",
                 new String[]{String.valueOf(relation.getRmId())});
         db.close();
     }

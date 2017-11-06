@@ -34,6 +34,17 @@ public class AppConstants {
     public static boolean isRecentCallFromSMSTab = false;
     //</editor-fold>
 
+    //<editor-fold desc="Instagram Section">
+    public static String CLIENT_ID = "7b51698a7a5b40409fa7d28cd051d125";
+    public static String CLIENT_SECRET = "5afd8e843d1d4a8686ec3d168a2beba0";
+    public static String REDIRECT_URI = "http://www.rcontacts.in";
+    //</editor-fold>
+
+    // <editor-fold desc="Twitter Section">
+    public static String CONSUMER_KEY = "MimJ9Yavuu3O2IeGCGJQgyRb8";
+    public static String CONSUMER_SECRET = "2IXb9rLPJxvYqYkeJFRAgvqBpBTTvAGZLv0wYGFFmt150nIi9G";
+    //</editor-fold>
+
     //<editor-fold desc="App Specific final constants">
 
     public static final String OTP_CONFIRMED_STATUS = "2";
@@ -75,11 +86,11 @@ public class AppConstants {
 
     //<editor-fold desc="Family Relation">
 
-    public static String[] FAMILY_RELATION = {"Father", "Father-in-law", "Step Father", "Grand father", "Son", "Son-in-law",
-            "Step-son", "Grand son", "Brother", "Brother-in-law", "Cousin brother", "Step brother", "Uncle", "Maternal Uncle",
-            "Nephew", "Husband", "Mother", "Mother-in-law", "Step mother", "Grand mother", "Daughter", "Daughter-in-law",
-            "Granddaughter", "Step daughter", "Sister", "Step sister", "Cousin sister", "Sister-in-law", "Aunt", "Maternal Aunt",
-            "Niece", "Wife"};
+//    public static String[] FAMILY_RELATION = {"Father", "Father-in-law", "Step Father", "Grand father", "Son", "Son-in-law",
+//            "Step-son", "Grand son", "Brother", "Brother-in-law", "Cousin brother", "Step brother", "Uncle", "Maternal Uncle",
+//            "Nephew", "Husband", "Mother", "Mother-in-law", "Step mother", "Grand mother", "Daughter", "Daughter-in-law",
+//            "Granddaughter", "Step daughter", "Sister", "Step sister", "Cousin sister", "Sister-in-law", "Aunt", "Maternal Aunt",
+//            "Niece", "Wife"};
 
     //<editor-fold">
 
@@ -308,7 +319,6 @@ public class AppConstants {
     public static String PREF_PROFILE_REMAINING_FIELDS = "pref_profile_remaining_fields";
     public static String PREF_DONTSHOWAGAIN_POPUP = "pref_dontshowagain_popup";
     public static String PREF_RATE_APP_DATE = "pref_rate_app_date";
-
 
     public static String[] arrayPrefKeys = {PREF_SELECTED_COUNTRY_OBJECT, PREF_DEVICE_TOKEN_ID,
             PREF_LAUNCH_SCREEN_INT, PREF_REGS_USER_OBJECT, PREF_REGS_MOBILE_NUMBER,
