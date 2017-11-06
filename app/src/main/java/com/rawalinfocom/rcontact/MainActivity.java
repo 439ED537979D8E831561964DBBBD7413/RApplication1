@@ -149,15 +149,28 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     public FrameLayout frameImageEnlarge;
     @BindView(R.id.image_enlarge)
     public ImageView imageEnlarge;
+    @BindView(R.id.frame_tutorial)
+    public FrameLayout frameTutorial;
+    @BindView(R.id.image_tutorial_notification)
+    public ImageView imageTutorialNotification;
+    @BindView(R.id.image_tutorial_add_contact)
+    public ImageView imageTutorialAddContact;
+    @BindView(R.id.image_tutorial_drawer)
+    public ImageView imageTutorialDrawer;
+    @BindView(R.id.linear_tutorial_search)
+    public LinearLayout linearTutorialSearch;
+    @BindView(R.id.text_tap_continue)
+    public TextView textTapContinue;
 
-    Toolbar toolbar;
+    public Toolbar toolbar;
     ImageView imageNotification;
     LinearLayout badgeLayout;
     TextView badgeTextView;
     FloatingActionButton fab;
-    DrawerLayout drawer;
+    public DrawerLayout drawer;
     NavigationView navigationView;
-    TabLayout tabMain;
+    public TabLayout tabMain;
+
 
     ContactsFragment contactsFragment;
     CallLogFragment callLogFragment;
@@ -1862,7 +1875,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 //        goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
 //                Intent.FLAG_ACTIVITY_NEW_DOCUMENT |
 //                Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
-        Utils.setBooleanPreference(this,AppConstants.PREF_DONTSHOWAGAIN_POPUP, true);
+        Utils.setBooleanPreference(this, AppConstants.PREF_DONTSHOWAGAIN_POPUP, true);
         try {
             startActivity(goToMarket);
         } catch (ActivityNotFoundException e) {
