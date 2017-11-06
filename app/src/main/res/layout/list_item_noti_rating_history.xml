@@ -31,13 +31,31 @@
             android:layout_toRightOf="@id/image_rater"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/text_rater_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:textColor="@color/colorPrimary"
-                tools:text="Aakar Jain" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/text_rater_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".5"
+                    android:ellipsize="end"
+                    android:textColor="@color/colorPrimary"
+                    tools:text="Aakar Jain" />
+
+                <TextView
+                    android:id="@+id/text_rating_noti_time"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".5"
+                    android:ellipsize="end"
+                    android:gravity="end"
+                    android:paddingRight="@dimen/activity_half_horizontal_margin"
+                    android:textAppearance="?android:textAppearanceSmall"
+                    tools:text="11:15 PM" />
+
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/rating_info"
@@ -70,16 +88,6 @@
                     android:isIndicator="true"
                     android:stepSize="1"
                     tools:rating="3" />
-
-                <TextView
-                    android:id="@+id/text_rating_noti_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:gravity="end"
-                    android:paddingRight="@dimen/activity_horizontal_margin"
-                    android:textAppearance="?android:textAppearanceSmall"
-                    tools:text="11:15 PM" />
 
             </LinearLayout>
 

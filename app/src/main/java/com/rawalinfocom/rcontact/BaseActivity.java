@@ -3,6 +3,7 @@ package com.rawalinfocom.rcontact;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 
 import com.rawalinfocom.rcontact.asynctasks.AsyncGetDeviceToken;
@@ -38,6 +39,12 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Utils.setBooleanPreference(this, AppConstants.PREF_PERCENTAGE_VIEW, true);
+    }
+
     public void startActivityIntent(Context packageContext, Class cls, Bundle extras) {
         Intent intent = new Intent(packageContext, cls);
         if (extras != null) {
@@ -47,12 +54,21 @@ public class BaseActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.enter, R.anim.exit);
     }
 
+    public String getDeviceId() {
+        return Settings.Secure.getString(getContentResolver(), Settings
+                .Secure.ANDROID_ID);
+    }
+
     public String getDeviceTokenId() {
         return Utils.getStringPreference(this, AppConstants.PREF_DEVICE_TOKEN_ID, "");
     }
 
     public String getUserPmId() {
         return Utils.getStringPreference(this, AppConstants.PREF_USER_PM_ID, "0");
+    }
+
+    public String getPmBadge() {
+        return Utils.getStringPreference(this, AppConstants.PREF_USER_PM_BADGE, "0");
     }
 
     public UserProfile getUserProfile() {

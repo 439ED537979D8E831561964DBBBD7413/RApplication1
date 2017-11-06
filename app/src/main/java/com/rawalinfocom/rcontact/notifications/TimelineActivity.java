@@ -12,6 +12,7 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -60,47 +61,62 @@ public class TimelineActivity extends BaseActivity implements RippleView
     @BindView(R.id.ripple_action_back)
     RippleView rippleActionBack;
 
-    @BindView(R.id.recyclerview1)
-    RecyclerView recyclerViewToday;
-    @BindView(R.id.search_view_timeline)
-    SearchView searchViewTimeline;
-    @BindView(R.id.recyclerview2)
-    RecyclerView recyclerViewYesterday;
-    @BindView(R.id.recyclerview3)
-    RecyclerView recyclerViewPast5day;
+    @BindView(R.id.recyclerviewAll)
+    RecyclerView recyclerViewAll;
     @BindView(R.id.view_more)
     TextView viewMore;
-    @BindView(R.id.h1)
-    RelativeLayout headerTodayLayout;
-    @BindView(R.id.h2)
-    RelativeLayout headerYesterdayLayout;
-    @BindView(R.id.h3)
-    RelativeLayout headerPast5daysLayout;
-    @BindView(R.id.header1_icon)
-    ImageView headerTodayIcon;
-    @BindView(R.id.header2_icon)
-    ImageView headerYesterdayIcon;
-    @BindView(R.id.header3_icon)
-    ImageView headerPast5DaysIcon;
-    @BindView(R.id.text_header1)
-    TextView headerTodayTitle;
-    @BindView(R.id.text_header2)
-    TextView headerYesterdayTitle;
-    @BindView(R.id.text_header3)
-    TextView headerPast5DaysTitle;
+//
+//    @BindView(R.id.recyclerview1)
+//    RecyclerView recyclerViewToday;
+    @BindView(R.id.search_view_timeline)
+    SearchView searchViewTimeline;
+//    @BindView(R.id.recyclerview2)
+//    RecyclerView recyclerViewYesterday;
+//    @BindView(R.id.recyclerview3)
+//    RecyclerView recyclerViewPast5day;
 
-    private TimelineAdapter todayTimelineAdapter;
-    private TimelineAdapter yesterdayTimelineAdapter;
-    private TimelineAdapter past5daysTimelineAdapter;
+    //    @BindView(R.id.h1)
+//    RelativeLayout headerTodayLayout;
+//    @BindView(R.id.h2)
+//    RelativeLayout headerYesterdayLayout;
+//    @BindView(R.id.h3)
+//    RelativeLayout headerPast5daysLayout;
+//    @BindView(R.id.header1_icon)
+//    ImageView headerTodayIcon;
+//    @BindView(R.id.header2_icon)
+//    ImageView headerYesterdayIcon;
+//    @BindView(R.id.header3_icon)
+//    ImageView headerPast5DaysIcon;
+//    @BindView(R.id.text_header1)
+//    TextView headerTodayTitle;
+//    @BindView(R.id.text_header2)
+//    TextView headerYesterdayTitle;
+//    @BindView(R.id.text_header3)
+//    TextView headerPast5DaysTitle;
+    @BindView(R.id.layout_root)
+    RelativeLayout layoutRoot;
+
+    @BindView(R.id.frame_container)
+    public FrameLayout frameContainer;
+    @BindView(R.id.frame_image_enlarge)
+    public FrameLayout frameImageEnlarge;
+    @BindView(R.id.image_enlarge)
+    public ImageView imageEnlarge;
+
+    private TimelineAdapter allTimelineAdapter;
+//    private TimelineAdapter todayTimelineAdapter;
+//    private TimelineAdapter yesterdayTimelineAdapter;
+//    private TimelineAdapter past5daysTimelineAdapter;
 
     TableCommentMaster tableCommentMaster;
     TableNotificationStateMaster tableNotificationStateMaster;
-    public static int selectedRecycler = -1;
+//    public static int selectedRecycler = -1;
     public static int selectedRecyclerItem = -1;
 
-    List<TimelineItem> listTimelineToday;
-    List<TimelineItem> listTimelineYesterday;
-    List<TimelineItem> listTimelinePastDay;
+    List<TimelineItem> listTimelineAll;
+//    List<TimelineItem> listTimelineToday;
+//    List<TimelineItem> listTimelineYesterday;
+//    List<TimelineItem> listTimelinePastDay;
 
     String today;
     String yesterDay;
@@ -110,7 +126,7 @@ public class TimelineActivity extends BaseActivity implements RippleView
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_timeline);
+        setContentView(R.layout.activity_timeline_temp);
         ButterKnife.bind(this);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         init();
@@ -127,76 +143,76 @@ public class TimelineActivity extends BaseActivity implements RippleView
 
     private void init() {
 
-        headerTodayTitle.setTypeface(Utils.typefaceRegular(this));
-        headerYesterdayTitle.setTypeface(Utils.typefaceRegular(this));
-        headerPast5DaysTitle.setTypeface(Utils.typefaceRegular(this));
+//        headerTodayTitle.setTypeface(Utils.typefaceRegular(this));
+//        headerYesterdayTitle.setTypeface(Utils.typefaceRegular(this));
+//        headerPast5DaysTitle.setTypeface(Utils.typefaceRegular(this));
 
         rippleActionBack.setOnRippleCompleteListener(this);
         textToolbarTitle.setText(getResources().getString(R.string.nav_text_timeline));
         textToolbarTitle.setTypeface(Utils.typefaceRegular(this));
 
-        headerTodayIcon.setImageResource(R.drawable.ic_collapse);
-
-        headerTodayLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if (recyclerViewToday.getVisibility() == View.VISIBLE) {
-                    recyclerViewToday.setVisibility(View.GONE);
-                    headerTodayIcon.setImageResource(R.drawable.ic_expand);
-                } else {
-                    recyclerViewToday.setVisibility(View.VISIBLE);
-                    headerTodayIcon.setImageResource(R.drawable.ic_collapse);
-                }
-
-                recyclerViewYesterday.setVisibility(View.GONE);
-                headerYesterdayIcon.setImageResource(R.drawable.ic_expand);
-
-                recyclerViewPast5day.setVisibility(View.GONE);
-                headerPast5DaysIcon.setImageResource(R.drawable.ic_expand);
-            }
-        });
-
-        headerYesterdayLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                recyclerViewToday.setVisibility(View.GONE);
-                headerTodayIcon.setImageResource(R.drawable.ic_expand);
-
-                if (recyclerViewYesterday.getVisibility() == View.VISIBLE) {
-                    recyclerViewYesterday.setVisibility(View.GONE);
-                    headerYesterdayIcon.setImageResource(R.drawable.ic_expand);
-                } else {
-                    recyclerViewYesterday.setVisibility(View.VISIBLE);
-                    headerYesterdayIcon.setImageResource(R.drawable.ic_collapse);
-                }
-                recyclerViewPast5day.setVisibility(View.GONE);
-                headerPast5DaysIcon.setImageResource(R.drawable.ic_expand);
-
-            }
-        });
-
-        headerPast5daysLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                recyclerViewToday.setVisibility(View.GONE);
-                headerTodayIcon.setImageResource(R.drawable.ic_expand);
-
-                recyclerViewYesterday.setVisibility(View.GONE);
-                headerYesterdayIcon.setImageResource(R.drawable.ic_expand);
-
-                if (recyclerViewPast5day.getVisibility() == View.VISIBLE) {
-                    recyclerViewPast5day.setVisibility(View.GONE);
-                    headerPast5DaysIcon.setImageResource(R.drawable.ic_expand);
-                } else {
-                    recyclerViewPast5day.setVisibility(View.VISIBLE);
-                    headerPast5DaysIcon.setImageResource(R.drawable.ic_collapse);
-                }
-
-            }
-        });
-        recyclerViewYesterday.setVisibility(View.GONE);
-        recyclerViewPast5day.setVisibility(View.GONE);
+//        headerTodayIcon.setImageResource(R.drawable.ic_collapse);
+//
+//        headerTodayLayout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                if (recyclerViewToday.getVisibility() == View.VISIBLE) {
+//                    recyclerViewToday.setVisibility(View.GONE);
+//                    headerTodayIcon.setImageResource(R.drawable.ic_expand);
+//                } else {
+//                    recyclerViewToday.setVisibility(View.VISIBLE);
+//                    headerTodayIcon.setImageResource(R.drawable.ic_collapse);
+//                }
+//
+//                recyclerViewYesterday.setVisibility(View.GONE);
+//                headerYesterdayIcon.setImageResource(R.drawable.ic_expand);
+//
+//                recyclerViewPast5day.setVisibility(View.GONE);
+//                headerPast5DaysIcon.setImageResource(R.drawable.ic_expand);
+//            }
+//        });
+//
+//        headerYesterdayLayout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                recyclerViewToday.setVisibility(View.GONE);
+//                headerTodayIcon.setImageResource(R.drawable.ic_expand);
+//
+//                if (recyclerViewYesterday.getVisibility() == View.VISIBLE) {
+//                    recyclerViewYesterday.setVisibility(View.GONE);
+//                    headerYesterdayIcon.setImageResource(R.drawable.ic_expand);
+//                } else {
+//                    recyclerViewYesterday.setVisibility(View.VISIBLE);
+//                    headerYesterdayIcon.setImageResource(R.drawable.ic_collapse);
+//                }
+//                recyclerViewPast5day.setVisibility(View.GONE);
+//                headerPast5DaysIcon.setImageResource(R.drawable.ic_expand);
+//
+//            }
+//        });
+//
+//        headerPast5daysLayout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                recyclerViewToday.setVisibility(View.GONE);
+//                headerTodayIcon.setImageResource(R.drawable.ic_expand);
+//
+//                recyclerViewYesterday.setVisibility(View.GONE);
+//                headerYesterdayIcon.setImageResource(R.drawable.ic_expand);
+//
+//                if (recyclerViewPast5day.getVisibility() == View.VISIBLE) {
+//                    recyclerViewPast5day.setVisibility(View.GONE);
+//                    headerPast5DaysIcon.setImageResource(R.drawable.ic_expand);
+//                } else {
+//                    recyclerViewPast5day.setVisibility(View.VISIBLE);
+//                    headerPast5DaysIcon.setImageResource(R.drawable.ic_collapse);
+//                }
+//
+//            }
+//        });
+//        recyclerViewYesterday.setVisibility(View.GONE);
+//        recyclerViewPast5day.setVisibility(View.GONE);
         searchViewTimeline.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -207,10 +223,11 @@ public class TimelineActivity extends BaseActivity implements RippleView
             @Override
             public boolean onQueryTextChange(String newText) {
                 if (TextUtils.isEmpty(newText)) {
-                    todayTimelineAdapter.updateList(listTimelineToday);
-                    yesterdayTimelineAdapter.updateList(listTimelineYesterday);
-                    past5daysTimelineAdapter.updateList(listTimelinePastDay);
-                    updateHeight();
+                    allTimelineAdapter.updateList(listTimelineAll);
+//                    todayTimelineAdapter.updateList(listTimelineToday);
+//                    yesterdayTimelineAdapter.updateList(listTimelineYesterday);
+//                    past5daysTimelineAdapter.updateList(listTimelinePastDay);
+//                    updateHeight();
                 }
                 return false;
             }
@@ -228,29 +245,37 @@ public class TimelineActivity extends BaseActivity implements RippleView
         {
 
             List<TimelineItem> temp = new ArrayList<>();
-            for (TimelineItem item : listTimelineToday) {
+            for (TimelineItem item : listTimelineAll) {
                 if (item.getWisherName().toLowerCase().contains(query.toLowerCase())) {
                     temp.add(item);
                 }
             }
-            todayTimelineAdapter.updateList(temp);
+            allTimelineAdapter.updateList(temp);
 
-            temp = new ArrayList<>();
-            for (TimelineItem item : listTimelineYesterday) {
-                if (item.getWisherName().toLowerCase().contains(query.toLowerCase())) {
-                    temp.add(item);
-                }
-            }
-            yesterdayTimelineAdapter.updateList(temp);
-
-            temp = new ArrayList<>();
-            for (TimelineItem item : listTimelinePastDay) {
-                if (item.getWisherName().toLowerCase().contains(query.toLowerCase())) {
-                    temp.add(item);
-                }
-            }
-            past5daysTimelineAdapter.updateList(temp);
-            updateHeight();
+//            List<TimelineItem> temp = new ArrayList<>();
+//            for (TimelineItem item : listTimelineToday) {
+//                if (item.getWisherName().toLowerCase().contains(query.toLowerCase())) {
+//                    temp.add(item);
+//                }
+//            }
+//            todayTimelineAdapter.updateList(temp);
+//
+//            temp = new ArrayList<>();
+//            for (TimelineItem item : listTimelineYesterday) {
+//                if (item.getWisherName().toLowerCase().contains(query.toLowerCase())) {
+//                    temp.add(item);
+//                }
+//            }
+//            yesterdayTimelineAdapter.updateList(temp);
+//
+//            temp = new ArrayList<>();
+//            for (TimelineItem item : listTimelinePastDay) {
+//                if (item.getWisherName().toLowerCase().contains(query.toLowerCase())) {
+//                    temp.add(item);
+//                }
+//            }
+//            past5daysTimelineAdapter.updateList(temp);
+//            updateHeight();
         }
     }
 
@@ -261,23 +286,30 @@ public class TimelineActivity extends BaseActivity implements RippleView
         dayBeforeYesterday = getDate(-2);
         pastday5thDay = getDate(-6);
 
-        ArrayList<Comment> commentsToday = tableCommentMaster.getAllCommentReceivedBetween(today, today);
-        ArrayList<Comment> commentsYesterday = tableCommentMaster.getAllCommentReceivedBetween(yesterDay, yesterDay);
-        ArrayList<Comment> commentsPastday = tableCommentMaster.getAllCommentReceivedBetween(pastday5thDay, dayBeforeYesterday);
+//        ArrayList<Comment> commentsToday = tableCommentMaster.getAllCommentReceivedBetween(today, today);
+        ArrayList<Comment> commentsAll = tableCommentMaster.getAllCommentReceivedBetween(pastday5thDay,today);
 
-        listTimelineToday = creatTimelineList(commentsToday);
-        listTimelineYesterday = creatTimelineList(commentsYesterday);
-        listTimelinePastDay = creatTimelineList(commentsPastday);
+//        ArrayList<Comment> commentsYesterday = tableCommentMaster.getAllCommentReceivedBetween(yesterDay, yesterDay);
+//        ArrayList<Comment> commentsPastday = tableCommentMaster.getAllCommentReceivedBetween(pastday5thDay, dayBeforeYesterday);
 
-        todayTimelineAdapter = new TimelineAdapter(this, listTimelineToday, 0);
-        yesterdayTimelineAdapter = new TimelineAdapter(this, listTimelineYesterday, 1);
-        past5daysTimelineAdapter = new TimelineAdapter(this, listTimelinePastDay, 2);
+        listTimelineAll = creatTimelineList(commentsAll);
+//        listTimelineToday = creatTimelineList(commentsToday);
+//        listTimelineYesterday = creatTimelineList(commentsYesterday);
+//        listTimelinePastDay = creatTimelineList(commentsPastday);
 
-        recyclerViewToday.setAdapter(todayTimelineAdapter);
-        recyclerViewYesterday.setAdapter(yesterdayTimelineAdapter);
-        recyclerViewPast5day.setAdapter(past5daysTimelineAdapter);
+        allTimelineAdapter = new TimelineAdapter(this, listTimelineAll);
+//        todayTimelineAdapter = new TimelineAdapter(this, listTimelineToday, 0);
+//        yesterdayTimelineAdapter = new TimelineAdapter(this, listTimelineYesterday, 1);
+//        past5daysTimelineAdapter = new TimelineAdapter(this, listTimelinePastDay, 2);
 
-        updateHeight();
+        recyclerViewAll.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewAll.setAdapter(allTimelineAdapter);
+
+//        recyclerViewToday.setAdapter(todayTimelineAdapter);
+//        recyclerViewYesterday.setAdapter(yesterdayTimelineAdapter);
+//        recyclerViewPast5day.setAdapter(past5daysTimelineAdapter);
+
+//        updateHeight();
         tableNotificationStateMaster.makeAllNotificationsAsReadByType(AppConstants.NOTIFICATION_TYPE_TIMELINE);
         int badgeCount = tableNotificationStateMaster.getTotalUnreadCount();
         ShortcutBadger.applyCount(this.getApplicationContext(), badgeCount);
@@ -308,9 +340,10 @@ public class TimelineActivity extends BaseActivity implements RippleView
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         int height = (displaymetrics.heightPixels * heightPercent) / 100;
 
-        setRecyclerViewHeight(recyclerViewToday, height);
-        setRecyclerViewHeight(recyclerViewYesterday, height);
-        setRecyclerViewHeight(recyclerViewPast5day, height);
+        setRecyclerViewHeight(recyclerViewAll, height);
+//        setRecyclerViewHeight(recyclerViewToday, height);
+//        setRecyclerViewHeight(recyclerViewYesterday, height);
+//        setRecyclerViewHeight(recyclerViewPast5day, height);
     }
 
     private void setRecyclerViewHeight(RecyclerView recyclerView, int height) {
@@ -341,7 +374,7 @@ public class TimelineActivity extends BaseActivity implements RippleView
                 item.setWisherName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
                 item.setWisherProfileImage(userProfile.getPmProfileImage());
             } else {
-                item.setWisherName("+" + comment.getCrmProfileDetails());
+                item.setWisherName(comment.getCrmProfileDetails());
             }
             final UserProfile ownProfile = tableProfileMaster.getProfileFromCloudPmId(Integer.parseInt(getUserPmId()));
             item.setWisherComment(comment.getCrmComment());
@@ -408,9 +441,12 @@ public class TimelineActivity extends BaseActivity implements RippleView
                 if (wsResponseObject != null) {
                     Rating rating = wsResponseObject.getProfileRating();
 
-                    int updated = tableCommentMaster.addReply(rating.getPrId() + "", rating.getPrReply(), Utils.getLocalTimeFromUTCTime(rating.getReplyAt()), Utils.getLocalTimeFromUTCTime(rating.getReplyAt()));
+                    int updated = tableCommentMaster.addReply(rating.getPrId() + "", rating.getPrReply(),
+                            Utils.getLocalTimeFromUTCTime(rating.getReplyAt()), Utils.getLocalTimeFromUTCTime(rating.getReplyAt()));
                     if (updated != 0) {
-                        if (selectedRecycler != -1 && selectedRecyclerItem != -1) {
+
+//                        addReplyAndUpdateList(listTimelineAll, allTimelineAdapter, rating.getPrReply(), rating.getReplyAt());
+                        /*if (selectedRecycler != -1 && selectedRecyclerItem != -1) {
                             switch (selectedRecycler) {
                                 case 0:
                                     addReplyAndUpdateList(listTimelineToday, todayTimelineAdapter, rating.getPrReply(), rating.getReplyAt());
@@ -424,12 +460,31 @@ public class TimelineActivity extends BaseActivity implements RippleView
                             }
                             selectedRecycler = -1;
                             selectedRecyclerItem = -1;
+                        }*/
+
+                        if (selectedRecyclerItem != -1) {
+                            addReplyAndUpdateList(listTimelineAll, allTimelineAdapter, rating.getPrReply(), rating.getReplyAt());
+                            /*switch (selectedRecycler) {
+                                case 0:
+                                    addReplyAndUpdateList(listTimelineToday, todayTimelineAdapter, rating.getPrReply(), rating.getReplyAt());
+                                    break;
+                                case 1:
+                                    addReplyAndUpdateList(listTimelineYesterday, yesterdayTimelineAdapter, rating.getPrReply(), rating.getReplyAt());
+                                    break;
+                                case 2:
+                                    addReplyAndUpdateList(listTimelinePastDay, past5daysTimelineAdapter, rating.getPrReply(), rating.getReplyAt());
+                                    break;
+                            }*/
+//                            selectedRecycler = -1;
+                            selectedRecyclerItem = -1;
                         }
+
                         Utils.hideProgressDialog();
+                        Utils.showSuccessSnackBar(TimelineActivity.this, layoutRoot, getString(R.string.str_comment_reply));
                     }
                 } else {
                     Utils.hideProgressDialog();
-                    Toast.makeText(TimelineActivity.this, getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
+                    Utils.showErrorSnackBar(TimelineActivity.this, layoutRoot, getString(R.string.msg_try_later));
                 }
             } else if (serviceType.equalsIgnoreCase(WsConstants.REQ_GET_EVENT_COMMENT)) {
 
@@ -438,9 +493,10 @@ public class TimelineActivity extends BaseActivity implements RippleView
                     ArrayList<EventCommentData> eventReceiveCommentData = wsResponseObject.getEventReceiveCommentData();
                     saveCommentDataToDb(eventReceiveCommentData);
                     Utils.hideProgressDialog();
+                    Utils.showSuccessSnackBar(TimelineActivity.this, layoutRoot, getString(R.string.str_comment_reply));
                 } else {
                     Utils.hideProgressDialog();
-                    Toast.makeText(TimelineActivity.this, getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
+                    Utils.showErrorSnackBar(TimelineActivity.this, layoutRoot, getString(R.string.msg_try_later));
                 }
             } else if (serviceType.equalsIgnoreCase(WsConstants.REQ_ADD_EVENT_COMMENT)) {
                 WsResponseObject wsResponseObject = (WsResponseObject) data;
@@ -451,35 +507,59 @@ public class TimelineActivity extends BaseActivity implements RippleView
                         int updated = tableCommentMaster.addReply(eventComment.getId(), eventComment.getReply(),
                                 Utils.getLocalTimeFromUTCTime(eventComment.getReplyAt()), Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
                         if (updated != 0) {
-                            if (selectedRecycler != -1 && selectedRecyclerItem != -1) {
-                                switch (selectedRecycler) {
-                                    case 0:
-                                        addReplyAndUpdateList(listTimelineToday, todayTimelineAdapter, eventComment.getReply(), eventComment.getReplyAt());
-                                        break;
-                                    case 1:
-                                        addReplyAndUpdateList(listTimelineYesterday, yesterdayTimelineAdapter, eventComment.getReply(), eventComment.getReplyAt());
-                                        break;
-                                    case 2:
-                                        addReplyAndUpdateList(listTimelinePastDay, past5daysTimelineAdapter, eventComment.getReply(), eventComment.getReplyAt());
-                                        break;
-                                }
-                                selectedRecycler = -1;
-                                selectedRecyclerItem = -1;
+                            addReplyAndUpdateList(listTimelineAll, allTimelineAdapter, eventComment.getReply(), eventComment.getReplyAt());
+//                            if (selectedRecycler != -1 && selectedRecyclerItem != -1) {
+//                                switch (selectedRecycler) {
+//                                    case 0:
+//                                        addReplyAndUpdateList(listTimelineToday, todayTimelineAdapter, eventComment.getReply(), eventComment.getReplyAt());
+//                                        break;
+//                                    case 1:
+//                                        addReplyAndUpdateList(listTimelineYesterday, yesterdayTimelineAdapter, eventComment.getReply(), eventComment.getReplyAt());
+//                                        break;
+//                                    case 2:
+//                                        addReplyAndUpdateList(listTimelinePastDay, past5daysTimelineAdapter, eventComment.getReply(), eventComment.getReplyAt());
+//                                        break;
+//                                }
+//                                selectedRecycler = -1;
+//                                selectedRecyclerItem = -1;
+//                            }
+
+
+                            if (selectedRecyclerItem != -1) {
+                                addReplyAndUpdateList(listTimelineAll, allTimelineAdapter, eventComment.getReply(), eventComment.getReplyAt());
+//                                selectedRecyclerItem = -1;
+
                             }
+//                                switch (selectedRecycler) {
+//                                    case 0:
+//                                        addReplyAndUpdateList(listTimelineToday, todayTimelineAdapter, eventComment.getReply(), eventComment.getReplyAt());
+//                                        break;
+//                                    case 1:
+//                                        addReplyAndUpdateList(listTimelineYesterday, yesterdayTimelineAdapter, eventComment.getReply(), eventComment.getReplyAt());
+//                                        break;
+//                                    case 2:
+//                                        addReplyAndUpdateList(listTimelinePastDay, past5daysTimelineAdapter, eventComment.getReply(), eventComment.getReplyAt());
+//                                        break;
+//                                }
+//                                selectedRecycler = -1;
+//                                selectedRecyclerItem = -1;
+//                            }
+
                             Utils.hideProgressDialog();
+                            Utils.showSuccessSnackBar(TimelineActivity.this, layoutRoot, getString(R.string.str_comment_reply));
                         }
                     } else {
                         Utils.hideProgressDialog();
-                        Toast.makeText(TimelineActivity.this, getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
+                        Utils.showErrorSnackBar(TimelineActivity.this, layoutRoot, getString(R.string.msg_try_later));
                     }
                 } else {
                     Utils.hideProgressDialog();
-                    Toast.makeText(TimelineActivity.this, getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
+                    Utils.showErrorSnackBar(TimelineActivity.this, layoutRoot, getString(R.string.msg_try_later));
                 }
             }
         } else {
             Utils.hideProgressDialog();
-            Toast.makeText(TimelineActivity.this, getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
+            Utils.showErrorSnackBar(TimelineActivity.this, layoutRoot, getString(R.string.msg_try_later));
         }
     }
 
@@ -549,17 +629,20 @@ public class TimelineActivity extends BaseActivity implements RippleView
     }
 
     private void refreshAllList() {
-        ArrayList<Comment> commentsToday = tableCommentMaster.getAllCommentReceivedBetween(today, today);
-        ArrayList<Comment> commentsYesterday = tableCommentMaster.getAllCommentReceivedBetween(yesterDay, yesterDay);
-        ArrayList<Comment> commentsPastday = tableCommentMaster.getAllCommentReceivedBetween(pastday5thDay, dayBeforeYesterday);
+        ArrayList<Comment> commentsToday = tableCommentMaster.getAllCommentReceivedBetween(today, pastday5thDay);
+//        ArrayList<Comment> commentsToday = tableCommentMaster.getAllCommentReceivedBetween(today, today);
+//        ArrayList<Comment> commentsYesterday = tableCommentMaster.getAllCommentReceivedBetween(yesterDay, yesterDay);
+//        ArrayList<Comment> commentsPastday = tableCommentMaster.getAllCommentReceivedBetween(pastday5thDay, dayBeforeYesterday);
 
-        listTimelineToday = creatTimelineList(commentsToday);
-        listTimelineYesterday = creatTimelineList(commentsYesterday);
-        listTimelinePastDay = creatTimelineList(commentsPastday);
+        listTimelineAll = creatTimelineList(commentsToday);
+//        listTimelineToday = creatTimelineList(commentsToday);
+//        listTimelineYesterday = creatTimelineList(commentsYesterday);
+//        listTimelinePastDay = creatTimelineList(commentsPastday);
 
-        todayTimelineAdapter.updateList(listTimelineToday);
-        yesterdayTimelineAdapter.updateList(listTimelineYesterday);
-        past5daysTimelineAdapter.updateList(listTimelinePastDay);
-        updateHeight();
+        allTimelineAdapter.updateList(listTimelineAll);
+//        todayTimelineAdapter.updateList(listTimelineToday);
+//        yesterdayTimelineAdapter.updateList(listTimelineYesterday);
+//        past5daysTimelineAdapter.updateList(listTimelinePastDay);
+//        updateHeight();
     }
 }

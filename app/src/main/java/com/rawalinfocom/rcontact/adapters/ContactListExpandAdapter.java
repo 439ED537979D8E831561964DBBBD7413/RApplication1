@@ -16,12 +16,14 @@ import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.model.ProfileData;
 
 import org.apache.commons.lang3.StringUtils;
@@ -39,15 +41,14 @@ public class ContactListExpandAdapter extends RecyclerView.Adapter<RecyclerView.
 
     private Context context;
     private ArrayList<ProfileData> arrayListUserContact;
-    private int previousPosition = 0;
     private String phonebookId;
     private String contactName;
-    PhoneBookContacts phoneBookContacts;
+    private PhoneBookContacts phoneBookContacts;
 
     private int colorBlack, colorPineGreen;
 
-    public ContactListExpandAdapter(Context context, ArrayList<ProfileData> arrayListUserContact,
-                                    String phonebookId, String contactName) {
+    ContactListExpandAdapter(Context context, ArrayList<ProfileData> arrayListUserContact,
+                             String phonebookId, String contactName) {
         this.context = context;
         this.phonebookId = phonebookId;
         this.contactName = contactName;
@@ -87,7 +88,6 @@ public class ContactListExpandAdapter extends RecyclerView.Adapter<RecyclerView.
             holder.textContactNumber.setText(contact.getTempNumber());
         }
 
-
        /* holder.textCloudContactName.setVisibility(View.VISIBLE);
         holder.textCloudContactName.setText(contact.getTempRcpName());*/
         /*if (StringUtils.contains(contact.getTempRcpName(), ",")) {
@@ -111,18 +111,35 @@ public class ContactListExpandAdapter extends RecyclerView.Adapter<RecyclerView.
             }
         });*/
 
+        final String thumbnailUrl = StringUtils.defaultString(contact.getTempRcpImageURL());
+        if (StringUtils.length(thumbnailUrl) > 0) {
+            Glide.with(context)
+                    .load(thumbnailUrl)
+                    .placeholder(R.drawable.home_screen_profile)
+                    .error(R.drawable.home_screen_profile)
+                    .bitmapTransform(new CropCircleTransformation(context))
+                    .override(300, 300)
+                    .into(holder.imageProfile);
+
+        } else {
+            holder.imageProfile.setImageResource(R.drawable.home_screen_profile);
+        }
+
         holder.relativeRowAllContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                TextView textName = (TextView) view.findViewById(R.id.text_contact_name);
-                TextView textCloudName = (TextView) view.findViewById(R.id
+                TextView textName = view.findViewById(R.id.text_contact_name);
+                TextView textCloudName = view.findViewById(R.id
                         .text_cloud_contact_name);
 
                 Bundle bundle = new Bundle();
                 bundle.putString(AppConstants.EXTRA_PM_ID, contact.getTempRcpId());
+                bundle.putBoolean(AppConstants.EXTRA_IS_RCP_USER, contact.getTempIsRcp());
                 bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, phonebookId);
                 bundle.putString(AppConstants.EXTRA_CONTACT_NAME, textName.getText().toString());
+                bundle.putString(AppConstants.EXTRA_PROFILE_IMAGE_URL, contact.getTempRcpImageURL
+                        ());
                 if (textCloudName.getVisibility() == View.VISIBLE) {
                     bundle.putString(AppConstants.EXTRA_CLOUD_CONTACT_NAME, textCloudName
                             .getText().toString());
@@ -166,7 +183,7 @@ public class ContactListExpandAdapter extends RecyclerView.Adapter<RecyclerView.
 
         @BindView(R.id.image_profile)
         ImageView imageProfile;
-//        @BindView(R.id.image_social_media)
+        //        @BindView(R.id.image_social_media)
 //        ImageView imageSocialMedia;
         @BindView(R.id.text_contact_name)
         TextView textContactName;
@@ -178,8 +195,8 @@ public class ContactListExpandAdapter extends RecyclerView.Adapter<RecyclerView.
         RatingBar ratingUser;
         @BindView(R.id.text_contact_number)
         public TextView textContactNumber;
-       /* @BindView(R.id.divider_all_contact)
-        View dividerAllContact;*/
+        /* @BindView(R.id.divider_all_contact)
+         View dividerAllContact;*/
         @BindView(R.id.relative_row_all_contact)
         RelativeLayout relativeRowAllContact;
         @BindView(R.id.linear_rating)

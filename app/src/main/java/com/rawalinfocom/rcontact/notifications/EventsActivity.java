@@ -9,10 +9,10 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.BaseActivity;
@@ -57,7 +57,7 @@ public class EventsActivity extends BaseActivity implements RippleView
     RelativeLayout relativeActionBack;
     @BindView(R.id.search_view_events)
     SearchView searchViewEvents;
-    @BindView(R.id.text_header1)
+    /*@BindView(R.id.text_header1)
     TextView textTodayTitle;
     @BindView(R.id.header1_icon)
     ImageView headerTodayIcon;
@@ -80,25 +80,38 @@ public class EventsActivity extends BaseActivity implements RippleView
     @BindView(R.id.header3)
     RelativeLayout headerUpcomingLayout;
     @BindView(R.id.recyclerview3)
-    RecyclerView recyclerViewUpcoming;
+    RecyclerView recyclerViewUpcoming;*/
     @BindView(R.id.view_more)
     TextView viewMore;
+    @BindView(R.id.layout_root)
+    RelativeLayout layoutRoot;
+    @BindView(R.id.recyclerview_event_list)
+    RecyclerView recyclerviewEventList;
 
-    private EventAdapter todayEventAdapter;
-    private EventAdapter recentEventAdapter;
-    private EventAdapter upcomingEventAdapter;
+    @BindView(R.id.frame_container)
+    public FrameLayout frameContainer;
+    @BindView(R.id.frame_image_enlarge)
+    public FrameLayout frameImageEnlarge;
+    @BindView(R.id.image_enlarge)
+    public ImageView imageEnlarge;
+
+    private EventAdapter eventAdapter;
+//    private EventAdapter todayEventAdapter;
+//    private EventAdapter recentEventAdapter;
+//    private EventAdapter upcomingEventAdapter;
     public static String evmRecordId = "";
     public static int selectedRecycler = -1;
     public static int selectedRecyclerItem = -1;
     TableCommentMaster tableCommentMaster;
-    List<EventItem> listTodayEvent;
-    List<EventItem> listRecentEvent;
-    List<EventItem> listUpcomingEvent;
+    List<EventItem> listAllEvent;
+//    List<EventItem> listTodayEvent;
+//    List<EventItem> listRecentEvent;
+//    List<EventItem> listUpcomingEvent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_events);
+        setContentView(R.layout.activity_events_temp);
         ButterKnife.bind(this);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         init();
@@ -109,12 +122,12 @@ public class EventsActivity extends BaseActivity implements RippleView
         textToolbarTitle.setText(getResources().getString(R.string.nav_text_events));
         textToolbarTitle.setTypeface(Utils.typefaceRegular(this));
 
-        textTodayTitle.setTypeface(Utils.typefaceRegular(this));
-        textRecentTitle.setTypeface(Utils.typefaceRegular(this));
-        textUpcomingTitle.setTypeface(Utils.typefaceRegular(this));
+//        textTodayTitle.setTypeface(Utils.typefaceRegular(this));
+//        textRecentTitle.setTypeface(Utils.typefaceRegular(this));
+//        textUpcomingTitle.setTypeface(Utils.typefaceRegular(this));
 
         rippleActionBack.setOnRippleCompleteListener(this);
-        headerTodayIcon.setImageResource(R.drawable.ic_collapse);
+        /*headerTodayIcon.setImageResource(R.drawable.ic_collapse);
         headerTodayLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -164,7 +177,8 @@ public class EventsActivity extends BaseActivity implements RippleView
                 }
 
             }
-        });
+        });*/
+
         searchViewEvents.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -175,16 +189,17 @@ public class EventsActivity extends BaseActivity implements RippleView
             @Override
             public boolean onQueryTextChange(String newText) {
                 if (TextUtils.isEmpty(newText)) {
-                    todayEventAdapter.updateList(listTodayEvent);
-                    recentEventAdapter.updateList(listRecentEvent);
-                    upcomingEventAdapter.updateList(listUpcomingEvent);
-                    updateHeight();
+                    eventAdapter.updateList(listAllEvent);
+//                    todayEventAdapter.updateList(listTodayEvent);
+//                    recentEventAdapter.updateList(listRecentEvent);
+//                    upcomingEventAdapter.updateList(listUpcomingEvent);
+//                    updateHeight();
                 }
                 return false;
             }
         });
-        recyclerViewRecent.setVisibility(View.GONE);
-        recyclerViewUpcoming.setVisibility(View.GONE);
+//        recyclerViewRecent.setVisibility(View.GONE);
+//        recyclerViewUpcoming.setVisibility(View.GONE);
         viewMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -197,29 +212,37 @@ public class EventsActivity extends BaseActivity implements RippleView
     void filter(String text) {
 
         List<EventItem> temp = new ArrayList<>();
-        for (EventItem item : listTodayEvent) {
+        for (EventItem item : listAllEvent) {
             if (item.getPersonName().toLowerCase().contains(text.toLowerCase())) {
                 temp.add(item);
             }
         }
-        todayEventAdapter.updateList(temp);
+        eventAdapter.updateList(temp);
 
-        temp = new ArrayList<>();
-        for (EventItem item : listRecentEvent) {
-            if (item.getPersonName().toLowerCase().contains(text.toLowerCase())) {
-                temp.add(item);
-            }
-        }
-        recentEventAdapter.updateList(temp);
-
-        temp = new ArrayList<>();
-        for (EventItem item : listUpcomingEvent) {
-            if (item.getPersonName().toLowerCase().contains(text.toLowerCase())) {
-                temp.add(item);
-            }
-        }
-        upcomingEventAdapter.updateList(temp);
-        updateHeight();
+//        List<EventItem> temp = new ArrayList<>();
+//        for (EventItem item : listTodayEvent) {
+//            if (item.getPersonName().toLowerCase().contains(text.toLowerCase())) {
+//                temp.add(item);
+//            }
+//        }
+//        todayEventAdapter.updateList(temp);
+//
+//        temp = new ArrayList<>();
+//        for (EventItem item : listRecentEvent) {
+//            if (item.getPersonName().toLowerCase().contains(text.toLowerCase())) {
+//                temp.add(item);
+//            }
+//        }
+//        recentEventAdapter.updateList(temp);
+//
+//        temp = new ArrayList<>();
+//        for (EventItem item : listUpcomingEvent) {
+//            if (item.getPersonName().toLowerCase().contains(text.toLowerCase())) {
+//                temp.add(item);
+//            }
+//        }
+//        upcomingEventAdapter.updateList(temp);
+//        updateHeight();
     }
 
     private void initData() {
@@ -231,26 +254,37 @@ public class EventsActivity extends BaseActivity implements RippleView
         String yesterDay = getEventDate(-1);
         String tomorrow = getEventDate(1);
         String day7th = getEventDate(7);
+        String newDate =  getEventDate(-2);
         String currentUserPmId = Utils.getStringPreference(this, AppConstants.PREF_USER_PM_ID, "0");
         int currentPmID = Integer.parseInt(currentUserPmId);
 
+//        ArrayList<Event> eventsAll = tableEventMaster.getAllEventsBetWeenExceptCurrentUser(yesterDay, day7th, currentPmID);
         ArrayList<Event> eventsToday = tableEventMaster.getAllEventsBetWeenExceptCurrentUser(today, today, currentPmID);
         ArrayList<Event> eventsRecent = tableEventMaster.getAllEventsBetWeenExceptCurrentUser(yesterDay, yesterDay, currentPmID);
         ArrayList<Event> eventsUpcoming7 = tableEventMaster.getAllEventsBetWeenExceptCurrentUser(tomorrow, day7th, currentPmID);
+        ArrayList<Event> newEventList =  new ArrayList<>();
 
-        listTodayEvent = createEventList(eventsToday, 0);
-        listRecentEvent = createEventList(eventsRecent, 1);
-        listUpcomingEvent = createEventList(eventsUpcoming7, 2);
+        newEventList.addAll(eventsToday);
+        newEventList.addAll(eventsRecent);
+        newEventList.addAll(eventsUpcoming7);
 
-        todayEventAdapter = new EventAdapter(this, listTodayEvent, 0);
-        recentEventAdapter = new EventAdapter(this, listRecentEvent, 1);
-        upcomingEventAdapter = new EventAdapter(this, listUpcomingEvent, 2);
+        listAllEvent = createEventList(newEventList, 0);
+//        listTodayEvent = createEventList(eventsToday, 0);
+//        listRecentEvent = createEventList(eventsRecent, 1);
+//        listUpcomingEvent = createEventList(eventsUpcoming7, 2);
 
-        recyclerViewToday.setAdapter(todayEventAdapter);
-        recyclerViewRecent.setAdapter(recentEventAdapter);
-        recyclerViewUpcoming.setAdapter(upcomingEventAdapter);
+        eventAdapter = new EventAdapter(this, listAllEvent);
+//        todayEventAdapter = new EventAdapter(this, listTodayEvent, 0);
+//        recentEventAdapter = new EventAdapter(this, listRecentEvent, 1);
+//        upcomingEventAdapter = new EventAdapter(this, listUpcomingEvent, 2);
 
-        updateHeight();
+        recyclerviewEventList.setLayoutManager(new LinearLayoutManager(this));
+        recyclerviewEventList.setAdapter(eventAdapter);
+//        recyclerViewToday.setAdapter(todayEventAdapter);
+//        recyclerViewRecent.setAdapter(recentEventAdapter);
+//        recyclerViewUpcoming.setAdapter(upcomingEventAdapter);
+
+//        updateHeight();
 
     }
 
@@ -279,9 +313,9 @@ public class EventsActivity extends BaseActivity implements RippleView
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         int height = (displaymetrics.heightPixels * heightPercent) / 100;
 
-        setRecyclerViewHeight(recyclerViewToday, height);
-        setRecyclerViewHeight(recyclerViewRecent, height);
-        setRecyclerViewHeight(recyclerViewUpcoming, height);
+//        setRecyclerViewHeight(recyclerViewToday, height);
+//        setRecyclerViewHeight(recyclerViewRecent, height);
+//        setRecyclerViewHeight(recyclerViewUpcoming, height);
     }
 
     private void setRecyclerViewHeight(RecyclerView recyclerView, int height) {
@@ -421,35 +455,40 @@ public class EventsActivity extends BaseActivity implements RippleView
                     if (evmRecordId != null) {
                         tableCommentMaster.addComment(comment);
                         evmRecordId = "";
-                        switch (selectedRecycler) {
-                            case 0:
-                                listTodayEvent.get(selectedRecyclerItem).setUserComment(eventComment.getComment());
-                                listTodayEvent.get(selectedRecyclerItem).setCommentTime(Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
-                                listTodayEvent.get(selectedRecyclerItem).setEventCommentPending(false);
-                                todayEventAdapter.notifyDataSetChanged();
-                                break;
-                            case 1:
-                                listRecentEvent.get(selectedRecyclerItem).setUserComment(eventComment.getComment());
-                                listRecentEvent.get(selectedRecyclerItem).setCommentTime(Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
-                                listRecentEvent.get(selectedRecyclerItem).setEventCommentPending(false);
-                                recentEventAdapter.notifyDataSetChanged();
-                                break;
-                            case 2:
-                                listUpcomingEvent.get(selectedRecyclerItem).setUserComment(eventComment.getComment());
-                                listUpcomingEvent.get(selectedRecyclerItem).setCommentTime(Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
-                                listUpcomingEvent.get(selectedRecyclerItem).setEventCommentPending(false);
-                                upcomingEventAdapter.notifyDataSetChanged();
-                                break;
-                        }
+                        listAllEvent.get(selectedRecyclerItem).setUserComment(eventComment.getComment());
+                        listAllEvent.get(selectedRecyclerItem).setCommentTime(Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
+                        listAllEvent.get(selectedRecyclerItem).setEventCommentPending(false);
+//                        switch (selectedRecycler) {
+//                            case 0:
+//                                listTodayEvent.get(selectedRecyclerItem).setUserComment(eventComment.getComment());
+//                                listTodayEvent.get(selectedRecyclerItem).setCommentTime(Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
+//                                listTodayEvent.get(selectedRecyclerItem).setEventCommentPending(false);
+//                                todayEventAdapter.notifyDataSetChanged();
+//                                break;
+//                            case 1:
+//                                listRecentEvent.get(selectedRecyclerItem).setUserComment(eventComment.getComment());
+//                                listRecentEvent.get(selectedRecyclerItem).setCommentTime(Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
+//                                listRecentEvent.get(selectedRecyclerItem).setEventCommentPending(false);
+//                                recentEventAdapter.notifyDataSetChanged();
+//                                break;
+//                            case 2:
+//                                listUpcomingEvent.get(selectedRecyclerItem).setUserComment(eventComment.getComment());
+//                                listUpcomingEvent.get(selectedRecyclerItem).setCommentTime(Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
+//                                listUpcomingEvent.get(selectedRecyclerItem).setEventCommentPending(false);
+//                                upcomingEventAdapter.notifyDataSetChanged();
+//                                break;
+//                        }
                         Utils.hideProgressDialog();
+                        Utils.showSuccessSnackBar(EventsActivity.this, layoutRoot, getString(R.string.str_comment_reply));
+                        eventAdapter.notifyDataSetChanged();
                     }
                 } else {
-                    Toast.makeText(EventsActivity.this, getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
+                    Utils.showErrorSnackBar(EventsActivity.this, layoutRoot, getString(R.string.msg_try_later));
                     Utils.hideProgressDialog();
                 }
             }
         } else {
-            Toast.makeText(EventsActivity.this, getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
+            Utils.showErrorSnackBar(EventsActivity.this, layoutRoot, getString(R.string.msg_try_later));
             Utils.hideProgressDialog();
         }
     }

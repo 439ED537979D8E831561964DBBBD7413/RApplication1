@@ -31,6 +31,7 @@ public class AppConstants {
     public static final int ORGANIZATION = 7;
     public static final int PROFILE_IMAGE = 8;
     public static final int NAME = 9;
+    public static final int AADHAR_NUMBER = 10;
     public static boolean isRecentCallFromSMSTab = false;
     //</editor-fold>
 
@@ -40,10 +41,18 @@ public class AppConstants {
 
     //</editor-fold>
 
+    //<editor-fold desc="Calendar Date Formate">
+    public static String EVENT_GENERAL_DATE_FORMAT = "dd'th' MMMM, yyyy";
+    public static String EVENT_ST_DATE_FORMAT = "dd'st' MMMM, yyyy";
+    public static String EVENT_ND_DATE_FORMAT = "dd'nd' MMMM, yyyy";
+    public static String EVENT_RD_DATE_FORMAT = "dd'rd' MMMM, yyyy";
+
+    //</editor-fold>
+
     //<editor-fold desc="GCM Constants">
 
     public static final String GCM_SERVER_KEY = "AIzaSyBv-bFhNJmIhNW4_8jROcy46_axuK3Fl6g";
-    public static final String GCM_SENDER_ID = "842331483294";
+    public static final String GCM_SENDER_ID = "376651096541";
 
     //</editor-fold>
 
@@ -55,6 +64,25 @@ public class AppConstants {
     public static boolean isBackgroundProcessStopped = false;
 
     //</editor-fold>
+
+    //<editor-fold desc="Business Relation">
+
+    public static String RELATION_COWORKER = "Co-Worker";
+    public static String RELATION_SUPPLIER = "Supplier";
+    public static String RELATION_COMPETITOR = "Competitor";
+    public static String RELATION_CUSTOMER = "Customer";
+
+    //<editor-fold">
+
+    //<editor-fold desc="Family Relation">
+
+    public static String[] FAMILY_RELATION = {"Father", "Father-in-law", "Step Father", "Grand father", "Son", "Son-in-law",
+            "Step-son", "Grand son", "Brother", "Brother-in-law", "Cousin brother", "Step brother", "Uncle", "Maternal Uncle",
+            "Nephew", "Husband", "Mother", "Mother-in-law", "Step mother", "Grand mother", "Daughter", "Daughter-in-law",
+            "Granddaughter", "Step daughter", "Sister", "Step sister", "Cousin sister", "Sister-in-law", "Aunt", "Maternal Aunt",
+            "Niece", "Wife"};
+
+    //<editor-fold">
 
     //<editor-fold desc="Request Codes">
 
@@ -83,9 +111,15 @@ public class AppConstants {
     public static String EXTRA_OTP_SERVICE_END_TIME = "extra_otp_service_end_time";
     public static String EXTRA_CALL_MSP_SERVER = "extra_call_msp_server";
     //    public static String EXTRA_IS_FROM_MOBILE_REGIS = "extra_is_from_mobile_regis";
+    public static String EXTRA_LOGIN_TYPE = "extra_login_type";
     public static String EXTRA_IS_FROM = "extra_is_from";
+    public static String EXTRA_IS_FROM_FORGOT_PASSWORD = "extra_is_from_forgot_password";
+    public static String EXTRA_IS_FROM_RE_LOGIN = "extra_is_from_re_login";
     public static String EXTRA_LOCAL_BROADCAST_MESSAGE = "message";
     public static String EXTRA_CONTACT_NAME = "contact_name";
+    public static String EXTRA_CONTACT_NUMBER = "contact_number";
+    public static String EXTRA_FAMILY_RELATION = "family_relation";
+    public static String EXTRA_FRIEND_RELATION = "friend_relation";
     public static String EXTRA_PROFILE_IMAGE_URL = "profile_image_url";
     public static String EXTRA_CLOUD_CONTACT_NAME = "cloud_contact_name";
     public static String EXTRA_CONTACT_POSITION = "contact_position";
@@ -117,6 +151,7 @@ public class AppConstants {
     public static String EXTRA_CALL_UNIQUE_ID = "extra_call_unique_id";
     public static String EXTRA_UNIQUE_CONTACT_ID = "extra_unique_contact_id";
     public static String EXTRA_FORMATTED_ADDRESS = "extra_formatted_address";
+    public static String EXTRA_CITY = "extra_city";
     public static String EXTRA_LATITUDE = "extra_latitude";
     public static String EXTRA_LONGITUDE = "extra_longitude";
     public static String EXTRA_CONTACT_PROFILE_IMAGE = "extra_contact_profile_image";
@@ -125,7 +160,12 @@ public class AppConstants {
     public static String EXTRA_FEEDBACK_URL = "extra_feedback_url";
     public static String EXTRA_IS_RCP_USER = "extra_is_rcp_user";
     public static String EXTRA_CALL_LOG_CLOUD_NAME = "extra_call_log_cloud_name";
-
+    public static String EXTRA_IS_RCP_VERIFIED_SPAM = "extra_is_rcp_verified_spam";
+    public static String EXTRA_RCP_VERIFIED_ID = "extra_rcp_verified_id";
+    public static String EXTRA_RCP_FROM_NOTI = "extra_rcp_from_noti";
+    public static String EXTRA_FROM_NOTI_PROFILE = "extra_from_noti_profile";
+    public static String EXTRA_DIALOG_CALL_LOG_INSTANCE = "extra_dialog_call_log_instance";
+    public static String EXTRA_DIALER_SIM_PREFERENCE = "extra_dialer_sim_preference";
 
     //</editor-fold>
 
@@ -166,6 +206,8 @@ public class AppConstants {
             "action_local_broadcast_update_notification_count";
     public static String ACTION_LOCAL_BROADCAST_CONTACT_DISPLAYED =
             "action_local_broadcast_contact_displayed";
+    public static String ACTION_LOCAL_BROADCAST_GET_GLOBAL_PROFILE_DATA =
+            "action_local_broadcast_get_global_profile_data";
 
     //</editor-fold>
 
@@ -186,16 +228,37 @@ public class AppConstants {
     public static String PREF_USER_RATING = "pref_user_rating";
     public static String PREF_USER_TOTAL_RATING = "pref_user_total_rating";
     public static String PREF_USER_PHOTO = "pref_user_photo";
-    public static String PREF_USER_FIRST_NAME =  "pref_user_first_name";
-    public static String PREF_USER_LAST_NAME =  "pref_user_last_name";
-    public static String PREF_USER_JOINING_DATE =  "pref_user_joining_date";
-    public static String PREF_USER_VERIFIED_EMAIL =  "pref_user_verified_email";
+    public static String PREF_USER_FIRST_NAME = "pref_user_first_name";
+    public static String PREF_USER_LAST_NAME = "pref_user_last_name";
+    public static String PREF_USER_JOINING_DATE = "pref_user_joining_date";
+    public static String PREF_USER_VERIFIED_EMAIL = "pref_user_verified_email";
+    public static String PREF_RESPONSE_KEY = "pref_response_key";
+    public static String PREF_CALL_LOG_RESPONSE_KEY = "pref_call_log_response_key";
 
     public static String KEY_PREFERENCES = "pref_rcontact";
+    public static String PREF_APP_LANGUAGE = "pref_app_language";
+    public static String PREF_PERCENTAGE_VIEW = "pref_percentage_view";
+    public static String PREF_SHORT_BY_CONTACT = "pref_short_by_contact";
+    public static String PREF_EXPORT_CONTACT = "pref_export_contact";
 
-    public static String PREF_RE_LOGIN = "pref_re_login";
-    public static String PREF_FORGOT_PASSWORD = "pref_forgot_password";
-    public static String PREF_IS_FROM = "pref_is_from";
+    public static String KEY_API_CALL_TIME = "key_api_call_time";
+    public static String KEY_API_CALL_TIME_STAMP = "key_api_call_time_stamp";
+    public static String KEY_RCONTACTS_API_CALL_TIME_STAMP = "key_rcontacts_api_call_time_stamp";
+    public static String KEY_IS_FIRST_TIME = "key_is_first_time";
+    public static String KEY_IS_RESTORE_DONE = "key_is_restore_done";
+
+    public static String KEY_API_CALL_TIME_STAMP_RCP = "key_api_call_time_stamp_rcp";
+    public static String KEY_API_CALL_TIME_STAMP_RATING = "key_api_call_time_stamp_rating";
+    public static String KEY_API_CALL_TIME_STAMP_PROFILE = "key_api_call_time_stamp_profile";
+    public static String KEY_API_CALL_TIME_STAMP_COMMENT = "key_api_call_time_stamp_comment";
+
+    public static String PREF_DISABLE_PUSH = "pref_disable_push";
+    public static String PREF_DISABLE_POPUP = "pref_disable_popup";
+    public static String PREF_DISABLE_EVENT_PUSH = "pref_disable_event_push";
+
+    public static String PREF_LOGIN_TYPE = "pref_login_type";
+    public static String PREF_IS_LOGIN = "pref_is_login";
+
     public static String PREF_TEMP_LOGOUT = "pref_temp_logout";
     public static String PREF_SELECTED_COUNTRY_OBJECT = "pref_selected_country_object";
     public static String PREF_DEVICE_TOKEN_ID = "pref_device_token_id";
@@ -205,6 +268,7 @@ public class AppConstants {
     //    public static String PREF_CONTACT_ID_SET = "pref_contact_id_set";
     public static String PREF_SYNCED_CONTACTS = "pref_synced_contacts";
     public static String PREF_USER_PM_ID = "pref_user_pm_id";
+    public static String PREF_USER_PM_BADGE = "pref_user_pm_badge";
     public static String PREF_ACCESS_TOKEN = "pref_access_token";
     public static String PREF_FAVOURITE_CONTACT_NUMBER_EMAIL =
             "pref_favourite_contact_number_email";
@@ -238,6 +302,14 @@ public class AppConstants {
             "pref_recent_calls_broadcast_receiver_main_instance_call_log_tab";
     public static String PREF_SMS_LOG_SYNCED_COUNT = "pref_sms_log_synced_count";
     public static String PREF_SMS_LOG_SYNCED = "pref_sms_log_synced";
+    public static String PREF_GOT_ALL_PROFILE_DATA = "pref_got_all_profile_data";
+    public static String PREF_IS_CALL_UPLOAD_CONTACT = "pref_is_call_upload_contact";
+    public static String PREF_LATEST_CALL_DATE_TIME = "pref_latest_call_date_time";
+    public static String PREF_LATEST_CALL_RAW_ID = "pref_latest_call_raw_id";
+    public static String PREF_PROFILE_REMAINING_FIELDS = "pref_profile_remaining_fields";
+    public static String PREF_DONTSHOWAGAIN_POPUP = "pref_dontshowagain_popup";
+    public static String PREF_RATE_APP_DATE = "pref_rate_app_date";
+
 
     public static String[] arrayPrefKeys = {PREF_SELECTED_COUNTRY_OBJECT, PREF_DEVICE_TOKEN_ID,
             PREF_LAUNCH_SCREEN_INT, PREF_REGS_USER_OBJECT, PREF_REGS_MOBILE_NUMBER,
@@ -282,6 +354,8 @@ public class AppConstants {
     public static boolean isSMSFromReceiver = false;
     public static boolean isComposingSMS = false;
     public static boolean isFromSearchActivity = false;
+    public static boolean isFromSettingActivity = false;
+    public static boolean isFromClearCallLogActivity = false;
 
     //<editor-fold desc="Call-log constants">
     public static final int READ_LOGS = 725;
@@ -293,6 +367,7 @@ public class AppConstants {
     public static final int INCOMING = 1;
     public static final int OUTGOING = 2;
     public static final int MISSED = 3;
+    public static final int NEW_CONTACT_MI = 10;
     public static final int BLOCKED = 4;
     public static final int UNBLOCK = 0;
 

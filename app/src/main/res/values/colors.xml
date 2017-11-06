@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#003933</color>
     <color name="colorPrimaryDark">#002B27</color>
-    <color name="colorAccent">#00796b</color>
+    <color name="colorAccent">#00796B</color>
 
     <color name="colorSnackBarNegative">#C14143</color>
     <color name="colorSnackBarPositive">#3FC08E</color>
@@ -39,6 +39,7 @@
     <color name="strongCyanLimeGreen">#00C94E</color>
     <color name="vividBlue">#20B6FE</color>
     <color name="vividRed1">#FE2539</color>
+    <color name="spamRed">#F74C4C</color>
     <color name="darkCyan">#1baa99</color>
     <color name="veryLightGray">#DCDCDC</color>
     <color name="darkGray">#767676</color>
@@ -58,5 +59,31 @@
     <color name="textColorGreen">#1F8072</color>
     <color name="textColorButton">#767678</color>
     <color name="textColorBlue">#189BE7</color>
+
+    <!-- Web View -->
+    <color name="finestWhite10">#1AFFFFFF</color>
+    <color name="finestWhite20">#33FFFFFF</color>
+    <color name="finestWhite30">#4DFFFFFF</color>
+    <color name="finestWhite40">#FFFFFF</color>
+
+    <color name="finestGray10">#1AD2D2D2</color>
+    <color name="finestGray20">#33D2D2D2</color>
+
+    <color name="finestBlack05">#0D202020</color>
+    <color name="finestBlack10">#1A202020</color>
+    <color name="finestBlack20">#33202020</color>
+    <color name="finestBlack30">#4D202020</color>
+    <color name="finestBlack40">#66202020</color>
+
+    <color name="finestWhite">#FFFFFF</color>
+    <color name="finestBlack">#000000</color>
+    <color name="finestSilver">#A5A5A5</color>
+    <color name="finestGray">#E7E7E7</color>
+    <color name="colorTextHeader">#222222</color>
+    <color name="colorTextSub">#666666</color>
+    <color name="bg_circle_default">#666666</color>
+
+    <color name="grey_hex_75">#757575</color>
+
 
 </resources>

@@ -3,6 +3,7 @@ package com.rawalinfocom.rcontact.calllog;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -30,12 +31,15 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.content.PermissionChecker;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -47,37 +51,39 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
+import com.rawalinfocom.rcontact.SearchActivity;
 import com.rawalinfocom.rcontact.adapters.SimpleCallLogListAdapter;
-import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
-import com.rawalinfocom.rcontact.constants.IntegerConstants;
-import com.rawalinfocom.rcontact.constants.WsConstants;
+import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.database.PhoneBookCallLogs;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
-import com.rawalinfocom.rcontact.enumerations.WSRequestType;
+import com.rawalinfocom.rcontact.database.TableSpamDetailMaster;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
+import com.rawalinfocom.rcontact.helper.RecyclerItemClickListener;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.WrapContentLinearLayoutManager;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.CallLogType;
 import com.rawalinfocom.rcontact.model.ProfileMobileMapping;
+import com.rawalinfocom.rcontact.model.SpamDataType;
 import com.rawalinfocom.rcontact.model.UserProfile;
-import com.rawalinfocom.rcontact.model.WsRequestObject;
-import com.rawalinfocom.rcontact.model.WsResponseObject;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -85,7 +91,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class CallLogFragment extends BaseFragment implements WsResponseListener, RippleView
-        .OnRippleCompleteListener/*, LoaderManager.LoaderCallbacks<Cursor>*/ {
+        .OnRippleCompleteListener/*, LoaderManager.LoaderCallbacks<Cursor>*/, SimpleCallLogListAdapter.SimpleCallLogListAdapterListener {
 
     public String CALL_LOG_ALL_CALLS = "All";
     public String CALL_LOG_INCOMING_CALLS = "Incoming";
@@ -118,6 +124,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     TextView textGrantPermission;
     TextView textNoCallsFound;
     private ArrayList<CallLogType> callLogTypeArrayList;
+    ArrayList<CallLogType> filteredList;
 
     private SimpleCallLogListAdapter simpleCallLogListAdapter;
 
@@ -129,7 +136,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
     private String[] requiredPermissions = {Manifest.permission.READ_CALL_LOG};
     private boolean isFirstTime;
-    private int LIST_PARTITION_COUNT = 7;
+    //    private int LIST_PARTITION_COUNT = 10;
     RContactApplication rContactApplication;
     MaterialDialog permissionConfirmationDialog;
 
@@ -141,10 +148,14 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     private TableProfileMobileMapping tableProfileMobileMapping;
     private GetRCPNameAndProfileImage nameAndProfileImage;
     boolean isFromDeleteBroadcast = false;
-
+    private UpdateOldLogWithUpdatedDetails updateOldLogWithUpdatedDetails;
+    Toolbar toolbar;
+    private ActionModeCallback actionModeCallback;
+    private ActionMode actionMode;
 
     public CallLogFragment() {
         // Required empty public constructor
+
     }
 
     public static CallLogFragment newInstance() {
@@ -177,6 +188,233 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 .PREF_RECENT_CALLS_BROADCAST_RECEIVER_CALL_LOG_TAB, true);
 
         isCallLogFragment = true;
+        toolbar = getMainActivity().getToolbar();
+
+    }
+
+    @Override
+    public void onIconClicked(int position) {
+        if (actionMode == null) {
+            actionMode = getMainActivity().startSupportActionMode(actionModeCallback);
+        }
+        toggleSelection(position);
+    }
+
+    @Override
+    public void onMessageRowClicked(int position) {
+        // verify whether action mode is enabled or not
+        // if enabled, change the row state to activated
+        if (simpleCallLogListAdapter.getSelectedItemCount() > 0) {
+            enableActionMode(position);
+        } else {
+
+            CallLogType selectedCallLogData;
+            if (!selectedCallType.equalsIgnoreCase(CALL_LOG_ALL_CALLS)) {
+                selectedCallLogData = filteredList.get(position);
+            } else {
+                selectedCallLogData = callLogTypeArrayList.get(position);
+            }
+
+            if (selectedCallLogData != null) {
+                if (simpleCallLogListAdapter != null)
+                    simpleCallLogListAdapter.setSelectedCallLogData(selectedCallLogData);
+            }
+            String key = "";
+            key = selectedCallLogData.getLocalPbRowId();
+            if (key.equalsIgnoreCase(" ")) {
+                key = selectedCallLogData.getUniqueContactId();
+            }
+
+            Boolean isRcpUser = selectedCallLogData.isRcpUser();
+            String firstName = selectedCallLogData.getRcpFirstName();
+            String lastName = selectedCallLogData.getRcpLastName();
+            String name = selectedCallLogData.getName();
+            String cloudName = "";
+            String contactDisplayName = "";
+            String contactNameToDisplay = "";
+            String prefix = selectedCallLogData.getPrefix();
+            String suffix = selectedCallLogData.getSuffix();
+            String middleName = selectedCallLogData.getMiddleName();
+
+            if (StringUtils.length(prefix) > 0)
+                contactNameToDisplay = contactNameToDisplay + prefix + " ";
+            if (StringUtils.length(suffix) > 0)
+                contactNameToDisplay = contactNameToDisplay + suffix + " ";
+            if (StringUtils.length(firstName) > 0)
+                contactNameToDisplay = contactNameToDisplay + firstName + " ";
+            if (StringUtils.length(middleName) > 0)
+                contactNameToDisplay = contactNameToDisplay + middleName + " ";
+            if (StringUtils.length(lastName) > 0)
+                contactNameToDisplay = contactNameToDisplay + lastName + "";
+
+
+            if (MoreObjects.firstNonNull(isRcpUser, false)) {
+                if (StringUtils.length(firstName) > 0) {
+                    contactDisplayName = contactDisplayName + firstName + " ";
+                }
+                if (StringUtils.length(lastName) > 0) {
+                    contactDisplayName = contactDisplayName + lastName + "";
+                }
+                if (!StringUtils.equalsIgnoreCase(name, contactDisplayName)) {
+                    cloudName = contactDisplayName;
+                }
+            }
+            long date = selectedCallLogData.getDate();
+            long selectedLogDate, dateFromReceiver = 0;
+            Date dateFromReceiver1 = selectedCallLogData.getCallReceiverDate();
+            if (dateFromReceiver1 != null) {
+                dateFromReceiver = dateFromReceiver1.getTime();
+            }
+            if (date == 0) {
+                selectedLogDate = dateFromReceiver;
+            } else {
+                selectedLogDate = date;
+            }
+            AppConstants.isFromReceiver = false;
+//                String formatedNumber = Utils.getFormattedNumber(mActivity, number);
+            Intent intent = new Intent(getActivity(), ProfileDetailActivity.class);
+            intent.putExtra(AppConstants.EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE, true);
+            intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, selectedCallLogData.getNumber());
+
+            if (selectedCallLogData.getRcpId() == null)
+                intent.putExtra(AppConstants.EXTRA_PM_ID, "-1");
+            else
+                intent.putExtra(AppConstants.EXTRA_PM_ID, selectedCallLogData.getRcpId());
+
+            intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NAME, name);
+            if (date == 0) {
+                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_DATE, dateFromReceiver);
+            } else {
+                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_DATE, date);
+            }
+            intent.putExtra(AppConstants.EXTRA_RCP_VERIFIED_ID, selectedCallLogData.getIsRcpVerfied());
+            intent.putExtra(AppConstants.EXTRA_CALL_UNIQUE_ID, key);
+            intent.putExtra(AppConstants.EXTRA_UNIQUE_CONTACT_ID, selectedCallLogData.getUniqueContactId());
+            intent.putExtra(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE, selectedCallLogData.getProfileImage());
+            intent.putExtra(AppConstants.EXTRA_IS_RCP_USER, isRcpUser);
+            if (!StringUtils.isEmpty(cloudName))
+                intent.putExtra(AppConstants.EXTRA_CALL_LOG_CLOUD_NAME, cloudName);
+            else
+                intent.putExtra(AppConstants.EXTRA_CALL_LOG_CLOUD_NAME, contactNameToDisplay);
+            getActivity().startActivity(intent);
+            (getActivity()).overridePendingTransition(R.anim.enter, R.anim.exit);
+
+        }
+
+    }
+
+    @Override
+    public void onRowLongClicked(int position) {
+        enableActionMode(position);
+    }
+
+
+    private void enableActionMode(int position) {
+        if (actionMode == null) {
+            actionMode = getMainActivity().startSupportActionMode(actionModeCallback);
+        }
+        toggleSelection(position);
+    }
+
+    private void toggleSelection(int position) {
+        simpleCallLogListAdapter.toggleSelection(position);
+        int count = simpleCallLogListAdapter.getSelectedItemCount();
+        if (count == 0) {
+            actionMode.finish();
+        } else {
+            actionMode.setTitle(String.valueOf(count) + " selected");
+            actionMode.invalidate();
+        }
+    }
+
+
+    private class ActionModeCallback implements ActionMode.Callback {
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            toolbar.setVisibility(View.GONE);
+            mode.getMenuInflater().inflate(R.menu.menu_action_mode_call_log, menu);
+            // disable swipe refresh if action mode is enabled
+//            swipeRefreshLayout.setEnabled(false);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.delete:
+                    // delete all the selected messages
+                    deleteMessages();
+                    mode.finish();
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            toolbar.setVisibility(View.VISIBLE);
+            if (mode != null)
+                mode.finish();
+            simpleCallLogListAdapter.clearSelections();
+//            swipeRefreshLayout.setEnabled(true);
+            actionMode = null;
+            recyclerCallLogs.post(new Runnable() {
+                @Override
+                public void run() {
+                    simpleCallLogListAdapter.resetAnimationIndex();
+                    // mAdapter.notifyDataSetChanged();
+                }
+            });
+
+        }
+    }
+
+    // deleting the messages from recycler view
+    private void deleteMessages() {
+        simpleCallLogListAdapter.resetAnimationIndex();
+        List<Integer> selectedItemPositions =
+                simpleCallLogListAdapter.getSelectedItems();
+        /*for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
+//            simpleCallLogListAdapter.removeData(selectedItemPositions.get(i));
+            int itemIndexToRemove =  selectedItemPositions.get(i);
+            callLogTypeArrayList.remove(itemIndexToRemove);
+            rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
+            simpleCallLogListAdapter.resetCurrentIndex();
+            simpleCallLogListAdapter.notifyItemRemoved(itemIndexToRemove);
+            simpleCallLogListAdapter.notifyItemRangeChanged(itemIndexToRemove,
+                    simpleCallLogListAdapter.getItemCount());
+        }*/
+
+        ArrayList<CallLogType> listToDelete = simpleCallLogListAdapter.getArrayListToDelete();
+        if (listToDelete.size() > 0) {
+            for (int j = 0; j < listToDelete.size(); j++) {
+                CallLogType callLogType = listToDelete.get(j);
+                String number = callLogType.getNumber();
+                long dateAndTime = callLogType.getDate();
+                // delete operation
+                String where = CallLog.Calls.NUMBER + " =?" + " AND " + CallLog.Calls.DATE + " =?";
+                String[] selectionArguments = new String[]{number, String.valueOf(dateAndTime)};
+                int value = getActivity().getContentResolver().delete(CallLog.Calls.CONTENT_URI, where,
+                        selectionArguments);
+                if (value > 0) {
+                    if (!selectedCallType.equalsIgnoreCase(CALL_LOG_ALL_CALLS)) {
+                        filteredList.remove(callLogType);
+                    }
+                    callLogTypeArrayList.remove(callLogType);
+                    rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
+                    simpleCallLogListAdapter.resetCurrentIndex();
+                }
+            }
+            simpleCallLogListAdapter.notifyDataSetChanged();
+        }
+//        simpleCallLogListAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -225,16 +463,15 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
         rContactApplication = (RContactApplication) getActivity().getApplicationContext();
 //        makeBlockedNumberList();
-
+        actionModeCallback = new ActionModeCallback();
         // Checking for permissions
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkPermissionToExecute(requiredPermissions, AppConstants.READ_LOGS);
         } else {
             initSpinner();
         }
-
+//        telephonyInit();
         initSwipe();
-
     }
 
     @Override
@@ -254,6 +491,40 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 }
             }, 1500);
 
+
+            if (simpleCallLogListAdapter != null) {
+                String phoneBookName = getNameFromNumber(simpleCallLogListAdapter.getSelectedCallLogData().getNumber());
+                if (StringUtils.length(phoneBookName) > 0) {
+                    String number = simpleCallLogListAdapter.getSelectedCallLogData().getNumber();
+                    for (int i = 0; i < callLogTypeArrayList.size(); i++) {
+                        CallLogType callLogType = callLogTypeArrayList.get(i);
+                        String numberToUpdate = callLogType.getNumber();
+                        if (numberToUpdate.equalsIgnoreCase(number)) {
+                            callLogType.setName(phoneBookName);
+                            callLogTypeArrayList.set(i, callLogType);
+                            rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
+                            simpleCallLogListAdapter.notifyDataSetChanged();
+                            //simpleCallLogListAdapter.notifyItemRangeChanged(itemIndexToUpdate, simpleCallLogListAdapter.getItemCount());
+                        }
+                    }
+                } else {
+                    String number = simpleCallLogListAdapter.getSelectedCallLogData().getNumber();
+                    for (int i = 0; i < callLogTypeArrayList.size(); i++) {
+                        CallLogType callLogType = callLogTypeArrayList.get(i);
+                        String numberToUpdate = callLogType.getNumber();
+                        if (numberToUpdate.equalsIgnoreCase(number)) {
+                            callLogType.setName("");
+                            callLogType.setNumber(Utils.getFormattedNumber(getActivity(), number));
+                            callLogType = setRCPDetailsAndSpamCountforUnsavedNumbers(number, callLogType);
+                            callLogTypeArrayList.set(i, callLogType);
+                            rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
+                            simpleCallLogListAdapter.notifyDataSetChanged();
+//                            simpleCallLogListAdapter.notifyItemRangeChanged(itemIndexToUpdate, simpleCallLogListAdapter.getItemCount());
+                        }
+                    }
+                }
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -267,13 +538,17 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         if (isFirstTime) {
             isFirstTime = false;
         }
-        AppConstants.isFromReceiver = false;
+//        AppConstants.isFromReceiver = false;
 
         if (nameAndProfileImage != null) {
             nameAndProfileImage.cancel(true);
             getDatabaseHandler().close();
         }
 
+        if (updateOldLogWithUpdatedDetails != null) {
+            updateOldLogWithUpdatedDetails.cancel(true);
+            getDatabaseHandler().close();
+        }
 
         LocalBroadcastManager localBroadcastManagerTabChange = LocalBroadcastManager.getInstance
                 (getActivity());
@@ -282,57 +557,41 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
     @Override
     public void onDeliveryResponse(String serviceType, Object data, Exception error) {
-        try {
-            if (error == null) {
-                if (serviceType.equalsIgnoreCase(WsConstants.REQ_UPLOAD_CALL_LOGS)) {
-                    WsResponseObject callLogInsertionResponse = (WsResponseObject) data;
-                    if (callLogInsertionResponse != null && StringUtils.equalsIgnoreCase
-                            (callLogInsertionResponse
-                                    .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
-
-                        Utils.setStringPreference(getActivity(), AppConstants.PREF_CALL_LOG_SYNC_TIME, callLogInsertionResponse.getCallDateAndTime());
-
-//                        if (Utils.getBooleanPreference(getActivity(), AppConstants
-//                                .PREF_CALL_LOG_SYNCED, false)) {
-//                            ArrayList<CallLogType> temp = divideCallLogByChunck(newList);
-//                            if (temp.size() >= LIST_PARTITION_COUNT) {
-//                                if (temp.size() > 0)
-//                                    insertServiceCall(newList);
-//                            } else {
-////                                Utils.showSuccessSnackBar(getActivity(), linearCallLogMain, "All Call Logs Synced");
-//                                System.out.println("RContact All Call Logs Synced");
-//                            }
+//        try {
+//            if (error == null) {
+//                if (serviceType.equalsIgnoreCase(WsConstants.REQ_UPLOAD_CALL_LOGS)) {
+//                    WsResponseObject callLogInsertionResponse = (WsResponseObject) data;
+//                    if (callLogInsertionResponse != null && StringUtils.equalsIgnoreCase
+//                            (callLogInsertionResponse
+//                                    .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 //
+//                        Utils.setStringPreference(getActivity(), AppConstants
+// .PREF_CALL_LOG_SYNC_TIME, callLogInsertionResponse.getCallDateAndTime());
+//                        Utils.setStringPreference(getActivity(), AppConstants
+// .PREF_CALL_LOG_ROW_ID, callLogInsertionResponse.getCallLogRowId());
+//                        Utils.setBooleanPreference(getActivity(), AppConstants
+// .PREF_CALL_LOG_SYNCED, true);
+//
+//                    } else {
+//                        if (callLogInsertionResponse != null) {
+//                            Log.e("error response", callLogInsertionResponse.getMessage());
+//                            Utils.showErrorSnackBar(getActivity(), linearMainContent,
+// callLogInsertionResponse.getMessage());
 //                        } else {
-                        ArrayList<CallLogType> callLogTypeArrayList = divideCallLogByChunck();
-                        if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0) {
-//                                insertServiceCall(callLogTypeArrayList);
-                        } else {
-                            System.out.println("RContact All Call Logs Synced");
-//                                Utils.showSuccessSnackBar(getActivity(), linearCallLogMain, "All " +
-//                                        "" + "Call Logs Synced");
-                            Utils.setBooleanPreference(getActivity(), AppConstants.PREF_CALL_LOG_SYNCED, true);
-                        }
+//                            Log.e("onDeliveryResponse: ", "userProfileResponse null");
+//                            Utils.showErrorSnackBar(getActivity(), linearMainContent, getString(R
+//                                    .string.msg_try_later));
 //                        }
-                    } else {
-                        if (callLogInsertionResponse != null) {
-                            Log.e("error response", callLogInsertionResponse.getMessage());
-                            Utils.showErrorSnackBar(getActivity(), linearMainContent, callLogInsertionResponse.getMessage());
-                        } else {
-                            Log.e("onDeliveryResponse: ", "userProfileResponse null");
-                            Utils.showErrorSnackBar(getActivity(), linearMainContent, getString(R
-                                    .string.msg_try_later));
-                        }
-                    }
-
-                } else {
-                    Utils.showErrorSnackBar(getActivity(), linearMainContent, "" + error
-                            .getLocalizedMessage());
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//                    }
+//
+//                } else {
+//                    Utils.showErrorSnackBar(getActivity(), linearMainContent, "" + error
+//                            .getLocalizedMessage());
+//                }
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
     @Override
@@ -340,7 +599,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         super.onDestroy();
         unregisterLocalBroadcast();
 //        AppConstants.setIsFirstTime(true);
-        simpleCallLogListAdapter = null;
+//        simpleCallLogListAdapter = null;
     }
 
     private void registerLocalBroadcast() {
@@ -387,9 +646,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     }
 
     private void unregisterLocalBroadcast() {
-        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance
-                (getActivity());
-        localBroadcastManager.unregisterReceiver(localBroadcastReceiver);
+//        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance
+//                (getActivity());
+//        localBroadcastManager.unregisterReceiver(localBroadcastReceiver);
 
         LocalBroadcastManager localBroadcastManagerDeleteLogs = LocalBroadcastManager.getInstance
                 (getActivity());
@@ -404,7 +663,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 .getInstance(getActivity());
         localBroadcastManagerProfileBlock.unregisterReceiver(localBroadcastReceiverBlock);
 
-        localBroadcastManager.unregisterReceiver(localBroadcastReceiverRecentCalls);
+        LocalBroadcastManager localBroadcastManagerRecentCalls = LocalBroadcastManager
+                .getInstance(getActivity());
+        localBroadcastManagerRecentCalls.unregisterReceiver(localBroadcastReceiverRecentCalls);
 
     }
 
@@ -428,8 +689,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             String name = cursor.getString(cursor.getColumnIndex(CallLog.Calls.CACHED_NAME));
 
             if (StringUtils.isEmpty(name)) {
-                name = getNameFromNumber(Utils.getFormattedNumber(getActivity(),number));
+                name = getNameFromNumber(Utils.getFormattedNumber(getActivity(), number));
             }
+//            String formattedNumber =  Utils.getFormattedNumber(getActivity(), number);
 
             Long date = cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE));
 
@@ -437,17 +699,21 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
             callLogType.setType(cursor.getInt(cursor.getColumnIndex(CallLog.Calls.TYPE)));
 
-            if (!TextUtils.isEmpty(number))
+            if (!StringUtils.isEmpty(number))
                 callLogType.setNumber(number);
-            else
-                callLogType.setNumber("");
+//            else
+//                callLogType.setNumber("");
 
-            if (!TextUtils.isEmpty(name))
+            if (!StringUtils.isEmpty(name))
                 callLogType.setName(name);
-            else
-                callLogType.setName("");
+//            else
+//                callLogType.setName("");
 
-            String photoThumbNail = getPhotoUrlFromNumber(Utils.getFormattedNumber(getActivity(),number));
+            callLogType.setDurationToPass(callLogType.getCoolDuration(Float.parseFloat
+                    (cursor.getString(cursor.getColumnIndex(CallLog.Calls.DURATION)))));
+
+            String photoThumbNail = getPhotoUrlFromNumber(Utils.getFormattedNumber(getActivity(),
+                    number));
 
             if (!TextUtils.isEmpty(photoThumbNail)) {
                 callLogType.setProfileImage(photoThumbNail);
@@ -456,7 +722,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             }
 
             callLogType.setUniqueContactId(rowId);
-            String uniquePhoneBookId = getStarredStatusFromNumber(Utils.getFormattedNumber(getActivity(),number));
+            String uniquePhoneBookId = getStarredStatusFromNumber(Utils.getFormattedNumber
+                    (getActivity(), number));
             if (!TextUtils.isEmpty(uniquePhoneBookId))
                 callLogType.setLocalPbRowId(uniquePhoneBookId);
             else
@@ -473,7 +740,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     callLogType.setHistoryId(callLogType1.getHistoryId());
                     callLogType.setCallDateAndTime(callLogType1.getCallDateAndTime());
                     callLogType.setTypeOfCall(callLogType1.getTypeOfCall());
-                    callLogType.setDurationToPass(callLogType1.getDurationToPass());
+//                    callLogType.setDurationToPass(callLogType1.getDurationToPass());
                     if (!StringUtils.isEmpty(callLogType1.getHistoryCallSimNumber()))
                         callLogType.setHistoryCallSimNumber(callLogType1.getHistoryCallSimNumber());
                     else
@@ -488,7 +755,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
                 if (!StringUtils.isEmpty(name)) {
                     ProfileMobileMapping profileMobileMapping =
-                            tableProfileMobileMapping.getCloudPmIdFromProfileMappingFromNumber(number);
+                            tableProfileMobileMapping.getCloudPmIdFromProfileMappingFromNumber
+                                    (number);
 
                     if (profileMobileMapping != null) {
                         String cloudPmId = profileMobileMapping.getMpmCloudPmId();
@@ -514,82 +782,161 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
                             callLogType.setRcpUser(true);
 
+                            callLogType = setRCPDetailsAndSpamCountforUnsavedNumbers(number,
+                                    callLogType);
                             callLogTypeArrayList.add(0, callLogType);
-                            rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
+                            updateOldLogWithUpdatedDetails = new UpdateOldLogWithUpdatedDetails();
+                            updateOldLogWithUpdatedDetails.execute(callLogType);
+//                            rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
                         }
                     } else {
+                        callLogType = setRCPDetailsAndSpamCountforUnsavedNumbers(number,
+                                callLogType);
                         callLogTypeArrayList.add(0, callLogType);
-                        rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
+                        updateOldLogWithUpdatedDetails = new UpdateOldLogWithUpdatedDetails();
+                        updateOldLogWithUpdatedDetails.execute(callLogType);
+//                        rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
                     }
                 } else {
+                    callLogType = setRCPDetailsAndSpamCountforUnsavedNumbers(number, callLogType);
                     callLogTypeArrayList.add(0, callLogType);
-                    rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
+                    updateOldLogWithUpdatedDetails = new UpdateOldLogWithUpdatedDetails();
+                    updateOldLogWithUpdatedDetails.execute(callLogType);
+//                    rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
                 }
 
-                if (simpleCallLogListAdapter != null)
+                if (simpleCallLogListAdapter != null) {
                     simpleCallLogListAdapter.notifyItemInserted(0);
+                    simpleCallLogListAdapter.notifyDataSetChanged();
+                }
+            }
 
-                recyclerCallLogs.scrollToPosition(0);
-                ArrayList<CallLogType> callLogTypeArrayList = new ArrayList<>();
-                callLogTypeArrayList.add(callLogType);
-                if (Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CONTACT_SYNCED, false) &&
-                        Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CALL_LOG_SYNCED, false)) {
-                    if (!TextUtils.isEmpty(callLogType.getNumber()))
-                        insertServiceCall(callLogTypeArrayList);
+            recyclerCallLogs.smoothScrollToPosition(0);
+
+//            ArrayList<CallLogType> callLogTypeArrayList = new ArrayList<>();
+//            callLogTypeArrayList.add(callLogType);
+//            if (Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CONTACT_SYNCED,
+// false) &&
+//                    Utils.getBooleanPreference(getActivity(), AppConstants
+// .PREF_CALL_LOG_SYNCED, false)) {
+//                if (!TextUtils.isEmpty(callLogType.getNumber()))
+//                    insertServiceCall(callLogTypeArrayList);
+//            }
+        }
+    }
+
+
+    private class UpdateOldLogWithUpdatedDetails extends AsyncTask<CallLogType, Void, Void> {
+
+        protected Void doInBackground(CallLogType... urls) {
+            updateLogsWithLatestDetails(urls[0]);
+            return null;
+        }
+
+        protected void onPostExecute(Void result) {
+
+           /* getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+
+                }
+            });*/
+
+            try {
+                simpleCallLogListAdapter.notifyDataSetChanged();
+                //Aniruddh -- TO do save 0th record dateTime and rawId in preference;
+                if (callLogTypeArrayList.size() > 0) {
+                    rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
+                    Long dateTime = callLogTypeArrayList.get(0).getDate();
+                    DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale
+                            .getDefault());
+
+                    Date cursorDate = new Date(dateTime);
+                    String latestCallDate = sdf.format(cursorDate);
+                    String rawId = callLogTypeArrayList.get(0).getUniqueContactId();
+
+                    Utils.setStringPreference(getActivity(), AppConstants
+                            .PREF_LATEST_CALL_DATE_TIME, latestCallDate);
+                    Utils.setStringPreference(getActivity(), AppConstants
+                            .PREF_LATEST_CALL_RAW_ID, rawId);
+                } else {
+                    textNoCallsFound.setVisibility(View.VISIBLE);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+
+    }
+
+    private void updateLogsWithLatestDetails(CallLogType callLogType) {
+        if (callLogType != null) {
+            String updatedNumber = callLogType.getNumber();
+            TableSpamDetailMaster tableSpamDetailMaster = new TableSpamDetailMaster
+                    (getDatabaseHandler());
+//            String savedNumberFormat = Utils.getFormattedNumber(getActivity(),updatedNumber);
+            if (updatedNumber.startsWith("0")) {
+                updatedNumber = Utils.getFormattedNumber(getActivity(), updatedNumber);
+            }
+
+            String savedNumberFormat = updatedNumber;
+            if (savedNumberFormat.startsWith("+91"))
+                savedNumberFormat = savedNumberFormat.replace("+", "");
+            else
+                savedNumberFormat = "91" + savedNumberFormat;
+
+            SpamDataType spamDataType = tableSpamDetailMaster.getSpamDetailsFromNumber
+                    (savedNumberFormat);
+            String spamCount = spamDataType.getSpamCount();
+            if (callLogTypeArrayList.size() > 0) {
+                for (int i = 0; i < callLogTypeArrayList.size(); i++) {
+                    /*if (nameAndProfileImage != null && nameAndProfileImage.isCancelled())
+                        return;
+                    if (updateOldLogWithUpdatedDetails != null && updateOldLogWithUpdatedDetails
+                    .isCancelled())
+                        return;*/
+
+                    CallLogType callLogTypeOfList = callLogTypeArrayList.get(i);
+                    String numberToUpdate = callLogTypeOfList.getNumber();
+                    // TODO: 13/08/17 Need to handle number begin with 0 and add logic to remove
+                    // + and add 91
+                    // (if issue found)
+                    if (StringUtils.equalsIgnoreCase(updatedNumber, numberToUpdate)) {
+                        callLogTypeOfList.setRcpLastName(callLogType.getRcpLastName());
+                        callLogTypeOfList.setRcpFirstName(callLogType.getRcpFirstName());
+                        callLogTypeOfList.setPrefix(callLogType.getPrefix());
+                        callLogTypeOfList.setSuffix(callLogType.getSuffix());
+                        callLogTypeOfList.setMiddleName(callLogType.getMiddleName());
+                        callLogTypeOfList.setIsRcpVerfied(callLogType.getIsRcpVerfied());
+                        callLogTypeOfList.setCallLogProfileRating(callLogType
+                                .getCallLogProfileRating());
+                        callLogTypeOfList.setCallLogTotalProfileRateUser(callLogType
+                                .getCallLogTotalProfileRateUser());
+                        if (StringUtils.equalsIgnoreCase(callLogType.getSpamCount(), spamCount)) {
+                            callLogTypeOfList.setSpamCount(callLogType.getSpamCount());
+                        } else {
+                            callLogTypeOfList.setSpamCount(spamCount);
+                        }
+                        callLogTypeOfList.setProfileImage(callLogType.getProfileImage());
+
+                        callLogTypeArrayList.set(i, callLogTypeOfList);
+                    }
                 }
             }
         }
     }
+
 
     @Override
     public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
         return super.onCreateAnimation(transit, enter, nextAnim);
     }
 
-    //<editor-fold desc="Public Private Methods">
-
-//    private void makeBlockedNumberList() {
-//        if (Utils.getHashMapPreferenceForBlock(getActivity(), AppConstants
-//                .PREF_BLOCK_CONTACT_LIST) != null) {
-//            HashMap<String, ArrayList<CallLogType>> blockProfileHashMapList =
-//                    Utils.getHashMapPreferenceForBlock(getActivity(), AppConstants
-//                            .PREF_BLOCK_CONTACT_LIST);
-//            ArrayList<CallLogType> callLogTypeList = new ArrayList<CallLogType>();
-//            ArrayList<String> listOfBlockedNumber = new ArrayList<>();
-//            String blockedNumber = "";
-//            String hashKey = "";
-//            if (blockProfileHashMapList != null && blockProfileHashMapList.size() > 0) {
-//                for (String key : blockProfileHashMapList.keySet()) {
-//                    System.out.println(key);
-//                    hashKey = key;
-//                    if (blockProfileHashMapList.containsKey(hashKey)) {
-//                        callLogTypeList.addAll(blockProfileHashMapList.get(hashKey));
-//                    }
-//                }
-//
-//                if (callLogTypeList != null) {
-//                    for (int j = 0; j < callLogTypeList.size(); j++) {
-//                        String tempNumber = callLogTypeList.get(j).getNumber();
-//                        if (!TextUtils.isEmpty(tempNumber)) {
-//                            listOfBlockedNumber.add(tempNumber);
-//                        }
-//                    }
-//                    Utils.setArrayListPreference(getActivity(), AppConstants.PREF_CALL_LOG_LIST,
-//                            listOfBlockedNumber);
-//                }
-//            } else {
-//                Utils.setArrayListPreference(getActivity(), AppConstants.PREF_CALL_LOG_LIST, new
-//                        ArrayList());
-//            }
-//
-//        }
-//    }
-
     private void initSpinner() {
 
         callLogTypeArrayList = new ArrayList<>();
-        nameAndProfileImage = new GetRCPNameAndProfileImage();
-
         callLogTypeArrayList = rContactApplication.getArrayListCallLogType();
 
         final List<String> spinnerArray = new ArrayList<>();
@@ -598,10 +945,13 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         spinnerArray.add(CALL_LOG_OUTGOING_CALLS);
         spinnerArray.add(CALL_LOG_MISSED_CALLS);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout
-                .simple_spinner_item, spinnerArray);
+        /*ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout
+                .simple_spinner_item, spinnerArray);*/
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout
+                .header_spinner_call_log, spinnerArray);
 
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        adapter.setDropDownViewResource(R.layout.list_item_spinner_call_log);
+//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerCallFilter.setAdapter(adapter);
 
         spinnerCallFilter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -610,24 +960,25 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 final String value = parent.getSelectedItem().toString();
                 if (!TextUtils.isEmpty(value)) {
                     selectedCallType = value;
+                    if (simpleCallLogListAdapter != null)
+                        actionModeCallback.onDestroyActionMode(actionMode);
 
                     Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
 
-                            if (AppConstants.isFirstTime()) {
-                                AppConstants.setIsFirstTime(false);
-//                                new GetCallLogs().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                                fetchCallLogs();
+//                            if (AppConstants.isFirstTime()) {
+//                                AppConstants.setIsFirstTime(false);
+//                                fetchCallLogs();
+//                            } else {
+                            if (callLogTypeArrayList.size() > 0) {
+                                getLatestData();
+//                                    makeSimpleData();
                             } else {
-                                if (callLogTypeArrayList.size() > 0) {
-                                    makeSimpleData();
-                                } else {
-//                                    new GetCallLogs().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                                    fetchCallLogs();
-                                }
+                                fetchCallLogs();
                             }
+//                            }
                         }
                     }, 250);
                 }
@@ -640,88 +991,38 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         });
     }
 
-    private ArrayList<CallLogType> divideCallLogByChunck() {
-        int size = callLogTypeArrayList.size();
-        callLogsListbyChunck = new ArrayList<>();
-        for (ArrayList<CallLogType> partition : choppedCallLog(callLogTypeArrayList, LIST_PARTITION_COUNT)) {
-            // do something with partition
-            callLogsListbyChunck.addAll(partition);
-            callLogTypeArrayList.removeAll(partition);
-            break;
-        }
-        return callLogsListbyChunck;
-    }
-
-    private ArrayList<CallLogType> divideCallLogByChunck(ArrayList<CallLogType> list) {
-        int size = 0;
-        callLogsListbyChunck = new ArrayList<>();
-        if (list != null && list.size() > 0) {
-            size = list.size();
-            if (size > LIST_PARTITION_COUNT) {
-                for (ArrayList<CallLogType> partition : choppedCallLog(list,
-                        LIST_PARTITION_COUNT)) {
-                    // do something with partition
-                    callLogsListbyChunck.addAll(partition);
-                    newList.removeAll(partition);
-                    break;
-                }
-            } else {
-                callLogsListbyChunck.addAll(list);
-                newList.removeAll(list);
-
-            }
-        }
-
-        return callLogsListbyChunck;
-    }
-
-    private class GetCallLogs extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            callLogTypeArrayList.clear();
-            simpleCallLogListAdapter = new SimpleCallLogListAdapter(getActivity(), callLogTypeArrayList);
-            recyclerCallLogs.setAdapter(simpleCallLogListAdapter);
-        }
-
-        protected Void doInBackground(Void... urls) {
-            fetchCallLogs();
-            return null;
-        }
-
-        protected void onPostExecute(Void result) {
-
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    makeSimpleData();
-                    nameAndProfileImage.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                }
-            });
-        }
-    }
+//    private ArrayList<CallLogType> divideCallLogByChunck() {
+//        callLogsListbyChunck = new ArrayList<>();
+//        for (ArrayList<CallLogType> partition : choppedCallLog(callLogTypeArrayList,
+// LIST_PARTITION_COUNT)) {
+//            // do something with partition
+//            callLogsListbyChunck.addAll(partition);
+////            callLogTypeArrayList.removeAll(partition);
+//            break;
+//        }
+//        return callLogsListbyChunck;
+//    }
 
     private void fetchCallLogs() {
 
         callLogTypeArrayList.clear();
-        simpleCallLogListAdapter = new SimpleCallLogListAdapter(getActivity(), callLogTypeArrayList);
+        simpleCallLogListAdapter = new SimpleCallLogListAdapter(getActivity(),
+                callLogTypeArrayList, this);
         recyclerCallLogs.setAdapter(simpleCallLogListAdapter);
 
         try {
 
             String order = CallLog.Calls.DATE + " DESC";
-            if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission
+                    .READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
 
-            Cursor cursor = getActivity().getContentResolver().query(CallLog.Calls.CONTENT_URI, null, null, null, order);
+            Cursor cursor = getActivity().getContentResolver().query(CallLog.Calls.CONTENT_URI,
+                    null, null, null, order);
 
             if (cursor != null) {
                 while (cursor.moveToNext()) {
-
-//                    String number = Utils.getFormattedNumber(getActivity(),
-//                            cursor.getString(cursor.getColumnIndex(CallLog.Calls.NUMBER)));
 
                     String number = cursor.getString(cursor.getColumnIndex(CallLog.Calls.NUMBER));
 
@@ -729,25 +1030,25 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
                     callLogType.setNumber(number);
 
-                    String userName = cursor.getString(cursor.getColumnIndex(CallLog.Calls.CACHED_NAME));
+                    String userName = cursor.getString(cursor.getColumnIndex(CallLog.Calls
+                            .CACHED_NAME));
 
-                    if (!TextUtils.isEmpty(userName))
+                    if (!StringUtils.isEmpty(userName))
                         callLogType.setName(userName);
-                    else
-                        callLogType.setName("");
+//                    else
+//                        callLogType.setName("");
 
                     callLogType.setType(cursor.getInt(cursor.getColumnIndex(CallLog.Calls.TYPE)));
-                    callLogType.setDuration(cursor.getInt(cursor.getColumnIndex(CallLog.Calls.DURATION)));
+                    callLogType.setDuration(cursor.getInt(cursor.getColumnIndex(CallLog.Calls
+                            .DURATION)));
                     callLogType.setDate(cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE)));
-                    callLogType.setUniqueContactId(cursor.getString(cursor.getColumnIndex(CallLog.Calls._ID)));
-//                    String uniquePhoneBookId = getStarredStatusFromNumber(number);
-//                    if (!TextUtils.isEmpty(uniquePhoneBookId)) {
-//                        callLogType.setLocalPbRowId(uniquePhoneBookId);
-//                    } else
+                    callLogType.setUniqueContactId(cursor.getString(cursor.getColumnIndex(CallLog
+                            .Calls._ID)));
                     callLogType.setLocalPbRowId(" ");
-                    callLogType.setProfileImage("");
-
-                    callLogTypeArrayList.add(callLogType);
+//                    callLogType.setProfileImage("");
+                    if (callLogType.getType() != AppConstants.NEW_CONTACT_MI) {
+                        callLogTypeArrayList.add(callLogType);
+                    }
                 }
                 cursor.close();
             }
@@ -756,43 +1057,115 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             e.printStackTrace();
         }
 
-        /*getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                makeSimpleData();
-                if(isFromDeleteBroadcast){
-                    isFromDeleteBroadcast =  false;
-                    new GetRCPNameAndProfileImage().execute();
-                }else{
-                    nameAndProfileImage.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                }
-
-            }
-        });*/
-
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 makeSimpleData();
-                /*if(isFromDeleteBroadcast){
-                    isFromDeleteBroadcast =  false;
-                    nameAndProfileImage = new GetRCPNameAndProfileImage();
-                    nameAndProfileImage.execute();
-                }else{
-                    nameAndProfileImage.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                }*/
                 nameAndProfileImage = new GetRCPNameAndProfileImage();
-                nameAndProfileImage.execute();
+                nameAndProfileImage.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
-        }, 100);
+        }, 150);
+    }
 
+    private void getLatestData() {
+
+        try {
+            String order = CallLog.Calls.DATE + " ASC";
+            String prefDate = Utils.getStringPreference(getActivity(), AppConstants
+                    .PREF_LATEST_CALL_DATE_TIME, "");
+            String prefRowId = Utils.getStringPreference(getActivity(), AppConstants
+                    .PREF_LATEST_CALL_RAW_ID, "");
+            String dateToCompare = "", tempDate = "";
+            String currentDate = "";
+            long dateToConvert = 0;
+            if (!StringUtils.isEmpty(prefDate)) {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale
+                        .getDefault());
+                dateToConvert = sdf.parse(prefDate).getTime();
+                dateToCompare = String.valueOf(dateToConvert);
+//                System.out.println("RContact last Call-log date : " + dateToCompare);
+                currentDate = String.valueOf(System.currentTimeMillis());
+            }
+
+            Cursor cursor = getActivity().getContentResolver().query(CallLog.Calls.CONTENT_URI,
+                    null, CallLog.Calls.DATE + " BETWEEN ? AND ?"
+                    , new String[]{dateToCompare, currentDate}, order);
+
+            if (cursor != null) {
+
+                while (cursor.moveToNext()) {
+
+                    DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a", Locale
+                            .getDefault());
+
+                    Date cursorDate = new Date(cursor.getLong(cursor.getColumnIndex(CallLog.Calls
+                            .DATE)));
+                    String cursorDateToCompare = sdf.format(cursorDate);
+
+                    Date compareDate = new Date(dateToConvert);
+                    String prefDateToCompare = sdf.format(compareDate);
+
+                    Date curDate = sdf.parse(cursorDateToCompare);
+                    Date preferenceDate = sdf.parse(prefDateToCompare);
+
+                    if (curDate.getTime() > preferenceDate.getTime() && (Integer.parseInt(cursor
+                            .getString(cursor.getColumnIndex(CallLog.Calls._ID)))
+                            > Integer.parseInt(prefRowId))) {
+                        String number = cursor.getString(cursor.getColumnIndex(CallLog.Calls
+                                .NUMBER));
+
+                        CallLogType callLogType = new CallLogType(getActivity());
+
+                        callLogType.setNumber(number);
+
+
+                        String userName = cursor.getString(cursor.getColumnIndex(CallLog.Calls
+                                .CACHED_NAME));
+
+                        if (!StringUtils.isEmpty(userName))
+                            callLogType.setName(userName);
+//                        else
+//                            callLogType.setName("");
+
+                        callLogType.setType(cursor.getInt(cursor.getColumnIndex(CallLog.Calls
+                                .TYPE)));
+                        callLogType.setDuration(cursor.getInt(cursor.getColumnIndex(CallLog.Calls
+                                .DURATION)));
+                        callLogType.setDate(cursor.getLong(cursor.getColumnIndex(CallLog.Calls
+                                .DATE)));
+                        callLogType.setUniqueContactId(cursor.getString(cursor.getColumnIndex
+                                (CallLog.Calls._ID)));
+                        callLogType.setLocalPbRowId(" ");
+//                        callLogType.setProfileImage("");
+                        if (callLogType.getType() != AppConstants.NEW_CONTACT_MI) {
+                            callLogTypeArrayList.add(0, callLogType);
+                        }
+//                        callLogTypeArrayList.add(0, callLogType);
+
+                    }
+                }
+                cursor.close();
+            }
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    makeSimpleData();
+                    nameAndProfileImage = new GetRCPNameAndProfileImage();
+                    nameAndProfileImage.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                }
+            }, 150);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void makeSimpleData() {
 
         System.out.println("RContact callLogTypeArrayList size --> " + callLogTypeArrayList.size());
 
-        ArrayList<CallLogType> filteredList = new ArrayList<>();
+        filteredList = new ArrayList<>();
 
         try {
             if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0) {
@@ -816,10 +1189,12 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                         }
                     }
 
-                    simpleCallLogListAdapter = new SimpleCallLogListAdapter(getActivity(), filteredList);
+                    simpleCallLogListAdapter = new SimpleCallLogListAdapter(getActivity(),
+                            filteredList, this);
 
                 } else {
-                    simpleCallLogListAdapter = new SimpleCallLogListAdapter(getActivity(), callLogTypeArrayList);
+                    simpleCallLogListAdapter = new SimpleCallLogListAdapter(getActivity(),
+                            callLogTypeArrayList, this);
                 }
 
                 recyclerCallLogs.setAdapter(simpleCallLogListAdapter);
@@ -834,22 +1209,189 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     private class GetRCPNameAndProfileImage extends AsyncTask<Void, Void, Void> {
 
         protected Void doInBackground(Void... urls) {
-            setRCPUserName();
-            getPhoto();
             getContactName();
+            getPhoto();
+            setRCPUserName();
+            setRCPDetailsAndSpamCountforUnsavedNumbers();
             return null;
         }
 
         protected void onPostExecute(Void result) {
 
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    simpleCallLogListAdapter.notifyDataSetChanged();
-                }
-            });
+            try {
+                simpleCallLogListAdapter.notifyDataSetChanged();
+                //Aniruddh -- TO do save 0th record dateTime and rawId in preference;
+                if (callLogTypeArrayList.size() > 0) {
+                    rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
+                    Long dateTime = callLogTypeArrayList.get(0).getDate();
+                    DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale
+                            .getDefault());
 
-            rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
+                    Date cursorDate = new Date(dateTime);
+                    String latestCallDate = sdf.format(cursorDate);
+                    String rawId = callLogTypeArrayList.get(0).getUniqueContactId();
+
+                    Utils.setStringPreference(getActivity(), AppConstants
+                            .PREF_LATEST_CALL_DATE_TIME, latestCallDate);
+                    Utils.setStringPreference(getActivity(), AppConstants
+                            .PREF_LATEST_CALL_RAW_ID, rawId);
+                } else {
+                    textNoCallsFound.setVisibility(View.VISIBLE);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private CallLogType setRCPDetailsAndSpamCountforUnsavedNumbers(String number, CallLogType
+            callLogType) {
+        try {
+            TableSpamDetailMaster tableSpamDetailMaster = new TableSpamDetailMaster
+                    (getDatabaseHandler());
+            if (!StringUtils.isEmpty(number)) {
+
+                if (number.startsWith("0")) {
+                    number = Utils.getFormattedNumber(getActivity(), number);
+                }
+
+                if (number.startsWith("+91"))
+                    number = number.replace("+", "");
+                else
+                    number = "91" + number;
+
+                SpamDataType spamDataType = tableSpamDetailMaster.getSpamDetailsFromNumber(number);
+                if (spamDataType != null && !StringUtils.isEmpty(spamDataType.getSpamCount())) {
+                    String lastName = spamDataType.getLastName();
+                    String firstName = spamDataType.getFirstName();
+                    String prefix = spamDataType.getPrefix();
+                    String suffix = spamDataType.getSuffix();
+                    String middleName = spamDataType.getMiddleName();
+                    String isRcpVerified = spamDataType.getRcpVerfiy();
+//                    String rcpId = spamDataType.getRcpPmId();
+                    String profileRating = spamDataType.getProfileRating();
+                    String totalProfileRateUser = spamDataType.getTotalProfileRateUser();
+                    String spamCount = spamDataType.getSpamCount();
+                    String photoUrl = spamDataType.getSpamPhotoUrl();
+
+                    if (MoreObjects.firstNonNull(callLogType.isRcpUser(), false)) {
+                        callLogType.setRcpFirstName(callLogType.getRcpFirstName());
+                        callLogType.setRcpLastName(callLogType.getRcpLastName());
+                        if (!StringUtils.isEmpty(spamCount))
+                            callLogType.setSpamCount(spamCount);
+                    } else {
+                        if (!StringUtils.isEmpty(lastName))
+                            callLogType.setRcpLastName(lastName);
+                        if (!StringUtils.isEmpty(firstName))
+                            callLogType.setRcpFirstName(firstName);
+                        if (!StringUtils.isEmpty(prefix))
+                            callLogType.setPrefix(prefix);
+                        if (!StringUtils.isEmpty(suffix))
+                            callLogType.setSuffix(suffix);
+                        if (!StringUtils.isEmpty(middleName))
+                            callLogType.setMiddleName(middleName);
+                        if (!StringUtils.isEmpty(isRcpVerified))
+                            callLogType.setIsRcpVerfied(isRcpVerified);
+                        /*if (!StringUtils.isEmpty(rcpId))
+                            callLogType.setRcpId(rcpId);*/
+                        if (!StringUtils.isEmpty(profileRating))
+                            callLogType.setCallLogProfileRating(profileRating);
+                        if (!StringUtils.isEmpty(totalProfileRateUser))
+                            callLogType.setCallLogTotalProfileRateUser(totalProfileRateUser);
+                        if (!StringUtils.isEmpty(spamCount))
+                            callLogType.setSpamCount(spamCount);
+                        if (!StringUtils.isEmpty(photoUrl))
+                            callLogType.setProfileImage(photoUrl);
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return callLogType;
+    }
+
+    private void setRCPDetailsAndSpamCountforUnsavedNumbers() {
+        try {
+            if (callLogTypeArrayList.size() > 0) {
+                TableSpamDetailMaster tableSpamDetailMaster = new TableSpamDetailMaster
+                        (getDatabaseHandler());
+                for (int i = 0; i < callLogTypeArrayList.size(); i++) {
+                    if (nameAndProfileImage != null && nameAndProfileImage.isCancelled())
+                        return;
+                    if (updateOldLogWithUpdatedDetails != null && updateOldLogWithUpdatedDetails
+                            .isCancelled())
+                        return;
+
+                    CallLogType callLogType = callLogTypeArrayList.get(i);
+                    String number = callLogType.getNumber();
+                    if (!StringUtils.isEmpty(number)) {
+                        if (number.startsWith("0")) {
+                            number = Utils.getFormattedNumber(getActivity(), number);
+                        }
+                        if (number.startsWith("+91"))
+                            number = number.replace("+", "");
+                        else
+                            number = "91" + number;
+
+                        SpamDataType spamDataType = tableSpamDetailMaster
+                                .getSpamDetailsFromNumber(number);
+                        if (spamDataType != null && !StringUtils.isEmpty(spamDataType
+                                .getSpamCount())) {
+                            String lastName = spamDataType.getLastName();
+                            String firstName = spamDataType.getFirstName();
+                            String prefix = spamDataType.getPrefix();
+                            String suffix = spamDataType.getSuffix();
+                            String middleName = spamDataType.getMiddleName();
+                            String isRcpVerified = spamDataType.getRcpVerfiy();
+//                            String rcpId = spamDataType.getRcpPmId();
+                            String profileRating = spamDataType.getProfileRating();
+                            String totalProfileRateUser = spamDataType.getTotalProfileRateUser();
+                            String spamCount = spamDataType.getSpamCount();
+                            String publicUrl = spamDataType.getSpamPublicUrl();
+                            String photoUrl = spamDataType.getSpamPhotoUrl();
+
+                            if (MoreObjects.firstNonNull(callLogType.isRcpUser(), false)) {
+                                callLogType.setRcpFirstName(callLogType.getRcpFirstName());
+                                callLogType.setRcpLastName(callLogType.getRcpLastName());
+                                if (!StringUtils.isEmpty(spamCount))
+                                    callLogType.setSpamCount(spamCount);
+                            } else {
+                                if (!StringUtils.isEmpty(lastName))
+                                    callLogType.setRcpLastName(lastName);
+                                if (!StringUtils.isEmpty(firstName))
+                                    callLogType.setRcpFirstName(firstName);
+                                if (!StringUtils.isEmpty(prefix))
+                                    callLogType.setPrefix(prefix);
+                                if (!StringUtils.isEmpty(suffix))
+                                    callLogType.setSuffix(suffix);
+                                if (!StringUtils.isEmpty(middleName))
+                                    callLogType.setMiddleName(middleName);
+                                if (!StringUtils.isEmpty(isRcpVerified))
+                                    callLogType.setIsRcpVerfied(isRcpVerified);
+                                /*if (!StringUtils.isEmpty(rcpId))
+                                    callLogType.setRcpId(rcpId);*/
+                                if (!StringUtils.isEmpty(profileRating))
+                                    callLogType.setCallLogProfileRating(profileRating);
+                                if (!StringUtils.isEmpty(totalProfileRateUser))
+                                    callLogType.setCallLogTotalProfileRateUser
+                                            (totalProfileRateUser);
+                                if (!StringUtils.isEmpty(spamCount))
+                                    callLogType.setSpamCount(spamCount);
+                                if (!StringUtils.isEmpty(photoUrl))
+                                    callLogType.setProfileImage(photoUrl);
+                            }
+
+                            callLogTypeArrayList.set(i, callLogType);
+                        }
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -859,8 +1401,12 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 for (int i = 0; i < callLogTypeArrayList.size(); i++) {
                     if (nameAndProfileImage != null && nameAndProfileImage.isCancelled())
                         return;
+                    if (updateOldLogWithUpdatedDetails != null && updateOldLogWithUpdatedDetails
+                            .isCancelled())
+                        return;
                     CallLogType callLogType = callLogTypeArrayList.get(i);
-                    String number = callLogType.getNumber();
+                    String number = Utils.getFormattedNumber(getActivity(), callLogType.getNumber
+                            ());
                     if (!StringUtils.isEmpty(number)) {
 
                         String photoThumbNail = getPhotoUrlFromNumber(number);
@@ -869,7 +1415,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                         } else {
                             callLogType.setProfileImage("");
                         }
-
                         callLogTypeArrayList.set(i, callLogType);
                     }
                 }
@@ -880,21 +1425,26 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
     }
 
-    /*private void getContactName() {
+    private void getContactName() {
         try {
             if (callLogTypeArrayList.size() > 0) {
                 for (int i = 0; i < callLogTypeArrayList.size(); i++) {
                     if (nameAndProfileImage != null && nameAndProfileImage.isCancelled())
                         return;
+                    if (updateOldLogWithUpdatedDetails != null && updateOldLogWithUpdatedDetails
+                            .isCancelled())
+                        return;
                     CallLogType callLogType = callLogTypeArrayList.get(i);
-                    String number = callLogType.getNumber();
+                    String number = Utils.getFormattedNumber(getActivity(), callLogType.getNumber
+                            ());
                     String name = callLogType.getName();
                     if (StringUtils.isEmpty(name)) {
                         name = getNameFromNumber(number);
-                        if (!StringUtils.isEmpty(name))
+                        if (!StringUtils.isEmpty(name)) {
                             callLogType.setName(name);
-                        else
-                            callLogType.setName("");
+                        } else {
+//                            callLogType.setName("");
+                        }
                     }
                     callLogTypeArrayList.set(i, callLogType);
                 }
@@ -903,39 +1453,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }*/
-    private void getContactName() {
-        try {
-            if (callLogTypeArrayList.size() > 0) {
-                for (int i = 0; i < callLogTypeArrayList.size(); i++) {
-                    if (nameAndProfileImage != null && nameAndProfileImage.isCancelled())
-                        return;
-                    CallLogType callLogType = callLogTypeArrayList.get(i);
-                    String number = callLogType.getNumber();
-
-                    if (!number.startsWith("+91")) {
-                        number = "+91" + number;
-                    }
-
-                    String name = callLogType.getName();
-                    if (StringUtils.isEmpty(name)) {
-                        name = getNameFromNumber(number);
-                        if (!StringUtils.isEmpty(name)) {
-                            callLogType.setName(name);
-                            callLogTypeArrayList.set(i, callLogType);
-                        } else {
-                            callLogType.setName("");
-                        }
-                    }
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
     }
-
 
     private void setRCPUserName() {
 
@@ -944,20 +1462,18 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 for (int i = 0; i < callLogTypeArrayList.size(); i++) {
                     if (nameAndProfileImage != null && nameAndProfileImage.isCancelled())
                         return;
+                    if (updateOldLogWithUpdatedDetails != null && updateOldLogWithUpdatedDetails.isCancelled())
+                        return;
                     CallLogType callLogType = callLogTypeArrayList.get(i);
 
-//                    String number = callLogType.getNumber();
-                    String number =  Utils.getFormattedNumber(getActivity(),callLogType.getNumber());
-
-                    /*if (!number.startsWith("+91")) {
-                        number = "+91" + number;
-                    }*/
-
+                    String number = Utils.getFormattedNumber(getActivity(), callLogType.getNumber
+                            ());
 
                     if (!StringUtils.isEmpty(number)) {
 
                         ProfileMobileMapping profileMobileMapping =
-                                tableProfileMobileMapping.getCloudPmIdFromProfileMappingFromNumber(number);
+                                tableProfileMobileMapping
+                                        .getCloudPmIdFromProfileMappingFromNumber(number);
                         if (profileMobileMapping != null) {
                             String cloudPmId = profileMobileMapping.getMpmCloudPmId();
                             if (!StringUtils.isEmpty(cloudPmId)) {
@@ -986,49 +1502,39 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
-    private void insertServiceCall(ArrayList<CallLogType> callLogTypeArrayList) {
-
-        if (Utils.isNetworkAvailable(getActivity())) {
-            WsRequestObject deviceDetailObject = new WsRequestObject();
-            deviceDetailObject.setFlag(IntegerConstants.SYNC_INSERT_CALL_LOG);
-            deviceDetailObject.setArrayListCallLogType(callLogTypeArrayList);
-            if (Utils.isNetworkAvailable(getActivity())) {
-                new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
-                        deviceDetailObject, null, WsResponseObject.class, WsConstants
-                        .REQ_UPLOAD_CALL_LOGS, null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                        WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_CALL_LOGS);
-            } else {
-                Utils.showErrorSnackBar(getActivity(), linearCallLogMain, getResources()
-                        .getString(R.string.msg_no_network));
-            }
-        }
-
-    }
-
-    private ArrayList<ArrayList<CallLogType>> choppedCallLog(ArrayList<CallLogType> list,
-                                                             final
-                                                             int L) {
-        ArrayList<ArrayList<CallLogType>> parts = new ArrayList<ArrayList<CallLogType>>();
-        final int N = list.size();
-        for (int i = 0; i < N; i += L) {
-            parts.add(new ArrayList<CallLogType>(
-                    list.subList(i, Math.min(N, i + L)))
-            );
-        }
-        return parts;
-    }
+//    private void insertServiceCall(ArrayList<CallLogType> callLogTypeArrayList) {
+//
+//        if (Utils.isNetworkAvailable(getActivity())) {
+//            WsRequestObject deviceDetailObject = new WsRequestObject();
+//            deviceDetailObject.setFlag(IntegerConstants.SYNC_INSERT_CALL_LOG);
+//            deviceDetailObject.setArrayListCallLogType(callLogTypeArrayList);
+//            if (Utils.isNetworkAvailable(getActivity())) {
+//                new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+//                        deviceDetailObject, null, WsResponseObject.class, WsConstants
+//                        .REQ_UPLOAD_CALL_LOGS, null, true).executeOnExecutor(AsyncTask
+// .THREAD_POOL_EXECUTOR,
+//                        WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_CALL_LOGS);
+//            } else {
+//                Utils.showErrorSnackBar(getActivity(), linearCallLogMain, getResources()
+//                        .getString(R.string.msg_no_network));
+//            }
+//        }
+//
+//    }
 
     private String getNameFromNumber(String phoneNumber) {
         String contactName = "";
         try {
 
-            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
+            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri
+                    .encode(phoneNumber));
 
-            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME, ContactsContract.PhoneLookup.LOOKUP_KEY};
-            Cursor cursor = getActivity().getContentResolver().query(uri, projection, null, null, null);
+            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME,
+                    ContactsContract.PhoneLookup.LOOKUP_KEY};
+            Cursor cursor = getActivity().getContentResolver().query(uri, projection, null, null,
+                    null);
 
             if (cursor != null) {
                 while (cursor.moveToNext()) {
@@ -1036,6 +1542,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                             (ContactsContract.PhoneLookup.DISPLAY_NAME));
                 }
                 cursor.close();
+            } else {
+                if (!cursor.isClosed())
+                    cursor.close();
             }
 
         } catch (Exception e) {
@@ -1044,28 +1553,13 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         return contactName;
     }
 
-    /**
-     * Set RecyclerView's LayoutManager
-     */
-    public void setRecyclerViewLayoutManager(RecyclerView recyclerView) {
-        int scrollPosition = 0;
-        // If a layout manager has already been set, get current scroll position.
-        if (recyclerView.getLayoutManager() != null) {
-            scrollPosition =
-                    ((LinearLayoutManager) recyclerView.getLayoutManager())
-                            .findFirstCompletelyVisibleItemPosition();
-        }
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.scrollToPosition(scrollPosition);
-    }
-
     private String getPhotoUrlFromNumber(String phoneNumber) {
         String photoThumbUrl = "";
         Cursor cursor = null;
         try {
 
-            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
+            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri
+                    .encode(phoneNumber));
 
             String[] projection = new String[]{ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI};
             cursor = getActivity().getContentResolver().query(uri, projection, null, null, null);
@@ -1085,6 +1579,22 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         }
 
         return photoThumbUrl;
+    }
+
+    /**
+     * Set RecyclerView's LayoutManager
+     */
+    public void setRecyclerViewLayoutManager(RecyclerView recyclerView) {
+        int scrollPosition = 0;
+        // If a layout manager has already been set, get current scroll position.
+        if (recyclerView.getLayoutManager() != null) {
+            scrollPosition =
+                    ((LinearLayoutManager) recyclerView.getLayoutManager())
+                            .findFirstCompletelyVisibleItemPosition();
+        }
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.scrollToPosition(scrollPosition);
     }
 
     private String getStarredStatusFromNumber(String phoneNumber) {
@@ -1153,7 +1663,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 return getActivity().getString(R.string.call_log_voice_mail);
 
         }
-        return getActivity().getString(R.string.type_other_caps);
+        return getActivity().getString(R.string.type_other);
     }
 
     public String getPhoneNumberType(int type) {
@@ -1233,7 +1743,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                int position = viewHolder.getAdapterPosition();
+                final int position = viewHolder.getAdapterPosition();
                 String actionNumber = StringUtils.defaultString(((SimpleCallLogListAdapter
                         .CallLogViewHolder) viewHolder).textTempNumber.getText()
                         .toString());
@@ -1246,15 +1756,17 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     startActivity(smsIntent);
 
                 } else {
-                    showCallConfirmationDialog(actionNumber);
+                    actionNumber = Utils.getFormattedNumber(getActivity(), actionNumber);
+                    Utils.callIntent(getActivity(), actionNumber);
+//                    showCallConfirmationDialog(actionNumber);
                 }
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        simpleCallLogListAdapter.notifyDataSetChanged();
+                        simpleCallLogListAdapter.notifyItemChanged(position);
                     }
-                }, 1000);
+                }, 300);
             }
 
             @Override
@@ -1309,36 +1821,35 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         itemTouchHelper.attachToRecyclerView(recyclerCallLogs);
     }
 
-
-    private void showCallConfirmationDialog(String number) {
-        final String formattedNumber = Utils.getFormattedNumber(getActivity(), number);
-        RippleView.OnRippleCompleteListener cancelListener = new RippleView
-                .OnRippleCompleteListener() {
-
-            @Override
-            public void onComplete(RippleView rippleView) {
-                switch (rippleView.getId()) {
-                    case R.id.rippleLeft:
-                        callConfirmationDialog.dismissDialog();
-                        break;
-
-                    case R.id.rippleRight:
-                        callConfirmationDialog.dismissDialog();
-                        Utils.callIntent(getActivity(), formattedNumber);
-                        break;
-                }
-            }
-        };
-
-        callConfirmationDialog = new MaterialDialog(getActivity(), cancelListener);
-        callConfirmationDialog.setTitleVisibility(View.GONE);
-        callConfirmationDialog.setLeftButtonText(getActivity().getString(R.string.action_cancel));
-        callConfirmationDialog.setRightButtonText(getActivity().getString(R.string.action_call));
-        callConfirmationDialog.setDialogBody(getActivity().getString(R.string.action_call) + " "
-                + formattedNumber + "?");
-        callConfirmationDialog.showDialog();
-
-    }
+//    private void showCallConfirmationDialog(String number) {
+//        final String formattedNumber = Utils.getFormattedNumber(getActivity(), number);
+//        RippleView.OnRippleCompleteListener cancelListener = new RippleView
+//                .OnRippleCompleteListener() {
+//
+//            @Override
+//            public void onComplete(RippleView rippleView) {
+//                switch (rippleView.getId()) {
+//                    case R.id.rippleLeft:
+//                        callConfirmationDialog.dismissDialog();
+//                        break;
+//
+//                    case R.id.rippleRight:
+//                        callConfirmationDialog.dismissDialog();
+//                        Utils.callIntent(getActivity(), formattedNumber);
+//                        break;
+//                }
+//            }
+//        };
+//
+//        callConfirmationDialog = new MaterialDialog(getActivity(), cancelListener);
+//        callConfirmationDialog.setTitleVisibility(View.GONE);
+//        callConfirmationDialog.setLeftButtonText(getActivity().getString(R.string.action_cancel));
+//        callConfirmationDialog.setRightButtonText(getActivity().getString(R.string.action_call));
+//        callConfirmationDialog.setDialogBody(getActivity().getString(R.string.action_call) + " "
+//                + formattedNumber + "?");
+//        callConfirmationDialog.showDialog();
+//
+//    }
 
     boolean isDualSIM;
 
@@ -1386,6 +1897,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     private Cursor getCallHistoryDataByNumber(String number) {
         Cursor cursor = null;
         String order = CallLog.Calls.DATE + " DESC";
+        if (getActivity() == null)
+            return null;
         try {
             cursor = getActivity().getContentResolver().query(CallLog.Calls.CONTENT_URI, null,
                     CallLog.Calls.NUMBER + " =?", new String[]{number}, order);
@@ -1401,6 +1914,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     private Cursor getCallHistoryDataByName(String name) {
         Cursor cursor = null;
         String order = CallLog.Calls.DATE + " DESC";
+        if (getActivity() == null)
+            return null;
         try {
             cursor = getActivity().getContentResolver().query(CallLog.Calls.CONTENT_URI, null,
                     CallLog.Calls.CACHED_NAME + " =?", new String[]{name}, order);
@@ -1411,8 +1926,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         return cursor;
     }
 
-
-    private ArrayList callLogHistory(String number) {
+    private ArrayList<CallLogType> callLogHistory(String number) {
         ArrayList<CallLogType> callDetails = new ArrayList<>();
         Cursor cursor = null;
         try {
@@ -1433,14 +1947,10 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 int duration = cursor.getColumnIndex(CallLog.Calls.DURATION);
                 int callLogId = cursor.getColumnIndex(CallLog.Calls._ID);
                 int numberType = cursor.getColumnIndex(CallLog.Calls.CACHED_NUMBER_TYPE);
-                int account = -1;
                 int account_id = -1;
-                int profileImage = -1;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    account = cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_COMPONENT_NAME);
                     //for versions above lollipop
                     account_id = cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_ID);
-                    profileImage = cursor.getColumnIndex(CallLog.Calls.CACHED_PHOTO_URI);
                 } else {
                     account_id = cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_ID);
                 }
@@ -1477,9 +1987,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     }
                     logObject.setTypeOfCall(typeOfCall);
 
-                    String durationtoPass = logObject.getCoolDuration(Float.parseFloat
-                            (callDuration));
-                    logObject.setDurationToPass(durationtoPass);
+//                    String durationtoPass = logObject.getCoolDuration(Float.parseFloat
+//                            (callDuration));
+//                    logObject.setDurationToPass(durationtoPass);
 
                     callDetails.add(logObject);
                 }
@@ -1537,7 +2047,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     boolean clearLogsFromContacts;
     private BroadcastReceiver localBroadcastReceiver = new BroadcastReceiver() {
         @Override
-        public void onReceive(Context context, Intent intent) {
+        public void onReceive(Context context, final Intent intent) {
             // Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
             clearLogs = intent.getBooleanExtra(AppConstants.EXTRA_CLEAR_CALL_LOGS, false);
             clearLogsFromContacts = intent.getBooleanExtra(AppConstants
@@ -1547,49 +2057,82 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    if (clearLogs) {
-                        if (simpleCallLogListAdapter != null) {
-                            // when data was loaded everytime
-
-                            // updated on 19/04/2017, when data are loading from arraylist
-                            CallLogType callDataToUpdate = simpleCallLogListAdapter
-                                    .getSelectedCallLogData();
-                            String number = callDataToUpdate.getNumber();
-                            for (int i = 0; i < callLogTypeArrayList.size(); i++) {
-                                CallLogType callLogType = callLogTypeArrayList.get(i);
-                                String numberToDelete = callLogType.getNumber();
-                                if (numberToDelete.equalsIgnoreCase(number)) {
-                                    callLogTypeArrayList.remove(callLogType);
-                                    rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
-                                    simpleCallLogListAdapter.notifyDataSetChanged();
-                                }
-                            }
-
-                            clearLogs = false;
-                        }
-                    } else {
-                        if (clearLogsFromContacts) {
-                            if (simpleCallLogListAdapter != null) {
-                                // when data was loaded everytime
-
-                                // updated on 19/04/2017, when data are loading from arraylist
-                                CallLogType callDataToUpdate = simpleCallLogListAdapter
-                                        .getSelectedCallLogData();
-                                String number = callDataToUpdate.getNumber();
-                                for (int i = 0; i < callLogTypeArrayList.size(); i++) {
-                                    CallLogType callLogType = callLogTypeArrayList.get(i);
-                                    String numberToDelete = callLogType.getNumber();
-                                    if (numberToDelete.equalsIgnoreCase(number)) {
-                                        callLogTypeArrayList.remove(callLogType);
-                                        rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
-                                        simpleCallLogListAdapter.notifyDataSetChanged();
+                    if(intent.hasExtra("from")){
+                        if(intent.getStringExtra("from").equalsIgnoreCase("clearCallLog")){
+                            if (intent.hasExtra("number")) {
+                                String number = intent.getStringExtra("number");
+                                if (!StringUtils.isBlank(number)) {
+                                    if (!number.startsWith("+91"))
+                                        number = Utils.getFormattedNumber(getActivity(), number);
+                                    for (int i = 0; i < callLogTypeArrayList.size(); i++) {
+                                        CallLogType callLogType = callLogTypeArrayList.get(i);
+                                        String numberToDelete = callLogType.getNumber();
+                                        if (!numberToDelete.startsWith("+91"))
+                                            numberToDelete = Utils.getFormattedNumber(getActivity(), numberToDelete);
+                                        if (numberToDelete.equalsIgnoreCase(number)) {
+                                            callLogTypeArrayList.remove(callLogType);
+                                            rContactApplication.setArrayListCallLogType
+                                                    (callLogTypeArrayList);
+                                            simpleCallLogListAdapter.notifyDataSetChanged();
+                                        }
                                     }
                                 }
-                                clearLogsFromContacts = false;
+                            }
+                        }
+                    }else {
+                        if (clearLogs) {
+                            if (simpleCallLogListAdapter != null) {
+                                // when data was loaded everytime
+                                // updated on 19/04/2017, when data are loading from arraylist
+                                CallLogType callDataToUpdate = simpleCallLogListAdapter.getSelectedCallLogData();
+                                if (callDataToUpdate != null) {
+                                    String number = callDataToUpdate.getNumber();
+                                    if (!number.startsWith("+91"))
+                                        number = Utils.getFormattedNumber(getActivity(), number);
+                                    for (int i = 0; i < callLogTypeArrayList.size(); i++) {
+                                        CallLogType callLogType = callLogTypeArrayList.get(i);
+                                        String numberToDelete = callLogType.getNumber();
+                                        if (!numberToDelete.startsWith("+91"))
+                                            numberToDelete = Utils.getFormattedNumber(getActivity(), numberToDelete);
+                                        if (numberToDelete.equalsIgnoreCase(number)) {
+                                            callLogTypeArrayList.remove(callLogType);
+                                            rContactApplication.setArrayListCallLogType
+                                                    (callLogTypeArrayList);
+                                            simpleCallLogListAdapter.notifyDataSetChanged();
+                                        }
+                                    }
+                                }
+                                clearLogs = false;
+                            }
+                        } else {
+                            if (clearLogsFromContacts) {
+                                if (simpleCallLogListAdapter != null) {
+                                    // when data was loaded everytime
+                                    // updated on 19/04/2017, when data are loading from arraylist
+                                    CallLogType callDataToUpdate = simpleCallLogListAdapter
+                                            .getSelectedCallLogData();
+                                    if (callDataToUpdate != null) {
+                                        String number = callDataToUpdate.getNumber();
+                                        if (!number.startsWith("+91"))
+                                            number = Utils.getFormattedNumber(getActivity(), number);
+                                        for (int i = 0; i < callLogTypeArrayList.size(); i++) {
+                                            CallLogType callLogType = callLogTypeArrayList.get(i);
+                                            String numberToDelete = callLogType.getNumber();
+                                            if (!numberToDelete.startsWith("+91"))
+                                                numberToDelete = Utils.getFormattedNumber(getActivity(), numberToDelete);
+                                            if (numberToDelete.equalsIgnoreCase(number)) {
+                                                callLogTypeArrayList.remove(callLogType);
+                                                rContactApplication.setArrayListCallLogType
+                                                        (callLogTypeArrayList);
+                                                simpleCallLogListAdapter.notifyDataSetChanged();
+                                            }
+                                        }
+                                    }
+                                    clearLogsFromContacts = false;
+                                }
                             }
                         }
                     }
-
                 }
             }, 1000);
         }
@@ -1611,14 +2154,17 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                         if (simpleCallLogListAdapter != null) {
                             int itemIndexToRemove = simpleCallLogListAdapter.getSelectedPosition();
 
-                            System.out.println("RContact itemIndexToRemove --> " + itemIndexToRemove);
+//                            System.out.println("RContact itemIndexToRemove --> " +
+// itemIndexToRemove);
 
                             // updated on 19/04/2017, when data are loading from arraylist
-//                            CallLogType callDataToUpdate = simpleCallLogListAdapter.getSelectedCallLogData();
+//                            CallLogType callDataToUpdate = simpleCallLogListAdapter
+// .getSelectedCallLogData();
                             callLogTypeArrayList.remove(itemIndexToRemove);
                             rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
                             simpleCallLogListAdapter.notifyItemRemoved(itemIndexToRemove);
-                            simpleCallLogListAdapter.notifyItemRangeChanged(itemIndexToRemove, simpleCallLogListAdapter.getItemCount());
+                            simpleCallLogListAdapter.notifyItemRangeChanged(itemIndexToRemove,
+                                    simpleCallLogListAdapter.getItemCount());
                             removeLogs = false;
                         }
                     }
@@ -1632,7 +2178,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            boolean deleteAll = intent.getBooleanExtra(AppConstants.EXTRA_DELETE_ALL_CALL_LOGS, false);
+            boolean deleteAll = intent.getBooleanExtra(AppConstants.EXTRA_DELETE_ALL_CALL_LOGS,
+                    false);
             if (deleteAll) {
                 if (simpleCallLogListAdapter != null) {
                     // when data was loaded everytime
@@ -1705,6 +2252,44 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         }
     };
     //</editor-fold>
-
-
 }
+
+//<editor-fold desc="Public Private Methods">
+
+//    private void makeBlockedNumberList() {
+//        if (Utils.getHashMapPreferenceForBlock(getActivity(), AppConstants
+//                .PREF_BLOCK_CONTACT_LIST) != null) {
+//            HashMap<String, ArrayList<CallLogType>> blockProfileHashMapList =
+//                    Utils.getHashMapPreferenceForBlock(getActivity(), AppConstants
+//                            .PREF_BLOCK_CONTACT_LIST);
+//            ArrayList<CallLogType> callLogTypeList = new ArrayList<CallLogType>();
+//            ArrayList<String> listOfBlockedNumber = new ArrayList<>();
+//            String blockedNumber = "";
+//            String hashKey = "";
+//            if (blockProfileHashMapList != null && blockProfileHashMapList.size() > 0) {
+//                for (String key : blockProfileHashMapList.keySet()) {
+//                    System.out.println(key);
+//                    hashKey = key;
+//                    if (blockProfileHashMapList.containsKey(hashKey)) {
+//                        callLogTypeList.addAll(blockProfileHashMapList.get(hashKey));
+//                    }
+//                }
+//
+//                if (callLogTypeList != null) {
+//                    for (int j = 0; j < callLogTypeList.size(); j++) {
+//                        String tempNumber = callLogTypeList.get(j).getNumber();
+//                        if (!TextUtils.isEmpty(tempNumber)) {
+//                            listOfBlockedNumber.add(tempNumber);
+//                        }
+//                    }
+//                    Utils.setArrayListPreference(getActivity(), AppConstants.PREF_CALL_LOG_LIST,
+//                            listOfBlockedNumber);
+//                }
+//            } else {
+//                Utils.setArrayListPreference(getActivity(), AppConstants.PREF_CALL_LOG_LIST, new
+//                        ArrayList());
+//            }
+//
+//        }
+//    }
+

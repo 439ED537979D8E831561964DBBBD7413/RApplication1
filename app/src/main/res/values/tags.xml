@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <item name="spinner_position" type="id"/>
+    <item name="spinner_type" type="id"/>
+
+    <item name="spinner_country_id" type="id"/>
+    <item name="spinner_country_position" type="id"/>
+
+    <item name="spinner_state_id" type="id"/>
+    <item name="spinner_state_position" type="id"/>
+
+    <item name="spinner_city_id" type="id"/>
+
+</resources>

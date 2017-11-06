@@ -25,6 +25,7 @@ public class ProfileDataOperation implements Serializable {
     private String pbNameFirst;
     private String pbNameMiddle;
     private ArrayList<ProfileDataOperationOrganization> pbOrganization;
+    private ArrayList<OrganizationListData> pbOrganizationList;
     private String isFavourite;
     private String pbSource;
     private String pbNamePrefix;
@@ -53,9 +54,12 @@ public class ProfileDataOperation implements Serializable {
     private String totalProfileRateUser;
     private String pbGender;
     private String pbProfilePhoto;
+    private String pmBadge;
 
     private String lookupKey;
     private long id;
+    private String callLogId;
+    private ProfileDataOperationAadharNumber pbAadhar;
 
     public ProfileDataOperation() {
     }
@@ -144,6 +148,15 @@ public class ProfileDataOperation implements Serializable {
 
     public void setPbOrganization(ArrayList<ProfileDataOperationOrganization> pbOrganization) {
         this.pbOrganization = pbOrganization;
+    }
+
+    @JsonProperty("pb_organization_list")
+    public ArrayList<OrganizationListData> getPbOrganizationList() {
+        return pbOrganizationList;
+    }
+
+    public void setPbOrganizationList(ArrayList<OrganizationListData> pbOrganizationList) {
+        this.pbOrganizationList = pbOrganizationList;
     }
 
     @JsonProperty("is_favourite")
@@ -346,7 +359,7 @@ public class ProfileDataOperation implements Serializable {
 
     @JsonProperty("total_profile_rate_user")
     public String getTotalProfileRateUser() {
-        return StringUtils.defaultString(totalProfileRateUser,"0");
+        return StringUtils.defaultString(totalProfileRateUser, "0");
     }
 
     public void setTotalProfileRateUser(String totalProfileRateUser) {
@@ -387,6 +400,24 @@ public class ProfileDataOperation implements Serializable {
 
     public void setPbProfilePhoto(String pbProfilePhoto) {
         this.pbProfilePhoto = pbProfilePhoto;
+    }
+
+    @JsonProperty("call_log_row_id")
+    public String getCallLogId() {
+        return callLogId;
+    }
+
+    public void setCallLogId(String callLogId) {
+        this.callLogId = callLogId;
+    }
+
+    @JsonProperty("pm_badge")
+    public String getPmBadge() {
+        return pmBadge;
+    }
+
+    public void setPmBadge(String pmBadge) {
+        this.pmBadge = pmBadge;
     }
 
     @JsonIgnore
@@ -462,5 +493,14 @@ public class ProfileDataOperation implements Serializable {
             pbEvent = new ArrayList<>();
         }
         pbEvent.add(event);
+    }
+
+    @JsonProperty("pb_aadhaar")
+    public ProfileDataOperationAadharNumber getPbAadhar() {
+        return pbAadhar;
+    }
+
+    public void setPbAadhar(ProfileDataOperationAadharNumber pbAadhar) {
+        this.pbAadhar = pbAadhar;
     }
 }

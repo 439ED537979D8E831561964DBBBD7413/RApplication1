@@ -9,6 +9,7 @@ public class Email {
     private String emId;
     private String emEmailAddress;
     private String emEmailType;
+    private String emSocialType;
     private String emRecordIndexId;
     private String emEmailPrivacy;
     private String emIsVerified;
@@ -42,6 +43,14 @@ public class Email {
 
     public void setEmEmailType(String emEmailType) {
         this.emEmailType = emEmailType;
+    }
+
+    public String getEmSocialType() {
+        return emSocialType;
+    }
+
+    public void setEmSocialType(String emSocialType) {
+        this.emSocialType = emSocialType;
     }
 
     public String getEmEmailPrivacy() {

@@ -1,7 +1,9 @@
 package com.rawalinfocom.rcontact.adapters;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +12,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.NotificationItem;
 import com.rawalinfocom.rcontact.notifications.NotificationsDetailActivity;
 import com.rawalinfocom.rcontact.notifications.TimelineActivity;
@@ -23,7 +26,8 @@ import butterknife.ButterKnife;
  * Created by maulik on 14/03/17.
  */
 
-public class NotificationsMainAdapter extends RecyclerView.Adapter<NotificationsMainAdapter.MyViewHolder> {
+public class NotificationsMainAdapter extends RecyclerView.Adapter<NotificationsMainAdapter
+        .MyViewHolder> {
 
     private List<NotificationItem> list;
     private Context context;
@@ -52,13 +56,14 @@ public class NotificationsMainAdapter extends RecyclerView.Adapter<Notifications
         int count = item.getNotificationItemCount();
         if (count > 0) {
             holder.textNotificationsCount.setText(String.valueOf(count));
-            holder.textNotificationDetail.setText(context.getString(R.string.str_unread_notification_hint_1) + count
+            holder.textNotificationDetail.setText(context.getString(R.string
+                    .str_unread_notification_hint_1) + " " + count + " "
                     + context.getString(R.string.str_unread_notification_hint_2));
         } else {
-            holder.textNotificationsCount.setVisibility(View.GONE);
-            holder.textNotificationDetail.setText(context.getString(R.string.str_unread_notification_hint_3));
+            holder.textNotificationsCount.setVisibility(View.INVISIBLE);
+            holder.textNotificationDetail.setText(context.getString(R.string
+                    .str_unread_notification_hint_3));
         }
-
 
         holder.buttonViewMore.setText(context.getString(R.string.str_view_more));
         holder.buttonViewMore.setOnClickListener(new View.OnClickListener() {
@@ -90,10 +95,16 @@ public class NotificationsMainAdapter extends RecyclerView.Adapter<Notifications
                     intent.putExtra("TAB_INDEX", tabIndex);
                 }
                 context.startActivity(intent);
+                removeNotification();
             }
         });
         //  holder.buttonViewMore.setBackgroundColor(Color.parseColor("#003933"));
+    }
 
+    private void removeNotification() {
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService
+                (Context.NOTIFICATION_SERVICE);
+        notificationManager.cancelAll();
     }
 
     @Override
@@ -115,6 +126,15 @@ public class NotificationsMainAdapter extends RecyclerView.Adapter<Notifications
         public MyViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+
+            Utils.setRoundedCornerBackground(buttonViewMore, ContextCompat.getColor(context, R
+                    .color.colorAccent), 7, 0, ContextCompat.getColor(context, R.color
+                    .colorAccent));
+
+            textNotificationHeader.setTypeface(Utils.typefaceRegular(context));
+            textNotificationsCount.setTypeface(Utils.typefaceRegular(context));
+            textNotificationDetail.setTypeface(Utils.typefaceRegular(context));
+            buttonViewMore.setTypeface(Utils.typefaceSemiBold(context));
         }
     }
 }

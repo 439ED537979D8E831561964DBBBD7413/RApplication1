@@ -1,9 +1,13 @@
 package com.rawalinfocom.rcontact.webservice;
 
+import android.app.Activity;
 import android.util.Log;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.constants.WsConstants;
+import com.rawalinfocom.rcontact.helper.Utils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -25,14 +29,16 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class WebServiceGet {
 
-    private static final String TAG_LOG = "WebServiceGet";
+    private static final String TAG_LOG = "WebServiceGetForCallPopup";
     private final Lock lock = new ReentrantLock();
     private String url;
+    private Activity activity;
     private ObjectMapper mapper = null;
 
-    public WebServiceGet(String url) {
+    public WebServiceGet(Activity activity, String url) {
         url = url.replace(" ", "%20");
         this.url = url;
+        this.activity = activity;
     }
 
     public <CLS> CLS execute(Class<CLS> responseType) throws Exception {
@@ -71,7 +77,7 @@ public class WebServiceGet {
 
 
         } catch (Exception e) {
-            Log.e(TAG_LOG, "Status code: " + Integer.toString(statusCode)
+            System.out.println("Status code: " + Integer.toString(statusCode)
                     + " Exception thrown: " + e.getMessage());
             throw e;
         }
@@ -110,7 +116,7 @@ public class WebServiceGet {
             }
             lock.unlock();
         } catch (Exception ex) {
-            Log.e(TAG_LOG, "Mapper Initialization Failed Exception : "
+            System.out.println("Mapper Initialization Failed Exception : "
                     + ex.getMessage());
         }
 

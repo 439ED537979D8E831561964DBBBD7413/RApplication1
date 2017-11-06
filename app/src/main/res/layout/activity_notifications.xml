@@ -16,6 +16,7 @@
         android:id="@+id/recycler_notification_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/include_toolbar" />
+        android:layout_below="@id/include_toolbar"
+        tools:listitem="@layout/list_item_notifications_main" />
 
 </RelativeLayout>

@@ -2,40 +2,54 @@ package com.rawalinfocom.rcontact.contacts;
 
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.SwipeDismissBehavior;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.util.LongSparseArray;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.BaseFragment;
+import com.rawalinfocom.rcontact.BuildConfig;
+import com.rawalinfocom.rcontact.MobileNumberRegistrationActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.AllContactAdapter;
@@ -45,6 +59,7 @@ import com.rawalinfocom.rcontact.constants.ContactStorageConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
+import com.rawalinfocom.rcontact.database.QueryManager;
 import com.rawalinfocom.rcontact.database.TableAddressMaster;
 import com.rawalinfocom.rcontact.database.TableEmailMaster;
 import com.rawalinfocom.rcontact.database.TableEventMaster;
@@ -61,6 +76,7 @@ import com.rawalinfocom.rcontact.helper.ProgressWheel;
 import com.rawalinfocom.rcontact.helper.RecyclerItemDecoration;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.helper.circleprogressview.CircleProgressView;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.Address;
 import com.rawalinfocom.rcontact.model.Email;
@@ -88,12 +104,16 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -114,6 +134,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     TextView textTotalContacts;
 
     public static ArrayList<Object> arrayListPhoneBookContacts;
+    //    public static ArrayList<Object> arrayListPhoneBookContactsTemp;
+//    public static ArrayList<ProfileData> arrayListContacts;
     ArrayList<ProfileData> arrayListSyncUserContact = new ArrayList<>();
     ArrayList<String> arrayListFavouriteContacts;
 
@@ -124,6 +146,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     PhoneBookContacts phoneBookContacts;
 
     AllContactAdapter allContactListAdapter;
+    @BindView(R.id.swipe_refresh_layout)
+    SwipeRefreshLayout swipeRefreshLayout;
+    Unbinder unbinder;
 
     private View rootView;
     private boolean isReload = false;
@@ -134,6 +159,30 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     int settingRequestPermission = 0;
     public String callNumber = "";
     private SyncingTask syncingTask;
+    private ArrayList<String> arrayListPBPhoneNumber;
+    private ArrayList<String> arrayListPBEmailAddress;
+
+    @BindView(R.id.relative_profile_percentage)
+    RelativeLayout relativeProfilePercentage;
+    @Nullable
+    @BindView(R.id.text_complete_profile)
+    TextView textCompleteProfile;
+    @Nullable
+    @BindView(R.id.text_complete_profile_description)
+    TextView textCompleteProfileDescription;
+    @Nullable
+    @BindView(R.id.progress_percentage)
+    CircleProgressView progressPercentage;
+    @BindView(R.id.cl_swipe_dismiss)
+    CoordinatorLayout clSwipeDismiss;
+    @BindView(R.id.button_update_now)
+    Button buttonUpdateNow;
+    @BindView(R.id.relative_content)
+    RelativeLayout relativeContent;
+    @BindView(R.id.include_elevation)
+    View includeElevation;
+
+    QueryManager queryManager;
 
     //<editor-fold desc="Constructors">
 
@@ -162,25 +211,28 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         Utils.setBooleanPreference(getActivity(), AppConstants
                 .PREF_RECENT_CALLS_BROADCAST_RECEIVER_CALL_LOG_TAB, false);
 
-
         lastSyncedData = Utils.getIntegerPreference(getActivity(), AppConstants
                 .PREF_SYNCED_CONTACTS, 0);
 
     }
 
     @Override
-    public void onResume() {
+    public void
+    onResume() {
         super.onResume();
         if (isFromSettings) {
             isFromSettings = false;
             if (settingRequestPermission == AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS) {
-                if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission
+                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission
                         .READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
                     if (!isReload) {
                         init();
                     }
                 }
             }
+        } else if (AppConstants.isFromSettingActivity) {
+            AppConstants.isFromSettingActivity = false;
+            setRecyclerViewLayoutManager();
         }
 
 //        if (Utils.getBooleanPreference(getActivity(), AppConstants.PREF_USER_PROFILE_UPDATE,
@@ -219,21 +271,40 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             rootView = inflater.inflate(R.layout.fragment_all_contacts, container, false);
             ButterKnife.bind(this, rootView);
         }
+        unbinder = ButterKnife.bind(this, rootView);
         return rootView;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission
                 .READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{android.Manifest.permission.READ_CONTACTS},
+            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS},
                     AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS);
         } else {
             if (!isReload) {
                 init();
             }
         }
+
+        // implement setOnRefreshListener event on SwipeRefreshLayout
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+                swipeRefreshLayout.setRefreshing(true);
+                if (arrayListPhoneBookContacts != null && arrayListPhoneBookContacts.size() > 0)
+                    loadData();
+            }
+        });
+    }
+
+    private void loadData() {
+        array.clear();
+        arrayListPhoneBookContacts = null;
+        progressAllContact.setVisibility(View.VISIBLE);
+        getLoaderManager().restartLoader(0, null, this);
     }
 
     @Override
@@ -253,9 +324,20 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         Utils.setIntegerPreference(getActivity(), AppConstants.PREF_SYNCED_CONTACTS,
                                 lastSyncedData);
 
-                        if (lastSyncedData < arrayListSyncUserContact.size()) {
+                        int percentage = (100 * lastSyncedData) / (arrayListSyncUserContact
+                                .size() + CONTACT_CHUNK);
+
+                        /*((ContactsFragment) getParentFragment()).textSyncProgress.setText
+                                (percentage + "% data synced!");*/
+                        ((ContactsFragment) getParentFragment()).progressContacts
+                                .setProgressWithAnim(percentage);
+
+
+                        if (lastSyncedData < (arrayListSyncUserContact.size() + CONTACT_CHUNK)) {
                             backgroundSync(true, uploadContactResponse);
                         } else {
+                            Utils.setStringPreference(getActivity(), AppConstants.PREF_RESPONSE_KEY,
+                                    "");
                             if (!Utils.isArraylistNullOrEmpty(uploadContactResponse
                                     .getArrayListUserRcProfile())) {
 
@@ -273,6 +355,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                         .getArrayListMapping());
                             }
 
+                            Utils.setIntegerPreference(getActivity(), AppConstants
+                                    .PREF_SYNCED_CONTACTS, 0);
 
                            /* Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts,
                                     getActivity().getString(R.string.str_all_contact_sync));*/
@@ -314,8 +398,27 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     if (savePackageResponse != null && StringUtils.equalsIgnoreCase
                             (savePackageResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                        Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts,
-                                getActivity().getString(R.string.str_all_contact_sync));
+                        /*Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts,
+                                getActivity().getString(R.string.str_all_contact_sync));*/
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                final View view = ((ContactsFragment) getParentFragment())
+                                        .relativeSyncProgress;
+                                view.animate()
+                                        .translationY(view.getHeight())
+                                        .alpha(0.0f)
+                                        .setDuration(300)
+                                        .setListener(new AnimatorListenerAdapter() {
+                                            @Override
+                                            public void onAnimationEnd(Animator animation) {
+                                                super.onAnimationEnd(animation);
+                                                view.setVisibility(View.GONE);
+                                            }
+                                        });
+                            }
+                        }, 1200);
+
                         Utils.setBooleanPreference(getActivity(), AppConstants
                                 .PREF_CONTACT_SYNCED, true);
                         Intent localBroadcastIntent = new Intent(AppConstants
@@ -361,6 +464,19 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 }
                 //</editor-fold>
 
+                //<editor-fold desc="REQ_GET_CHECK_VERSION">
+                if (serviceType.contains(WsConstants.REQ_GET_CHECK_VERSION)) {
+                    WsResponseObject checkVersionResponse = (WsResponseObject) data;
+
+                    if (checkVersionResponse != null && StringUtils.equalsIgnoreCase
+                            (checkVersionResponse.getMessage(), "force update")) {
+                        Utils.showForceUpdateDialog(getActivity());
+//                        showForceUpdateDialog();
+                    } else {
+                        startSync();
+                    }
+                }
+                //</editor-fold>
             } else {
                 progressAllContact.setVisibility(View.GONE);
                 Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, "" + (error !=
@@ -371,8 +487,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
 
     @Override
@@ -420,10 +534,11 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Set<String> set = new HashSet<>();
         set.add(ContactsContract.Data.MIMETYPE);
-//        set.add(ContactsContract.Data.CONTACT_ID);
         set.add(ContactsContract.Data.RAW_CONTACT_ID);
         set.add(ContactsContract.CommonDataKinds.Phone.NUMBER);
         set.add(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+        set.add(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME);
+        set.add(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME);
         set.add(ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI);
         set.add(ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID);
         set.add(ContactsContract.RawContacts.ACCOUNT_NAME);
@@ -431,8 +546,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
         Uri uri = ContactsContract.Data.CONTENT_URI;
         String[] projection = set.toArray(new String[0]);
-       /* String selection = ContactsContract.Data.MIMETYPE + " in (?, ?) and " +
-                ContactsContract.Contacts.HAS_PHONE_NUMBER + " > 0";*/
         String selection = ContactsContract.Data.MIMETYPE + " in (?, ?) and " + ContactsContract
                 .Contacts.HAS_PHONE_NUMBER + " > 0 and " + ContactsContract.RawContacts
                 .ACCOUNT_TYPE + " in (" + ContactStorageConstants.CONTACT_STORAGE + ")";
@@ -440,8 +553,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
                 ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,
         };
-//        String sortOrder = "upper(" + ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + ")
-// ASC";
+
         String sortOrder = "upper(" + ContactsContract.Contacts.DISPLAY_NAME + ") ASC";
 
         // Starts the query
@@ -471,20 +583,30 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         getContactsFromPhoneBook(data);
         data.close();
         setRecyclerViewLayoutManager();
+        getRcpDetail();
         initSwipe();
 
         textTotalContacts.setVisibility(View.GONE);
         progressAllContact.setVisibility(View.GONE);
 
-        if (!Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CONTACT_SYNCED, false)) {
-            syncingTask = new SyncingTask();
-            syncingTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        if (swipeRefreshLayout != null)
+            swipeRefreshLayout.setRefreshing(false);
+
+        checkVersion();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        if (Utils.getBooleanPreference(getActivity(), AppConstants.PREF_PERCENTAGE_VIEW, true)) {
+            queryManager = new QueryManager(((BaseActivity) getActivity()).getDatabaseHandler());
+            ProfileDataOperation profileDataOperation = queryManager.getRcProfileDetail
+                    (getActivity(), ((BaseActivity) getActivity()).getUserPmId());
+            showProfilePercentage(profileDataOperation);
+        } else {
+            relativeProfilePercentage.setVisibility(View.GONE);
         }
-        Intent localBroadcastIntent = new Intent(AppConstants
-                .ACTION_LOCAL_BROADCAST_CONTACT_DISPLAYED);
-        LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance
-                (getActivity());
-        myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
     }
 
     @Override
@@ -527,6 +649,27 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         RecyclerItemDecoration decoration = new RecyclerItemDecoration(getActivity(), ContextCompat
                 .getColor(getActivity(), R.color.colorVeryLightGray), 0.7f);
         recyclerViewContactList.addItemDecoration(decoration);
+
+        final SwipeDismissBehavior swipeDismissBehavior = new SwipeDismissBehavior();
+        swipeDismissBehavior.setSwipeDirection(SwipeDismissBehavior.SWIPE_DIRECTION_START_TO_END);
+        CoordinatorLayout.LayoutParams layoutParams =
+                (CoordinatorLayout.LayoutParams) relativeProfilePercentage.getLayoutParams();
+        layoutParams.setBehavior(swipeDismissBehavior);
+
+        swipeDismissBehavior.setListener(new SwipeDismissBehavior.OnDismissListener() {
+            @Override
+            public void onDismiss(View view) {
+                clSwipeDismiss.setVisibility(View.GONE);
+                Utils.setBooleanPreference(getActivity(), AppConstants.PREF_PERCENTAGE_VIEW, false);
+            }
+
+            @Override
+            public void onDragStateChanged(int state) {
+                /*if (state != SwipeDismissBehavior.STATE_IDLE) {
+                    clSwipeDismiss.setVisibility(View.GONE);
+                }*/
+            }
+        });
     }
 
 
@@ -538,14 +681,47 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         allContactListAdapter = new AllContactAdapter(this, arrayListPhoneBookContacts, null);
         recyclerViewContactList.setAdapter(allContactListAdapter);
         rContactApplication.setArrayListAllPhoneBookContacts(arrayListPhoneBookContacts);
-        getRcpDetail();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
+    }
+
+    private void startSync() {
+        if (getActivity() == null)
+            return;
+
+        if (!Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CONTACT_SYNCED, false)) {
+            syncingTask = new SyncingTask();
+            syncingTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        } else {
+            Intent localBroadcastIntent = new Intent(AppConstants
+                    .ACTION_LOCAL_BROADCAST_CONTACT_DISPLAYED);
+            LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance
+                    (getActivity());
+            myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+        }
+    }
+
+    public class CustomComparator implements Comparator<ProfileData> {
+        @Override
+        public int compare(ProfileData o1, ProfileData o2) {
+            try {
+                return o1.getTempLastName().compareTo(o2.getTempLastName());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return 0;
+        }
     }
 
     private void getRcpDetail() {
         try {
             TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler
                     ());
-            ArrayList<String> arrayListIds = tableProfileMaster.getAllRcpId();
+            ArrayList<String> arrayListIds = tableProfileMaster.getAllRawIds();
             for (int i = 0; i < arrayListPhoneBookContacts.size(); i++) {
                 if (arrayListPhoneBookContacts.get(i) instanceof ProfileData) {
                     if (arrayListIds.contains(((ProfileData) arrayListPhoneBookContacts.get
@@ -555,25 +731,26 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         userProfiles.addAll(tableProfileMaster.getProfileDetailsFromRawId((
                                 (ProfileData) arrayListPhoneBookContacts.get(i))
                                 .getRawContactId()));
-                        String name = "0";
+                        StringBuilder name = new StringBuilder("0");
                         String rcpID = "0";
                         String rcpProfileImage = "";
                         if (userProfiles.size() > 1) {
                             for (int j = 0; j < userProfiles.size(); j++) {
-                                if (name.equalsIgnoreCase("0")) {
-                                    name = userProfiles.get(j).getPmRcpId();
+                                if (name.toString().equalsIgnoreCase("0")) {
+                                    name = new StringBuilder(userProfiles.get(j).getPmRcpId());
                                 } else {
-                                    name = name + "," + userProfiles.get(j).getPmRcpId();
+                                    name.append(",").append(userProfiles.get(j).getPmRcpId());
                                 }
                             }
                         } else if (userProfiles.size() == 1) {
-                            name = userProfiles.get(0).getPmFirstName() + " " + userProfiles
-                                    .get(0)
-                                    .getPmLastName();
+                            name = new StringBuilder(userProfiles.get(0).getPmFirstName() + " " +
+                                    userProfiles.get
+                                            (0).getPmLastName());
                             rcpID = userProfiles.get(0).getPmRcpId();
                             rcpProfileImage = userProfiles.get(0).getPmProfileImage();
                         }
-                        ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpName(name);
+                        ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpName(name
+                                .toString());
                         ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpId(rcpID);
                         ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpImageURL
                                 (rcpProfileImage);
@@ -600,8 +777,11 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         final int mimeTypeIdx = data.getColumnIndex(ContactsContract.Data.MIMETYPE);
         final int idIdx = data.getColumnIndex(ContactsContract.Data.RAW_CONTACT_ID);
         final int phoneIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+        final int givenName = data.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName
+                .GIVEN_NAME);
+        final int familyName = data.getColumnIndex(ContactsContract.CommonDataKinds
+                .StructuredName.FAMILY_NAME);
 
-//        final int lookUpKeyIdx = data.getColumnIndex(ContactsContract.Data.LOOKUP_KEY);
         final int photoURIIdx = data.getColumnIndex(ContactsContract.PhoneLookup
                 .PHOTO_THUMBNAIL_URI);
 
@@ -621,6 +801,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     profileData = new ProfileData();
                     array.put(id, profileData);
                     arrayListPhoneBookContacts.add(profileData);
+//                    arrayListContacts.add(profileData);
                 }
 
                 profileData.setLocalPhoneBookId(data.getString(rawIdIdx));
@@ -644,6 +825,12 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         break;
                     case ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE:
                         profileData.setName(data.getString(display));
+                        profileData.setTempFirstName(data.getString(givenName));
+                        if (data.getString(familyName).equalsIgnoreCase(""))
+                            profileData.setTempLastName("");
+                        else
+                            profileData.setTempLastName(data.getString(familyName));
+
                         break;
                 }
             } catch (Exception E) {
@@ -729,23 +916,15 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
             //<editor-fold desc="Profile Master">
             UserProfile userProfile = new UserProfile();
-//            userProfile.setPmSuffix(profileData.get(i).getPbNameSuffix());
-//            userProfile.setPmPrefix(profileData.get(i).getPbNamePrefix());
             userProfile.setPmFirstName(profileData.get(i).getPbNameFirst());
-//            userProfile.setPmMiddleName(profileData.get(i).getPbNameMiddle());
             userProfile.setPmLastName(profileData.get(i).getPbNameLast());
-//            userProfile.setPmPhoneticFirstName(profileData.get(i).getPbPhoneticNameFirst());
-//            userProfile.setPmPhoneticMiddleName(profileData.get(i).getPbPhoneticNameMiddle());
-//            userProfile.setPmPhoneticLastName(profileData.get(i).getPbPhoneticNameLast());
             userProfile.setPmIsFavourite(profileData.get(i).getIsFavourite());
-//            userProfile.setPmNotes(profileData.get(i).getPbNote());
-//            userProfile.setPmNickName(profileData.get(i).getPbNickname());
             userProfile.setPmRcpId(profileData.get(i).getRcpPmId());
             userProfile.setPmNosqlMasterId(profileData.get(i).getNoSqlMasterId());
+            userProfile.setPmBadge(profileData.get(i).getPmBadge());
             userProfile.setProfileRating(profileData.get(i).getProfileRating());
             userProfile.setPmProfileImage(profileData.get(i).getPbProfilePhoto());
             userProfile.setTotalProfileRateUser(profileData.get(i).getTotalProfileRateUser());
-
 
             if (mapLocalRcpId.containsKey(profileData.get(i).getRcpPmId())) {
                 userProfile.setPmRawId(mapLocalRcpId.get(profileData.get(i).getRcpPmId()));
@@ -764,23 +943,40 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 ArrayList<MobileNumber> arrayListMobileNumber = new ArrayList<>();
                 for (int j = 0; j < arrayListPhoneNumber.size(); j++) {
 
+                    getUserData(arrayListPhoneNumber.get(j).getPhoneId());
+
                     MobileNumber mobileNumber = new MobileNumber();
+
                     mobileNumber.setMnmRecordIndexId(arrayListPhoneNumber.get(j).getPhoneId());
-                    mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j)
-                            .getPhoneNumber());
+
+                    if (String.valueOf(arrayListPhoneNumber.get(j).getPhonePublic()).equalsIgnoreCase("3")) {
+                        mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j).getPhoneNumber());
+                    } else {
+                        if (arrayListPBPhoneNumber.size() > 0)
+                            if (arrayListPBPhoneNumber.contains("+" + arrayListPhoneNumber.get(j).getOriginalNumber())) {
+                                mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j).getOriginalNumber());
+                            } else {
+                                mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j).getPhoneNumber());
+                            }
+                        else
+                            mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j).getPhoneNumber());
+                    }
+
                     mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(j).getPhoneType());
                     mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber.get(j)
                             .getPhonePublic()));
                     mobileNumber.setMnmIsPrivate(arrayListPhoneNumber.get(j).getIsPrivate());
+                    mobileNumber.setMnmIsPrimary(String.valueOf(arrayListPhoneNumber.get(j)
+                            .getPbRcpType()));
                     mobileNumber.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
-                    if (StringUtils.equalsIgnoreCase(profileData.get(i).getVerifiedMobileNumber()
+                   /* if (StringUtils.equalsIgnoreCase(profileData.get(i).getVerifiedMobileNumber()
                             , mobileNumber.getMnmMobileNumber())) {
                         mobileNumber.setMnmIsPrimary(String.valueOf(IntegerConstants
                                 .RCP_TYPE_PRIMARY));
                     } else {
                         mobileNumber.setMnmIsPrimary(String.valueOf(IntegerConstants
                                 .RCP_TYPE_SECONDARY));
-                    }
+                    }*/
                     arrayListMobileNumber.add(mobileNumber);
                 }
 
@@ -795,8 +991,19 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                             .getPbEmailId();
                     ArrayList<Email> arrayListEmail = new ArrayList<>();
                     for (int j = 0; j < arrayListEmailId.size(); j++) {
+
                         Email email = new Email();
-                        email.setEmEmailAddress(arrayListEmailId.get(j).getEmEmailId());
+
+                        if (arrayListPBEmailAddress.size() > 0)
+                            if (arrayListPBEmailAddress.contains(arrayListEmailId.get(j).getOriginalEmail())) {
+                                email.setEmEmailAddress(arrayListEmailId.get(j).getOriginalEmail());
+                            } else {
+                                email.setEmEmailAddress(arrayListEmailId.get(j).getEmEmailId());
+                            }
+                        else
+                            email.setEmEmailAddress(arrayListEmailId.get(j).getEmEmailId());
+
+                        email.setEmSocialType(arrayListEmailId.get(j).getEmSocialType());
                         email.setEmRecordIndexId(arrayListEmailId.get(j).getEmId());
                         email.setEmEmailType(arrayListEmailId.get(j).getEmType());
                         email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(j)
@@ -840,12 +1047,33 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         organization.setOmRecordIndexId(arrayListOrganization.get(j).getOrgId
                                 ());
                         organization.setOmOrganizationCompany(arrayListOrganization.get(j)
-                                .getOrgName
-                                        ());
+                                .getOrgName());
                         organization.setOmOrganizationDesignation(arrayListOrganization.get(j)
                                 .getOrgJobTitle());
+                        organization.setOmOrganizationFromDate(arrayListOrganization.get(j)
+                                .getOrgFromDate());
+                        organization.setOmOrganizationToDate(arrayListOrganization.get(j)
+                                .getOrgToDate());
                         organization.setOmIsCurrent(String.valueOf(arrayListOrganization.get(j)
                                 .getIsCurrent()));
+
+                        if (arrayListOrganization.get(j).getIsVerify() != null)
+                            if (arrayListOrganization.get(j).getIsVerify() == IntegerConstants.RCP_TYPE_PRIMARY) {
+                                organization.setOmOrganizationType(arrayListOrganization.get(j).getOrgIndustryType());
+                                organization.setOmEnterpriseOrgId(arrayListOrganization.get(j).getOrgEntId());
+                                organization.setOmOrganizationLogo(arrayListOrganization.get(j).getOrgLogo());
+                            } else {
+                                organization.setOmOrganizationType("");
+                                organization.setOmEnterpriseOrgId("");
+                                organization.setOmOrganizationLogo("");
+                            }
+                        else {
+                            organization.setOmOrganizationType("");
+                            organization.setOmEnterpriseOrgId("");
+                            organization.setOmOrganizationLogo("");
+                        }
+
+                        organization.setOmIsVerified(String.valueOf(arrayListOrganization.get(j).getIsVerify()));
                         organization.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
                         organizationList.add(organization);
                     }
@@ -887,13 +1115,16 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         Address address = new Address();
                         address.setAmRecordIndexId(arrayListAddress.get(j).getAddId());
                         address.setAmCity(arrayListAddress.get(j).getCity());
+                        address.setAmCityId(arrayListAddress.get(j).getCityId());
                         address.setAmCountry(arrayListAddress.get(j).getCountry());
+                        address.setAmCountryId(arrayListAddress.get(j).getCountryId());
                         address.setAmFormattedAddress(arrayListAddress.get(j)
-                                .getFormattedAddress
-                                        ());
+                                .getFormattedAddress());
                         address.setAmNeighborhood(arrayListAddress.get(j).getNeighborhood());
                         address.setAmPostCode(arrayListAddress.get(j).getPostCode());
                         address.setAmPoBox(arrayListAddress.get(j).getPoBox());
+                        address.setAmState(arrayListAddress.get(j).getState());
+                        address.setAmStateId(arrayListAddress.get(j).getStateId());
                         address.setAmStreet(arrayListAddress.get(j).getStreet());
                         address.setAmAddressType(arrayListAddress.get(j).getAddressType());
                         address.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
@@ -987,6 +1218,48 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         }
     }
 
+    private void getUserData(String phoneBookId) {
+
+        arrayListPBPhoneNumber = new ArrayList<>();
+        arrayListPBEmailAddress = new ArrayList<>();
+
+        // From PhoneBook
+        Cursor contactNumberCursor = phoneBookContacts.getContactNumbers(phoneBookId);
+
+        if (contactNumberCursor != null && contactNumberCursor.getCount() > 0) {
+            while (contactNumberCursor.moveToNext()) {
+
+                ProfileDataOperationPhoneNumber phoneNumber = new
+                        ProfileDataOperationPhoneNumber();
+                ProfileDataOperationPhoneNumber phoneNumberOperation = new
+                        ProfileDataOperationPhoneNumber();
+
+                arrayListPBPhoneNumber.add(Utils.getFormattedNumber(getActivity(),
+                        contactNumberCursor.getString(contactNumberCursor.getColumnIndex
+                                (ContactsContract.CommonDataKinds.Phone.NUMBER))));
+
+            }
+            contactNumberCursor.close();
+        }
+
+        //</editor-fold>
+
+        // <editor-fold desc="Email Id">
+
+        // From PhoneBook
+        Cursor contactEmailCursor = phoneBookContacts.getContactEmail(phoneBookId);
+
+        if (contactEmailCursor != null && contactEmailCursor.getCount() > 0) {
+            while (contactEmailCursor.moveToNext()) {
+                arrayListPBEmailAddress.add(contactEmailCursor.getString(contactEmailCursor
+                        .getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)));
+            }
+            contactEmailCursor.close();
+        }
+
+        //</editor-fold>
+    }
+
     private void initSwipe() {
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper
                 .SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -1016,8 +1289,10 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     } else {
                         callNumber = actionNumber;
                     }*/
-                    callNumber =  Utils.getFormattedNumber(getActivity(),actionNumber);
-                    showCallConfirmationDialog();
+                    callNumber = Utils.getFormattedNumber(getActivity(), actionNumber);
+                    swipeToCall();
+                    // showCallConfirmationDialog();
+
                 }
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -1098,46 +1373,301 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         itemTouchHelper.attachToRecyclerView(recyclerViewContactList);
     }
 
+    private void swipeToCall() {
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest
+                .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission
+                    .CALL_PHONE}, AppConstants
+                    .MY_PERMISSIONS_REQUEST_PHONE_CALL);
+        } else {
+            AppConstants.setIsFirstTime(false);
+            Utils.callIntent(getActivity(), Utils.getFormattedNumber(getActivity
+                    (), callNumber));
+        }
+    }
 
-    private void showCallConfirmationDialog() {
+    private void showProfilePercentage(ProfileDataOperation profileDetail) {
+        if (progressPercentage != null) {
+            progressPercentage.setBarColor(Color.parseColor("#CCE4E1"), Color.parseColor
+                    ("#00796B"));
+            int percentage = 5;
+            ArrayList<String> arrayListRemainingFields = new ArrayList<>();
+            if (Utils.hasSharedPreference(getActivity(), AppConstants
+                    .PREF_PROFILE_REMAINING_FIELDS)) {
+                arrayListRemainingFields.addAll(Utils.getArrayListPreference(getActivity(),
+                        AppConstants.PREF_PROFILE_REMAINING_FIELDS));
+            }
 
-        RippleView.OnRippleCompleteListener cancelListener = new RippleView
-                .OnRippleCompleteListener() {
+            //<editor-fold desc="Gender">
+            if (!StringUtils.isBlank(profileDetail.getPbGender())) {
+                percentage += 5;
+                if (arrayListRemainingFields.contains(getString(R.string.str_gender))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_gender));
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_gender));
+            }
+            //</editor-fold>
 
-            @Override
-            public void onComplete(RippleView rippleView) {
-                switch (rippleView.getId()) {
-                    case R.id.rippleLeft:
-                        callConfirmationDialog.dismissDialog();
+            //<editor-fold desc="Profile Photo">
+            if (!StringUtils.isBlank(profileDetail.getPbProfilePhoto())) {
+                percentage += 5;
+                if (arrayListRemainingFields.contains(getString(R.string.str_profile_photo))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_profile_photo));
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_profile_photo));
+            }
+            //</editor-fold>
+
+            //<editor-fold desc="Organization">
+            if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbOrganization())) {
+               /* percentage += 15;
+                if (arrayListRemainingFields.contains(getString(R.string.str_organization))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_organization));
+                }*/
+                percentage += 5;
+                if (arrayListRemainingFields.contains(getString(R.string.str_organization))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_organization));
+                }
+                boolean hasVerifiedOrganization = false;
+                for (int i = 0; i < profileDetail.getPbOrganization().size(); i++) {
+                    if (profileDetail.getPbOrganization().get(i).getIsVerify() == 1) {
+                        percentage += 10;
+                        hasVerifiedOrganization = true;
                         break;
+                    }
+                }
+                if (hasVerifiedOrganization) {
+                    if (arrayListRemainingFields.contains("Verified Organization")) {
+                        arrayListRemainingFields.remove("Verified Organization");
+                    }
+                } else {
+                    arrayListRemainingFields.add("Verified Organization");
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_organization));
+            }
+            //</editor-fold>
 
-                    case R.id.rippleRight:
-                        callConfirmationDialog.dismissDialog();
-                        if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest
-                                .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                            requestPermissions(new String[]{Manifest.permission
-                                    .CALL_PHONE}, AppConstants
-                                    .MY_PERMISSIONS_REQUEST_PHONE_CALL);
-                        } else {
-                            AppConstants.setIsFirstTime(false);
-                            Utils.callIntent(getActivity(), Utils.getFormattedNumber(getActivity(),callNumber));
+            //<editor-fold desc="Web Address">
+            if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbWebAddress())) {
+                percentage += 5;
+                if (arrayListRemainingFields.contains(getString(R.string.str_website))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_website));
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_website));
+            }
+            //</editor-fold>
+
+            //<editor-fold desc="Address">
+            if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbAddress())) {
+                percentage += 20;
+                if (arrayListRemainingFields.contains(getString(R.string.str_address))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_address));
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_address));
+            }
+            //</editor-fold>
+
+            //<editor-fold desc="Event">
+            if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEvent())) {
+                percentage += 5;
+                if (arrayListRemainingFields.contains(getString(R.string.str_event))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_event));
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_event));
+            }
+            //</editor-fold>
+
+            //<editor-fold desc="Email Id">
+            if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEmailId())) {
+                percentage += 5;
+                if (arrayListRemainingFields.contains(getString(R.string.str_email))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_email));
+                }
+                boolean hasVerifiedEmail = false;
+                for (int i = 0; i < profileDetail.getPbEmailId().size(); i++) {
+                    if (profileDetail.getPbEmailId().get(i).getEmRcpType() == IntegerConstants
+                            .RCP_TYPE_PRIMARY) {
+                        percentage += 15;
+                        hasVerifiedEmail = true;
+                        break;
+                    } else if (profileDetail.getPbEmailId().get(i).getEmRcpType() == IntegerConstants
+                            .RCP_TYPE_SECONDARY) {
+                        if (!profileDetail.getPbEmailId().get(i).getEmSocialType().equalsIgnoreCase("")) {
+                            percentage += 15;
+                            hasVerifiedEmail = true;
+                            break;
                         }
-                        break;
+                    }
+                }
+                if (hasVerifiedEmail) {
+                    if (arrayListRemainingFields.contains("Verified Email")) {
+                        arrayListRemainingFields.remove("Verified Email");
+                    }
+                } else {
+                    arrayListRemainingFields.add("Verified Email");
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_email));
+            }
+            //</editor-fold>
+
+            //<editor-fold desc="Im Account">
+            if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbIMAccounts())) {
+                if (arrayListRemainingFields.contains(getString(R.string.str_social_contact))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_social_contact));
+                }
+                ArrayList<String> savedImAccount = new ArrayList<>();
+                for (int i = 0; i < profileDetail.getPbIMAccounts().size(); i++) {
+//                    savedImAccount.add(profileDetail.getPbIMAccounts().get(i)
+//                            .getIMAccountProtocol());
+                    String protocol = profileDetail.getPbIMAccounts().get(i)
+                            .getIMAccountProtocol();
+                    if (protocol.contains(getString(R.string.facebook)) || protocol.contains
+                            (getString(R.string.google_plus)) || protocol.contains(getString(R
+                            .string.linked_in))) {
+                        savedImAccount.add(protocol);
+                    } else {
+                        savedImAccount.add("Other");
+                    }
+
+                }
+                if (savedImAccount.contains(getString(R.string.facebook))) {
+                    percentage += 5;
+                    if (arrayListRemainingFields.contains("Facebook Account")) {
+                        arrayListRemainingFields.remove("Facebook Account");
+                    }
+                } else {
+                    arrayListRemainingFields.add("Facebook Account");
+                }
+                if (savedImAccount.contains(getString(R.string.google_plus))) {
+                    percentage += 5;
+                    if (arrayListRemainingFields.contains("Google Plus Account")) {
+                        arrayListRemainingFields.remove("Google Plus Account");
+                    }
+                } else {
+                    arrayListRemainingFields.add("Google Plus Account");
+                }
+                if (savedImAccount.contains(getString(R.string.linked_in))) {
+                    percentage += 5;
+                    if (arrayListRemainingFields.contains("Linked In Account")) {
+                        arrayListRemainingFields.remove("Linked In Account");
+                    }
+                } else {
+                    arrayListRemainingFields.add("Linked In Account");
+                }
+                if (savedImAccount.contains("Other")) {
+                    percentage += 5;
+                    if (arrayListRemainingFields.contains(getString(R.string.str_social_contact))) {
+                        arrayListRemainingFields.remove(getString(R.string.str_social_contact));
+                    }
+                } else {
+                    arrayListRemainingFields.add(getString(R.string.str_social_contact));
                 }
 
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_social_contact));
             }
-        };
+            //</editor-fold>
 
-        callConfirmationDialog = new MaterialDialog(getActivity(), cancelListener);
-        callConfirmationDialog.setTitleVisibility(View.GONE);
-        callConfirmationDialog.setLeftButtonText(getActivity().getString(R.string.action_cancel));
-        callConfirmationDialog.setRightButtonText(getActivity().getString(R.string.action_call));
-        callConfirmationDialog.setDialogBody(getActivity().getString(R.string.action_call) + " "
-                + callNumber + "?");
+            //<editor-fold desc="Adhaar Card">
+            if (profileDetail.getPbAadhar() != null) {
+                percentage += 10;
+                if (arrayListRemainingFields.contains(getString(R.string.str_aadhar_card))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_aadhar_card));
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_aadhar_card));
+            }
+            //</editor-fold>
 
-        callConfirmationDialog.showDialog();
+            Utils.setArrayListPreference(getActivity(), AppConstants
+                    .PREF_PROFILE_REMAINING_FIELDS, arrayListRemainingFields);
 
+            if (percentage < 100) {
+
+                textCompleteProfile.setTypeface(Utils.typefaceSemiBold(getActivity()));
+                textCompleteProfileDescription.setTypeface(Utils.typefaceRegular(getActivity()));
+
+                /*relativeContent.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color
+                        .veryVeryLightGray));*/
+                relativeProfilePercentage.setBackgroundColor(Color.parseColor("#EBEBEB"));
+
+                includeElevation.setRotation(180);
+                includeElevation.setAlpha(0.5f);
+
+                relativeProfilePercentage.setVisibility(View.VISIBLE);
+                progressPercentage.setValueAnimated(percentage);
+
+                if (arrayListRemainingFields.size() > 0) {
+                    Random random = new Random();
+
+                    textCompleteProfileDescription.setText(String.format(getString(R.string
+                            .str_complete_profile_description), arrayListRemainingFields.get
+                            (random.nextInt(arrayListRemainingFields.size()))));
+                }
+
+                buttonUpdateNow.setTypeface(Utils.typefaceRegular(getActivity()));
+
+                buttonUpdateNow.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ((BaseActivity) getActivity()).startActivityIntent(getActivity(),
+                                EditProfileActivity.class, null);
+                    }
+                });
+
+            } else {
+                relativeProfilePercentage.setVisibility(View.GONE);
+            }
+        }
     }
+
+//    private void showCallConfirmationDialog() {
+//
+//        RippleView.OnRippleCompleteListener cancelListener = new RippleView
+//                .OnRippleCompleteListener() {
+//
+//            @Override
+//            public void onComplete(RippleView rippleView) {
+//                switch (rippleView.getId()) {
+//                    case R.id.rippleLeft:
+//                        callConfirmationDialog.dismissDialog();
+//                        break;
+//
+//                    case R.id.rippleRight:
+//                        callConfirmationDialog.dismissDialog();
+//                        if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest
+//                                .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+//                            requestPermissions(new String[]{Manifest.permission
+//                                    .CALL_PHONE}, AppConstants
+//                                    .MY_PERMISSIONS_REQUEST_PHONE_CALL);
+//                        } else {
+//                            AppConstants.setIsFirstTime(false);
+//                            Utils.callIntent(getActivity(), Utils.getFormattedNumber(getActivity
+//                                    (), callNumber));
+//                        }
+//                        break;
+//                }
+//
+//            }
+//        };
+//
+//        callConfirmationDialog = new MaterialDialog(getActivity(), cancelListener);
+//        callConfirmationDialog.setTitleVisibility(View.GONE);
+//        callConfirmationDialog.setLeftButtonText(getActivity().getString(R.string.action_cancel));
+//        callConfirmationDialog.setRightButtonText(getActivity().getString(R.string.action_call));
+//        callConfirmationDialog.setDialogBody(getActivity().getString(R.string.action_call) + " "
+//                + callNumber + "?");
+//
+//        callConfirmationDialog.showDialog();
+//
+//    }
 
     private void showPermissionConfirmationDialog(final int permissionType) {
 
@@ -1161,6 +1691,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     case R.id.rippleRight:
                         permissionConfirmationDialog.dismissDialog();
                         isFromSettings = true;
+                        getActivity().finish();
                         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
                                 Uri.fromParts("package", getActivity().getPackageName(), null));
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -1332,11 +1863,14 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                             ProfileDataOperationPhoneNumber phoneNumber = new
                                     ProfileDataOperationPhoneNumber();
 
+//                            String number = ;
+//                            number = Utils.getFormattedNumber(getActivity(), number);
+
                             phoneNumber.setPhoneNumber(cursor.getString(cursor.getColumnIndex
                                     (ContactsContract
                                             .CommonDataKinds.Phone.NUMBER)));
                             phoneNumber.setPhoneType(phoneBookContacts.getPhoneNumberType
-                                    (cursor.getInt(cursor.getColumnIndex
+                                    (cursor, cursor.getInt(cursor.getColumnIndex
                                             (ContactsContract.CommonDataKinds.Phone.TYPE))));
                             phoneNumber.setPhonePublic(IntegerConstants.PRIVACY_EVERYONE);
 
@@ -1386,18 +1920,18 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                             organization.setOrgJobTitle(cursor.getString
                                     (cursor.getColumnIndex(ContactsContract
                                             .CommonDataKinds.Organization.TITLE)));
-                            organization.setOrgDepartment(cursor.getString
-                                    (cursor.getColumnIndex(ContactsContract
-                                            .CommonDataKinds.Organization.DEPARTMENT)));
-                            organization.setOrgType(phoneBookContacts.getOrganizationType(cursor,
-                                    cursor.getInt((cursor.getColumnIndex(ContactsContract
-                                            .CommonDataKinds.Organization.TYPE)))));
-                            organization.setOrgJobDescription(cursor.getString
-                                    (cursor.getColumnIndex(ContactsContract
-                                            .CommonDataKinds.Organization.JOB_DESCRIPTION)));
-                            organization.setOrgOfficeLocation(cursor.getString
-                                    (cursor.getColumnIndex(ContactsContract
-                                            .CommonDataKinds.Organization.OFFICE_LOCATION)));
+//                            organization.setOrgDepartment(cursor.getString
+//                                    (cursor.getColumnIndex(ContactsContract
+//                                            .CommonDataKinds.Organization.DEPARTMENT)));
+//                            organization.setOrgType(phoneBookContacts.getOrganizationType(cursor,
+//                                    cursor.getInt((cursor.getColumnIndex(ContactsContract
+//                                            .CommonDataKinds.Organization.TYPE)))));
+//                            organization.setOrgJobDescription(cursor.getString
+//                                    (cursor.getColumnIndex(ContactsContract
+//                                            .CommonDataKinds.Organization.JOB_DESCRIPTION)));
+//                            organization.setOrgOfficeLocation(cursor.getString
+//                                    (cursor.getColumnIndex(ContactsContract
+//                                            .CommonDataKinds.Organization.OFFICE_LOCATION)));
                             organization.setOrgPublic(IntegerConstants.PRIVACY_EVERYONE);
 
                             if (StringUtils.length(organization.getOrgName()) > 0) {
@@ -1456,7 +1990,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                             .CommonDataKinds.Im.TYPE))));
 
                             imAccount.setIMAccountProtocol(phoneBookContacts.getImProtocol
-                                    (cursor.getInt((cursor.getColumnIndex
+                                    (cursor, cursor.getInt((cursor.getColumnIndex
                                             (ContactsContract.CommonDataKinds.Im.PROTOCOL)))));
 
                             imAccount.setIMAccountPublic(IntegerConstants.PRIVACY_EVERYONE);
@@ -1542,6 +2076,15 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         }
         //</editor-fold>
 
+        int percentage = (100 * lastSyncedData) / (arrayListSyncUserContact
+                .size() + CONTACT_CHUNK);
+
+        if (percentage >= 100) {
+            ((ContactsFragment) getParentFragment()).relativeSyncProgress.setVisibility(View.GONE);
+        } else {
+            ((ContactsFragment) getParentFragment()).progressContacts.setProgress(percentage);
+        }
+
         if (lastSyncedData < arrayListSyncUserContact.size()) {
             if (syncingTask != null && syncingTask.isCancelled()) {
                 return;
@@ -1562,8 +2105,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     .getInstance(getActivity());
             myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
         }
-
-
     }
 
     private void backgroundSync(final boolean addToDatabase, final WsResponseObject
@@ -1574,8 +2115,12 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         Runnable run = new Runnable() {
             @Override
             public void run() {
+                String responseKey;
                 if (addToDatabase) {
                     if (uploadContactResponse != null) {
+                        responseKey = uploadContactResponse.getResponseKey();
+                        Utils.setStringPreference(getActivity(), AppConstants.PREF_RESPONSE_KEY,
+                                responseKey);
                         if (syncingTask != null && syncingTask.isCancelled()) {
                             return;
                         }
@@ -1603,9 +2148,12 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 }
                 if (lastSyncedData <= limit) {
                     ArrayList<ProfileData> subList = new ArrayList<>(arrayListSyncUserContact
-                            .subList
-                                    (lastSyncedData, limit));
-                    uploadContacts(lastSyncedData, subList);
+                            .subList(lastSyncedData, limit));
+                    uploadContacts(lastSyncedData, Utils.getStringPreference(getActivity(),
+                            AppConstants.PREF_RESPONSE_KEY, ""), subList);
+                } else {
+                    uploadContacts(lastSyncedData, Utils.getStringPreference(getActivity(),
+                            AppConstants.PREF_RESPONSE_KEY, ""), new ArrayList<ProfileData>());
                 }
             }
         };
@@ -1621,16 +2169,18 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         }
     }
 
-    //<editor-fold desc="Private Methods">
+    //<editor-fold desc="Web Service Call">
 
-    private void uploadContacts(int previouslySyncedData, ArrayList<ProfileData>
-            arrayListUserContact) {
+    private void uploadContacts(int previouslySyncedData, String responseKey,
+                                ArrayList<ProfileData> arrayListUserContact) {
         if (syncingTask != null && syncingTask.isCancelled()) {
             return;
         }
+
+//        System.out.println("RContacts first time uploadContacts");
+
         WsRequestObject uploadContactObject = new WsRequestObject();
-//        uploadContactObject.setPmId(Integer.parseInt(((BaseActivity) getActivity()).getUserPmId
-// ()));
+        uploadContactObject.setResponseKey(responseKey);
         uploadContactObject.setProfileData(arrayListUserContact);
 
         if (Utils.isNetworkAvailable(getActivity())) {
@@ -1663,6 +2213,52 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         }
     }
 
+    private void checkVersion() {
+
+        WsRequestObject checkVersionObject = new WsRequestObject();
+        checkVersionObject.setAppVersion(String.valueOf(BuildConfig.VERSION_CODE));
+        checkVersionObject.setAppPlatform("android");
+
+        if (Utils.isNetworkAvailable(getActivity())) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), checkVersionObject, null,
+                    WsResponseObject.class, WsConstants.REQ_GET_CHECK_VERSION, null, true)
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants
+                            .REQ_GET_CHECK_VERSION);
+        } else {
+            Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, getResources().getString(R.string.msg_no_network));
+        }
+    }
 
     //</editor-fold>
+
+    public void showForceUpdateDialog() {
+
+        ContextThemeWrapper themedContext;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            themedContext = new ContextThemeWrapper(getActivity(), android.R.style.Theme_Holo_Light_Dialog_NoActionBar);
+        } else {
+            themedContext = new ContextThemeWrapper(getActivity(), android.R.style.Theme_Light_NoTitleBar);
+        }
+
+        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(themedContext);
+
+        alertDialogBuilder.setTitle(getActivity().getString(R.string.youAreNotUpdatedTitle));
+        alertDialogBuilder.setMessage(getActivity().getString(R.string.youAreNotUpdatedMessage));
+        alertDialogBuilder.setCancelable(false);
+        alertDialogBuilder.setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+                startSync();
+//                finish();
+//                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getPackageName())));
+            }
+        });
+        alertDialogBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int i) {
+                getActivity().finish();
+            }
+        });
+        alertDialogBuilder.show();
+    }
 }

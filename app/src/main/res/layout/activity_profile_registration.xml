@@ -61,30 +61,28 @@
                     android:id="@+id/text_or"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
+                    android:layout_centerHorizontal="true"
                     android:layout_marginLeft="@dimen/activity_horizontal_margin"
                     android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:includeFontPadding="false"
                     android:text="@string/text_or"
-                    android:textAppearance="?android:textAppearanceMedium" />
+                    android:textColor="@color/grayishMagenta"
+                    android:textSize="28sp" />
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="2dp"
+                    android:layout_height="1.5dp"
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="@dimen/activity_horizontal_margin"
-                    android:layout_marginRight="@dimen/activity_horizontal_margin"
                     android:layout_toEndOf="@id/text_or"
-                    android:layout_toRightOf="@id/text_or"
                     android:background="@color/grayishMagenta" />
 
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="2dp"
+                    android:layout_height="1.5dp"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
                     android:layout_marginStart="@dimen/activity_horizontal_margin"
-                    android:layout_toLeftOf="@id/text_or"
                     android:layout_toStartOf="@id/text_or"
                     android:background="@color/grayishMagenta" />
 
@@ -104,7 +102,8 @@
                     android:id="@+id/button_facebook"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/colorFacebookBlue"
+                    android:background="@drawable/background_rounded_corner"
+                    android:backgroundTint="@color/colorFacebookBlue"
                     android:drawableLeft="@drawable/ico_facebook_white_svg"
                     android:paddingLeft="@dimen/activity_horizontal_margin"
                     android:paddingRight="@dimen/activity_horizontal_margin"
@@ -118,7 +117,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/ripple_facebook"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:layout_marginTop="@dimen/activity_double_vertical_margin"
                 android:orientation="horizontal">
 
                 <com.rawalinfocom.rcontact.helper.RippleView
@@ -136,7 +135,8 @@
                         android:id="@+id/button_google"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/colorGoogleRed"
+                        android:background="@drawable/background_rounded_corner"
+                        android:backgroundTint="@color/colorGoogleRed"
                         android:drawableLeft="@drawable/ic_google"
                         android:paddingLeft="@dimen/activity_horizontal_margin"
                         android:paddingRight="@dimen/activity_horizontal_margin"
@@ -160,7 +160,8 @@
                         android:id="@+id/button_linked_in"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/colorLinkedInBlue"
+                        android:background="@drawable/background_rounded_corner"
+                        android:backgroundTint="@color/colorLinkedInBlue"
                         android:drawableLeft="@drawable/ico_linkedin_white_svg"
                         android:paddingLeft="@dimen/activity_horizontal_margin"
                         android:paddingRight="@dimen/activity_horizontal_margin"
@@ -176,7 +177,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/ll_other_login"
-                android:layout_marginTop="@dimen/activity_double_vertical_margin"
+                android:layout_marginTop="@dimen/margin_huge"
                 app:rv_alpha="@integer/alpha_ripple"
                 app:rv_color="@color/colorWhite"
                 app:rv_rippleDuration="@integer/duration_ripple">
@@ -185,11 +186,12 @@
                     android:id="@+id/button_continue"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/colorAccent"
-                    android:text="@string/action_continue"
-                    android:textColor="@color/colorWhite"
+                    android:layout_alignParentStart="true"
                     android:layout_alignParentTop="true"
-                    android:layout_alignParentStart="true" />
+                    android:background="@drawable/background_rounded_corner"
+                    android:backgroundTint="@color/colorAccent"
+                    android:text="@string/action_continue"
+                    android:textColor="@color/colorWhite" />
 
             </com.rawalinfocom.rcontact.helper.RippleView>
 

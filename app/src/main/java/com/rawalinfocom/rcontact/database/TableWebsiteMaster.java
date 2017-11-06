@@ -36,7 +36,7 @@ public class TableWebsiteMaster {
 //    private static final String COLUMN_WM_WEBSITE_PRIVACY = "wm_website_privacy";
 
     // Table Create Statements
-    static final String CREATE_TABLE_RC_WEBSITE_MASTER = "CREATE TABLE " + TABLE_RC_WEBSITE_MASTER
+    static final String CREATE_TABLE_RC_WEBSITE_MASTER = "CREATE TABLE IF NOT EXISTS " + TABLE_RC_WEBSITE_MASTER
             + " (" +
             " " + COLUMN_WM_ID + " integer NOT NULL CONSTRAINT rc_website_master_pk PRIMARY KEY," +
             " " + COLUMN_WM_RECORD_INDEX_ID + " text," +
@@ -116,12 +116,24 @@ public class TableWebsiteMaster {
         db.close(); // Closing database connection
     }
 
+    public void deleteData(String RcpPmId) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+        int count = db.delete(TABLE_RC_WEBSITE_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
+                RcpPmId, null);
+        if (count > 0) System.out.println("RContact data delete ");
+
+        db.close(); // Closing database connection
+    }
+
     // Adding or Updating array website
     public void addUpdateArrayWebsite(ArrayList<Website> arrayListWebsite, String RcpPmId) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
 
-        int count = db.delete(TABLE_RC_WEBSITE_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " + RcpPmId, null);
+        int count = db.delete(TABLE_RC_WEBSITE_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
+                RcpPmId, null);
         if (count > 0) System.out.println("RContact data delete ");
+
 
 //        ContentValues values = new ContentValues();
         for (int i = 0; i < arrayListWebsite.size(); i++) {

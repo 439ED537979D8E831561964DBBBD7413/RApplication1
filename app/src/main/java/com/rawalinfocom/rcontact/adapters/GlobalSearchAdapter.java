@@ -1,9 +1,17 @@
 package com.rawalinfocom.rcontact.adapters;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.LayerDrawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.style.TextAppearanceSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +24,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.SearchActivity;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.model.GlobalSearchType;
@@ -23,6 +32,7 @@ import com.rawalinfocom.rcontact.model.GlobalSearchType;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,14 +44,16 @@ import butterknife.ButterKnife;
 public class GlobalSearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
-
     private Context context;
     ArrayList<GlobalSearchType> globalSearchTypeArrayList;
     String nameToPass = "";
+    String searchedText;
 
-    public GlobalSearchAdapter(Context context, ArrayList<GlobalSearchType> globalSearchTypeList) {
+    public GlobalSearchAdapter(Context context, ArrayList<GlobalSearchType> globalSearchTypeList,
+                               String searchChar) {
         this.context = context;
         this.globalSearchTypeArrayList = globalSearchTypeList;
+        this.searchedText = searchChar;
     }
 
     @Override
@@ -53,34 +65,46 @@ public class GlobalSearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder contactViewHolder, int position) {
-        GlobalSearchViewHolder holder = (GlobalSearchViewHolder) contactViewHolder;
+        final GlobalSearchViewHolder holder = (GlobalSearchViewHolder) contactViewHolder;
         final GlobalSearchType globalSearchType = globalSearchTypeArrayList.get(position);
         String firstName = globalSearchType.getFirstName();
         int isRcpVerified = globalSearchType.getIsRcpVerified();
         if (isRcpVerified == 1) {
             holder.textContactFirstname.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
-            holder.textContactLastname.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
+//            holder.textContactLastname.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
             holder.textContactNumber.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
             holder.textRatingUserCount.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
             holder.linearRating.setVisibility(View.VISIBLE);
         } else {
             holder.textContactFirstname.setTextColor(ContextCompat.getColor(context, R.color.textColorBlue));
-            holder.textContactLastname.setTextColor(ContextCompat.getColor(context, R.color.textColorBlue));
+//            holder.textContactLastname.setTextColor(ContextCompat.getColor(context, R.color.textColorBlue));
             holder.textContactNumber.setTextColor(ContextCompat.getColor(context, R.color.textColorBlue));
             holder.linearRating.setVisibility(View.GONE);
         }
 
+        String contactNameToDisplay = "";
         if (!StringUtils.isEmpty(firstName)) {
-            holder.textContactFirstname.setText(firstName);
-        } else {
-            holder.textContactFirstname.setText("");
+            contactNameToDisplay = firstName;
         }
 
         String lastName = globalSearchType.getLastName();
-        if (!StringUtils.isEmpty(lastName))
+        if (!StringUtils.isEmpty(lastName)) {
+            contactNameToDisplay = contactNameToDisplay + " " + lastName;
+        }
+
+        holder.textContactFirstname.setText(contactNameToDisplay);
+
+
+        /*if (!StringUtils.isEmpty(firstName)) {
+            holder.textContactFirstname.setText(firstName);
+        } else {
+            holder.textContactFirstname.setText("");
+        }*/
+
+        /*if (!StringUtils.isEmpty(lastName))
             holder.textContactLastname.setText(lastName);
         else
-            holder.textContactLastname.setText("");
+            holder.textContactLastname.setText("");*/
 
         if (!StringUtils.isEmpty(firstName) && !StringUtils.isEmpty(lastName)) {
             nameToPass = firstName + " " + lastName;
@@ -102,7 +126,7 @@ public class GlobalSearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         } else
             holder.textContactNumber.setText("");
 
-        String profileImage = globalSearchType.getProfileImageUrl();
+        final String profileImage = globalSearchType.getProfileImageUrl();
         if (!StringUtils.isEmpty(profileImage)) {
             Glide.with(context)
                     .load(profileImage)
@@ -115,6 +139,17 @@ public class GlobalSearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         } else {
             holder.imageProfile.setImageResource(R.drawable.home_screen_profile);
         }
+
+        holder.imageProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (StringUtils.length(profileImage) > 0) if (context instanceof SearchActivity)
+                    Utils.zoomImageFromThumb((Activity) context, holder.imageProfile,
+                            profileImage, ((SearchActivity) context).frameImageEnlarge, (
+                                    (SearchActivity) context).imageEnlarge, ((SearchActivity)
+                                    context).frameContainer);
+            }
+        });
 
         String userRatingCount = globalSearchType.getProfileRatedCount();
         if (!StringUtils.isEmpty(userRatingCount)) {
@@ -130,6 +165,57 @@ public class GlobalSearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             holder.ratingUser.setRating(Float.parseFloat("0"));
         }
 
+        if(!StringUtils.isBlank(searchedText)){
+            if(searchedText.matches("[+][0-9]+") || searchedText.matches("\\d+")){
+                hightLightSearchedText(holder.textContactNumber.getText().toString(), holder.textContactNumber);
+            }else{
+                if (searchedText.contains(" ")) {
+                    try{
+                        String originalStringCloud = holder.textContactFirstname.getText().toString();
+                        searchedText =  searchedText.trim();
+                        String[] separatedCloud = searchedText.split(" ");
+                        String secondPartCloud ="";
+                        String firstPartCloud = "";
+                        if(!StringUtils.isBlank(separatedCloud[0]))
+                            firstPartCloud = separatedCloud[0];
+                        if(searchedText.contains(" ")){
+                            if(separatedCloud[1]!=null && separatedCloud[1].length()>0)
+                                secondPartCloud= separatedCloud[1];
+                        }
+
+                        SpannableStringBuilder builderCloud = new SpannableStringBuilder(originalStringCloud);
+                        if (!StringUtils.isBlank(firstPartCloud)) {
+                            int startPos1 = originalStringCloud.toLowerCase(Locale.US).indexOf(firstPartCloud
+                                    .toLowerCase(Locale.US));
+                            int endPos1 = startPos1 + firstPartCloud.length();
+                            if (startPos1 != -1) {
+                                ColorStateList hightlightColor;
+                                hightlightColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.RED});
+                                TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, hightlightColor, null);
+                                builderCloud.setSpan(highlightSpan, startPos1, endPos1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            }
+                        }
+
+                        if (!StringUtils.isBlank(secondPartCloud)) {
+                            int startPos2 = originalStringCloud.toLowerCase(Locale.US).indexOf(secondPartCloud
+                                    .toLowerCase(Locale.US));
+                            int endPos2 = startPos2 + secondPartCloud.length();
+                            if (startPos2 != -1) {
+                                ColorStateList hightlightColor;
+                                hightlightColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.RED});
+                                TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, hightlightColor, null);
+                                builderCloud.setSpan(highlightSpan, startPos2, endPos2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            }
+                        }
+                        holder.textContactFirstname.setText(builderCloud, TextView.BufferType.SPANNABLE);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                } else {
+                    hightLightSearchedText(holder.textContactFirstname.getText().toString(), holder.textContactFirstname);
+                }
+            }
+        }
         /*final String publicUrl = globalSearchType.getPublicProfileUrl();
         if(!StringUtils.isEmpty(publicUrl)){
             if(isRcpVerified == 1){
@@ -183,11 +269,10 @@ public class GlobalSearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }*/
 
         if (isRcpVerified == 1) {
-            if(!StringUtils.isEmpty(mobileNumber)){
+            if (!StringUtils.isEmpty(mobileNumber)) {
 //                holder.image3dotsCallLog.setVisibility(View.VISIBLE);
                 holder.image3dotsCallLog.setVisibility(View.GONE);
-            }
-            else {
+            } else {
                 holder.image3dotsCallLog.setVisibility(View.GONE);
                 holder.llNumber.setVisibility(View.GONE);
             }
@@ -195,6 +280,23 @@ public class GlobalSearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             holder.image3dotsCallLog.setVisibility(View.GONE);
         }
 
+    }
+
+    private void hightLightSearchedText(String originalText, TextView textView) {
+        searchedText = searchedText.trim();
+        int startPos = originalText.toLowerCase(Locale.US).indexOf(searchedText
+                .toLowerCase(Locale.US));
+        int endPos = startPos + searchedText.length();
+        if (startPos != -1) {
+            Spannable spannable = new SpannableString(originalText);
+            ColorStateList blueColor;
+            blueColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.RED});
+            TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, blueColor, null);
+            spannable.setSpan(highlightSpan, startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            textView.setText(spannable);
+        } else {
+            textView.setText(originalText);
+        }
     }
 
     @Override
@@ -217,8 +319,8 @@ public class GlobalSearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         Button buttonInvite;
         @BindView(R.id.text_contact_firstname)
         TextView textContactFirstname;
-        @BindView(R.id.text_contact_lastname)
-        TextView textContactLastname;
+        /* @BindView(R.id.text_contact_lastname)
+         TextView textContactLastname;*/
         @BindView(R.id.image_call_type)
         ImageView imageCallType;
         @BindView(R.id.textCount)

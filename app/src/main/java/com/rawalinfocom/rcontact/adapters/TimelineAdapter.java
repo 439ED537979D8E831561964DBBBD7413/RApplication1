@@ -29,6 +29,10 @@ import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 import com.rawalinfocom.rcontact.notifications.TimelineActivity;
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 
 import butterknife.BindView;
@@ -38,12 +42,12 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
 
     private List<TimelineItem> list;
     private Activity activity;
-    private int recyclerPosition;
+//    private int recyclerPosition;
 
-    public TimelineAdapter(Activity activity, List<TimelineItem> list, int recyclerPosition) {
+    public TimelineAdapter(Activity activity, List<TimelineItem> list) {
         this.list = list;
         this.activity = activity;
-        this.recyclerPosition = recyclerPosition;
+//        this.recyclerPosition = recyclerPosition;
     }
 
     @Override
@@ -58,38 +62,74 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
         final TimelineItem item = list.get(position);
         holder.textWisherName.setText(item.getWisherName());
         holder.textEventName.setText(item.getEventName());
-        holder.textTimelineNotiTime.setText(item.getNotiTime());
+        if (!StringUtils.isEmpty(item.getNotiTime())) {
+//            holder.textTimelineNotiTime.setText(item.getNotiTime());
+            String notiTime = item.getNotiTime();
+            String date = Utils.formatDateTime(notiTime, "yyyy-MM-dd");
+            Calendar c = Calendar.getInstance();
+            SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
+            String current = s.format(c.getTime());
+            if (StringUtils.equalsIgnoreCase(current, date)) {
+                holder.textTimelineNotiTime.setText(Utils.formatDateTime(notiTime, "hh:mm a"));
+            } else {
+                holder.textTimelineNotiTime.setText(Utils.formatDateTime(notiTime, "dd MMM, yy"));
+            }
+        } else {
+            String wishersCommentTime = item.getWisherCommentTime();
+            String date = Utils.formatDateTime(wishersCommentTime, "yyyy-MM-dd");
+            Calendar c = Calendar.getInstance();
+            SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
+            String current = s.format(c.getTime());
+            if (StringUtils.equalsIgnoreCase(current, date)) {
+                holder.textTimelineNotiTime.setText(Utils.formatDateTime(wishersCommentTime,
+                        "hh:mm a"));
+            } else {
+                holder.textTimelineNotiTime.setText(Utils.formatDateTime(wishersCommentTime, "dd " +
+                        "MMM, yy"));
+            }
+        }
         String wisherComment = item.getWisherComment();
         String userComment = item.getUserComment();
 
         int notiType = 0;
-        if (activity.getResources().getString(R.string.str_tab_rating).equalsIgnoreCase(item.getCrmType()))
+        if (item.getCrmType().equalsIgnoreCase("Rating"))
             notiType = 1;
         if (wisherComment != null && wisherComment.length() > 0) {
             holder.textWisherComment.setVisibility(View.VISIBLE);
             holder.textWisherComment.setText(wisherComment);
-            if (recyclerPosition == 0)
-                holder.textWisherCommentTime.setText(Utils.formatDateTime(item.getWisherCommentTime(), "hh:mm a"));
-            else
-                holder.textWisherCommentTime.setText(Utils.formatDateTime(item.getWisherCommentTime(), "dd MMM, hh:mm a"));
+            holder.textWisherCommentTime.setText(Utils.formatDateTime(item.getWisherCommentTime()
+                    , "hh:mm a"));
+//            if (recyclerPosition == 0)
+//                holder.textWisherCommentTime.setText(Utils.formatDateTime(item
+// .getWisherCommentTime(), "hh:mm a"));
+//            else
+//                holder.textWisherCommentTime.setText(Utils.formatDateTime(item
+// .getWisherCommentTime(), "dd MMM, hh:mm a"));
         } else {
             holder.textWisherComment.setVisibility(View.GONE);
             if (notiType == 1) {
                 //set rating done time only
-                if (recyclerPosition == 0)
-                    holder.textWisherCommentTime.setText(Utils.formatDateTime(item.getWisherCommentTime(), "hh:mm a"));
-                else
-                    holder.textWisherCommentTime.setText(Utils.formatDateTime(item.getWisherCommentTime(), "dd MMM, hh:mm a"));
+                holder.textWisherCommentTime.setText(Utils.formatDateTime(item
+                        .getWisherCommentTime(), "hh:mm a"));
+//                if (recyclerPosition == 0)
+//                    holder.textWisherCommentTime.setText(Utils.formatDateTime(item
+// .getWisherCommentTime(), "hh:mm a"));
+//                else
+//                    holder.textWisherCommentTime.setText(Utils.formatDateTime(item
+// .getWisherCommentTime(), "dd MMM, hh:mm a"));
             }
         }
         if (userComment != null && userComment.length() > 0) {
             holder.layoutUserCommentDone.setVisibility(View.VISIBLE);
             holder.textUserComment.setText(userComment);
-
-            if (recyclerPosition == 0)
-                holder.textUserCommentTime.setText(Utils.formatDateTime(item.getUserCommentTime(), "hh:mm a"));
-            else
-                holder.textUserCommentTime.setText(Utils.formatDateTime(item.getUserCommentTime(), "dd MMM, hh:mm a"));
+            holder.textUserCommentTime.setText(Utils.formatDateTime(item.getUserCommentTime(),
+                    "hh:mm a"));
+//            if (recyclerPosition == 0)
+//                holder.textUserCommentTime.setText(Utils.formatDateTime(item.getUserCommentTime
+// (), "hh:mm a"));
+//            else
+//                holder.textUserCommentTime.setText(Utils.formatDateTime(item.getUserCommentTime
+// (), "dd MMM, hh:mm a"));
 
             holder.layoutUserCommentPending.setVisibility(View.GONE);
         } else {
@@ -99,16 +139,21 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
         if (notiType == 1) {
             holder.ratingInfo.setVisibility(View.VISIBLE);
             holder.textRatingGiven.setText(item.getCrmRating());
-            holder.givenRatingBar.setRating(Float.parseFloat(item.getCrmRating()));
+            if (!StringUtils.isEmpty(item.getCrmRating()))
+                holder.givenRatingBar.setRating(Float.parseFloat(item.getCrmRating()));
+            else
+                holder.givenRatingBar.setRating(0f);
             LayerDrawable stars = (LayerDrawable) holder.givenRatingBar.getProgressDrawable();
             // Filled stars
             Utils.setRatingStarColor(stars.getDrawable(2), ContextCompat.getColor(activity, R.color
                     .vivid_yellow));
-            Utils.setRatingStarColor(stars.getDrawable(1), ContextCompat.getColor(activity, android.R
-                    .color.darker_gray));
+            Utils.setRatingStarColor(stars.getDrawable(1), ContextCompat.getColor(activity,
+                    android.R
+                            .color.darker_gray));
             // Empty stars
-            Utils.setRatingStarColor(stars.getDrawable(0), ContextCompat.getColor(activity, android.R
-                    .color.darker_gray));
+            Utils.setRatingStarColor(stars.getDrawable(0), ContextCompat.getColor(activity,
+                    android.R
+                            .color.darker_gray));
             holder.textEventDetailInfo.setVisibility(View.GONE);
         } else {
             holder.textEventDetailInfo.setText(item.getEventDetail());
@@ -117,13 +162,16 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
         holder.buttonUserCommentSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String userComment = holder.edittextUserComment.getText().toString();
-                if (userComment != null && userComment.length() > 0) {
-                    TimelineActivity.selectedRecycler = recyclerPosition;
+                String userComment = holder.edittextUserComment.getText().toString().trim();
+                if (!(userComment.matches(""))) {
+//                    TimelineActivity.selectedRecycler = recyclerPosition;
                     TimelineActivity.selectedRecyclerItem = position;
-                    addReplyonComment(item.getCrmType(), item.getCrmCloudPrId(), userComment, AppConstants.COMMENT_STATUS_RECEIVED, item.getEvmRecordIndexId());
+                    holder.edittextUserComment.getText().clear();
+                    addReplyonComment(item.getCrmType(), item.getCrmCloudPrId(), userComment,
+                            AppConstants.COMMENT_STATUS_RECEIVED, item.getEvmRecordIndexId());
                 } else {
-                    Toast.makeText(activity, activity.getResources().getString(R.string.msg_please_enter_some_comment), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, activity.getResources().getString(R.string
+                            .msg_please_enter_some_comment), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -139,6 +187,19 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
         } else {
             holder.imageWisher.setImageResource(R.drawable.home_screen_profile);
         }
+
+        holder.imageWisher.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!StringUtils.isBlank(item.getWisherProfileImage())) {
+                    Utils.zoomImageFromThumb(activity, holder.imageWisher, item
+                            .getWisherProfileImage(), ((TimelineActivity) activity)
+                            .frameImageEnlarge, ((TimelineActivity) activity).imageEnlarge, (
+                                    (TimelineActivity) activity).frameContainer);
+                }
+            }
+        });
+
         if (!TextUtils.isEmpty(item.getWisherProfileImage())) {
             Glide.with(activity)
                     .load(item.getWisherProfileImage())
@@ -151,6 +212,19 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
         } else {
             holder.imageWisherSmall.setImageResource(R.drawable.home_screen_profile);
         }
+
+        holder.imageWisherSmall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!StringUtils.isBlank(item.getWisherProfileImage())) {
+                    Utils.zoomImageFromThumb(activity, holder.imageWisherSmall, item
+                            .getWisherProfileImage(), ((TimelineActivity) activity)
+                            .frameImageEnlarge, ((TimelineActivity) activity).imageEnlarge, (
+                            (TimelineActivity) activity).frameContainer);
+                }
+            }
+        });
+
         if (!TextUtils.isEmpty(item.getUserprofileImage())) {
             Glide.with(activity)
                     .load(item.getUserprofileImage())
@@ -163,12 +237,26 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
         } else {
             holder.imageUser.setImageResource(R.drawable.home_screen_profile);
         }
+
+        holder.imageUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!StringUtils.isBlank(item.getUserprofileImage())) {
+                    Utils.zoomImageFromThumb(activity, holder.imageUser, item
+                            .getUserprofileImage(), ((TimelineActivity) activity)
+                            .frameImageEnlarge, ((TimelineActivity) activity).imageEnlarge, (
+                            (TimelineActivity) activity).frameContainer);
+                }
+            }
+        });
+
     }
 
-    private void addReplyonComment(String crmType, String crmCloudPrId, String userComment, int commentStatusReceived, String evmRecordIndexId) {
+    private void addReplyonComment(String crmType, String crmCloudPrId, String userComment, int
+            commentStatusReceived, String evmRecordIndexId) {
 
         WsRequestObject addCommentObject = new WsRequestObject();
-        if (crmType.equalsIgnoreCase(activity.getResources().getString(R.string.str_tab_rating))) {
+        if (crmType.equalsIgnoreCase("Rating")) {
             addCommentObject.setPrId(crmCloudPrId);
             addCommentObject.setPrReply(userComment);
             addCommentObject.setPrStatus(commentStatusReceived + "");
@@ -180,20 +268,26 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
             addCommentObject.setStatus(commentStatusReceived + "");
         }
         if (Utils.isNetworkAvailable(activity)) {
-            if (crmType.equalsIgnoreCase(activity.getResources().getString(R.string.str_tab_rating))) {
+//            if (crmType.equalsIgnoreCase(activity.getResources().getString(R.string
+// .str_tab_rating))) {
+            if (crmType.equalsIgnoreCase("Rating")) {
                 new AsyncWebServiceCall(activity, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                         addCommentObject, null, WsResponseObject.class, WsConstants
-                        .REQ_PROFILE_RATING, activity.getResources().getString(R.string.msg_please_wait), true)
-                        .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants.REQ_PROFILE_RATING);
+                        .REQ_PROFILE_RATING, activity.getResources().getString(R.string
+                        .msg_please_wait), true)
+                        .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT +
+                                WsConstants.REQ_PROFILE_RATING);
             } else {
                 new AsyncWebServiceCall(activity, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                         addCommentObject, null, WsResponseObject.class, WsConstants
-                        .REQ_ADD_EVENT_COMMENT, activity.getResources().getString(R.string.msg_please_wait), true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                        .REQ_ADD_EVENT_COMMENT, activity.getResources().getString(R.string
+                        .msg_please_wait), true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
                         WsConstants.WS_ROOT + WsConstants.REQ_ADD_EVENT_COMMENT);
             }
         } else {
             //show no toast
-            Toast.makeText(activity, activity.getResources().getString(R.string.msg_no_network), Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, activity.getResources().getString(R.string.msg_no_network),
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -208,6 +302,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
+
         @BindView(R.id.image_wisher)
         ImageView imageWisher;
 
@@ -265,6 +360,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
         public MyViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
+            System.out.println("timeline MyViewHolder");
             textWisherName.setTypeface(Utils.typefaceRegular(activity));
 
             textEventName.setTypeface(Utils.typefaceRegular(activity));

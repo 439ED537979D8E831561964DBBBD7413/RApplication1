@@ -32,6 +32,8 @@ import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.CallLogType;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -62,11 +64,16 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
     private String profileUrl;
     private String pmId;
     private boolean isCallLogRcpUser;
+    String rcpVerifiedId;
+    String cloudName;
+
+    MaterialDialog clearConfirmationDialog;
 
     public Profile3DotDialogAdapter(Context context, ArrayList<String> arrayList, String number,
                                     long date, boolean isFromCallLogs, ArrayList<CallLogType>
                                             list, String name, String uniqueRowId, String key,
-                                    String profileUrl, String pmId, boolean isCallLogRcpUser) {
+                                    String profileUrl, String pmId, boolean isCallLogRcpUser,
+                                    String rcpVerifiedId, String cloudName) {
         this.context = context;
         this.arrayListString = arrayList;
         this.numberToCall = number;
@@ -79,6 +86,8 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
         this.key = key;
         this.pmId = pmId;
         this.isCallLogRcpUser = isCallLogRcpUser;
+        this.rcpVerifiedId = rcpVerifiedId;
+        this.cloudName = cloudName;
     }
 
     @Override
@@ -137,6 +146,8 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                     intent.putExtra(AppConstants.EXTRA_PM_ID, pmId);
                     intent.putExtra(AppConstants.EXTRA_IS_RCP_USER, isCallLogRcpUser);
                     intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, numberToCall);
+                    intent.putExtra(AppConstants.EXTRA_CALL_LOG_CLOUD_NAME, cloudName);
+                    intent.putExtra(AppConstants.EXTRA_DIALOG_CALL_LOG_INSTANCE, isFromCallLogFragment);
                     context.startActivity(intent);
 
                 } else if (value.equalsIgnoreCase(context.getString(R.string.block))) {
@@ -146,6 +157,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                     String uniqueContactId = "";
                     if (!TextUtils.isEmpty(dialogName)) {
                         listToBlock = getNumbersFromName(dialogName);
+
                         // Log.i("block list size =", listToBlock.size() + "");
                         for (int i = 0; i < listToBlock.size(); i++) {
                             CallLogType callLogType = listToBlock.get(i);
@@ -258,7 +270,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
 
                 } else if (value.equalsIgnoreCase(context.getString(R.string.clear_call_log))) {
 
-                    if (isFromCallLogFragment) {
+                    /*if (isFromCallLogFragment) {
 
                         deleteCallLogByNumber(numberToCall);
 
@@ -272,6 +284,12 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                             deleteCallHistoryByName(numberToCall);
                         }
 
+                    }*/
+
+                    if(callLogHistory(numberToCall) > 0){
+                        showClearConfirmationDialog();
+                    }else{
+                        Toast.makeText(context, context.getString(R.string.no_history_to_delete), Toast.LENGTH_SHORT).show();
                     }
 
                 } else if (value.equalsIgnoreCase(context.getString(R.string.delete))) {
@@ -279,6 +297,20 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                     Intent intent = new Intent(context, CallLogDeleteActivity.class);
                     Bundle b = new Bundle();
                     b.putSerializable(AppConstants.EXTRA_CALL_ARRAY_LIST, arrayListCallLogType);
+
+                    if (StringUtils.isEmpty(dialogName))
+                        b.putString(AppConstants.EXTRA_RCP_VERIFIED_ID, rcpVerifiedId);
+                    else {
+                        b.putString(AppConstants.EXTRA_RCP_VERIFIED_ID, "");
+                        if (isCallLogRcpUser) {
+                            rcpVerifiedId = "1";
+                            b.putString(AppConstants.EXTRA_RCP_VERIFIED_ID, rcpVerifiedId);
+                        }
+//                        else if (!StringUtils.isEmpty(rcpVerifiedId)) {
+//                            if ((StringUtils.isEmpty(userName)))
+//                                logObject.setIsHistoryRcpVerifiedId(isRcpVerifiedUser);
+//                        }
+                    }
                     intent.putExtras(b);
                     context.startActivity(intent);
                     ((Activity) context).overridePendingTransition(R.anim.enter, R.anim.exit);
@@ -507,6 +539,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
 
                 Intent localBroadcastIntent2 = new Intent(AppConstants
                         .ACTION_LOCAL_BROADCAST_CALL_HISTORY_ACTIVITY);
+                localBroadcastIntent2.putExtra("action", "delete");
                 LocalBroadcastManager myLocalBroadcastManager2 = LocalBroadcastManager
                         .getInstance(context);
                 myLocalBroadcastManager2.sendBroadcast(localBroadcastIntent2);
@@ -521,6 +554,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
 
     private void deleteCallHistoryByNumber(String number) {
         try {
+            number =  Utils.getFormattedNumber(context,number);
             String where = CallLog.Calls.NUMBER + " =?";
             String[] selectionArguments = new String[]{number};
             int value = context.getContentResolver().delete(CallLog.Calls.CONTENT_URI, where,
@@ -547,6 +581,8 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
 
                 Intent localBroadcastIntent2 = new Intent(AppConstants
                         .ACTION_LOCAL_BROADCAST_CALL_HISTORY_ACTIVITY);
+                localBroadcastIntent2.putExtra("action", "delete");
+                localBroadcastIntent2.putExtra("number", number);
                 LocalBroadcastManager myLocalBroadcastManager2 = LocalBroadcastManager
                         .getInstance(context);
                 myLocalBroadcastManager2.sendBroadcast(localBroadcastIntent2);
@@ -582,50 +618,50 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
         }
     }
 
-    private void showCallConfirmationDialog(final String number) {
-
-        final String finalNumber;
-
-        if (!number.startsWith("+91")) {
-            finalNumber = "+91" + number;
-        } else {
-            finalNumber = number;
-        }
-
-        RippleView.OnRippleCompleteListener cancelListener = new RippleView
-                .OnRippleCompleteListener() {
-
-            @Override
-            public void onComplete(RippleView rippleView) {
-                switch (rippleView.getId()) {
-                    case R.id.rippleLeft:
-                        callConfirmationDialog.dismissDialog();
-                        break;
-
-                    case R.id.rippleRight:
-                        callConfirmationDialog.dismissDialog();
-                        /*Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
-                        number));
-                        try {
-                            context.startActivity(intent);
-
-                        } catch (SecurityException e) {
-                            e.printStackTrace();
-                        }*/
-                        Utils.callIntent(context, finalNumber);
-                        break;
-                }
-            }
-        };
-
-        callConfirmationDialog = new MaterialDialog(context, cancelListener);
-        callConfirmationDialog.setTitleVisibility(View.GONE);
-        callConfirmationDialog.setLeftButtonText(context.getString(R.string.action_cancel));
-        callConfirmationDialog.setRightButtonText(context.getString(R.string.action_call));
-        callConfirmationDialog.setDialogBody(context.getString(R.string.action_call) + " " + finalNumber + "?");
-        callConfirmationDialog.showDialog();
-
-    }
+//    private void showCallConfirmationDialog(final String number) {
+//
+//        final String finalNumber;
+//
+//        if (!number.startsWith("+91")) {
+//            finalNumber = "+91" + number;
+//        } else {
+//            finalNumber = number;
+//        }
+//
+//        RippleView.OnRippleCompleteListener cancelListener = new RippleView
+//                .OnRippleCompleteListener() {
+//
+//            @Override
+//            public void onComplete(RippleView rippleView) {
+//                switch (rippleView.getId()) {
+//                    case R.id.rippleLeft:
+//                        callConfirmationDialog.dismissDialog();
+//                        break;
+//
+//                    case R.id.rippleRight:
+//                        callConfirmationDialog.dismissDialog();
+//                        /*Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
+//                        number));
+//                        try {
+//                            context.startActivity(intent);
+//
+//                        } catch (SecurityException e) {
+//                            e.printStackTrace();
+//                        }*/
+//                        Utils.callIntent(context, finalNumber);
+//                        break;
+//                }
+//            }
+//        };
+//
+//        callConfirmationDialog = new MaterialDialog(context, cancelListener);
+//        callConfirmationDialog.setTitleVisibility(View.GONE);
+//        callConfirmationDialog.setLeftButtonText(context.getString(R.string.action_cancel));
+//        callConfirmationDialog.setRightButtonText(context.getString(R.string.action_call));
+//        callConfirmationDialog.setDialogBody(context.getString(R.string.action_call) + " " + finalNumber + "?");
+//        callConfirmationDialog.showDialog();
+//
+//    }
 
     @TargetApi(Build.VERSION_CODES.M)
     private Cursor getCallHistoryDataByNumber(String number) {
@@ -642,7 +678,12 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
     }
 
     private long callLogHistory(String number) {
-        Cursor cursor = getCallHistoryDataByNumber(number);
+        Cursor cursor;
+        cursor = getCallHistoryDataByNumber(number);
+        if(cursor.getCount()==0){
+            number = Utils.getFormattedNumber(context,number);
+            cursor =  getCallHistoryDataByNumber(number);
+        }
         long callDateToDelete = 0;
         try {
             if (cursor != null && cursor.getCount() > 0) {
@@ -662,4 +703,111 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
 
         return callDateToDelete;
     }
+
+    private void showClearConfirmationDialog() {
+
+        RippleView.OnRippleCompleteListener cancelListener = new RippleView
+                .OnRippleCompleteListener() {
+
+            @Override
+            public void onComplete(RippleView rippleView) {
+                switch (rippleView.getId()) {
+                    case R.id.rippleLeft:
+                        clearConfirmationDialog.dismissDialog();
+                        break;
+
+                    case R.id.rippleRight:
+                        clearConfirmationDialog.dismissDialog();
+                        if (isFromCallLogFragment) {
+
+                            deleteCallLogByNumber(numberToCall);
+
+                        } else {
+
+                            Pattern numberPat = Pattern.compile("\\d+");
+                            Matcher matcher1 = numberPat.matcher(numberToCall);
+                            if (matcher1.find()) {
+                                deleteCallHistoryByNumber(numberToCall);
+                            } else {
+                                deleteCallHistoryByName(numberToCall);
+                            }
+
+                        }
+                        break;
+                }
+
+            }
+        };
+
+        clearConfirmationDialog = new MaterialDialog(context, cancelListener);
+        clearConfirmationDialog.setTitleVisibility(View.GONE);
+        clearConfirmationDialog.setLeftButtonText(context.getString(R.string.action_cancel));
+        clearConfirmationDialog.setRightButtonText("Yes");
+        clearConfirmationDialog.setDialogBody("Are you sure you want to clear all call logs?");
+
+        clearConfirmationDialog.showDialog();
+
+    }
+
+    private ArrayList<CallLogType> callLogHistoryList(String number) {
+        ArrayList<CallLogType> callDetails = new ArrayList<>();
+        Cursor cursor = null;
+        try {
+            if (!TextUtils.isEmpty(number)) {
+                Pattern numberPat = Pattern.compile("\\d+");
+                Matcher matcher1 = numberPat.matcher(number);
+                if (matcher1.find()) {
+                    cursor = getCallHistoryDataByNumber(number);
+                } else {
+                }
+            }
+
+            if (cursor != null && cursor.getCount() > 0) {
+                int number1 = cursor.getColumnIndex(CallLog.Calls.NUMBER);
+                int type = cursor.getColumnIndex(CallLog.Calls.TYPE);
+                int date = cursor.getColumnIndex(CallLog.Calls.DATE);
+                int duration = cursor.getColumnIndex(CallLog.Calls.DURATION);
+                int callLogId = cursor.getColumnIndex(CallLog.Calls._ID);
+                int numberType = cursor.getColumnIndex(CallLog.Calls.CACHED_NUMBER_TYPE);
+                int account_id = -1;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    //for versions above lollipop
+                    account_id = cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_ID);
+                } else {
+                    account_id = cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_ID);
+                }
+                while (cursor.moveToNext()) {
+                    String phNum = cursor.getString(number1);
+                    int callType = Integer.parseInt(cursor.getString(type));
+                    String callDate = cursor.getString(date);
+                    long dateOfCall = Long.parseLong(callDate);
+                    String callDuration = cursor.getString(duration);
+
+                    int histroyId = Integer.parseInt(cursor.getString(callLogId));
+                    CallLogType logObject = new CallLogType();
+                    logObject.setHistoryNumber(phNum);
+                    logObject.setHistoryType(callType);
+                    logObject.setHistoryDate(dateOfCall);
+                    logObject.setHistoryDuration(Integer.parseInt(callDuration));
+                    if (account_id != -1)
+                        logObject.setHistoryCallSimNumber(cursor.getString(account_id));
+                    else
+                        logObject.setHistoryCallSimNumber(" ");
+
+                    logObject.setHistoryId(histroyId);
+                    Date date1 = new Date(dateOfCall);
+                    String callDataAndTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a").format
+                            (date1);
+                    logObject.setCallDateAndTime(callDataAndTime);
+                    callDetails.add(logObject);
+                }
+                cursor.close();
+            }
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+
+        return callDetails;
+    }
+
 }

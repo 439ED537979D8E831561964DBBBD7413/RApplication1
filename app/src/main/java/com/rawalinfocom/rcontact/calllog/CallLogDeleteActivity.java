@@ -46,6 +46,8 @@ public class CallLogDeleteActivity extends BaseActivity implements RippleView
     @BindView(R.id.no_record_to_display)
     TextView textNoRecordToDisplay;
 
+    String rcpVerifiedId = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,7 +82,10 @@ public class CallLogDeleteActivity extends BaseActivity implements RippleView
     private void receiveBundleData() {
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            arrayListCallLogType = (ArrayList<CallLogType>) bundle.getSerializable(AppConstants.EXTRA_CALL_ARRAY_LIST);
+            arrayListCallLogType = (ArrayList<CallLogType>) bundle.getSerializable(AppConstants
+                    .EXTRA_CALL_ARRAY_LIST);
+            if(bundle.containsKey(AppConstants.EXTRA_RCP_VERIFIED_ID))
+                rcpVerifiedId = bundle.getString(AppConstants.EXTRA_RCP_VERIFIED_ID);
         }
     }
 
@@ -89,7 +94,7 @@ public class CallLogDeleteActivity extends BaseActivity implements RippleView
         textToolbarTitle = ButterKnife.findById(includeToolbar, R.id.text_toolbar_title);
         imageDelete = ButterKnife.findById(includeToolbar, R.id.image_delete);
         rippleActionToolbarDelete = ButterKnife.findById(includeToolbar, R.id.ripple_action_delete);
-        deleteCallLogListAdapter = new DeleteCallLogListAdapter(this, arrayListCallLogType);
+        deleteCallLogListAdapter = new DeleteCallLogListAdapter(this, arrayListCallLogType,rcpVerifiedId);
         textToolbarTitle.setTypeface(Utils.typefaceSemiBold(this));
         textToolbarTitle.setText(getString(R.string.action_delete));
         rippleActionBack.setOnRippleCompleteListener(this);
@@ -115,7 +120,7 @@ public class CallLogDeleteActivity extends BaseActivity implements RippleView
             checkboxSelectAll.setEnabled(true);
             rippleActionToolbarDelete.setEnabled(true);
             deleteCallLogListAdapter = new
-                    DeleteCallLogListAdapter(this, arrayListCallLogType);
+                    DeleteCallLogListAdapter(this, arrayListCallLogType,rcpVerifiedId);
             recycleViewDeleteCallLog.setAdapter(deleteCallLogListAdapter);
             setRecyclerViewLayoutManager(recycleViewDeleteCallLog);
         } else {
@@ -137,7 +142,8 @@ public class CallLogDeleteActivity extends BaseActivity implements RippleView
                 // delete operation
                 String where = CallLog.Calls.NUMBER + " =?" + " AND " + CallLog.Calls.DATE + " =?";
                 String[] selectionArguments = new String[]{number, String.valueOf(dateAndTime)};
-                int value = this.getContentResolver().delete(CallLog.Calls.CONTENT_URI, where, selectionArguments);
+                int value = this.getContentResolver().delete(CallLog.Calls.CONTENT_URI, where,
+                        selectionArguments);
                 if (value > 0) {
                     arrayListCallLogType.remove(callLogType);
                     deleteCallLogListAdapter.notifyDataSetChanged();
@@ -150,16 +156,19 @@ public class CallLogDeleteActivity extends BaseActivity implements RippleView
                 checkboxSelectAll.setChecked(false);
             }
 
-            Intent localBroadcastIntent1 = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_DELETE_LOGS);
+            Intent localBroadcastIntent1 = new Intent(AppConstants
+                    .ACTION_LOCAL_BROADCAST_DELETE_LOGS);
             localBroadcastIntent1.putExtra(AppConstants.EXTRA_DELETE_ALL_CALL_LOGS, selectAll);
-            LocalBroadcastManager myLocalBroadcastManager1 = LocalBroadcastManager.getInstance(this);
+            LocalBroadcastManager myLocalBroadcastManager1 = LocalBroadcastManager.getInstance
+                    (this);
             myLocalBroadcastManager1.sendBroadcast(localBroadcastIntent1);
 
             finish();
             overridePendingTransition(R.anim.pop_enter, R.anim.pop_exit);
 
         } else {
-            Toast.makeText(this, getString(R.string.please_select_history_to_delete), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.please_select_history_to_delete), Toast
+                    .LENGTH_SHORT).show();
         }
     }
 

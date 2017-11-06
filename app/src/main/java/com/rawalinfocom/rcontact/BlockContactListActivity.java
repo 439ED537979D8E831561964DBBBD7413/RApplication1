@@ -90,7 +90,7 @@ public class BlockContactListActivity extends BaseActivity implements RippleView
                 ArrayList<String> arrayList = new ArrayList<>(Arrays.asList(getString(R.string
                         .unblock_All)));
                 ProfileMenuOptionDialog profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
-                        arrayList, " ", 0, false, listOfBlockContact, "", "", "", "", "", false);
+                        arrayList, " ", 0, false, listOfBlockContact, "", "", "", "", "", false,"","");
                 profileMenuOptionDialog.showDialog();
 
                 break;

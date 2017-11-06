@@ -1,42 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/relative_row_contact"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="@dimen/activity_half_horizontal_margin">
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/relative_row_main"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/image_profile"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:contentDescription="@string/str_content_description"
             android:src="@mipmap/ic_launcher" />
 
-        <CheckBox
-            android:id="@+id/checkbox_select_contact"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="@dimen/activity_horizontal_margin" />
+        <!--<CheckBox-->
+        <!--android:id="@+id/checkbox_select_contact"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_marginRight="@dimen/activity_horizontal_margin"-->
+        <!--android:visibility="gone" />-->
 
         <LinearLayout
             android:id="@+id/linear_content_main"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerVertical="true"
-            android:layout_toEndOf="@+id/image_profile"
-            android:layout_toLeftOf="@id/checkbox_select_contact"
-            android:layout_toRightOf="@+id/image_profile"
-            android:layout_toStartOf="@id/checkbox_select_contact"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center|start"
             android:orientation="vertical">
 
             <TextView
@@ -58,7 +57,22 @@
 
         </LinearLayout>
 
-    </RelativeLayout>
+        <Button
+            android:id="@+id/button_invite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_rounded_corner"
+            android:minHeight="0dp"
+            android:minWidth="0dp"
+            android:paddingBottom="@dimen/margin_small"
+            android:paddingLeft="@dimen/margin_medium"
+            android:paddingRight="@dimen/margin_medium"
+            android:paddingTop="@dimen/margin_small"
+            android:text="@string/str_invite"
+            android:textAllCaps="false"
+            android:textColor="@color/colorWhite" />
+
+    </LinearLayout>
 
     <View
         android:id="@+id/divider_all_contact"

@@ -13,15 +13,21 @@ import java.io.Serializable;
 public class ProfileDataOperationOrganization implements Serializable {
 
     private String orgId;
+    private String orgEntId;
     private String orgJobTitle;
-    private String orgDepartment;
     private String orgName;
-    private String orgType;
-    private String orgJobDescription;
-    private String orgOfficeLocation;
+    private String orgIndustryType;
     private Integer isCurrent;
     private Integer orgPublic;
+    private Integer isVerify;
     private Integer isPrivate;
+    private String orgFromDate;
+    private String orgToDate;
+    private String orgLogo;
+
+//    private String orgType;
+//    private String orgJobDescription;
+//    private String orgOfficeLocation;
 
     //    private Integer orgRcpType;
     private String orgRcpType;
@@ -35,6 +41,15 @@ public class ProfileDataOperationOrganization implements Serializable {
         this.orgId = orgId;
     }
 
+    @JsonProperty("org_ent_id")
+    public String getOrgEntId() {
+        return orgEntId;
+    }
+
+    public void setOrgEntId(String orgEntId) {
+        this.orgEntId = orgEntId;
+    }
+
     @JsonProperty("org_job_title")
     public String getOrgJobTitle() {
         return StringUtils.defaultString(this.orgJobTitle);
@@ -44,14 +59,6 @@ public class ProfileDataOperationOrganization implements Serializable {
         this.orgJobTitle = orgJobTitle;
     }
 
-    @JsonProperty("org_department")
-    public String getOrgDepartment() {
-        return StringUtils.defaultString(this.orgDepartment);
-    }
-
-    public void setOrgDepartment(String orgDepartment) {
-        this.orgDepartment = orgDepartment;
-    }
 
     @JsonProperty("org_name")
     public String getOrgName() {
@@ -62,31 +69,31 @@ public class ProfileDataOperationOrganization implements Serializable {
         this.orgName = orgName;
     }
 
-    @JsonProperty("org_type")
-    public String getOrgType() {
-        return StringUtils.defaultString(orgType);
+    @JsonProperty("org_industry_type")
+    public String getOrgIndustryType() {
+        return StringUtils.defaultString(this.orgIndustryType);
     }
 
-    public void setOrgType(String orgType) {
-        this.orgType = orgType;
+    public void setOrgIndustryType(String orgIndustryType) {
+        this.orgIndustryType = orgIndustryType;
     }
 
-    @JsonProperty("org_job_description")
-    public String getOrgJobDescription() {
-        return StringUtils.defaultString(orgJobDescription);
+    @JsonProperty("org_logo")
+    public String getOrgLogo() {
+        return StringUtils.defaultString(this.orgLogo);
     }
 
-    public void setOrgJobDescription(String orgJobDescription) {
-        this.orgJobDescription = orgJobDescription;
+    public void setOrgLogo(String orgLogo) {
+        this.orgLogo = orgLogo;
     }
 
-    @JsonProperty("org_office_location")
-    public String getOrgOfficeLocation() {
-        return StringUtils.defaultString(orgOfficeLocation);
+    @JsonProperty("is_verified")
+    public Integer getIsVerify() {
+        return isVerify;
     }
 
-    public void setOrgOfficeLocation(String orgOfficeLocation) {
-        this.orgOfficeLocation = orgOfficeLocation;
+    public void setIsVerify(Integer isVerify) {
+        this.isVerify = isVerify;
     }
 
     @JsonProperty("is_current")
@@ -113,6 +120,24 @@ public class ProfileDataOperationOrganization implements Serializable {
 
     public void setOrgRcpType(String orgRcpType) {
         this.orgRcpType = orgRcpType;
+    }
+
+    @JsonProperty("org_from_date")
+    public String getOrgFromDate() {
+        return orgFromDate;
+    }
+
+    public void setOrgFromDate(String orgFromDate) {
+        this.orgFromDate = orgFromDate;
+    }
+
+    @JsonProperty("org_to_date")
+    public String getOrgToDate() {
+        return orgToDate;
+    }
+
+    public void setOrgToDate(String orgToDate) {
+        this.orgToDate = orgToDate;
     }
 
     @JsonProperty("is_private")

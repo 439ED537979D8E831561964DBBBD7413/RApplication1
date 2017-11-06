@@ -26,7 +26,7 @@ public class TableProfileMaster {
     }
 
     // Table Names
-    static final String TABLE_RC_PROFILE_MASTER = "rc_profile_master";
+    public static final String TABLE_RC_PROFILE_MASTER = "rc_profile_master";
 
     // Column Names
 //    private static final String COLUMN_PM_ID = "pm_id";
@@ -44,21 +44,22 @@ public class TableProfileMaster {
 //    private static final String COLUMN_PM_SIGNUP_SOCIAL_MEDIA_TYPE =
 // "pm_signup_social_media_type";
 
-    static final String COLUMN_PM_RCP_ID = "pm_rcp_id";
-    static final String COLUMN_PM_RAW_ID = "pm_raw_id";
-    static final String COLUMN_PM_FIRST_NAME = "pm_first_name";
-    static final String COLUMN_PM_LAST_NAME = "pm_last_name";
-    static final String COLUMN_PM_PROFILE_IMAGE = "pm_profile_image";
-    static final String COLUMN_PM_GENDER = "pm_gender";
-    static final String COLUMN_PM_GENDER_PRIVACY = "pm_gender_privacy";
-    static final String COLUMN_PM_PROFILE_RATING = "pm_profile_rating";
-    static final String COLUMN_PM_PROFILE_RATE_USER = "pm_total_user_rating";
-    static final String COLUMN_PM_IS_FAVOURITE = "pm_is_favourite";
+    public static final String COLUMN_PM_RCP_ID = "pm_rcp_id";
+    public static final String COLUMN_PM_RAW_ID = "pm_raw_id";
+    public static final String COLUMN_PM_FIRST_NAME = "pm_first_name";
+    public static final String COLUMN_PM_LAST_NAME = "pm_last_name";
+    public static final String COLUMN_PM_PROFILE_IMAGE = "pm_profile_image";
+    public static final String COLUMN_PM_GENDER = "pm_gender";
+    public static final String COLUMN_PM_GENDER_PRIVACY = "pm_gender_privacy";
+    public static final String COLUMN_PM_PROFILE_RATING = "pm_profile_rating";
+    public static final String COLUMN_PM_PROFILE_RATE_USER = "pm_total_user_rating";
+    public static final String COLUMN_PM_IS_FAVOURITE = "pm_is_favourite";
     private static final String COLUMN_PM_NOSQL_MASTER_ID = "pm_nosql_master_id";
+    static final String COLUMN_PM_BADGE = "pm_badge";
     private static final String COLUMN_PM_JOINING_DATE = "pm_joining_date";
 
     // Table Create Statements
-//    static final String CREATE_TABLE_RC_PROFILE_MASTER = "CREATE TABLE " +
+//    static final String CREATE_TABLE_RC_PROFILE_MASTER = "CREATE TABLE IF NOT EXISTS " +
 //            TABLE_RC_PROFILE_MASTER + " (" +
 //            " " + COLUMN_PM_RAW_ID + " text," +
 //            " " + COLUMN_PM_RCP_ID + " integer UNIQUE," +
@@ -86,7 +87,7 @@ public class TableProfileMaster {
 //            " " + COLUMN_PM_JOINING_DATE + " text" +
 //            ");";
 
-    static final String CREATE_TABLE_RC_PROFILE_MASTER = "CREATE TABLE " +
+    static final String CREATE_TABLE_RC_PROFILE_MASTER = "CREATE TABLE IF NOT EXISTS " +
             TABLE_RC_PROFILE_MASTER + " (" +
             " " + COLUMN_PM_RAW_ID + " text," +
             " " + COLUMN_PM_RCP_ID + " integer UNIQUE," +
@@ -99,6 +100,7 @@ public class TableProfileMaster {
             " " + COLUMN_PM_PROFILE_RATE_USER + " integer," +
             " " + COLUMN_PM_IS_FAVOURITE + " integer," +
             " " + COLUMN_PM_NOSQL_MASTER_ID + " text," +
+            " " + COLUMN_PM_BADGE + " text," +
             " " + COLUMN_PM_JOINING_DATE + " text" +
             ");";
 
@@ -120,6 +122,7 @@ public class TableProfileMaster {
         values.put(COLUMN_PM_PROFILE_RATE_USER, userProfile.getTotalProfileRateUser());
         values.put(COLUMN_PM_IS_FAVOURITE, userProfile.getPmIsFavourite());
         values.put(COLUMN_PM_NOSQL_MASTER_ID, userProfile.getPmNosqlMasterId());
+        values.put(COLUMN_PM_BADGE, userProfile.getPmBadge());
         values.put(COLUMN_PM_JOINING_DATE, userProfile.getPmJoiningDate());
 
         int count = 0;
@@ -162,6 +165,7 @@ public class TableProfileMaster {
                     .getTotalProfileRateUser());
             values.put(COLUMN_PM_IS_FAVOURITE, arrayListUserProfile.get(i).getPmIsFavourite());
             values.put(COLUMN_PM_NOSQL_MASTER_ID, arrayListUserProfile.get(i).getPmNosqlMasterId());
+            values.put(COLUMN_PM_BADGE, arrayListUserProfile.get(i).getPmBadge());
             values.put(COLUMN_PM_JOINING_DATE, arrayListUserProfile.get(i).getPmJoiningDate());
 
             int count = 0;
@@ -225,7 +229,7 @@ public class TableProfileMaster {
         return userProfile;
     }
 
-    // get login user profile
+    // get rcp user profile
     public UserProfile getProfileFromPmId(int cloudPmd) {
         UserProfile userProfile = new UserProfile();
 
@@ -233,8 +237,8 @@ public class TableProfileMaster {
             SQLiteDatabase db = databaseHandler.getReadableDatabase();
 
             Cursor cursor = db.query(TABLE_RC_PROFILE_MASTER, new String[]{COLUMN_PM_RAW_ID,
-                    COLUMN_PM_FIRST_NAME, COLUMN_PM_LAST_NAME, COLUMN_PM_PROFILE_IMAGE,
-                    COLUMN_PM_RCP_ID,}, COLUMN_PM_RCP_ID
+                    COLUMN_PM_FIRST_NAME, COLUMN_PM_LAST_NAME, COLUMN_PM_PROFILE_IMAGE, COLUMN_PM_PROFILE_RATE_USER,
+                    COLUMN_PM_PROFILE_RATING, COLUMN_PM_RCP_ID,}, COLUMN_PM_RCP_ID
                     + "=?", new String[]{String.valueOf(cloudPmd)}, null, null, null, null);
             if (cursor != null)
                 cursor.moveToFirst();
@@ -247,7 +251,10 @@ public class TableProfileMaster {
                         (COLUMN_PM_LAST_NAME)));
                 userProfile.setPmProfileImage(cursor.getString(cursor.getColumnIndex
                         (COLUMN_PM_PROFILE_IMAGE)));
-
+                userProfile.setProfileRating(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_PM_PROFILE_RATING)));
+                userProfile.setTotalProfileRateUser(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_PM_PROFILE_RATE_USER)));
                 cursor.close();
             }
             db.close();
@@ -268,14 +275,12 @@ public class TableProfileMaster {
             SQLiteDatabase db = databaseHandler.getReadableDatabase();
 
             Cursor cursor = db.query(TABLE_RC_PROFILE_MASTER, new String[]{COLUMN_PM_RAW_ID,
-                    COLUMN_PM_FIRST_NAME,
-                    COLUMN_PM_LAST_NAME,
-                    COLUMN_PM_PROFILE_IMAGE, COLUMN_PM_RCP_ID,
-                    COLUMN_PM_GENDER, COLUMN_PM_PROFILE_RATING,
-                    COLUMN_PM_PROFILE_RATE_USER, COLUMN_PM_IS_FAVOURITE,
-                    COLUMN_PM_NOSQL_MASTER_ID,
-                    COLUMN_PM_JOINING_DATE}, COLUMN_PM_RCP_ID
-                    + "=?", new String[]{String.valueOf(cloudPmd)}, null, null, null, null);
+                    COLUMN_PM_FIRST_NAME, COLUMN_PM_LAST_NAME, COLUMN_PM_PROFILE_IMAGE,
+                    COLUMN_PM_RCP_ID, COLUMN_PM_GENDER, COLUMN_PM_GENDER_PRIVACY,
+                    COLUMN_PM_PROFILE_RATING, COLUMN_PM_PROFILE_RATE_USER,
+                    COLUMN_PM_IS_FAVOURITE, COLUMN_PM_NOSQL_MASTER_ID, COLUMN_PM_BADGE,
+                    COLUMN_PM_JOINING_DATE}, COLUMN_PM_RCP_ID + "=?", new String[]{String.valueOf
+                    (cloudPmd)}, null, null, null, null);
             if (cursor != null)
                 cursor.moveToFirst();
 
@@ -301,6 +306,7 @@ public class TableProfileMaster {
                         (COLUMN_PM_IS_FAVOURITE)));
                 userProfile.setPmNosqlMasterId(cursor.getString(cursor.getColumnIndex
                         (COLUMN_PM_NOSQL_MASTER_ID)));
+                userProfile.setPmBadge(cursor.getString(cursor.getColumnIndex(COLUMN_PM_BADGE)));
                 userProfile.setPmJoiningDate(cursor.getString(cursor.getColumnIndex
                         (COLUMN_PM_JOINING_DATE)));
 
@@ -350,6 +356,7 @@ public class TableProfileMaster {
                         (COLUMN_PM_IS_FAVOURITE)));
                 userProfile.setPmNosqlMasterId(cursor.getString(cursor.getColumnIndex
                         (COLUMN_PM_NOSQL_MASTER_ID)));
+                userProfile.setPmBadge(cursor.getString(cursor.getColumnIndex(COLUMN_PM_BADGE)));
                 userProfile.setPmJoiningDate(cursor.getString(cursor.getColumnIndex
                         (COLUMN_PM_JOINING_DATE)));
                 // Adding user profile to list
@@ -394,6 +401,7 @@ public class TableProfileMaster {
         values.put(COLUMN_PM_PROFILE_RATE_USER, userProfile.getTotalProfileRateUser());
         values.put(COLUMN_PM_IS_FAVOURITE, userProfile.getPmIsFavourite());
         values.put(COLUMN_PM_NOSQL_MASTER_ID, userProfile.getPmNosqlMasterId());
+        values.put(COLUMN_PM_BADGE, userProfile.getPmBadge());
         values.put(COLUMN_PM_JOINING_DATE, userProfile.getPmJoiningDate());
 
         int isUpdated = db.update(TABLE_RC_PROFILE_MASTER, values, COLUMN_PM_RCP_ID + " = ?",
@@ -421,18 +429,18 @@ public class TableProfileMaster {
         return isUpdated;
     }
 
-    public int getRcpIdCount(int rcpId) {
-        int count = 0;
+    public String getUserGender(int rcpId) {
+        String gender = "";
         SQLiteDatabase db = databaseHandler.getReadableDatabase();
-        Cursor mCount = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_RC_PROFILE_MASTER + " WHERE " +
+        Cursor mCount = db.rawQuery("SELECT " + COLUMN_PM_GENDER + " FROM " + TABLE_RC_PROFILE_MASTER + " WHERE " +
                 COLUMN_PM_RCP_ID + " = " + rcpId, null);
         if (mCount != null) {
             mCount.moveToFirst();
-            count = mCount.getInt(0);
+            gender = mCount.getString(0);
             mCount.close();
         }
         db.close();
-        return count;
+        return gender;
     }
 
     public String getRawIdFromRcpId(int rcpId) {
@@ -463,7 +471,7 @@ public class TableProfileMaster {
 
     }
 
-    public ArrayList<String> getAllRcpId() {
+    public ArrayList<String> getAllRawIds() {
 
         ArrayList<String> arrayListRawId = new ArrayList<>();
         SQLiteDatabase db = null;
@@ -504,6 +512,46 @@ public class TableProfileMaster {
 
         // return user profile list
         return arrayListRawId;
+    }
+
+
+    public ArrayList<String> getAllRcpIds() {
+
+        ArrayList<String> arrayListRcpId = new ArrayList<>();
+        SQLiteDatabase db = null;
+        // Select All Query
+
+        try {
+
+            String selectQuery = "SELECT " + COLUMN_PM_RCP_ID + " FROM " + TABLE_RC_PROFILE_MASTER;
+
+            db = databaseHandler.getWritableDatabase();
+            Cursor cursor = db.rawQuery(selectQuery, null);
+
+            // looping through all rows and adding to list
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    do {
+                        UserProfile userProfile = new UserProfile();
+                        userProfile.setPmRcpId(cursor.getString(cursor.getColumnIndex
+                                (COLUMN_PM_RCP_ID)));
+                        arrayListRcpId.add(userProfile.getPmRcpId());
+
+                    } while (cursor.moveToNext());
+                }
+                cursor.close();
+            }
+
+            db.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (db != null) {
+                db.close();
+            }
+        }
+
+        // return user profile list
+        return arrayListRcpId;
     }
 
     public String getNameFromRawId(String rawId) {
@@ -563,7 +611,7 @@ public class TableProfileMaster {
         return name;
     }
 
-    public ArrayList<UserProfile> getProfileDetailsFromRawId(String rawId) {
+    public ArrayList<UserProfile> getProfileDetailsFromRawIdTemp(String rawId) {
 
         ArrayList<UserProfile> userProfiles = new ArrayList<>();
         // Select All Query
@@ -624,6 +672,88 @@ public class TableProfileMaster {
         return userProfiles;
     }
 
+    public ArrayList<UserProfile> getProfileDetailsFromRawId(String rawId) {
+
+        ArrayList<UserProfile> userProfiles = new ArrayList<>();
+
+        String selectQuery1 = "SELECT " + COLUMN_PM_RAW_ID + ", " + COLUMN_PM_RCP_ID + " FROM " +
+                TABLE_RC_PROFILE_MASTER + " WHERE " + COLUMN_PM_RAW_ID + " LIKE '%" + rawId + "%'";
+
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery1, null);
+
+        if (cursor != null) {
+
+            if (cursor.moveToFirst()) {
+                do {
+                    UserProfile userProfile = new UserProfile();
+                    userProfile.setPmRcpId(cursor.getString(cursor.getColumnIndex
+                            (COLUMN_PM_RCP_ID)));
+                    userProfile.setPmRawId(cursor.getString(cursor.getColumnIndex
+                            (COLUMN_PM_RAW_ID)));
+                    userProfiles.add(userProfile);
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
+        db.close();
+
+        ArrayList<String> rawIds = new ArrayList<>();
+        ArrayList<String> rcpIds = new ArrayList<>();
+        for (int i = 0; i < userProfiles.size(); i++) {
+            if (StringUtils.contains(userProfiles.get(i).getPmRawId(), ",")) {
+                String[] tempRawIds = StringUtils.split(userProfiles.get(i).getPmRawId(), ",");
+                for (String tempRawId : tempRawIds) {
+                    rawIds.add(tempRawId);
+                    rcpIds.add(userProfiles.get(i).getPmRcpId());
+                }
+            } else {
+                rawIds.add(userProfiles.get(i).getPmRawId());
+                rcpIds.add(userProfiles.get(i).getPmRcpId());
+            }
+        }
+
+        ArrayList<String> finalRcpIds = new ArrayList<>();
+        for (int i = 0; i < rawIds.size(); i++) {
+            if (StringUtils.equalsAnyIgnoreCase(rawIds.get(i), rawId)) {
+                finalRcpIds.add(rcpIds.get(i));
+            }
+        }
+
+        String allRcpId = StringUtils.join(finalRcpIds.toArray(new String[finalRcpIds.size()]),
+                ",");
+
+        String selectQuery = "SELECT " + COLUMN_PM_RCP_ID + "," + COLUMN_PM_FIRST_NAME + "," +
+                COLUMN_PM_PROFILE_IMAGE + "," + COLUMN_PM_LAST_NAME + " FROM " +
+                TABLE_RC_PROFILE_MASTER + " WHERE " + COLUMN_PM_RCP_ID + " IN (" + allRcpId + ")";
+
+        userProfiles = new ArrayList<>();
+        db = databaseHandler.getWritableDatabase();
+        cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor != null) {
+
+            if (cursor.moveToFirst()) {
+                do {
+                    UserProfile userProfile = new UserProfile();
+                    userProfile.setPmFirstName(cursor.getString(cursor.getColumnIndex
+                            (COLUMN_PM_FIRST_NAME)));
+                    userProfile.setPmLastName(cursor.getString(cursor.getColumnIndex
+                            (COLUMN_PM_LAST_NAME)));
+                    userProfile.setPmRcpId(cursor.getString(cursor.getColumnIndex
+                            (COLUMN_PM_RCP_ID)));
+                    userProfile.setPmProfileImage(cursor.getString(cursor.getColumnIndex
+                            (COLUMN_PM_PROFILE_IMAGE)));
+                    userProfiles.add(userProfile);
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
+        db.close();
+
+        return userProfiles;
+    }
+
     public ArrayList<String> getAllRcpIdFromRawId(String rawId) {
 
         ArrayList<String> rcpIds = new ArrayList<>();
@@ -650,5 +780,29 @@ public class TableProfileMaster {
         db.close();
 
         return rcpIds;
+    }
+
+    public String getRCPIdFromRawId(String rawId) {
+
+        String rcpID = "";
+
+        String selectQuery = "SELECT " + COLUMN_PM_RCP_ID + " FROM " + TABLE_RC_PROFILE_MASTER + " WHERE " +
+                COLUMN_PM_RAW_ID + " LIKE '%" + rawId + "%'";
+
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor != null) {
+
+            if (cursor.moveToFirst()) {
+                do {
+                    rcpID = cursor.getString(cursor.getColumnIndex(COLUMN_PM_RCP_ID));
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
+
+        return rcpID;
+
     }
 }

@@ -14,6 +14,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -41,6 +42,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -53,6 +55,7 @@ import com.rawalinfocom.rcontact.adapters.AllContactAdapter;
 import com.rawalinfocom.rcontact.calldialer.transition.ScaleTransition;
 import com.rawalinfocom.rcontact.calllog.TelephonyInfo;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.constants.ContactStorageConstants;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
@@ -147,6 +150,8 @@ public class DialerActivity extends BaseActivity {
     ImageButton imageBtnCloseDrawer;
     @BindView(R.id.number_pad)
     LinearLayout numberPad;
+
+
     MaterialDialog callConfirmationDialog;
     boolean isCalledOnce = false;
 
@@ -171,12 +176,37 @@ public class DialerActivity extends BaseActivity {
     RelativeLayout relativeContact;
 
     String numberToCall;
+    @BindView(R.id.text_abc)
+    TextView textAbc;
+    @BindView(R.id.text_def)
+    TextView textDef;
+    @BindView(R.id.text_ghi)
+    TextView textGhi;
+    @BindView(R.id.text_jkl)
+    TextView textJkl;
+    @BindView(R.id.text_mno)
+    TextView textMno;
+    @BindView(R.id.text_pqrs)
+    TextView textPqrs;
+    @BindView(R.id.text_tuv)
+    TextView textTuv;
+    @BindView(R.id.text_wxyz)
+    TextView textWxyz;
+    @BindView(R.id.text_plus)
+    TextView textPlus;
+//    @BindView(R.id.image_sim_preference)
+//    ImageView imageSimPreference;
     private String[] requiredPermissions = {Manifest.permission.READ_CALL_LOG};
     MaterialDialog permissionConfirmationDialog;
     ArrayList<Object> objectArrayListContact;
     RContactApplication rContactApplication;
     AllContactAdapter allContactAdapter;
-
+    private SyncGetContactNumber syncGetContactNumber;
+    TableProfileMaster tableProfileMaster;
+    TableProfileMobileMapping tableProfileMobileMapping;
+    ArrayList<ProfileData> secondaryContactList;
+//    boolean isDualSim;
+//    int simCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -185,18 +215,28 @@ public class DialerActivity extends BaseActivity {
         ButterKnife.bind(this);
 
         objectArrayListContact = new ArrayList<>();
+        secondaryContactList = new ArrayList<>();
+        tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
+        tableProfileMobileMapping = new TableProfileMobileMapping(getDatabaseHandler());
+        syncGetContactNumber = new SyncGetContactNumber();
+        syncGetContactNumber.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         rContactApplication = (RContactApplication) getApplicationContext();
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recycleViewPbContact.setLayoutManager(linearLayoutManager);
-        if (rContactApplication.getArrayListAllPhoneBookContacts() != null)
-            objectArrayListContact.addAll(rContactApplication.getArrayListAllPhoneBookContacts());
-
-        if (objectArrayListContact != null && objectArrayListContact.size() > 0) {
-            allContactAdapter = new AllContactAdapter(DialerActivity.this, objectArrayListContact);
-        }
-
+        populateDataToFilter();
         slideDownAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.slide_down_animation);
+
+        /*TelephonyInfo telephonyInfo = TelephonyInfo.getInstance(DialerActivity
+                .this);
+        if (telephonyInfo != null) {
+            isDualSim = telephonyInfo.isDualSIM();
+            if(isDualSim){
+                imageSimPreference.setVisibility(View.GONE);
+            }else{
+                imageSimPreference.setVisibility(View.GONE);
+            }
+        }*/
 
         editTextNumber.setCursorVisible(false);
         editTextNumber.addTextChangedListener(new TextWatcher() {
@@ -208,13 +248,10 @@ public class DialerActivity extends BaseActivity {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-                // TODO Auto-generated method stub
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-
-                // TODO Auto-generated method stub
 
                 if (s.length() > 11) {
                     editTextNumber.setTextSize(getResources().getDimension(R.dimen.text_size_14sp));
@@ -267,6 +304,24 @@ public class DialerActivity extends BaseActivity {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context
                 .INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(editTextNumber.getWindowToken(), 0);
+//        editTextNumber.getText().clear();
+        /*int length = editTextNumber.getText().length();
+        if (length == 0) {
+            showContactDetail(editTextNumber.getText().toString());
+        }*/
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (syncGetContactNumber != null)
+            syncGetContactNumber.cancel(true);
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        finish();
     }
 
     @SuppressLint("NewApi")
@@ -323,8 +378,38 @@ public class DialerActivity extends BaseActivity {
         return decor.findViewById(actionBarId);
     }
 
+    private class SyncGetContactNumber extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            getContactFromSecondaryNumber();
+            return null;
+        }
+    }
+
     private void initandClickEvents() {
 
+        textAddToContact.setTypeface(Utils.typefaceRegular(DialerActivity.this));
+        editTextNumber.setTypeface(Utils.typefaceRegular(DialerActivity.this));
+        btn0.setTypeface(Utils.typefaceRegular(DialerActivity.this));
+        btn1.setTypeface(Utils.typefaceRegular(DialerActivity.this));
+        btn2.setTypeface(Utils.typefaceRegular(DialerActivity.this));
+        btn3.setTypeface(Utils.typefaceRegular(DialerActivity.this));
+        btn4.setTypeface(Utils.typefaceRegular(DialerActivity.this));
+        btn5.setTypeface(Utils.typefaceRegular(DialerActivity.this));
+        btn6.setTypeface(Utils.typefaceRegular(DialerActivity.this));
+        btn7.setTypeface(Utils.typefaceRegular(DialerActivity.this));
+        btn8.setTypeface(Utils.typefaceRegular(DialerActivity.this));
+        btn9.setTypeface(Utils.typefaceRegular(DialerActivity.this));
+        textAbc.setTypeface(Utils.typefaceRegular(DialerActivity.this));
+        textDef.setTypeface(Utils.typefaceRegular(DialerActivity.this));
+        textGhi.setTypeface(Utils.typefaceRegular(DialerActivity.this));
+        textJkl.setTypeface(Utils.typefaceRegular(DialerActivity.this));
+        textMno.setTypeface(Utils.typefaceRegular(DialerActivity.this));
+        textPqrs.setTypeface(Utils.typefaceRegular(DialerActivity.this));
+        textTuv.setTypeface(Utils.typefaceRegular(DialerActivity.this));
+        textWxyz.setTypeface(Utils.typefaceRegular(DialerActivity.this));
+        textPlus.setTypeface(Utils.typefaceRegular(DialerActivity.this));
 
         linearAddToContact.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -368,6 +453,11 @@ public class DialerActivity extends BaseActivity {
                     editTextNumber.getText().delete(positionFrom - 1, positionFrom);
                 } else {
                     editTextNumber.setCursorVisible(false);
+                }
+
+                if (length == 1 && StringUtils.isEmpty(editTextNumber.getText().toString())) {
+                    editTextNumber.getText().clear();
+                    length = editTextNumber.getText().length();
                 }
 
                 if (length == 0) {
@@ -581,22 +671,89 @@ public class DialerActivity extends BaseActivity {
             }
         });
 
+        /*if(isDualSim){
+            imageSimPreference.setVisibility(View.GONE);
+            if(simCount == 0){
+                Utils.setStringPreference(DialerActivity.this,AppConstants.EXTRA_DIALER_SIM_PREFERENCE,"0");
+            }
+            imageSimPreference.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(simCount == 0){
+                        imageSimPreference.setImageResource(R.drawable.ico_sim1_svg);
+                        simCount = 1;
+                        Utils.setStringPreference(DialerActivity.this,AppConstants.EXTRA_DIALER_SIM_PREFERENCE,"1");
+                    }else if(simCount == 1){
+                        imageSimPreference.setImageResource(R.drawable.ico_sim2_svg);
+                        simCount = 2;
+                        Utils.setStringPreference(DialerActivity.this,AppConstants.EXTRA_DIALER_SIM_PREFERENCE,"2");
+                    }else if(simCount == 2){
+                        imageSimPreference.setImageResource(R.drawable.ico_ask_sim_svg);
+                        simCount = 0;
+                        Utils.setStringPreference(DialerActivity.this,AppConstants.EXTRA_DIALER_SIM_PREFERENCE,"0");
+                    }
+                }
+            });
+        }else{
+            imageSimPreference.setVisibility(View.GONE);
+        }*/
+
         callButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
-                    TelephonyInfo telephonyInfo = TelephonyInfo.getInstance(DialerActivity.this);
-                    if (telephonyInfo != null) {
-                        String simSerialNumber = telephonyInfo.simSerialNumber;
-                        if (!StringUtils.isEmpty(simSerialNumber)) {
-                            String numberToCall = editTextNumber.getText().toString();
-                            if (!TextUtils.isEmpty(numberToCall))
-                                showCallConfirmationDialog(numberToCall);
-                        } else {
-                            Toast.makeText(DialerActivity.this, getString(R.string.str_no_sim),
-                                    Toast.LENGTH_SHORT).show();
+
+                    String numberToCall = editTextNumber.getText().toString();
+                    if (!TextUtils.isEmpty(numberToCall)) {
+                        TelephonyInfo telephonyInfo = TelephonyInfo.getInstance(DialerActivity
+                                .this);
+                        if (telephonyInfo != null) {
+                            boolean isDualSim = telephonyInfo.isDualSIM();
+//                            if (!isDualSim) {
+//                                imageSimPreference.setVisibility(View.GONE);
+                                String simSerialNumber = telephonyInfo.simSerialNumber;
+                                if (!StringUtils.isEmpty(simSerialNumber)) {
+                                    numberToCall = Utils.getFormattedNumber(DialerActivity.this,
+                                            numberToCall);
+                                    Utils.callIntent(DialerActivity.this, numberToCall);
+//                                showCallConfirmationDialog(numberToCall);
+                                } else {
+                                    Toast.makeText(DialerActivity.this, getString(R.string.str_no_sim),
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            /*} else {
+                                String callFromSim =  Utils.getStringPreference(DialerActivity.this,
+                                        AppConstants.EXTRA_DIALER_SIM_PREFERENCE,"-1");
+                                if(StringUtils.equalsIgnoreCase(callFromSim,"1")){
+                                    numberToCall = Utils.getFormattedNumber(DialerActivity.this,
+                                            numberToCall);
+                                    Utils.callIntentWithSimPreference(DialerActivity.this, numberToCall,"0");
+
+                                }else if(StringUtils.equalsIgnoreCase(callFromSim,"2")){
+
+                                    numberToCall = Utils.getFormattedNumber(DialerActivity.this,
+                                            numberToCall);
+                                    Utils.callIntentWithSimPreference(DialerActivity.this, numberToCall,"1");
+
+                                }else if(StringUtils.equalsIgnoreCase(callFromSim,"0")){
+                                    String simSerialNumber = telephonyInfo.simSerialNumber;
+                                    if (!StringUtils.isEmpty(simSerialNumber)) {
+                                        numberToCall = Utils.getFormattedNumber(DialerActivity.this,
+                                                numberToCall);
+                                        Utils.callIntent(DialerActivity.this, numberToCall);
+                                    } else {
+                                        Toast.makeText(DialerActivity.this, getString(R.string.str_no_sim),
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            }*/
+
                         }
+                    } else {
+                        Toast.makeText(DialerActivity.this, getString(R.string.str_no_number),
+                                Toast.LENGTH_SHORT).show();
                     }
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -658,6 +815,87 @@ public class DialerActivity extends BaseActivity {
         }
     }
 
+    private void populateDataToFilter() {
+        if (rContactApplication.getArrayListAllPhoneBookContacts() != null)
+            objectArrayListContact.addAll(rContactApplication.getArrayListAllPhoneBookContacts());
+
+        if (objectArrayListContact != null && objectArrayListContact.size() > 0) {
+            allContactAdapter = new AllContactAdapter(DialerActivity.this, objectArrayListContact);
+        }
+    }
+
+    private void getContactFromSecondaryNumber() {
+        try {
+            Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+            String[] projection = new String[]{
+//                ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY,
+                    ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID,
+                    ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+                    ContactsContract.CommonDataKinds.Phone.NUMBER,
+                    ContactsContract.RawContacts.ACCOUNT_TYPE,
+                    ContactsContract.CommonDataKinds.Phone.PHOTO_THUMBNAIL_URI
+            };
+            String selection = ContactsContract.CommonDataKinds.Phone.NUMBER /*+ " LIKE '%"+number+"%' "*/
+                    + " and " + ContactsContract.RawContacts.ACCOUNT_TYPE
+                    + " in (" + ContactStorageConstants.CONTACT_STORAGE + ")";
+            String sortOrder = "upper(" + ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + ") ASC";
+//            String[] selectionArg =  {number};
+            Cursor cursor = getContentResolver().query(uri, projection, selection, null, sortOrder);
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    if (syncGetContactNumber != null && syncGetContactNumber.isCancelled())
+                        return;
+
+                    ProfileData profileData = new ProfileData();
+                    String contactNumber = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                    String contactName = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+                    String contactThumbnail = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.PHOTO_THUMBNAIL_URI));
+
+                    if (!StringUtils.isEmpty(contactNumber))
+                        profileData.setTempNumber(contactNumber);
+                    if (!StringUtils.isEmpty(contactName))
+                        profileData.setName(contactName);
+                    if (!StringUtils.isEmpty(contactThumbnail))
+                        profileData.setProfileUrl(contactThumbnail);
+
+                    String newNumber = contactNumber.replace(" ", "").replace("-", "");
+                    String formattedNumber = Utils.getFormattedNumber(this, newNumber);
+                    ProfileMobileMapping profileMobileMapping =
+                            tableProfileMobileMapping
+                                    .getCloudPmIdFromProfileMappingFromNumber(formattedNumber);
+                    if (profileMobileMapping != null) {
+                        String cloudPmId = profileMobileMapping.getMpmCloudPmId();
+                        if (!StringUtils.isEmpty(cloudPmId)) {
+                            UserProfile userProfile = tableProfileMaster
+                                    .getRCPProfileFromPmId(Integer.parseInt(cloudPmId));
+
+                            String firstName = userProfile.getPmFirstName();
+                            String lastName = userProfile.getPmLastName();
+                            String rcpId = userProfile.getPmRcpId();
+                            String profileImage = userProfile.getPmProfileImage();
+
+                            if (!StringUtils.isEmpty(firstName))
+                                profileData.setTempRcpName(firstName + " " + lastName);
+                            if (!StringUtils.isEmpty(rcpId)) {
+                                profileData.setTempRcpId(rcpId);
+                                profileData.setTempIsRcp(true);
+                            }
+                            if (!StringUtils.isEmpty(profileImage))
+                                profileData.setTempRcpImageURL(profileImage);
+                        } else {
+                            profileData.setTempIsRcp(false);
+                        }
+                    }
+
+                    secondaryContactList.add(profileData);
+                }
+                cursor.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private void showContactDetail(final String number) {
         if (!TextUtils.isEmpty(number)) {
             if (allContactAdapter != null) {
@@ -668,7 +906,22 @@ public class DialerActivity extends BaseActivity {
                     linearAddToContact.setVisibility(View.GONE);
                     recycleViewPbContact.setAdapter(allContactAdapter);
                 } else {
-                    String name = getNameFromNumber(number);
+                    if (secondaryContactList.size() > 0) {
+                        ArrayList<Object> newObjectArrayListContact = new ArrayList<>();
+                        newObjectArrayListContact.addAll(secondaryContactList);
+                        allContactAdapter = new AllContactAdapter(this, newObjectArrayListContact);
+                        allContactAdapter.filter(number);
+                        if (allContactAdapter.getSearchCount() > 0) {
+                            relativeContact.setVisibility(View.VISIBLE);
+                            linearAddToContact.setVisibility(View.GONE);
+                            recycleViewPbContact.setAdapter(allContactAdapter);
+                        } else {
+                            relativeContact.setVisibility(View.GONE);
+                            linearAddToContact.setVisibility(View.VISIBLE);
+                        }
+
+                    }
+                    /*String name = getNameFromNumber(number);
                     if (!TextUtils.isEmpty(name)) {
                         relativeContact.setVisibility(View.VISIBLE);
                         linearAddToContact.setVisibility(View.GONE);
@@ -721,7 +974,7 @@ public class DialerActivity extends BaseActivity {
                     } else {
                         relativeContact.setVisibility(View.GONE);
                         linearAddToContact.setVisibility(View.VISIBLE);
-                    }
+                    }*/
 
                 }
             }
@@ -781,7 +1034,7 @@ public class DialerActivity extends BaseActivity {
             numberToCall = number;
             requestPermissions(permissions, requestCode);
         } else {
-            showCallConfirmationDialog(number);
+            Utils.callIntent(DialerActivity.this, number);
         }
     }
 
@@ -795,7 +1048,8 @@ public class DialerActivity extends BaseActivity {
                 .READ_CALL_LOG)) {
             if (grantResults[0] == PermissionChecker.PERMISSION_GRANTED) {
                 if (!TextUtils.isEmpty(numberToCall))
-                    showCallConfirmationDialog(numberToCall);
+                    AppConstants.setIsFirstTime(false);
+                Utils.callIntent(DialerActivity.this, numberToCall);
             } else {
                 showPermissionConfirmationDialog();
             }
@@ -834,52 +1088,53 @@ public class DialerActivity extends BaseActivity {
         permissionConfirmationDialog.showDialog();
     }
 
-    private void showCallConfirmationDialog(final String number) {
-
-        final String finalNumber = Utils.getFormattedNumber(DialerActivity.this, number);
-
-       /* if (number.startsWith("*")) {
-            finalNumber = number;
-        } else {
-            finalNumber = Utils.getFormattedNumber(DialerActivity.this,number);
-        }*/
-
-//        final String formattedNumber = Utils.getFormattedNumber(DialerActivity.this, number);
-        RippleView.OnRippleCompleteListener cancelListener = new RippleView
-                .OnRippleCompleteListener() {
-
-            @Override
-            public void onComplete(RippleView rippleView) {
-                switch (rippleView.getId()) {
-                    case R.id.rippleLeft:
-                        callConfirmationDialog.dismissDialog();
-                        break;
-
-                    case R.id.rippleRight:
-                        callConfirmationDialog.dismissDialog();
-
-                       /* String unicodeNumber = number.replace("*", Uri.encode("*")).replace("#",
-                                Uri.encode("#"));
-                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
-                                unicodeNumber));
-                        startActivity(intent);*/
-
-
-                        AppConstants.setIsFirstTime(false);
-                        Utils.callIntent(DialerActivity.this, finalNumber);
-                        break;
-                }
-            }
-        };
-
-        callConfirmationDialog = new MaterialDialog(DialerActivity.this, cancelListener);
-        callConfirmationDialog.setTitleVisibility(View.GONE);
-        callConfirmationDialog.setLeftButtonText(getString(R.string.action_cancel));
-        callConfirmationDialog.setRightButtonText(getString(R.string.action_call));
-        callConfirmationDialog.setDialogBody(getString(R.string.action_call) + " " + finalNumber
-                + " ?");
-        callConfirmationDialog.showDialog();
-    }
+//    private void showCallConfirmationDialog(final String number) {
+//
+////        final String finalNumber = Utils.getFormattedNumber(DialerActivity.this, number);
+//
+//       /* if (number.startsWith("*")) {
+//            finalNumber = number;
+//        } else {
+//            finalNumber = Utils.getFormattedNumber(DialerActivity.this,number);
+//        }*/
+//
+////        final String formattedNumber = Utils.getFormattedNumber(DialerActivity.this, number);
+//        RippleView.OnRippleCompleteListener cancelListener = new RippleView
+//                .OnRippleCompleteListener() {
+//
+//            @Override
+//            public void onComplete(RippleView rippleView) {
+//                switch (rippleView.getId()) {
+//                    case R.id.rippleLeft:
+//                        callConfirmationDialog.dismissDialog();
+//                        break;
+//
+//                    case R.id.rippleRight:
+//                        callConfirmationDialog.dismissDialog();
+//
+//                       /* String unicodeNumber = number.replace("*", Uri.encode("*")).replace("#",
+//                                Uri.encode("#"));
+//                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
+//                                unicodeNumber));
+//                        startActivity(intent);*/
+//
+//
+//                        AppConstants.setIsFirstTime(false);
+//                        Utils.callIntent(DialerActivity.this, number);
+//                        break;
+//
+//                }
+//            }
+//        };
+//
+//        callConfirmationDialog = new MaterialDialog(DialerActivity.this, cancelListener);
+//        callConfirmationDialog.setTitleVisibility(View.GONE);
+//        callConfirmationDialog.setLeftButtonText(getString(R.string.action_cancel));
+//        callConfirmationDialog.setRightButtonText(getString(R.string.action_call));
+//        callConfirmationDialog.setDialogBody(getString(R.string.action_call) + " " + number
+//                + " ?");
+//        callConfirmationDialog.showDialog();
+//    }
 
     private String getPhotoUrlFromNumber(String phoneNumber) {
         String photoThumbUrl = "";
@@ -991,23 +1246,42 @@ public class DialerActivity extends BaseActivity {
                         checkPermissionToExecute(requiredPermissions, AppConstants.READ_LOGS,
                                 actionNumber);
                     } else {
-                        showCallConfirmationDialog(actionNumber);
+                        actionNumber = Utils.getFormattedNumber(DialerActivity.this, actionNumber);
+                        Utils.callIntent(DialerActivity.this, actionNumber);
+//                        showCallConfirmationDialog(actionNumber);
                     }
-
-//                    showCallConfirmationDialog(actionNumber);
                 }
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        allContactAdapter.notifyDataSetChanged();
-                    }
-                }, 1000);
+                try {
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (allContactAdapter != null)
+                                allContactAdapter.notifyDataSetChanged();
+                        }
+                    }, 1000);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
             }
 
             @Override
             public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
                 /* Disable swiping in headers */
+                if (viewHolder instanceof AllContactAdapter.AllContactViewHolder) {
+                    /* Disable swiping in multiple RC case */
+                    if (((AllContactAdapter.AllContactViewHolder) viewHolder)
+                            .recyclerViewMultipleRc.getVisibility() == View.VISIBLE) {
+                        return 0;
+                    }
+                    /* Disable swiping for No number */
+                    if (StringUtils.length(((AllContactAdapter.AllContactViewHolder) viewHolder)
+                            .textContactNumber.getText().toString()) <= 0) {
+                        return 0;
+                    }
+                }
+
                 return super.getSwipeDirs(recyclerView, viewHolder);
             }
 

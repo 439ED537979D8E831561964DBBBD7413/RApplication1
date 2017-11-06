@@ -50,11 +50,14 @@ public class ProfileMenuOptionDialog {
     private String profileUrl;
     private String pmId;
     private boolean isCallLogRcpUser;
+    private String rcpVerifiedId;
+    private String cloudName;
 
     public ProfileMenuOptionDialog(Context context, ArrayList<String> arrayList, String number,
                                    long date, boolean isFromCallTab, ArrayList<CallLogType> list,
                                    String name, String uniqueRowId, String key, String
-                                           profileUrl, String pmId, boolean isCallLogRcpUser) {
+                                           profileUrl, String pmId, boolean isCallLogRcpUser,String rcpVerifiedId,
+                                   String cloudName ) {
         this.context = context;
         dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -96,6 +99,8 @@ public class ProfileMenuOptionDialog {
         this.profileUrl = profileUrl;
         this.pmId = pmId;
         this.isCallLogRcpUser = isCallLogRcpUser;
+        this.rcpVerifiedId =  rcpVerifiedId;
+        this.cloudName =  cloudName;
 
         setAdapter();
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
@@ -103,13 +108,12 @@ public class ProfileMenuOptionDialog {
         localBroadcastManager.registerReceiver(localBroadcastReceiverDialog, intentFilter);
     }
 
-
     private void setAdapter() {
         if (!TextUtils.isEmpty(numberToCall)) {
             Profile3DotDialogAdapter profile3DotDialogAdapter = new Profile3DotDialogAdapter
                     (context, stringArrayList, numberToCall, callLogDateToDelete,
                             isFromCallLogFragment, arrayListCallLogType, name, uniqueID, key,
-                            profileUrl, pmId, isCallLogRcpUser);
+                            profileUrl, pmId, isCallLogRcpUser,rcpVerifiedId,cloudName);
             recycleViewDialog.setAdapter(profile3DotDialogAdapter);
             setRecyclerViewLayoutManager(recycleViewDialog);
         }

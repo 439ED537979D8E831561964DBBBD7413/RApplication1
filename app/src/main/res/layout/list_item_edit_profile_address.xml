@@ -62,45 +62,134 @@
                 android:src="@drawable/ic_delete"
                 android:visibility="visible"/>
 
-            <Spinner
-                android:id="@+id/spinner_type"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/margin_small"
-                android:layout_marginLeft="@dimen/margin_small"
-                android:layout_marginRight="@dimen/margin_small"
-                android:layout_marginStart="@dimen/margin_small"
-                android:layout_toLeftOf="@id/image_delete"
-                android:layout_toStartOf="@id/image_delete"/>
+            <!-- <Spinner
+                 android:id="@+id/spinner_type"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_marginEnd="@dimen/margin_small"
+                 android:layout_marginLeft="@dimen/margin_small"
+                 android:layout_marginRight="@dimen/margin_small"
+                 android:layout_marginStart="@dimen/margin_small"
+                 android:layout_toStartOf="@id/image_delete"/>
 
-            <EditText
-                android:id="@+id/input_country"
+             <EditText
+                 android:id="@+id/input_country"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:layout_toStartOf="@id/spinner_type"
+                 android:textColor="@color/colorAccent"
+                 android:textSize="16sp"/>-->
+            <LinearLayout
+                android:id="@+id/linear_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_toLeftOf="@id/spinner_type"
-                android:layout_toStartOf="@id/spinner_type"
-                android:textColor="@color/colorAccent"
-                android:textSize="16sp"/>
+                android:layout_toStartOf="@id/image_delete"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.25">
+
+                    <EditText
+                        android:id="@+id/input_country"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="false"
+                        android:cursorVisible="false"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="16sp"
+                        tools:ignore="TextFields"
+                        tools:text="1234567890"/>
+
+                    <Spinner
+                        android:id="@+id/spinner_country"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="bottom"
+                        android:layout_marginStart="@dimen/margin_small_tiny"
+                        android:background="@null"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="16sp"
+                        tools:ignore="TextFields"
+                        tools:text="India"/>
+
+                </FrameLayout>
+
+                <Spinner
+                    android:id="@+id/spinner_type"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin_small"
+                    android:layout_marginLeft="@dimen/margin_small"
+                    android:layout_marginRight="@dimen/margin_small"
+                    android:layout_marginStart="@dimen/margin_small"
+                    android:layout_weight="0.75"
+                    android:background="@null"
+                    android:padding="0dp"/>
+
+            </LinearLayout>
 
         </RelativeLayout>
 
 
-        <EditText
-            android:id="@+id/input_state"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/colorAccent"
-            android:textSize="16sp"/>
-        <!--android:textColorHint="@color/darkCyan"-->
+            android:layout_height="wrap_content">
 
-        <EditText
-            android:id="@+id/input_city"
+            <EditText
+                android:id="@+id/input_state"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:cursorVisible="false"
+                android:textColor="@color/colorAccent"
+                android:textSize="16sp"
+                tools:ignore="TextFields"/>
+            <!--android:textColorHint="@color/darkCyan"-->
+
+            <Spinner
+                android:id="@+id/spinner_state"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/margin_small_tiny"
+                android:background="@null"
+                android:gravity="bottom"
+                android:prompt="@string/hint_state_required"
+                android:textColor="@color/colorAccent"
+                android:textSize="16sp"
+                tools:ignore="TextFields"
+                tools:text="India"/>
+
+        </FrameLayout>
+
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/colorAccent"
-            android:textSize="16sp"/>
-        <!--android:textColorHint="@color/darkCyan"-->
+            android:layout_height="wrap_content">
 
+            <EditText
+                android:id="@+id/input_city"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorAccent"
+                android:textSize="16sp"
+                tools:ignore="TextFields"/>
+            <!--android:textColorHint="@color/darkCyan"-->
+
+            <!--<Spinner
+                android:id="@+id/spinner_city"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/margin_small_tiny"
+                android:background="@null"
+                android:gravity="bottom"
+                android:prompt="@string/hint_city_town_required"
+                android:textColor="@color/colorAccent"
+                android:textSize="16sp"
+                tools:ignore="TextFields"
+                tools:text="India"/>-->
+
+        </FrameLayout>
 
         <EditText
             android:id="@+id/input_street"
@@ -186,6 +275,7 @@
             android:textColor="@color/colorAccent"
             android:textSize="16sp"
             tools:ignore="TextFields"/>
+
         <!--android:textColorHint="@color/darkCyan"-->
 
 

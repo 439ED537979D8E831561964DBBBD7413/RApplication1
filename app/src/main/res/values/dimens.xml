@@ -45,8 +45,10 @@
     <dimen name="margin_10dp">10dp</dimen>
     <dimen name="margin_8dp">8dp</dimen>
     <dimen name="margin_15dp">15dp</dimen>
+    <dimen name="margin_16dp">16dp</dimen>
     <dimen name="padding_15dp">15dp</dimen>
     <dimen name="padding_20dp">20dp</dimen>
+    <dimen name="margin_2dp">2dp</dimen>
 
     <dimen name="text_size_12sp">12sp</dimen>
     <dimen name="text_size_8sp">8sp</dimen>
@@ -60,9 +62,11 @@
     <!--call dialer-->
     <dimen name="padding_12dp">12dp</dimen>
     <dimen name="padding_11dp">11dp</dimen>
+    <dimen name="text_size_26sp">26sp</dimen>
     <dimen name="text_size_32sp">32sp</dimen>
     <dimen name="text_size_45sp">45sp</dimen>
     <dimen name="text_size_25sp">25sp</dimen>
+    <dimen name="text_size_20sp">20sp</dimen>
     <dimen name="padding_14dp">14dp</dimen>
     <dimen name="margin_28dp">28dp</dimen>
     <dimen name="margin_20dp">20dp</dimen>
@@ -73,5 +77,24 @@
     <dimen name="height_pb_contact_search">260dp</dimen>
     <!--<dimen name="height_global_contact_search"></dimen>-->
     <dimen name="height_global_button">45dp</dimen>
+
+    <!-- Web View -->
+    <dimen name="toolbarHeight">56dp</dimen>
+    <dimen name="menusWidth">168dp</dimen>
+
+    <dimen name="defaultDividerHeight">4dp</dimen>
+    <dimen name="defaultProgressBarHeight">1dp</dimen>
+    <dimen name="defaultTitleSize">14dp</dimen>
+    <dimen name="defaultUrlSize">10dp</dimen>
+    <dimen name="defaultMenuDropShadowCornerRadius">2dp</dimen>
+    <dimen name="defaultMenuDropShadowSize">4dp</dimen>
+    <dimen name="defaultMenuTextSize">16dp</dimen>
+    <dimen name="defaultMenuTextPaddingLeft">16dp</dimen>
+    <dimen name="defaultMenuTextPaddingRight">32dp</dimen>
+    <dimen name="defaultMenuLayoutMargin">4dp</dimen>
+    <dimen name="defaultMenuCornerRadius">2dp</dimen>
+
+    <!--Relation Recommendation-->
+    <dimen name="margin_30dp">30dp</dimen>
 
 </resources>

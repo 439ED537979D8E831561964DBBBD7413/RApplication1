@@ -9,10 +9,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.net.Uri;
@@ -20,12 +22,15 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.provider.Telephony;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -33,6 +38,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -41,6 +47,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -50,7 +57,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.BaseActivity;
+import com.rawalinfocom.rcontact.BuildConfig;
 import com.rawalinfocom.rcontact.ContactListingActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
@@ -65,6 +74,7 @@ import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.database.QueryManager;
+import com.rawalinfocom.rcontact.database.TableAadharMaster;
 import com.rawalinfocom.rcontact.database.TableAddressMaster;
 import com.rawalinfocom.rcontact.database.TableCommentMaster;
 import com.rawalinfocom.rcontact.database.TableEmailMaster;
@@ -77,9 +87,11 @@ import com.rawalinfocom.rcontact.database.TableWebsiteMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.CallConfirmationListDialog;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
+import com.rawalinfocom.rcontact.helper.MyProfileShareDialog;
 import com.rawalinfocom.rcontact.helper.ProfileMenuOptionDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.helper.circleprogressview.CircleProgressView;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.Address;
@@ -91,8 +103,11 @@ import com.rawalinfocom.rcontact.model.Event;
 import com.rawalinfocom.rcontact.model.ImAccount;
 import com.rawalinfocom.rcontact.model.MobileNumber;
 import com.rawalinfocom.rcontact.model.Organization;
+import com.rawalinfocom.rcontact.model.PrivacyDataItem;
+import com.rawalinfocom.rcontact.model.PrivacyEntityItem;
 import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
+import com.rawalinfocom.rcontact.model.ProfileDataOperationAadharNumber;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEvent;
@@ -106,6 +121,8 @@ import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.Website;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
+import com.rawalinfocom.rcontact.relation.ExistingRelationActivity;
+import com.rawalinfocom.rcontact.relation.RCPExistingRelationActivity;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -117,7 +134,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -138,9 +157,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     Toolbar includeToolbar;
     TextView textToolbarTitle;
     RippleView rippleActionBack;
+    RippleView rippleActionRelation;
     RippleView rippleActionRightLeft;
     RippleView rippleActionRightCenter;
     RippleView rippleActionRightRight;
+    ImageView imageRelation;
     ImageView imageRightLeft;
     ImageView imageRightCenter;
     ImageView imageRightRight;
@@ -165,6 +186,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     TextView textDesignation;
     @BindView(R.id.text_organization)
     TextView textOrganization;
+    @BindView(R.id.text_time)
+    TextView textTime;
     @BindView(R.id.text_view_all_organization)
     TextView textViewAllOrganization;
     @BindView(R.id.linear_basic_detail)
@@ -235,6 +258,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     CardView cardOtherDetails;
     @BindView(R.id.button_view_more)
     Button buttonViewMore;
+    @Nullable
+    @BindView(R.id.image_expand_collapse)
+    ImageView imageExpandCollapse;
     @BindView(R.id.ripple_view_more)
     RippleView rippleViewMore;
     @BindView(R.id.relative_section_view_more)
@@ -251,31 +277,67 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     Button buttonCallLog;
     @BindView(R.id.button_sms)
     Button buttonSms;
+    @Nullable
     @BindView(R.id.relative_call_history)
     RelativeLayout relativeCallHistory;
     /* @BindView(R.id.text_icon_history)
      TextView textIconHistory;*/
+    @Nullable
     @BindView(R.id.recycler_call_history)
     RecyclerView recyclerCallHistory;
     @BindView(R.id.ripple_call_log)
     RippleView rippleCallLog;
     @BindView(R.id.ripple_sms)
     RippleView rippleSms;
+    @Nullable
     @BindView(R.id.text_no_history_to_show)
     TextView textNoHistoryToShow;
+    @Nullable
+    @BindView(R.id.text_text_call_history)
+    TextView textCallHistory;
     @BindView(R.id.ripple_invite)
     RippleView rippleInvite;
     @BindView(R.id.button_invite)
     Button buttonInvite;
+
+    @BindView(R.id.image_enlarge)
+    ImageView imageEnlarge;
+    @BindView(R.id.frame_image_enlarge)
+    FrameLayout frameImageEnlarge;
+
+    @BindView(R.id.frame_container)
+    FrameLayout frameContainer;
+
+    @Nullable
+    @BindView(R.id.relative_profile_percentage)
+    RelativeLayout relativeProfilePercentage;
+    @Nullable
+    @BindView(R.id.text_complete_profile)
+    TextView textCompleteProfile;
+    @Nullable
+    @BindView(R.id.text_complete_profile_description)
+    TextView textCompleteProfileDescription;
+    @Nullable
+    @BindView(R.id.progress_percentage)
+    CircleProgressView progressPercentage;
+    @Nullable
+    @BindView(R.id.include_elevation)
+    View includeElevation;
+    @Nullable
+    @BindView(R.id.include_elevation_top)
+    View includeElevationTop;
+
     String callLogCloudName;
     boolean isCallLogRcpUser, isRatingUpdate = false;
+    boolean isDialogCallLogInstance;
 
     RelativeLayout relativeRootRatingDialog;
 
     ProfileDataOperation profileDataOperationVcard;
 
-    String pmId = "", phoneBookId, contactName = "", cloudContactName = null, checkNumberFavourite =
-            null, thumbnailUrl = "";
+    String pmId = "", phoneBookId, contactName = "", contactNumber = "", cloudContactName = null,
+            checkNumberFavourite =
+                    null, thumbnailUrl = "";
     boolean displayOwnProfile = false, isHideFavourite = false, isFromFavourite = false;
     int isFavourite = 0;
 
@@ -286,7 +348,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     ProfileDetailAdapter phoneDetailAdapter;
     MaterialDialog callConfirmationDialog;
 
+    ArrayList<String> arrayListPBPhoneNumber;
+    ArrayList<String> arrayListPBEmailAddress;
     ArrayList<String> arrayListFavouriteContacts;
+
     RContactApplication rContactApplication;
     boolean profileActivityCallInstance = false;
     ArrayList<CallLogType> arrayListHistory;
@@ -297,10 +362,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     String profileContactNumber;
     String hashMapKey = "";
     String uniqueContactId = "";
+    @Nullable
     @BindView(R.id.ripple_view_old_records)
     RippleView rippleViewOldRecords;
+    @Nullable
     @BindView(R.id.progressBarLoadCallLogs)
     ProgressBar progressBarLoadCallLogs;
+    @Nullable
     @BindView(R.id.button_view_old_records)
     Button buttonViewOldRecords;
     LinearLayoutManager mLinearLayoutManager;
@@ -314,6 +382,23 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     boolean isContactEdited = false;
 
     public String callNumber = "";
+    String callLogRcpVerfiedId = "";
+    boolean isFromNotification;
+    AsyncWebServiceCall asyncGetProfileDetails;
+    @BindView(R.id.image_aadhar_card)
+    ImageView imageAadharCard;
+    @BindView(R.id.text_label_aadhar_card)
+    TextView textLabelAadharCard;
+    @BindView(R.id.button_privacy)
+    ImageView buttonPrivacy;
+    @BindView(R.id.text_aadhar_number)
+    TextView textAadharNumber;
+    @BindView(R.id.relative_aadhar_number)
+    RelativeLayout relativeAadharNumber;
+    @BindView(R.id.text_label_UIDAI_number)
+    TextView textLabelUIDAINumber;
+    @BindView(R.id.linear_aadhar_card)
+    LinearLayout linearAadharCard;
 
     //<editor-fold desc="Override Methods">
 
@@ -366,6 +451,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         IntentFilter intentFilter = new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_PROFILE);
         localBroadcastManager.registerReceiver(localBroadcastReceiver, intentFilter);
 
+        LocalBroadcastManager localBroadcastManager1 = LocalBroadcastManager.getInstance(this);
+        IntentFilter intentFilter1 = new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_DIALOG);
+        localBroadcastManager1.registerReceiver(localBroadcastReceiverDialog, intentFilter1);
+
         if (profileActivityCallInstance) {
 //            fetchCallLogHistoryDateWise(historyNumber);
 //            fetchAllCallLogHistory(historyNumber);
@@ -385,20 +474,23 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 AppConstants.isFromReceiver = false;
             }
 
-        } else {
-            if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase("[Unknown]")) {
-                fetchAllCallLogHistory(contactName);
-            } else {
-                if (!TextUtils.isEmpty(profileContactNumber)) {
-                    fetchAllCallLogHistory(profileContactNumber);
-                }
-            }
         }
+//        else {
+//            if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase("[Unknown]")) {
+//                fetchAllCallLogHistory(contactName);
+//            } else {
+//                if (!TextUtils.isEmpty(profileContactNumber)) {
+//                    fetchAllCallLogHistory(profileContactNumber);
+//                }
+//            }
+//        }
         if (displayOwnProfile) {
-            ProfileDataOperation profileDataOperation = queryManager.getRcProfileDetail
-                    (this, pmId);
-            setUpView(profileDataOperation);
-            layoutVisibility();
+            if (pmId != null) {
+                ProfileDataOperation profileDataOperation = queryManager.getRcProfileDetail
+                        (this, pmId);
+                layoutVisibility();
+                setUpView(profileDataOperation);
+            }
         }
     }
 
@@ -407,6 +499,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         super.onPause();
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
         localBroadcastManager.unregisterReceiver(localBroadcastReceiver);
+
+        LocalBroadcastManager localBroadcastManager1 = LocalBroadcastManager.getInstance(this);
+        localBroadcastManager1.unregisterReceiver(localBroadcastReceiverDialog);
     }
 
     @Override
@@ -418,9 +513,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 if (relativeSectionViewMore.getVisibility() == View.VISIBLE) {
                     relativeSectionViewMore.setVisibility(View.GONE);
                     buttonViewMore.setText(getString(R.string.str_view_more));
+                    imageExpandCollapse.setImageResource(R.drawable.ico_arrow_down_svg);
                 } else {
                     relativeSectionViewMore.setVisibility(View.VISIBLE);
                     buttonViewMore.setText(getString(R.string.str_view_less));
+                    imageExpandCollapse.setImageResource(R.drawable.ic_arrow_up_svg);
                 }
                 break;
             //</editor-fold>
@@ -467,11 +564,21 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     selectContactDialog(phoneNumbers, emails);
                 } else {
                     if (phoneNumbers.size() > 0) {
-                        ArrayList<String> numbers = new ArrayList<>();
-                        for (int i = 0; i < phoneNumbers.size(); i++) {
-                            numbers.add(phoneNumbers.get(i).getPhoneNumber());
-                        }
-                        inviteContact(numbers, null);
+//                        ArrayList<String> numbers = new ArrayList<>();
+//                        for (int i = 0; i < phoneNumbers.size(); i++) {
+//                            numbers.add(phoneNumbers.get(i).getPhoneNumber());
+//                        }
+
+                        Intent smsIntent = new Intent(Intent.ACTION_SENDTO);
+                        smsIntent.addCategory(Intent.CATEGORY_DEFAULT);
+                        smsIntent.setType("vnd.android-dir/mms-sms");
+                        smsIntent.putExtra("sms_body", AppConstants.PLAY_STORE_LINK +
+                                getPackageName());
+                        smsIntent.setData(Uri.parse("sms:" + phoneNumbers.get(0).getPhoneNumber()));
+                        startActivity(smsIntent);
+
+
+//                        inviteContact(numbers, null);
                     } else if (emails.size() > 0) {
                         ArrayList<String> aryEmails = new ArrayList<>();
                         for (int i = 0; i < emails.size(); i++) {
@@ -491,10 +598,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             .READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
                         requestPermissions(new String[]{Manifest.permission.READ_CALL_LOG},
                                 AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS);
-
                     } else {
                         openCallLogHistoryDetailsActivity();
-
                     }
                 } else {
                     openCallLogHistoryDetailsActivity();
@@ -505,113 +610,192 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             //<editor-fold desc="SMS">
             case R.id.ripple_sms:
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    if (ContextCompat.checkSelfPermission(this, Manifest.permission
-                            .READ_SMS) != PackageManager.PERMISSION_GRANTED) {
-                        requestPermissions(new String[]{Manifest.permission.READ_SMS},
-                                AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS);
-                    } else {
+                if (tempPhoneNumber != null && tempPhoneNumber.size() > 1) {
+                    if (tempPhoneNumber != null && tempPhoneNumber.size() > 0) {
+                        int count = tempPhoneNumber.size();
+                        ArrayList<String> listPhoneNumber = new ArrayList<>();
+                        if (count > 1) {
+                            for (int i = 0; i < tempPhoneNumber.size(); i++) {
+                                ProfileDataOperationPhoneNumber phoneNumber =
+                                        (ProfileDataOperationPhoneNumber) tempPhoneNumber
+                                                .get(i);
 
-                        if (tempPhoneNumber != null && tempPhoneNumber.size() > 1) {
-                            if (tempPhoneNumber != null && tempPhoneNumber.size() > 0) {
-                                int count = tempPhoneNumber.size();
-                                ArrayList<String> listPhoneNumber = new ArrayList<>();
-                                if (count > 1) {
-                                    for (int i = 0; i < tempPhoneNumber.size(); i++) {
-                                        ProfileDataOperationPhoneNumber phoneNumber =
-                                                (ProfileDataOperationPhoneNumber) tempPhoneNumber
-                                                        .get(i);
-                                        String number = phoneNumber.getPhoneNumber();
-                                        listPhoneNumber.add(number);
+                                String number = phoneNumber.getPhoneNumber();
+
+                                if (!number.startsWith("+XX")) {
+                                    listPhoneNumber.add(number);
+                                }
+                            }
+
+                            if (listPhoneNumber.size() == 1) {
+                                if (!TextUtils.isEmpty(listPhoneNumber.get(0))) {
+                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.fromParts
+                                            ("sms", listPhoneNumber.get(0), null));
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                                        intent.setPackage(Telephony.Sms.getDefaultSmsPackage(this));
                                     }
-
+                                    intent.putExtra("finishActivityOnSaveCompleted", true);
+                                    startActivity(intent);
+                                }
+                            } else {
+                                if (listPhoneNumber.size() > 0) {
                                     CallConfirmationListDialog callConfirmationListDialog = new
                                             CallConfirmationListDialog(this, listPhoneNumber,
                                             false);
                                     callConfirmationListDialog.setDialogTitle(getString(R.string
                                             .please_select_number_view_sms_log));
                                     callConfirmationListDialog.showDialog();
-
-                                } else {
-                                    showCallConfirmationDialog(profileContactNumber);
                                 }
+
                             }
+
                         } else {
-
-                            if (!profileActivityCallInstance) {
-                                if (tempPhoneNumber != null) {
-                                    if (tempPhoneNumber.size() == 1) {
-                                        ProfileDataOperationPhoneNumber phoneNumber =
-                                                (ProfileDataOperationPhoneNumber) tempPhoneNumber
-                                                        .get(0);
-                                        if (phoneNumber != null) {
-                                            historyNumber = phoneNumber.getPhoneNumber();
-                                        }
-                                    }
-                                }
-                            }
-                            if (!TextUtils.isEmpty(historyNumber)) {
-                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.fromParts
-                                        ("sms", historyNumber, null));
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                                    intent.setPackage(Telephony.Sms.getDefaultSmsPackage(this));
-                                }
-                                intent.putExtra("finishActivityOnSaveCompleted", true);
-                                startActivity(intent);
-                            }
+                            dialCall(profileContactNumber);
+//                                    showCallConfirmationDialog(profileContactNumber);
                         }
-
                     }
                 } else {
-                    if (tempPhoneNumber != null && tempPhoneNumber.size() > 1) {
-                        if (tempPhoneNumber != null && tempPhoneNumber.size() > 0) {
-                            int count = tempPhoneNumber.size();
-                            ArrayList<String> listPhoneNumber = new ArrayList<>();
-                            if (count > 1) {
-                                for (int i = 0; i < tempPhoneNumber.size(); i++) {
-                                    ProfileDataOperationPhoneNumber phoneNumber =
-                                            (ProfileDataOperationPhoneNumber) tempPhoneNumber.get
-                                                    (i);
-                                    String number = phoneNumber.getPhoneNumber();
-                                    listPhoneNumber.add(number);
-                                }
 
-                                CallConfirmationListDialog callConfirmationListDialog = new
-                                        CallConfirmationListDialog(this, listPhoneNumber, false);
-                                callConfirmationListDialog.setDialogTitle(getString(R.string
-                                        .please_select_number_view_sms_log));
-                                callConfirmationListDialog.showDialog();
-
-                            } else {
-                                showCallConfirmationDialog(profileContactNumber);
-                            }
-                        }
-                    } else {
-                        if (!profileActivityCallInstance) {
-                            if (tempPhoneNumber != null) {
-                                if (tempPhoneNumber.size() == 1) {
-                                    ProfileDataOperationPhoneNumber phoneNumber =
-                                            (ProfileDataOperationPhoneNumber) tempPhoneNumber.get
-                                                    (0);
-                                    if (phoneNumber != null) {
-                                        historyNumber = phoneNumber.getPhoneNumber();
-                                    }
+                    if (!profileActivityCallInstance) {
+                        if (tempPhoneNumber != null) {
+                            if (tempPhoneNumber.size() == 1) {
+                                ProfileDataOperationPhoneNumber phoneNumber =
+                                        (ProfileDataOperationPhoneNumber) tempPhoneNumber
+                                                .get(0);
+                                if (phoneNumber != null) {
+                                    historyNumber = phoneNumber.getPhoneNumber();
                                 }
                             }
                         }
-
-                        if (!TextUtils.isEmpty(historyNumber)) {
-                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.fromParts("sms",
-                                    historyNumber, null));
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                                intent.setPackage(Telephony.Sms.getDefaultSmsPackage(this));
-                            }
-                            intent.putExtra("finishActivityOnSaveCompleted", true);
-                            startActivity(intent);
+                    }
+                    if (!TextUtils.isEmpty(historyNumber)) {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.fromParts
+                                ("sms", historyNumber, null));
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                            intent.setPackage(Telephony.Sms.getDefaultSmsPackage(this));
                         }
-
+                        intent.putExtra("finishActivityOnSaveCompleted", true);
+                        startActivity(intent);
                     }
                 }
+
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                    if (ContextCompat.checkSelfPermission(this, Manifest.permission
+//                            .READ_SMS) != PackageManager.PERMISSION_GRANTED) {
+//                        requestPermissions(new String[]{Manifest.permission.READ_SMS},
+//                                AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+//                    } else {
+//
+//                        if (tempPhoneNumber != null && tempPhoneNumber.size() > 1) {
+//                            if (tempPhoneNumber != null && tempPhoneNumber.size() > 0) {
+//                                int count = tempPhoneNumber.size();
+//                                ArrayList<String> listPhoneNumber = new ArrayList<>();
+//                                if (count > 1) {
+//                                    for (int i = 0; i < tempPhoneNumber.size(); i++) {
+//                                        ProfileDataOperationPhoneNumber phoneNumber =
+//                                                (ProfileDataOperationPhoneNumber) tempPhoneNumber
+//                                                        .get(i);
+//
+//                                        String number = phoneNumber.getPhoneNumber();
+//
+//                                        if (!number.startsWith("+XX")) {
+//                                            listPhoneNumber.add(number);
+//                                        }
+//                                    }
+//
+//                                    CallConfirmationListDialog callConfirmationListDialog = new
+//                                            CallConfirmationListDialog(this, listPhoneNumber,
+//                                            false);
+//                                    callConfirmationListDialog.setDialogTitle(getString(R.string
+//                                            .please_select_number_view_sms_log));
+//                                    callConfirmationListDialog.showDialog();
+//
+//                                } else {
+//                                    dialCall(profileContactNumber);
+////                                    showCallConfirmationDialog(profileContactNumber);
+//                                }
+//                            }
+//                        } else {
+//
+//                            if (!profileActivityCallInstance) {
+//                                if (tempPhoneNumber != null) {
+//                                    if (tempPhoneNumber.size() == 1) {
+//                                        ProfileDataOperationPhoneNumber phoneNumber =
+//                                                (ProfileDataOperationPhoneNumber) tempPhoneNumber
+//                                                        .get(0);
+//                                        if (phoneNumber != null) {
+//                                            historyNumber = phoneNumber.getPhoneNumber();
+//                                        }
+//                                    }
+//                                }
+//                            }
+//                            if (!TextUtils.isEmpty(historyNumber)) {
+//                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.fromParts
+//                                        ("sms", historyNumber, null));
+//                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//                                    intent.setPackage(Telephony.Sms.getDefaultSmsPackage(this));
+//                                }
+//                                intent.putExtra("finishActivityOnSaveCompleted", true);
+//                                startActivity(intent);
+//                            }
+//                        }
+//
+//                    }
+//                } else {
+//                    if (tempPhoneNumber != null && tempPhoneNumber.size() > 1) {
+//                        if (tempPhoneNumber != null && tempPhoneNumber.size() > 0) {
+//                            int count = tempPhoneNumber.size();
+//                            ArrayList<String> listPhoneNumber = new ArrayList<>();
+//                            if (count > 1) {
+//                                for (int i = 0; i < tempPhoneNumber.size(); i++) {
+//                                    ProfileDataOperationPhoneNumber phoneNumber =
+//                                            (ProfileDataOperationPhoneNumber) tempPhoneNumber.get
+//                                                    (i);
+//
+//                                    String number = phoneNumber.getPhoneNumber();
+//
+//                                    if (!number.startsWith("+XX")) {
+//                                        listPhoneNumber.add(number);
+//                                    }
+//                                }
+//
+//                                CallConfirmationListDialog callConfirmationListDialog = new
+//                                        CallConfirmationListDialog(this, listPhoneNumber, false);
+//                                callConfirmationListDialog.setDialogTitle(getString(R.string
+//                                        .please_select_number_view_sms_log));
+//                                callConfirmationListDialog.showDialog();
+//
+//                            } else {
+//                                dialCall(profileContactNumber);
+////                                showCallConfirmationDialog(profileContactNumber);
+//                            }
+//                        }
+//                    } else {
+//                        if (!profileActivityCallInstance) {
+//                            if (tempPhoneNumber != null) {
+//                                if (tempPhoneNumber.size() == 1) {
+//                                    ProfileDataOperationPhoneNumber phoneNumber =
+//                                            (ProfileDataOperationPhoneNumber) tempPhoneNumber.get
+//                                                    (0);
+//                                    if (phoneNumber != null) {
+//                                        historyNumber = phoneNumber.getPhoneNumber();
+//                                    }
+//                                }
+//                            }
+//                        }
+//
+//                        if (!TextUtils.isEmpty(historyNumber)) {
+//                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.fromParts("sms",
+//                                    historyNumber, null));
+//                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//                                intent.setPackage(Telephony.Sms.getDefaultSmsPackage(this));
+//                            }
+//                            intent.putExtra("finishActivityOnSaveCompleted", true);
+//                            startActivity(intent);
+//                        }
+//
+//                    }
+//                }
 
 
                 break;
@@ -621,12 +805,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             case R.id.ripple_action_right_center:
 
                 if (StringUtils.equals(imageRightCenter.getTag().toString(), TAG_IMAGE_CALL)) {
-                    showCallConfirmationDialog(historyNumber);
+                    dialCall(historyNumber);
+//                    showCallConfirmationDialog(historyNumber);
                     isFromReceiver = true;
 
                 } else if (StringUtils.equals(imageRightCenter.getTag().toString(),
                         TAG_IMAGE_SHARE)) {
-                    Toast.makeText(this, "Currently Unavailable!", Toast.LENGTH_SHORT).show();
+
+//                    Toast.makeText(this, "Currently Unavailable!", Toast.LENGTH_SHORT).show();
+
                     /*if (!StringUtils.equalsAnyIgnoreCase(pmId, "-1")) {
                         TableProfileMaster tableProfileMaster = new TableProfileMaster
                                 (databaseHandler);
@@ -637,7 +824,104 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     } else {
                         showChooseShareOption(null, null);
                     }*/
+
+                    if (displayOwnProfile) {
+                        ArrayList arrayList = new ArrayList(Arrays.asList(getString(R.string
+                                        .my_profile_share),
+                                getString(R.string.average_rate_sharing)));
+                        MyProfileShareDialog myProfileShareDialog = new
+                                MyProfileShareDialog(this, arrayList, pmId,
+                                profileDataOperationVcard, contactName,
+                                ProfileDetailActivity.this);
+                        myProfileShareDialog.showDialog();
+
+                    } else {
+                        if (!StringUtils.equalsAnyIgnoreCase(pmId, "-1")) {
+                            TableProfileMaster tableProfileMaster = new TableProfileMaster
+                                    (databaseHandler);
+                            UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId
+                                    (Integer.parseInt(pmId));
+                            TableMobileMaster tableMobileMaster = new TableMobileMaster
+                                    (databaseHandler);
+                            String number = tableMobileMaster.getUserMobileNumber(pmId);
+
+                            if (StringUtils.startsWith(number, "+")) {
+                                number = StringUtils.substring(number, 1);
+                            }
+
+                            /*Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+                            sharingIntent.setType("text/plain");
+                            String shareBody;
+                            if (StringUtils.isBlank(userProfile.getPmBadge())) {
+                                shareBody = WsConstants.WS_PROFILE_VIEW_BADGE_ROOT + number;
+                            } else {
+                                shareBody = WsConstants.WS_PROFILE_VIEW_BADGE_ROOT + userProfile
+                                        .getPmBadge();
+                            }
+                            sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
+                            startActivity(Intent.createChooser(sharingIntent, getString(R.string
+                                    .str_share_contact_via)));*/
+
+                            Intent shareIntent = new Intent();
+                            shareIntent.setAction(Intent.ACTION_SEND);
+                            shareIntent.setType("text/x-vcard");
+                            List<ResolveInfo> listVCardResInfo = getPackageManager()
+                                    .queryIntentActivities(shareIntent, 0);
+
+                            List<Intent> targetedShareIntents = new ArrayList<>();
+                            if (!listVCardResInfo.isEmpty()) {
+                                for (ResolveInfo resolveInfo : listVCardResInfo) {
+                                    String packageName = resolveInfo.activityInfo.packageName;
+                                    Intent targetedShareIntent = new Intent(
+                                            Intent.ACTION_SEND);
+                                    targetedShareIntent.setType("text/plain");
+                                    String shareBody;
+                                    if (StringUtils.isBlank(userProfile.getPmBadge())) {
+                                        shareBody = WsConstants.WS_PROFILE_VIEW_BADGE_ROOT + number;
+                                    } else {
+                                        shareBody = WsConstants.WS_PROFILE_VIEW_BADGE_ROOT +
+                                                userProfile.getPmBadge();
+                                    }
+                                    targetedShareIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
+                                    targetedShareIntent.setPackage(packageName);
+                                    targetedShareIntents.add(targetedShareIntent);
+
+                                }
+
+                                Intent chooserIntent = Intent.createChooser(targetedShareIntents
+                                                .remove(0),
+                                        getString(R.string.str_share_contact_via));
+                                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS,
+                                        targetedShareIntents.toArray(new
+                                                Parcelable[targetedShareIntents.size()]));
+                                startActivity(chooserIntent);
+                            }
+
+                        } else {
+                            shareContact();
+                        }
+                    }
                 }
+                break;
+            //</editor-fold>
+
+            //<editor-fold desc="Favourites">
+            case R.id.ripple_action_relation:
+
+                if (displayOwnProfile) {
+                    startActivity(new Intent(ProfileDetailActivity.this, ExistingRelationActivity
+                            .class));
+                } else {
+
+                    Intent intent = new Intent(ProfileDetailActivity.this,
+                            RCPExistingRelationActivity.class);
+                    intent.putExtra(AppConstants.EXTRA_CONTACT_NAME, contactName);
+                    intent.putExtra(AppConstants.EXTRA_CONTACT_NUMBER, contactNumber);
+                    intent.putExtra(AppConstants.EXTRA_PROFILE_IMAGE_URL, thumbnailUrl);
+                    intent.putExtra(AppConstants.EXTRA_PM_ID, pmId);
+                    startActivity(intent);
+                }
+
                 break;
             //</editor-fold>
 
@@ -693,9 +977,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             null);*/
                     startActivityIntent(ProfileDetailActivity.this, EditProfileActivity.class,
                             null);
-                    /*Intent i = new Intent(ProfileDetailActivity.this, EditProfileActivity.class);
-                    startActivityForResult(i, 1);
-                    overridePendingTransition(R.anim.enter, R.anim.exit);*/
                 }
                 break;
             //</editor-fold>
@@ -737,7 +1018,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                     arrayListName, historyNumber, historyDate, true,
                                     arrayListHistory, historyName, "", hashMapKey,
-                                    profileThumbnail, pmId, isCallLogRcpUser);
+                                    profileThumbnail, pmId, isCallLogRcpUser, "", callLogCloudName);
                             profileMenuOptionDialog.showDialog();
 
                         } else {
@@ -756,11 +1037,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                         arrayListNumber, historyNumber, historyDate,
                                         true, arrayListHistory, "", uniqueContactId,
-                                        hashMapKey, profileThumbnail, pmId, isCallLogRcpUser);
+                                        hashMapKey, profileThumbnail, pmId, isCallLogRcpUser,
+                                        callLogRcpVerfiedId, callLogCloudName);
                                 profileMenuOptionDialog.showDialog();
                             }
                         }
                     } else {
+
                         if (!TextUtils.isEmpty(historyName)) {
                             ArrayList<String> arrayListName = new ArrayList<>(Arrays.asList(this
                                             .getString(R.string.edit),
@@ -774,7 +1057,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                     arrayListName, historyNumber, historyDate, true,
                                     arrayListHistory, historyName, "", phoneBookId,
-                                    profileThumbnail, pmId, isCallLogRcpUser);
+                                    profileThumbnail, pmId, isCallLogRcpUser, "", callLogCloudName);
                             //11/07/2017 : hashMapKey replaced with phoneBookId to solve edit
                             // option problem
                             profileMenuOptionDialog.showDialog();
@@ -794,7 +1077,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                         arrayListNumber, historyNumber, historyDate,
                                         true, arrayListHistory, "", uniqueContactId,
-                                        "", profileThumbnail, pmId, isCallLogRcpUser);
+                                        "", profileThumbnail, pmId, isCallLogRcpUser,
+                                        callLogRcpVerfiedId, callLogCloudName);
                                 profileMenuOptionDialog.showDialog();
                             }
                         }
@@ -821,10 +1105,45 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             rawId = checkNumberFavourite;
                         }
 
-                        OptionMenuDialog optionMenu = new OptionMenuDialog(ProfileDetailActivity
-                                .this, rawId, menuType, isFavourite == 1, isFromFavourite);
+                        if (isFromNotification) {
+                            if (!StringUtils.isBlank(contactName)) {
+                                if (contactName.startsWith("+91")) {
+                                    String contactNumber = contactName.substring(0, 13);
+                                    String isContactName = getNameFromNumber(contactNumber);
+                                    if (StringUtils.isBlank(isContactName)) {
+                                        ArrayList<String> arrayListNumber = new ArrayList<>
+                                                (Arrays.asList
+                                                        (this.getString(R.string.add_to_contact),
+                                                                this.getString(R.string
+                                                                        .add_to_existing_contact)));
+                                        ProfileMenuOptionDialog profileMenuOptionDialog = new
+                                                ProfileMenuOptionDialog(this,
+                                                arrayListNumber, contactNumber, 0,
+                                                false, null, "", "",
+                                                "", "", "", false,
+                                                "", "");
+                                        profileMenuOptionDialog.showDialog();
+                                    }
+                                } else {
+                                    OptionMenuDialog optionMenu = new OptionMenuDialog
+                                            (ProfileDetailActivity
+                                                    .this, rawId, menuType, isFavourite == 1,
+                                                    isFromFavourite,
+                                                    isCallLogRcpUser);
 
-                        optionMenu.showDialog();
+                                    optionMenu.showDialog();
+                                }
+
+                            }
+                        } else {
+                            OptionMenuDialog optionMenu = new OptionMenuDialog(ProfileDetailActivity
+                                    .this, rawId, menuType, isFavourite == 1, isFromFavourite,
+                                    isCallLogRcpUser);
+
+                            optionMenu.showDialog();
+                        }
+
+
                     }
                 }
                 break;
@@ -857,7 +1176,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
-            case AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS: {
+            case AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS:
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager
                         .PERMISSION_GRANTED) {
@@ -871,9 +1190,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     showPermissionConfirmationDialog();
 
                 }
-            }
+                break;
 
-            case AppConstants.MY_PERMISSIONS_REQUEST_PHONE_CALL: {
+            case AppConstants.MY_PERMISSIONS_REQUEST_PHONE_CALL:
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager
                         .PERMISSION_GRANTED) {
@@ -885,8 +1204,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     showPermissionConfirmationDialog(AppConstants
                             .MY_PERMISSIONS_REQUEST_PHONE_CALL);
                 }*/
-            }
-            break;
+                break;
         }
     }
 
@@ -894,13 +1212,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     public void onDeliveryResponse(String serviceType, Object data, Exception error) {
         if (error == null) {
 
+            Utils.hideProgressDialog();
             // <editor-fold desc="REQ_GET_PROFILE_DETAILS">
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_GET_PROFILE_DETAILS)) {
                 WsResponseObject getProfileResponse = (WsResponseObject) data;
                 Utils.hideProgressDialog();
                 if (getProfileResponse != null && StringUtils.equalsIgnoreCase(getProfileResponse
-                                .getStatus(),
-                        WsConstants.RESPONSE_STATUS_TRUE)) {
+                        .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+
+                    getUserData();
 
                     ProfileDataOperation profileDetail = getProfileResponse.getProfileDetail();
                     storeProfileDataToDb(profileDetail);
@@ -914,11 +1234,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     profileVisits.add(profileVisit);
                     profileVisit(profileVisits);
 
-                } else {
+                }
+                /*else {
                     Log.e("onDeliveryResponse: ", "otpDetailResponse null");
                     Utils.showErrorSnackBar(this, relativeRootProfileDetail, getString(R
                             .string.msg_try_later));
-                }
+                }*/
             }
             //</editor-fold>
 
@@ -958,10 +1279,18 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         e.printStackTrace();
                     }
 
+//                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+//                        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+//                        StrictMode.setVmPolicy(builder.build());
+//                    }
+
                     Intent sendIntent = new Intent();
                     sendIntent.setAction(Intent.ACTION_SEND);
                     sendIntent.setType("text/x-vcard");
-                    sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(vcfFile));
+                    sendIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile
+                            (ProfileDetailActivity.this,
+                                    BuildConfig.APPLICATION_ID + ".provider",
+                                    vcfFile));
                     startActivity(sendIntent);
 
                 } else {
@@ -1064,7 +1393,22 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     if (oldHistoryList != null && oldHistoryList.size() > 0) {
                         // Log.i("HistoryServiceCalled", "Data Received");
                         rippleViewOldRecords.setVisibility(View.VISIBLE);
-                        arrayListHistory.addAll(oldHistoryList);
+                        ArrayList<CallLogType> listToAppend = new ArrayList<>();
+                        for (int i = 0; i < oldHistoryList.size(); i++) {
+                            CallLogType callLogType = oldHistoryList.get(i);
+                            String number = callLogType.getNumber();
+                            if (number.startsWith("91"))
+                                number = "+" + number;
+                            callLogType.setHistoryNumber(number);
+                            callLogType.setHistoryNumberType(callLogType.getNumberType());
+                            callLogType.setHistoryDate(Long.parseLong(callLogType
+                                    .getCallDateAndTime()));
+                            callLogType.setHistoryType(Integer.parseInt(callLogType.getTypeOfCall
+                                    ()));
+                            callLogType.setWebDuration(callLogType.getDurationToPass());
+                            listToAppend.add(callLogType);
+                        }
+                        arrayListHistory.addAll(listToAppend);
                         if (callHistoryListAdapter != null) {
                             callHistoryListAdapter.notifyDataSetChanged();
                         }
@@ -1103,18 +1447,17 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                     getDataFromDB();
 
-                    Toast.makeText(ProfileDetailActivity.this, getString(R.string
-                                    .str_privacy_setting_update),
-                            Toast.LENGTH_SHORT).show();
+                    Utils.showSuccessSnackBar(this, relativeRootProfileDetail, getString(R.string
+                            .str_privacy_setting_update));
                 } else {
                     if (editProfileResponse != null) {
                         Log.e("error response", editProfileResponse.getMessage());
-                        Toast.makeText(ProfileDetailActivity.this, editProfileResponse.getMessage
-                                (), Toast.LENGTH_SHORT).show();
+                        Utils.showErrorSnackBar(this, relativeRootProfileDetail,
+                                editProfileResponse.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "otpDetailResponse null");
-                        Toast.makeText(ProfileDetailActivity.this, "Privacy Setting Update " +
-                                "failed", Toast.LENGTH_SHORT).show();
+                        Utils.showErrorSnackBar(this, relativeRootProfileDetail, "Privacy Setting" +
+                                " Update failed");
                     }
                 }
             }
@@ -1140,10 +1483,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         } else {
 //            AppUtils.hideProgressDialog();
+            Utils.hideProgressDialog();
             Utils.showErrorSnackBar(this, relativeRootProfileDetail, "" + error
                     .getLocalizedMessage());
         }
-
     }
 
     @Override
@@ -1168,28 +1511,29 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
 
-            TextView textDialogTitle = (TextView) dialog.findViewById(R.id.text_dialog_title);
-            relativeRootRatingDialog = (RelativeLayout) dialog.findViewById(R.id
-                    .relative_root_rating_dialog);
-            final RatingBar ratingUser = (RatingBar) dialog.findViewById(R.id.rating_user);
-            TextView textComment = (TextView) dialog.findViewById(R.id.text_comment);
-            final TextView textRemainingCharacters = (TextView) dialog.findViewById(R.id
+            TextView textDialogTitle = dialog.findViewById(R.id.text_dialog_title);
+            relativeRootRatingDialog = dialog.findViewById(R.id.relative_root_rating_dialog);
+            final RatingBar ratingUser = dialog.findViewById(R.id.rating_user);
+            TextView textComment = dialog.findViewById(R.id.text_comment);
+            final TextView textRemainingCharacters = dialog.findViewById(R.id
                     .text_remaining_characters);
-            final EditText inputComment = (EditText) dialog.findViewById(R.id.input_comment);
-            RippleView rippleLeft = (RippleView) dialog.findViewById(R.id.ripple_left);
-            Button buttonLeft = (Button) dialog.findViewById(R.id.button_left);
-            RippleView rippleRight = (RippleView) dialog.findViewById(R.id.ripple_right);
-            Button buttonRight = (Button) dialog.findViewById(R.id.button_right);
+            final EditText inputComment = dialog.findViewById(R.id.input_comment);
+            RippleView rippleLeft = dialog.findViewById(R.id.ripple_left);
+            Button buttonLeft = dialog.findViewById(R.id.button_left);
+            RippleView rippleRight = dialog.findViewById(R.id.ripple_right);
+            Button buttonRight = dialog.findViewById(R.id.button_right);
 
             textDialogTitle.setTypeface(Utils.typefaceSemiBold(this));
             textComment.setTypeface(Utils.typefaceRegular(this));
             textRemainingCharacters.setTypeface(Utils.typefaceLight(this));
             inputComment.setTypeface(Utils.typefaceRegular(this));
-            buttonLeft.setTypeface(Utils.typefaceSemiBold(this));
-            buttonRight.setTypeface(Utils.typefaceSemiBold(this));
+            buttonLeft.setTypeface(Utils.typefaceRegular(this));
+            buttonRight.setTypeface(Utils.typefaceRegular(this));
 
-            textDialogTitle.setText(String.format("%s %s", getString(R.string.text_rate),
-                    contactName));
+            Utils.setRatingColor(ProfileDetailActivity.this, ratingUser);
+
+            textDialogTitle.setText(String.format("%s %s", StringUtils.upperCase(getString(R
+                    .string.text_rate)), StringUtils.upperCase(contactName)));
             textRemainingCharacters.setText(String.format(Locale.ENGLISH, "%d %s", getResources()
                     .getInteger(R.integer.max_comment_length), getString(R.string
                     .characters_left)));
@@ -1263,6 +1607,19 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     private void getIntentDetails(Intent intent) {
         if (intent != null) {
 
+            if (intent.hasExtra(AppConstants.EXTRA_FROM_NOTI_PROFILE)) {
+                isFromNotification = intent.getBooleanExtra(AppConstants.EXTRA_FROM_NOTI_PROFILE,
+                        false);
+            }
+            if (intent.hasExtra(AppConstants.EXTRA_DIALOG_CALL_LOG_INSTANCE)) {
+                isDialogCallLogInstance = intent.getBooleanExtra(AppConstants
+                        .EXTRA_DIALOG_CALL_LOG_INSTANCE, false);
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_RCP_VERIFIED_ID)) {
+                callLogRcpVerfiedId = intent.getStringExtra(AppConstants.EXTRA_RCP_VERIFIED_ID);
+            }
+
             if (intent.hasExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER)) {
                 historyNumber = intent.getStringExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER);
             }
@@ -1305,15 +1662,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 if (!StringUtils.isEmpty(pmId)) {
                     if (!pmId.equalsIgnoreCase("-1") && !pmId.equalsIgnoreCase(getUserPmId())) {
                         if (!Utils.isNetworkAvailable(this)) {
-//
-////                        getProfileDetails();
-////                        ArrayList<ProfileVisit> profileVisits = new ArrayList<>();
-////                        ProfileVisit profileVisit = new ProfileVisit();
-////                        profileVisit.setVisitorPmId(Integer.parseInt(pmId));
-////                        profileVisit.setVisitCount(1);
-////                        profileVisits.add(profileVisit);
-////                        profileVisit(profileVisits);
-//                    } else {
+
                             HashMap<String, String> mapProfileViews = new HashMap<>();
                             if (Utils.getHashMapPreference(this, AppConstants
                                     .PREF_PROFILE_VIEWS) != null) {
@@ -1431,22 +1780,39 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     private void layoutVisibility() {
         if (profileActivityCallInstance) {
+//            new GetRCPNameAndProfileImage().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
-            new GetRCPNameAndProfileImage().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            if (buttonViewOldRecords != null) {
+                buttonViewOldRecords.setTypeface(Utils.typefaceRegular(this));
+            }
+
+            if (rippleViewOldRecords != null) {
+                rippleViewOldRecords.setVisibility(View.GONE);
+                rippleViewOldRecords.setOnRippleCompleteListener(this);
+            }
+
+            if (recyclerCallHistory != null) {
+                recyclerCallHistory.setLayoutManager(mLinearLayoutManager);
+                recyclerCallHistory.setNestedScrollingEnabled(false);
+            }
 
             relativeContactDetails.setVisibility(View.GONE);
-            relativeCallHistory.setVisibility(View.VISIBLE);
+            if (relativeCallHistory != null) {
+                relativeCallHistory.setVisibility(View.VISIBLE);
+            }
             rippleCallLog.setVisibility(View.GONE);
             setCallLogHistoryDetails();
 
         } else {
 
             relativeContactDetails.setVisibility(View.VISIBLE);
-            relativeCallHistory.setVisibility(View.GONE);
+            if (relativeCallHistory != null) {
+                relativeCallHistory.setVisibility(View.GONE);
+            }
 
             if (displayOwnProfile) {
                 TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
-                UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer
+                final UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer
                         .parseInt(pmId));
                 textFullScreenText.setText(userProfile.getPmFirstName() + " " + userProfile
                         .getPmLastName());
@@ -1465,9 +1831,20 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     imageProfile.setImageResource(R.drawable.home_screen_profile);
                 }
 
+                imageProfile.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (StringUtils.length(userProfile.getPmProfileImage()) > 0) {
+                            Utils.zoomImageFromThumb(ProfileDetailActivity.this, imageProfile,
+                                    userProfile.getPmProfileImage(),
+                                    frameImageEnlarge, imageEnlarge, frameContainer);
+                        }
+
+                    }
+                });
+
             } else {
                 textFullScreenText.setText(contactName);
-
                 if (StringUtils.length(thumbnailUrl) > 0) {
                     Glide.with(this)
                             .load(thumbnailUrl)
@@ -1481,14 +1858,56 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 } else {
                     imageProfile.setImageResource(R.drawable.home_screen_profile);
                 }
+
+                imageProfile.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (StringUtils.length(thumbnailUrl) > 0) {
+                            Utils.zoomImageFromThumb(ProfileDetailActivity.this, imageProfile,
+                                    thumbnailUrl,
+                                    frameImageEnlarge, imageEnlarge, frameContainer);
+                        }
+                    }
+                });
+
             }
             if (StringUtils.length(cloudContactName) > 0) {
                 textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
                 textName.setText(cloudContactName);
                 linearBasicDetailRating.setVisibility(View.VISIBLE);
                 rippleInvite.setVisibility(View.GONE);
+            } else if (StringUtils.length(callLogCloudName) > 0) {
+                String phoneBookName = getNameFromNumber(historyNumber);
+                if (!StringUtils.equalsIgnoreCase(phoneBookName, contactName)) {
+                    textFullScreenText.setText(phoneBookName);
+                }
+                textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
+                if (!StringUtils.isEmpty(callLogCloudName)) {
+                    textName.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
+                    textName.setText(callLogCloudName);
+                }
+                linearBasicDetailRating.setVisibility(View.VISIBLE);
+                rippleInvite.setVisibility(View.GONE);
             } else {
                 if (StringUtils.equalsIgnoreCase(pmId, "-1")) {
+                    String phoneBookName = getNameFromNumber(historyNumber);
+                    if (StringUtils.length(phoneBookName) > 0) {
+                        if (!StringUtils.equalsIgnoreCase(phoneBookName, contactName)) {
+                            textFullScreenText.setText(phoneBookName);
+                        }
+                    } else {
+                        /*// Updated on 17/08/2019
+                        if (historyNumber.startsWith("+91")) {
+
+                        } else if (historyNumber.startsWith("0")) {
+                            historyNumber = Utils.getFormattedNumber(ProfileDetailActivity.this,
+                            historyNumber);
+                        } else {
+                            historyNumber = Utils.getFormattedNumber(ProfileDetailActivity.this,
+                            historyNumber);
+                        }
+                        textFullScreenText.setText(historyNumber);*/
+                    }
                     textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color
                             .colorBlack));
                     linearBasicDetailRating.setVisibility(View.GONE);
@@ -1546,6 +1965,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             if (displayOwnProfile) {
                 textToolbarTitle.setText(getString(R.string.title_my_profile));
                 linearCallSms.setVisibility(View.GONE);
+                relativeProfilePercentage.setVisibility(View.VISIBLE);
                 imageRightLeft.setImageResource(R.drawable.ic_action_edit);
                 rippleActionRightRight.setVisibility(View.GONE);
                 imageRightLeft.setTag(TAG_IMAGE_EDIT);
@@ -1553,6 +1973,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             } else {
                 textToolbarTitle.setText(getString(R.string.str_profile_deails));
                 linearCallSms.setVisibility(View.VISIBLE);
+                relativeProfilePercentage.setVisibility(View.GONE);
             }
 
         }
@@ -1561,10 +1982,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     private void init() {
         rippleActionBack = ButterKnife.findById(includeToolbar, R.id.ripple_action_back);
         textToolbarTitle = ButterKnife.findById(includeToolbar, R.id.text_toolbar_title);
+        imageRelation = ButterKnife.findById(includeToolbar, R.id.image_relation);
         imageRightLeft = ButterKnife.findById(includeToolbar, R.id.image_right_left);
         imageRightCenter = ButterKnife.findById(includeToolbar, R.id.image_right_center);
         imageRightRight = ButterKnife.findById(includeToolbar, R.id.image_right_right);
         rippleActionRightLeft = ButterKnife.findById(includeToolbar, R.id.ripple_action_right_left);
+        rippleActionRelation = ButterKnife.findById(includeToolbar, R.id.ripple_action_relation);
         rippleActionRightCenter = ButterKnife.findById(includeToolbar, R.id
                 .ripple_action_right_center);
         rippleActionRightRight = ButterKnife.findById(includeToolbar, R.id
@@ -1594,13 +2017,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         textFullScreenText.setTypeface(Utils.typefaceSemiBold(this));
         textName.setTypeface(Utils.typefaceSemiBold(this));
         textDesignation.setTypeface(Utils.typefaceRegular(this));
-        textOrganization.setTypeface(Utils.typefaceRegular(this));
+        textOrganization.setTypeface(Utils.typefaceIcons(this));
+        textTime.setTypeface(Utils.typefaceRegular(this));
         textViewAllOrganization.setTypeface(Utils.typefaceRegular(this));
         textUserRating.setTypeface(Utils.typefaceRegular(this));
 
         textFullScreenText.setSelected(true);
         rippleViewMore.setOnRippleCompleteListener(this);
         rippleActionBack.setOnRippleCompleteListener(this);
+        rippleActionRelation.setOnRippleCompleteListener(this);
         rippleActionRightLeft.setOnRippleCompleteListener(this);
         rippleActionRightCenter.setOnRippleCompleteListener(this);
         rippleActionRightRight.setOnRippleCompleteListener(this);
@@ -1608,14 +2033,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         rippleSms.setOnRippleCompleteListener(this);
         rippleInvite.setOnRippleCompleteListener(this);
 
-        buttonViewOldRecords.setTypeface(Utils.typefaceRegular(this));
+
         buttonInvite.setTypeface(Utils.typefaceRegular(this));
-        rippleViewOldRecords.setVisibility(View.GONE);
-        rippleViewOldRecords.setOnRippleCompleteListener(this);
 
         mLinearLayoutManager = new LinearLayoutManager(this);
-        recyclerCallHistory.setLayoutManager(mLinearLayoutManager);
-        recyclerCallHistory.setNestedScrollingEnabled(false);
 
         Utils.setRatingColor(ProfileDetailActivity.this, ratingUser);
 
@@ -1630,14 +2051,30 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 //        Utils.setRatingStarColor(stars.getDrawable(0), ContextCompat.getColor(this, android.R
 //                .color.darker_gray));
 
-        if (!displayOwnProfile)
+        layoutVisibility();
+
+        if (!displayOwnProfile) {
             if (!StringUtils.equalsIgnoreCase(pmId, "-1")) {
                 // RC Profile
-                if (Utils.isNetworkAvailable(ProfileDetailActivity.this)) {
+//                getDataFromDB();
+                if (Utils.isNetworkAvailable(ProfileDetailActivity.this) &&
+                        !profileActivityCallInstance) {
                     //call service
                     cardContactDetails.setVisibility(View.GONE);
                     cardOtherDetails.setVisibility(View.GONE);
                     getProfileDetails();
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Utils.hideProgressDialog();
+                            if (asyncGetProfileDetails != null) {
+                                asyncGetProfileDetails.cancel(true);
+                            }
+                            getDataFromDB();
+                        }
+                    }, 4000);
+
                 } else {
                     getDataFromDB();
                 }
@@ -1646,8 +2083,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 // Non-RC Profile
                 setUpView(null);
             }
+        }
 
-        layoutVisibility();
 
         initSwipe();
 
@@ -1660,6 +2097,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     }
 
     private void setCallLogHistoryDetails() {
+
+        textNoHistoryToShow.setTypeface(Utils.typefaceRegular(ProfileDetailActivity.this));
+        textCallHistory.setTypeface(Utils.typefaceRegular(ProfileDetailActivity.this));
+
+
         if (!TextUtils.isEmpty(historyName)) {
             if (StringUtils.containsOnly(historyName, "\\d+")) {
 //                textToolbarTitle.setText("Unknown number");
@@ -1692,7 +2134,28 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 } else {
                     textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color
                             .colorBlack));
-                    textFullScreenText.setText(historyName);
+//                    textFullScreenText.setText(historyName);
+                    // updated on 17/08/2017
+                    String phoneBookName = getNameFromNumber(historyNumber);
+                    if (StringUtils.length(phoneBookName) > 0) {
+                        textFullScreenText.setText(phoneBookName);
+                    } else {
+                        if (StringUtils.length(historyName) > 0) {
+                            textFullScreenText.setText(historyName);
+                        } else {
+                            //Updated on 17/08/2017
+                            if (historyNumber.startsWith("+91")) {
+
+                            } else if (historyNumber.startsWith("0")) {
+                                historyNumber = Utils.getFormattedNumber(ProfileDetailActivity
+                                        .this, historyNumber);
+                            } else {
+                                historyNumber = Utils.getFormattedNumber(ProfileDetailActivity
+                                        .this, historyNumber);
+                            }
+                            textFullScreenText.setText(historyNumber);
+                        }
+                    }
                     textName.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
                     textName.setText(callLogCloudName);
                 }
@@ -1700,7 +2163,27 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 rippleInvite.setVisibility(View.VISIBLE);
                 linearBasicDetailRating.setVisibility(View.GONE);
                 textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
-                textFullScreenText.setText(historyName);
+//                textFullScreenText.setText(historyName);
+                String phoneBookName = getNameFromNumber(historyNumber);
+                if (StringUtils.length(phoneBookName) > 0) {
+                    textFullScreenText.setText(phoneBookName);
+                } else {
+                    if (StringUtils.length(historyName) > 0) {
+                        textFullScreenText.setText(historyName);
+                    } else {
+                        //Updated on 17/08/2017
+                        if (historyNumber.startsWith("+91")) {
+
+                        } else if (historyNumber.startsWith("0")) {
+                            historyNumber = Utils.getFormattedNumber(ProfileDetailActivity.this,
+                                    historyNumber);
+                        } else {
+                            historyNumber = Utils.getFormattedNumber(ProfileDetailActivity.this,
+                                    historyNumber);
+                        }
+                        textFullScreenText.setText(historyNumber);
+                    }
+                }
             }
 
         } else {
@@ -1718,6 +2201,28 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 // 11/07/2017 : toolBarTitle text is changed again for Call-logs as per Avijit
                 // Sir's suggestion
                 textToolbarTitle.setText(getString(R.string.call_history_toolbar_title));
+                if (StringUtils.equalsIgnoreCase(callLogRcpVerfiedId, "0")) {
+                    textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color
+                            .textColorBlue));
+                    if (!StringUtils.isEmpty(callLogCloudName)) {
+                        textName.setTextColor(ContextCompat.getColor(this, R.color.textColorBlue));
+                        textName.setText(callLogCloudName);
+                    }
+                } else if (StringUtils.equalsIgnoreCase(callLogRcpVerfiedId, "1")) {
+                    textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color
+                            .colorAccent));
+                    if (!StringUtils.isEmpty(callLogCloudName)) {
+                        textName.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
+                        textName.setText(callLogCloudName);
+                    }
+                } else {
+                    textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color
+                            .colorBlack));
+                    textName.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
+                    if (!StringUtils.isEmpty(callLogCloudName)) {
+                        textName.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
+                    }
+                }
             }
 
         }
@@ -1733,6 +2238,18 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         } else {
             imageProfile.setImageResource(R.drawable.home_screen_profile);
         }
+
+        imageProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (StringUtils.length(profileThumbnail) > 0) {
+                    Utils.zoomImageFromThumb(ProfileDetailActivity.this, imageProfile,
+                            profileThumbnail,
+                            frameImageEnlarge, imageEnlarge, frameContainer);
+                }
+
+            }
+        });
 
         imageRightCenter.setImageResource(R.drawable.ic_phone);
         imageRightCenter.setTag(TAG_IMAGE_CALL);
@@ -1765,7 +2282,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     private void setUpView(final ProfileDataOperation profileDetail) {
 
         try {
-
+            Utils.hideProgressDialog();
             cardContactDetails.setVisibility(View.VISIBLE);
             cardOtherDetails.setVisibility(View.VISIBLE);
 
@@ -1846,50 +2363,19 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         organization.setOrgJobTitle(contactOrganizationCursor.getString
                                 (contactOrganizationCursor.getColumnIndex(ContactsContract
                                         .CommonDataKinds.Organization.TITLE)));
-                        organization.setOrgDepartment(contactOrganizationCursor.getString
-                                (contactOrganizationCursor.getColumnIndex(ContactsContract
-                                        .CommonDataKinds.Organization.DEPARTMENT)));
-                        organization.setOrgType(phoneBookContacts.getOrganizationType
-                                (contactOrganizationCursor,
-                                        contactOrganizationCursor.getInt((contactOrganizationCursor
-                                                .getColumnIndex(ContactsContract.CommonDataKinds
-                                                        .Organization.TYPE)))));
-                        organization.setOrgJobDescription(contactOrganizationCursor.getString
-                                (contactOrganizationCursor.getColumnIndex(ContactsContract
-                                        .CommonDataKinds.Organization.JOB_DESCRIPTION)));
-                        organization.setOrgOfficeLocation(contactOrganizationCursor.getString
-                                (contactOrganizationCursor.getColumnIndex(ContactsContract
-                                        .CommonDataKinds.Organization.OFFICE_LOCATION)));
                         organization.setOrgRcpType(String.valueOf(IntegerConstants
                                 .RCP_TYPE_LOCAL_PHONE_BOOK));
-
                         organizationOperation.setOrgName(contactOrganizationCursor.getString
                                 (contactOrganizationCursor.getColumnIndex(ContactsContract
                                         .CommonDataKinds.Organization.COMPANY)));
                         organizationOperation.setOrgJobTitle(contactOrganizationCursor.getString
                                 (contactOrganizationCursor.getColumnIndex(ContactsContract
                                         .CommonDataKinds.Organization.TITLE)));
-                        organizationOperation.setOrgDepartment(contactOrganizationCursor.getString
-                                (contactOrganizationCursor.getColumnIndex(ContactsContract
-                                        .CommonDataKinds.Organization.DEPARTMENT)));
-                        organizationOperation.setOrgType(phoneBookContacts.getOrganizationType
-                                (contactOrganizationCursor,
-                                        contactOrganizationCursor.getInt((contactOrganizationCursor
-                                                .getColumnIndex(ContactsContract.CommonDataKinds
-                                                        .Organization.TYPE)))));
-                        organizationOperation.setOrgJobDescription(contactOrganizationCursor
-                                .getString
-                                        (contactOrganizationCursor.getColumnIndex(ContactsContract
-                                                .CommonDataKinds.Organization.JOB_DESCRIPTION)));
-                        organizationOperation.setOrgOfficeLocation(contactOrganizationCursor
-                                .getString
-                                        (contactOrganizationCursor.getColumnIndex(ContactsContract
-                                                .CommonDataKinds.Organization.OFFICE_LOCATION)));
-
 
                         if (!arrayListOrganization.contains(organization)) {
                             arrayListPhoneBookOrganization.add(organization);
                         }
+
                         arrayListPhoneBookOrganizationOperation.add(organizationOperation);
                     }
                     contactOrganizationCursor.close();
@@ -1899,8 +2385,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
 
             if (!Utils.isArraylistNullOrEmpty(arrayListOrganization) || !Utils
-                    .isArraylistNullOrEmpty
-                            (arrayListPhoneBookOrganization)) {
+                    .isArraylistNullOrEmpty(arrayListPhoneBookOrganization)) {
 
                 final ArrayList<ProfileDataOperationOrganization> tempOrganization = new
                         ArrayList<>();
@@ -1911,19 +2396,72 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                 if (tempOrganization.size() == 1) {
                     textViewAllOrganization.setVisibility(View.GONE);
+                    textTime.setVisibility(View.VISIBLE);
                 } else {
                     textViewAllOrganization.setVisibility(View.VISIBLE);
+                    textTime.setVisibility(View.GONE);
                 }
 
                 if (arrayListOrganization.size() > 0) {
-                    textDesignation.setTextColor(ContextCompat.getColor(ProfileDetailActivity.this, R.color.colorAccent));
-                    textOrganization.setTextColor(ContextCompat.getColor(ProfileDetailActivity.this, R.color.colorAccent));
+                    textDesignation.setTextColor(ContextCompat.getColor(ProfileDetailActivity
+                            .this, R.color.colorAccent));
+                    textOrganization.setTextColor(ContextCompat.getColor(ProfileDetailActivity
+                            .this, R.color.colorAccent));
+                    textTime.setTextColor(ContextCompat.getColor(ProfileDetailActivity
+                            .this, R.color.colorAccent));
                 } else {
-                    textDesignation.setTextColor(ContextCompat.getColor(ProfileDetailActivity.this, R.color.colorBlack));
-                    textOrganization.setTextColor(ContextCompat.getColor(ProfileDetailActivity.this, R.color.colorBlack));
+                    textDesignation.setTextColor(ContextCompat.getColor(ProfileDetailActivity
+                            .this, R.color.colorBlack));
+                    textOrganization.setTextColor(ContextCompat.getColor(ProfileDetailActivity
+                            .this, R.color.colorBlack));
+                    textTime.setVisibility(View.GONE);
                 }
+
+                if (MoreObjects.firstNonNull(tempOrganization.get(0).getIsVerify(), 0) ==
+                        IntegerConstants.RCP_TYPE_PRIMARY) {
+
+                    String s = Utils.setMultipleTypeface(ProfileDetailActivity.this,
+                            tempOrganization.get(0).getOrgName() + " <font color" + "='#00796B'>" +
+                                    getString(R.string.im_icon_verify) + "</font>", 0,
+                            (StringUtils.length(tempOrganization.get(0).getOrgName()) + 1),
+                            ((StringUtils.length(tempOrganization.get(0).getOrgName()) + 1) + 1))
+                            .toString();
+
+                    textOrganization.setText(Html.fromHtml(s));
+
+                } else {
+                    textOrganization.setText(tempOrganization.get(0).getOrgName());
+                }
+
                 textDesignation.setText(tempOrganization.get(0).getOrgJobTitle());
-                textOrganization.setText(tempOrganization.get(0).getOrgName());
+
+                if (StringUtils.equalsIgnoreCase(tempOrganization.get(0).getOrgToDate(), "")) {
+                    if (!StringUtils.isEmpty(tempOrganization.get(0).getOrgFromDate())) {
+                        String formattedFromDate = Utils.convertDateFormat(tempOrganization.get
+                                        (0).getOrgFromDate(),
+                                "yyyy-MM-dd", Utils.getEventDateFormat(tempOrganization
+                                        .get(0).getOrgFromDate()));
+
+                        textTime.setText(String.format("%s to Present ", formattedFromDate));
+                    } else {
+                        textTime.setVisibility(View.GONE);
+                    }
+                } else {
+                    if (!StringUtils.isEmpty(tempOrganization.get(0).getOrgFromDate()) &&
+                            !StringUtils.isEmpty(tempOrganization.get(0).getOrgToDate())) {
+                        String formattedFromDate = Utils.convertDateFormat(tempOrganization.get
+                                        (0).getOrgFromDate(),
+                                "yyyy-MM-dd", Utils.getEventDateFormat(tempOrganization
+                                        .get(0).getOrgFromDate()));
+                        String formattedToDate = Utils.convertDateFormat(tempOrganization.get(0)
+                                        .getOrgToDate(),
+                                "yyyy-MM-dd", Utils.getEventDateFormat(tempOrganization
+                                        .get(0).getOrgToDate()));
+
+                        textTime.setText(String.format("%s to %s ", formattedFromDate,
+                                formattedToDate));
+                    }
+                }
 
                 textViewAllOrganization.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -1961,6 +2499,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     String number = Utils.getFormattedNumber(this, arrayListPhoneNumber.get(i)
                             .getPhoneNumber());
                     arrayListCloudNumber.add(number);
+
+                    if (arrayListPhoneNumber.get(i).getPbRcpType() == IntegerConstants
+                            .RCP_TYPE_PRIMARY) {
+                        contactNumber = arrayListPhoneNumber.get(i).getPhoneNumber();
+                    }
                 }
             }
 
@@ -1984,14 +2527,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 contactNumberCursor.getString(contactNumberCursor.getColumnIndex
                                         (ContactsContract.CommonDataKinds.Phone.NUMBER))));
                         phoneNumber.setPhoneType(phoneBookContacts.getPhoneNumberType
-                                (contactNumberCursor.getInt(contactNumberCursor.getColumnIndex
-                                        (ContactsContract.CommonDataKinds.Phone.TYPE))));
-                        phoneNumberOperation.setPhoneNumber(Utils.getFormattedNumber(this,
-                                contactNumberCursor.getString(contactNumberCursor.getColumnIndex
-                                        (ContactsContract.CommonDataKinds.Phone.NUMBER))));
-                        phoneNumberOperation.setPhoneType(phoneBookContacts.getPhoneNumberType
-                                (contactNumberCursor.getInt(contactNumberCursor.getColumnIndex
-                                        (ContactsContract.CommonDataKinds.Phone.TYPE))));
+                                (contactNumberCursor, contactNumberCursor.getInt
+                                        (contactNumberCursor.getColumnIndex(ContactsContract
+                                                .CommonDataKinds.Phone.TYPE))));
                         phoneNumber.setPbRcpType(IntegerConstants.RCP_TYPE_LOCAL_PHONE_BOOK);
 
                         if (!arrayListCloudNumber.contains(phoneNumber.getPhoneNumber())) {
@@ -2133,7 +2671,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 (contactWebsiteCursor
                                         .getColumnIndex(ContactsContract.CommonDataKinds.Website
                                                 .URL)));
-
 
                         if (!arrayListCloudWebsite.contains(webAddress.getWebAddress())) {
                             arrayListPhoneBookWebsite.add(webAddress);
@@ -2321,9 +2858,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                                                 .TYPE))));
 
                         imAccount.setIMAccountProtocol(phoneBookContacts.getImProtocol
-                                (contactImAccountCursor.getInt((contactImAccountCursor
-                                        .getColumnIndex
-                                                (ContactsContract.CommonDataKinds.Im.PROTOCOL)))));
+                                (contactImAccountCursor, contactImAccountCursor.getInt(
+                                        (contactImAccountCursor.getColumnIndex(ContactsContract
+                                                .CommonDataKinds.Im.PROTOCOL)))));
 
                         imAccount.setIMRcpType(String.valueOf(IntegerConstants
                                 .RCP_TYPE_LOCAL_PHONE_BOOK));
@@ -2351,6 +2888,84 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
             //</editor-fold>
 
+            // <editor-fold desc="Aadhar card details">
+            if (profileDetail != null) {
+                final ProfileDataOperationAadharNumber aadharDetails;
+                if (profileDetail.getPbAadhar() != null) {
+                    linearAadharCard.setVisibility(View.VISIBLE);
+                    aadharDetails = profileDetail.getPbAadhar();
+                    if (aadharDetails.getAadharPublic() != 3) {
+                        if (aadharDetails.getAadharPublic() == 1) {
+                            buttonPrivacy.setImageResource(R.drawable.ico_privacy_public);
+                        } else if (aadharDetails.getAadharPublic() == 2) {
+                            buttonPrivacy.setImageResource(R.drawable.ico_privacy_my_contact);
+                        }
+                    } else {
+                        buttonPrivacy.setImageResource(R.drawable.ico_privacy_onlyme);
+                    }
+
+                    textAadharNumber.setTypeface(Utils.typefaceRegular(this));
+                    textAadharNumber.setText(aadharDetails.getAadharNumber() + "");
+
+                    buttonPrivacy.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            PrivacySettingPopupDialog privacySettingPopupDialog = new
+                                    PrivacySettingPopupDialog(null, ProfileDetailActivity.this, new PrivacySettingPopupDialog.DialogCallback() {
+                                @Override
+                                public void onSettingSaved(ProfileDetailAdapter.ProfileDetailViewHolder view, int whichItem, int newPrivacy, int itemPosition, int oldPrivacy, String cloudId) {
+
+                                    if (oldPrivacy == newPrivacy + 1) {
+                                        return;
+                                    }
+
+                                    WsRequestObject wsRequestObject = new WsRequestObject();
+
+                                    PrivacyEntityItem privacyEntityItem = new PrivacyEntityItem();
+                                    privacyEntityItem.setId(cloudId);
+                                    privacyEntityItem.setValue(newPrivacy + 1);
+                                    ArrayList<PrivacyEntityItem> privacyEntityItems = new ArrayList<>();
+                                    privacyEntityItems.add(privacyEntityItem);
+                                    ArrayList<PrivacyDataItem> privacyItems = new ArrayList<>();
+                                    PrivacyDataItem privacyDataItem = new PrivacyDataItem();
+                                    switch (whichItem) {
+                                        case AppConstants.AADHAR_NUMBER:
+                                            privacyDataItem.setPbAadhaar(privacyEntityItems);
+                                            break;
+                                    }
+                                    privacyItems.add(privacyDataItem);
+                                    wsRequestObject.setPrivacyData(privacyItems);
+//        wsRequestObject.setPmId(pmId);
+                                    if (Utils.isNetworkAvailable(ProfileDetailActivity.this)) {
+                                        new AsyncWebServiceCall(ProfileDetailActivity.this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                                                wsRequestObject, null, WsResponseObject.class, WsConstants
+                                                .REQ_SET_PRIVACY_SETTING, ProfileDetailActivity.this.getResources().getString(R.string
+                                                .msg_please_wait), true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                                                WsConstants.WS_ROOT + WsConstants.REQ_SET_PRIVACY_SETTING);
+                                    } else {
+                                        //show no toast
+                                        Toast.makeText(ProfileDetailActivity.this,
+                                                ProfileDetailActivity.this.getResources().getString(R.string.msg_no_network),
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            }, AppConstants
+                                    .AADHAR_NUMBER,
+                                    0, aadharDetails.getAadharPublic(), aadharDetails.getAadharId() + "");
+                            privacySettingPopupDialog.setDialogTitle(ProfileDetailActivity.this.getResources().getString(R
+                                    .string.privacy_dialog_title));
+                            privacySettingPopupDialog.showDialog();
+                        }
+                    });
+
+                } else {
+                    linearAadharCard.setVisibility(View.GONE);
+                }
+            } else {
+                linearAadharCard.setVisibility(View.GONE);
+            }
+
+            //</editor-fold>
             if ((!Utils.isArraylistNullOrEmpty(arrayListWebsite) || !Utils.isArraylistNullOrEmpty
                     (arrayListPhoneBookWebsite))
                     ||
@@ -2359,7 +2974,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     ||
                     (!Utils.isArraylistNullOrEmpty(arrayListImAccount) || !Utils
                             .isArraylistNullOrEmpty(arrayListPhoneBookImAccount))
-                    ) {
+                    || (profileDetail.getPbAadhar() != null)) {
                 rippleViewMore.setVisibility(View.VISIBLE);
             } else {
                 rippleViewMore.setVisibility(View.GONE);
@@ -2432,6 +3047,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 recyclerViewEvent.setAdapter(eventDetailAdapter);
             } else {
                 linearEvent.setVisibility(View.GONE);
+                cardOtherDetails.setVisibility(View.GONE);
             }
             //</editor-fold>
 
@@ -2459,11 +3075,268 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
 
 
+            if (displayOwnProfile && profileDetail != null) {
+                showProfilePercentage(profileDetail);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
 
+    private void sendAccessRequest(int toPMId, String carFiledType, String recordIndexId) {
+
+        WsRequestObject requestObj = new WsRequestObject();
+        requestObj.setCarPmIdTo(toPMId);
+        requestObj.setCarFiledType(carFiledType);
+        requestObj.setCarStatus(0);
+        requestObj.setCarMongoDbRecordIndex(recordIndexId);
+
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    requestObj, null, WsResponseObject.class, WsConstants
+                    .REQ_PROFILE_PRIVACY_REQUEST, this.getResources().getString(R.string
+                    .msg_please_wait), true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                    WsConstants.WS_ROOT + WsConstants.REQ_PROFILE_PRIVACY_REQUEST);
+        } else {
+            //show no net
+            Toast.makeText(this, this.getResources().getString(R.string.msg_no_network),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void showProfilePercentage(ProfileDataOperation profileDetail) {
+        if (progressPercentage != null) {
+            progressPercentage.setBarColor(Color.parseColor("#CCE4E1"), Color.parseColor
+                    ("#00796B"));
+
+            int percentage = 5;
+            ArrayList<String> arrayListRemainingFields = new ArrayList<>();
+            if (Utils.hasSharedPreference(ProfileDetailActivity.this, AppConstants
+                    .PREF_PROFILE_REMAINING_FIELDS)) {
+                arrayListRemainingFields.addAll(Utils.getArrayListPreference(ProfileDetailActivity
+                        .this, AppConstants.PREF_PROFILE_REMAINING_FIELDS));
+            }
+
+            //<editor-fold desc="Gender">
+            if (!StringUtils.isBlank(profileDetail.getPbGender())) {
+                percentage += 5;
+                if (arrayListRemainingFields.contains(getString(R.string.str_gender))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_gender));
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_gender));
+            }
+            //</editor-fold>
+
+            //<editor-fold desc="Profile Photo">
+            if (!StringUtils.isBlank(profileDetail.getPbProfilePhoto())) {
+                percentage += 5;
+                if (arrayListRemainingFields.contains(getString(R.string.str_profile_photo))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_profile_photo));
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_profile_photo));
+            }
+            //</editor-fold>
+
+            //<editor-fold desc="Organization">
+            if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbOrganization())) {
+               /* percentage += 15;
+                if (arrayListRemainingFields.contains(getString(R.string.str_organization))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_organization));
+                }*/
+                percentage += 5;
+                if (arrayListRemainingFields.contains(getString(R.string.str_organization))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_organization));
+                }
+                boolean hasVerifiedOrganization = false;
+                for (int i = 0; i < profileDetail.getPbOrganization().size(); i++) {
+                    if (profileDetail.getPbOrganization().get(i).getIsVerify() == 1) {
+                        percentage += 10;
+                        hasVerifiedOrganization = true;
+                        break;
+                    }
+                }
+                if (hasVerifiedOrganization) {
+                    if (arrayListRemainingFields.contains("Verified Organization")) {
+                        arrayListRemainingFields.remove("Verified Organization");
+                    }
+                } else {
+                    arrayListRemainingFields.add("Verified Organization");
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_organization));
+            }
+            //</editor-fold>
+
+            //<editor-fold desc="Web Address">
+            if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbWebAddress())) {
+                percentage += 5;
+                if (arrayListRemainingFields.contains(getString(R.string.str_website))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_website));
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_website));
+            }
+            //</editor-fold>
+
+            //<editor-fold desc="Address">
+            if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbAddress())) {
+                percentage += 10;
+                if (arrayListRemainingFields.contains(getString(R.string.str_address))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_address));
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_address));
+            }
+            //</editor-fold>
+
+            //<editor-fold desc="Event">
+            if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEvent())) {
+                percentage += 5;
+                if (arrayListRemainingFields.contains(getString(R.string.str_event))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_event));
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_event));
+            }
+            //</editor-fold>
+
+            //<editor-fold desc="Email Id">
+            if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEmailId())) {
+                percentage += 5;
+                if (arrayListRemainingFields.contains(getString(R.string.str_email))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_email));
+                }
+                boolean hasVerifiedEmail = false;
+                for (int i = 0; i < profileDetail.getPbEmailId().size(); i++) {
+                    if (profileDetail.getPbEmailId().get(i).getEmRcpType() == IntegerConstants
+                            .RCP_TYPE_PRIMARY) {
+                        percentage += 15;
+                        hasVerifiedEmail = true;
+                        break;
+                    } else if (profileDetail.getPbEmailId().get(i).getEmRcpType() ==
+                            IntegerConstants
+                                    .RCP_TYPE_SECONDARY) {
+                        if (!profileDetail.getPbEmailId().get(i).getEmSocialType()
+                                .equalsIgnoreCase("")) {
+                            percentage += 15;
+                            hasVerifiedEmail = true;
+                            break;
+                        }
+                    }
+                }
+                if (hasVerifiedEmail) {
+                    if (arrayListRemainingFields.contains("Verified Email")) {
+                        arrayListRemainingFields.remove("Verified Email");
+                    }
+                } else {
+                    arrayListRemainingFields.add("Verified Email");
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_email));
+            }
+            //</editor-fold>
+
+            //<editor-fold desc="Im Account">
+            if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbIMAccounts())) {
+                if (arrayListRemainingFields.contains(getString(R.string.str_social_contact))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_social_contact));
+                }
+                ArrayList<String> savedImAccount = new ArrayList<>();
+                for (int i = 0; i < profileDetail.getPbIMAccounts().size(); i++) {
+//                    savedImAccount.add(profileDetail.getPbIMAccounts().get(i)
+//                            .getIMAccountProtocol());
+                    String protocol = profileDetail.getPbIMAccounts().get(i)
+                            .getIMAccountProtocol();
+                    if (protocol.contains(getString(R.string.facebook)) || protocol.contains
+                            (getString(R.string.google_plus)) || protocol.contains(getString(R
+                            .string.linked_in))) {
+                        savedImAccount.add(protocol);
+                    } else {
+                        savedImAccount.add("Other");
+                    }
+
+                }
+                if (savedImAccount.contains(getString(R.string.facebook))) {
+                    percentage += 5;
+                    if (arrayListRemainingFields.contains("Facebook Account")) {
+                        arrayListRemainingFields.remove("Facebook Account");
+                    }
+                } else {
+                    arrayListRemainingFields.add("Facebook Account");
+                }
+                if (savedImAccount.contains(getString(R.string.google_plus))) {
+                    percentage += 5;
+                    if (arrayListRemainingFields.contains("Google Plus Account")) {
+                        arrayListRemainingFields.remove("Google Plus Account");
+                    }
+                } else {
+                    arrayListRemainingFields.add("Google Plus Account");
+                }
+                if (savedImAccount.contains(getString(R.string.linked_in))) {
+                    percentage += 5;
+                    if (arrayListRemainingFields.contains("Linked In Account")) {
+                        arrayListRemainingFields.remove("Linked In Account");
+                    }
+                } else {
+                    arrayListRemainingFields.add("Linked In Account");
+                }
+                if (savedImAccount.contains("Other")) {
+                    percentage += 5;
+                    if (arrayListRemainingFields.contains(getString(R.string.str_social_contact))) {
+                        arrayListRemainingFields.remove(getString(R.string.str_social_contact));
+                    }
+                } else {
+                    arrayListRemainingFields.add(getString(R.string.str_social_contact));
+                }
+
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_social_contact));
+            }
+            //</editor-fold>
+
+            //<editor-fold desc="Adhaar Card">
+            if (profileDetail.getPbAadhar() != null) {
+                percentage += 10;
+                if (arrayListRemainingFields.contains(getString(R.string.str_aadhar_card))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_aadhar_card));
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_aadhar_card));
+            }
+            //</editor-fold>
+
+            Utils.setArrayListPreference(ProfileDetailActivity.this, AppConstants
+                    .PREF_PROFILE_REMAINING_FIELDS, arrayListRemainingFields);
+
+            if (percentage < 100) {
+                relativeProfilePercentage.setVisibility(View.VISIBLE);
+
+                textCompleteProfile.setTypeface(Utils.typefaceSemiBold(ProfileDetailActivity.this));
+                textCompleteProfileDescription.setTypeface(Utils.typefaceRegular
+                        (ProfileDetailActivity.this));
+
+                includeElevation.setRotation(180);
+                includeElevation.setAlpha(0.6f);
+                includeElevationTop.setAlpha(0.6f);
+
+                progressPercentage.setValueAnimated(percentage);
+
+                if (arrayListRemainingFields.size() > 0) {
+                    Random random = new Random();
+
+                    textCompleteProfileDescription.setText(String.format(getString(R.string
+                            .str_complete_profile_description), arrayListRemainingFields.get
+                            (random.nextInt(arrayListRemainingFields.size()))));
+                }
+
+            } else {
+                relativeProfilePercentage.setVisibility(View.GONE);
+            }
+        }
     }
 
     private void showAllOrganizations(ArrayList<ProfileDataOperationOrganization>
@@ -2480,13 +3353,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
 
-        TextView textDialogTitle = (TextView) dialog.findViewById(R.id.text_dialog_title);
+        TextView textDialogTitle = dialog.findViewById(R.id.text_dialog_title);
         textDialogTitle.setText(getString(R.string.title_all_organizations));
         textDialogTitle.setTypeface(Utils.typefaceSemiBold(this));
 
-        Button buttonRight = (Button) dialog.findViewById(R.id.button_right);
-        RippleView rippleRight = (RippleView) dialog.findViewById(R.id.ripple_right);
-        RippleView rippleLeft = (RippleView) dialog.findViewById(R.id.ripple_left);
+        Button buttonRight = dialog.findViewById(R.id.button_right);
+        RippleView rippleRight = dialog.findViewById(R.id.ripple_right);
+        RippleView rippleLeft = dialog.findViewById(R.id.ripple_left);
 
         rippleLeft.setVisibility(View.GONE);
 
@@ -2500,7 +3373,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
         });
 
-        RecyclerView recyclerViewDialogList = (RecyclerView) dialog.findViewById(R.id
+        RecyclerView recyclerViewDialogList = dialog.findViewById(R.id
                 .recycler_view_dialog_list);
         recyclerViewDialogList.setLayoutManager(new LinearLayoutManager(this));
 
@@ -2527,11 +3400,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 String actionNumber;
                 if (displayOwnProfile) {
                     actionNumber = StringUtils.defaultString(((ProfileDetailAdapter
-                            .ProfileDetailViewHolder) viewHolder).textMain1.getText()
+                            .ProfileDetailViewHolder) viewHolder).textMain.getText()
                             .toString());
                 } else {
                     actionNumber = StringUtils.defaultString(((ProfileDetailAdapter
-                            .ProfileDetailViewHolder) viewHolder).textMain1.getText()
+                            .ProfileDetailViewHolder) viewHolder).textMain.getText()
                             .toString());
                 }
                 if (direction == ItemTouchHelper.LEFT) {
@@ -2546,14 +3419,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     startActivity(smsIntent);
 
                 } else {
-
-                    if (!actionNumber.startsWith("+91")) {
-                        callNumber = "+91" + actionNumber;
-                    } else {
-                        callNumber = actionNumber;
-                    }
-
-                    showCallConfirmationDialog(actionNumber);
+                    dialCall(actionNumber);
+//                    showCallConfirmationDialog(actionNumber);
                 }
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -2570,7 +3437,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
                 if (viewHolder instanceof ProfileDetailAdapter.ProfileDetailViewHolder &&
                         StringUtils.startsWithIgnoreCase(((ProfileDetailAdapter
-                                .ProfileDetailViewHolder) viewHolder).textMain1.getText()
+                                .ProfileDetailViewHolder) viewHolder).textMain.getText()
                                 .toString(), "+XX")) {
                     return 0;
                 }
@@ -2624,55 +3491,19 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         itemTouchHelper.attachToRecyclerView(recyclerViewContactNumber);
     }
 
-    private void showCallConfirmationDialog(final String number) {
+    private void dialCall(String number) {
 
-        final String finalNumber = Utils.getFormattedNumber(ProfileDetailActivity.this,number);
+        String finalNumber = Utils.getFormattedNumber(ProfileDetailActivity.this, number);
 
-        /*if (!number.startsWith("+91")) {
-            finalNumber = "+91" + number;
-        } else {
-            finalNumber = number;
-        }*/
-
-        RippleView.OnRippleCompleteListener cancelListener = new RippleView
-                .OnRippleCompleteListener() {
-
-            @Override
-            public void onComplete(RippleView rippleView) {
-                switch (rippleView.getId()) {
-                    case R.id.rippleLeft:
-                        callConfirmationDialog.dismissDialog();
-                        break;
-
-                    case R.id.rippleRight:
-                        callConfirmationDialog.dismissDialog();
-                       /* Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
-                                number));
-                        startActivity(intent);*/
-                        if (ContextCompat.checkSelfPermission(ProfileDetailActivity.this, android
-                                .Manifest.permission.CALL_PHONE) != PackageManager
-                                .PERMISSION_GRANTED)
-                            requestPermissions(new String[]{Manifest.permission
-                                    .CALL_PHONE}, AppConstants
-                                    .MY_PERMISSIONS_REQUEST_PHONE_CALL);
-                        else {
-                            Utils.callIntent(ProfileDetailActivity.this, finalNumber);
-                        }
-
-                        break;
-                }
-            }
-        };
-
-        callConfirmationDialog = new MaterialDialog(this, cancelListener);
-        callConfirmationDialog.setTitleVisibility(View.GONE);
-        callConfirmationDialog.setLeftButtonText(getString(R.string.action_cancel));
-        callConfirmationDialog.setRightButtonText(getString(R.string.action_call));
-        callConfirmationDialog.setDialogBody(getString(R.string.action_call) + " " + finalNumber
-                + "?");
-
-        callConfirmationDialog.showDialog();
-
+        if (ContextCompat.checkSelfPermission(ProfileDetailActivity.this,
+                Manifest.permission.CALL_PHONE) != PackageManager
+                .PERMISSION_GRANTED)
+            requestPermissions(new String[]{Manifest.permission
+                    .CALL_PHONE}, AppConstants
+                    .MY_PERMISSIONS_REQUEST_PHONE_CALL);
+        else {
+            Utils.callIntent(ProfileDetailActivity.this, finalNumber);
+        }
     }
 
     public RelativeLayout getRelativeRootProfileDetail() {
@@ -2698,13 +3529,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
 
-        TextView textDialogTitle = (TextView) dialog.findViewById(R.id.text_dialog_title);
-        TextView textFromContact = (TextView) dialog.findViewById(R.id.text_from_contact);
-        TextView textFromSocialMedia = (TextView) dialog.findViewById(R.id.text_from_social_media);
-        TextView textRemovePhoto = (TextView) dialog.findViewById(R.id.text_remove_photo);
+        TextView textDialogTitle = dialog.findViewById(R.id.text_dialog_title);
+        TextView textFromContact = dialog.findViewById(R.id.text_from_contact);
+        TextView textFromSocialMedia = dialog.findViewById(R.id.text_from_social_media);
+        TextView textRemovePhoto = dialog.findViewById(R.id.text_remove_photo);
 
-        RippleView rippleLeft = (RippleView) dialog.findViewById(R.id.ripple_left);
-        Button buttonLeft = (Button) dialog.findViewById(R.id.button_left);
+        RippleView rippleLeft = dialog.findViewById(R.id.ripple_left);
+        Button buttonLeft = dialog.findViewById(R.id.button_left);
 
         textDialogTitle.setTypeface(Utils.typefaceSemiBold(this));
         textFromContact.setTypeface(Utils.typefaceRegular(this));
@@ -2865,6 +3696,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     }
 
     private ArrayList callLogHistory(String number) {
+
         ArrayList<CallLogType> callDetails = new ArrayList<>();
         Cursor cursor;
 //        Pattern numberPat = Pattern.compile("\\d+");
@@ -2874,10 +3706,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             cursor = getCallHistoryDataByNumber(number);
         } else {
             cursor = getCallHistoryDataByName(number);
-//            cursor = getCallHistoryDataByNumber(number);
+            if (cursor != null && cursor.getCount() == 0) {
+                if (!StringUtils.isEmpty(historyNumber))
+                    cursor = getCallHistoryDataByNumber(historyNumber);
+            }
         }
         try {
-
             if (cursor != null && cursor.getCount() > 0) {
                 int number1 = cursor.getColumnIndex(CallLog.Calls.NUMBER);
                 int type = cursor.getColumnIndex(CallLog.Calls.TYPE);
@@ -2885,6 +3719,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 int duration = cursor.getColumnIndex(CallLog.Calls.DURATION);
                 int callLogId = cursor.getColumnIndex(CallLog.Calls._ID);
                 int numberType = cursor.getColumnIndex(CallLog.Calls.CACHED_NUMBER_TYPE);
+                int name = cursor.getColumnIndex(CallLog.Calls.CACHED_NAME);
                 int account = -1;
                 int account_id = -1;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -2915,6 +3750,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 //                        if (userImage != null)
 //                            Log.e("User Image", userImage);
                     }
+                    String userName = getNameFromNumber(Utils.getFormattedNumber(this, phNum));
                     int histroyId = Integer.parseInt(cursor.getString(callLogId));
                     CallLogType logObject = new CallLogType();
                     logObject.setHistoryNumber(phNum);
@@ -2924,6 +3760,14 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     logObject.setHistoryCallSimNumber(accountId);
                     logObject.setHistoryId(histroyId);
                     logObject.setHistoryNumberType(numberTypeLog);
+                    if (isCallLogRcpUser) {
+                        logObject.setIsHistoryRcpVerifiedId("1");
+                    } else if (!StringUtils.isEmpty(callLogRcpVerfiedId)) {
+                        if ((StringUtils.isEmpty(userName)))
+                            logObject.setIsHistoryRcpVerifiedId(callLogRcpVerfiedId);
+                    } else {
+                        logObject.setIsHistoryRcpVerifiedId("");
+                    }
                     callDetails.add(logObject);
                 }
                 cursor.close();
@@ -2932,10 +3776,39 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         } catch (Exception e) {
             e.printStackTrace();
+            if (cursor != null)
+                cursor.close();
         }
 
         return callDetails;
     }
+
+
+    private String getNameFromNumber(String phoneNumber) {
+        String contactName = "";
+        try {
+
+            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri
+                    .encode(phoneNumber));
+
+            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME,
+                    ContactsContract.PhoneLookup.LOOKUP_KEY};
+            Cursor cursor = this.getContentResolver().query(uri, projection, null, null, null);
+
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    contactName = cursor.getString(cursor.getColumnIndexOrThrow
+                            (ContactsContract.PhoneLookup.DISPLAY_NAME));
+                }
+                cursor.close();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return contactName;
+    }
+
 
     private String getPhoneNumberType(int type) {
         switch (type) {
@@ -3008,30 +3881,41 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-//            Utils.showProgressDialog(ProfileDetailActivity.this, "Please wait...", false);
+            Utils.showProgressDialog(ProfileDetailActivity.this, getString(R.string
+                    .msg_please_wait), false);
             rippleViewOldRecords.setVisibility(View.GONE);
         }
 
         protected Void doInBackground(Void... urls) {
-            if (!TextUtils.isEmpty(historyName)) {
-                fetchAllCallLogHistory(historyName);
-            } else {
-                fetchAllCallLogHistory(historyNumber);
-            }
 
+            if (profileActivityCallInstance) {
+                if (!TextUtils.isEmpty(historyNumber)) {
+                    fetchAllCallLogHistory(historyNumber);
+                } else {
+                    if (!TextUtils.isEmpty(historyName)) {
+                        fetchAllCallLogHistory(historyName);
+                    }
+                }
+            } else {
+                if (!TextUtils.isEmpty(historyName)) {
+                    fetchAllCallLogHistory(historyName);
+                } else {
+                    fetchAllCallLogHistory(historyNumber);
+                }
+            }
             return null;
         }
 
         protected void onPostExecute(Void result) {
 
-            runOnUiThread(new Runnable() {
+            new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-//                    Utils.hideProgressDialog();
-                    setHistoryAdapter();
-
+                    Utils.hideProgressDialog();
                 }
-            });
+            }, 1500);
+
+            setHistoryAdapter();
         }
     }
 
@@ -3074,14 +3958,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                              emailIds) {
 
         final ArrayList<Object> arrayList = new ArrayList<>();
-        arrayList.add(getString(R.string.str_all));
         arrayList.addAll(phoneNumbers);
         arrayList.addAll(emailIds);
 
         final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_all_organization);
-        dialog.setCancelable(false);
+        dialog.setCancelable(true);
 
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
         layoutParams.copyFrom(dialog.getWindow().getAttributes());
@@ -3102,6 +3985,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         RippleView rippleRight = (RippleView) dialog.findViewById(R.id.ripple_right);
         RippleView rippleLeft = (RippleView) dialog.findViewById(R.id.ripple_left);
 
+        rippleRight.setVisibility(View.GONE);
+        rippleLeft.setVisibility(View.GONE);
+
         buttonRight.setTypeface(Utils.typefaceRegular(this));
         buttonRight.setText(R.string.action_cancel);
         buttonLeft.setTypeface(Utils.typefaceRegular(this));
@@ -3119,37 +4005,36 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         recyclerViewDialogList.setLayoutManager(new LinearLayoutManager(this));
 
         final PhoneBookContactDetailAdapter adapter = new PhoneBookContactDetailAdapter(this,
-                arrayList);
-        recyclerViewDialogList.setAdapter(adapter);
-
-        rippleLeft.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
+                arrayList, new PhoneBookContactDetailAdapter.onClickListener() {
             @Override
-            public void onComplete(RippleView rippleView) {
-                if (adapter.getArrayListSelectedContacts().size() > 0) {
-                    dialog.dismiss();
-                    ArrayList<String> numbers = new ArrayList<>();
-                    ArrayList<String> emails = new ArrayList<>();
-                    for (int i = 0; i < arrayList.size(); i++) {
-                        if (adapter.getArrayListSelectedContacts().contains(i)) {
-                            if (arrayList.get(i) instanceof ProfileDataOperationPhoneNumber) {
-                                ProfileDataOperationPhoneNumber number =
-                                        (ProfileDataOperationPhoneNumber) arrayList.get(i);
-                                numbers.add(number.getPhoneNumber());
-                            }
-                            if (arrayList.get(i) instanceof ProfileDataOperationEmail) {
-                                ProfileDataOperationEmail email = (ProfileDataOperationEmail)
-                                        arrayList.get(i);
-                                emails.add(email.getEmEmailId());
-                            }
-                        }
-                    }
-                    inviteContact(numbers, emails);
-                } else {
-                    Utils.showErrorSnackBar(ProfileDetailActivity.this, relativeRootDialogList,
-                            getString(R.string.please_select_one));
-                }
+            public void onPhoneNumberClick(String number) {
+
+                dialog.dismiss();
+
+                Intent smsIntent = new Intent(Intent.ACTION_SENDTO);
+                smsIntent.addCategory(Intent.CATEGORY_DEFAULT);
+                smsIntent.setType("vnd.android-dir/mms-sms");
+                smsIntent.putExtra("sms_body", AppConstants.PLAY_STORE_LINK + getPackageName());
+                smsIntent.setData(Uri.parse("sms:" + number));
+                startActivity(smsIntent);
+
+            }
+
+            @Override
+            public void onEmailClick(String email) {
+
+                dialog.dismiss();
+
+                ArrayList<String> numbers = new ArrayList<>();
+                ArrayList<String> emails = new ArrayList<>();
+
+                emails.add(email);
+
+                inviteContact(numbers, emails);
+
             }
         });
+        recyclerViewDialogList.setAdapter(adapter);
 
         dialog.show();
     }
@@ -3164,96 +4049,28 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         }
     };
 
-    @SuppressWarnings("unused")
-    private void selectContactDialog(String contactName,
-                                     final ArrayList<ProfileDataOperationPhoneNumber> phoneNumbers,
-                                     ArrayList<ProfileDataOperationEmail> emailIds) {
-
-        final ArrayList<Object> arrayList = new ArrayList<>();
-        arrayList.add("All");
-        arrayList.addAll(phoneNumbers);
-        arrayList.addAll(emailIds);
-
-        final Dialog dialog = new Dialog(this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.dialog_all_organization);
-        dialog.setCancelable(false);
-
-        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
-        layoutParams.copyFrom(dialog.getWindow().getAttributes());
-        layoutParams.width = (int) (getResources().getDisplayMetrics().widthPixels * 0.90);
-        layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
-
-        dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
-
-        final LinearLayout relativeRootDialogList = (LinearLayout) dialog.findViewById(R.id
-                .relative_root_dialog_list);
-        TextView textDialogTitle = (TextView) dialog.findViewById(R.id.text_dialog_title);
-        textDialogTitle.setText(String.format("%s %s", getString(R.string.str_invite),
-                contactName));
-        textDialogTitle.setTypeface(Utils.typefaceSemiBold(this));
-
-        Button buttonRight = (Button) dialog.findViewById(R.id.button_right);
-        Button buttonLeft = (Button) dialog.findViewById(R.id.button_left);
-        RippleView rippleRight = (RippleView) dialog.findViewById(R.id.ripple_right);
-        RippleView rippleLeft = (RippleView) dialog.findViewById(R.id.ripple_left);
-
-        buttonRight.setTypeface(Utils.typefaceRegular(this));
-        buttonRight.setText(R.string.action_cancel);
-        buttonLeft.setTypeface(Utils.typefaceRegular(this));
-        buttonLeft.setText(getString(R.string.str_invite));
-
-        rippleRight.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
-            @Override
-            public void onComplete(RippleView rippleView) {
-                dialog.dismiss();
-            }
-        });
-
-
-        RecyclerView recyclerViewDialogList = (RecyclerView) dialog.findViewById(R.id
-                .recycler_view_dialog_list);
-        recyclerViewDialogList.setLayoutManager(new LinearLayoutManager(this));
-
-        final PhoneBookContactDetailAdapter adapter = new PhoneBookContactDetailAdapter(this,
-                arrayList);
-        recyclerViewDialogList.setAdapter(adapter);
-
-        rippleLeft.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
-            @Override
-            public void onComplete(RippleView rippleView) {
-                if (adapter.getArrayListSelectedContacts().size() > 0) {
-                    dialog.dismiss();
-                    ArrayList<String> numbers = new ArrayList<>();
-                    ArrayList<String> emails = new ArrayList<>();
-                    for (int i = 0; i < arrayList.size(); i++) {
-                        if (adapter.getArrayListSelectedContacts().contains(i)) {
-                            if (arrayList.get(i) instanceof ProfileDataOperationPhoneNumber) {
-                                ProfileDataOperationPhoneNumber number =
-                                        (ProfileDataOperationPhoneNumber) arrayList.get(i);
-                                numbers.add(number.getPhoneNumber());
-                            }
-                            if (arrayList.get(i) instanceof ProfileDataOperationEmail) {
-                                ProfileDataOperationEmail email = (ProfileDataOperationEmail)
-                                        arrayList.get(i);
-                                emails.add(email.getEmEmailId());
-                            }
-                        }
-                    }
-                    inviteContact(numbers, emails);
-                } else {
-                    Utils.showErrorSnackBar(ProfileDetailActivity.this, relativeRootDialogList,
-                            getString(R.string.please_select_one));
-                }
-            }
-        });
-
-        dialog.show();
-    }
-
     private void openCallLogHistoryDetailsActivity() {
         Intent intent = new Intent(ProfileDetailActivity.this, CallHistoryDetailsActivity.class);
-        intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, historyNumber);
+        if (!StringUtils.isEmpty(historyNumber)) {
+            historyNumber = historyNumber.replace(" ", "").replace("-", "");
+            intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, historyNumber);
+        } else {
+            if (intent.hasExtra(AppConstants.EXTRA_FROM_NOTI_PROFILE)) {
+                if (intent.getBooleanExtra(AppConstants.EXTRA_FROM_NOTI_PROFILE, false)) {
+                    if (tempPhoneNumber != null) {
+                        ProfileDataOperationPhoneNumber phoneNumber =
+                                (ProfileDataOperationPhoneNumber) tempPhoneNumber.get(0);
+                        String profilePrimaryNumber = "";
+                        if (phoneNumber != null) {
+                            profilePrimaryNumber = phoneNumber.getPhoneNumber();
+                        }
+                        intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER,
+                                profilePrimaryNumber);
+                        intent.putExtra(AppConstants.EXTRA_RCP_FROM_NOTI, true);
+                    }
+                }
+            }
+        }
         intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NAME, historyName);
         intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_DATE, historyDate);
         intent.putExtra(AppConstants.EXTRA_PM_ID, pmId);
@@ -3266,7 +4083,18 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         intent.putExtra(AppConstants.EXTRA_PHONE_BOOK_ID, rawId);
 //        intent.putExtra(AppConstants.EXTRA_PHONE_BOOK_ID, phoneBookId);
         intent.putExtra(AppConstants.EXTRA_CONTACT_NAME, contactName);
-        intent.putExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME, cloudContactName);
+        if (!StringUtils.isEmpty(cloudContactName))
+            intent.putExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME, cloudContactName);
+        else {
+            if (!StringUtils.isEmpty(callLogCloudName))
+                intent.putExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME, callLogCloudName);
+            else {
+                intent.putExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME, "");
+            }
+
+        }
+        intent.putExtra(AppConstants.EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE,
+                profileActivityCallInstance);
         intent.putExtra(AppConstants.EXTRA_CHECK_NUMBER_FAVOURITE, checkNumberFavourite);
         intent.putExtra(AppConstants.EXTRA_CONTACT_POSITION, listClickedPosition);
         intent.putExtra(AppConstants.EXTRA_CALL_UNIQUE_ID, hashMapKey);
@@ -3277,6 +4105,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         } else {
             intent.putExtra(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE, thumbnailUrl);
         }
+        intent.putExtra(AppConstants.EXTRA_DIALOG_CALL_LOG_INSTANCE, isDialogCallLogInstance);
         startActivity(intent);
         overridePendingTransition(R.anim.enter, R.anim.exit);
     }
@@ -3285,16 +4114,20 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         ArrayList<CallLogHistoryType> arrayListToSend = new ArrayList<>();
         if (arrayListHistory != null && arrayListHistory.size() > 0) {
             CallLogType callLogType = arrayListHistory.get(arrayListHistory.size() - 1);
-            String number = callLogType.getHistoryNumber();
-            String formattedNumber = "";
-            if (!StringUtils.isEmpty(number))
-                formattedNumber = Utils.getFormattedNumber(this, number);
+//            String number = callLogType.getHistoryNumber();
+            String number = Utils.getFormattedNumber(this, callLogType.getHistoryNumber());
+            if (!StringUtils.isEmpty(number)) {
+                if (number.startsWith("+91"))
+                    number = number.replace("+", "");
+                else
+                    number = "91" + number;
+            }
             long date = callLogType.getHistoryDate();
                 /*Date date1 = new Date(date);
                 String finalDate = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss").format(date1);*/
             CallLogHistoryType callLogHistoryType = new CallLogHistoryType();
-            if (!StringUtils.isEmpty(formattedNumber))
-                callLogHistoryType.setHistoryNumber(formattedNumber);
+            if (!StringUtils.isEmpty(number))
+                callLogHistoryType.setHistoryNumber(number);
             callLogHistoryType.setHistoryDate(date);
             arrayListToSend.add(callLogHistoryType);
 
@@ -3303,23 +4136,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         } else {
             rippleViewOldRecords.setVisibility(View.GONE);
         }
-    }
-
-    private void fetchOldRecordsServiceCall(ArrayList<CallLogHistoryType> callLogTypeArrayList) {
-        // Log.i("HistoryServiceCalled", "Service Started");
-        WsRequestObject deviceDetailObject = new WsRequestObject();
-        deviceDetailObject.setHistoryTypeArrayList(callLogTypeArrayList);
-        if (Utils.isNetworkAvailable(this)) {
-            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
-                    deviceDetailObject, null, WsResponseObject.class, WsConstants
-                    .REQ_GET_CALL_LOG_HISTORY_REQUEST, null, true).executeOnExecutor(AsyncTask
-                            .THREAD_POOL_EXECUTOR,
-                    WsConstants.WS_ROOT + WsConstants.REQ_GET_CALL_LOG_HISTORY_REQUEST);
-        } else {
-            Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources()
-                    .getString(R.string.msg_no_network));
-        }
-
     }
 
     @SuppressWarnings("unused")
@@ -3360,6 +4176,18 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     }
 
     private void savePrivacySettingToDb(ProfileDataOperation profileDetail) {
+
+        // <editor-fold desc="Aadhar card details">
+        TableAadharMaster tableAadharMaster = new TableAadharMaster(databaseHandler);
+        tableAadharMaster.deleteAadharDetails(getUserPmId());
+        if (profileDetail != null) {
+            ProfileDataOperationAadharNumber aadharDetails = profileDetail.getPbAadhar();
+            if (aadharDetails != null) {
+                aadharDetails.setRcProfileMasterPmId(getUserPmId());
+                tableAadharMaster.addAadharDetail(aadharDetails);
+            }
+        }
+        //</editor-fold>
 
         // <editor-fold desc="Mobile Number">
         TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
@@ -3404,6 +4232,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 Email email = new Email();
                 email.setEmRecordIndexId(arrayListEmailId.get(i).getEmId());
                 email.setEmEmailAddress(arrayListEmailId.get(i).getEmEmailId());
+                email.setEmSocialType(arrayListEmailId.get(i).getEmSocialType());
                 email.setEmEmailType(arrayListEmailId.get(i).getEmType());
                 email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(i).getEmPublic()));
                 email.setEmIsVerified(String.valueOf(arrayListEmailId.get(i).getEmRcpType()));
@@ -3430,17 +4259,21 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 Address address = new Address();
                 address.setAmRecordIndexId(arrayListAddress.get(j).getAddId());
                 address.setAmState(arrayListAddress.get(j).getState());
+                address.setAmStateId(arrayListAddress.get(j).getStateId());
                 address.setAmCity(arrayListAddress.get(j).getCity());
+                address.setAmCityId(arrayListAddress.get(j).getCityId());
                 address.setAmAddressPrivacy(String.valueOf(arrayListAddress.get(j).getAddPublic()));
                 address.setAmCountry(arrayListAddress.get(j).getCountry());
+                address.setAmCountryId(arrayListAddress.get(j).getCountryId());
                 address.setAmFormattedAddress(arrayListAddress.get(j).getFormattedAddress());
                 address.setAmNeighborhood(arrayListAddress.get(j).getNeighborhood());
                 address.setAmPostCode(arrayListAddress.get(j).getPostCode());
                 address.setAmPoBox(arrayListAddress.get(j).getPoBox());
                 address.setAmStreet(arrayListAddress.get(j).getStreet());
                 address.setAmAddressType(arrayListAddress.get(j).getAddressType());
-              /*  address.setAmGoogleLatitude(arrayListAddress.get(j).getGoogleLatitude());
-                address.setAmGoogleLongitude(arrayListAddress.get(j).getGoogleLongitude());*/
+                address.setAmGoogleLatitude(arrayListAddress.get(j).getGoogleLatLong().get(1));
+                address.setAmGoogleLongitude(arrayListAddress.get(j).getGoogleLatLong().get(0));
+                address.setAmGoogleAddress(arrayListAddress.get(j).getGoogleAddress());
                 address.setRcProfileMasterPmId(getUserPmId());
                 addressList.add(address);
             }
@@ -3461,13 +4294,18 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             ArrayList<ImAccount> imAccountsList = new ArrayList<>();
             for (int j = 0; j < arrayListImAccount.size(); j++) {
                 ImAccount imAccount = new ImAccount();
+
                 imAccount.setImRecordIndexId(arrayListImAccount.get(j).getIMId());
                 imAccount.setImImDetail(arrayListImAccount.get(j).getIMAccountDetails());
-//                imAccount.setImImType(arrayListImAccount.get(j).getIMAccountType());
                 imAccount.setImImProtocol(arrayListImAccount.get(j).getIMAccountProtocol());
                 imAccount.setImImPrivacy(String.valueOf(arrayListImAccount.get(j)
                         .getIMAccountPublic()));
-                imAccount.setRcProfileMasterPmId(getUserPmId());
+                imAccount.setImImFirstName(arrayListImAccount.get(j).getIMAccountFirstName());
+                imAccount.setImImLastName(arrayListImAccount.get(j).getIMAccountLastName());
+                imAccount.setImImProfileImage(arrayListImAccount.get(j).getIMAccountProfileImage());
+                imAccount.setImIsPrivate(arrayListImAccount.get(j).getIMAccountIsPrivate());
+                imAccount.setRcProfileMasterPmId(profileDetail.getRcpPmId());
+
                 imAccountsList.add(imAccount);
             }
 
@@ -3503,6 +4341,58 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     }
 
+    private void getUserData() {
+
+        String rawId;
+
+        arrayListPBPhoneNumber = new ArrayList<>();
+        arrayListPBEmailAddress = new ArrayList<>();
+
+        if (checkNumberFavourite == null) {
+            rawId = phoneBookId;
+        } else {
+            rawId = checkNumberFavourite;
+
+            if (StringUtils.contains(rawId, ",")) {
+                String rawIds[] = rawId.split(",");
+                rawId = rawIds[0];
+            }
+        }
+
+        // From PhoneBook
+        if (!StringUtils.isEmpty(rawId)) {
+            Cursor contactNumberCursor = phoneBookContacts.getContactNumbers(rawId);
+
+            if (contactNumberCursor != null && contactNumberCursor.getCount() > 0) {
+                while (contactNumberCursor.moveToNext()) {
+
+                    arrayListPBPhoneNumber.add(Utils.getFormattedNumber(this,
+                            contactNumberCursor.getString(contactNumberCursor.getColumnIndex
+                                    (ContactsContract.CommonDataKinds.Phone.NUMBER))));
+
+                }
+                contactNumberCursor.close();
+            }
+        }
+
+        //</editor-fold>
+
+        // <editor-fold desc="Email Id">
+
+        // From PhoneBook
+        Cursor contactEmailCursor = phoneBookContacts.getContactEmail(rawId);
+
+        if (contactEmailCursor != null && contactEmailCursor.getCount() > 0) {
+            while (contactEmailCursor.moveToNext()) {
+                arrayListPBEmailAddress.add(contactEmailCursor.getString(contactEmailCursor
+                        .getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)));
+            }
+            contactEmailCursor.close();
+        }
+
+        //</editor-fold>
+    }
+
     private void storeProfileDataToDb(ProfileDataOperation profileDetail) {
 
         //<editor-fold desc="Basic Details">
@@ -3516,6 +4406,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         userProfile.setTotalProfileRateUser(profileDetail.getTotalProfileRateUser());
         userProfile.setPmProfileImage(profileDetail.getPbProfilePhoto());
         userProfile.setPmGender(profileDetail.getPbGender());
+        userProfile.setPmBadge(profileDetail.getPmBadge());
 
         tableProfileMaster.addProfile(userProfile);
         //</editor-fold>
@@ -3531,7 +4422,26 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 MobileNumber mobileNumber = new MobileNumber();
                 mobileNumber.setMnmRecordIndexId(arrayListPhoneNumber.get(i).getPhoneId());
                 mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(i).getPhoneType());
-                mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(i).getPhoneNumber());
+
+                if (String.valueOf(arrayListPhoneNumber.get(i).getPhonePublic()).equalsIgnoreCase
+                        ("3")) {
+                    mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(i)
+                            .getPhoneNumber());
+                } else {
+                    if (arrayListPBPhoneNumber.size() > 0)
+                        if (arrayListPBPhoneNumber.contains("+" + arrayListPhoneNumber.get(i)
+                                .getOriginalNumber())) {
+                            mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(i)
+                                    .getOriginalNumber());
+                        } else {
+                            mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(i)
+                                    .getPhoneNumber());
+                        }
+                    else
+                        mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(i)
+                                .getPhoneNumber());
+                }
+
                 mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber.get(i)
                         .getPhonePublic()));
                 mobileNumber.setMnmIsPrimary(String.valueOf(arrayListPhoneNumber.get(i)
@@ -3542,17 +4452,32 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
             tableMobileMaster.addUpdateArrayMobileNumber(arrayListMobileNumber, profileDetail
                     .getRcpPmId());
+        } else {
+            tableMobileMaster.deleteData(profileDetail.getRcpPmId());
         }
         //</editor-fold>
 
         //<editor-fold desc="Email Master">
+        TableEmailMaster tableEmailMaster = new TableEmailMaster(databaseHandler);
+
         if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEmailId())) {
             ArrayList<ProfileDataOperationEmail> arrayListEmailId = profileDetail.getPbEmailId();
             ArrayList<Email> arrayListEmail = new ArrayList<>();
             for (int i = 0; i < arrayListEmailId.size(); i++) {
                 Email email = new Email();
                 email.setEmRecordIndexId(arrayListEmailId.get(i).getEmId());
-                email.setEmEmailAddress(arrayListEmailId.get(i).getEmEmailId());
+
+                if (arrayListPBEmailAddress.size() > 0)
+                    if (arrayListPBEmailAddress.contains(arrayListEmailId.get(i).getOriginalEmail
+                            ())) {
+                        email.setEmEmailAddress(arrayListEmailId.get(i).getOriginalEmail());
+                    } else {
+                        email.setEmEmailAddress(arrayListEmailId.get(i).getEmEmailId());
+                    }
+                else
+                    email.setEmEmailAddress(arrayListEmailId.get(i).getEmEmailId());
+
+                email.setEmSocialType(arrayListEmailId.get(i).getEmSocialType());
                 email.setEmEmailType(arrayListEmailId.get(i).getEmType());
                 email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(i).getEmPublic()));
                 email.setEmIsPrivate(arrayListEmailId.get(i).getEmIsPrivate());
@@ -3560,13 +4485,18 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 email.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 arrayListEmail.add(email);
             }
-
-            TableEmailMaster tableEmailMaster = new TableEmailMaster(databaseHandler);
             tableEmailMaster.addUpdateArrayEmail(arrayListEmail, profileDetail.getRcpPmId());
+        } else {
+            tableEmailMaster.deleteData(profileDetail.getRcpPmId());
         }
         //</editor-fold>
 
         //<editor-fold desc="Organization Master">
+        TableOrganizationMaster tableOrganizationMaster = new TableOrganizationMaster
+                (databaseHandler);
+
+        tableOrganizationMaster.deleteOrganization(profileDetail.getRcpPmId());
+
         if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbOrganization())) {
             ArrayList<ProfileDataOperationOrganization> arrayListOrganization = profileDetail
                     .getPbOrganization();
@@ -3577,19 +4507,48 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 organization.setOmOrganizationCompany(arrayListOrganization.get(i).getOrgName());
                 organization.setOmOrganizationDesignation(arrayListOrganization.get(i)
                         .getOrgJobTitle());
+                organization.setOmOrganizationFromDate(arrayListOrganization.get(i)
+                        .getOrgFromDate());
+                organization.setOmOrganizationToDate(arrayListOrganization.get(i).getOrgToDate());
                 organization.setOmIsPrivate(arrayListOrganization.get(i).getIsPrivate());
+                organization.setOmIsCurrent(String.valueOf(arrayListOrganization.get(i)
+                        .getIsCurrent()));
+
+                if (arrayListOrganization.get(i).getIsVerify() != null)
+                    if (arrayListOrganization.get(i).getIsVerify() == IntegerConstants
+                            .RCP_TYPE_PRIMARY) {
+                        organization.setOmOrganizationType(arrayListOrganization.get(i).getOrgIndustryType());
+                        organization.setOmEnterpriseOrgId(arrayListOrganization.get(i).getOrgEntId());
+                        organization.setOmOrganizationLogo(arrayListOrganization.get(i).getOrgLogo());
+                    } else {
+                        organization.setOmOrganizationType("");
+                        organization.setOmEnterpriseOrgId("");
+                        organization.setOmOrganizationLogo("");
+                    }
+                else {
+                    organization.setOmOrganizationType("");
+                    organization.setOmEnterpriseOrgId("");
+                    organization.setOmOrganizationLogo("");
+                }
+
+                organization.setOmIsVerified(String.valueOf(arrayListOrganization.get(i)
+                        .getIsVerify()));
                 organization.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 organizationList.add(organization);
             }
 
-            TableOrganizationMaster tableOrganizationMaster = new TableOrganizationMaster
-                    (databaseHandler);
             tableOrganizationMaster.addUpdateArrayOrganization(organizationList, profileDetail
                     .getRcpPmId());
+        } else {
+            tableOrganizationMaster.deleteData(profileDetail.getRcpPmId());
         }
         //</editor-fold>
 
         // <editor-fold desc="Website Master">
+        TableWebsiteMaster tableWebsiteMaster = new TableWebsiteMaster(databaseHandler);
+
+        tableWebsiteMaster.deleteWebsite(profileDetail.getRcpPmId());
+
         if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbWebAddress())) {
 //            ArrayList<String> arrayListWebsite = profileDetail.getPbWebAddress();
             ArrayList<ProfileDataOperationWebAddress> arrayListWebsite = profileDetail
@@ -3605,12 +4564,17 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 websiteList.add(website);
             }
 
-            TableWebsiteMaster tableWebsiteMaster = new TableWebsiteMaster(databaseHandler);
             tableWebsiteMaster.addUpdateArrayWebsite(websiteList, profileDetail.getRcpPmId());
+        } else {
+            tableWebsiteMaster.deleteData(profileDetail.getRcpPmId());
         }
         //</editor-fold>
 
         //<editor-fold desc="Address Master">
+        TableAddressMaster tableAddressMaster = new TableAddressMaster(databaseHandler);
+
+        tableAddressMaster.deleteAddress(profileDetail.getRcpPmId());
+
         if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbAddress())) {
             ArrayList<ProfileDataOperationAddress> arrayListAddress = profileDetail.getPbAddress();
             ArrayList<Address> addressList = new ArrayList<>();
@@ -3641,12 +4605,17 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 addressList.add(address);
             }
 
-            TableAddressMaster tableAddressMaster = new TableAddressMaster(databaseHandler);
             tableAddressMaster.addUpdateArrayAddress(addressList, profileDetail.getRcpPmId());
+        } else {
+            tableAddressMaster.deleteData(profileDetail.getRcpPmId());
         }
         //</editor-fold>
 
         // <editor-fold desc="Im Account Master">
+        TableImMaster tableImMaster = new TableImMaster(databaseHandler);
+
+        tableImMaster.deleteImAccount(profileDetail.getRcpPmId());
+
         if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbIMAccounts())) {
             ArrayList<ProfileDataOperationImAccount> arrayListImAccount = profileDetail
                     .getPbIMAccounts();
@@ -3659,18 +4628,26 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 imAccount.setImImProtocol(arrayListImAccount.get(j).getIMAccountProtocol());
                 imAccount.setImImPrivacy(String.valueOf(arrayListImAccount.get(j)
                         .getIMAccountPublic()));
+                imAccount.setImImFirstName(arrayListImAccount.get(j).getIMAccountFirstName());
+                imAccount.setImImLastName(arrayListImAccount.get(j).getIMAccountLastName());
+                imAccount.setImImProfileImage(arrayListImAccount.get(j).getIMAccountProfileImage());
                 imAccount.setImIsPrivate(arrayListImAccount.get(j).getIMAccountIsPrivate());
                 imAccount.setRcProfileMasterPmId(profileDetail.getRcpPmId());
 
                 imAccountsList.add(imAccount);
             }
 
-            TableImMaster tableImMaster = new TableImMaster(databaseHandler);
             tableImMaster.addUpdateArrayImAccount(imAccountsList, profileDetail.getRcpPmId());
+        } else {
+            tableImMaster.deleteData(profileDetail.getRcpPmId());
         }
         //</editor-fold>
 
         // <editor-fold desc="Event Master">
+        TableEventMaster tableEventMaster = new TableEventMaster(databaseHandler);
+
+        tableEventMaster.deleteEvent(profileDetail.getRcpPmId());
+
         if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEvent())) {
             ArrayList<ProfileDataOperationEvent> arrayListEvent = profileDetail.getPbEvent();
             ArrayList<Event> eventList = new ArrayList<>();
@@ -3685,8 +4662,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 eventList.add(event);
             }
 
-            TableEventMaster tableEventMaster = new TableEventMaster(databaseHandler);
             tableEventMaster.addUpdateArrayEvent(eventList, profileDetail.getRcpPmId());
+        } else {
+            tableEventMaster.deleteData(profileDetail.getRcpPmId());
         }
         //</editor-fold>
     }
@@ -3754,12 +4732,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     private void getProfileDetails() {
         if (Utils.isNetworkAvailable(this)) {
-            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), null, null,
-                    WsResponseObject.class, WsConstants.REQ_GET_PROFILE_DETAILS, getString(R
-                    .string.msg_please_wait), true)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT +
-                            WsConstants.REQ_GET_PROFILE_DETAILS + "/" +
-                            pmId);
+            asyncGetProfileDetails = new AsyncWebServiceCall(this, WSRequestType
+                    .REQUEST_TYPE_JSON.getValue(), null, null, WsResponseObject.class, WsConstants
+                    .REQ_GET_PROFILE_DETAILS, getResources().getString(R.string.msg_please_wait),
+                    true);
+            asyncGetProfileDetails.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants
+                    .WS_ROOT + WsConstants.REQ_GET_PROFILE_DETAILS + "/" + pmId);
         } else {
             Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources()
                     .getString(R.string.msg_no_network));
@@ -3803,7 +4781,62 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         }*/
     }
 
+    private void fetchOldRecordsServiceCall(ArrayList<CallLogHistoryType> callLogTypeArrayList) {
+        // Log.i("HistoryServiceCalled", "Service Started");
+        WsRequestObject deviceDetailObject = new WsRequestObject();
+        deviceDetailObject.setHistoryTypeArrayList(callLogTypeArrayList);
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    deviceDetailObject, null, WsResponseObject.class, WsConstants
+                    .REQ_GET_CALL_LOG_HISTORY_REQUEST, null, true).executeOnExecutor(AsyncTask
+                            .THREAD_POOL_EXECUTOR,
+                    WsConstants.WS_ROOT + WsConstants.REQ_GET_CALL_LOG_HISTORY_REQUEST);
+        } else {
+            Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources()
+                    .getString(R.string.msg_no_network));
+        }
+
+    }
+
     //</editor-fold>
 
+    private BroadcastReceiver localBroadcastReceiverDialog = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.hasExtra("networkIssue")) {
+                String intentNetworkIssue = intent.getStringExtra("networkIssue");
+                if (StringUtils.equalsIgnoreCase(intentNetworkIssue, "true")) {
+                    Utils.showErrorSnackBar(ProfileDetailActivity.this,
+                            relativeRootProfileDetail, getResources()
+                                    .getString(R.string.msg_no_network));
+                }
+            } else if (intent.hasExtra("responseError")) {
+                String responseError = intent.getStringExtra("responseError");
+                if (StringUtils.equalsIgnoreCase(responseError, "true")) {
+                    if (intent.hasExtra("responseMessage")) {
+                        String responseMessage = intent.getStringExtra("responseMessage");
+                        if (!StringUtils.isEmpty(responseMessage)) {
+                            Utils.showErrorSnackBar(ProfileDetailActivity.this,
+                                    relativeRootProfileDetail, responseMessage);
+                        }
+                    }
+                }
+            } else if (intent.hasExtra("serverError")) {
+                String serverError = intent.getStringExtra("serverError");
+                if (StringUtils.equalsIgnoreCase(serverError, "true")) {
+                    Utils.showErrorSnackBar(ProfileDetailActivity.this,
+                            relativeRootProfileDetail, getResources()
+                                    .getString(R.string.msg_try_later));
+                }
+            } else if (intent.hasExtra("noApps")) {
+                String noAppFound = intent.getStringExtra("noApps");
+                if (StringUtils.equalsIgnoreCase(noAppFound, "true")) {
+                    Utils.showErrorSnackBar(ProfileDetailActivity.this,
+                            relativeRootProfileDetail, getResources()
+                                    .getString(R.string.error_no_social_app_found));
+                }
+            }
 
+        }
+    };
 }

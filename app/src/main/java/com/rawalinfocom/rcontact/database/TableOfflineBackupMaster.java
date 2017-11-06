@@ -23,7 +23,7 @@ public class TableOfflineBackupMaster {
     }
 
     // Table Names
-    private static final String TABLE_PB_OFFLINE_BACKUP_MASTER = "pb_offline_backup_master";
+    public static final String TABLE_PB_OFFLINE_BACKUP_MASTER = "pb_offline_backup_master";
 
     // Column Names
     private static final String COLUMN_OBM_ID = "obm_id";
@@ -32,7 +32,7 @@ public class TableOfflineBackupMaster {
 
 
     // Table Create Statements
-    static final String CREATE_TABLE_PB_OFFLINE_BACKUP_MASTER = "CREATE TABLE " +
+    static final String CREATE_TABLE_PB_OFFLINE_BACKUP_MASTER = "CREATE TABLE IF NOT EXISTS " +
             TABLE_PB_OFFLINE_BACKUP_MASTER + " (" +
             " " + COLUMN_OBM_ID + " integer NOT NULL CONSTRAINT pb_offline_backup_master_pk " +
             "PRIMARY KEY AUTOINCREMENT," +

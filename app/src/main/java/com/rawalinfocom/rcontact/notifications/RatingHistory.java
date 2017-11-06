@@ -15,6 +15,7 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -65,7 +66,7 @@ public class RatingHistory extends BaseActivity implements RippleView
     @BindView(R.id.search_view)
     SearchView searchView;
 
-    @BindView(R.id.text_header1)
+    /*@BindView(R.id.text_header1)
     TextView textTodayTitle;
     @BindView(R.id.header1_icon)
     ImageView headerTodayIcon;
@@ -91,27 +92,37 @@ public class RatingHistory extends BaseActivity implements RippleView
     @BindView(R.id.relative_header3)
     RelativeLayout headerPast5dayLayout;
     @BindView(R.id.recycler_view3)
-    RecyclerView recyclerViewPast5day;
+    RecyclerView recyclerViewPast5day;*/
     @BindView(R.id.text_view_more)
     TextView textViewMore;
     @BindView(R.id.layout_root)
     RelativeLayout layoutRoot;
 
+    @BindView(R.id.frame_container)
+    public FrameLayout frameContainer;
+    @BindView(R.id.frame_image_enlarge)
+    public FrameLayout frameImageEnlarge;
+    @BindView(R.id.image_enlarge)
+    public ImageView imageEnlarge;
+
 
     SoftKeyboard softKeyboard;
     TableCommentMaster tableCommentMaster;
 
-    List<NotiRatingItem> listTodayRatingDone;
-    List<NotiRatingItem> listYesterdayRatingDone;
-    List<NotiRatingItem> listPastRatingDone;
+    List<NotiRatingItem> listAllRatingDone;
+//    List<NotiRatingItem> listTodayRatingDone;
+//    List<NotiRatingItem> listYesterdayRatingDone;
+//    List<NotiRatingItem> listPastRatingDone;
 
-    List<NotiRatingItem> listTodayRatingReceive;
-    List<NotiRatingItem> listYesterdayRatingReceive;
-    List<NotiRatingItem> listPastRatingReceive;
+    List<NotiRatingItem> listAllRatingReceive;
+//    List<NotiRatingItem> listYesterdayRatingReceive;
+//    List<NotiRatingItem> listYesterdayRatingReceive;
+//    List<NotiRatingItem> listPastRatingReceive;
 
-    NotiRatingHistoryAdapter todayRatingAdapter;
-    NotiRatingHistoryAdapter yesterdayRatingAdapter;
-    NotiRatingHistoryAdapter pastRatingAdapter;
+    NotiRatingHistoryAdapter notiHisRatingAdapter;
+//    NotiRatingHistoryAdapter todayRatingAdapter;
+//    NotiRatingHistoryAdapter yesterdayRatingAdapter;
+//    NotiRatingHistoryAdapter pastRatingAdapter;
 
     private static int tabIndex = 0;
     int height;
@@ -119,11 +130,13 @@ public class RatingHistory extends BaseActivity implements RippleView
     String yesterDay;
     String dayBeforeYesterday;
     String pastday5thDay;
+    @BindView(R.id.recycler_view_rating_history)
+    RecyclerView recyclerViewRatingHistory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_rating_history);
+        setContentView(R.layout.activity_rating_history_temp);
         ButterKnife.bind(this);
         init();
         tableCommentMaster = new TableCommentMaster(databaseHandler);
@@ -152,25 +165,28 @@ public class RatingHistory extends BaseActivity implements RippleView
             public void onTabSelected(TabLayout.Tab tab) {
                 tabIndex = tab.getPosition();
                 if (tabIndex == 0) {
-                    if (todayRatingAdapter != null)
-                        todayRatingAdapter.updateList(listTodayRatingDone);
-                    if (yesterdayRatingAdapter != null)
-                        yesterdayRatingAdapter.updateList(listYesterdayRatingDone);
-                    if (pastRatingAdapter != null) {
-                        pastRatingAdapter.updateList(listPastRatingDone);
-                        updateHeight();
-                    }
+                    if (notiHisRatingAdapter != null)
+                        notiHisRatingAdapter.updateList(listAllRatingDone);
+//                    if (todayRatingAdapter != null)
+//                        todayRatingAdapter.updateList(listTodayRatingDone);
+//                    if (yesterdayRatingAdapter != null)
+//                        yesterdayRatingAdapter.updateList(listYesterdayRatingDone);
+//                    if (pastRatingAdapter != null) {
+//                        pastRatingAdapter.updateList(listPastRatingDone);
+//                        updateHeight();
+//                    }
                 } else {
-                    if (todayRatingAdapter != null)
-                        todayRatingAdapter.updateList(listTodayRatingReceive);
-                    if (yesterdayRatingAdapter != null)
-                        yesterdayRatingAdapter.updateList(listYesterdayRatingReceive);
-                    if (pastRatingAdapter != null) {
-                        pastRatingAdapter.updateList(listPastRatingReceive);
-                        updateHeight();
-                    }
+                    if (notiHisRatingAdapter != null)
+                        notiHisRatingAdapter.updateList(listAllRatingReceive);
+//                    if (todayRatingAdapter != null)
+//                        todayRatingAdapter.updateList(listTodayRatingReceive);
+//                    if (yesterdayRatingAdapter != null)
+//                        yesterdayRatingAdapter.updateList(listYesterdayRatingReceive);
+//                    if (pastRatingAdapter != null) {
+//                        pastRatingAdapter.updateList(listPastRatingReceive);
+//                        updateHeight();
+//                    }
                 }
-
             }
 
             @Override
@@ -220,62 +236,63 @@ public class RatingHistory extends BaseActivity implements RippleView
             }
         });
 
-        textTodayTitle.setTypeface(Utils.typefaceRegular(this));
-        textYesterdayTitle.setTypeface(Utils.typefaceRegular(this));
-        textPast5daysTitle.setTypeface(Utils.typefaceRegular(this));
+//        textTodayTitle.setTypeface(Utils.typefaceRegular(this));
+//        textYesterdayTitle.setTypeface(Utils.typefaceRegular(this));
+//        textPast5daysTitle.setTypeface(Utils.typefaceRegular(this));
 
         rippleActionBack.setOnRippleCompleteListener(this);
-        headerTodayIcon.setImageResource(R.drawable.ic_collapse);
-        headerTodayLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (recyclerViewToday.getVisibility() == View.VISIBLE) {
-                    recyclerViewToday.setVisibility(View.GONE);
-                    headerTodayIcon.setImageResource(R.drawable.ic_expand);
-                } else {
-                    recyclerViewToday.setVisibility(View.VISIBLE);
-                    headerTodayIcon.setImageResource(R.drawable.ic_collapse);
-                }
-                recyclerViewYesterday.setVisibility(View.GONE);
-                headerYesterdayIcon.setImageResource(R.drawable.ic_expand);
-                recyclerViewPast5day.setVisibility(View.GONE);
-                headerPast5dayIcon.setImageResource(R.drawable.ic_expand);
-            }
-        });
-        headerYesterdayLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                recyclerViewToday.setVisibility(View.GONE);
-                headerTodayIcon.setImageResource(R.drawable.ic_expand);
-                recyclerViewPast5day.setVisibility(View.GONE);
-                headerPast5dayIcon.setImageResource(R.drawable.ic_expand);
-                if (recyclerViewYesterday.getVisibility() == View.VISIBLE) {
-                    recyclerViewYesterday.setVisibility(View.GONE);
-                    headerYesterdayIcon.setImageResource(R.drawable.ic_expand);
-                } else {
-                    recyclerViewYesterday.setVisibility(View.VISIBLE);
-                    headerYesterdayIcon.setImageResource(R.drawable.ic_collapse);
-                }
+//        headerTodayIcon.setImageResource(R.drawable.ic_collapse);
+//        headerTodayLayout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (recyclerViewToday.getVisibility() == View.VISIBLE) {
+//                    recyclerViewToday.setVisibility(View.GONE);
+//                    headerTodayIcon.setImageResource(R.drawable.ic_expand);
+//                } else {
+//                    recyclerViewToday.setVisibility(View.VISIBLE);
+//                    headerTodayIcon.setImageResource(R.drawable.ic_collapse);
+//                }
+//                recyclerViewYesterday.setVisibility(View.GONE);
+//                headerYesterdayIcon.setImageResource(R.drawable.ic_expand);
+//                recyclerViewPast5day.setVisibility(View.GONE);
+//                headerPast5dayIcon.setImageResource(R.drawable.ic_expand);
+//            }
+//        });
+//        headerYesterdayLayout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                recyclerViewToday.setVisibility(View.GONE);
+//                headerTodayIcon.setImageResource(R.drawable.ic_expand);
+//                recyclerViewPast5day.setVisibility(View.GONE);
+//                headerPast5dayIcon.setImageResource(R.drawable.ic_expand);
+//                if (recyclerViewYesterday.getVisibility() == View.VISIBLE) {
+//                    recyclerViewYesterday.setVisibility(View.GONE);
+//                    headerYesterdayIcon.setImageResource(R.drawable.ic_expand);
+//                } else {
+//                    recyclerViewYesterday.setVisibility(View.VISIBLE);
+//                    headerYesterdayIcon.setImageResource(R.drawable.ic_collapse);
+//                }
+//
+//            }
+//        });
+//        headerPast5dayLayout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                recyclerViewToday.setVisibility(View.GONE);
+//                headerTodayIcon.setImageResource(R.drawable.ic_expand);
+//                recyclerViewYesterday.setVisibility(View.GONE);
+//                headerYesterdayIcon.setImageResource(R.drawable.ic_expand);
+//                if (recyclerViewPast5day.getVisibility() == View.VISIBLE) {
+//                    recyclerViewPast5day.setVisibility(View.GONE);
+//                    headerPast5dayIcon.setImageResource(R.drawable.ic_expand);
+//                } else {
+//                    recyclerViewPast5day.setVisibility(View.VISIBLE);
+//                    headerPast5dayIcon.setImageResource(R.drawable.ic_collapse);
+//                }
+//
+//            }
+//        });
 
-            }
-        });
-        headerPast5dayLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                recyclerViewToday.setVisibility(View.GONE);
-                headerTodayIcon.setImageResource(R.drawable.ic_expand);
-                recyclerViewYesterday.setVisibility(View.GONE);
-                headerYesterdayIcon.setImageResource(R.drawable.ic_expand);
-                if (recyclerViewPast5day.getVisibility() == View.VISIBLE) {
-                    recyclerViewPast5day.setVisibility(View.GONE);
-                    headerPast5dayIcon.setImageResource(R.drawable.ic_expand);
-                } else {
-                    recyclerViewPast5day.setVisibility(View.VISIBLE);
-                    headerPast5dayIcon.setImageResource(R.drawable.ic_collapse);
-                }
-
-            }
-        });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -287,17 +304,19 @@ public class RatingHistory extends BaseActivity implements RippleView
             public boolean onQueryTextChange(String newText) {
                 if (tabIndex == 0) {
                     if (TextUtils.isEmpty(newText)) {
-                        todayRatingAdapter.updateList(listTodayRatingDone);
-                        yesterdayRatingAdapter.updateList(listYesterdayRatingDone);
-                        pastRatingAdapter.updateList(listPastRatingDone);
-                        updateHeight();
+                        notiHisRatingAdapter.updateList(listAllRatingDone);
+//                        todayRatingAdapter.updateList(listTodayRatingDone);
+//                        yesterdayRatingAdapter.updateList(listYesterdayRatingDone);
+//                        pastRatingAdapter.updateList(listPastRatingDone);
+//                        updateHeight();
                     }
                 } else {
                     if (TextUtils.isEmpty(newText)) {
-                        todayRatingAdapter.updateList(listTodayRatingReceive);
-                        yesterdayRatingAdapter.updateList(listYesterdayRatingReceive);
-                        pastRatingAdapter.updateList(listPastRatingReceive);
-                        updateHeight();
+                        notiHisRatingAdapter.updateList(listAllRatingReceive);
+//                        todayRatingAdapter.updateList(listTodayRatingReceive);
+//                        yesterdayRatingAdapter.updateList(listYesterdayRatingReceive);
+//                        pastRatingAdapter.updateList(listPastRatingReceive);
+//                        updateHeight();
                     }
 
                 }
@@ -321,34 +340,41 @@ public class RatingHistory extends BaseActivity implements RippleView
         dayBeforeYesterday = getDate(-2);
         pastday5thDay = getDate(-6);
 
-        ArrayList<Comment> ratingDoneToday = tableCommentMaster.getAllRatingDone(today, today);
-        ArrayList<Comment> ratingDoneYesterday = tableCommentMaster.getAllRatingDone(yesterDay, yesterDay);
-        ArrayList<Comment> ratingDonePast5day = tableCommentMaster.getAllRatingDone(pastday5thDay, dayBeforeYesterday);
+        ArrayList<Comment> ratingDoneAll = tableCommentMaster.getAllRatingDone(pastday5thDay, today);
+//        ArrayList<Comment> ratingDoneToday = tableCommentMaster.getAllRatingDone(today, today);
+//        ArrayList<Comment> ratingDoneYesterday = tableCommentMaster.getAllRatingDone(yesterDay, yesterDay);
+//        ArrayList<Comment> ratingDonePast5day = tableCommentMaster.getAllRatingDone(pastday5thDay, dayBeforeYesterday);
 
-        ArrayList<Comment> ratingReceiveToday = tableCommentMaster.getAllRatingReceived(today, today);
-        ArrayList<Comment> ratingReceiveYesterday = tableCommentMaster.getAllRatingReceived(yesterDay, yesterDay);
-        ArrayList<Comment> ratingReceivePast5day = tableCommentMaster.getAllRatingReceived(pastday5thDay, dayBeforeYesterday);
+        ArrayList<Comment> ratingReceiveAll = tableCommentMaster.getAllRatingReceived(pastday5thDay, today);
+//        ArrayList<Comment> ratingReceiveToday = tableCommentMaster.getAllRatingReceived(today, today);
+//        ArrayList<Comment> ratingReceiveYesterday = tableCommentMaster.getAllRatingReceived(yesterDay, yesterDay);
+//        ArrayList<Comment> ratingReceivePast5day = tableCommentMaster.getAllRatingReceived(pastday5thDay, dayBeforeYesterday);
 
-        listTodayRatingDone = createRatingList(ratingDoneToday, 0);
-        listYesterdayRatingDone = createRatingList(ratingDoneYesterday, 0);
-        listPastRatingDone = createRatingList(ratingDonePast5day, 0);
+        listAllRatingDone = createRatingList(ratingDoneAll, 0);
+//        listTodayRatingDone = createRatingList(ratingDoneToday, 0);
+//        listYesterdayRatingDone = createRatingList(ratingDoneYesterday, 0);
+//        listPastRatingDone = createRatingList(ratingDonePast5day, 0);
 
-        listTodayRatingReceive = createRatingList(ratingReceiveToday, 1);
-        listYesterdayRatingReceive = createRatingList(ratingReceiveYesterday, 1);
-        listPastRatingReceive = createRatingList(ratingReceivePast5day, 1);
+        listAllRatingReceive = createRatingList(ratingReceiveAll, 1);
+//        listTodayRatingReceive = createRatingList(ratingReceiveToday, 1);
+//        listYesterdayRatingReceive = createRatingList(ratingReceiveYesterday, 1);
+//        listPastRatingReceive = createRatingList(ratingReceivePast5day, 1);
 
-        todayRatingAdapter = new NotiRatingHistoryAdapter(this, listTodayRatingDone, 0);
-        yesterdayRatingAdapter = new NotiRatingHistoryAdapter(this, listYesterdayRatingDone, 1);
-        pastRatingAdapter = new NotiRatingHistoryAdapter(this, listPastRatingDone, 2);
+        notiHisRatingAdapter = new NotiRatingHistoryAdapter(this, listAllRatingDone);
+//        todayRatingAdapter = new NotiRatingHistoryAdapter(this, listTodayRatingDone, 0);
+//        yesterdayRatingAdapter = new NotiRatingHistoryAdapter(this, listYesterdayRatingDone, 1);
+//        pastRatingAdapter = new NotiRatingHistoryAdapter(this, listPastRatingDone, 2);
 
-        recyclerViewToday.setAdapter(todayRatingAdapter);
-        recyclerViewYesterday.setAdapter(yesterdayRatingAdapter);
-        recyclerViewPast5day.setAdapter(pastRatingAdapter);
+        recyclerViewRatingHistory.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewRatingHistory.setAdapter(notiHisRatingAdapter);
+//        recyclerViewToday.setAdapter(todayRatingAdapter);
+//        recyclerViewYesterday.setAdapter(yesterdayRatingAdapter);
+//        recyclerViewPast5day.setAdapter(pastRatingAdapter);
 
-        updateHeight();
+//        updateHeight();
 
-        recyclerViewYesterday.setVisibility(View.GONE);
-        recyclerViewPast5day.setVisibility(View.GONE);
+//        recyclerViewYesterday.setVisibility(View.GONE);
+//        recyclerViewPast5day.setVisibility(View.GONE);
     }
 
     private void updateHeight() {
@@ -379,9 +405,9 @@ public class RatingHistory extends BaseActivity implements RippleView
         }
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         height = (displaymetrics.heightPixels * heightPercent) / 100;
-        setRecyclerViewHeight(recyclerViewToday, height);
-        setRecyclerViewHeight(recyclerViewYesterday, height);
-        setRecyclerViewHeight(recyclerViewPast5day, height);
+//        setRecyclerViewHeight(recyclerViewToday, height);
+//        setRecyclerViewHeight(recyclerViewYesterday, height);
+//        setRecyclerViewHeight(recyclerViewPast5day, height);
     }
 
     private void setRecyclerViewHeight(RecyclerView recyclerView, int height) {
@@ -441,55 +467,71 @@ public class RatingHistory extends BaseActivity implements RippleView
 
         if (tabIndex == 0) {
             List<NotiRatingItem> temp = new ArrayList<>();
-            for (NotiRatingItem item : listTodayRatingDone) {
+            for (NotiRatingItem item : listAllRatingDone) {
                 if (item.getReceiverPersonName().toLowerCase().contains(query.toLowerCase())) {
                     temp.add(item);
                 }
             }
-            todayRatingAdapter.updateList(temp);
+            notiHisRatingAdapter.updateList(temp);
 
-            temp = new ArrayList<>();
-            for (NotiRatingItem item : listYesterdayRatingDone) {
-                if (item.getReceiverPersonName().toLowerCase().contains(query.toLowerCase())) {
-                    temp.add(item);
-                }
-            }
-            yesterdayRatingAdapter.updateList(temp);
-
-            temp = new ArrayList<>();
-            for (NotiRatingItem item : listPastRatingDone) {
-                if (item.getReceiverPersonName().toLowerCase().contains(query.toLowerCase())) {
-                    temp.add(item);
-                }
-            }
-            pastRatingAdapter.updateList(temp);
-            updateHeight();
+//            List<NotiRatingItem> temp = new ArrayList<>();
+//            for (NotiRatingItem item : listTodayRatingDone) {
+//                if (item.getReceiverPersonName().toLowerCase().contains(query.toLowerCase())) {
+//                    temp.add(item);
+//                }
+//            }
+//            todayRatingAdapter.updateList(temp);
+//
+//            temp = new ArrayList<>();
+//            for (NotiRatingItem item : listYesterdayRatingDone) {
+//                if (item.getReceiverPersonName().toLowerCase().contains(query.toLowerCase())) {
+//                    temp.add(item);
+//                }
+//            }
+//            yesterdayRatingAdapter.updateList(temp);
+//
+//            temp = new ArrayList<>();
+//            for (NotiRatingItem item : listPastRatingDone) {
+//                if (item.getReceiverPersonName().toLowerCase().contains(query.toLowerCase())) {
+//                    temp.add(item);
+//                }
+//            }
+//            pastRatingAdapter.updateList(temp);
+//            updateHeight();
         } else {
 
             List<NotiRatingItem> temp = new ArrayList<>();
-            for (NotiRatingItem item : listTodayRatingReceive) {
+            for (NotiRatingItem item : listAllRatingReceive) {
                 if (item.getRaterName().toLowerCase().contains(query.toLowerCase())) {
                     temp.add(item);
                 }
             }
-            todayRatingAdapter.updateList(temp);
+            notiHisRatingAdapter.updateList(temp);
 
-            temp = new ArrayList<>();
-            for (NotiRatingItem item : listYesterdayRatingReceive) {
-                if (item.getRaterName().toLowerCase().contains(query.toLowerCase())) {
-                    temp.add(item);
-                }
-            }
-            yesterdayRatingAdapter.updateList(temp);
-
-            temp = new ArrayList<>();
-            for (NotiRatingItem item : listPastRatingReceive) {
-                if (item.getRaterName().toLowerCase().contains(query.toLowerCase())) {
-                    temp.add(item);
-                }
-            }
-            pastRatingAdapter.updateList(temp);
-            updateHeight();
+//            List<NotiRatingItem> temp = new ArrayList<>();
+//            for (NotiRatingItem item : listTodayRatingReceive) {
+//                if (item.getRaterName().toLowerCase().contains(query.toLowerCase())) {
+//                    temp.add(item);
+//                }
+//            }
+//            todayRatingAdapter.updateList(temp);
+//
+//            temp = new ArrayList<>();
+//            for (NotiRatingItem item : listYesterdayRatingReceive) {
+//                if (item.getRaterName().toLowerCase().contains(query.toLowerCase())) {
+//                    temp.add(item);
+//                }
+//            }
+//            yesterdayRatingAdapter.updateList(temp);
+//
+//            temp = new ArrayList<>();
+//            for (NotiRatingItem item : listPastRatingReceive) {
+//                if (item.getRaterName().toLowerCase().contains(query.toLowerCase())) {
+//                    temp.add(item);
+//                }
+//            }
+//            pastRatingAdapter.updateList(temp);
+//            updateHeight();
         }
     }
 
@@ -549,35 +591,41 @@ public class RatingHistory extends BaseActivity implements RippleView
     }
 
     private void refreshAllList() {
-        ArrayList<Comment> ratingDoneToday = tableCommentMaster.getAllRatingDone(today, today);
-        ArrayList<Comment> ratingDoneYesterday = tableCommentMaster.getAllRatingDone(yesterDay, yesterDay);
-        ArrayList<Comment> ratingDonePast5day = tableCommentMaster.getAllRatingDone(pastday5thDay, dayBeforeYesterday);
+        ArrayList<Comment> ratingDoneAll = tableCommentMaster.getAllRatingDone(pastday5thDay, today);
+//        ArrayList<Comment> ratingDoneToday = tableCommentMaster.getAllRatingDone(today, today);
+//        ArrayList<Comment> ratingDoneYesterday = tableCommentMaster.getAllRatingDone(yesterDay, yesterDay);
+//        ArrayList<Comment> ratingDonePast5day = tableCommentMaster.getAllRatingDone(pastday5thDay, dayBeforeYesterday);
 
-        ArrayList<Comment> ratingReceiveToday = tableCommentMaster.getAllRatingReceived(today, today);
-        ArrayList<Comment> ratingReceiveYesterday = tableCommentMaster.getAllRatingReceived(yesterDay, yesterDay);
-        ArrayList<Comment> ratingReceivePast5day = tableCommentMaster.getAllRatingReceived(pastday5thDay, dayBeforeYesterday);
+        ArrayList<Comment> ratingReceiveAll = tableCommentMaster.getAllRatingReceived(pastday5thDay, today);
+//        ArrayList<Comment> ratingReceiveToday = tableCommentMaster.getAllRatingReceived(today, today);
+//        ArrayList<Comment> ratingReceiveYesterday = tableCommentMaster.getAllRatingReceived(yesterDay, yesterDay);
+//        ArrayList<Comment> ratingReceivePast5day = tableCommentMaster.getAllRatingReceived(pastday5thDay, dayBeforeYesterday);
 
 
-        listTodayRatingDone = createRatingList(ratingDoneToday, 0);
-        listYesterdayRatingDone = createRatingList(ratingDoneYesterday, 0);
-        listPastRatingDone = createRatingList(ratingDonePast5day, 0);
+        listAllRatingDone = createRatingList(ratingDoneAll, 0);
+//        listTodayRatingDone = createRatingList(ratingDoneToday, 0);
+//        listYesterdayRatingDone = createRatingList(ratingDoneYesterday, 0);
+//        listPastRatingDone = createRatingList(ratingDonePast5day, 0);
 
-        listTodayRatingReceive = createRatingList(ratingReceiveToday, 1);
-        listYesterdayRatingReceive = createRatingList(ratingReceiveYesterday, 1);
-        listPastRatingReceive = createRatingList(ratingReceivePast5day, 1);
+        listAllRatingReceive = createRatingList(ratingReceiveAll, 1);
+//        listTodayRatingReceive = createRatingList(ratingReceiveToday, 1);
+//        listYesterdayRatingReceive = createRatingList(ratingReceiveYesterday, 1);
+//        listPastRatingReceive = createRatingList(ratingReceivePast5day, 1);
 
         if (tabIndex == 0) {
-            todayRatingAdapter.updateList(listTodayRatingDone);
-            yesterdayRatingAdapter.updateList(listYesterdayRatingDone);
-            pastRatingAdapter.updateList(listPastRatingDone);
-            updateHeight();
+            notiHisRatingAdapter.updateList(listAllRatingDone);
+//            todayRatingAdapter.updateList(listTodayRatingDone);
+//            yesterdayRatingAdapter.updateList(listYesterdayRatingDone);
+//            pastRatingAdapter.updateList(listPastRatingDone);
+//            updateHeight();
 
         } else {
 
-            todayRatingAdapter.updateList(listTodayRatingReceive);
-            yesterdayRatingAdapter.updateList(listYesterdayRatingReceive);
-            pastRatingAdapter.updateList(listPastRatingReceive);
-            updateHeight();
+            notiHisRatingAdapter.updateList(listAllRatingReceive);
+//            todayRatingAdapter.updateList(listTodayRatingReceive);
+//            yesterdayRatingAdapter.updateList(listYesterdayRatingReceive);
+//            pastRatingAdapter.updateList(listPastRatingReceive);
+//            updateHeight();
 
         }
     }

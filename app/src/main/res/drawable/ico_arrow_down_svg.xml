@@ -1,9 +1,9 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="14dp"
-    android:height="14dp"
-    android:viewportHeight="44.0"
-    android:viewportWidth="44.0">
+        android:width="14dp"
+        android:height="14dp"
+        android:viewportHeight="44.0"
+        android:viewportWidth="44.0">
     <path
-        android:fillColor="#BBBBBB"
-        android:pathData="M3.5,11l18.4,14.7l17.3,-14.7l4.7,3.7l-22,18.3l-22,-18.3z" />
+        android:fillColor="@color/dialogButtonTextColor"
+        android:pathData="M3.5,11l18.4,14.7l17.3,-14.7l4.7,3.7l-22,18.3l-22,-18.3z"/>
 </vector>

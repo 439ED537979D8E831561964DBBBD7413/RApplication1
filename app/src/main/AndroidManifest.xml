@@ -23,6 +23,7 @@
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="com.app.loople.permission.MAPS_RECEIVE" />
     <uses-permission android:name="com.rawalinfocom.rcontact.permission.C2D_MESSAGE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -35,12 +36,13 @@
         android:required="false" />
 
     <permission
-        android:name="com.app.loople.permission.MAPS_RECEIVE"
+        android:name="com.rawalinfocom.rcontact.permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />
-
     <permission
         android:name="com.rawalinfocom.rcontact.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
+
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application
         android:name=".RContactApplication"
@@ -50,12 +52,20 @@
         android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
 
         <!-- meta-data -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@mipmap/ic_launcher" />
-
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorAccent" />
@@ -80,106 +90,139 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".BaseActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".MobileNumberRegistrationActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".CountryListActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
-
         <activity
             android:name=".OtpVerificationActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".ProfileRegistrationActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="portrait" />
-
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".contacts.ProfileDetailActivity"
             android:screenOrientation="portrait" />
-
+        <activity
+            android:name=".PublicProfileDetailActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ContactListingActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".notifications.TimelineActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".notifications.EventsActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".notifications.NotificationsActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".notifications.NotificationsDetailActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
-
         <activity
             android:name=".contacts.MapsActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
-
         <activity
             android:name=".calllog.CallLogDeleteActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".calllog.CallHistoryDetailsActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".BlockContactListActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".calldialer.DialerActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".notifications.RatingHistory"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
-
         <activity
             android:name=".SearchActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".contacts.EditProfileActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".SetPasswordActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".EnterPasswordActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".ReLoginEnterPasswordActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".WebBrowserActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".SettingsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ContactsSettingsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ContactsSettingsActivity1"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".NotificationSettingsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".AboutHelpActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".SocialMediaJoinUsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ContactUsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".RestorationActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".LinkedinLoginActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".EnterPriseOrganizationListActivity"
+            android:screenOrientation="portrait" />
+
+        <!-- Start : Relation -->
+        <activity
+            android:name=".relation.ExistingRelationActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".relation.AddNewRelationActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".relation.RelationRecommendationActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".relation.RCPExistingRelationActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".relation.RContactsListActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme1" />
+        <!-- End : Relation -->
+
+        <activity android:name=".helper.imgcrop.CropImageActivity" />
 
         <!-- receiver -->
 
@@ -188,7 +231,6 @@
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
-
         <receiver android:name=".receivers.PhoneCallReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE" />
@@ -198,11 +240,14 @@
             </intent-filter>
         </receiver>
 
+        <!--
         <receiver android:name=".receivers.SmsReceiver">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
+        -->
+
 
         <!-- Services -->
 
@@ -211,36 +256,33 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
         <service android:name=".services.FCMNotificationInstanceIdService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
-
         <service
             android:name=".services.ContactSyncService"
             android:enabled="true" />
-
         <service
             android:name=".services.CallLogIdFetchService"
             android:enabled="true" />
 
-        <activity android:name=".account.SlideMenuAccounts"
-                  android:screenOrientation="portrait" />
-
-        <activity android:name=".account.ViewAccountActivity"
-                  android:screenOrientation="portrait" />
-
-        <activity android:name=".account.SecurityActivity"
-                  android:screenOrientation="portrait" />
-
-        <activity android:name=".TutorialActivity"
-                  android:screenOrientation="portrait" />
-
-        <activity android:name=".TermsConditionsActivity"
-                  android:screenOrientation="portrait" />
-
+        <activity
+            android:name=".account.SlideMenuAccounts"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".account.ViewAccountActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".account.SecurityActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".TutorialActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".TermsConditionsActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

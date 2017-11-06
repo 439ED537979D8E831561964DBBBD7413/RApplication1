@@ -56,6 +56,10 @@ public class WsRequestObject {
     @JsonProperty("privacy_data")
     private List<PrivacyDataItem> privacyData;
 
+
+    @JsonProperty("mobile_numbers")
+    private ArrayList<String> unknownNumberList;
+
     private String countryCode;
     private String mobileNumber;
     private Integer forgotPassword;
@@ -76,11 +80,18 @@ public class WsRequestObject {
     private String lastName;
     private String emailId;
     private String type;
+    private String description;
     private String deviceId;
-    private String socialMediaTokenId;
+    private String socialMedia;
     private String createdBy;
     private String gcmToken;
     private Integer reAuthenticate;
+
+    private String fromDate;
+    private String toDate;
+    private String timeStamp;
+
+    private String omName;
 
     private String password;
     private String password_confirmation;
@@ -97,6 +108,9 @@ public class WsRequestObject {
     private Integer pmIdWhose;
     private ContactReceiver receiver;
 
+    private String appVersion;
+    private String appPlatform;
+
     private String dmModel;
     private String dmVersion;
     private String dmBrand;
@@ -105,8 +119,11 @@ public class WsRequestObject {
     private String dmLocation;
 
     private ArrayList<ProfileData> profileData;
+    private String responseKey;
     private ArrayList<ProfileData> favourites;
     private ProfileDataOperation contactData;
+
+    private ArrayList<String> arrayListScreenShot;
 
     private ArrayList<String> arrayListContactNumber;
     private ArrayList<String> arrayListEmailAddress;
@@ -117,6 +134,7 @@ public class WsRequestObject {
     private ArrayList<ContactPackage> arrayListPackageData;
 
     private ProfileDataOperation profileEdit;
+    private ProfileDataOperation profileUpdate;
 
     private ArrayList<CallLogHistoryType> historyTypeArrayList;
 
@@ -200,6 +218,15 @@ public class WsRequestObject {
 
     public void setOtp(String otp) {
         this.otp = otp;
+    }
+
+    @JsonProperty("om_name")
+    public String getOmName() {
+        return omName;
+    }
+
+    public void setOmName(String omName) {
+        this.omName = omName;
     }
 
     @JsonProperty("otp_generation_time")
@@ -306,6 +333,33 @@ public class WsRequestObject {
         this.deviceId = deviceId;
     }
 
+    @JsonProperty("from_date")
+    public String getFromDate() {
+        return fromDate;
+    }
+
+    public void setFromDate(String fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    @JsonProperty("to_date")
+    public String getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(String toDate) {
+        this.toDate = toDate;
+    }
+
+    @JsonProperty("timestamp")
+    public String getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(String timeStamp) {
+        this.timeStamp = timeStamp;
+    }
+
     // Set Password
     @JsonProperty("password")
     public String getPassword() {
@@ -325,13 +379,13 @@ public class WsRequestObject {
         this.password_confirmation = password_confirmation;
     }
 
-    @JsonProperty("social_media_token_id")
-    public String getSocialMediaTokenId() {
-        return socialMediaTokenId;
+    @JsonProperty("social_media")
+    public String getSocialMedia() {
+        return socialMedia;
     }
 
-    public void setSocialMediaTokenId(String socialMediaTokenId) {
-        this.socialMediaTokenId = socialMediaTokenId;
+    public void setSocialMedia(String socialMedia) {
+        this.socialMedia = socialMedia;
     }
 
     @JsonProperty("type")
@@ -341,6 +395,15 @@ public class WsRequestObject {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    @JsonProperty("description")
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @JsonProperty("pb_social_id")
@@ -368,6 +431,15 @@ public class WsRequestObject {
 
     public void setProfileData(ArrayList<ProfileData> profileData) {
         this.profileData = profileData;
+    }
+
+    @JsonProperty("response_key")
+    public String getResponseKey() {
+        return responseKey;
+    }
+
+    public void setResponseKey(String responseKey) {
+        this.responseKey = responseKey;
     }
 
     @JsonProperty("cm_id")
@@ -469,6 +541,15 @@ public class WsRequestObject {
         this.arrayListContactNumber = arrayListContactNumber;
     }
 
+    @JsonProperty("screenshot")
+    public ArrayList<String> getArrayListScreenShot() {
+        return arrayListScreenShot;
+    }
+
+    public void setArrayListScreenShot(ArrayList<String> arrayListScreenShot) {
+        this.arrayListScreenShot = arrayListScreenShot;
+    }
+
     @JsonProperty("email_address")
     public ArrayList<String> getArrayListEmailAddress() {
         return arrayListEmailAddress;
@@ -476,6 +557,24 @@ public class WsRequestObject {
 
     public void setArrayListEmailAddress(ArrayList<String> arrayListEmailAddress) {
         this.arrayListEmailAddress = arrayListEmailAddress;
+    }
+
+    @JsonProperty("version")
+    public String getAppVersion() {
+        return appVersion;
+    }
+
+    public void setAppVersion(String appVersion) {
+        this.appVersion = appVersion;
+    }
+
+    @JsonProperty("platform")
+    public String getAppPlatform() {
+        return appPlatform;
+    }
+
+    public void setAppPlatform(String appPlatform) {
+        this.appPlatform = appPlatform;
     }
 
     @JsonProperty("dm_model")
@@ -574,6 +673,15 @@ public class WsRequestObject {
 
     public void setProfileEdit(ProfileDataOperation profileEdit) {
         this.profileEdit = profileEdit;
+    }
+
+    @JsonProperty("profile_update")
+    public ProfileDataOperation profileUpdate() {
+        return profileUpdate;
+    }
+
+    public void setProfileUpdate(ProfileDataOperation profileUpdate) {
+        this.profileUpdate = profileUpdate;
     }
 
     @JsonProperty("call_history")
@@ -739,4 +847,14 @@ public class WsRequestObject {
     public void setArrayListPackageData(ArrayList<ContactPackage> arrayListPackageData) {
         this.arrayListPackageData = arrayListPackageData;
     }
+
+    @JsonProperty("mobile_numbers")
+    public ArrayList<String> getUnknownNumberList() {
+        return unknownNumberList;
+    }
+
+    public void setUnknownNumberList(ArrayList<String> unknownNumberList) {
+        this.unknownNumberList = unknownNumberList;
+    }
+
 }

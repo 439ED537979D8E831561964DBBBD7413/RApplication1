@@ -1,21 +1,33 @@
 {
   "project_info": {
-    "project_number": "842331483294",
-    "firebase_url": "https://rcontact-fd109.firebaseio.com",
-    "project_id": "rcontact-fd109",
-    "storage_bucket": "rcontact-fd109.appspot.com"
+    "project_number": "376651096541",
+    "firebase_url": "https://rcontacts-live.firebaseio.com",
+    "project_id": "rcontacts-live",
+    "storage_bucket": "rcontacts-live.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:842331483294:android:23cc3b50347b8f26",
+        "mobilesdk_app_id": "1:376651096541:android:23cc3b50347b8f26",
         "android_client_info": {
           "package_name": "com.rawalinfocom.rcontact"
         }
       },
       "oauth_client": [
         {
-          "client_id": "842331483294-g6tvnplur8ejqo7lb0mr3enfsip6nu2a.apps.googleusercontent.com",
+          "client_id": "376651096541-tl8v4qsljnqvoduj5p9s3rft4l6cht3r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rawalinfocom.rcontact",
+            "certificate_hash": "4c55f6717220e41e60dcf4491243af5ce92d6e56"
+          }
+        },
+        {
+          "client_id": "376651096541-14itosgf92vffhppbo1fblmpa1q08kf1.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "376651096541-28v9gsaio723ma4k4rg7bolb1abs1i6a.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.rawalinfocom.rcontact",
@@ -23,17 +35,29 @@
           }
         },
         {
-          "client_id": "842331483294-im8opitimn08thlpkvdbk8olc1ll39ji.apps.googleusercontent.com",
-          "client_type": 3
+          "client_id": "376651096541-bfpjnht5rjf7q5qn23t6cjap7aqqadk6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rawalinfocom.rcontact",
+            "certificate_hash": "8810a0f5375a4a3e715c0938ad1df74a5069b3f6"
+          }
         },
         {
-          "client_id": "842331483294-ehe2r3r6mdbn6e1g9b33ecuakb5j0n28.apps.googleusercontent.com",
+          "client_id": "376651096541-m9m0k47qf8l6stq59ogmrcbhbpmg6lsb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rawalinfocom.rcontact",
+            "certificate_hash": "bd5cea9c352bc15bc931f7da5269d9f15566cd6a"
+          }
+        },
+        {
+          "client_id": "376651096541-ld7s47jcasatm1m9d3c0l8q2vcve18qs.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDhtzSvTGUw8vKo21xBEcoBjexPE0gCvBo"
+          "current_key": "AIzaSyBfTxro2JDiEZ0EMN4ygDMto3ByNcHJCds"
         }
       ],
       "services": {
@@ -44,15 +68,15 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "842331483294-8raup6tsp11nmroqbu8ohl02324m4j32.apps.googleusercontent.com",
+              "client_id": "376651096541-14itosgf92vffhppbo1fblmpa1q08kf1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "376651096541-o3rerun6hcsapsishlp3f6dluttasf83.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
                 "bundle_id": "com.rawalinfocom.rcontacts"
               }
-            },
-            {
-              "client_id": "842331483294-im8opitimn08thlpkvdbk8olc1ll39ji.apps.googleusercontent.com",
-              "client_type": 3
             }
           ]
         },

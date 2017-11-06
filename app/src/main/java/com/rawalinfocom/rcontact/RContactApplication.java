@@ -2,15 +2,26 @@ package com.rawalinfocom.rcontact;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.support.multidex.MultiDex;
+import android.util.Base64;
+import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.rawalinfocom.rcontact.model.CallLogType;
 import com.rawalinfocom.rcontact.model.SmsDataType;
+import com.rawalinfocom.rcontact.model.SpamDataType;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
 import io.fabric.sdk.android.Fabric;
+
+/*import io.realm.Realm;
+import io.realm.RealmConfiguration;*/
 
 /**
  * Created by Monal on 20/10/16.
@@ -42,34 +53,23 @@ public class RContactApplication extends Application {
 
     ArrayList<SmsDataType> arrayListSmsLogType;
     ArrayList<Object> arrayListObjectSmsLogs;
+    ArrayList<SpamDataType> arrayListSpamDataType;
 //    ArrayList<String> arrayListSmsLogsHeaders;
-
 
     @Override
     public void onCreate() {
         super.onCreate();
-//        Log.d("KeyHash:", "We are here");
-//        try {
-//            PackageInfo info = getPackageManager().getPackageInfo(
-//                    "com.rawalinfocom.rcontact",
-//                    PackageManager.GET_SIGNATURES);
-//            for (Signature signature : info.signatures) {
-//                MessageDigest md = MessageDigest.getInstance("SHA");
-//                md.update(signature.toByteArray());
-//                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
-//            }
-//        } catch (PackageManager.NameNotFoundException e) {
-//
-//        } catch (NoSuchAlgorithmException e) {
-//
-//        }
-//        Log.d("KeyHash:", "We are here end");
 
         mInstance = this;
+//        hashKey();
 
 //         Fabric Initialization
         Fabric.with(this, new Crashlytics());
 
+/*        Realm.init(this);
+        RealmConfiguration config = new RealmConfiguration.Builder().name("rcontacts.realm")
+                .schemaVersion(1).build();
+        Realm.setDefaultConfiguration(config);*/
         arrayListAllPhoneBookContacts = new ArrayList<>();
 //        arrayListAllContactHeaders = new ArrayList<>();
         arrayListFavPhoneBookContacts = new ArrayList<>();
@@ -79,48 +79,28 @@ public class RContactApplication extends Application {
         arrayListCallLogType = new ArrayList<>();
 
         arrayListObjectSmsLogs = new ArrayList<>();
+        arrayListSpamDataType = new ArrayList<>();
 //        arrayListSmsLogsHeaders = new ArrayList<>();
 
-        // Facebook Initialization
-//        AppEventsLogger.activateApp(this);
+    }
 
-//        registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
-//
-//            @Override
-//            public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-//                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-//            }
-//
-//            @Override
-//            public void onActivityStarted(Activity activity) {
-//
-//            }
-//
-//            @Override
-//            public void onActivityResumed(Activity activity) {
-//
-//            }
-//
-//            @Override
-//            public void onActivityPaused(Activity activity) {
-//
-//            }
-//
-//            @Override
-//            public void onActivityStopped(Activity activity) {
-//
-//            }
-//
-//            @Override
-//            public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
-//
-//            }
-//
-//            @Override
-//            public void onActivityDestroyed(Activity activity) {
-//
-//            }
-//        });
+    private void hashKey() {
+
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo("com.rawalinfocom.rcontact",
+                    PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                System.out.println("RContacts KEY HASH --> " + Base64.encodeToString(md.digest(),
+                        Base64.DEFAULT));
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.d("Name not found", e.getMessage(), e);
+
+        } catch (NoSuchAlgorithmException e) {
+            Log.d("Error", e.getMessage(), e);
+        }
     }
 
     public static synchronized RContactApplication getInstance() {
@@ -222,7 +202,15 @@ public class RContactApplication extends Application {
         this.arrayListObjectSmsLogs = arrayListObjectSmsLogs;
     }
 
-//    public ArrayList<String> getArrayListSmsLogsHeaders() {
+    public ArrayList<SpamDataType> getArrayListSpamDataType() {
+        return arrayListSpamDataType;
+    }
+
+    public void setArrayListSpamDataType(ArrayList<SpamDataType> arrayListSpamDataType) {
+        this.arrayListSpamDataType = arrayListSpamDataType;
+    }
+
+    //    public ArrayList<String> getArrayListSmsLogsHeaders() {
 //        return arrayListSmsLogsHeaders;
 //    }
 //

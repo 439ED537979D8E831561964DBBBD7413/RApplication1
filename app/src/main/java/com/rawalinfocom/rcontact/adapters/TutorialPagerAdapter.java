@@ -18,7 +18,8 @@ public class TutorialPagerAdapter extends PagerAdapter {
 
     Context context;
     private int images[] = {R.drawable.tutorial_1, R.drawable.tutorial_2,
-            R.drawable.tutorial_3, R.drawable.tutorial_4, R.drawable.tutorial_5};
+            R.drawable.tutorial_3, R.drawable.tutorial_4, R.drawable.tutorial_5, R.drawable
+            .tutorial_6};
     private LayoutInflater layoutInflater;
 
     public TutorialPagerAdapter(Context context) {
@@ -40,7 +41,7 @@ public class TutorialPagerAdapter extends PagerAdapter {
     public Object instantiateItem(ViewGroup container, final int position) {
         View itemView = layoutInflater.inflate(R.layout.list_item_tutorial, container, false);
 
-        ImageView imageView = (ImageView) itemView.findViewById(R.id.image_tutorial);
+        ImageView imageView = itemView.findViewById(R.id.image_tutorial);
         imageView.setImageResource(images[position]);
 
         container.addView(itemView);

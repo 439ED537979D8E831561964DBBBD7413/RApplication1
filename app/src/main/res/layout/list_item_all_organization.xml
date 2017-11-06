@@ -6,17 +6,84 @@
     android:layout_marginBottom="@dimen/activity_half_vertical_margin"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/text_main"
-        android:layout_width="wrap_content"
+    <TableRow
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="Big Labs Pvt. Ltd." />
+        android:gravity="center|start">
 
-    <TextView
-        android:id="@+id/text_sub"
-        android:layout_width="wrap_content"
+        <ImageView
+            android:id="@+id/image_org_profile"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:contentDescription="@string/str_content_description"
+            android:padding="3dp"
+            android:src="@drawable/home_screen_profile"
+            android:visibility="visible" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:gravity="center|start"
+            android:orientation="vertical">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center|start">
+
+                <TextView
+                    android:id="@+id/text_main"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="@dimen/margin_5dp"
+                    android:padding="2dp"
+                    tools:text="Big Labs Pvt. Ltd." />
+
+                <ImageView
+                    android:id="@+id/img_tic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:contentDescription="@string/app_name"
+                    android:gravity="center|start"
+                    android:src="@drawable/ico_double_tick_svg"
+                    android:visibility="gone" />
+
+            </TableRow>
+
+            <TextView
+                android:id="@+id/text_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="2dp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/text_sub"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="2dp"
+                android:textColor="@color/colorAccent"
+                tools:text="Director" />
+
+        </LinearLayout>
+    </TableRow>
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorAccent"
-        tools:text="Director" />
+        android:scrollbars="none">
+
+        <TextView
+            android:id="@+id/text_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:singleLine="true"
+            android:textSize="@dimen/text_size_12sp"
+            android:visibility="gone" />
+
+    </HorizontalScrollView>
 
 </LinearLayout>

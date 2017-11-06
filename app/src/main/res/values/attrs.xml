@@ -1,63 +1,223 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <declare-styleable name="ShadowLayout">
+        <attr name="slCornerRadius" format="dimension"/>
+        <attr name="slShadowSize" format="dimension"/>
+        <attr name="slShadowColor" format="color"/>
+        <attr name="slDx" format="dimension"/>
+        <attr name="slDy" format="dimension"/>
+    </declare-styleable>
+
+
     <declare-styleable name="RippleView">
-        <attr name="rv_alpha" format="integer" />
-        <attr name="rv_framerate" format="integer" />
-        <attr name="rv_rippleDuration" format="integer" />
-        <attr name="rv_zoomDuration" format="integer" />
-        <attr name="rv_color" format="color" />
-        <attr name="rv_centered" format="boolean" />
+        <attr name="rv_alpha" format="integer"/>
+        <attr name="rv_framerate" format="integer"/>
+        <attr name="rv_rippleDuration" format="integer"/>
+        <attr name="rv_zoomDuration" format="integer"/>
+        <attr name="rv_color" format="color"/>
+        <attr name="rv_centered" format="boolean"/>
         <attr name="rv_type" format="enum">
-            <enum name="simpleRipple" value="0" />
-            <enum name="doubleRipple" value="1" />
-            <enum name="rectangle" value="2" />
+            <enum name="simpleRipple" value="0"/>
+            <enum name="doubleRipple" value="1"/>
+            <enum name="rectangle" value="2"/>
         </attr>
-        <attr name="rv_ripplePadding" format="dimension" />
-        <attr name="rv_zoom" format="boolean" />
-        <attr name="rv_zoomScale" format="float" />
+        <attr name="rv_ripplePadding" format="dimension"/>
+        <attr name="rv_zoom" format="boolean"/>
+        <attr name="rv_zoomScale" format="float"/>
 
     </declare-styleable>
 
     <declare-styleable name="ProgressWheel">
-        <attr name="matProg_progressIndeterminate" format="boolean" />
-        <attr name="matProg_barColor" format="color" />
-        <attr name="matProg_rimColor" format="color" />
-        <attr name="matProg_rimWidth" format="dimension" />
-        <attr name="matProg_spinSpeed" format="float" />
-        <attr name="matProg_barSpinCycleTime" format="integer" />
-        <attr name="matProg_circleRadius" format="dimension" />
-        <attr name="matProg_fillRadius" format="boolean" />
-        <attr name="matProg_barWidth" format="dimension" />
-        <attr name="matProg_linearProgress" format="boolean" />
+        <attr name="matProg_progressIndeterminate" format="boolean"/>
+        <attr name="matProg_barColor" format="color"/>
+        <attr name="matProg_rimColor" format="color"/>
+        <attr name="matProg_rimWidth" format="dimension"/>
+        <attr name="matProg_spinSpeed" format="float"/>
+        <attr name="matProg_barSpinCycleTime" format="integer"/>
+        <attr name="matProg_circleRadius" format="dimension"/>
+        <attr name="matProg_fillRadius" format="boolean"/>
+        <attr name="matProg_barWidth" format="dimension"/>
+        <attr name="matProg_linearProgress" format="boolean"/>
     </declare-styleable>
 
     <declare-styleable name="AbsRecyclerViewFastScroller">
-        <attr name="rfs_fast_scroller_layout" format="reference" />
-        <attr name="rfs_barColor" format="color|reference" />
-        <attr name="rfs_barBackground" format="reference" />
-        <attr name="rfs_handleColor" format="color|reference" />
-        <attr name="rfs_handleBackground" format="reference" />
+        <attr name="rfs_fast_scroller_layout" format="reference"/>
+        <attr name="rfs_barColor" format="color|reference"/>
+        <attr name="rfs_barBackground" format="reference"/>
+        <attr name="rfs_handleColor" format="color|reference"/>
+        <attr name="rfs_handleBackground" format="reference"/>
     </declare-styleable>
 
     <declare-styleable name="AbsSectionIndicator">
-        <attr name="rfs_section_indicator_layout" format="reference" />
+        <attr name="rfs_section_indicator_layout" format="reference"/>
     </declare-styleable>
 
     <declare-styleable name="SectionTitleIndicator">
-        <attr name="rfs_textColor" format="color|reference" />
-        <attr name="rfs_backgroundColor" format="color|reference" />
+        <attr name="rfs_textColor" format="color|reference"/>
+        <attr name="rfs_backgroundColor" format="color|reference"/>
     </declare-styleable>
 
     <declare-styleable name="IndexFastScrollRecyclerView">
-        <attr name="setIndexTextSize" format="integer" />
-        <attr name="setIndexbarWidth" format="float" />
-        <attr name="setIndexbarMargin" format="float" />
-        <attr name="setPreviewPadding" format="integer" />
-        <attr name="setIndexBarCornerRadius" format="integer" />
-        <attr name="setIndexBarTransparentValue" format="float" />
-        <attr name="setIndexBarColor" format="string" />
-        <attr name="setIndexBarTextColor" format="string" />
+        <attr name="setIndexTextSize" format="integer"/>
+        <attr name="setIndexbarWidth" format="float"/>
+        <attr name="setIndexbarMargin" format="float"/>
+        <attr name="setPreviewPadding" format="integer"/>
+        <attr name="setIndexBarCornerRadius" format="integer"/>
+        <attr name="setIndexBarTransparentValue" format="float"/>
+        <attr name="setIndexBarColor" format="string"/>
+        <attr name="setIndexBarTextColor" format="string"/>
+    </declare-styleable>
+
+    <declare-styleable name="CropImageView">
+        <attr name="cropGuidelines">
+            <enum name="off" value="0"/>
+            <enum name="onTouch" value="1"/>
+            <enum name="on" value="2"/>
+        </attr>
+        <attr name="cropScaleType">
+            <enum name="fitCenter" value="0"/>
+            <enum name="center" value="1"/>
+            <enum name="centerCrop" value="2"/>
+            <enum name="centerInside" value="3"/>
+        </attr>
+        <attr name="cropShape">
+            <enum name="rectangle" value="0"/>
+            <enum name="oval" value="1"/>
+        </attr>
+        <attr name="cropAutoZoomEnabled" format="boolean"/>
+        <attr name="cropMaxZoom" format="integer"/>
+        <attr name="cropMultiTouchEnabled" format="boolean"/>
+        <attr name="cropFixAspectRatio" format="boolean"/>
+        <attr name="cropAspectRatioX" format="integer"/>
+        <attr name="cropAspectRatioY" format="integer"/>
+        <attr name="cropInitialCropWindowPaddingRatio" format="float"/>
+        <attr name="cropBorderLineThickness" format="dimension"/>
+        <attr name="cropBorderLineColor" format="color"/>
+        <attr name="cropBorderCornerThickness" format="dimension"/>
+        <attr name="cropBorderCornerOffset" format="dimension"/>
+        <attr name="cropBorderCornerLength" format="dimension"/>
+        <attr name="cropBorderCornerColor" format="color"/>
+        <attr name="cropGuidelinesThickness" format="dimension"/>
+        <attr name="cropGuidelinesColor" format="color"/>
+        <attr name="cropBackgroundColor" format="color"/>
+        <attr name="cropSnapRadius" format="dimension"/>
+        <attr name="cropTouchRadius" format="dimension"/>
+        <attr name="cropSaveBitmapToInstanceState" format="boolean"/>
+        <attr name="cropShowCropOverlay" format="boolean"/>
+        <attr name="cropShowProgressBar" format="boolean"/>
+        <attr name="cropMinCropWindowWidth" format="dimension"/>
+        <attr name="cropMinCropWindowHeight" format="dimension"/>
+        <attr name="cropMinCropResultWidthPX" format="float"/>
+        <attr name="cropMinCropResultHeightPX" format="float"/>
+        <attr name="cropMaxCropResultWidthPX" format="float"/>
+        <attr name="cropMaxCropResultHeightPX" format="float"/>
+        <attr name="cropFlipHorizontally" format="boolean"/>
+        <attr name="cropFlipVertically" format="boolean"/>
+    </declare-styleable>
+
+    <declare-styleable name="AnimateHorizontalProgressBar">
+        <attr name="ahp_progressColor" format="color|reference"/>
+        <attr name="ahp_backgroundColor" format="color|reference"/>
+        <attr name="ahp_cornerRadius" format="dimension|reference"/>
+    </declare-styleable>
+
+    <declare-styleable name="CircleProgressView">
+        <!-- Text-->
+        <attr name="cpv_text" format="string" />
+        <attr name="cpv_unit" format="string" />
+        <attr name="cpv_textColor" format="color" />
+        <attr name="cpv_unitColor" format="color" />
+        <attr name="cpv_showUnit" format="boolean" />
+        <attr name="cpv_autoTextColor" format="boolean" />
+        <attr name="cpv_textTypeface" format="string" />
+        <attr name="cpv_unitTypeface" format="string" />
+        <attr name="cpv_decimalFormat" format="string" />
+
+        <!-- Text sizes-->
+        <attr name="cpv_textSize" format="dimension" />
+        <attr name="cpv_unitSize" format="dimension" />
+        <attr name="cpv_textScale" format="float" />
+        <attr name="cpv_unitScale" format="float" />
+        <attr name="cpv_unitToTextScale" format="float" />
+        <attr name="cpv_autoTextSize" format="boolean" />
+
+        <!-- Progress Bar -->
+        <attr name="cpv_direction" format="enum">
+            <enum name="CW" value="0" />
+            <enum name="CCW" value="1" />
+        </attr>
+        <attr name="cpv_value" format="float" />
+        <attr name="cpv_maxValue" format="float" />
+        <attr name="cpv_minValueAllowed" format="float" />
+        <attr name="cpv_maxValueAllowed" format="float" />
+        <attr name="cpv_barWidth" format="dimension" />
+        <attr name="cpv_barColor" format="color" />
+        <attr name="cpv_barColor1" format="color" />
+        <attr name="cpv_barColor2" format="color" />
+        <attr name="cpv_barColor3" format="color" />
+        <attr name="cpv_startAngle" format="integer" />
+        <attr name="cpv_barStrokeCap" format="enum">
+            <enum name="Butt" value="0" />
+            <enum name="Round" value="1" />
+            <enum name="Square" value="2" />
+        </attr>
+        <attr name="cpv_barStartEndLineWidth" format="dimension" />
+        <attr name="cpv_barStartEndLineSweep" format="float" />
+        <attr name="cpv_barStartEndLineColor" format="color" />
+        <attr name="cpv_barStartEndLine" format="enum">
+            <enum name="None" value="0" />
+            <enum name="Start" value="1" />
+            <enum name="End" value="2" />
+            <enum name="Both" value="3" />
+        </attr>
+
+        <!-- Spinner-->
+        <attr name="cpv_spin" format="boolean" />
+        <attr name="cpv_spinColor" format="color" />
+        <attr name="cpv_spinSpeed" format="float" />
+        <attr name="cpv_spinBarLength" format="float" />
+        <attr name="cpv_showTextInSpinningMode" format="boolean" />
+
+        <!-- Rim-->
+        <attr name="cpv_rimColor" format="color" />
+        <attr name="cpv_rimWidth" format="dimension" />
+
+        <!-- Outer Contour-->
+        <attr name="cpv_outerContourColor" format="color" />
+        <attr name="cpv_outerContourSize" format="dimension" />
+
+        <!-- Inner Contour-->
+        <attr name="cpv_innerContourColor" format="color" />
+        <attr name="cpv_innerContourSize" format="dimension" />
+
+        <!-- Background color-->
+        <attr name="cpv_fillColor" format="color" />
+
+        <!-- Seek mode-->
+        <attr name="cpv_seekMode" format="boolean" />
+
+        <!-- Block -->
+        <attr name="cpv_roundToBlock" format="boolean" />
+        <attr name="cpv_roundToWholeNumber" format="boolean" />
+        <attr name="cpv_blockScale" format="float" />
+        <attr name="cpv_blockCount" format="integer" />
+
+        <attr name="cpv_textMode" format="enum">
+            <enum name="Text" value="0" />
+            <enum name="Percent" value="1" />
+            <enum name="Value" value="2" />
+        </attr>
+
+        <attr name="cpv_unitPosition" format="enum">
+            <enum name="top" value="0" />
+            <enum name="bottom" value="1" />
+            <enum name="left_top" value="2" />
+            <enum name="right_top" value="3" />
+            <enum name="left_bottom" value="4" />
+            <enum name="right_bottom" value="5" />
+        </attr>
+
     </declare-styleable>
 
 </resources>

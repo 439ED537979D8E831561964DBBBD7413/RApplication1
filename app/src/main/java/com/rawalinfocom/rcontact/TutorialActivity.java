@@ -1,11 +1,14 @@
 package com.rawalinfocom.rcontact;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
@@ -32,7 +35,7 @@ import butterknife.ButterKnife;
 
 public class TutorialActivity extends BaseActivity {
 
-    private final int TUTORIAL_SCREENS = 5;
+    private final int TUTORIAL_SCREENS = 6;
 
     @BindView(R.id.text_tutorial_header)
     TextView textTutorialHeader;
@@ -40,6 +43,8 @@ public class TutorialActivity extends BaseActivity {
      TextView textTutorialContent;*/
     @BindView(R.id.text_next)
     TextView textNext;
+    @BindView(R.id.text_skip)
+    TextView textSkip;
     @BindView(R.id.linear_indicator)
     LinearLayout linearIndicator;
     @BindView(R.id.relative_indicator)
@@ -56,12 +61,14 @@ public class TutorialActivity extends BaseActivity {
     ImageView imageTutorial4;
     @BindView(R.id.image_tutorial_5)
     ImageView imageTutorial5;
+    @BindView(R.id.image_tutorial_6)
+    ImageView imageTutorial6;
     @BindView(R.id.switcher_tutorial_content)
     TextSwitcher switcherTutorialContent;
 
-    Integer[] tutorialContents = {R.string.tutorial_content_1, R.string
-            .tutorial_content_2, R.string.tutorial_content_3, R.string
-            .tutorial_content_4, R.string.tutorial_content_5};
+    Integer[] tutorialContents = {R.string.tutorial_content_1, R.string.tutorial_content_2, R
+            .string.tutorial_content_3, R.string.tutorial_content_4, R.string.tutorial_content_5,
+            R.string.tutorial_content_6};
 
 
     TutorialPagerAdapter tutorialPagerAdapter;
@@ -89,12 +96,28 @@ public class TutorialActivity extends BaseActivity {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length <= 0 || grantResults[0] != PackageManager
                         .PERMISSION_GRANTED) {
+
                     // Permission Denied
-                    finish();
+                    boolean showRationale = false;
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        showRationale = shouldShowRequestPermissionRationale(Manifest.permission
+                                .READ_CONTACTS);
+                    }
+
+                    if (!showRationale) {
+                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        Uri uri = Uri.fromParts("package", getPackageName(), null);
+                        intent.setData(uri);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        finish();
+                    }
+
                 }
-                /*else {
-                    // Permission Granted
-                }*/
+//                else {
+//                    // Permission Granted
+//                }
             }
             break;
         }
@@ -137,10 +160,13 @@ public class TutorialActivity extends BaseActivity {
 //        textTutorialContent.setText(R.string.tutorial_content_1);
         switcherTutorialContent.setText(getString(tutorialContents[0]));
         textNext.setText(R.string.tutorial_and);
+        textSkip.setText(R.string.tutorial_skip);
+        textSkip.setVisibility(View.GONE);
 
         textTutorialHeader.setTypeface(Utils.typefaceSemiBold(TutorialActivity.this));
 //        textTutorialContent.setTypeface(Utils.typefaceRegular(TutorialActivity.this));
         textNext.setTypeface(Utils.typefaceRegular(TutorialActivity.this));
+        textSkip.setTypeface(Utils.typefaceRegular(TutorialActivity.this));
 
         pagerTutorial.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
@@ -160,8 +186,8 @@ public class TutorialActivity extends BaseActivity {
                 switch (position) {
                     case 0:
                         textTutorialHeader.setText(getString(R.string.tutorial_header_1));
-//                        textTutorialContent.setText(R.string.tutorial_content_1);
                         textNext.setText(R.string.tutorial_and);
+                        textSkip.setVisibility(View.GONE);
                         break;
 
                     case 1:
@@ -173,26 +199,32 @@ public class TutorialActivity extends BaseActivity {
                                     .MY_PERMISSIONS_REQUEST_READ_CONTACTS);
                         }
                         textTutorialHeader.setText(getString(R.string.tutorial_header_2));
-//                        textTutorialContent.setText(R.string.tutorial_content_2);
                         textNext.setText(R.string.tutorial_and);
+                        textSkip.setVisibility(View.VISIBLE);
                         break;
 
                     case 2:
                         textTutorialHeader.setText(getString(R.string.tutorial_header_3));
-//                        textTutorialContent.setText(R.string.tutorial_content_3);
                         textNext.setText(R.string.tutorial_and);
+                        textSkip.setVisibility(View.VISIBLE);
                         break;
 
                     case 3:
                         textTutorialHeader.setText(getString(R.string.tutorial_header_4));
-//                        textTutorialContent.setText(R.string.tutorial_content_4);
                         textNext.setText(R.string.tutorial_and);
+                        textSkip.setVisibility(View.VISIBLE);
                         break;
 
                     case 4:
                         textTutorialHeader.setText(getString(R.string.tutorial_header_5));
-//                        textTutorialContent.setText(R.string.tutorial_content_5);
+                        textNext.setText(R.string.tutorial_and);
+                        textSkip.setVisibility(View.VISIBLE);
+                        break;
+
+                    case 5:
+                        textTutorialHeader.setText(getString(R.string.tutorial_header_5));
                         textNext.setText(R.string.tutorial_lets_go);
+                        textSkip.setVisibility(View.GONE);
                         break;
                 }
             }
@@ -217,11 +249,24 @@ public class TutorialActivity extends BaseActivity {
                 }
             }
         });
+
+        textSkip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Utils.setIntegerPreference(TutorialActivity.this, AppConstants
+                        .PREF_LAUNCH_SCREEN_INT, IntegerConstants
+                        .LAUNCH_TERMS_CONDITIONS_ACTIVITY);
+                startActivityIntent(TutorialActivity.this, TermsConditionsActivity.class, null);
+                finish();
+
+            }
+        });
     }
 
     private void setIndicatorSelection(int selection) {
         ImageView[] tutorialImages = {imageTutorial1, imageTutorial2, imageTutorial3,
-                imageTutorial4, imageTutorial5};
+                imageTutorial4, imageTutorial5, imageTutorial6};
         for (int i = 0; i < tutorialImages.length; i++) {
             if (i == selection) {
                 tutorialImages[i].setColorFilter(new PorterDuffColorFilter(ContextCompat.getColor

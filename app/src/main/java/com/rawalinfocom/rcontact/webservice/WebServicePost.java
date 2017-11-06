@@ -19,6 +19,8 @@ import com.rawalinfocom.rcontact.helper.Utils;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -28,6 +30,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -65,6 +69,7 @@ class WebServicePost {
         Response response = null;
         InputStream inputStream;
         HttpURLConnection urlConnection;
+
         int statusCode = 0;
 
         try {
@@ -83,6 +88,11 @@ class WebServicePost {
                 urlConnection.setRequestProperty("Content-Type", "application/json");
                 urlConnection.setRequestProperty("Accept", "application/json");
                 if (setHeader) {
+
+                    System.out.println("RContact set header token --> " + Utils
+                            .getStringPreference
+                                    (activity, AppConstants.PREF_ACCESS_TOKEN, ""));
+
                     urlConnection.addRequestProperty(WsConstants.REQ_HEADER, Utils
                             .getStringPreference
                                     (activity, AppConstants.PREF_ACCESS_TOKEN, ""));
@@ -94,9 +104,8 @@ class WebServicePost {
                 if (request != null) {
 
                     // Json string passed as request
-
                     jsonObject = writer.writeValueAsString(request);
-                    System.out.println("RContact param -->  " + jsonObject);
+                    System.out.println("RContacts param -->  " + jsonObject);
 //					 FileUtilities utilities = new FileUtilities();
 //					 utilities.write("Filter file", jsonObject);
                 }
@@ -110,6 +119,8 @@ class WebServicePost {
             /* Get Response and execute WebService request*/
                 statusCode = urlConnection.getResponseCode();
 
+//                System.out.println("RContact statusCode --> " + url + " --> " + statusCode);
+
             /* 200 represents HTTP OK */
                 if (statusCode == HttpsURLConnection.HTTP_OK) {
 
@@ -117,8 +128,13 @@ class WebServicePost {
                     String header = urlConnection.getHeaderField(WsConstants.REQ_HEADER);
 
                     if (url.toString().endsWith(WsConstants.REQ_SAVE_PASSWORD)
+                            || url.toString().endsWith(WsConstants.REQ_REGISTER_WITH_SOCIAL_MEDIA)
+                            || url.toString().endsWith(WsConstants.REQ_LOGIN_WITH_SOCIAL_MEDIA)
                             || url.toString().endsWith(WsConstants.REQ_CHECK_LOGIN)
                             || url.toString().endsWith(WsConstants.REQ_OTP_CONFIRMED)) {
+
+                        System.out.println("RContact new token --> " + header);
+
                         Utils.setStringPreference(activity, AppConstants.PREF_ACCESS_TOKEN, header);
                     }
 
@@ -126,42 +142,50 @@ class WebServicePost {
                     String responseString = convertInputStreamToString(inputStream);
                     response = getMapper().readValue(responseString, responseType);
                 } else if (statusCode == HttpsURLConnection.HTTP_BAD_REQUEST) {
-                    Log.e("Status Code: ", HttpsURLConnection.HTTP_BAD_REQUEST + " : Bad Request " +
-                            ": Due to user error");
+//                    Log.e("Status Code: ", HttpsURLConnection.HTTP_BAD_REQUEST + " : Bad Request " +
+//                            ": Due to user error");
                     inputStream = new BufferedInputStream(urlConnection.getErrorStream());
                     String responseString = convertInputStreamToString(inputStream);
                     response = getMapper().readValue(responseString, responseType);
+                /*} else if (statusCode == 503) {
+                    inputStream = new BufferedInputStream(urlConnection.getErrorStream());
+                    String responseString = convertInputStreamToString(inputStream);
+                    response = getMapper().readValue(responseString, responseType);*/
                 } else if (statusCode == 429) {
-                    Log.e("Status Code: ", ": Due to throttling");
+//                    Log.e("Status Code: ", ": Due to throttling");
                     final String header = urlConnection.getHeaderField(WsConstants
                             .REQ_THROTTLING_HEADER);
                     String responseString = "{\"message\":\"Retry after " + header + " seconds\"}";
                     response = getMapper().readValue(responseString, responseType);
+                } else if (statusCode == 426) {
+                    String responseString = "{\"message\":\"force update\"}";
+                    response = getMapper().readValue(responseString, responseType);
                 } else if (statusCode == HttpsURLConnection.HTTP_INTERNAL_ERROR) {
-                    Log.e("Status Code: ", HttpsURLConnection.HTTP_INTERNAL_ERROR + " : Internal " +
-                            "Server Error : Due to any unhandled error on server");
+//                    Log.e("Status Code: ", HttpsURLConnection.HTTP_INTERNAL_ERROR + " : Internal " +
+//                            "Server Error : Due to any unhandled error on server");
                     response = null;
                 } else if (statusCode == HttpsURLConnection.HTTP_NOT_FOUND) {
-                    Log.e("Status Code: ", HttpsURLConnection.HTTP_NOT_FOUND + " :  Not Found :  " +
-                            "Request resource not found");
+//                    Log.e("Status Code: ", HttpsURLConnection.HTTP_NOT_FOUND + " :  Not Found :  " +
+//                            "Request resource not found");
                     response = null;
                 } else if (statusCode == HttpsURLConnection.HTTP_UNAUTHORIZED) {
-                    Log.e("Status Code: ", HttpsURLConnection.HTTP_UNAUTHORIZED + " :  " +
-                            "Unauthorised Access :  Due to invalid credentials or invalid access " +
-                            "token or expired token");
+//                    Log.e("Status Code: ", HttpsURLConnection.HTTP_UNAUTHORIZED + " :  " +
+//                            "Unauthorised Access :  Due to invalid credentials or invalid access " +
+//                            "token or expired token");
                     response = null;
 
                     Utils.setIntegerPreference(activity, AppConstants.PREF_LAUNCH_SCREEN_INT,
                             IntegerConstants
                                     .LAUNCH_RE_LOGIN_PASSWORD);
                     Utils.setBooleanPreference(activity, AppConstants.PREF_TEMP_LOGOUT, true);
+                    Utils.setBooleanPreference(activity, AppConstants.PREF_IS_LOGIN, false);
 
                     // Redirect to MobileNumberRegistrationActivity
                     Intent intent = new Intent(activity, ReLoginEnterPasswordActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    intent.putExtra(AppConstants.PREF_IS_FROM, AppConstants.PREF_RE_LOGIN);
+                    intent.putExtra(AppConstants.EXTRA_IS_FROM, AppConstants.EXTRA_IS_FROM_RE_LOGIN);
                     activity.startActivity(intent);
                     activity.overridePendingTransition(R.anim.enter, R.anim.exit);
                     activity.finish();
@@ -208,7 +232,7 @@ class WebServicePost {
             }
 
         } catch (Exception e) {
-            Log.e(TAG_LOG, "Status code: " + Integer.toString(statusCode)
+            System.out.println("RContacts Status code: " + Integer.toString(statusCode)
                     + " Exception thrown: " + e.getMessage());
             throw e;
         }
@@ -271,5 +295,43 @@ class WebServicePost {
         }
         return mapper;
     }
-
 }
+//    HostnameVerifier hostnameVerifier = new HostnameVerifier() {
+//        @Override
+//        public boolean verify(String hostname, SSLSession session) {
+//            HostnameVerifier hv =
+//                    HttpsURLConnection.getDefaultHostnameVerifier();
+//            return hv.verify("api.rcontacts.in", session);
+//        }
+//    };
+//
+//    /**
+//     * Trust every server - dont check for any certificate
+//     */
+//    private static void trustAllHosts() {
+//        // Create a trust manager that does not validate certificate chains
+//        TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
+//            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+//                return new java.security.cert.X509Certificate[]{};
+//            }
+//
+//            public void checkClientTrusted(X509Certificate[] chain,
+//                                           String authType) throws CertificateException {
+//            }
+//
+//            public void checkServerTrusted(X509Certificate[] chain,
+//                                           String authType) throws CertificateException {
+//            }
+//        }};
+//
+//        // Install the all-trusting trust manager
+//        try {
+//            SSLContext sc = SSLContext.getInstance("TLS");
+//            sc.init(null, trustAllCerts, new java.security.SecureRandom());
+//            HttpsURLConnection
+//                    .setDefaultSSLSocketFactory(sc.getSocketFactory());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+

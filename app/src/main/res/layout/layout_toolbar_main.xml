@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
-                                   xmlns:app="http://schemas.android.com/apk/res-auto"
-                                   xmlns:tools="http://schemas.android.com/tools"
-                                   android:layout_width="match_parent"
-                                   android:layout_height="?attr/actionBarSize"
-                                   android:background="@color/colorPrimary"
-                                   android:elevation="4dp"
-                                   android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-                                   app:contentInsetLeft="0dp"
-                                   app:contentInsetStart="0dp"
-                                   app:contentInsetStartWithNavigation="0dp"
-                                   tools:ignore="UnusedAttribute">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:background="@color/colorPrimary"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+    app:contentInsetLeft="0dp"
+    app:contentInsetStart="0dp"
+    app:contentInsetStartWithNavigation="0dp"
+    tools:ignore="UnusedAttribute">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -24,7 +23,7 @@
             android:contentDescription="@string/str_content_description"
             android:padding="@dimen/activity_half_horizontal_margin"
             android:src="@drawable/ic_action_drawer"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <LinearLayout
             android:id="@+id/linear_action_right"
@@ -41,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/str_content_description"
                 android:padding="@dimen/margin_small"
-                android:src="@drawable/ic_action_notification"/>
+                android:src="@drawable/ic_action_notification" />
 
             <LinearLayout
                 android:id="@+id/badge_layout"
@@ -61,7 +60,7 @@
                     android:gravity="center"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                     android:textColor="@color/colorWhite"
-                    tools:text="9"/>
+                    tools:text="9" />
 
             </LinearLayout>
 
@@ -71,7 +70,7 @@
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/str_content_description"
                 android:padding="@dimen/margin_small"
-                android:src="@drawable/ic_add_new_contact"/>
+                android:src="@drawable/ic_add_new_contact" />
 
             <!-- <ImageView
                  android:id="@+id/image_add_contact"
@@ -90,7 +89,19 @@
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@id/linear_action_right"
             android:layout_toRightOf="@id/imgActionDrawer"
-            android:visibility="gone"/>
+            android:visibility="gone" />
+
+        <EditText
+            android:id="@+id/input_search"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/margin_5dp"
+            android:layout_toEndOf="@+id/image_search"
+            android:layout_toStartOf="@+id/linear_action_right"
+            android:backgroundTint="@color/finestWhite30"
+            android:cursorVisible="false"
+            android:hint="@string/str_search_name" />
 
         <ImageView
             android:id="@+id/image_search"
@@ -102,7 +113,7 @@
             android:paddingLeft="@dimen/margin_tiny"
             android:paddingRight="@dimen/margin_small"
             android:paddingTop="@dimen/margin_small"
-            android:src="@drawable/ic_search"/>
+            android:src="@drawable/ic_search" />
 
 
     </RelativeLayout>

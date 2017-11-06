@@ -28,7 +28,7 @@ public class TableMobileMaster {
     }
 
     // Table Names
-    static final String TABLE_RC_MOBILE_NUMBER_MASTER = "rc_mobile_number_master";
+    public static final String TABLE_RC_MOBILE_NUMBER_MASTER = "rc_mobile_number_master";
 
     // Column Names
     private static final String COLUMN_MNM_ID = "mnm_id";
@@ -49,7 +49,7 @@ public class TableMobileMaster {
     //    private static final String COLUMN_MNM_IS_VERIFIED = "mnm_is_verified";
 
     // Table Create Statements
-  /*  static final String CREATE_TABLE_RC_MOBILE_NUMBER_MASTER = "CREATE TABLE " +
+  /*  static final String CREATE_TABLE_RC_MOBILE_NUMBER_MASTER = "CREATE TABLE IF NOT EXISTS " +
             TABLE_RC_MOBILE_NUMBER_MASTER + " (" +
             " " + COLUMN_MNM_ID + " integer NOT NULL CONSTRAINT rc_mobile_number_master_pk " +
             "PRIMARY KEY AUTOINCREMENT," +
@@ -64,7 +64,7 @@ public class TableMobileMaster {
             " " + COLUMN_RC_PROFILE_MASTER_PM_ID + " integer" +
             ");";*/
 
-    static final String CREATE_TABLE_RC_MOBILE_NUMBER_MASTER = "CREATE TABLE " +
+    static final String CREATE_TABLE_RC_MOBILE_NUMBER_MASTER = "CREATE TABLE IF NOT EXISTS " +
             TABLE_RC_MOBILE_NUMBER_MASTER + " (" +
             " " + COLUMN_MNM_ID + " integer NOT NULL CONSTRAINT rc_mobile_number_master_pk " +
             "PRIMARY KEY AUTOINCREMENT," +
@@ -131,12 +131,24 @@ public class TableMobileMaster {
         db.close(); // Closing database connection
     }
 
+    public void deleteData(String RcpPmId) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+        int count = db.delete(TABLE_RC_MOBILE_NUMBER_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
+                RcpPmId, null);
+        if (count > 0) System.out.println("RContact data delete ");
+
+        db.close(); // Closing database connection
+    }
+
     // Add or update RCP user mobile data
     public void addUpdateArrayMobileNumber(ArrayList<MobileNumber> arrayListMobileNumber, String RcpPmId) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
 
-        int count = db.delete(TABLE_RC_MOBILE_NUMBER_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " + RcpPmId, null);
+        int count = db.delete(TABLE_RC_MOBILE_NUMBER_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
+                RcpPmId, null);
         if (count > 0) System.out.println("RContact data delete ");
+
 
         for (int i = 0; i < arrayListMobileNumber.size(); i++) {
             ContentValues values = new ContentValues();
@@ -171,7 +183,7 @@ public class TableMobileMaster {
                     " where " + COLUMN_RC_PROFILE_MASTER_PM_ID + " = \"" + pm_id + "\" and " + COLUMN_MNM_IS_PRIMARY
                     + " = 1 ";
 
-            System.out.println("RContact query --> " + query);
+            // System.out.println("RContact query --> " + query);
 
             Cursor cursor = db.rawQuery(query, null);
 

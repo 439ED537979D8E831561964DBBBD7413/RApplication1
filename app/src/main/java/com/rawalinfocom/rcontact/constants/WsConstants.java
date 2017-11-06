@@ -8,39 +8,101 @@ package com.rawalinfocom.rcontact.constants;
 
 public class WsConstants {
 
-    // Staging Env
-//    public static final String WS_ROOT = "http://apistaging.rcontacts.in/api/v1/";
+    /**
+     * Production
+     */
+    //<editor-fold desc="Production">
 
-    // QA Server
-//    public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
+    /*// API ROOT
+    public static final String WS_ROOT = "https://api.rcontacts.in/api/v1/";
+    public static final String WS_ROOT_V2 = "https://api.rcontacts.in/api/v2/";
+    // TERMS-CONDITIONS URL
+    public static final String URL_TERMS_CONDITIONS = "https://www.rcontacts.in/global/terms";
+    // FAQ URL
+    public static final String URL_FAQ = "https://www.rcontacts.in/global/faqs";
+    // PROFILE SHARE
+    public static final String WS_PROFILE_VIEW_ROOT = "https://www.rcontacts.in/global/public/";
+    public static final String WS_PROFILE_VIEW_BADGE_ROOT = "http://rcrc.ac/p/";
+    // WEBSITE URL
+    public static final String WS_WEBSITE_URL = "https://www.rcontacts.in";
+    // AVERAGE RATING SHARE
+    public static final String WS_AVG_RATING_SHARE_BADGE_ROOT = "http://rcrc.ac/r/";
+    //PLAY STORE LINK
+    public static String PLAY_STORE_LINK = "http://rcrc.ac/a/";*/
 
+    //</editor-fold>
+
+    /**
+     * Staging
+     */
+    //<editor-fold desc="Staging">
+   /* // API ROOT
+    public static final String WS_ROOT = "http://apistaging.rcontacts.in/api/v1/";
+    public static final String WS_ROOT_V2 = "http://apistaging.rcontacts.in/api/v2/";
+    // TERMS-CONDITIONS URL
+    public static final String URL_TERMS_CONDITIONS = "http://webstaging.rcontacts.in/global/terms";
+    // FAQ URL
+    public static final String URL_FAQ = "http://webstaging.rcontacts.in/global/faqs";
+    // PROFILE SHARE
+    public static final String WS_PROFILE_VIEW_ROOT = "http://webstaging.rcontacts" +
+            ".in/global/public/";
+    public static final String WS_PROFILE_VIEW_BADGE_ROOT = "http://staging.rcrc.ac/p/";
+    // WEBSITE URL
+    public static final String WS_WEBSITE_URL = "http://webstaging.rcontacts.in";
+    // AVERAGE RATING SHARE
+    public static final String WS_AVG_RATING_SHARE_BADGE_ROOT = "http://staging.rcrc.ac/r/";
+    //PLAY STORE LINK
+    public static String PLAY_STORE_LINK = "http://staging.rcrc.ac/a/";*/
+    //</editor-fold>
+
+    /**
+     * QA
+     */
+    //<editor-fold desc="QA">
+
+    // API ROOT
+    public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
+    public static final String WS_ROOT_V2 = "http://apiqa.rcontacts.in/api/v2/";
+    // TERMS-CONDITIONS URL
+    public static final String URL_TERMS_CONDITIONS = "http://webqa.rcontacts.in/global/terms";
+    // FAQ URL
+    public static final String URL_FAQ = "http://webqa.rcontacts.in/global/faqs";
+    // PROFILE SHARE
+    public static final String WS_PROFILE_VIEW_ROOT = "http://webqa.rcontacts.in/global/public/";
+    public static final String WS_PROFILE_VIEW_BADGE_ROOT = "http://qa.rcrc.ac/p/";
+    // WEBSITE URL
+    public static final String WS_WEBSITE_URL = "http://webqa.rcontacts.in";
+    // AVERAGE RATING SHARE
+    public static final String WS_AVG_RATING_SHARE_BADGE_ROOT = "http://qa.rcrc.ac/r/";
+    //PLAY STORE LINK
+    public static String PLAY_STORE_LINK = "http://qa.rcrc.ac/a/";
+    //</editor-fold>
+
+    /**
+     * Local
+     */
+    //<editor-fold desc="Local">
     // Monal
-    public static final String WS_ROOT = "http://10.0.21.163/api/v1/";
+//    public static final String WS_ROOT = "http://10.0.21.163/api/v1/";
 
     // Aniruddh
 //    public static final String WS_ROOT = "http://10.0.21.122/api/v1/";
-
-    // Maulik
-//    public static final String WS_ROOT = "http://10.0.51.119/api/v1/";
+//    public static final String WS_ROOT_V2 = "http://10.0.21.122/api/v2/";
 
     // Hardik
 //    public static final String WS_ROOT = "http://10.0.30.11/api/v1/";
 
     // Shailesh
 //    public static final String WS_ROOT = "http://10.0.21.14:8001/api/v1/";
+//    public static final String WS_ROOT_V2 = "http://10.0.21.14:8001/api/v2/";
 
     // Jignesh
-//    public static final String WS_ROOT = "  http://10.0.21.15:8000/api/v1/";
+//    public static final String WS_ROOT = "http://10.0.21.15:8000/api/v1/";
+//    public static final String WS_ROOT_V2 = "http://10.0.21.15:8000/api/v2/";
 
     // Vijay
 //     public static final String WS_ROOT = "http://10.0.21.16/api/v1/";
-
-
-    /**
-     * Redirection URL
-     */
-    // Staging Env
-    public static final String URL_TERMS_CONDITIONS = "http://webstaging.rcontacts.in/global/terms";
+    //</editor-fold>
 
     /**
      * Feedback URL
@@ -48,23 +110,17 @@ public class WsConstants {
     public static final String URL_FEEDBACK = "http://feedback.rcontacts.in";
 
     /**
-     * Profile View
+     * PRIVACY-POLICY URL
      */
+    public static final String URL_PRIVACY_POLICY = "https://www.rcontacts" +
+            ".in/global/privacy-policy";
 
-    // Web Server
-    public static final String WS_PROFILE_VIEW_ROOT = "http://web.rcontacts.in/global/public/";
-
-    // QA Server
-//    public static final String WS_PROFILE_VIEW_ROOT = "http://webqa.rcontacts.in/global/public/";
-
-    // Staging Env
-//    public static final String WS_PROFILE_VIEW_ROOT = "http://webstaging.rcontacts.in/global/public/";
-
-    /**
-     * WEBSITE URL
-     */
-    public static final String WS_WEBSITE_URL = "http://webstaging.rcontacts.in";
-
+    public static final String WS_FACEBOOK_URL = "https://www.facebook.com/RContacts/";
+    public static final String WS_TWITTER_URL = "https://twitter.com/RContactsApp";
+    public static final String WS_LINKEDIN_URL = "https://www.linkedin.com/showcase/13388776/";
+    public static final String WS_PINTEREST_URL = "https://in.pinterest.com/RContactsApp/";
+    public static final String WS_YOUTUBE_URL = "https://www.youtube.com/channel/UCeFoqQHdxf-s003EXZ0r7rQ";
+    public static final String WS_GOOGLE_URL = "https://plus.google.com/109948771947024347418";
 
     public static final String RESPONSE_STATUS_TRUE = "true";
 
@@ -75,6 +131,7 @@ public class WsConstants {
      * API Headers
      */
     public static final String REQ_HEADER = "rcAuthToken";
+    public static final String REQ_AUTHORIZATION = "Authorization";
     public static final String REQ_THROTTLING_HEADER = "Retry-After";
 
     /**
@@ -83,9 +140,13 @@ public class WsConstants {
     public static final String REQ_CHECK_NUMBER = "check-number";
     public static final String REQ_OTP_CONFIRMED = "confirm-otp";
     public static final String REQ_PROFILE_REGISTRATION = "profile-registration";
+    public static final String REQ_REGISTER_WITH_SOCIAL_MEDIA = "register-with-social-media";
     public static final String REQ_SAVE_PASSWORD = "save-password";
     public static final String REQ_CHECK_LOGIN = "check-login";
+    public static final String REQ_LOGIN_WITH_SOCIAL_MEDIA = "login-with-social-media";
     public static final String REQ_COUNTRY_CODE_DETAIL = "country-code-detail";
+    public static final String REQ_STATE_DETAILS = "state-details";
+    public static final String REQ_CITY_DETAILS = "city-details";
     public static final String REQ_MSP_DELIVERY_TIME = "msp-delivery-time";
     public static final String REQ_STORE_DEVICE_DETAILS = "store-device-details";
     public static final String REQ_UPLOAD_CONTACTS = "uploadContacts";
@@ -109,6 +170,13 @@ public class WsConstants {
     public static final String REQ_ADD_EVENT_COMMENT = "event-comment";
     public static final String REQ_GET_EVENT_COMMENT = "get-event-comment";
     public static final String REQ_GET_RCONTACT_UPDATES = "get-rcontact-update";
-
-
+    public static final String REQ_GET_PROFILE_DATA = "get-global-profile";
+    public static final String REQ_CONTACT_US = "contact-us";
+    public static final String REQ_MAKE_SPAM = "make-spam";
+    public static final String REQ_GET_CONTACT_REQUEST = "get-contact-request";
+    public static final String REQ_GET_RATING_DETAILS = "get-rating-details";
+    public static final String REQ_GET_COMMENT_DETAILS = "get-comment-details";
+    public static final String REQ_GET_RCP_CONTACT = "get-rcp-contact";
+    public static final String REQ_GET_CHECK_VERSION = "check-version";
+    public static final String REQ_GET_ORGANIZATIONS = "get-organizations";
 }

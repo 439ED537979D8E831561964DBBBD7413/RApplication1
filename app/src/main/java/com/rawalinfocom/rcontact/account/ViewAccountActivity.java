@@ -1,8 +1,11 @@
 package com.rawalinfocom.rcontact.account;
 
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -16,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import butterknife.BindView;
@@ -46,8 +50,6 @@ public class ViewAccountActivity extends BaseActivity implements RippleView
     TextView textPhoneNumber;
     @BindView(R.id.text_lable_email)
     TextView textLableEmail;
-    @BindView(R.id.text_email)
-    TextView textEmail;
     @BindView(R.id.text_lable_joining_date)
     TextView textLableJoiningDate;
     @BindView(R.id.text_joining_date)
@@ -60,13 +62,12 @@ public class ViewAccountActivity extends BaseActivity implements RippleView
     String firstName;
     String lastName;
     String phoneNumber;
-    String emailId;
+    ArrayList<String> emailIdList;
     String joiningDate;
-    String isVerifiedPhoneNumber;
-    @BindView(R.id.text_phone_verified)
-    TextView textPhoneVerified;
-    @BindView(R.id.text_email_verified)
-    TextView textEmailVerified;
+
+    @BindView(R.id.ll_email_vertical)
+    LinearLayout llEmailVertical;
+    TextView textEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +91,15 @@ public class ViewAccountActivity extends BaseActivity implements RippleView
         textToolbarTitle.setTypeface(Utils.typefaceRegular(this));
         textToolbarTitle.setText(getString(R.string.view_account));
 
+        textLableFirstName.setTypeface(Utils.typefaceSemiBold(ViewAccountActivity.this));
+        textFirstName.setTypeface(Utils.typefaceRegular(ViewAccountActivity.this));
+        textLableLastName.setTypeface(Utils.typefaceSemiBold(ViewAccountActivity.this));
+        textLastName.setTypeface(Utils.typefaceRegular(ViewAccountActivity.this));
+        textLablePhone.setTypeface(Utils.typefaceSemiBold(ViewAccountActivity.this));
+        textLableEmail.setTypeface(Utils.typefaceSemiBold(ViewAccountActivity.this));
+        textLableJoiningDate.setTypeface(Utils.typefaceSemiBold(ViewAccountActivity.this));
+        textJoiningDate.setTypeface(Utils.typefaceRegular(ViewAccountActivity.this));
+
         getPreference();
     }
 
@@ -97,18 +107,17 @@ public class ViewAccountActivity extends BaseActivity implements RippleView
         firstName = Utils.getStringPreference(this, AppConstants.PREF_USER_FIRST_NAME, "");
         lastName = Utils.getStringPreference(this, AppConstants.PREF_USER_LAST_NAME, "");
         phoneNumber = Utils.getStringPreference(this, AppConstants.PREF_USER_NUMBER, "");
-        emailId = Utils.getStringPreference(this, AppConstants.PREF_USER_VERIFIED_EMAIL, "");
+        emailIdList = Utils.getArrayListPreference(this, AppConstants.PREF_USER_VERIFIED_EMAIL);
+        if (emailIdList == null) {
+            emailIdList = new ArrayList<>();
+        }
         joiningDate = Utils.getStringPreference(this, AppConstants.PREF_USER_JOINING_DATE, "");
 
         populateView();
     }
 
     private void populateView() {
-        textFirstName.setTypeface(Utils.typefaceRegular(this));
-        textLastName.setTypeface(Utils.typefaceRegular(this));
-        textPhoneNumber.setTypeface(Utils.typefaceRegular(this));
-        textEmail.setTypeface(Utils.typefaceRegular(this));
-        textJoiningDate.setTypeface(Utils.typefaceRegular(this));
+
 
         if (!StringUtils.isEmpty(firstName))
             textFirstName.setText(firstName);
@@ -129,34 +138,47 @@ public class ViewAccountActivity extends BaseActivity implements RippleView
                 String firstPath = phoneNumber.substring(0, 2);
                 String lastPath = phoneNumber.substring(2, phoneNumber.length());
                 String newString = "+" + firstPath + " " + lastPath;
-                textPhoneNumber.setText(newString);
-                textPhoneVerified.setText(this.getString(R.string
-                        .im_icon_verify));
-                textPhoneVerified.setTypeface(Utils.typefaceIcons(this));
+                textPhoneNumber.setText(Utils.setMultipleTypeface(ViewAccountActivity.this,
+                        newString + " " + getString(R.string.im_icon_verify), 0, (StringUtils
+                                .length(newString) + 1), ((StringUtils.length(newString) + 1) +
+                                1)));
             }
         } else {
             textPhoneNumber.setVisibility(View.GONE);
             textLablePhone.setVisibility(View.GONE);
-            textPhoneVerified.setVisibility(View.GONE);
         }
 
-
-        if (!StringUtils.isEmpty(emailId)) {
-            String newString = emailId;
-            textEmail.setText(newString);
-            textEmailVerified.setText(this.getString(R.string
-                    .im_icon_verify));
-            textEmailVerified.setTypeface(Utils.typefaceIcons(this));
+        if (emailIdList.size() > 0) {
+            llEmailVertical.removeAllViews();
+            for (int i = 0; i < emailIdList.size(); i++) {
+                String emailId = emailIdList.get(i);
+                textEmail = new TextView(this);
+                textEmail.setText(Utils.setMultipleTypeface(ViewAccountActivity.this, emailId +
+                        "" + " " + getString(R.string.im_icon_verify), 0, (StringUtils.length
+                        (emailId) + 1), ((StringUtils.length(emailId) + 1) + 1)));
+                textEmail.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
+                textEmail.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+                        getResources().getDimension(R.dimen.text_size_16sp));
+                textEmail.setPadding(8, 8, 8, 8);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout
+                        .LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT);
+                float pixels = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15,
+                        getResources().getDisplayMetrics());
+                params.setMargins((int) pixels, 0, 0, 0);
+                textEmail.setLayoutParams(params);
+                llEmailVertical.addView(textEmail);
+            }
         } else {
+            llEmailVertical.setVisibility(View.GONE);
+            textEmail = new TextView(this);
             textEmail.setVisibility(View.GONE);
             textLableEmail.setVisibility(View.GONE);
-            textEmailVerified.setVisibility(View.GONE);
         }
 
-        if (!StringUtils.isEmpty(joiningDate))
-        {
+        if (!StringUtils.isEmpty(joiningDate)) {
             String dtStart = joiningDate;
-            Date joinDate =  null;
+            Date joinDate = null;
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             try {
                 joinDate = format.parse(dtStart);
@@ -168,11 +190,11 @@ public class ViewAccountActivity extends BaseActivity implements RippleView
             SimpleDateFormat format1 = new SimpleDateFormat("d");
             String date = format1.format(joinDate);
 
-            if(date.endsWith("1") && !date.endsWith("11"))
+            if (date.endsWith("1") && !date.endsWith("11"))
                 format1 = new SimpleDateFormat("d'st' MMMM, yyyy");
-            else if(date.endsWith("2") && !date.endsWith("12"))
+            else if (date.endsWith("2") && !date.endsWith("12"))
                 format1 = new SimpleDateFormat("d'nd' MMMM, yyyy");
-            else if(date.endsWith("3") && !date.endsWith("13"))
+            else if (date.endsWith("3") && !date.endsWith("13"))
                 format1 = new SimpleDateFormat("d'rd' MMMM, yyyy");
             else
                 format1 = new SimpleDateFormat("d'th' MMMM, yyyy");
@@ -180,8 +202,7 @@ public class ViewAccountActivity extends BaseActivity implements RippleView
             String yourDate = format1.format(joinDate);
             textJoiningDate.setText(yourDate);
 
-        }
-        else {
+        } else {
             textJoiningDate.setVisibility(View.GONE);
             textLableJoiningDate.setVisibility(View.GONE);
         }

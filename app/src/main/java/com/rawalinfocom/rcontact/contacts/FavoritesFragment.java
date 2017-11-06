@@ -352,8 +352,9 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
                     Utils.callIntent(getActivity(), callNumber);
                 } else {
                     // Permission Denied
-                    showPermissionConfirmationDialog(AppConstants
-                            .MY_PERMISSIONS_REQUEST_PHONE_CALL);
+                   /* showPermissionConfirmationDialog(AppConstants
+                            .MY_PERMISSIONS_REQUEST_PHONE_CALL);*/
+                    Utils.showErrorSnackBar(getActivity(), relativeRootFavourite, getString(R.string.error_call_permission));
                 }
             }
             break;
@@ -457,13 +458,10 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
 
                 } else {
 
-                    if (!actionNumber.startsWith("+91")) {
-                        callNumber = "+91" + actionNumber;
-                    } else {
-                        callNumber = actionNumber;
-                    }
-
-                    showCallConfirmationDialog();
+                    callNumber = Utils.getFormattedNumber(getActivity(), actionNumber);
+//                    Utils.callIntent(getActivity(), callNumber);
+//                    showCallConfirmationDialog();
+                    swipeToCall();
                 }
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -555,9 +553,22 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
         recyclerView.scrollToPosition(scrollPosition);
     }
 
+    private void swipeToCall() {
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest
+                .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission
+                    .CALL_PHONE}, AppConstants
+                    .MY_PERMISSIONS_REQUEST_PHONE_CALL);
+        } else {
+            AppConstants.setIsFirstTime(false);
+            Utils.callIntent(getActivity(), Utils.getFormattedNumber(getActivity
+                    (), callNumber));
+        }
+    }
+
     private void getRcpDetail() {
         TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
-        ArrayList<String> arrayListIds = tableProfileMaster.getAllRcpId();
+        ArrayList<String> arrayListIds = tableProfileMaster.getAllRawIds();
         for (int i = 0; i < arrayListPhoneBookContacts.size(); i++) {
             if (arrayListPhoneBookContacts.get(i) instanceof ProfileData) {
                 if (arrayListIds.contains(((ProfileData) arrayListPhoneBookContacts.get
@@ -673,45 +684,45 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
         getRcpDetail();
     }
 
-    private void showCallConfirmationDialog() {
-
-        RippleView.OnRippleCompleteListener cancelListener = new RippleView
-                .OnRippleCompleteListener() {
-
-            @Override
-            public void onComplete(RippleView rippleView) {
-                switch (rippleView.getId()) {
-                    case R.id.rippleLeft:
-                        callConfirmationDialog.dismissDialog();
-                        break;
-
-                    case R.id.rippleRight:
-                        callConfirmationDialog.dismissDialog();
-                        if (ContextCompat.checkSelfPermission(getActivity(), Manifest
-                                .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                            requestPermissions(new String[]{Manifest.permission
-                                    .CALL_PHONE}, AppConstants
-                                    .MY_PERMISSIONS_REQUEST_PHONE_CALL);
-                        } else {
-                           /* Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
-                                    callNumber));
-                            startActivity(intent);*/
-                            Utils.callIntent(getActivity(), callNumber);
-                        }
-                        break;
-                }
-            }
-        };
-
-        callConfirmationDialog = new MaterialDialog(getActivity(), cancelListener);
-        callConfirmationDialog.setTitleVisibility(View.GONE);
-        callConfirmationDialog.setLeftButtonText(getActivity().getString(R.string.action_cancel));
-        callConfirmationDialog.setRightButtonText(getActivity().getString(R.string.action_call));
-        callConfirmationDialog.setDialogBody(getActivity().getString(R.string.action_call) + " "
-                + callNumber + "?");
-
-        callConfirmationDialog.showDialog();
-    }
+//    private void showCallConfirmationDialog() {
+//
+//        RippleView.OnRippleCompleteListener cancelListener = new RippleView
+//                .OnRippleCompleteListener() {
+//
+//            @Override
+//            public void onComplete(RippleView rippleView) {
+//                switch (rippleView.getId()) {
+//                    case R.id.rippleLeft:
+//                        callConfirmationDialog.dismissDialog();
+//                        break;
+//
+//                    case R.id.rippleRight:
+//                        callConfirmationDialog.dismissDialog();
+//                        if (ContextCompat.checkSelfPermission(getActivity(), Manifest
+//                                .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+//                            requestPermissions(new String[]{Manifest.permission
+//                                    .CALL_PHONE}, AppConstants
+//                                    .MY_PERMISSIONS_REQUEST_PHONE_CALL);
+//                        } else {
+//                           /* Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
+//                                    callNumber));
+//                            startActivity(intent);*/
+//                            Utils.callIntent(getActivity(), callNumber);
+//                        }
+//                        break;
+//                }
+//            }
+//        };
+//
+//        callConfirmationDialog = new MaterialDialog(getActivity(), cancelListener);
+//        callConfirmationDialog.setTitleVisibility(View.GONE);
+//        callConfirmationDialog.setLeftButtonText(getActivity().getString(R.string.action_cancel));
+//        callConfirmationDialog.setRightButtonText(getActivity().getString(R.string.action_call));
+//        callConfirmationDialog.setDialogBody(getActivity().getString(R.string.action_call) + " "
+//                + callNumber + "?");
+//
+//        callConfirmationDialog.showDialog();
+//    }
 
     /*public AllContactListAdapter getAllContactListAdapter() {
         return allContactListAdapter;

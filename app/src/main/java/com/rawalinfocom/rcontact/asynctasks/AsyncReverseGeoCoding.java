@@ -12,6 +12,8 @@ import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.ReverseGeocodingAddress;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -22,16 +24,16 @@ import java.util.List;
 public class AsyncReverseGeoCoding extends AsyncTask<LatLng, Void, Object> {
 
     private final String LOG_TAG = "AsyncReverseGeoCoding";
-    Exception error = null;
+    private Exception error = null;
 
-    Context mContext;
+    private Context mContext;
 
-    WsResponseListener wsResponseListener;
-    boolean showProgress;
+    private WsResponseListener wsResponseListener;
+    private boolean showProgress;
 
-    ReverseGeocodingAddress objAddress;
+    private ReverseGeocodingAddress objAddress;
 
-    String serviceType;
+    private String serviceType;
 
     public AsyncReverseGeoCoding(Context mContext, String serviceType, boolean
             showProgress) {
@@ -84,11 +86,11 @@ public class AsyncReverseGeoCoding extends AsyncTask<LatLng, Void, Object> {
             if (addresses != null && addresses.size() > 0) {
                 Address address = addresses.get(0);
 
-                if (address.getAddressLine(0).length() > 0) {
+                if (StringUtils.length(address.getAddressLine(0)) > 0) {
                     addressText = address.getAddressLine(0);
                 }
 
-                if (address.getLocality().length() > 0) {
+                if (StringUtils.length(address.getLocality()) > 0) {
                     if (addressText.length() > 0) {
                         addressText += ", " + address.getLocality();
                     } else {
@@ -97,7 +99,7 @@ public class AsyncReverseGeoCoding extends AsyncTask<LatLng, Void, Object> {
 
                 }
 
-                if (address.getAdminArea().length() > 0) {
+                if (StringUtils.length(address.getAdminArea()) > 0) {
                     if (addressText.length() > 0) {
                         addressText += ", " + address.getAdminArea();
                     } else {

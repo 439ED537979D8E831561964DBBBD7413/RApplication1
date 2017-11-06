@@ -25,7 +25,7 @@ public class TableEventMaster {
     }
 
     // Table Names
-    static final String TABLE_RC_EVENT_MASTER = "rc_event_master";
+    public static final String TABLE_RC_EVENT_MASTER = "rc_event_master";
 
     // Column Names
     private static final String COLUMN_EVM_ID = "evm_id";
@@ -40,7 +40,7 @@ public class TableEventMaster {
     //    private static final String COLUMN_EVM_CUSTOM_TYPE = "evm_custom_type";
 
     // Table Create Statements
-    static final String CREATE_TABLE_RC_EVENT_MASTER = "CREATE TABLE " + TABLE_RC_EVENT_MASTER +
+    static final String CREATE_TABLE_RC_EVENT_MASTER = "CREATE TABLE IF NOT EXISTS " + TABLE_RC_EVENT_MASTER +
             " (" +
             " " + COLUMN_EVM_ID + " integer NOT NULL CONSTRAINT rc_event_master_pk PRIMARY KEY," +
             " " + COLUMN_EVM_RECORD_INDEX_ID + " text," +
@@ -96,11 +96,22 @@ public class TableEventMaster {
         db.close(); // Closing database connection
     }
 
+    public void deleteData(String RcpPmId) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+        int count = db.delete(TABLE_RC_EVENT_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
+                RcpPmId, null);
+        if (count > 0) System.out.println("RContact data delete ");
+
+        db.close(); // Closing database connection
+    }
+
     // Adding or Updating array Event
     public void addUpdateArrayEvent(ArrayList<Event> arrayListEvent, String RcpPmId) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
 
-        int count = db.delete(TABLE_RC_EVENT_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " + RcpPmId, null);
+        int count = db.delete(TABLE_RC_EVENT_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
+                RcpPmId, null);
         if (count > 0) System.out.println("RContact data delete ");
 
         for (int i = 0; i < arrayListEvent.size(); i++) {

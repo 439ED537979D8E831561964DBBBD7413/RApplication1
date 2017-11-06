@@ -2,10 +2,17 @@ package com.rawalinfocom.rcontact.adapters;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.style.TextAppearanceSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +25,10 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.BaseActivity;
+import com.rawalinfocom.rcontact.MainActivity;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.SearchActivity;
+import com.rawalinfocom.rcontact.calldialer.DialerActivity;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.helper.Utils;
@@ -29,6 +39,9 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -44,12 +57,15 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private Fragment fragment;
     private ArrayList<Object> arrayListUserProfile;
     private ArrayList<String> arrayListContactHeader;
+    private ArrayList<Object> arraylist;
 
     private final int HEADER = 0, CONTACT = 1, FOOTER = 2;
 
     private int previousPosition = 0;
 
     private ArrayList<Integer> mSectionPositions;
+    private int searchCount;
+    private String searchChar;
 
     //<editor-fold desc="Constructor">
     public RContactListAdapter(Fragment fragment, ArrayList<Object> arrayListUserProfile,
@@ -60,6 +76,14 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         this.arrayListContactHeader = arrayListContactHeader;
     }
 
+    public RContactListAdapter(Activity activity, ArrayList<Object> arrayListUserContact) {
+        this.activity = activity;
+        this.arrayListUserProfile = new ArrayList<>();
+        this.arrayListUserProfile.addAll(arrayListUserContact);
+        this.arraylist = new ArrayList<>();
+        this.arraylist.addAll(arrayListUserContact);
+    }
+
     public void updateList(int pos, ArrayList<Object> arrayListUserProfile) {
         this.arrayListUserProfile = arrayListUserProfile;
         notifyItemChanged(pos);
@@ -67,6 +91,15 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     //</editor-fold>
 
     //<editor-fold desc="Override Methods">
+
+
+    public int getSearchCount() {
+        return searchCount;
+    }
+
+    public void setSearchCount(int searchCount) {
+        this.searchCount = searchCount;
+    }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -108,7 +141,8 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public int getItemViewType(int position) {
-        if (position == arrayListUserProfile.size()) {
+        if (position == arrayListUserProfile.size() && !(activity instanceof SearchActivity)
+                && !(activity instanceof DialerActivity)) {
             return FOOTER;
         } else if (arrayListUserProfile.get(position) instanceof UserProfile) {
             return CONTACT;
@@ -118,7 +152,11 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public int getItemCount() {
-        return (arrayListUserProfile.size() + 1);
+        if (!(activity instanceof SearchActivity) && !(activity instanceof DialerActivity)) {
+            return (arrayListUserProfile.size() + 1);
+        }else{
+            return arrayListUserProfile.size();
+        }
     }
 
     /**
@@ -198,6 +236,73 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             holder.textContactNumber.setText(userProfile.getEmailId());
         }
 
+
+        if(!StringUtils.isBlank(searchChar)){
+            Pattern numberPat = Pattern.compile("\\d+");
+            Matcher matcher1 = numberPat.matcher(searchChar);
+            if (matcher1.find() || searchChar.matches("[+][0-9]+")) {
+                int startPos =  holder.textContactNumber.getText().toString().toLowerCase(Locale.US).indexOf(searchChar
+                        .toLowerCase(Locale.US));
+                int endPos = startPos + searchChar.length();
+                if (startPos != -1) {
+                    Spannable spannable = new SpannableString(holder.textContactNumber.getText().toString());
+                    ColorStateList blueColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.RED});
+                    TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.BOLD, -1, blueColor, null);
+                    spannable.setSpan(highlightSpan, startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    holder.textContactNumber.setText(spannable);
+                } else {
+                    holder.textContactNumber.setText(holder.textContactNumber.getText().toString());
+                }
+            }else{
+                if (searchChar.contains(" ")) {
+                    String originalString = holder.textContactName.getText().toString();
+                    String[] separated = searchChar.split(" ");
+                    String firstPart = separated[0];
+                    String secondPart = separated[1];
+                    SpannableStringBuilder builder = new SpannableStringBuilder(originalString);
+                    if (!StringUtils.isBlank(firstPart)) {
+                        int startPos1 = originalString.toLowerCase(Locale.US).indexOf(firstPart
+                                .toLowerCase(Locale.US));
+                        int endPos1 = startPos1 + firstPart.length();
+                        if (startPos1 != -1) {
+                            ColorStateList hightlightColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.RED});
+                            TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, hightlightColor, null);
+                            builder.setSpan(highlightSpan, startPos1, endPos1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        }
+                    }
+
+                    if (!StringUtils.isBlank(secondPart)) {
+                        int startPos2 = originalString.toLowerCase(Locale.US).indexOf(secondPart
+                                .toLowerCase(Locale.US));
+                        int endPos2 = startPos2 + secondPart.length();
+                        if (startPos2 != -1) {
+                            ColorStateList hightlightColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.RED});
+                            TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, hightlightColor, null);
+                            builder.setSpan(highlightSpan, startPos2, endPos2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        }
+                    }
+                    holder.textContactName.setText(builder,TextView.BufferType.SPANNABLE);
+
+                }else{
+
+                    int startPos =  holder.textContactName.getText().toString().toLowerCase(Locale.US).indexOf(searchChar
+                            .toLowerCase(Locale.US));
+                    int endPos = startPos + searchChar.length();
+
+                    if (startPos != -1) {
+                        Spannable spannable = new SpannableString(holder.textContactName.getText().toString());
+                        ColorStateList blueColor =  new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.RED}) ;
+                        TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, blueColor, null);
+                        spannable.setSpan(highlightSpan, startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        holder.textContactName.setText(spannable);
+                    } else {
+                        holder.textContactName.setText(holder.textContactName.getText().toString());
+                    }
+                }
+
+            }
+
+        }
         if (StringUtils.length(userProfile.getPmProfileImage()) > 0) {
             Glide.with(activity)
                     .load(userProfile.getPmProfileImage())
@@ -210,6 +315,17 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         } else {
             holder.imageProfile.setImageResource(R.drawable.home_screen_profile);
         }
+
+        holder.imageProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (StringUtils.length(userProfile.getPmProfileImage()) > 0)
+                    Utils.zoomImageFromThumb(activity, holder.imageProfile, userProfile
+                            .getPmProfileImage(), ((MainActivity) activity).frameImageEnlarge, (
+                            (MainActivity) activity).imageEnlarge, ((MainActivity)
+                            activity).frameContainer);
+            }
+        });
 
         holder.textRatingUserCount.setText(userProfile.getTotalProfileRateUser());
         holder.ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
@@ -239,20 +355,33 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                 bundle.putString(AppConstants.EXTRA_CALL_HISTORY_NUMBER, userProfile
                         .getMobileNumber());
-                Intent intent = new Intent(activity, ProfileDetailActivity.class);
-                intent.putExtras(bundle);
-                fragment.startActivityForResult(intent, AppConstants
-                        .REQUEST_CODE_PROFILE_DETAIL);
-                ((BaseActivity) activity).overridePendingTransition(R.anim.enter, R
-                        .anim.exit);
+                if(fragment!=null){
+                    Intent intent = new Intent(activity, ProfileDetailActivity.class);
+                    intent.putExtras(bundle);
+                    fragment.startActivityForResult(intent, AppConstants
+                            .REQUEST_CODE_PROFILE_DETAIL);
+                    ((BaseActivity) activity).overridePendingTransition(R.anim.enter, R
+                            .anim.exit);
+                }else{
+                    Intent intent = new Intent(activity, ProfileDetailActivity.class);
+                    intent.putExtras(bundle);
+                    activity.startActivityForResult(intent, AppConstants
+                            .REQUEST_CODE_PROFILE_DETAIL);
+                    ((BaseActivity) activity).overridePendingTransition(R.anim.enter, R
+                            .anim.exit);
+                }
+
             }
         });
     }
 
     private void configureFooterViewHolder(ContactFooterViewHolder holder, int position) {
 //        String letter = (String) arrayListUserContact.get(position);
-        holder.textTotalContacts.setText(arrayListUserProfile.size() - arrayListContactHeader
-                .size() + " " + activity.getString(R.string.contacts));
+        if (!(activity instanceof SearchActivity) && !(activity instanceof DialerActivity)){
+            holder.textTotalContacts.setText(arrayListUserProfile.size() - arrayListContactHeader
+                    .size() + " " + activity.getString(R.string.str_count_contacts));
+        }
+
     }
 
     //</editor-fold>
@@ -330,4 +459,109 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
     //</editor-fold>
+
+    // Filter Class
+    public void filter(String charText) {
+        Pattern numberPat = Pattern.compile("\\d+");
+        Matcher matcher1 = numberPat.matcher(charText);
+        if (matcher1.find()) {
+            charText = charText.toLowerCase(Locale.getDefault());
+            charText = charText.trim();
+            arrayListUserProfile.clear();
+            if (charText.length() == 0) {
+                arrayListUserProfile.addAll(arraylist);
+            } else {
+                for (int i = 0; i < arraylist.size(); i++) {
+                    /*if (arraylist.get(i) instanceof ProfileData) {
+                        charText = charText.trim();
+                        ProfileData profileData = (ProfileData) arraylist.get(i);
+                        if (!StringUtils.isEmpty(profileData.getTempNumber())) {
+                            String number = profileData.getTempNumber();
+                            number = number.replace(" ", "").replace("-", "");
+                            if (number.contains(charText)) {
+                                arrayListUserProfile.add(profileData);
+                            }
+                        }
+                    }*/
+                    if (arraylist.get(i) instanceof UserProfile) {
+                        UserProfile profileData = (UserProfile) arraylist.get(i);
+                        String name =  profileData.getMobileNumber();
+                        if (!StringUtils.isEmpty(name)) {
+                            name = name.replace(" ", "").replace("-", "");
+                            if (name.toLowerCase(Locale.getDefault()).contains
+                                    (charText)) {
+                                arrayListUserProfile.add(profileData);
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            charText = charText.toLowerCase(Locale.getDefault());
+            charText = charText.trim();
+            arrayListUserProfile.clear();
+            if (charText.length() == 0) {
+                arrayListUserProfile.addAll(arraylist);
+            } else {
+                for (int i = 0; i < arraylist.size(); i++) {
+                    if (arraylist.get(i) instanceof UserProfile) {
+                        UserProfile profileData = (UserProfile) arraylist.get(i);
+                        String name =  profileData.getPmFirstName() + " " + profileData.getPmFirstName() ;
+                        if (!StringUtils.isEmpty(name)) {
+                            if (name.toLowerCase(Locale.getDefault()).contains
+                                    (charText)) {
+                                arrayListUserProfile.add(profileData);
+                            }else {
+                                if (!StringUtils.isBlank(profileData.getPmFirstName())
+                                        && !StringUtils.isBlank(profileData.getPmLastName())) {
+                                    nameFilter(charText, profileData);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        searchChar = charText;
+        setSearchCount(arrayListUserProfile.size());
+        notifyDataSetChanged();
+    }
+
+    private void nameFilter(String charText, UserProfile profileData) {
+
+        if (charText.contains(" ")) {
+
+            String[] splitString = charText.split("\\s+");
+
+            if (splitString.length == 2) {
+
+                if ((profileData.getPmFirstName().toLowerCase().startsWith(splitString[0])
+                        || profileData.getPmLastName().toLowerCase().startsWith(splitString[0]))
+                        && (profileData.getPmFirstName().toLowerCase().startsWith(splitString[1])
+                        || profileData.getPmLastName().toLowerCase().startsWith(splitString[1]))) {
+                    arrayListUserProfile.add(profileData);
+                }
+
+            } else {
+
+                if ((profileData.getPmFirstName().toLowerCase().startsWith(splitString[0])
+                        || profileData.getPmLastName().toLowerCase().startsWith(splitString[0]))
+                        && (profileData.getPmFirstName().toLowerCase().startsWith(splitString[1])
+                        || profileData.getPmLastName().toLowerCase().startsWith(splitString[1]))) {
+                    arrayListUserProfile.add(profileData);
+                }
+            }
+
+        } else {
+
+            if ((profileData.getPmFirstName().toLowerCase().startsWith(charText)
+                    || profileData.getPmLastName().toLowerCase().startsWith(charText))
+                    && (profileData.getPmFirstName().toLowerCase().startsWith(charText)
+                    || profileData.getPmLastName().toLowerCase().startsWith(charText))) {
+                arrayListUserProfile.add(profileData);
+            }
+        }
+
+    }
+
 }

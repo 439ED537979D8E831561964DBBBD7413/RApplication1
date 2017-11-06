@@ -51,7 +51,7 @@ public class TableProfileMobileMapping {
 
 
     // Table Create Statements
-    static final String CREATE_TABLE_PB_PROFILE_MOBILE_MAPPING = "CREATE TABLE " +
+    static final String CREATE_TABLE_PB_PROFILE_MOBILE_MAPPING = "CREATE TABLE IF NOT EXISTS " +
             TABLE_PB_PROFILE_MOBILE_MAPPING + " (" +
             " " + COLUMN_MPM_ID + " integer NOT NULL CONSTRAINT pb_profile_mobile_mapping_pk " +
             "PRIMARY KEY AUTOINCREMENT," +
@@ -81,49 +81,64 @@ public class TableProfileMobileMapping {
     // Adding array Profile Mobile Mapping
     public void addArrayProfileMobileMapping(ArrayList<ProfileMobileMapping>
                                                      arrayListProfileMobileMapping) {
+
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
 
-//        ContentValues values = new ContentValues();
-        for (int i = 0; i < arrayListProfileMobileMapping.size(); i++) {
-            ContentValues values = new ContentValues();
-            values.put(COLUMN_MPM_ID, arrayListProfileMobileMapping.get(i).getMpmId());
-            values.put(COLUMN_MPM_MOBILE_NUMBER, arrayListProfileMobileMapping.get(i)
-                    .getMpmMobileNumber());
-            values.put(COLUMN_MPM_CLOUD_MNM_ID, arrayListProfileMobileMapping.get(i)
-                    .getMpmCloudMnmId());
-            values.put(COLUMN_MPM_CLOUD_PM_ID, arrayListProfileMobileMapping.get(i)
-                    .getMpmCloudPmId());
-            values.put(COLUMN_MPM_IS_RCP, arrayListProfileMobileMapping.get(i).getMpmIsRcp());
+        try {
 
-            // Inserting Row
-            db.insert(TABLE_PB_PROFILE_MOBILE_MAPPING, null, values);
+//        ContentValues values = new ContentValues();
+            for (int i = 0; i < arrayListProfileMobileMapping.size(); i++) {
+                ContentValues values = new ContentValues();
+                values.put(COLUMN_MPM_ID, arrayListProfileMobileMapping.get(i).getMpmId());
+                values.put(COLUMN_MPM_MOBILE_NUMBER, arrayListProfileMobileMapping.get(i)
+                        .getMpmMobileNumber());
+                values.put(COLUMN_MPM_CLOUD_MNM_ID, arrayListProfileMobileMapping.get(i)
+                        .getMpmCloudMnmId());
+                values.put(COLUMN_MPM_CLOUD_PM_ID, arrayListProfileMobileMapping.get(i)
+                        .getMpmCloudPmId());
+                values.put(COLUMN_MPM_IS_RCP, arrayListProfileMobileMapping.get(i).getMpmIsRcp());
+
+                // Inserting Row
+                db.insert(TABLE_PB_PROFILE_MOBILE_MAPPING, null, values);
+            }
+            db.close(); // Closing database connection
+        } catch (Exception e) {
+            if (db != null && db.isOpen())
+                db.close();
         }
-        db.close(); // Closing database connection
     }
 
     // Getting single Profile Mobile Mapping
     public ProfileMobileMapping getProfileMobileMapping(int mpmId) {
-        SQLiteDatabase db = databaseHandler.getReadableDatabase();
 
-        Cursor cursor = db.query(TABLE_PB_PROFILE_MOBILE_MAPPING, new String[]{COLUMN_MPM_ID,
-                COLUMN_MPM_MOBILE_NUMBER, COLUMN_MPM_CLOUD_MNM_ID, COLUMN_MPM_CLOUD_PM_ID,
-                COLUMN_MPM_IS_RCP}, COLUMN_MPM_ID + "=?", new
-                String[]{String.valueOf(mpmId)}, null, null, null, null);
-        if (cursor != null)
-            cursor.moveToFirst();
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        ProfileMobileMapping profileMobileMapping = null;
 
-        ProfileMobileMapping profileMobileMapping = new ProfileMobileMapping();
-        if (cursor != null) {
-            profileMobileMapping.setMpmId(cursor.getString(0));
-            profileMobileMapping.setMpmMobileNumber(cursor.getString(1));
-            profileMobileMapping.setMpmCloudMnmId(cursor.getString(2));
-            profileMobileMapping.setMpmCloudPmId(cursor.getString(3));
-            profileMobileMapping.setMpmIsRcp(cursor.getString(4));
+        try {
 
-            cursor.close();
+            Cursor cursor = db.query(TABLE_PB_PROFILE_MOBILE_MAPPING, new String[]{COLUMN_MPM_ID,
+                    COLUMN_MPM_MOBILE_NUMBER, COLUMN_MPM_CLOUD_MNM_ID, COLUMN_MPM_CLOUD_PM_ID,
+                    COLUMN_MPM_IS_RCP}, COLUMN_MPM_ID + "=?", new
+                    String[]{String.valueOf(mpmId)}, null, null, null, null);
+            if (cursor != null)
+                cursor.moveToFirst();
+
+            profileMobileMapping = new ProfileMobileMapping();
+            if (cursor != null) {
+                profileMobileMapping.setMpmId(cursor.getString(0));
+                profileMobileMapping.setMpmMobileNumber(cursor.getString(1));
+                profileMobileMapping.setMpmCloudMnmId(cursor.getString(2));
+                profileMobileMapping.setMpmCloudPmId(cursor.getString(3));
+                profileMobileMapping.setMpmIsRcp(cursor.getString(4));
+
+                cursor.close();
+            }
+
+            db.close();
+        } catch (Exception e) {
+            if (db != null && db.isOpen())
+                db.close();
         }
-
-        db.close();
 
         // return Profile Mobile Mapping
         return profileMobileMapping;
@@ -134,32 +149,37 @@ public class TableProfileMobileMapping {
                                                                                      mobileNumbers) {
 
         ArrayList<ProfileMobileMapping> arrayListProfileMapping = new ArrayList<>();
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
 
-        SQLiteDatabase db = databaseHandler.getReadableDatabase();
+        try {
 
-        String query = "SELECT " + COLUMN_MPM_MOBILE_NUMBER + ", " + COLUMN_MPM_CLOUD_PM_ID + " " +
-                "FROM " + TABLE_PB_PROFILE_MOBILE_MAPPING + " where " + COLUMN_MPM_IS_RCP + " = 1" +
-                " and " + COLUMN_MPM_MOBILE_NUMBER + " IN (" + makePlaceholders(mobileNumbers
-                .length) + ")";
+            String query = "SELECT " + COLUMN_MPM_MOBILE_NUMBER + ", " + COLUMN_MPM_CLOUD_PM_ID + " " +
+                    "FROM " + TABLE_PB_PROFILE_MOBILE_MAPPING + " where " + COLUMN_MPM_IS_RCP + " = 1" +
+                    " and " + COLUMN_MPM_MOBILE_NUMBER + " IN (" + makePlaceholders(mobileNumbers
+                    .length) + ")";
 
-        Cursor cursor = db.rawQuery(query, mobileNumbers);
+            Cursor cursor = db.rawQuery(query, mobileNumbers);
 
-        // looping through all rows and adding to list
-        if (cursor.moveToFirst()) {
-            do {
-                ProfileMobileMapping profileMobileMapping = new ProfileMobileMapping();
-                profileMobileMapping.setMpmMobileNumber(cursor.getString(0));
-                profileMobileMapping.setMpmCloudPmId(cursor.getString(1));
+            // looping through all rows and adding to list
+            if (cursor.moveToFirst()) {
+                do {
+                    ProfileMobileMapping profileMobileMapping = new ProfileMobileMapping();
+                    profileMobileMapping.setMpmMobileNumber(cursor.getString(0));
+                    profileMobileMapping.setMpmCloudPmId(cursor.getString(1));
 
-                // Adding profileMapping to list
-                arrayListProfileMapping.add(profileMobileMapping);
-            } while (cursor.moveToNext());
+                    // Adding profileMapping to list
+                    arrayListProfileMapping.add(profileMobileMapping);
+                } while (cursor.moveToNext());
 
-            cursor.close();
+                cursor.close();
 
+            }
+
+            db.close();
+        } catch (Exception e) {
+            if (db != null && db.isOpen())
+                db.close();
         }
-
-        db.close();
 
         // return profileMapping list
         return arrayListProfileMapping;
@@ -199,11 +219,8 @@ public class TableProfileMobileMapping {
     public ProfileMobileMapping getCloudPmIdFromProfileMappingFromNumber(String mobileNumber) {
 
         ProfileMobileMapping profileMobileMapping = new ProfileMobileMapping();
-
+        SQLiteDatabase db = databaseHandler.getReadableDatabase();
         try {
-
-            String cloudPmId = "";
-            SQLiteDatabase db = databaseHandler.getReadableDatabase();
 
             String query = "SELECT " + COLUMN_MPM_CLOUD_PM_ID +
                     " FROM " + TABLE_PB_PROFILE_MOBILE_MAPPING + " where " +
@@ -221,8 +238,12 @@ public class TableProfileMobileMapping {
             cursor.close();
             db.close();
 
+
         } catch (Exception e) {
             e.printStackTrace();
+            if (db != null && db.isOpen()) {
+                db.close();
+            }
         }
         return profileMobileMapping;
     }
@@ -261,6 +282,7 @@ public class TableProfileMobileMapping {
     }
 
     // Getting single Profile Mobile Mapping from MobileNumber
+
     public boolean getIsMobileNumberExists(String mobileNumber) {
 
         SQLiteDatabase db = databaseHandler.getReadableDatabase();
@@ -382,7 +404,7 @@ public class TableProfileMobileMapping {
                     TABLE_PB_PROFILE_MOBILE_MAPPING + "." + COLUMN_MPM_CLOUD_PM_ID + " LEFT JOIN " +
                     TABLE_PB_PROFILE_EMAIL_MAPPING + " ON " + TABLE_RC_PROFILE_MASTER + "." +
                     COLUMN_PM_RCP_ID + " = " + TABLE_PB_PROFILE_EMAIL_MAPPING + "." +
-                    COLUMN_EPM_CLOUD_PM_ID + " WHERE " + "length("+COLUMN_PM_RAW_ID+")>0" +" AND " +TABLE_PB_PROFILE_MOBILE_MAPPING + "." +
+                    COLUMN_EPM_CLOUD_PM_ID + " WHERE " + "length(" + COLUMN_PM_RAW_ID + ")>0" + " AND " + TABLE_PB_PROFILE_MOBILE_MAPPING + "." +
                     COLUMN_MPM_IS_RCP + " = 1 OR " + TABLE_PB_PROFILE_EMAIL_MAPPING + "." +
                     COLUMN_EPM_IS_RCP + " = 1 ORDER BY UPPER(" + TABLE_RC_PROFILE_MASTER + "." +
                     COLUMN_PM_FIRST_NAME + ")";

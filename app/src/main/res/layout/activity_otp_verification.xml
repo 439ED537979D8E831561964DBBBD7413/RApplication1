@@ -25,7 +25,7 @@
         android:gravity="center"
         android:text="@string/title_verifying_mobile_number"
         android:textColor="@color/colorVeryDarkGrayishBlue1"
-        android:textSize="16sp" />
+        android:textSize="@dimen/text_size_18sp" />
 
     <TextView
         android:id="@+id/text_enter_otp"
@@ -70,9 +70,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/linear_country_number"
-            android:background="@color/colorAccent"
+            android:background="@drawable/background_rounded_corner"
             android:text="@string/action_submit"
-            android:textColor="@color/colorWhite" />
+            android:textColor="@color/colorWhite"
+            tools:backgroundTint="@color/colorAccent" />
 
     </com.rawalinfocom.rcontact.helper.RippleView>
 
@@ -92,9 +93,10 @@
             android:id="@+id/button_resend"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/vividRed"
+            android:background="@drawable/background_rounded_corner"
             android:text="@string/action_resend"
-            android:textColor="@color/colorWhite" />
+            android:textColor="@color/colorWhite"
+            tools:backgroundTint="@color/vividRed" />
 
     </com.rawalinfocom.rcontact.helper.RippleView>
 

@@ -28,11 +28,9 @@ public class OtpReceiver extends BroadcastReceiver {
                     String senderAddress = currentMessage.getDisplayOriginatingAddress();
                     String message = currentMessage.getDisplayMessageBody();
 
-//                    Log.i("MAULIK", "senderAddress" + senderAddress);
-//                    Log.i("MAULIK", "message" + message);
-
                     // if the SMS is not from our gateway, ignore the message
-                    if (!senderAddress.toLowerCase().contains(AppConstants.SMS_ORIGIN.toLowerCase())) {
+                    if (!senderAddress.toLowerCase().contains(AppConstants.SMS_ORIGIN.toLowerCase
+                            ())) {
                         return;
                     }
 
@@ -55,11 +53,9 @@ public class OtpReceiver extends BroadcastReceiver {
         int index = message.indexOf(AppConstants.OTP_DELIMITER);
 
         if (index != -1) {
-//            Log.i("MAULIK", "index" + index);
             int start = index + 4;
             int length = 6;
             code = message.substring(start, start + length);
-//            Log.i("MAULIK", "code" + code);
             return code;
         }
 

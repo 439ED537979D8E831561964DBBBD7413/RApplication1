@@ -2,6 +2,7 @@ package com.rawalinfocom.rcontact.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -14,6 +15,8 @@ import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.CallLogType;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -53,7 +56,17 @@ public class CallHistoryListAdapter extends RecyclerView.Adapter<CallHistoryList
         CallLogType callLogType = listCallHistory.get(position);
         String number = callLogType.getHistoryNumber();
         if (!TextUtils.isEmpty(number)) {
-            holder.textHistoryNumber.setText(Utils.getFormattedNumber(context,number));
+            if (StringUtils.equalsIgnoreCase(callLogType.getIsHistoryRcpVerifiedId(), "0")) {
+                holder.textHistoryNumber.setTextColor(ContextCompat.getColor(context, R.color
+                        .textColorBlue));
+            } else if (StringUtils.equalsIgnoreCase(callLogType.getIsHistoryRcpVerifiedId(), "1")) {
+                holder.textHistoryNumber.setTextColor(ContextCompat.getColor(context, R.color
+                        .colorAccent));
+            } else {
+                holder.textHistoryNumber.setTextColor(ContextCompat.getColor(context, R.color
+                        .colorTextHeader));
+            }
+            holder.textHistoryNumber.setText(Utils.getFormattedNumber(context, number));
         }
 
         String numberType = callLogType.getHistoryNumberType();
@@ -62,9 +75,11 @@ public class CallHistoryListAdapter extends RecyclerView.Adapter<CallHistoryList
                     "");
         }
 
+
         long logDate1 = callLogType.getHistoryDate();
         Date date1 = new Date(logDate1);
         String logDate = new SimpleDateFormat("yyyy-MM-dd").format(date1);
+
 
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -1);
@@ -76,7 +91,7 @@ public class CallHistoryListAdapter extends RecyclerView.Adapter<CallHistoryList
         Date cDate = c.getTime();
         String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(cDate);
 
-        String finalDate;
+        String finalDate = "";
         if (logDate.equalsIgnoreCase(currentDate)) {
             finalDate = context.getString(R.string.str_today);
         } else if (logDate.equalsIgnoreCase(yesterdayDate)) {
@@ -105,8 +120,23 @@ public class CallHistoryListAdapter extends RecyclerView.Adapter<CallHistoryList
             }
         }
 
-        String duration = callLogType.getHistroyCoolDuration();
-        holder.textHistoryDurationValue.setText(duration);
+        /*if(!StringUtils.isEmpty(callLogType.getHistroyCoolDuration())){
+            String duration = callLogType.getHistroyCoolDuration();
+            holder.textHistoryDurationValue.setText(duration);
+        }else{
+            if(!StringUtils.isEmpty(callLogType.getWebDuration())){
+                String duration = callLogType.getWebDuration();
+                holder.textHistoryDurationValue.setText(duration);
+            }
+        }*/
+
+        if (!StringUtils.isEmpty(callLogType.getWebDuration())) {
+            String duration = callLogType.getWebDuration();
+            holder.textHistoryDurationValue.setText(duration);
+        } else {
+            String duration = callLogType.getHistroyCoolDuration();
+            holder.textHistoryDurationValue.setText(duration);
+        }
 
         Date historyDate = new Date(callLogType.getHistoryDate());
         String callTime = new SimpleDateFormat("hh:mm a").format(historyDate);
@@ -144,6 +174,13 @@ public class CallHistoryListAdapter extends RecyclerView.Adapter<CallHistoryList
         MyViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, itemView);
+
+            textHistoryNumber.setTypeface(Utils.typefaceRegular(context));
+            textHistoryCallType.setTypeface(Utils.typefaceRegular(context));
+            textHistoryDate.setTypeface(Utils.typefaceRegular(context));
+            textDuration.setTypeface(Utils.typefaceRegular(context));
+            textHistoryDurationValue.setTypeface(Utils.typefaceRegular(context));
+            textHistoryCallTime.setTypeface(Utils.typefaceRegular(context));
 
         }
     }

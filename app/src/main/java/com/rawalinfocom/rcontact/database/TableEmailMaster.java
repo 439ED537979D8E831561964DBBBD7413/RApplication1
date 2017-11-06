@@ -25,11 +25,13 @@ public class TableEmailMaster {
 
     // Table Names
     static final String TABLE_RC_EMAIL_MASTER = "rc_email_master";
+    static final String TABLE_RC_EMAIL_MASTER_TEMP = "rc_email_master_temp";
 
     // Column Names
     private static final String COLUMN_EM_ID = "em_id";
     static final String COLUMN_EM_EMAIL_ADDRESS = "em_email_address";
     static final String COLUMN_EM_EMAIL_TYPE = "em_email_type";
+    static final String COLUMN_EM_SOCIAL_TYPE = "em_social_type";
     static final String COLUMN_EM_RECORD_INDEX_ID = "em_record_index_id";
     static final String COLUMN_EM_EMAIL_PRIVACY = "em_email_privacy";
     static final String COLUMN_EM_IS_PRIVATE = "em_is_private";
@@ -42,17 +44,33 @@ public class TableEmailMaster {
     //    private static final String COLUMN_EM_IS_DEFAULT = "em_is_default";
 
     // Table Create Statements
-    static final String CREATE_TABLE_RC_EMAIL_MASTER = "CREATE TABLE " +
+    static final String CREATE_TABLE_RC_EMAIL_MASTER = "CREATE TABLE IF NOT EXISTS " +
             TABLE_RC_EMAIL_MASTER + " (" +
             " " + COLUMN_EM_ID + " integer NOT NULL CONSTRAINT rc_email_master_pk PRIMARY KEY," +
             " " + COLUMN_EM_EMAIL_ADDRESS + " text NOT NULL," +
             " " + COLUMN_EM_EMAIL_TYPE + " text," +
+            /*" " + COLUMN_EM_SOCIAL_TYPE + " text," +*/
             " " + COLUMN_EM_RECORD_INDEX_ID + " text," +
             " " + COLUMN_EM_EMAIL_PRIVACY + " integer DEFAULT 2," +
             " " + COLUMN_EM_IS_VERIFIED + " integer," +
             " " + COLUMN_EM_IS_PRIVATE + " integer," +
             " " + COLUMN_RC_PROFILE_MASTER_PM_ID + " integer," +
             " UNIQUE(" + COLUMN_EM_EMAIL_ADDRESS + ", " + COLUMN_RC_PROFILE_MASTER_PM_ID + ")" +
+            ");";
+
+    // Table Create Statements
+    static final String CREATE_TABLE_RC_EMAIL_MASTER_1 = "CREATE TABLE IF NOT EXISTS " +
+            TABLE_RC_EMAIL_MASTER_TEMP + " (" +
+            " " + COLUMN_EM_ID + " integer NOT NULL CONSTRAINT rc_email_master_pk PRIMARY KEY," +
+            " " + COLUMN_EM_EMAIL_ADDRESS + " text NOT NULL," +
+            " " + COLUMN_EM_EMAIL_TYPE + " text," +
+            " " + COLUMN_EM_SOCIAL_TYPE + " text," +
+            " " + COLUMN_EM_RECORD_INDEX_ID + " text," +
+            " " + COLUMN_EM_EMAIL_PRIVACY + " integer DEFAULT 2," +
+            " " + COLUMN_EM_IS_VERIFIED + " integer," +
+            " " + COLUMN_EM_IS_PRIVATE + " integer," +
+            " " + COLUMN_RC_PROFILE_MASTER_PM_ID + " integer," +
+            " UNIQUE(" + COLUMN_EM_RECORD_INDEX_ID + ", " + COLUMN_RC_PROFILE_MASTER_PM_ID + ")" +
             ");";
 
     // Adding new Email
@@ -84,6 +102,7 @@ public class TableEmailMaster {
             ContentValues values = new ContentValues();
             values.put(COLUMN_EM_ID, arrayListEmail.get(i).getEmId());
             values.put(COLUMN_EM_EMAIL_ADDRESS, arrayListEmail.get(i).getEmEmailAddress());
+            values.put(COLUMN_EM_SOCIAL_TYPE, arrayListEmail.get(i).getEmSocialType());
             values.put(COLUMN_EM_EMAIL_TYPE, arrayListEmail.get(i).getEmEmailType());
             values.put(COLUMN_EM_RECORD_INDEX_ID, arrayListEmail.get(i).getEmRecordIndexId());
             values.put(COLUMN_EM_EMAIL_PRIVACY, arrayListEmail.get(i).getEmEmailPrivacy());
@@ -98,6 +117,16 @@ public class TableEmailMaster {
         db.close(); // Closing database connection
     }
 
+    public void deleteData(String RcpPmId) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+        int count = db.delete(TABLE_RC_EMAIL_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
+                RcpPmId, null);
+        if (count > 0) System.out.println("RContact data delete ");
+
+        db.close(); // Closing database connection
+    }
+
     // Adding or Updating array Email
     public void addUpdateArrayEmail(ArrayList<Email> arrayListEmail, String RcpPmId) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
@@ -106,12 +135,14 @@ public class TableEmailMaster {
                 RcpPmId, null);
         if (count > 0) System.out.println("RContact data delete ");
 
+
 //        ContentValues values = new ContentValues();
         for (int i = 0; i < arrayListEmail.size(); i++) {
             ContentValues values = new ContentValues();
 
             values.put(COLUMN_EM_ID, arrayListEmail.get(i).getEmId());
             values.put(COLUMN_EM_EMAIL_ADDRESS, arrayListEmail.get(i).getEmEmailAddress());
+            values.put(COLUMN_EM_SOCIAL_TYPE, arrayListEmail.get(i).getEmSocialType());
             values.put(COLUMN_EM_EMAIL_TYPE, arrayListEmail.get(i).getEmEmailType());
             values.put(COLUMN_EM_RECORD_INDEX_ID, arrayListEmail.get(i).getEmRecordIndexId());
             values.put(COLUMN_EM_EMAIL_PRIVACY, arrayListEmail.get(i).getEmEmailPrivacy());
@@ -227,6 +258,7 @@ public class TableEmailMaster {
         String selectQuery = "SELECT DISTINCT " +
                 COLUMN_EM_EMAIL_ADDRESS + ", " +
                 COLUMN_EM_EMAIL_TYPE + ", " +
+                COLUMN_EM_SOCIAL_TYPE + ", " +
                 COLUMN_EM_RECORD_INDEX_ID + ", " +
                 COLUMN_EM_EMAIL_PRIVACY + ", " +
                 COLUMN_EM_IS_VERIFIED + ", " +
@@ -244,6 +276,7 @@ public class TableEmailMaster {
                 email.setEmEmailAddress(cursor.getString(cursor.getColumnIndex
                         (COLUMN_EM_EMAIL_ADDRESS)));
                 email.setEmEmailType(cursor.getString(cursor.getColumnIndex(COLUMN_EM_EMAIL_TYPE)));
+                email.setEmSocialType(cursor.getString(cursor.getColumnIndex(COLUMN_EM_SOCIAL_TYPE)));
                 email.setEmRecordIndexId(cursor.getString(cursor.getColumnIndex
                         (COLUMN_EM_RECORD_INDEX_ID)));
                 email.setEmEmailPrivacy(cursor.getString(cursor.getColumnIndex
