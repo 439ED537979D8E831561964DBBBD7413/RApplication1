@@ -2022,6 +2022,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
         }, 2000);*/
 
+        descriptionLayoutParam.topMargin = (int) (Utils.getDeviceHeight(ProfileDetailActivity.this) / 2.5);
+
         textTapContinue.setText("TAP ON THE EDIT ICON");
 
         TextView textHeader = new TextView(this);
@@ -2044,9 +2046,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         imageTutorialEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                startActivityIntent(ProfileDetailActivity.this, EditProfileActivity.class, null);
             }
-        });startActivityIntent(ProfileDetailActivity.this, EditProfileActivity.class, null);
+        });
 
         frameTutorial.addView(linearDescription);
     }

@@ -507,6 +507,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             }
         }, 2000);*/
 
+        descriptionLayoutParam.topMargin = (int) (Utils.getDeviceHeight(EditProfileActivity.this)
+                / 2.5);
+
         textTapContinue.setText("TAP ANYWHERE AND GET STARTED");
 
         TextView textHeader = new TextView(this);

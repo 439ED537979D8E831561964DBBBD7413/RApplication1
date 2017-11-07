@@ -161,11 +161,13 @@ public class ContactsFragment extends BaseFragment {
             public void run() {
                 layoutParamsLinear.topMargin = ((MainActivity) getActivity()).toolbar.getHeight()
                         + ((MainActivity) getActivity()).tabMain.getHeight();
-                descriptionLayoutParam.topMargin = ((MainActivity) getActivity()).toolbar
+                /*descriptionLayoutParam.topMargin = ((MainActivity) getActivity()).toolbar
                         .getHeight() + ((MainActivity) getActivity()).tabMain.getHeight() + (int)
-                        getResources().getDimension(R.dimen.nav_header_height);
+                        getResources().getDimension(R.dimen.nav_header_height);*/
             }
         }, 500);
+
+        descriptionLayoutParam.topMargin = (int) (Utils.getDeviceHeight(getActivity()) / 2.5);
 
         ((MainActivity) getActivity()).textTapContinue.setText(arrayListTapContinue[0]);
 
