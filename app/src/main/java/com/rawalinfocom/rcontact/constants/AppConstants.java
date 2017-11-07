@@ -47,6 +47,7 @@ public class AppConstants {
 
     // <editor-fold desc="Pinterest Section">
     public static String appID = "4932442687895776973";
+    public static String KEY_PINTEREST_LOIN_PREFERENCES = "key_pinterest_loin_preferences";
     //</editor-fold>
 
     //<editor-fold desc="App Specific final constants">

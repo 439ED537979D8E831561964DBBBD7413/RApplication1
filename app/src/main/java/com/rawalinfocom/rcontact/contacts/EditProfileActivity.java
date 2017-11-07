@@ -5,11 +5,8 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
@@ -104,12 +101,12 @@ import com.rawalinfocom.rcontact.helper.imgcrop.CropImageView;
 import com.rawalinfocom.rcontact.helper.instagram.Instagram;
 import com.rawalinfocom.rcontact.helper.instagram.InstagramSession;
 import com.rawalinfocom.rcontact.helper.instagram.InstagramUser;
-import com.rawalinfocom.rcontact.helper.instagram.util.StringUtil;
 import com.rawalinfocom.rcontact.helper.pinterest.PDKCallback;
 import com.rawalinfocom.rcontact.helper.pinterest.PDKClient;
 import com.rawalinfocom.rcontact.helper.pinterest.PDKException;
 import com.rawalinfocom.rcontact.helper.pinterest.PDKResponse;
 import com.rawalinfocom.rcontact.helper.pinterest.PDKUser;
+import com.rawalinfocom.rcontact.helper.pinterest.PinterestTempActivity;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.Address;
 import com.rawalinfocom.rcontact.model.Country;
@@ -132,17 +129,6 @@ import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.Website;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
-import com.rawalinfocom.rcontact.relation.RContactsListActivity;
-import com.twitter.sdk.android.core.Callback;
-import com.twitter.sdk.android.core.Result;
-import com.twitter.sdk.android.core.Twitter;
-import com.twitter.sdk.android.core.TwitterAuthToken;
-import com.twitter.sdk.android.core.TwitterCore;
-import com.twitter.sdk.android.core.TwitterException;
-import com.twitter.sdk.android.core.TwitterSession;
-import com.twitter.sdk.android.core.identity.TwitterAuthClient;
-import com.twitter.sdk.android.core.identity.TwitterLoginButton;
-import com.twitter.sdk.android.core.models.User;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
@@ -413,6 +399,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     // Social Login
     private final int RC_SIGN_IN = 7;
     private final int RC_LINKEDIN_SIGN_IN = 8;
+    private final int RC_PINTEREST_SIGN_IN = 9;
 
     // Google API Client
     private GoogleApiClient googleApiClient;
@@ -439,10 +426,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     private Dialog auth_dialog;
     private WebView web;
     private ProgressDialog progress;
-
-    // Pinterest
-    private PDKClient pdkClient;
     // End
+
     private ArrayList<String> socialTypeList;
     private SocialConnectListAdapter socialConnectListAdapter;
     private String socialId = "";
@@ -469,12 +454,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         mInstagram = new Instagram(this, AppConstants.CLIENT_ID, AppConstants.CLIENT_SECRET,
                 AppConstants.REDIRECT_URI);
         mInstagramSession = mInstagram.getSession();
-        // Call configureInstance() method with context and App Id
-        pdkClient = PDKClient.configureInstance(this, AppConstants.appID);
-
-        // Call onConnect() method to make link between App id and Pinterest SDK
-        pdkClient.onConnect(this);
-        pdkClient.setDebugMode(true);
 
         twitter = new TwitterFactory().getInstance();
         twitter.setOAuthConsumer(AppConstants.CONSUMER_KEY, AppConstants.CONSUMER_SECRET);
@@ -711,11 +690,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 callbackManager.onActivityResult(requestCode, resultCode, data);
         }
 
-        if (IntegerConstants.REGISTRATION_VIA == IntegerConstants.REGISTRATION_VIA_PINTEREST) {
-//            // Twitter Callback
-            pdkClient.onOauthResponse(requestCode, resultCode, data);
-        }
-
+//        if (IntegerConstants.REGISTRATION_VIA == IntegerConstants.REGISTRATION_VIA_PINTEREST) {
+////            // Twitter Callback
+//            pdkClient.onOauthResponse(requestCode, resultCode, data);
+//        }
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         //<editor-fold desc="Sign In">
@@ -795,6 +773,20 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             }
         }
         //</editor-fold>
+
+        //<editor-fold desc="Linked In">
+        if (resultCode == RESULT_OK && requestCode == RC_PINTEREST_SIGN_IN) {
+
+            if (data != null) {
+                if (data.getStringExtra("isBack").equalsIgnoreCase("0")) {
+                    getUserDetails(data.getStringExtra("socialId"));
+                } else {
+                    Utils.showErrorSnackBar(this, relativeRootEditProfile, "Login cancelled!");
+                }
+            } else {
+                Utils.showErrorSnackBar(this, relativeRootEditProfile, "Login cancelled!");
+            }
+        }
 
         //<editor-fold desc="Organization">
         if (resultCode == RESULT_OK && requestCode == 201) {
@@ -1233,6 +1225,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
     private class AccessTokenGet extends AsyncTask<String, String, Boolean> {
 
+        twitter4j.User user;
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -1249,6 +1243,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
             try {
                 accessToken = twitter.getOAuthAccessToken(requestToken, oauth_verifier);
+                user = twitter.showUser(accessToken.getUserId());
             } catch (twitter4j.TwitterException e) {
                 e.printStackTrace();
             }
@@ -1259,88 +1254,51 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         protected void onPostExecute(Boolean response) {
 
             progress.hide();
-            try {
-                if (response) {
-                    twitter4j.User user = twitter.showUser(accessToken.getUserId());
+            if (response) {
 
-                    if (user != null) {
+                if (user != null) {
 
-                        socialId = user.getScreenName();
-                        isAdd = true;
+                    socialId = user.getScreenName();
+                    isAdd = true;
 
-                        ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
-                        imAccount.setIMAccountProtocol("Twitter");
+                    ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
+                    imAccount.setIMAccountProtocol("Twitter");
 
-                        String[] temp = user.getName().split("\\ ");
-                        if (temp.length > 1) {
-                            imAccount.setIMAccountFirstName(temp[1]);
-                            imAccount.setIMAccountLastName(temp[0]);
-                        } else {
-                            imAccount.setIMAccountFirstName(user.getName());
-                            imAccount.setIMAccountLastName("");
-                        }
-
-                        imAccount.setIMAccountPublic(IntegerConstants.PRIVACY_MY_CONTACT);
-                        imAccount.setIMAccountProfileImage(String.valueOf(user.getOriginalProfileImageURL()));
-                        imAccount.setIMAccountDetails(socialId);
-                        arrayListSocialContactObject.add(imAccount);
-
-                        socialTypeList.remove("Twitter");
-
-                        addSocialConnectView(arrayListSocialContactObject.get
-                                (arrayListSocialContactObject.size() - 1), "");
+                    String[] temp = user.getName().split("\\ ");
+                    if (temp.length > 1) {
+                        imAccount.setIMAccountFirstName(temp[1]);
+                        imAccount.setIMAccountLastName(temp[0]);
+                    } else {
+                        imAccount.setIMAccountFirstName(user.getName());
+                        imAccount.setIMAccountLastName("");
                     }
-                }
-            } catch (twitter4j.TwitterException e) {
 
-                e.printStackTrace();
+                    imAccount.setIMAccountPublic(IntegerConstants.PRIVACY_MY_CONTACT);
+                    imAccount.setIMAccountProfileImage(String.valueOf(user.getOriginalProfileImageURL()));
+                    imAccount.setIMAccountDetails(socialId);
+                    arrayListSocialContactObject.add(imAccount);
+
+                    socialTypeList.remove("Twitter");
+
+                    addSocialConnectView(arrayListSocialContactObject.get
+                            (arrayListSocialContactObject.size() - 1), "");
+                }
             }
         }
     }
 
     private void pinterestLogin() {
 
-        List scopes = new ArrayList<String>();
-        scopes.add(PDKClient.PDKCLIENT_PERMISSION_READ_PUBLIC);
-        scopes.add(PDKClient.PDKCLIENT_PERMISSION_WRITE_PUBLIC);
-        scopes.add(PDKClient.PDKCLIENT_PERMISSION_READ_RELATIONSHIPS);
-        scopes.add(PDKClient.PDKCLIENT_PERMISSION_WRITE_RELATIONSHIPS);
-        scopes.add(PDKClient.PDKCLIENT_PERMISSION_READ_PRIVATE);
-        scopes.add(PDKClient.PDKCLIENT_PERMISSION_WRITE_PRIVATE);
+        Utils.setStringPreference(EditProfileActivity.this,
+                AppConstants.KEY_PINTEREST_LOIN_PREFERENCES, "0");
 
-        pdkClient.login(this, scopes, new PDKCallback() {
-
-            /**
-             * It called, when Authentication success
-             * @param response
-             */
-            @Override
-            public void onSuccess(PDKResponse response) {
-
-                Log.e(getClass().getName(), response.getData().toString());
-
-                try {
-                    getUserDetails(new JSONObject(response.getData().toString()));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            /**
-             * It called, when Authentication failed
-             * @param exception
-             */
-            @Override
-            public void onFailure(PDKException exception) {
-                Log.e(getClass().getName(), exception.getDetailMessage());
-            }
-        });
+        Intent intent = new Intent(EditProfileActivity.this, PinterestTempActivity.class);
+        startActivityForResult(intent, RC_PINTEREST_SIGN_IN);// Activity is started with requestCode
     }
-
 
     private final String USER_FIELDS = "id,image,counts,created_at,first_name,last_name,bio";
 
-    private void getUserDetails(final JSONObject jsonObject) {
+    private void getUserDetails(final String socialId) {
 
         PDKClient.getInstance().getMe(USER_FIELDS, new PDKCallback() {
 
@@ -1354,7 +1312,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                 if (user != null) {
 
-                    socialId = jsonObject.optString("url");
                     isAdd = true;
 
                     ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
@@ -1371,8 +1328,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                     addSocialConnectView(arrayListSocialContactObject.get
                             (arrayListSocialContactObject.size() - 1), "");
-
-                    relativeSocialConnect.performClick();
                 }
             }
 
@@ -1943,11 +1898,14 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         pinterestLogin();
                     }
 
-                } else if (socialName.equalsIgnoreCase("Custom") || socialName.equalsIgnoreCase
-                        ("કસ્ટમ")
-                        || socialName.equalsIgnoreCase("कस्टम")) {
-                    showCustomTypeDialogForSocial();
-                } else {
+                }
+
+//                else if (socialName.equalsIgnoreCase("Custom") || socialName.equalsIgnoreCase
+//                        ("કસ્ટમ")
+//                        || socialName.equalsIgnoreCase("कस्टम")) {
+//                    showCustomTypeDialogForSocial();
+//                }
+                else {
                     addSocialConnectView(null, socialName);
                 }
             }
@@ -3589,6 +3547,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             if (arrayListImAccount.get(i).getImImProtocol().equalsIgnoreCase("Facebook")
                     || arrayListImAccount.get(i).getImImProtocol().equalsIgnoreCase("GooglePlus")
                     || arrayListImAccount.get(i).getImImProtocol().equalsIgnoreCase("Instagram")
+                    || arrayListImAccount.get(i).getImImProtocol().equalsIgnoreCase("Pinterest")
                     || arrayListImAccount.get(i).getImImProtocol().equalsIgnoreCase("LinkedIn")) {
                 socialTypeList.remove(arrayListImAccount.get(i).getImImProtocol());
             }

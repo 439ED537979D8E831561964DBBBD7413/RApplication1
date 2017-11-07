@@ -719,7 +719,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                             url = "http://instagram.com/_u/" + imAccount.getIMAccountDetails();
                         } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
                                 ("pinterest")) {
-                            url = "https://www.in.pinterest.com/" + imAccount.getIMAccountDetails();
+                            url = imAccount.getIMAccountDetails();
                         } else if (StringUtils.lowerCase(imAccount.getIMAccountDetails()).startsWith("https://")
                                 || StringUtils.lowerCase(imAccount.getIMAccountDetails()).startsWith("http://")
                                 || StringUtils.lowerCase(imAccount.getIMAccountDetails()).startsWith("www.")) {
