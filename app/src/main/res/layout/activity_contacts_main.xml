@@ -46,6 +46,7 @@
                 </LinearLayout>
 
             </android.support.v4.widget.NestedScrollView>
+
         </android.support.design.widget.NavigationView>
 
         <!--<FrameLayout
@@ -156,14 +157,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/include_toolbar"
-        android:layout_marginTop="@dimen/padding_around_content_area"
         android:background="@drawable/background_walk_through"
         android:clickable="true"
         android:focusable="true">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding_around_content_area">
 
             <LinearLayout
                 android:id="@+id/linear_action_right"
@@ -251,6 +252,104 @@
             android:padding="@dimen/activity_horizontal_margin"
             android:textColor="@color/dialogButtonTextColor"
             tools:text="Tap to continue"/>
+
+        <LinearLayout
+            android:id="@+id/tutorial_user_profile"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/nav_header_height"
+            android:background="#EFEFEF"
+            android:gravity="center|bottom"
+            android:orientation="horizontal"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <LinearLayout
+                android:id="@+id/main_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/tutorial_profile_image"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/app_name"
+                    android:src="@mipmap/ic_launcher"/>
+
+                <LinearLayout
+                    android:id="@+id/tutorial_user_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="10dp"
+                    android:orientation="vertical"
+                    android:paddingEnd="@dimen/margin_tiny">
+
+
+                    <TextView
+                        android:id="@+id/tutorial_user_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:singleLine="true"
+                        android:text=""
+                        android:textColor="@color/colorAccent"
+                        android:textSize="@dimen/text_size_16sp"/>
+
+                    <TextView
+                        android:id="@+id/tutorial_number"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textColor="@color/colorAccent"
+                        android:textSize="@dimen/text_size_14sp"/>
+
+                    <LinearLayout
+                        android:id="@+id/tutorial_user_rating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tutorial_rating_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:textColor="@color/colorAccent"
+                            android:textSize="@dimen/text_size_14sp"/>
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:layout_marginEnd="4dp"
+                            android:layout_marginLeft="4dp"
+                            android:layout_marginRight="4dp"
+                            android:layout_marginStart="4dp"
+                            android:contentDescription="@string/app_name"
+                            android:src="@drawable/ico_person_svg"/>
+
+                        <RatingBar
+                            android:id="@+id/tutorial_rating_user"
+                            style="?android:attr/ratingBarStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:isIndicator="true"
+                            android:stepSize="1"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
 
     </FrameLayout>
 

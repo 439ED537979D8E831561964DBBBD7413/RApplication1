@@ -2,6 +2,7 @@ package com.rawalinfocom.rcontact.contacts;
 
 
 import android.graphics.Paint;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -11,10 +12,12 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
@@ -23,12 +26,18 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.MainActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.database.TableMobileMaster;
 import com.rawalinfocom.rcontact.helper.AnimateHorizontalProgressBar;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 
@@ -83,7 +92,6 @@ public class ContactsFragment extends BaseFragment {
         // Required empty public constructor
     }
 
-
     public static ContactsFragment newInstance() {
         return new ContactsFragment();
     }
@@ -120,16 +128,119 @@ public class ContactsFragment extends BaseFragment {
     }
     //</editor-fold>
 
+    //<editor-fold desc="Private / Public Methods">
+
     private void init() {
 
-        ((MainActivity) getActivity()).frameTutorial.setVisibility(View.GONE);
+        displayWalkThrough();
+
+        allContactsFragment = AllContactsListFragment.newInstance();
+        rContactsFragment = RContactsFragment.newInstance();
+        favoritesFragment = FavoritesFragment.newInstance();
+
+        includeElevation.setAlpha(0.5f);
+
+        if (!(Utils.getBooleanPreference(getActivity(), AppConstants
+                .PREF_CONTACT_SYNCED, false))) {
+            relativeSyncProgress.setVisibility(View.VISIBLE);
+            progressContacts.setMax(100);
+
+            Animation sampleFadeAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim
+                    .rotate);
+            imageSync.startAnimation(sampleFadeAnimation);
+
+        /*GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget
+        (imageSync);
+        Glide.with(this).load(R.drawable.image_sync).into(imageViewTarget);*/
+
+            textSyncProgress.setTypeface(Utils.typefaceRegular(getActivity()));
+            textSyncProgress.setText("Contacts Sync in progress!");
+
+        }
+
+        bindWidgetsWithAnEvent();
+        setupTabLayout();
+        Utils.changeTabsFont(getActivity(), tabContact, true);
+
+    }
+
+    private void displayWalkThrough() {
+
+//        ((MainActivity) getActivity()).frameTutorial.setVisibility(View.GONE);
+
+        TableMobileMaster tableMobileMaster = new TableMobileMaster(((BaseActivity) getActivity()
+        ).databaseHandler);
+        String number = tableMobileMaster.getUserMobileNumber(getUserPmId());
+
+        ((MainActivity) getActivity()).tutorialUserName.setTypeface(Utils.typefaceSemiBold
+                (getActivity()));
+        ((MainActivity) getActivity()).tutorialNumber.setTypeface(Utils.typefaceRegular
+                (getActivity()));
+        ((MainActivity) getActivity()).tutorialRatingCount.setTypeface(Utils.typefaceBold
+                (getActivity()));
+
+        ((MainActivity) getActivity()).tutorialUserName.setText(Utils.getStringPreference
+                (getActivity(),
+                        AppConstants.PREF_USER_NAME, ""));
+        ((MainActivity) getActivity()).tutorialNumber.setText(number);
+        ((MainActivity) getActivity()).tutorialRatingCount.setText(Utils.getStringPreference
+                (getActivity(), AppConstants
+                        .PREF_USER_TOTAL_RATING, ""));
+
+        if (!StringUtils.isEmpty(Utils.getStringPreference(getActivity(), AppConstants
+                .PREF_USER_RATING, "")))
+            ((MainActivity) getActivity()).tutorialRatingUser.setRating(Float.parseFloat(Utils
+                    .getStringPreference(getActivity(), AppConstants.PREF_USER_RATING, "0")));
+        else
+            ((MainActivity) getActivity()).tutorialRatingUser.setRating(0f);
+
+        final String thumbnailUrl = Utils.getStringPreference(getActivity(), AppConstants
+                        .PREF_USER_PHOTO,
+                "");
+        if (!TextUtils.isEmpty(thumbnailUrl)) {
+            Glide.with(getActivity())
+                    .load(thumbnailUrl)
+                    .placeholder(R.drawable.home_screen_profile)
+                    .error(R.drawable.home_screen_profile)
+                    .bitmapTransform(new CropCircleTransformation(getActivity()))
+                    .override(500, 500)
+                    .into(((MainActivity) getActivity()).tutorialProfileImage);
+        } else {
+            ((MainActivity) getActivity()).tutorialProfileImage.setImageResource(R.drawable
+                    .home_screen_profile);
+        }
 
         tutorialViews = new ArrayList<>();
 
         final LinearLayout linearTabs = new LinearLayout(getActivity());
         FrameLayout.LayoutParams layoutParamsFrame = new FrameLayout.LayoutParams(FrameLayout
                 .LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+        layoutParamsFrame.topMargin = (int) getResources().getDimension(R.dimen
+                .padding_around_content_area);
         linearTabs.setLayoutParams(layoutParamsFrame);
+
+        final ViewGroup.LayoutParams profileLayoutParams = ((MainActivity) getActivity())
+                .tutorialUserProfile.getLayoutParams();
+        /*profileLayoutParams.width = Utils.getDeviceWidth(getActivity()) - android.R.attr
+                .actionBarSize;*/
+        ViewTreeObserver vto = ((MainActivity) getActivity()).navigationView.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                    ((MainActivity) getActivity()).navigationView.getViewTreeObserver()
+                            .removeGlobalOnLayoutListener(this);
+                } else {
+                    ((MainActivity) getActivity()).navigationView.getViewTreeObserver()
+                            .removeOnGlobalLayoutListener(this);
+                }
+//                int width  = ((MainActivity) getActivity()).navigationView.getMeasuredWidth();
+                profileLayoutParams.width = ((MainActivity) getActivity()).navigationView
+                        .getWidth();
+            }
+        });
+//        profileLayoutParams.width = ((MainActivity) getActivity()).navigationView.getWidth();
+        ((MainActivity) getActivity()).tutorialUserProfile.setLayoutParams(profileLayoutParams);
 
         final float scale = getResources().getDisplayMetrics().density;
 
@@ -258,44 +369,36 @@ public class ContactsFragment extends BaseFragment {
             @Override
             public void onClick(View view) {
                 if (view.getVisibility() == View.VISIBLE) {
+                    ((MainActivity) getActivity()).tutorialUserProfile.setVisibility(View.VISIBLE);
+
                     ((MainActivity) getActivity()).drawer.openDrawer(GravityCompat.START);
                     ((MainActivity) getActivity()).imageTutorialDrawer.setVisibility(View.GONE);
                     textHeader.setText("Your Profile");
                     textDescription.setText("Click to view your profile");
                     ((MainActivity) getActivity()).textTapContinue.setText("TAP ANYWHERE ON YOUR " +
                             "DETAILS");
+
+
                 }
             }
         });
 
-
-        allContactsFragment = AllContactsListFragment.newInstance();
-        rContactsFragment = RContactsFragment.newInstance();
-        favoritesFragment = FavoritesFragment.newInstance();
-
-        includeElevation.setAlpha(0.5f);
-
-        if (!(Utils.getBooleanPreference(getActivity(), AppConstants
-                .PREF_CONTACT_SYNCED, false))) {
-            relativeSyncProgress.setVisibility(View.VISIBLE);
-            progressContacts.setMax(100);
-
-            Animation sampleFadeAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim
-                    .rotate);
-            imageSync.startAnimation(sampleFadeAnimation);
-
-        /*GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget
-        (imageSync);
-        Glide.with(this).load(R.drawable.image_sync).into(imageViewTarget);*/
-
-            textSyncProgress.setTypeface(Utils.typefaceRegular(getActivity()));
-            textSyncProgress.setText("Contacts Sync in progress!");
-
-        }
-
-        bindWidgetsWithAnEvent();
-        setupTabLayout();
-        Utils.changeTabsFont(getActivity(), tabContact, true);
+        ((MainActivity) getActivity()).tutorialUserProfile.setOnClickListener(new View
+                .OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putString(AppConstants.EXTRA_PM_ID, getUserPmId());
+                bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, "");
+                bundle.putString(AppConstants.EXTRA_CONTACT_NAME, Utils.getStringPreference
+                        (getActivity(), AppConstants.PREF_USER_NAME, ""));
+                bundle.putString(AppConstants.EXTRA_PROFILE_IMAGE_URL, thumbnailUrl);
+                bundle.putInt(AppConstants.EXTRA_CONTACT_POSITION, 1);
+                ((MainActivity) getActivity()).startActivityIntent(getActivity(),
+                        ProfileDetailActivity.class,
+                        bundle);
+            }
+        });
 
     }
 
@@ -362,5 +465,7 @@ public class ContactsFragment extends BaseFragment {
                 break;
         }
     }
+
+    //</editor-fold>
 
 }

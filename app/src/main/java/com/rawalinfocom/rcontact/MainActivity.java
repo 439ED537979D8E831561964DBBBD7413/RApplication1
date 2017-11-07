@@ -161,6 +161,18 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     public LinearLayout linearTutorialSearch;
     @BindView(R.id.text_tap_continue)
     public TextView textTapContinue;
+    @BindView(R.id.tutorial_user_profile)
+    public LinearLayout tutorialUserProfile;
+    @BindView(R.id.tutorial_profile_image)
+    public ImageView tutorialProfileImage;
+    @BindView(R.id.tutorial_user_name)
+    public TextView tutorialUserName;
+    @BindView(R.id.tutorial_number)
+    public TextView tutorialNumber;
+    @BindView(R.id.tutorial_rating_count)
+    public TextView tutorialRatingCount;
+    @BindView(R.id.tutorial_rating_user)
+    public RatingBar tutorialRatingUser;
 
     public Toolbar toolbar;
     ImageView imageNotification;
@@ -168,9 +180,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     TextView badgeTextView;
     FloatingActionButton fab;
     public DrawerLayout drawer;
-    NavigationView navigationView;
+    public NavigationView navigationView;
     public TabLayout tabMain;
-
 
     ContactsFragment contactsFragment;
     CallLogFragment callLogFragment;
@@ -1182,14 +1193,6 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         textNumber.setText(number);
         textRatingCount.setText(Utils.getStringPreference(this, AppConstants
                 .PREF_USER_TOTAL_RATING, ""));
-        textUserName.setTypeface(Utils.typefaceSemiBold(MainActivity.this));
-        textNumber.setTypeface(Utils.typefaceRegular(MainActivity.this));
-        textRatingCount.setTypeface(Utils.typefaceBold(MainActivity.this));
-
-        textUserName.setText(Utils.getStringPreference(this, AppConstants.PREF_USER_NAME, ""));
-        textNumber.setText(number);
-        textRatingCount.setText(Utils.getStringPreference(this, AppConstants
-                .PREF_USER_TOTAL_RATING, "0"));
 
         if (!StringUtils.isEmpty(Utils.getStringPreference(this, AppConstants
                 .PREF_USER_RATING, "")))
