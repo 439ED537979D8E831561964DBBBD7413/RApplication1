@@ -2364,6 +2364,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 isUpdated = false;
                 break;
             //</editor-fold>
+
             //<editor-fold desc="button_name_cancel">
             case R.id.button_name_cancel:
                 profileDetails(true, false, false, false);
@@ -2482,6 +2483,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
         inputFirstName.addTextChangedListener(valueTextWatcher);
         inputLastName.addTextChangedListener(valueTextWatcher);
+        inputAadharNumber.addTextChangedListener(valueTextWatcher);
 
     }
 
@@ -3229,9 +3231,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 ProfileDataOperationAadharNumber profileDataOperationAadharNumber = tableAadharMaster.
                         getAadharDetailFromPmId(Integer.parseInt(getUserPmId()));
                 if (profileDataOperationAadharNumber != null) {
-                    if(profileDataOperationAadharNumber.getAadharNumber() != null){
+                    if (profileDataOperationAadharNumber.getAadharNumber() != null) {
                         inputAadharNumber.setText(profileDataOperationAadharNumber.getAadharNumber() + "");
-                    }else{
+                    } else {
                         inputAadharNumber.setText("");
                     }
                 }
