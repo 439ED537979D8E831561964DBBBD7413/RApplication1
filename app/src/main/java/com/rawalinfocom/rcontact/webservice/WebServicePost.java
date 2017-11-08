@@ -119,7 +119,7 @@ class WebServicePost {
             /* Get Response and execute WebService request*/
                 statusCode = urlConnection.getResponseCode();
 
-//                System.out.println("RContact statusCode --> " + url + " --> " + statusCode);
+                System.out.println("RContact statusCode --> " + url + " --> " + statusCode);
 
             /* 200 represents HTTP OK */
                 if (statusCode == HttpsURLConnection.HTTP_OK) {

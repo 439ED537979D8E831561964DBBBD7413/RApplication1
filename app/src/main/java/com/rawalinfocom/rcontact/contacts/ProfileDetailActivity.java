@@ -32,6 +32,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -399,6 +400,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     TextView textLabelUIDAINumber;
     @BindView(R.id.linear_aadhar_card)
     LinearLayout linearAadharCard;
+    @BindView(R.id.image_action_back)
+    ImageView imageActionBack;
+    @BindView(R.id.button_request)
+    AppCompatButton buttonRequest;
 
     //<editor-fold desc="Override Methods">
 
@@ -2894,18 +2899,41 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 if (profileDetail.getPbAadhar() != null) {
                     linearAadharCard.setVisibility(View.VISIBLE);
                     aadharDetails = profileDetail.getPbAadhar();
-                    if (aadharDetails.getAadharPublic() != 3) {
-                        if (aadharDetails.getAadharPublic() == 1) {
-                            buttonPrivacy.setImageResource(R.drawable.ico_privacy_public);
-                        } else if (aadharDetails.getAadharPublic() == 2) {
-                            buttonPrivacy.setImageResource(R.drawable.ico_privacy_my_contact);
+
+                    if (displayOwnProfile) {
+                        buttonRequest.setVisibility(View.GONE);
+                        if (aadharDetails.getAadharPublic() != 3) {
+                            if (aadharDetails.getAadharPublic() == 1) {
+                                buttonPrivacy.setImageResource(R.drawable.ico_privacy_public);
+                            } else if (aadharDetails.getAadharPublic() == 2) {
+                                buttonPrivacy.setImageResource(R.drawable.ico_privacy_my_contact);
+                            }
+                        } else {
+                            buttonPrivacy.setImageResource(R.drawable.ico_privacy_onlyme);
                         }
                     } else {
-                        buttonPrivacy.setImageResource(R.drawable.ico_privacy_onlyme);
+                        if ((MoreObjects.firstNonNull(aadharDetails.getAadharPublic(), 3)) == IntegerConstants
+                                .PRIVACY_PRIVATE) {
+                            buttonRequest.setVisibility(View.VISIBLE);
+                            buttonPrivacy.setVisibility(View.GONE);
+                        }
                     }
 
+                    buttonRequest.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            //Toast.makeText(activity, "requesting profile", Toast.LENGTH_SHORT).show();
+                            int pmTo = Integer.parseInt(pmId);
+                            // sendAccessRequest(int toPMId, String carFiledType, String recordIndexId)
+                            sendAccessRequest(pmTo, "pb_aadhaar", String.valueOf(aadharDetails.getAadharId()));
+                        }
+                    });
+
                     textAadharNumber.setTypeface(Utils.typefaceRegular(this));
-                    textAadharNumber.setText(aadharDetails.getAadharNumber() + "");
+                    if (aadharDetails.getAadharNumber() == 0) {
+                        textAadharNumber.setText("XXXX-XXXX-XXXX");
+                    } else
+                        textAadharNumber.setText(aadharDetails.getAadharNumber() + "");
 
                     buttonPrivacy.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -2966,6 +2994,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
 
             //</editor-fold>
+
             if ((!Utils.isArraylistNullOrEmpty(arrayListWebsite) || !Utils.isArraylistNullOrEmpty
                     (arrayListPhoneBookWebsite))
                     ||
@@ -4665,6 +4694,18 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             tableEventMaster.addUpdateArrayEvent(eventList, profileDetail.getRcpPmId());
         } else {
             tableEventMaster.deleteData(profileDetail.getRcpPmId());
+        }
+        //</editor-fold>
+
+        // <editor-fold desc="Aadhar Details">
+        TableAadharMaster tableAadharMaster = new TableAadharMaster(databaseHandler);
+        // Remove Existing Number
+        tableAadharMaster.deleteAadharDetails(profileDetail.getRcpPmId());
+
+        if (profileDetail.getPbAadhar() != null) {
+            ProfileDataOperationAadharNumber profileDataOperationAadharNumber = profileDetail.getPbAadhar();
+            profileDataOperationAadharNumber.setRcProfileMasterPmId(profileDetail.getRcpPmId());
+            tableAadharMaster.addAadharDetail(profileDataOperationAadharNumber);
         }
         //</editor-fold>
     }

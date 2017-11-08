@@ -72,6 +72,7 @@ import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.DatabaseHandler;
+import com.rawalinfocom.rcontact.database.TableAadharMaster;
 import com.rawalinfocom.rcontact.database.TableAddressMaster;
 import com.rawalinfocom.rcontact.database.TableEmailMaster;
 import com.rawalinfocom.rcontact.database.TableEventMaster;
@@ -90,6 +91,7 @@ import com.rawalinfocom.rcontact.model.ImAccount;
 import com.rawalinfocom.rcontact.model.MobileNumber;
 import com.rawalinfocom.rcontact.model.Organization;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
+import com.rawalinfocom.rcontact.model.ProfileDataOperationAadharNumber;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEvent;
@@ -1306,6 +1308,16 @@ public class Utils {
 
             TableEventMaster tableEventMaster = new TableEventMaster(databaseHandler);
             tableEventMaster.addArrayEvent(eventList);
+        }
+        //</editor-fold>
+
+        // <editor-fold desc="Aadhar Details">
+        TableAadharMaster tableAadharMaster = new TableAadharMaster(databaseHandler);
+
+        if (profileDetail.getPbAadhar() != null) {
+            ProfileDataOperationAadharNumber profileDataOperationAadharNumber = profileDetail.getPbAadhar();
+            profileDataOperationAadharNumber.setRcProfileMasterPmId(profileDetail.getRcpPmId());
+            tableAadharMaster.addAadharDetail(profileDataOperationAadharNumber);
         }
         //</editor-fold>
     }
