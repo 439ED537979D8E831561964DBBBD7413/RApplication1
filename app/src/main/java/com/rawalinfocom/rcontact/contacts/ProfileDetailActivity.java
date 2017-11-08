@@ -2922,7 +2922,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     buttonRequest.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            //Toast.makeText(activity, "requesting profile", Toast.LENGTH_SHORT).show();
                             int pmTo = Integer.parseInt(pmId);
                             // sendAccessRequest(int toPMId, String carFiledType, String recordIndexId)
                             sendAccessRequest(pmTo, "pb_aadhaar", String.valueOf(aadharDetails.getAadharId()));
