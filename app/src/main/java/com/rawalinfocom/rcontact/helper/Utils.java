@@ -81,7 +81,6 @@ import com.rawalinfocom.rcontact.database.TableMobileMaster;
 import com.rawalinfocom.rcontact.database.TableOrganizationMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.database.TableWebsiteMaster;
-import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.model.Address;
 import com.rawalinfocom.rcontact.model.CallLogType;
 import com.rawalinfocom.rcontact.model.Country;
@@ -1185,10 +1184,14 @@ public class Utils {
                         .getIsCurrent()));
 
                 if (arrayListOrganization.get(i).getIsVerify() != null)
-                    if (arrayListOrganization.get(i).getIsVerify() == IntegerConstants.RCP_TYPE_PRIMARY) {
-                        organization.setOmOrganizationType(arrayListOrganization.get(i).getOrgIndustryType());
-                        organization.setOmEnterpriseOrgId(arrayListOrganization.get(i).getOrgEntId());
-                        organization.setOmOrganizationLogo(arrayListOrganization.get(i).getOrgLogo());
+                    if (arrayListOrganization.get(i).getIsVerify() == IntegerConstants
+                            .RCP_TYPE_PRIMARY) {
+                        organization.setOmOrganizationType(arrayListOrganization.get(i)
+                                .getOrgIndustryType());
+                        organization.setOmEnterpriseOrgId(arrayListOrganization.get(i)
+                                .getOrgEntId());
+                        organization.setOmOrganizationLogo(arrayListOrganization.get(i)
+                                .getOrgLogo());
                     } else {
                         organization.setOmOrganizationType("");
                         organization.setOmEnterpriseOrgId("");
@@ -1200,7 +1203,8 @@ public class Utils {
                     organization.setOmOrganizationLogo("");
                 }
 
-                organization.setOmIsVerified(String.valueOf(arrayListOrganization.get(i).getIsVerify()));
+                organization.setOmIsVerified(String.valueOf(arrayListOrganization.get(i)
+                        .getIsVerify()));
                 organization.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 organizationList.add(organization);
             }
@@ -1374,10 +1378,12 @@ public class Utils {
         }
     }
 
-    public static void zoomImageFromThumb(Activity activity, final View thumbView, String imageUrl, final FrameLayout frameImageEnlarge
-            , final ImageView imageEnlarge, FrameLayout frameContainer) {
+    public static void zoomImageFromThumb(Activity activity, final View thumbView, String
+            imageUrl, final FrameLayout frameImageEnlarge, final ImageView imageEnlarge,
+                                          final FrameLayout frameContainer) {
 
-        mShortAnimationDuration = activity.getResources().getInteger(android.R.integer.config_shortAnimTime);
+        mShortAnimationDuration = activity.getResources().getInteger(android.R.integer
+                .config_shortAnimTime);
 
         // If there's an animation in progress, cancel it
         // immediately and proceed with this one.
@@ -1388,9 +1394,9 @@ public class Utils {
         // Load the high-resolution "zoomed-in" image.
         Glide.with(activity)
                 .load(imageUrl)
-                .placeholder(R.drawable.home_screen_profile)
-                .bitmapTransform(new CropCircleTransformation(activity))
-                .error(R.drawable.home_screen_profile)
+                .placeholder(R.drawable.profile_place_holder)
+//                .bitmapTransform(new CropCircleTransformation(activity))
+                .error(R.drawable.profile_place_holder)
                 .into(imageEnlarge);
 
         // Calculate the starting and ending bounds for the zoomed-in image.
@@ -1522,9 +1528,11 @@ public class Utils {
 
         ContextThemeWrapper themedContext;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            themedContext = new ContextThemeWrapper(activity, android.R.style.Theme_Holo_Light_Dialog_NoActionBar);
+            themedContext = new ContextThemeWrapper(activity, android.R.style
+                    .Theme_Holo_Light_Dialog_NoActionBar);
         } else {
-            themedContext = new ContextThemeWrapper(activity, android.R.style.Theme_Light_NoTitleBar);
+            themedContext = new ContextThemeWrapper(activity, android.R.style
+                    .Theme_Light_NoTitleBar);
         }
 
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(themedContext);
@@ -1532,14 +1540,17 @@ public class Utils {
         alertDialogBuilder.setTitle(activity.getString(R.string.youAreNotUpdatedTitle));
         alertDialogBuilder.setMessage(activity.getString(R.string.youAreNotUpdatedMessage));
         alertDialogBuilder.setCancelable(false);
-        alertDialogBuilder.setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
+        alertDialogBuilder.setPositiveButton(R.string.update, new DialogInterface.OnClickListener
+                () {
             public void onClick(DialogInterface dialog, int id) {
                 dialog.cancel();
                 activity.finish();
-                activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + activity.getPackageName())));
+                activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse
+                        ("market://details?id=" + activity.getPackageName())));
             }
         });
-        alertDialogBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+        alertDialogBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener
+                () {
             @Override
             public void onClick(DialogInterface dialog, int i) {
                 dialog.cancel();

@@ -8,6 +8,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -22,7 +24,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import me.leolin.shortcutbadger.ShortcutBadger;
 
-public class NotificationsDetailActivity extends BaseActivity implements RippleView.OnRippleCompleteListener {
+public class NotificationsDetailActivity extends BaseActivity implements RippleView
+        .OnRippleCompleteListener {
 
     @BindView(R.id.text_toolbar_title)
     TextView textToolbarTitle;
@@ -51,6 +54,13 @@ public class NotificationsDetailActivity extends BaseActivity implements RippleV
     int commentsCount;
     int rContactsCount;
 
+    @BindView(R.id.frame_container)
+    public FrameLayout frameContainer;
+    @BindView(R.id.frame_image_enlarge)
+    public FrameLayout frameImageEnlarge;
+    @BindView(R.id.image_enlarge)
+    public ImageView imageEnlarge;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,12 +77,17 @@ public class NotificationsDetailActivity extends BaseActivity implements RippleV
 
     public void init() {
         textToolbarTitle.setText(getString(R.string.text_notifications));
-        int profileRequestCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_PROFILE_REQUEST);
-        int profileResponseCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_PROFILE_RESPONSE);
+        int profileRequestCount = getNotificationCountByType(databaseHandler, AppConstants
+                .NOTIFICATION_TYPE_PROFILE_REQUEST);
+        int profileResponseCount = getNotificationCountByType(databaseHandler, AppConstants
+                .NOTIFICATION_TYPE_PROFILE_RESPONSE);
         profileCount = profileRequestCount + profileResponseCount;
-        ratingCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_RATE);
-        commentsCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_COMMENTS);
-        rContactsCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_RUPDATE);
+        ratingCount = getNotificationCountByType(databaseHandler, AppConstants
+                .NOTIFICATION_TYPE_RATE);
+        commentsCount = getNotificationCountByType(databaseHandler, AppConstants
+                .NOTIFICATION_TYPE_COMMENTS);
+        rContactsCount = getNotificationCountByType(databaseHandler, AppConstants
+                .NOTIFICATION_TYPE_RUPDATE);
         rippleActionBack.setOnRippleCompleteListener(this);
         bindWidgetsWithAnEvent();
         setupTabLayout();
@@ -113,10 +128,14 @@ public class NotificationsDetailActivity extends BaseActivity implements RippleV
         notiCommentsFragment = NotiCommentsFragment.newInstance();
         notiRContactsFragment = NotiRContactsFragment.newInstance();
 
-        tabNotifications.addTab(tabNotifications.newTab().setText(getResources().getString(R.string.text_tab_profile)));
-        tabNotifications.addTab(tabNotifications.newTab().setText(getResources().getString(R.string.str_tab_rating)));
-        tabNotifications.addTab(tabNotifications.newTab().setText(getResources().getString(R.string.text_tab_comments)));
-        tabNotifications.addTab(tabNotifications.newTab().setText(getResources().getString(R.string.text_tab_rcontact)));
+        tabNotifications.addTab(tabNotifications.newTab().setText(getResources().getString(R
+                .string.text_tab_profile)));
+        tabNotifications.addTab(tabNotifications.newTab().setText(getResources().getString(R
+                .string.str_tab_rating)));
+        tabNotifications.addTab(tabNotifications.newTab().setText(getResources().getString(R
+                .string.text_tab_comments)));
+        tabNotifications.addTab(tabNotifications.newTab().setText(getResources().getString(R
+                .string.text_tab_rcontact)));
         for (int i = 0; i < tabNotifications.getTabCount(); i++) {
             TabLayout.Tab tab = tabNotifications.getTabAt(i);
             tab.setCustomView(getTabView(i));
@@ -125,9 +144,10 @@ public class NotificationsDetailActivity extends BaseActivity implements RippleV
     }
 
     private View getTabView(int position) {
-        View v = LayoutInflater.from(NotificationsDetailActivity.this).inflate(R.layout.custom_tab, null);
-        TextView titleText = (TextView) v.findViewById(R.id.text_toolbar_title);
-        TextView countText = (TextView) v.findViewById(R.id.text_notifications_count);
+        View v = LayoutInflater.from(NotificationsDetailActivity.this).inflate(R.layout
+                .custom_tab, null);
+        TextView titleText = v.findViewById(R.id.text_toolbar_title);
+        TextView countText = v.findViewById(R.id.text_notifications_count);
         String title = "";
         int count = 0;
         switch (position) {
@@ -196,12 +216,14 @@ public class NotificationsDetailActivity extends BaseActivity implements RippleV
 
     private int getNotificationCountByType(DatabaseHandler databaseHandler, int type) {
 
-        TableNotificationStateMaster notificationStateMaster = new TableNotificationStateMaster(databaseHandler);
+        TableNotificationStateMaster notificationStateMaster = new TableNotificationStateMaster
+                (databaseHandler);
         return notificationStateMaster.getTotalUnreadCountByType(type);
     }
 
     public void updateNotificationCount(int type) {
-        TableNotificationStateMaster tableNotificationStateMaster = new TableNotificationStateMaster(databaseHandler);
+        TableNotificationStateMaster tableNotificationStateMaster = new
+                TableNotificationStateMaster(databaseHandler);
         tableNotificationStateMaster.makeAllNotificationsAsReadByType(type);
         int profileRequestCount;
         int profileResponseCount;
@@ -209,13 +231,14 @@ public class NotificationsDetailActivity extends BaseActivity implements RippleV
 
         switch (type) {
             case AppConstants.NOTIFICATION_TYPE_PROFILE_REQUEST:
-                profileRequestCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_PROFILE_REQUEST);
-                profileResponseCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_PROFILE_RESPONSE);
+                profileRequestCount = getNotificationCountByType(databaseHandler, AppConstants
+                        .NOTIFICATION_TYPE_PROFILE_REQUEST);
+                profileResponseCount = getNotificationCountByType(databaseHandler, AppConstants
+                        .NOTIFICATION_TYPE_PROFILE_RESPONSE);
                 profileCount = profileRequestCount + profileResponseCount;
                 TabLayout.Tab tab = tabNotifications.getTabAt(0);
                 View view = tab.getCustomView();
-                TextView countText = (TextView)
-                        view.findViewById(R.id.text_notifications_count);
+                TextView countText = view.findViewById(R.id.text_notifications_count);
                 if (profileCount > 0) {
                     countText.setText(String.valueOf(profileCount));
                 } else {
@@ -223,13 +246,14 @@ public class NotificationsDetailActivity extends BaseActivity implements RippleV
                 }
                 break;
             case AppConstants.NOTIFICATION_TYPE_PROFILE_RESPONSE:
-                profileRequestCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_PROFILE_REQUEST);
-                profileResponseCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_PROFILE_RESPONSE);
+                profileRequestCount = getNotificationCountByType(databaseHandler, AppConstants
+                        .NOTIFICATION_TYPE_PROFILE_REQUEST);
+                profileResponseCount = getNotificationCountByType(databaseHandler, AppConstants
+                        .NOTIFICATION_TYPE_PROFILE_RESPONSE);
                 profileCount = profileRequestCount + profileResponseCount;
                 tab = tabNotifications.getTabAt(0);
                 view = tab.getCustomView();
-                countText = (TextView)
-                        view.findViewById(R.id.text_notifications_count);
+                countText = view.findViewById(R.id.text_notifications_count);
                 if (profileCount > 0) {
                     countText.setText(String.valueOf(profileCount));
                 } else {
@@ -237,11 +261,11 @@ public class NotificationsDetailActivity extends BaseActivity implements RippleV
                 }
                 break;
             case AppConstants.NOTIFICATION_TYPE_RATE:
-                ratingCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_RATE);
+                ratingCount = getNotificationCountByType(databaseHandler, AppConstants
+                        .NOTIFICATION_TYPE_RATE);
                 tab = tabNotifications.getTabAt(1);
                 view = tab.getCustomView();
-                countText = (TextView)
-                        view.findViewById(R.id.text_notifications_count);
+                countText = view.findViewById(R.id.text_notifications_count);
                 if (ratingCount > 0) {
                     countText.setText(String.valueOf(ratingCount));
                 } else {
@@ -249,11 +273,11 @@ public class NotificationsDetailActivity extends BaseActivity implements RippleV
                 }
                 break;
             case AppConstants.NOTIFICATION_TYPE_COMMENTS:
-                commentsCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_COMMENTS);
+                commentsCount = getNotificationCountByType(databaseHandler, AppConstants
+                        .NOTIFICATION_TYPE_COMMENTS);
                 tab = tabNotifications.getTabAt(2);
                 view = tab.getCustomView();
-                countText = (TextView)
-                        view.findViewById(R.id.text_notifications_count);
+                countText = view.findViewById(R.id.text_notifications_count);
                 if (commentsCount > 0) {
                     countText.setText(String.valueOf(commentsCount));
                 } else {
@@ -261,11 +285,11 @@ public class NotificationsDetailActivity extends BaseActivity implements RippleV
                 }
                 break;
             case AppConstants.NOTIFICATION_TYPE_RUPDATE:
-                rContactsCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_RUPDATE);
+                rContactsCount = getNotificationCountByType(databaseHandler, AppConstants
+                        .NOTIFICATION_TYPE_RUPDATE);
                 tab = tabNotifications.getTabAt(3);
                 view = tab.getCustomView();
-                countText = (TextView)
-                        view.findViewById(R.id.text_notifications_count);
+                countText = view.findViewById(R.id.text_notifications_count);
                 if (rContactsCount > 0) {
                     countText.setText(String.valueOf(rContactsCount));
                 } else {
