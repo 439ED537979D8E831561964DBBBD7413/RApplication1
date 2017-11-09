@@ -141,6 +141,8 @@ public class WsRequestObject {
 
     private ArrayList<GlobalSearchType> globalSearchTypeArrayList;
 
+    private ArrayList<RelationRequest> arrayListRelationRequest;
+
     private String searchQuery;
 
     @JsonProperty("startAt")
@@ -637,6 +639,15 @@ public class WsRequestObject {
 
     public void setArrayListProfileVisit(ArrayList<ProfileVisit> arrayListProfileVisit) {
         this.arrayListProfileVisit = arrayListProfileVisit;
+    }
+
+    @JsonProperty("relations")
+    public ArrayList<RelationRequest> getArrayListRelationRequest() {
+        return arrayListRelationRequest;
+    }
+
+    public void setArrayListRelationRequest(ArrayList<RelationRequest> arrayListRelationRequest) {
+        this.arrayListRelationRequest = arrayListRelationRequest;
     }
 
     public Integer getFlag() {

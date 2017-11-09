@@ -1185,19 +1185,17 @@ public class Utils {
                 if (arrayListOrganization.get(i).getIsVerify() != null)
                     if (arrayListOrganization.get(i).getIsVerify() == IntegerConstants.RCP_TYPE_PRIMARY) {
                         organization.setOmOrganizationType(arrayListOrganization.get(i).getOrgIndustryType());
-                        organization.setOmEnterpriseOrgId(arrayListOrganization.get(i).getOrgEntId());
                         organization.setOmOrganizationLogo(arrayListOrganization.get(i).getOrgLogo());
                     } else {
                         organization.setOmOrganizationType("");
-                        organization.setOmEnterpriseOrgId("");
                         organization.setOmOrganizationLogo("");
                     }
                 else {
                     organization.setOmOrganizationType("");
-                    organization.setOmEnterpriseOrgId("");
                     organization.setOmOrganizationLogo("");
                 }
 
+                organization.setOmEnterpriseOrgId(arrayListOrganization.get(i).getOrgEntId());
                 organization.setOmIsVerified(String.valueOf(arrayListOrganization.get(i).getIsVerify()));
                 organization.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 organizationList.add(organization);

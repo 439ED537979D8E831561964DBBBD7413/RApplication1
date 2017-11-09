@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -27,20 +29,31 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.contacts.EditProfileActivity;
+import com.rawalinfocom.rcontact.database.TableEmailMaster;
 import com.rawalinfocom.rcontact.database.TableOrganizationMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
+import com.rawalinfocom.rcontact.database.TableRelationMappingMaster;
 import com.rawalinfocom.rcontact.database.TableRelationMaster;
+import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
+import com.rawalinfocom.rcontact.helper.instagram.util.StringUtil;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.IndividualRelationType;
+import com.rawalinfocom.rcontact.model.ProfileDataOperation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationImAccount;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
 import com.rawalinfocom.rcontact.model.Relation;
 import com.rawalinfocom.rcontact.model.RelationRecommendationType;
+import com.rawalinfocom.rcontact.model.RelationRequest;
+import com.rawalinfocom.rcontact.model.RelationRequestResponse;
+import com.rawalinfocom.rcontact.model.WsRequestObject;
+import com.rawalinfocom.rcontact.model.WsResponseObject;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -104,7 +117,7 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
     @BindView(R.id.linear_single_business_relation)
     LinearLayout linearSingleBusinessRelation;
 
-    TableRelationMaster tableRelationMaster;
+    private TableRelationMaster tableRelationMaster;
 
     private Activity activity;
     private String isFrom = "";
@@ -114,10 +127,9 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
     public static int familyRelationPosition = 0;
 
     private Dialog businessRelationDialog;
-    private String pmId = "", contactName = "", contactNumber = "", profileImage = "", organizationId = "",
-            organizationName = "", businessRelationName = "", strGender = "", familyRelation = "",
-            friendRelation = "";
-    private int businessRelationId, familyRelationId, friendRelationId;
+    private String pmId = "", contactName = "", contactNumber = "", profileImage = "", organizationName = "",
+            businessRelationName = "", strGender = "", familyRelation = "", friendRelation = "";
+    private int businessRelationId, familyRelationId, organizationId;
     private ArrayList<ProfileDataOperationOrganization> arrayListOrganization;
     private int colorPineGreen;
 
@@ -145,6 +157,10 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
     private void init() {
 
         tableRelationMaster = new TableRelationMaster(databaseHandler);
+
+        if (tableRelationMaster.getRelationCount() == 0) {
+            tableRelationMaster.insertData();
+        }
 
         activity = AddNewRelationActivity.this;
         arrayListOrganization = new ArrayList<>();
@@ -186,17 +202,6 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
                     .bitmapTransform(new CropCircleTransformation(activity))
                     .into(imageProfile);
 
-            checkboxFriend.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-
-                    if (b) {
-                        friendRelationId = 1;
-                    } else {
-                        friendRelationId = 0;
-                    }
-                }
-            });
         }
     }
 
@@ -210,6 +215,42 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
     @Override
     public void onDeliveryResponse(String serviceType, Object data, Exception error) {
 
+        if (error == null) {
+
+            //<editor-fold desc="REQ_PROFILE_UPDATE">
+            if (serviceType.contains(WsConstants.REQ_SEND_RELATION_REQUEST)) {
+                WsResponseObject sendRelationRequestObject = (WsResponseObject) data;
+                Utils.hideProgressDialog();
+                if (sendRelationRequestObject != null && StringUtils.equalsIgnoreCase
+                        (sendRelationRequestObject.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+
+                    ArrayList<RelationRequest> relationRequestResponse = sendRelationRequestObject.
+                            getArrayListRelationRequestResponse();
+
+                    Utils.showSuccessSnackBar(activity, relativeRootNewRelation,
+                            "New Relation Added Successfully!!!");
+                    storeProfileDataToDb(relationRequestResponse);
+
+                    finish();
+
+                } else {
+                    if (sendRelationRequestObject != null) {
+                        Log.e("error response", sendRelationRequestObject.getMessage());
+                        Utils.showErrorSnackBar(this, relativeRootNewRelation,
+                                sendRelationRequestObject.getMessage());
+                    } else {
+                        Log.e("onDeliveryResponse: ", "otpDetailResponse null");
+                        Utils.showErrorSnackBar(this, relativeRootNewRelation, getString(R
+                                .string.msg_try_later));
+                    }
+                }
+            }
+            //</editor-fold>
+
+        } else {
+            Utils.showErrorSnackBar(this, relativeRootNewRelation, "" + error
+                    .getLocalizedMessage());
+        }
     }
 
     @Override
@@ -222,12 +263,7 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
                 if (StringUtils.isEmpty(strGender)) {
                     startActivityIntent(activity, EditProfileActivity.class, null);
                 } else {
-//                    if (StringUtils.isEmpty(contactName)) {
-//                        Utils.showErrorSnackBar(activity, relativeRootNewRelation,
-//                                "Please select User to establish relation!!");
-//                    } else {
                     dialogFamilyRelation();
-//                    }
                 }
                 break;
 
@@ -238,13 +274,7 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
             case R.id.input_value_business:
 
                 if (arrayListOrganization.size() > 0) {
-
-//                    if (StringUtils.isEmpty(contactName)) {
-//                        Utils.showErrorSnackBar(activity, relativeRootNewRelation,
-//                                "Please select User to establish relation!!");
-//                    } else {
                     dialogBusinessRelation();
-//                    }
                 } else {
                     startActivityIntent(activity, EditProfileActivity.class, null);
                 }
@@ -254,7 +284,52 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
                 finish();
                 break;
             case R.id.button_name_done:
-                Utils.showSuccessSnackBar(activity, relativeRootNewRelation, "Add New Relation Done");
+
+                if (StringUtils.isEmpty(contactName)) {
+                    Utils.showErrorSnackBar(activity, relativeRootNewRelation,
+                            "Please select User to establish relation!!");
+                } else if (StringUtils.isEmpty(organizationName)) {
+                    Utils.showErrorSnackBar(activity, relativeRootNewRelation,
+                            "Please select organization to establish relation!!");
+                } else {
+
+                    ArrayList<RelationRequest> relationRequests = new ArrayList<>();
+
+                    RelationRequest friendRelationRequest = new RelationRequest();
+
+                    if (checkboxFriend.isChecked()) {
+                        friendRelationRequest.setRcRelationMasterId(1);
+                        friendRelationRequest.setRrmToPmId(Integer.parseInt(pmId));
+                        friendRelationRequest.setRrmType(1);
+
+                        relationRequests.add(friendRelationRequest);
+                    }
+
+                    RelationRequest familyRelationRequest = new RelationRequest();
+
+                    if (!StringUtils.isBlank(familyRelation)) {
+                        familyRelationRequest.setRcRelationMasterId(familyRelationId);
+                        familyRelationRequest.setRrmToPmId(Integer.parseInt(pmId));
+                        familyRelationRequest.setRrmType(2);
+                        familyRelationRequest.setGender(strGender.equals("Male") ? 1 : 2);
+
+                        relationRequests.add(familyRelationRequest);
+                    }
+
+                    RelationRequest businessRelationRequest = new RelationRequest();
+
+                    if (!StringUtils.isBlank(familyRelation)) {
+                        businessRelationRequest.setRcRelationMasterId(businessRelationId);
+                        businessRelationRequest.setRrmToPmId(Integer.parseInt(pmId));
+                        businessRelationRequest.setRcOrgId(organizationId);
+                        businessRelationRequest.setRrmType(3);
+                        businessRelationRequest.setOmName(organizationName);
+
+                        relationRequests.add(businessRelationRequest);
+                    }
+
+                    sendRelationRequest(relationRequests);
+                }
                 break;
             case R.id.button_name_cancel:
                 finish();
@@ -266,7 +341,7 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
                 contactName = "";
                 profileImage = "";
                 businessRelationName = "";
-                organizationId = "";
+                organizationId = 0;
                 organizationName = "";
                 familyRelation = "";
 
@@ -292,7 +367,7 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
                 orgPosition = 0;
                 businessRelationPosition = 0;
 
-                organizationId = "";
+                organizationId = 0;
                 organizationName = "";
                 businessRelationName = "";
 
@@ -708,7 +783,8 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
 
                     addBusinessRelationView(relationType);
                 } else {
-                    inputValueBusiness.setText(businessRelationName + " at " + organizationName);
+                    inputValueBusiness.setText(String.format("%s at %s", businessRelationName,
+                            organizationName));
                     imgBusinessClear.setVisibility(View.VISIBLE);
                 }
             }
@@ -731,7 +807,7 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
                     @Override
                     public void onClick(String orgId, String orgName) {
 
-                        organizationId = orgId;
+                        organizationId = (int) Long.parseLong(orgId);
                         organizationName = orgName;
                     }
                 });
@@ -835,5 +911,51 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
         arrayList.add(individualRelationTypeList);
 
         return arrayList;
+    }
+
+    private void sendRelationRequest(ArrayList<RelationRequest> relationRequest) {
+
+        WsRequestObject sendRelationRequestObject = new WsRequestObject();
+        sendRelationRequestObject.setArrayListRelationRequest(relationRequest);
+
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    sendRelationRequestObject, null, WsResponseObject.class, WsConstants
+                    .REQ_SEND_RELATION_REQUEST, getResources().getString(R.string.msg_please_wait),
+                    true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                    WsConstants.WS_ROOT + WsConstants.REQ_SEND_RELATION_REQUEST);
+        } else {
+            Utils.showErrorSnackBar(this, relativeRootNewRelation, getResources()
+                    .getString(R.string.msg_no_network));
+        }
+    }
+
+    private void storeProfileDataToDb(ArrayList<RelationRequest> relationRequestResponse) {
+
+        //<editor-fold desc="Relation Mapping Master">
+        TableRelationMappingMaster tableRelationMappingMaster = new
+                TableRelationMappingMaster(databaseHandler);
+
+        if (!Utils.isArraylistNullOrEmpty(relationRequestResponse)) {
+
+            ArrayList<RelationRequestResponse> relationResponseList = new ArrayList<>();
+
+            for (int i = 0; i < relationRequestResponse.size(); i++) {
+                RelationRequestResponse relationResponse = new RelationRequestResponse();
+
+                relationResponse.setId(relationRequestResponse.get(i).getId());
+                relationResponse.setRcRelationMasterId(relationRequestResponse.get(i).getRcRelationMasterId());
+                relationResponse.setRrmToPmId(relationRequestResponse.get(i).getRrmToPmId());
+                relationResponse.setRrmType(relationRequestResponse.get(i).getRrmType());
+                relationResponse.setRrmFromPmId(relationRequestResponse.get(i).getRrmFromPmId());
+                relationResponse.setRcStatus(relationRequestResponse.get(i).getRcStatus());
+                relationResponse.setRcOrgId(relationRequestResponse.get(i).getRcOrgId());
+                relationResponse.setCreatedAt(relationRequestResponse.get(i).getCreatedAt());
+
+                relationResponseList.add(relationResponse);
+            }
+
+            tableRelationMappingMaster.addRelationMapping(relationResponseList);
+        }
     }
 }

@@ -84,6 +84,24 @@ public class TableRelationMaster {
         return arrayListRelation;
     }
 
+    private int relationCount() {
+
+        try {
+            String selectQuery = "SELECT  * FROM " + TABLE_RC_RELATION_MASTER;
+
+            SQLiteDatabase db = databaseHandler.getWritableDatabase();
+            Cursor cursor = db.rawQuery(selectQuery, null);
+
+            cursor.moveToFirst();
+
+            return cursor.getCount();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
     public void insertData() {
 
         SQLiteDatabase db = databaseHandler.getReadableDatabase();

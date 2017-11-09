@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.rawalinfocom.rcontact.model.Relation;
+import com.rawalinfocom.rcontact.model.RelationRequestResponse;
 
 import java.util.ArrayList;
 
@@ -49,16 +50,30 @@ public class TableRelationMappingMaster {
             ");";
 
     // Adding new Relation
-    public void addRelationMapping(Relation relation) {
+    public void addRelationMapping(ArrayList<RelationRequestResponse> relationRequestResponses) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
 
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_ID, relation.getRmId());
-        values.put(COLUMN_RRM_PROFILE_DETAILS, relation.getRmRelationName());
-        values.put(COLUMN_RRM_TYPE, relation.getRmRelationType());
+        for (int i = 0; i < relationRequestResponses.size(); i++) {
 
-        // Inserting Row
-        db.insert(TABLE_RC_RCP_RELATION_MAPPING, null, values);
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, relationRequestResponses.get(i).getRrmToPmId());
+            values.put(COLUMN_RC_RELATIONS_MASTER_ID, relationRequestResponses.get(i).getRcRelationMasterId());
+            values.put(COLUMN_RRM_TYPE, relationRequestResponses.get(i).getRrmType());
+            values.put(COLUMN_RRM_STATUS, relationRequestResponses.get(i).getRcStatus());
+            values.put(COLUMN_RRM_ORG_ENT_ID, relationRequestResponses.get(i).getRcOrgId());
+            values.put(COLUMN_CREATED_AT, relationRequestResponses.get(i).getCreatedAt());
+
+            // Inserting Row
+            int id = (int) db.insert(TABLE_RC_RCP_RELATION_MAPPING, null, values);
+
+            try {
+                if (id == 1)
+                    System.out.println("RContacts record insert!!!");
+            } catch (Exception e) {
+                db.close();
+            }
+        }
+
         // insertWithOnConflict
         db.close(); // Closing database connection
     }
