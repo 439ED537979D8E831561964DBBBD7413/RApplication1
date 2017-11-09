@@ -1164,22 +1164,23 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     @Override
     public void onBackPressed() {
+        if (!Utils.getBooleanPreference(this, AppConstants.PREF_SHOW_WALK_THROUGH, true)) {
+            if (isRatingUpdate) {
 
-        if (isRatingUpdate) {
+                Intent localBroadcastIntent1 = new Intent(AppConstants
+                        .ACTION_LOCAL_BROADCAST_RATING_UPDATE);
+                localBroadcastIntent1.putExtra(AppConstants.EXTRA_RCONTACT_POSITION, getIntent()
+                        .getIntExtra(AppConstants.EXTRA_RCONTACT_POSITION, 0));
+                localBroadcastIntent1.putExtra(AppConstants.EXTRA_RATING_UPDATE, isRatingUpdate);
+                LocalBroadcastManager.getInstance(ProfileDetailActivity.this).sendBroadcast
+                        (localBroadcastIntent1);
+            }
 
-            Intent localBroadcastIntent1 = new Intent(AppConstants
-                    .ACTION_LOCAL_BROADCAST_RATING_UPDATE);
-            localBroadcastIntent1.putExtra(AppConstants.EXTRA_RCONTACT_POSITION, getIntent()
-                    .getIntExtra(AppConstants.EXTRA_RCONTACT_POSITION, 0));
-            localBroadcastIntent1.putExtra(AppConstants.EXTRA_RATING_UPDATE, isRatingUpdate);
-            LocalBroadcastManager.getInstance(ProfileDetailActivity.this).sendBroadcast
-                    (localBroadcastIntent1);
+            Intent backIntent = getIntent();
+            setResult(RESULT_OK, backIntent);
+            finish();
+            overridePendingTransition(R.anim.pop_enter, R.anim.pop_exit);
         }
-
-        Intent backIntent = getIntent();
-        setResult(RESULT_OK, backIntent);
-        finish();
-        overridePendingTransition(R.anim.pop_enter, R.anim.pop_exit);
     }
 
     @Override
@@ -2022,7 +2023,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
         }, 2000);*/
 
-        descriptionLayoutParam.topMargin = (int) (Utils.getDeviceHeight(ProfileDetailActivity.this) / 2.5);
+        descriptionLayoutParam.topMargin = (int) (Utils.getDeviceHeight(ProfileDetailActivity
+                .this) / 2.5);
 
         textTapContinue.setText("TAP ON THE EDIT ICON");
 
@@ -2046,6 +2048,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         imageTutorialEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        frameTutorial.setVisibility(View.GONE);
+                    }
+                }, 700);
                 startActivityIntent(ProfileDetailActivity.this, EditProfileActivity.class, null);
             }
         });
@@ -2159,7 +2167,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 setUpView(null);
             }
         } else {
-            displayWalkThrough();
+            if (Utils.getBooleanPreference(ProfileDetailActivity.this, AppConstants
+                    .PREF_SHOW_WALK_THROUGH, true)) {
+                displayWalkThrough();
+            } else {
+                frameTutorial.setVisibility(View.GONE);
+            }
         }
 
 

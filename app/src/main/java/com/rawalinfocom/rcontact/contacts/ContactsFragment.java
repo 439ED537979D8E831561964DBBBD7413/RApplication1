@@ -132,7 +132,11 @@ public class ContactsFragment extends BaseFragment {
 
     private void init() {
 
-        displayWalkThrough();
+        if (Utils.getBooleanPreference(getActivity(), AppConstants.PREF_SHOW_WALK_THROUGH, true)) {
+            displayWalkThrough();
+        } else {
+            ((MainActivity) getActivity()).frameTutorial.setVisibility(View.GONE);
+        }
 
         allContactsFragment = AllContactsListFragment.newInstance();
         rContactsFragment = RContactsFragment.newInstance();
@@ -387,6 +391,13 @@ public class ContactsFragment extends BaseFragment {
                 .OnClickListener() {
             @Override
             public void onClick(View v) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((MainActivity) getActivity()).frameTutorial.setVisibility(View.GONE);
+                        ((MainActivity) getActivity()).drawer.closeDrawer(Gravity.START);
+                    }
+                }, 700);
                 Bundle bundle = new Bundle();
                 bundle.putString(AppConstants.EXTRA_PM_ID, getUserPmId());
                 bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, "");

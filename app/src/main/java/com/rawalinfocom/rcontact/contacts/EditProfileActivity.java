@@ -533,6 +533,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             @Override
             public void onClick(View v) {
                 frameTutorial.setVisibility(View.GONE);
+                Utils.setBooleanPreference(EditProfileActivity.this, AppConstants
+                        .PREF_SHOW_WALK_THROUGH, false);
             }
         });
 
@@ -2524,10 +2526,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
     @Override
     public void onBackPressed() {
-        if (isUpdated) {
-            showBackConfirmationDialog();
-        } else {
-            super.onBackPressed();
+        if (!Utils.getBooleanPreference(this, AppConstants.PREF_SHOW_WALK_THROUGH, true)) {
+            if (isUpdated) {
+                showBackConfirmationDialog();
+            } else {
+                super.onBackPressed();
+            }
         }
     }
 
@@ -2537,7 +2541,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
     private void init(boolean showAddress) {
 
-        displayWalkThrough();
+        if (Utils.getBooleanPreference(EditProfileActivity.this, AppConstants
+                .PREF_SHOW_WALK_THROUGH, true)) {
+            displayWalkThrough();
+        } else {
+            frameTutorial.setVisibility(View.GONE);
+        }
 
         initToolbar();
         setFonts();
