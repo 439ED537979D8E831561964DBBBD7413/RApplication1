@@ -262,7 +262,7 @@
             android:orientation="horizontal"
             android:theme="@style/ThemeOverlay.AppCompat.Dark"
             android:visibility="gone"
-            tools:visibility="visible">
+            tools:visibility="gone">
 
             <LinearLayout
                 android:id="@+id/main_content"
