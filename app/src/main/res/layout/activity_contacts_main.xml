@@ -230,7 +230,7 @@
                 <EditText
                     android:id="@+id/input_search"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="@dimen/margin_5dp"
                     android:backgroundTint="@color/finestWhite30"

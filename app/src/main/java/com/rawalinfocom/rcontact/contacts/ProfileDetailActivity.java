@@ -1994,6 +1994,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     private void displayWalkThrough() {
 
+        frameTutorial.setVisibility(View.VISIBLE);
+
         FrameLayout.LayoutParams layoutParamsFrame = new FrameLayout.LayoutParams(FrameLayout
                 .LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
 
