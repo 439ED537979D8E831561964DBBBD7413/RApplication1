@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">RContacts App</string>
+    <string name="app_name">RContacts</string>
 
     <!--  facebook  -->
     <!--old-->
@@ -68,6 +68,7 @@
     <string name="action_register">रजिस्टर</string>
     <string name="action_continue">जारी रखे</string>
     <string name="hint_first_name">पहला नाम</string>
+    <string name="hint_aadhar_number">Aadhar Number</string>
     <string name="hint_last_name">अंतिम नाम</string>
     <string name="hint_email_id">ईमेल आईडी</string>
     <string name="text_or">या</string>
@@ -467,6 +468,8 @@
     <string name="str_small_cap_email">ईमेल</string>
     <string name="str_website">वेबसाइट</string>
     <string name="str_address">पोस्टल पता</string>
+    <string name="str_aadhar_card">आधार कार्ड</string>
+    <string name="str_aadhar_number">आधार नंबर</string>
     <string name="str_link">लिंक</string>
     <!--<string name="str_account_name">खाते का नाम</string>-->
     <string name="str_choose_date">दिनांक चुनें</string>

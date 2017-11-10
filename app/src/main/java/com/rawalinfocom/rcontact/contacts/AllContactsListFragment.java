@@ -1390,7 +1390,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         if (progressPercentage != null) {
             progressPercentage.setBarColor(Color.parseColor("#CCE4E1"), Color.parseColor
                     ("#00796B"));
-
             int percentage = 5;
             ArrayList<String> arrayListRemainingFields = new ArrayList<>();
             if (Utils.hasSharedPreference(getActivity(), AppConstants
@@ -1423,9 +1422,28 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
             //<editor-fold desc="Organization">
             if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbOrganization())) {
-                percentage += 15;
+               /* percentage += 15;
                 if (arrayListRemainingFields.contains(getString(R.string.str_organization))) {
                     arrayListRemainingFields.remove(getString(R.string.str_organization));
+                }*/
+                percentage += 5;
+                if (arrayListRemainingFields.contains(getString(R.string.str_organization))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_organization));
+                }
+                boolean hasVerifiedOrganization = false;
+                for (int i = 0; i < profileDetail.getPbOrganization().size(); i++) {
+                    if (profileDetail.getPbOrganization().get(i).getIsVerify() == 1) {
+                        percentage += 10;
+                        hasVerifiedOrganization = true;
+                        break;
+                    }
+                }
+                if (hasVerifiedOrganization) {
+                    if (arrayListRemainingFields.contains("Verified Organization")) {
+                        arrayListRemainingFields.remove("Verified Organization");
+                    }
+                } else {
+                    arrayListRemainingFields.add("Verified Organization");
                 }
             } else {
                 arrayListRemainingFields.add(getString(R.string.str_organization));
@@ -1554,6 +1572,17 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
             } else {
                 arrayListRemainingFields.add(getString(R.string.str_social_contact));
+            }
+            //</editor-fold>
+
+            //<editor-fold desc="Adhaar Card">
+            if (profileDetail.getPbAadhar() != null) {
+                percentage += 10;
+                if (arrayListRemainingFields.contains(getString(R.string.str_aadhar_card))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_aadhar_card));
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_aadhar_card));
             }
             //</editor-fold>
 

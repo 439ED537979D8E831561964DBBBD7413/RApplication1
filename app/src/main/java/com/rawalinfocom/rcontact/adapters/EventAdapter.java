@@ -156,6 +156,19 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
         } else {
             holder.imagePerson.setImageResource(R.drawable.home_screen_profile);
         }
+
+        holder.imagePerson.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!StringUtils.isBlank(item.getPersonImage())) {
+                    Utils.zoomImageFromThumb(activity, holder.imagePerson, item
+                            .getPersonImage(), ((EventsActivity) activity)
+                            .frameImageEnlarge, ((EventsActivity) activity).imageEnlarge, (
+                            (EventsActivity ) activity).frameContainer);
+                }
+            }
+        });
+
         holder.buttonUserCommentSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

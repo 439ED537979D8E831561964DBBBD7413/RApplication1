@@ -1,5 +1,6 @@
 package com.rawalinfocom.rcontact.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -23,6 +24,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.SearchActivity;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.model.GlobalSearchType;
@@ -63,7 +65,7 @@ public class GlobalSearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder contactViewHolder, int position) {
-        GlobalSearchViewHolder holder = (GlobalSearchViewHolder) contactViewHolder;
+        final GlobalSearchViewHolder holder = (GlobalSearchViewHolder) contactViewHolder;
         final GlobalSearchType globalSearchType = globalSearchTypeArrayList.get(position);
         String firstName = globalSearchType.getFirstName();
         int isRcpVerified = globalSearchType.getIsRcpVerified();
@@ -124,7 +126,7 @@ public class GlobalSearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         } else
             holder.textContactNumber.setText("");
 
-        String profileImage = globalSearchType.getProfileImageUrl();
+        final String profileImage = globalSearchType.getProfileImageUrl();
         if (!StringUtils.isEmpty(profileImage)) {
             Glide.with(context)
                     .load(profileImage)
@@ -137,6 +139,17 @@ public class GlobalSearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         } else {
             holder.imageProfile.setImageResource(R.drawable.home_screen_profile);
         }
+
+        holder.imageProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (StringUtils.length(profileImage) > 0) if (context instanceof SearchActivity)
+                    Utils.zoomImageFromThumb((Activity) context, holder.imageProfile,
+                            profileImage, ((SearchActivity) context).frameImageEnlarge, (
+                                    (SearchActivity) context).imageEnlarge, ((SearchActivity)
+                                    context).frameContainer);
+            }
+        });
 
         String userRatingCount = globalSearchType.getProfileRatedCount();
         if (!StringUtils.isEmpty(userRatingCount)) {

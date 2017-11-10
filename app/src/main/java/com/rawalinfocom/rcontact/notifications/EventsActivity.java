@@ -9,6 +9,7 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -86,6 +87,13 @@ public class EventsActivity extends BaseActivity implements RippleView
     RelativeLayout layoutRoot;
     @BindView(R.id.recyclerview_event_list)
     RecyclerView recyclerviewEventList;
+
+    @BindView(R.id.frame_container)
+    public FrameLayout frameContainer;
+    @BindView(R.id.frame_image_enlarge)
+    public FrameLayout frameImageEnlarge;
+    @BindView(R.id.image_enlarge)
+    public ImageView imageEnlarge;
 
     private EventAdapter eventAdapter;
 //    private EventAdapter todayEventAdapter;

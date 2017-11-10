@@ -81,9 +81,11 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
             SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
             String current = s.format(c.getTime());
             if (StringUtils.equalsIgnoreCase(current, date)) {
-                holder.textTimelineNotiTime.setText(Utils.formatDateTime(wishersCommentTime, "hh:mm a"));
+                holder.textTimelineNotiTime.setText(Utils.formatDateTime(wishersCommentTime,
+                        "hh:mm a"));
             } else {
-                holder.textTimelineNotiTime.setText(Utils.formatDateTime(wishersCommentTime, "dd MMM, yy"));
+                holder.textTimelineNotiTime.setText(Utils.formatDateTime(wishersCommentTime, "dd " +
+                        "MMM, yy"));
             }
         }
         String wisherComment = item.getWisherComment();
@@ -95,30 +97,39 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
         if (wisherComment != null && wisherComment.length() > 0) {
             holder.textWisherComment.setVisibility(View.VISIBLE);
             holder.textWisherComment.setText(wisherComment);
-            holder.textWisherCommentTime.setText(Utils.formatDateTime(item.getWisherCommentTime(), "hh:mm a"));
+            holder.textWisherCommentTime.setText(Utils.formatDateTime(item.getWisherCommentTime()
+                    , "hh:mm a"));
 //            if (recyclerPosition == 0)
-//                holder.textWisherCommentTime.setText(Utils.formatDateTime(item.getWisherCommentTime(), "hh:mm a"));
+//                holder.textWisherCommentTime.setText(Utils.formatDateTime(item
+// .getWisherCommentTime(), "hh:mm a"));
 //            else
-//                holder.textWisherCommentTime.setText(Utils.formatDateTime(item.getWisherCommentTime(), "dd MMM, hh:mm a"));
+//                holder.textWisherCommentTime.setText(Utils.formatDateTime(item
+// .getWisherCommentTime(), "dd MMM, hh:mm a"));
         } else {
             holder.textWisherComment.setVisibility(View.GONE);
             if (notiType == 1) {
                 //set rating done time only
-                holder.textWisherCommentTime.setText(Utils.formatDateTime(item.getWisherCommentTime(), "hh:mm a"));
+                holder.textWisherCommentTime.setText(Utils.formatDateTime(item
+                        .getWisherCommentTime(), "hh:mm a"));
 //                if (recyclerPosition == 0)
-//                    holder.textWisherCommentTime.setText(Utils.formatDateTime(item.getWisherCommentTime(), "hh:mm a"));
+//                    holder.textWisherCommentTime.setText(Utils.formatDateTime(item
+// .getWisherCommentTime(), "hh:mm a"));
 //                else
-//                    holder.textWisherCommentTime.setText(Utils.formatDateTime(item.getWisherCommentTime(), "dd MMM, hh:mm a"));
+//                    holder.textWisherCommentTime.setText(Utils.formatDateTime(item
+// .getWisherCommentTime(), "dd MMM, hh:mm a"));
             }
         }
         if (userComment != null && userComment.length() > 0) {
             holder.layoutUserCommentDone.setVisibility(View.VISIBLE);
             holder.textUserComment.setText(userComment);
-            holder.textUserCommentTime.setText(Utils.formatDateTime(item.getUserCommentTime(), "hh:mm a"));
+            holder.textUserCommentTime.setText(Utils.formatDateTime(item.getUserCommentTime(),
+                    "hh:mm a"));
 //            if (recyclerPosition == 0)
-//                holder.textUserCommentTime.setText(Utils.formatDateTime(item.getUserCommentTime(), "hh:mm a"));
+//                holder.textUserCommentTime.setText(Utils.formatDateTime(item.getUserCommentTime
+// (), "hh:mm a"));
 //            else
-//                holder.textUserCommentTime.setText(Utils.formatDateTime(item.getUserCommentTime(), "dd MMM, hh:mm a"));
+//                holder.textUserCommentTime.setText(Utils.formatDateTime(item.getUserCommentTime
+// (), "dd MMM, hh:mm a"));
 
             holder.layoutUserCommentPending.setVisibility(View.GONE);
         } else {
@@ -136,11 +147,13 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
             // Filled stars
             Utils.setRatingStarColor(stars.getDrawable(2), ContextCompat.getColor(activity, R.color
                     .vivid_yellow));
-            Utils.setRatingStarColor(stars.getDrawable(1), ContextCompat.getColor(activity, android.R
-                    .color.darker_gray));
+            Utils.setRatingStarColor(stars.getDrawable(1), ContextCompat.getColor(activity,
+                    android.R
+                            .color.darker_gray));
             // Empty stars
-            Utils.setRatingStarColor(stars.getDrawable(0), ContextCompat.getColor(activity, android.R
-                    .color.darker_gray));
+            Utils.setRatingStarColor(stars.getDrawable(0), ContextCompat.getColor(activity,
+                    android.R
+                            .color.darker_gray));
             holder.textEventDetailInfo.setVisibility(View.GONE);
         } else {
             holder.textEventDetailInfo.setText(item.getEventDetail());
@@ -154,9 +167,11 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
 //                    TimelineActivity.selectedRecycler = recyclerPosition;
                     TimelineActivity.selectedRecyclerItem = position;
                     holder.edittextUserComment.getText().clear();
-                    addReplyonComment(item.getCrmType(), item.getCrmCloudPrId(), userComment, AppConstants.COMMENT_STATUS_RECEIVED, item.getEvmRecordIndexId());
+                    addReplyonComment(item.getCrmType(), item.getCrmCloudPrId(), userComment,
+                            AppConstants.COMMENT_STATUS_RECEIVED, item.getEvmRecordIndexId());
                 } else {
-                    Toast.makeText(activity, activity.getResources().getString(R.string.msg_please_enter_some_comment), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, activity.getResources().getString(R.string
+                            .msg_please_enter_some_comment), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -172,6 +187,19 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
         } else {
             holder.imageWisher.setImageResource(R.drawable.home_screen_profile);
         }
+
+        holder.imageWisher.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!StringUtils.isBlank(item.getWisherProfileImage())) {
+                    Utils.zoomImageFromThumb(activity, holder.imageWisher, item
+                            .getWisherProfileImage(), ((TimelineActivity) activity)
+                            .frameImageEnlarge, ((TimelineActivity) activity).imageEnlarge, (
+                                    (TimelineActivity) activity).frameContainer);
+                }
+            }
+        });
+
         if (!TextUtils.isEmpty(item.getWisherProfileImage())) {
             Glide.with(activity)
                     .load(item.getWisherProfileImage())
@@ -184,6 +212,19 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
         } else {
             holder.imageWisherSmall.setImageResource(R.drawable.home_screen_profile);
         }
+
+        holder.imageWisherSmall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!StringUtils.isBlank(item.getWisherProfileImage())) {
+                    Utils.zoomImageFromThumb(activity, holder.imageWisherSmall, item
+                            .getWisherProfileImage(), ((TimelineActivity) activity)
+                            .frameImageEnlarge, ((TimelineActivity) activity).imageEnlarge, (
+                            (TimelineActivity) activity).frameContainer);
+                }
+            }
+        });
+
         if (!TextUtils.isEmpty(item.getUserprofileImage())) {
             Glide.with(activity)
                     .load(item.getUserprofileImage())
@@ -196,9 +237,23 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
         } else {
             holder.imageUser.setImageResource(R.drawable.home_screen_profile);
         }
+
+        holder.imageUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!StringUtils.isBlank(item.getUserprofileImage())) {
+                    Utils.zoomImageFromThumb(activity, holder.imageUser, item
+                            .getUserprofileImage(), ((TimelineActivity) activity)
+                            .frameImageEnlarge, ((TimelineActivity) activity).imageEnlarge, (
+                            (TimelineActivity) activity).frameContainer);
+                }
+            }
+        });
+
     }
 
-    private void addReplyonComment(String crmType, String crmCloudPrId, String userComment, int commentStatusReceived, String evmRecordIndexId) {
+    private void addReplyonComment(String crmType, String crmCloudPrId, String userComment, int
+            commentStatusReceived, String evmRecordIndexId) {
 
         WsRequestObject addCommentObject = new WsRequestObject();
         if (crmType.equalsIgnoreCase("Rating")) {
@@ -213,21 +268,26 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
             addCommentObject.setStatus(commentStatusReceived + "");
         }
         if (Utils.isNetworkAvailable(activity)) {
-//            if (crmType.equalsIgnoreCase(activity.getResources().getString(R.string.str_tab_rating))) {
+//            if (crmType.equalsIgnoreCase(activity.getResources().getString(R.string
+// .str_tab_rating))) {
             if (crmType.equalsIgnoreCase("Rating")) {
                 new AsyncWebServiceCall(activity, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                         addCommentObject, null, WsResponseObject.class, WsConstants
-                        .REQ_PROFILE_RATING, activity.getResources().getString(R.string.msg_please_wait), true)
-                        .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants.REQ_PROFILE_RATING);
+                        .REQ_PROFILE_RATING, activity.getResources().getString(R.string
+                        .msg_please_wait), true)
+                        .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT +
+                                WsConstants.REQ_PROFILE_RATING);
             } else {
                 new AsyncWebServiceCall(activity, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                         addCommentObject, null, WsResponseObject.class, WsConstants
-                        .REQ_ADD_EVENT_COMMENT, activity.getResources().getString(R.string.msg_please_wait), true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                        .REQ_ADD_EVENT_COMMENT, activity.getResources().getString(R.string
+                        .msg_please_wait), true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
                         WsConstants.WS_ROOT + WsConstants.REQ_ADD_EVENT_COMMENT);
             }
         } else {
             //show no toast
-            Toast.makeText(activity, activity.getResources().getString(R.string.msg_no_network), Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, activity.getResources().getString(R.string.msg_no_network),
+                    Toast.LENGTH_SHORT).show();
         }
     }
 

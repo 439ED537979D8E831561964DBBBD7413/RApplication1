@@ -222,7 +222,7 @@ public class TutorialActivity extends BaseActivity {
                         break;
 
                     case 5:
-                        textTutorialHeader.setText(getString(R.string.tutorial_header_5));
+                        textTutorialHeader.setText(getString(R.string.tutorial_header_6));
                         textNext.setText(R.string.tutorial_lets_go);
                         textSkip.setVisibility(View.GONE);
                         break;

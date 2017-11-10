@@ -56,6 +56,7 @@ public class WsRequestObject {
     @JsonProperty("privacy_data")
     private List<PrivacyDataItem> privacyData;
 
+
     @JsonProperty("mobile_numbers")
     private ArrayList<String> unknownNumberList;
 
@@ -866,6 +867,5 @@ public class WsRequestObject {
     public void setUnknownNumberList(ArrayList<String> unknownNumberList) {
         this.unknownNumberList = unknownNumberList;
     }
-
 
 }

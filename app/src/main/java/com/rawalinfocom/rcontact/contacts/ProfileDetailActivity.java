@@ -32,6 +32,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -74,6 +75,7 @@ import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.database.QueryManager;
+import com.rawalinfocom.rcontact.database.TableAadharMaster;
 import com.rawalinfocom.rcontact.database.TableAddressMaster;
 import com.rawalinfocom.rcontact.database.TableCommentMaster;
 import com.rawalinfocom.rcontact.database.TableEmailMaster;
@@ -102,8 +104,11 @@ import com.rawalinfocom.rcontact.model.Event;
 import com.rawalinfocom.rcontact.model.ImAccount;
 import com.rawalinfocom.rcontact.model.MobileNumber;
 import com.rawalinfocom.rcontact.model.Organization;
+import com.rawalinfocom.rcontact.model.PrivacyDataItem;
+import com.rawalinfocom.rcontact.model.PrivacyEntityItem;
 import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
+import com.rawalinfocom.rcontact.model.ProfileDataOperationAadharNumber;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEvent;
@@ -152,6 +157,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     @BindView(R.id.include_toolbar)
     Toolbar includeToolbar;
     TextView textToolbarTitle;
+    //    Toolbar toolbarProfileDetail;
     RippleView rippleActionBack;
     RippleView rippleActionRelation;
     RippleView rippleActionRightLeft;
@@ -323,6 +329,16 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     @BindView(R.id.include_elevation_top)
     View includeElevationTop;
 
+    @Nullable
+    @BindView(R.id.text_tap_continue)
+    TextView textTapContinue;
+    @Nullable
+    @BindView(R.id.frame_tutorial)
+    FrameLayout frameTutorial;
+    @Nullable
+    @BindView(R.id.image_tutorial_edit)
+    ImageView imageTutorialEdit;
+
     String callLogCloudName;
     boolean isCallLogRcpUser, isRatingUpdate = false;
     boolean isDialogCallLogInstance;
@@ -381,6 +397,24 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     String callLogRcpVerfiedId = "";
     boolean isFromNotification;
     AsyncWebServiceCall asyncGetProfileDetails;
+    @BindView(R.id.image_aadhar_card)
+    ImageView imageAadharCard;
+    @BindView(R.id.text_label_aadhar_card)
+    TextView textLabelAadharCard;
+    @BindView(R.id.button_privacy)
+    ImageView buttonPrivacy;
+    @BindView(R.id.text_aadhar_number)
+    TextView textAadharNumber;
+    @BindView(R.id.relative_aadhar_number)
+    RelativeLayout relativeAadharNumber;
+    @BindView(R.id.text_label_UIDAI_number)
+    TextView textLabelUIDAINumber;
+    @BindView(R.id.linear_aadhar_card)
+    LinearLayout linearAadharCard;
+    @BindView(R.id.image_action_back)
+    ImageView imageActionBack;
+    @BindView(R.id.button_request)
+    AppCompatButton buttonRequest;
 
     //<editor-fold desc="Override Methods">
 
@@ -854,8 +888,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             if (!listVCardResInfo.isEmpty()) {
                                 for (ResolveInfo resolveInfo : listVCardResInfo) {
                                     String packageName = resolveInfo.activityInfo.packageName;
-                                    Intent targetedShareIntent = new Intent(android.content
-                                            .Intent.ACTION_SEND);
+                                    Intent targetedShareIntent = new Intent(
+                                            Intent.ACTION_SEND);
                                     targetedShareIntent.setType("text/plain");
                                     String shareBody;
                                     if (StringUtils.isBlank(userProfile.getPmBadge())) {
@@ -1135,22 +1169,23 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     @Override
     public void onBackPressed() {
+        if (!Utils.getBooleanPreference(this, AppConstants.PREF_SHOW_WALK_THROUGH, true)) {
+            if (isRatingUpdate) {
 
-        if (isRatingUpdate) {
+                Intent localBroadcastIntent1 = new Intent(AppConstants
+                        .ACTION_LOCAL_BROADCAST_RATING_UPDATE);
+                localBroadcastIntent1.putExtra(AppConstants.EXTRA_RCONTACT_POSITION, getIntent()
+                        .getIntExtra(AppConstants.EXTRA_RCONTACT_POSITION, 0));
+                localBroadcastIntent1.putExtra(AppConstants.EXTRA_RATING_UPDATE, isRatingUpdate);
+                LocalBroadcastManager.getInstance(ProfileDetailActivity.this).sendBroadcast
+                        (localBroadcastIntent1);
+            }
 
-            Intent localBroadcastIntent1 = new Intent(AppConstants
-                    .ACTION_LOCAL_BROADCAST_RATING_UPDATE);
-            localBroadcastIntent1.putExtra(AppConstants.EXTRA_RCONTACT_POSITION, getIntent()
-                    .getIntExtra(AppConstants.EXTRA_RCONTACT_POSITION, 0));
-            localBroadcastIntent1.putExtra(AppConstants.EXTRA_RATING_UPDATE, isRatingUpdate);
-            LocalBroadcastManager.getInstance(ProfileDetailActivity.this).sendBroadcast
-                    (localBroadcastIntent1);
+            Intent backIntent = getIntent();
+            setResult(RESULT_OK, backIntent);
+            finish();
+            overridePendingTransition(R.anim.pop_enter, R.anim.pop_exit);
         }
-
-        Intent backIntent = getIntent();
-        setResult(RESULT_OK, backIntent);
-        finish();
-        overridePendingTransition(R.anim.pop_enter, R.anim.pop_exit);
     }
 
     @Override
@@ -1793,6 +1828,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
 
             if (displayOwnProfile) {
+
                 TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
                 final UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer
                         .parseInt(pmId));
@@ -1961,7 +1997,79 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         }
     }
 
+    private void displayWalkThrough() {
+
+        frameTutorial.setVisibility(View.VISIBLE);
+
+        FrameLayout.LayoutParams layoutParamsFrame = new FrameLayout.LayoutParams(FrameLayout
+                .LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+
+        final LinearLayout linearDescription = new LinearLayout(this);
+        linearDescription.setLayoutParams(layoutParamsFrame);
+        linearDescription.setOrientation(LinearLayout.VERTICAL);
+
+        final LinearLayout.LayoutParams descriptionLayoutParam = new LinearLayout.LayoutParams
+                (LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        descriptionLayoutParam.leftMargin = (int) getResources().getDimension(R.dimen
+                .activity_horizontal_margin);
+        descriptionLayoutParam.rightMargin = (int) getResources().getDimension(R.dimen
+                .activity_horizontal_margin);
+
+        final LinearLayout.LayoutParams headerLayoutParam = new LinearLayout.LayoutParams
+                (LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        headerLayoutParam.leftMargin = (int) getResources().getDimension(R.dimen
+                .activity_horizontal_margin);
+        headerLayoutParam.rightMargin = (int) getResources().getDimension(R.dimen
+                .activity_horizontal_margin);
+
+        /*new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                descriptionLayoutParam.topMargin = includeToolbar.getHeight() + (int)
+                        getResources().getDimension(R.dimen.nav_header_height);
+            }
+        }, 2000);*/
+
+        descriptionLayoutParam.topMargin = (int) (Utils.getDeviceHeight(ProfileDetailActivity
+                .this) / 2.5);
+
+        textTapContinue.setText("TAP ON THE EDIT ICON");
+
+        TextView textHeader = new TextView(this);
+        textHeader.setTextColor(ContextCompat.getColor(this, R.color.colorWhite));
+        textHeader.setTypeface(Utils.typefaceBold(this));
+        textHeader.setLayoutParams(descriptionLayoutParam);
+        textHeader.setTextSize(18);
+        textHeader.setPaintFlags(textHeader.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        textHeader.setText("Edit Profile");
+        linearDescription.addView(textHeader);
+
+        TextView textDescription = new TextView(this);
+        textDescription.setTextColor(ContextCompat.getColor(this, R.color.colorWhite));
+        textDescription.setTypeface(Utils.typefaceRegular(this));
+        textDescription.setLayoutParams(headerLayoutParam);
+        textDescription.setTextSize(14);
+        textDescription.setText("Add your info for your Contacts\nto know you better!");
+        linearDescription.addView(textDescription);
+
+        imageTutorialEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        frameTutorial.setVisibility(View.GONE);
+                    }
+                }, 700);
+                startActivityIntent(ProfileDetailActivity.this, EditProfileActivity.class, null);
+            }
+        });
+
+        frameTutorial.addView(linearDescription);
+    }
+
     private void init() {
+//        toolbarProfileDetail = ButterKnife.findById(includeToolbar, R.id.toolbar_profile_detail);
         rippleActionBack = ButterKnife.findById(includeToolbar, R.id.ripple_action_back);
         textToolbarTitle = ButterKnife.findById(includeToolbar, R.id.text_toolbar_title);
         imageRelation = ButterKnife.findById(includeToolbar, R.id.image_relation);
@@ -2064,6 +2172,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             } else {
                 // Non-RC Profile
                 setUpView(null);
+            }
+        } else {
+            if (Utils.getBooleanPreference(ProfileDetailActivity.this, AppConstants
+                    .PREF_SHOW_WALK_THROUGH, true)) {
+                displayWalkThrough();
+            } else {
+                frameTutorial.setVisibility(View.GONE);
             }
         }
 
@@ -2399,11 +2514,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     textTime.setVisibility(View.GONE);
                 }
 
-                if (MoreObjects.firstNonNull(tempOrganization.get(0).getIsVerify(), 0) == IntegerConstants.RCP_TYPE_PRIMARY) {
+                if (MoreObjects.firstNonNull(tempOrganization.get(0).getIsVerify(), 0) ==
+                        IntegerConstants.RCP_TYPE_PRIMARY) {
 
-                    String s = Utils.setMultipleTypeface(ProfileDetailActivity.this, tempOrganization.get(0).getOrgName() + " <font color" + "='#00796B'>" +
-                                    getString(R.string.im_icon_verify) + "</font>", 0, (StringUtils.length(tempOrganization.get(0).getOrgName()) + 1),
-                            ((StringUtils.length(tempOrganization.get(0).getOrgName()) + 1) + 1)).toString();
+                    String s = Utils.setMultipleTypeface(ProfileDetailActivity.this,
+                            tempOrganization.get(0).getOrgName() + " <font color" + "='#00796B'>" +
+                                    getString(R.string.im_icon_verify) + "</font>", 0,
+                            (StringUtils.length(tempOrganization.get(0).getOrgName()) + 1),
+                            ((StringUtils.length(tempOrganization.get(0).getOrgName()) + 1) + 1))
+                            .toString();
 
                     textOrganization.setText(Html.fromHtml(s));
 
@@ -2866,6 +2985,130 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
             //</editor-fold>
 
+            // <editor-fold desc="Aadhar card details">
+            if (profileDetail != null) {
+                final ProfileDataOperationAadharNumber aadharDetails;
+                if (profileDetail.getPbAadhar() != null) {
+                    linearAadharCard.setVisibility(View.VISIBLE);
+                    aadharDetails = profileDetail.getPbAadhar();
+
+                    if (displayOwnProfile) {
+                        buttonRequest.setVisibility(View.GONE);
+                        if (aadharDetails.getAadharPublic() != 3) {
+                            if (aadharDetails.getAadharPublic() == 1) {
+                                buttonPrivacy.setImageResource(R.drawable.ico_privacy_public);
+                            } else if (aadharDetails.getAadharPublic() == 2) {
+                                buttonPrivacy.setImageResource(R.drawable.ico_privacy_my_contact);
+                            }
+                        } else {
+                            buttonPrivacy.setImageResource(R.drawable.ico_privacy_onlyme);
+                        }
+                    } else {
+                        if ((MoreObjects.firstNonNull(aadharDetails.getAadharPublic(), 3)) == IntegerConstants
+                                .PRIVACY_PRIVATE) {
+                            buttonRequest.setVisibility(View.VISIBLE);
+                            buttonPrivacy.setVisibility(View.GONE);
+                        }
+                    }
+
+                    buttonRequest.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            int pmTo = Integer.parseInt(pmId);
+                            // sendAccessRequest(int toPMId, String carFiledType, String recordIndexId)
+                            sendAccessRequest(pmTo, "pb_aadhaar", String.valueOf(aadharDetails.getAadharId()));
+                        }
+                    });
+
+                    textAadharNumber.setTypeface(Utils.typefaceRegular(this));
+                    if (aadharDetails.getAadharNumber() == 0) {
+                        textAadharNumber.setText("XXXX-XXXX-XXXX");
+                    } else
+                        textAadharNumber.setText(aadharDetails.getAadharNumber() + "");
+
+                    buttonPrivacy.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            PrivacySettingPopupDialog privacySettingPopupDialog = new
+                                    PrivacySettingPopupDialog(null, ProfileDetailActivity.this,
+                                    new PrivacySettingPopupDialog.DialogCallback() {
+                                        @Override
+                                        public void onSettingSaved(ProfileDetailAdapter
+                                                                           .ProfileDetailViewHolder view, int whichItem, int newPrivacy, int
+                                                                           itemPosition, int
+                                                                           oldPrivacy, String
+                                                                           cloudId) {
+
+                                            if (oldPrivacy == newPrivacy + 1) {
+                                                return;
+                                            }
+
+                                            WsRequestObject wsRequestObject = new WsRequestObject();
+
+                                            PrivacyEntityItem privacyEntityItem = new
+                                                    PrivacyEntityItem();
+                                            privacyEntityItem.setId(cloudId);
+                                            privacyEntityItem.setValue(newPrivacy + 1);
+                                            ArrayList<PrivacyEntityItem> privacyEntityItems = new
+                                                    ArrayList<>();
+                                            privacyEntityItems.add(privacyEntityItem);
+                                            ArrayList<PrivacyDataItem> privacyItems = new
+                                                    ArrayList<>();
+                                            PrivacyDataItem privacyDataItem = new PrivacyDataItem();
+                                            switch (whichItem) {
+                                                case AppConstants.AADHAR_NUMBER:
+                                                    privacyDataItem.setPbAadhaar
+                                                            (privacyEntityItems);
+                                                    break;
+                                            }
+                                            privacyItems.add(privacyDataItem);
+                                            wsRequestObject.setPrivacyData(privacyItems);
+//        wsRequestObject.setPmId(pmId);
+                                            if (Utils.isNetworkAvailable(ProfileDetailActivity
+                                                    .this)) {
+                                                new AsyncWebServiceCall(ProfileDetailActivity.this,
+                                                        WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                                                        wsRequestObject, null, WsResponseObject
+                                                        .class,
+                                                        WsConstants
+                                                                .REQ_SET_PRIVACY_SETTING,
+                                                        ProfileDetailActivity
+                                                                .this.getResources().getString(R
+                                                                .string
+                                                                .msg_please_wait), true)
+                                                        .executeOnExecutor
+                                                                (AsyncTask.THREAD_POOL_EXECUTOR,
+                                                                        WsConstants.WS_ROOT +
+                                                                                WsConstants
+                                                                                        .REQ_SET_PRIVACY_SETTING);
+                                            } else {
+                                                //show no toast
+                                                Toast.makeText(ProfileDetailActivity.this,
+                                                        ProfileDetailActivity.this.getResources()
+                                                                .getString(R.string.msg_no_network),
+                                                        Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    }, AppConstants
+                                    .AADHAR_NUMBER,
+                                    0, aadharDetails.getAadharPublic(), aadharDetails.getAadharId
+                                    () + "");
+                            privacySettingPopupDialog.setDialogTitle(ProfileDetailActivity.this
+                                    .getResources().getString(R
+                                            .string.privacy_dialog_title));
+                            privacySettingPopupDialog.showDialog();
+                        }
+                    });
+
+                } else {
+                    linearAadharCard.setVisibility(View.GONE);
+                }
+            } else {
+                linearAadharCard.setVisibility(View.GONE);
+            }
+
+            //</editor-fold>
+
             if ((!Utils.isArraylistNullOrEmpty(arrayListWebsite) || !Utils.isArraylistNullOrEmpty
                     (arrayListPhoneBookWebsite))
                     ||
@@ -2874,7 +3117,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     ||
                     (!Utils.isArraylistNullOrEmpty(arrayListImAccount) || !Utils
                             .isArraylistNullOrEmpty(arrayListPhoneBookImAccount))
-                    ) {
+                    || (profileDetail.getPbAadhar() != null)) {
                 rippleViewMore.setVisibility(View.VISIBLE);
             } else {
                 rippleViewMore.setVisibility(View.GONE);
@@ -2984,6 +3227,28 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         }
     }
 
+
+    private void sendAccessRequest(int toPMId, String carFiledType, String recordIndexId) {
+
+        WsRequestObject requestObj = new WsRequestObject();
+        requestObj.setCarPmIdTo(toPMId);
+        requestObj.setCarFiledType(carFiledType);
+        requestObj.setCarStatus(0);
+        requestObj.setCarMongoDbRecordIndex(recordIndexId);
+
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    requestObj, null, WsResponseObject.class, WsConstants
+                    .REQ_PROFILE_PRIVACY_REQUEST, this.getResources().getString(R.string
+                    .msg_please_wait), true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                    WsConstants.WS_ROOT + WsConstants.REQ_PROFILE_PRIVACY_REQUEST);
+        } else {
+            //show no net
+            Toast.makeText(this, this.getResources().getString(R.string.msg_no_network),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void showProfilePercentage(ProfileDataOperation profileDetail) {
         if (progressPercentage != null) {
             progressPercentage.setBarColor(Color.parseColor("#CCE4E1"), Color.parseColor
@@ -3021,9 +3286,28 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             //<editor-fold desc="Organization">
             if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbOrganization())) {
-                percentage += 15;
+               /* percentage += 15;
                 if (arrayListRemainingFields.contains(getString(R.string.str_organization))) {
                     arrayListRemainingFields.remove(getString(R.string.str_organization));
+                }*/
+                percentage += 5;
+                if (arrayListRemainingFields.contains(getString(R.string.str_organization))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_organization));
+                }
+                boolean hasVerifiedOrganization = false;
+                for (int i = 0; i < profileDetail.getPbOrganization().size(); i++) {
+                    if (profileDetail.getPbOrganization().get(i).getIsVerify() == 1) {
+                        percentage += 10;
+                        hasVerifiedOrganization = true;
+                        break;
+                    }
+                }
+                if (hasVerifiedOrganization) {
+                    if (arrayListRemainingFields.contains("Verified Organization")) {
+                        arrayListRemainingFields.remove("Verified Organization");
+                    }
+                } else {
+                    arrayListRemainingFields.add("Verified Organization");
                 }
             } else {
                 arrayListRemainingFields.add(getString(R.string.str_organization));
@@ -3043,7 +3327,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             //<editor-fold desc="Address">
             if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbAddress())) {
-                percentage += 20;
+                percentage += 10;
                 if (arrayListRemainingFields.contains(getString(R.string.str_address))) {
                     arrayListRemainingFields.remove(getString(R.string.str_address));
                 }
@@ -3076,9 +3360,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         percentage += 15;
                         hasVerifiedEmail = true;
                         break;
-                    } else if (profileDetail.getPbEmailId().get(i).getEmRcpType() == IntegerConstants
-                            .RCP_TYPE_SECONDARY) {
-                        if (!profileDetail.getPbEmailId().get(i).getEmSocialType().equalsIgnoreCase("")) {
+                    } else if (profileDetail.getPbEmailId().get(i).getEmRcpType() ==
+                            IntegerConstants
+                                    .RCP_TYPE_SECONDARY) {
+                        if (!profileDetail.getPbEmailId().get(i).getEmSocialType()
+                                .equalsIgnoreCase("")) {
                             percentage += 15;
                             hasVerifiedEmail = true;
                             break;
@@ -3152,6 +3438,17 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             } else {
                 arrayListRemainingFields.add(getString(R.string.str_social_contact));
+            }
+            //</editor-fold>
+
+            //<editor-fold desc="Adhaar Card">
+            if (profileDetail.getPbAadhar() != null) {
+                percentage += 10;
+                if (arrayListRemainingFields.contains(getString(R.string.str_aadhar_card))) {
+                    arrayListRemainingFields.remove(getString(R.string.str_aadhar_card));
+                }
+            } else {
+                arrayListRemainingFields.add(getString(R.string.str_aadhar_card));
             }
             //</editor-fold>
 
@@ -3341,8 +3638,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         String finalNumber = Utils.getFormattedNumber(ProfileDetailActivity.this, number);
 
-        if (ContextCompat.checkSelfPermission(ProfileDetailActivity.this, android
-                .Manifest.permission.CALL_PHONE) != PackageManager
+        if (ContextCompat.checkSelfPermission(ProfileDetailActivity.this,
+                Manifest.permission.CALL_PHONE) != PackageManager
                 .PERMISSION_GRANTED)
             requestPermissions(new String[]{Manifest.permission
                     .CALL_PHONE}, AppConstants
@@ -4023,6 +4320,18 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     private void savePrivacySettingToDb(ProfileDataOperation profileDetail) {
 
+        // <editor-fold desc="Aadhar card details">
+        TableAadharMaster tableAadharMaster = new TableAadharMaster(databaseHandler);
+        tableAadharMaster.deleteAadharDetails(getUserPmId());
+        if (profileDetail != null) {
+            ProfileDataOperationAadharNumber aadharDetails = profileDetail.getPbAadhar();
+            if (aadharDetails != null) {
+                aadharDetails.setRcProfileMasterPmId(getUserPmId());
+                tableAadharMaster.addAadharDetail(aadharDetails);
+            }
+        }
+        //</editor-fold>
+
         // <editor-fold desc="Mobile Number">
         TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
 
@@ -4345,6 +4654,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         .getOrgFromDate());
                 organization.setOmOrganizationToDate(arrayListOrganization.get(i).getOrgToDate());
                 organization.setOmIsPrivate(arrayListOrganization.get(i).getIsPrivate());
+                organization.setOmIsCurrent(String.valueOf(arrayListOrganization.get(i)
+                        .getIsCurrent()));
 
                 if (arrayListOrganization.get(i).getIsVerify() != null)
                     if (arrayListOrganization.get(i).getIsVerify() == IntegerConstants
@@ -4498,6 +4809,18 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             tableEventMaster.addUpdateArrayEvent(eventList, profileDetail.getRcpPmId());
         } else {
             tableEventMaster.deleteData(profileDetail.getRcpPmId());
+        }
+        //</editor-fold>
+
+        // <editor-fold desc="Aadhar Details">
+        TableAadharMaster tableAadharMaster = new TableAadharMaster(databaseHandler);
+        // Remove Existing Number
+        tableAadharMaster.deleteAadharDetails(profileDetail.getRcpPmId());
+
+        if (profileDetail.getPbAadhar() != null) {
+            ProfileDataOperationAadharNumber profileDataOperationAadharNumber = profileDetail.getPbAadhar();
+            profileDataOperationAadharNumber.setRcProfileMasterPmId(profileDetail.getRcpPmId());
+            tableAadharMaster.addAadharDetail(profileDataOperationAadharNumber);
         }
         //</editor-fold>
     }

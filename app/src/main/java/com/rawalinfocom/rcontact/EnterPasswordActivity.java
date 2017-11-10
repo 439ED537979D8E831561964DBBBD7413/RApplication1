@@ -268,6 +268,9 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
 
                     ProfileDataOperation profileDetail = enterPassWordResponse.getProfileDetail();
 
+                    Long date_firstLaunch = System.currentTimeMillis();
+                    Utils.setLongPreference(this,AppConstants.PREF_RATE_APP_DATE, date_firstLaunch);
+
                     setProfileData(profileDetail);
                     Utils.storeProfileDataToDb(EnterPasswordActivity.this, profileDetail, databaseHandler);
 

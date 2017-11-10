@@ -173,6 +173,9 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
                                 AppConstants.PREF_LAUNCH_SCREEN_INT, IntegerConstants
                                         .LAUNCH_MAIN_ACTIVITY);
 
+                        Long date_firstLaunch = System.currentTimeMillis();
+                        Utils.setLongPreference(this,AppConstants.PREF_RATE_APP_DATE, date_firstLaunch);
+                        
                         ProfileDataOperation profileDetail = setPasswordResponse.getProfileDetail();
                         Utils.setObjectPreference(this, AppConstants
                                 .PREF_REGS_USER_OBJECT, profileDetail);

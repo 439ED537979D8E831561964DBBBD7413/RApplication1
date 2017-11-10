@@ -2,7 +2,6 @@ package com.rawalinfocom.rcontact;
 
 import android.Manifest;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
@@ -42,6 +41,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
@@ -116,7 +116,6 @@ import com.rawalinfocom.rcontact.notifications.NotificationsActivity;
 import com.rawalinfocom.rcontact.notifications.RatingHistory;
 import com.rawalinfocom.rcontact.notifications.TimelineActivity;
 import com.rawalinfocom.rcontact.receivers.NetworkConnectionReceiver;
-import com.rawalinfocom.rcontact.relation.RelationRecommendationActivity;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -144,14 +143,45 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
     @BindView(R.id.relative_root_contacts_main)
     RelativeLayout relativeRootContactsMain;
-    Toolbar toolbar;
+    @BindView(R.id.frame_container)
+    public FrameLayout frameContainer;
+    @BindView(R.id.frame_image_enlarge)
+    public FrameLayout frameImageEnlarge;
+    @BindView(R.id.image_enlarge)
+    public ImageView imageEnlarge;
+    @BindView(R.id.frame_tutorial)
+    public FrameLayout frameTutorial;
+    @BindView(R.id.image_tutorial_notification)
+    public ImageView imageTutorialNotification;
+    @BindView(R.id.image_tutorial_add_contact)
+    public ImageView imageTutorialAddContact;
+    @BindView(R.id.image_tutorial_drawer)
+    public ImageView imageTutorialDrawer;
+    @BindView(R.id.linear_tutorial_search)
+    public LinearLayout linearTutorialSearch;
+    @BindView(R.id.text_tap_continue)
+    public TextView textTapContinue;
+    @BindView(R.id.tutorial_user_profile)
+    public LinearLayout tutorialUserProfile;
+    @BindView(R.id.tutorial_profile_image)
+    public ImageView tutorialProfileImage;
+    @BindView(R.id.tutorial_user_name)
+    public TextView tutorialUserName;
+    @BindView(R.id.tutorial_number)
+    public TextView tutorialNumber;
+    @BindView(R.id.tutorial_rating_count)
+    public TextView tutorialRatingCount;
+    @BindView(R.id.tutorial_rating_user)
+    public RatingBar tutorialRatingUser;
+
+    public Toolbar toolbar;
     ImageView imageNotification;
     LinearLayout badgeLayout;
     TextView badgeTextView;
     FloatingActionButton fab;
-    DrawerLayout drawer;
-    NavigationView navigationView;
-    TabLayout tabMain;
+    public DrawerLayout drawer;
+    public NavigationView navigationView;
+    public TabLayout tabMain;
 
     ContactsFragment contactsFragment;
     CallLogFragment callLogFragment;
@@ -320,7 +350,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 }
 
             } catch (Exception e) {
-                    e.printStackTrace();
+                e.printStackTrace();
             }
             return null;
         }
@@ -417,7 +447,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 break;
 
             case R.id.nav_ll_relation:
-//                startActivityIntent(MainActivity.this, RelationRecommendationActivity.class, null);
+//                startActivityIntent(MainActivity.this, RelationRecommendationActivity.class,
+// null);
                 break;
         }
 
@@ -427,11 +458,13 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
+        if (!Utils.getBooleanPreference(this, AppConstants.PREF_SHOW_WALK_THROUGH, true)) {
+            DrawerLayout drawer = findViewById(R.id.drawer_layout);
+            if (drawer.isDrawerOpen(GravityCompat.START)) {
+                drawer.closeDrawer(GravityCompat.START);
+            } else {
+                super.onBackPressed();
+            }
         }
     }
 
@@ -1149,7 +1182,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         TextView textNumber = navigationView.findViewById(R.id.text_number);
         TextView textRatingCount = navigationView.findViewById(R.id.text_rating_count);
         RatingBar ratingUser = navigationView.findViewById(R.id.rating_user);
-        ImageView userProfileImage = navigationView.findViewById(R.id.userProfileImage);
+        final ImageView userProfileImage = navigationView.findViewById(R.id.userProfileImage);
 
         TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
         String number = tableMobileMaster.getUserMobileNumber(getUserPmId());
@@ -1162,14 +1195,6 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         textNumber.setText(number);
         textRatingCount.setText(Utils.getStringPreference(this, AppConstants
                 .PREF_USER_TOTAL_RATING, ""));
-        textUserName.setTypeface(Utils.typefaceSemiBold(MainActivity.this));
-        textNumber.setTypeface(Utils.typefaceRegular(MainActivity.this));
-        textRatingCount.setTypeface(Utils.typefaceBold(MainActivity.this));
-
-        textUserName.setText(Utils.getStringPreference(this, AppConstants.PREF_USER_NAME, ""));
-        textNumber.setText(number);
-        textRatingCount.setText(Utils.getStringPreference(this, AppConstants
-                .PREF_USER_TOTAL_RATING, "0"));
 
         if (!StringUtils.isEmpty(Utils.getStringPreference(this, AppConstants
                 .PREF_USER_RATING, "")))
@@ -1191,6 +1216,16 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         } else {
             userProfileImage.setImageResource(R.drawable.home_screen_profile);
         }
+
+        userProfileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!StringUtils.isBlank(thumbnailUrl)) {
+                    Utils.zoomImageFromThumb(MainActivity.this, userProfileImage, thumbnailUrl,
+                            frameImageEnlarge, imageEnlarge, frameContainer);
+                }
+            }
+        });
 
         Utils.setRatingColor(MainActivity.this, ratingUser);
 
@@ -1509,17 +1544,23 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                         MobileNumber mobileNumber = new MobileNumber();
                         mobileNumber.setMnmRecordIndexId(arrayListPhoneNumber.get(j).getPhoneId());
 
-                        if (String.valueOf(arrayListPhoneNumber.get(j).getPhonePublic()).equalsIgnoreCase("3")) {
-                            mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j).getPhoneNumber());
+                        if (String.valueOf(arrayListPhoneNumber.get(j).getPhonePublic())
+                                .equalsIgnoreCase("3")) {
+                            mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j)
+                                    .getPhoneNumber());
                         } else {
                             if (arrayListPBPhoneNumber.size() > 0)
-                                if (arrayListPBPhoneNumber.contains("+" + arrayListPhoneNumber.get(j).getOriginalNumber())) {
-                                    mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j).getOriginalNumber());
+                                if (arrayListPBPhoneNumber.contains("+" + arrayListPhoneNumber
+                                        .get(j).getOriginalNumber())) {
+                                    mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber
+                                            .get(j).getOriginalNumber());
                                 } else {
-                                    mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j).getPhoneNumber());
+                                    mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber
+                                            .get(j).getPhoneNumber());
                                 }
                             else
-                                mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j).getPhoneNumber());
+                                mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j)
+                                        .getPhoneNumber());
                         }
 
                         mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(j).getPhoneType());
@@ -1553,8 +1594,10 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                             Email email = new Email();
 
                             if (arrayListPBEmailAddress.size() > 0)
-                                if (arrayListPBEmailAddress.contains(arrayListEmailId.get(j).getOriginalEmail())) {
-                                    email.setEmEmailAddress(arrayListEmailId.get(j).getOriginalEmail());
+                                if (arrayListPBEmailAddress.contains(arrayListEmailId.get(j)
+                                        .getOriginalEmail())) {
+                                    email.setEmEmailAddress(arrayListEmailId.get(j)
+                                            .getOriginalEmail());
                                 } else {
                                     email.setEmEmailAddress(arrayListEmailId.get(j).getEmEmailId());
                                 }
@@ -1618,10 +1661,14 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                                     .getIsCurrent()));
 
                             if (arrayListOrganization.get(j).getIsVerify() != null)
-                                if (arrayListOrganization.get(j).getIsVerify() == IntegerConstants.RCP_TYPE_PRIMARY) {
-                                    organization.setOmOrganizationType(arrayListOrganization.get(j).getOrgIndustryType());
-                                    organization.setOmEnterpriseOrgId(arrayListOrganization.get(j).getOrgEntId());
-                                    organization.setOmOrganizationLogo(arrayListOrganization.get(j).getOrgLogo());
+                                if (arrayListOrganization.get(j).getIsVerify() ==
+                                        IntegerConstants.RCP_TYPE_PRIMARY) {
+                                    organization.setOmOrganizationType(arrayListOrganization.get
+                                            (j).getOrgIndustryType());
+                                    organization.setOmEnterpriseOrgId(arrayListOrganization.get
+                                            (j).getOrgEntId());
+                                    organization.setOmOrganizationLogo(arrayListOrganization.get
+                                            (j).getOrgLogo());
                                 } else {
                                     organization.setOmOrganizationType("");
                                     organization.setOmEnterpriseOrgId("");
@@ -1633,7 +1680,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                                 organization.setOmOrganizationLogo("");
                             }
 
-                            organization.setOmIsVerified(String.valueOf(arrayListOrganization.get(j).getIsVerify()));
+                            organization.setOmIsVerified(String.valueOf(arrayListOrganization.get
+                                    (j).getIsVerify()));
                             organization.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
                             organizationList.add(organization);
                         }
@@ -1759,10 +1807,12 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                             return;
                         } else {
 
-                            if (!StringUtils.isBlank(mapLocalRcpId.get(profileData.get(i).getRcpPmId()))) {
-                                String newRawIds = existingRawId + "," + mapLocalRcpId.get(profileData
-                                        .get(i)
-                                        .getRcpPmId());
+                            if (!StringUtils.isBlank(mapLocalRcpId.get(profileData.get(i)
+                                    .getRcpPmId()))) {
+                                String newRawIds = existingRawId + "," + mapLocalRcpId.get
+                                        (profileData
+                                                .get(i)
+                                                .getRcpPmId());
                                 tableProfileMaster.updateRawIds(Integer.parseInt(userProfile
                                                 .getPmRcpId()),
                                         newRawIds);
@@ -1776,10 +1826,12 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                             return;
                         else {
 
-                            if (!StringUtils.isBlank(mapLocalRcpId.get(profileData.get(i).getRcpPmId()))) {
-                                String newRawIds = existingRawId + "," + mapLocalRcpId.get(profileData
-                                        .get(i)
-                                        .getRcpPmId());
+                            if (!StringUtils.isBlank(mapLocalRcpId.get(profileData.get(i)
+                                    .getRcpPmId()))) {
+                                String newRawIds = existingRawId + "," + mapLocalRcpId.get
+                                        (profileData
+                                                .get(i)
+                                                .getRcpPmId());
                                 tableProfileMaster.updateRawIds(Integer.parseInt(userProfile
                                                 .getPmRcpId()),
                                         newRawIds);
@@ -1828,6 +1880,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 //        goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
 //                Intent.FLAG_ACTIVITY_NEW_DOCUMENT |
 //                Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+        Utils.setBooleanPreference(this, AppConstants.PREF_DONTSHOWAGAIN_POPUP, true);
         try {
             startActivity(goToMarket);
         } catch (ActivityNotFoundException e) {
@@ -2937,7 +2990,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             String rcpId = tableProfileMaster.getRCPIdFromRawId(deletedRawId);
 
             if (!StringUtils.isEmpty(rcpId)) {
-                queryManager.updateRcProfileDetail(MainActivity.this, Integer.parseInt(rcpId), deletedRawId);
+                queryManager.updateRcProfileDetail(MainActivity.this, Integer.parseInt(rcpId),
+                        deletedRawId);
             }
 
             ProfileData profileData = new ProfileData();

@@ -31,7 +31,8 @@ public class AppConstants {
     public static final int ORGANIZATION = 7;
     public static final int PROFILE_IMAGE = 8;
     public static final int NAME = 9;
-    public static final int RELATION = 10;
+    public static final int AADHAR_NUMBER = 10;
+    public static final int RELATION = 11;
     public static boolean isRecentCallFromSMSTab = false;
     //</editor-fold>
 
@@ -326,6 +327,7 @@ public class AppConstants {
     public static String PREF_PROFILE_REMAINING_FIELDS = "pref_profile_remaining_fields";
     public static String PREF_DONTSHOWAGAIN_POPUP = "pref_dontshowagain_popup";
     public static String PREF_RATE_APP_DATE = "pref_rate_app_date";
+    public static String PREF_SHOW_WALK_THROUGH = "pref_show_walk_through";
 
     public static String[] arrayPrefKeys = {PREF_SELECTED_COUNTRY_OBJECT, PREF_DEVICE_TOKEN_ID,
             PREF_LAUNCH_SCREEN_INT, PREF_REGS_USER_OBJECT, PREF_REGS_MOBILE_NUMBER,
