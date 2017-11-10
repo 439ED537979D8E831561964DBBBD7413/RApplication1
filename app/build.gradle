@@ -63,7 +63,6 @@ android {
 
     productFlavors {
         qa {
-            applicationIdSuffix ".free"
             //packageName "com.rawalinfocom.rcontact.staging"
             getProps('./config/qa.props').each { p ->
                 buildConfigField 'String', p.key, p.value
