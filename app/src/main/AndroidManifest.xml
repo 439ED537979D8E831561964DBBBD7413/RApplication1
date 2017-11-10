@@ -159,6 +159,18 @@
             android:name=".contacts.EditProfileActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".helper.pinterest.PinterestTempActivity"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="pdk4932442687895776973" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".SetPasswordActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -208,6 +220,7 @@
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".relation.AddNewRelationActivity"
+            android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
         <activity
             android:name=".relation.RelationRecommendationActivity"

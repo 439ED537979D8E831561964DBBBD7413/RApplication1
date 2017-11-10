@@ -18,7 +18,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.BaseActivity;
+import com.rawalinfocom.rcontact.MainActivity;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.SearchActivity;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
@@ -124,6 +126,25 @@ public class ContactListExpandAdapter extends RecyclerView.Adapter<RecyclerView.
         } else {
             holder.imageProfile.setImageResource(R.drawable.home_screen_profile);
         }
+
+        holder.imageProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (StringUtils.length(thumbnailUrl) > 0) {
+                    if (context instanceof MainActivity) {
+                        Utils.zoomImageFromThumb((Activity) context, holder.imageProfile,
+                                thumbnailUrl, ((MainActivity) context).frameImageEnlarge, (
+                                        (MainActivity) context).imageEnlarge, ((MainActivity)
+                                        context).frameContainer);
+                    } else if (context instanceof SearchActivity) {
+                        Utils.zoomImageFromThumb((Activity) context, holder.imageProfile,
+                                thumbnailUrl, ((SearchActivity) context).frameImageEnlarge, (
+                                        (SearchActivity) context).imageEnlarge, ((SearchActivity)
+                                        context).frameContainer);
+                    }
+                }
+            }
+        });
 
         holder.relativeRowAllContact.setOnClickListener(new View.OnClickListener() {
             @Override

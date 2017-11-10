@@ -116,6 +116,7 @@ import com.rawalinfocom.rcontact.notifications.NotificationsActivity;
 import com.rawalinfocom.rcontact.notifications.RatingHistory;
 import com.rawalinfocom.rcontact.notifications.TimelineActivity;
 import com.rawalinfocom.rcontact.receivers.NetworkConnectionReceiver;
+import com.rawalinfocom.rcontact.relation.RelationRecommendationActivity;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -149,15 +150,39 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     public FrameLayout frameImageEnlarge;
     @BindView(R.id.image_enlarge)
     public ImageView imageEnlarge;
+    @BindView(R.id.frame_tutorial)
+    public FrameLayout frameTutorial;
+    @BindView(R.id.image_tutorial_notification)
+    public ImageView imageTutorialNotification;
+    @BindView(R.id.image_tutorial_add_contact)
+    public ImageView imageTutorialAddContact;
+    @BindView(R.id.image_tutorial_drawer)
+    public ImageView imageTutorialDrawer;
+    @BindView(R.id.linear_tutorial_search)
+    public LinearLayout linearTutorialSearch;
+    @BindView(R.id.text_tap_continue)
+    public TextView textTapContinue;
+    @BindView(R.id.tutorial_user_profile)
+    public LinearLayout tutorialUserProfile;
+    @BindView(R.id.tutorial_profile_image)
+    public ImageView tutorialProfileImage;
+    @BindView(R.id.tutorial_user_name)
+    public TextView tutorialUserName;
+    @BindView(R.id.tutorial_number)
+    public TextView tutorialNumber;
+    @BindView(R.id.tutorial_rating_count)
+    public TextView tutorialRatingCount;
+    @BindView(R.id.tutorial_rating_user)
+    public RatingBar tutorialRatingUser;
 
-    Toolbar toolbar;
+    public Toolbar toolbar;
     ImageView imageNotification;
     LinearLayout badgeLayout;
     TextView badgeTextView;
     FloatingActionButton fab;
-    DrawerLayout drawer;
-    NavigationView navigationView;
-    TabLayout tabMain;
+    public DrawerLayout drawer;
+    public NavigationView navigationView;
+    public TabLayout tabMain;
 
     ContactsFragment contactsFragment;
     CallLogFragment callLogFragment;
@@ -423,8 +448,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 break;
 
             case R.id.nav_ll_relation:
-//                startActivityIntent(MainActivity.this, RelationRecommendationActivity.class,
-// null);
+                startActivity(new Intent(MainActivity.this, RelationRecommendationActivity.class));
                 break;
         }
 
@@ -434,11 +458,13 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
+        if (!Utils.getBooleanPreference(this, AppConstants.PREF_SHOW_WALK_THROUGH, true)) {
+            DrawerLayout drawer = findViewById(R.id.drawer_layout);
+            if (drawer.isDrawerOpen(GravityCompat.START)) {
+                drawer.closeDrawer(GravityCompat.START);
+            } else {
+                super.onBackPressed();
+            }
         }
     }
 
@@ -1169,14 +1195,6 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         textNumber.setText(number);
         textRatingCount.setText(Utils.getStringPreference(this, AppConstants
                 .PREF_USER_TOTAL_RATING, ""));
-        textUserName.setTypeface(Utils.typefaceSemiBold(MainActivity.this));
-        textNumber.setTypeface(Utils.typefaceRegular(MainActivity.this));
-        textRatingCount.setTypeface(Utils.typefaceBold(MainActivity.this));
-
-        textUserName.setText(Utils.getStringPreference(this, AppConstants.PREF_USER_NAME, ""));
-        textNumber.setText(number);
-        textRatingCount.setText(Utils.getStringPreference(this, AppConstants
-                .PREF_USER_TOTAL_RATING, "0"));
 
         if (!StringUtils.isEmpty(Utils.getStringPreference(this, AppConstants
                 .PREF_USER_RATING, "")))
@@ -1862,7 +1880,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 //        goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
 //                Intent.FLAG_ACTIVITY_NEW_DOCUMENT |
 //                Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
-        Utils.setBooleanPreference(this,AppConstants.PREF_DONTSHOWAGAIN_POPUP, true);
+        Utils.setBooleanPreference(this, AppConstants.PREF_DONTSHOWAGAIN_POPUP, true);
         try {
             startActivity(goToMarket);
         } catch (ActivityNotFoundException e) {

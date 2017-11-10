@@ -5,11 +5,13 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -39,6 +41,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -46,6 +50,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -96,6 +101,15 @@ import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.helper.imgcrop.CropImage;
 import com.rawalinfocom.rcontact.helper.imgcrop.CropImageView;
+import com.rawalinfocom.rcontact.helper.instagram.Instagram;
+import com.rawalinfocom.rcontact.helper.instagram.InstagramSession;
+import com.rawalinfocom.rcontact.helper.instagram.InstagramUser;
+import com.rawalinfocom.rcontact.helper.pinterest.PDKCallback;
+import com.rawalinfocom.rcontact.helper.pinterest.PDKClient;
+import com.rawalinfocom.rcontact.helper.pinterest.PDKException;
+import com.rawalinfocom.rcontact.helper.pinterest.PDKResponse;
+import com.rawalinfocom.rcontact.helper.pinterest.PDKUser;
+import com.rawalinfocom.rcontact.helper.pinterest.PinterestTempActivity;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.Address;
 import com.rawalinfocom.rcontact.model.Country;
@@ -143,6 +157,9 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import twitter4j.TwitterFactory;
+import twitter4j.auth.AccessToken;
+import twitter4j.auth.RequestToken;
 
 public class EditProfileActivity extends BaseActivity implements WsResponseListener, RippleView
         .OnRippleCompleteListener, GoogleApiClient.OnConnectionFailedListener {
@@ -370,6 +387,11 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     @BindView(R.id.linear_aadhar_number)
     LinearLayout linearAadharNumber;
 
+    @BindView(R.id.text_tap_continue)
+    TextView textTapContinue;
+    @BindView(R.id.frame_tutorial)
+    FrameLayout frameTutorial;
+
     private File mFileTemp;
     private Uri fileUri;
 
@@ -404,6 +426,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     // Social Login
     private final int RC_SIGN_IN = 7;
     private final int RC_LINKEDIN_SIGN_IN = 8;
+    private final int RC_PINTEREST_SIGN_IN = 9;
 
     // Google API Client
     private GoogleApiClient googleApiClient;
@@ -411,8 +434,25 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     private static final int FACEBOOK_LOGIN_PERMISSION = 21;
     private static final int GOOGLE_LOGIN_PERMISSION = 22;
     private static final int LINKEDIN_LOGIN_PERMISSION = 23;
+    private static final int INSTAGRAM_LOGIN_PERMISSION = 24;
+    private static final int TWITTER_LOGIN_PERMISSION = 25;
+    private static final int PINTEREST_LOGIN_PERMISSION = 26;
     // Facebook Callback Manager
     CallbackManager callbackManager;
+
+    // Instagram
+    private InstagramSession mInstagramSession;
+    private Instagram mInstagram;
+
+    // Twitter
+    private twitter4j.Twitter twitter;
+    private RequestToken requestToken = null;
+    private AccessToken accessToken;
+
+    private String oauth_url, oauth_verifier, profile_url;
+    private Dialog auth_dialog;
+    private WebView web;
+    private ProgressDialog progress;
     // End
 
     private ArrayList<String> socialTypeList;
@@ -438,6 +478,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         arrayListProfile = new ArrayList<>();
 
         FacebookSdk.sdkInitialize(getApplicationContext());
+        mInstagram = new Instagram(this, AppConstants.CLIENT_ID, AppConstants.CLIENT_SECRET,
+                AppConstants.REDIRECT_URI);
+        mInstagramSession = mInstagram.getSession();
+
+        twitter = new TwitterFactory().getInstance();
+        twitter.setOAuthConsumer(AppConstants.CONSUMER_KEY, AppConstants.CONSUMER_SECRET);
 
         // Google+ Registration
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions
@@ -467,6 +513,71 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         } else {
             init(true);
         }
+    }
+
+    private void displayWalkThrough() {
+
+        FrameLayout.LayoutParams layoutParamsFrame = new FrameLayout.LayoutParams(FrameLayout
+                .LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+
+        final LinearLayout linearDescription = new LinearLayout(this);
+        linearDescription.setLayoutParams(layoutParamsFrame);
+        linearDescription.setOrientation(LinearLayout.VERTICAL);
+
+        final LinearLayout.LayoutParams descriptionLayoutParam = new LinearLayout.LayoutParams
+                (LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        descriptionLayoutParam.leftMargin = (int) getResources().getDimension(R.dimen
+                .activity_horizontal_margin);
+        descriptionLayoutParam.rightMargin = (int) getResources().getDimension(R.dimen
+                .activity_horizontal_margin);
+
+        final LinearLayout.LayoutParams headerLayoutParam = new LinearLayout.LayoutParams
+                (LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        headerLayoutParam.leftMargin = (int) getResources().getDimension(R.dimen
+                .activity_horizontal_margin);
+        headerLayoutParam.rightMargin = (int) getResources().getDimension(R.dimen
+                .activity_horizontal_margin);
+
+        /*new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                descriptionLayoutParam.topMargin = includeToolbar.getHeight() + (int)
+                        getResources().getDimension(R.dimen.nav_header_height);
+            }
+        }, 2000);*/
+
+        descriptionLayoutParam.topMargin = (int) (Utils.getDeviceHeight(EditProfileActivity.this)
+                / 2.5);
+
+        textTapContinue.setText("TAP ANYWHERE AND GET STARTED");
+
+        TextView textHeader = new TextView(this);
+        textHeader.setTextColor(ContextCompat.getColor(this, R.color.colorWhite));
+        textHeader.setTypeface(Utils.typefaceBold(this));
+        textHeader.setLayoutParams(descriptionLayoutParam);
+        textHeader.setTextSize(18);
+        textHeader.setPaintFlags(textHeader.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        textHeader.setText("Edit Profile");
+        linearDescription.addView(textHeader);
+
+        TextView textDescription = new TextView(this);
+        textDescription.setTextColor(ContextCompat.getColor(this, R.color.colorWhite));
+        textDescription.setTypeface(Utils.typefaceRegular(this));
+        textDescription.setLayoutParams(headerLayoutParam);
+        textDescription.setTextSize(14);
+        textDescription.setText("Now fill in your info and\nhave an attractive profile!");
+        linearDescription.addView(textDescription);
+
+        frameTutorial.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                frameTutorial.setVisibility(View.GONE);
+                Utils.setBooleanPreference(EditProfileActivity.this, AppConstants
+                        .PREF_SHOW_WALK_THROUGH, false);
+            }
+        });
+
+        frameTutorial.addView(linearDescription);
     }
 
 
@@ -664,13 +775,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             if (callbackManager != null)
                 callbackManager.onActivityResult(requestCode, resultCode, data);
         }
-        //</editor-fold>
 
-//        else if (IntegerConstants.REGISTRATION_VIA == IntegerConstants
-//                .REGISTRATION_VIA_LINED_IN) {
-//            // LinkedIn Callback
-//            LISessionManager.getInstance(getApplicationContext()).onActivityResult(this,
-//                    requestCode, resultCode, data);
+//        if (IntegerConstants.REGISTRATION_VIA == IntegerConstants.REGISTRATION_VIA_PINTEREST) {
+////            // Twitter Callback
+//            pdkClient.onOauthResponse(requestCode, resultCode, data);
 //        }
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
@@ -751,6 +859,20 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             }
         }
         //</editor-fold>
+
+        //<editor-fold desc="Linked In">
+        if (resultCode == RESULT_OK && requestCode == RC_PINTEREST_SIGN_IN) {
+
+            if (data != null) {
+                if (data.getStringExtra("isBack").equalsIgnoreCase("0")) {
+                    getUserDetails(data.getStringExtra("socialId"));
+                } else {
+                    Utils.showErrorSnackBar(this, relativeRootEditProfile, "Login cancelled!");
+                }
+            } else {
+                Utils.showErrorSnackBar(this, relativeRootEditProfile, "Login cancelled!");
+            }
+        }
 
         //<editor-fold desc="Organization">
         if (resultCode == RESULT_OK && requestCode == 201) {
@@ -839,6 +961,15 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 break;
             case LINKEDIN_LOGIN_PERMISSION:
                 linkedInSignIn();
+                break;
+            case INSTAGRAM_LOGIN_PERMISSION:
+                instagramLogin();
+                break;
+            case TWITTER_LOGIN_PERMISSION:
+                twitterSignIn();
+                break;
+            case PINTEREST_LOGIN_PERMISSION:
+                pinterestLogin();
                 break;
         }
     }
@@ -1063,6 +1194,239 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         Intent intent = new Intent(EditProfileActivity.this, LinkedinLoginActivity.class);
         intent.putExtra("from", "profile");
         startActivityForResult(intent, RC_LINKEDIN_SIGN_IN);// Activity is started with requestCode
+    }
+
+    public void instagramLogin() {
+        mInstagram.authorize(mAuthListener);
+    }
+
+    private Instagram.InstagramAuthListener mAuthListener = new Instagram.InstagramAuthListener() {
+        @Override
+        public void onSuccess(InstagramUser user) {
+
+            if (user != null) {
+                socialId = user.username;
+                isAdd = true;
+
+                ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
+                imAccount.setIMAccountProtocol("Instagram");
+
+                String[] temp = user.fullName.split("\\ ");
+                if (temp.length > 1) {
+                    imAccount.setIMAccountFirstName(temp[1]);
+                    imAccount.setIMAccountLastName(temp[0]);
+                } else {
+                    imAccount.setIMAccountFirstName(user.fullName);
+                    imAccount.setIMAccountLastName("");
+                }
+
+                imAccount.setIMAccountPublic(IntegerConstants.PRIVACY_MY_CONTACT);
+                imAccount.setIMAccountProfileImage(String.valueOf(user.profilPicture));
+                imAccount.setIMAccountDetails(socialId);
+                arrayListSocialContactObject.add(imAccount);
+
+                socialTypeList.remove("Instagram");
+
+                mInstagramSession.reset();
+                addSocialConnectView(arrayListSocialContactObject.get
+                        (arrayListSocialContactObject.size() - 1), "");
+            }
+        }
+
+        @Override
+        public void onError(String error) {
+            Utils.showErrorSnackBar(EditProfileActivity.this, relativeRootEditProfile, error);
+            mInstagramSession.reset();
+        }
+
+        @Override
+        public void onCancel() {
+            Utils.showErrorSnackBar(EditProfileActivity.this, relativeRootEditProfile,
+                    "OK. Maybe later?");
+            mInstagramSession.reset();
+        }
+    };
+
+    public void twitterSignIn() {
+        new TokenGet().execute();
+    }
+
+    private class TokenGet extends AsyncTask<String, String, String> {
+
+        @Override
+        protected String doInBackground(String... args) {
+
+            try {
+                requestToken = twitter.getOAuthRequestToken();
+                oauth_url = requestToken.getAuthorizationURL();
+            } catch (twitter4j.TwitterException e) {
+                e.printStackTrace();
+            }
+            return oauth_url;
+        }
+
+        @Override
+        protected void onPostExecute(String oauth_url) {
+            if (oauth_url != null) {
+                auth_dialog = new Dialog(EditProfileActivity.this);
+                auth_dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+                auth_dialog.setContentView(R.layout.auth_dialog);
+                web = (WebView) auth_dialog.findViewById(R.id.webView);
+                web.getSettings().setJavaScriptEnabled(true);
+                web.loadUrl(oauth_url);
+                web.setWebViewClient(new WebViewClient() {
+                    boolean authComplete = false;
+
+                    @Override
+                    public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                        super.onPageStarted(view, url, favicon);
+                    }
+
+                    @Override
+                    public void onPageFinished(WebView view, String url) {
+                        super.onPageFinished(view, url);
+                        if (url.contains("oauth_verifier") && !authComplete) {
+                            authComplete = true;
+                            Log.e("Url", url);
+                            Uri uri = Uri.parse(url);
+                            oauth_verifier = uri.getQueryParameter("oauth_verifier");
+
+                            auth_dialog.dismiss();
+                            new AccessTokenGet().execute();
+                        } else if (url.contains("denied")) {
+                            auth_dialog.dismiss();
+                            Toast.makeText(EditProfileActivity.this, "Sorry !, Permission Denied", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+                auth_dialog.show();
+                auth_dialog.setCancelable(true);
+
+            } else {
+                Toast.makeText(EditProfileActivity.this, "Sorry !, Network Error or Invalid Credentials", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private class AccessTokenGet extends AsyncTask<String, String, Boolean> {
+
+        twitter4j.User user;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progress = new ProgressDialog(EditProfileActivity.this);
+            progress.setMessage("Fetching Data ...");
+            progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progress.setIndeterminate(true);
+            progress.show();
+
+        }
+
+        @Override
+        protected Boolean doInBackground(String... args) {
+
+            try {
+                accessToken = twitter.getOAuthAccessToken(requestToken, oauth_verifier);
+                user = twitter.showUser(accessToken.getUserId());
+            } catch (twitter4j.TwitterException e) {
+                e.printStackTrace();
+            }
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean response) {
+
+            progress.hide();
+            if (response) {
+
+                if (user != null) {
+
+                    socialId = user.getScreenName();
+                    isAdd = true;
+
+                    ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
+                    imAccount.setIMAccountProtocol("Twitter");
+
+                    String[] temp = user.getName().split("\\ ");
+                    if (temp.length > 1) {
+                        imAccount.setIMAccountFirstName(temp[1]);
+                        imAccount.setIMAccountLastName(temp[0]);
+                    } else {
+                        imAccount.setIMAccountFirstName(user.getName());
+                        imAccount.setIMAccountLastName("");
+                    }
+
+                    imAccount.setIMAccountPublic(IntegerConstants.PRIVACY_MY_CONTACT);
+                    imAccount.setIMAccountProfileImage(String.valueOf(user.getOriginalProfileImageURL()));
+                    imAccount.setIMAccountDetails(socialId);
+                    arrayListSocialContactObject.add(imAccount);
+
+                    socialTypeList.remove("Twitter");
+
+                    addSocialConnectView(arrayListSocialContactObject.get
+                            (arrayListSocialContactObject.size() - 1), "");
+                }
+            }
+        }
+    }
+
+    private void pinterestLogin() {
+
+        Utils.setStringPreference(EditProfileActivity.this,
+                AppConstants.KEY_PINTEREST_LOIN_PREFERENCES, "0");
+
+        Intent intent = new Intent(EditProfileActivity.this, PinterestTempActivity.class);
+        startActivityForResult(intent, RC_PINTEREST_SIGN_IN);// Activity is started with requestCode
+    }
+
+    private final String USER_FIELDS = "id,image,counts,created_at,first_name,last_name,bio";
+
+    private void getUserDetails(final String socialId) {
+
+        PDKClient.getInstance().getMe(USER_FIELDS, new PDKCallback() {
+
+            /**
+             * It called, when successfully retrieve details of user.
+             * @param response
+             */
+            @Override
+            public void onSuccess(PDKResponse response) {
+                PDKUser user = response.getUser();
+
+                if (user != null) {
+
+                    isAdd = true;
+
+                    ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
+                    imAccount.setIMAccountProtocol("Pinterest");
+                    imAccount.setIMAccountFirstName(user.getFirstName());
+                    imAccount.setIMAccountLastName(user.getLastName());
+
+                    imAccount.setIMAccountPublic(IntegerConstants.PRIVACY_MY_CONTACT);
+                    imAccount.setIMAccountProfileImage(String.valueOf(user.getImageUrl()));
+                    imAccount.setIMAccountDetails(socialId);
+                    arrayListSocialContactObject.add(imAccount);
+
+                    socialTypeList.remove("Pinterest");
+
+                    addSocialConnectView(arrayListSocialContactObject.get
+                            (arrayListSocialContactObject.size() - 1), "");
+                }
+            }
+
+            /**
+             * It called , when request to get user details failed
+             * @param exception
+             */
+            @Override
+            public void onFailure(PDKException exception) {
+                Log.e("Exception", exception.getDetailMessage());
+                Toast.makeText(EditProfileActivity.this, "/me Request failed", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -1592,11 +1956,47 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         linkedInSignIn();
                     }
 
-                } else if (socialName.equalsIgnoreCase("Custom") || socialName.equalsIgnoreCase
-                        ("કસ્ટમ")
-                        || socialName.equalsIgnoreCase("कस्टम")) {
-                    showCustomTypeDialogForSocial();
-                } else {
+                } else if (socialName.equalsIgnoreCase("Instagram")) {
+
+
+                    IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_INSTAGRAM;
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        checkPermissionToExecute(requiredPermissions, INSTAGRAM_LOGIN_PERMISSION);
+                    } else {
+                        instagramLogin();
+                    }
+
+                } else if (socialName.equalsIgnoreCase("Twitter")) {
+
+
+                    IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_TWITTER;
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        checkPermissionToExecute(requiredPermissions, TWITTER_LOGIN_PERMISSION);
+                    } else {
+                        twitterSignIn();
+                    }
+
+                } else if (socialName.equalsIgnoreCase("Pinterest")) {
+
+
+                    IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_PINTEREST;
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        checkPermissionToExecute(requiredPermissions, PINTEREST_LOGIN_PERMISSION);
+                    } else {
+                        pinterestLogin();
+                    }
+
+                }
+
+//                else if (socialName.equalsIgnoreCase("Custom") || socialName.equalsIgnoreCase
+//                        ("કસ્ટમ")
+//                        || socialName.equalsIgnoreCase("कस्टम")) {
+//                    showCustomTypeDialogForSocial();
+//                }
+                else {
                     addSocialConnectView(null, socialName);
                 }
             }
@@ -2318,16 +2718,20 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
             //<editor-fold desc="button_aadhar_update">
             case R.id.button_aadhar_update:
-                ProfileDataOperationAadharNumber profileDataOperationAadharNumber = new ProfileDataOperationAadharNumber();
+                ProfileDataOperationAadharNumber profileDataOperationAadharNumber = new
+                        ProfileDataOperationAadharNumber();
                 if (!StringUtils.isEmpty(inputAadharNumber.getText().toString().trim())
                         && inputAadharNumber.getText().toString().trim().length() == 12) {
-                    profileDataOperationAadharNumber.setAadharNumber(Long.parseLong(inputAadharNumber.getText().toString().trim()));
+                    profileDataOperationAadharNumber.setAadharNumber(Long.parseLong
+                            (inputAadharNumber.getText().toString().trim()));
                     profileDataOperationAadharNumber.setAadharId(1);
                     profileDataOperationAadharNumber.setAadharIsVerified(0);
-                    TableAadharMaster tableAadharMaster = new TableAadharMaster(getDatabaseHandler());
+                    TableAadharMaster tableAadharMaster = new TableAadharMaster
+                            (getDatabaseHandler());
                     if (profileDataOperationAadharNumber != null) {
                         Integer aadharPublic = tableAadharMaster.
-                                getAadharPublicValueFromAadharNumber(profileDataOperationAadharNumber.getAadharNumber());
+                                getAadharPublicValueFromAadharNumber
+                                        (profileDataOperationAadharNumber.getAadharNumber());
                         if (aadharPublic != 3 && aadharPublic != 0) {
                             profileDataOperationAadharNumber.setAadharPublic(aadharPublic);
                         } else {
@@ -2451,10 +2855,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
     @Override
     public void onBackPressed() {
-        if (isUpdated) {
-            showBackConfirmationDialog();
-        } else {
-            super.onBackPressed();
+        if (!Utils.getBooleanPreference(this, AppConstants.PREF_SHOW_WALK_THROUGH, true)) {
+            if (isUpdated) {
+                showBackConfirmationDialog();
+            } else {
+                super.onBackPressed();
+            }
         }
     }
 
@@ -2463,6 +2869,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     //<editor-fold desc="Private Methods">
 
     private void init(boolean showAddress) {
+
+        if (Utils.getBooleanPreference(EditProfileActivity.this, AppConstants
+                .PREF_SHOW_WALK_THROUGH, true)) {
+            displayWalkThrough();
+        } else {
+            frameTutorial.setVisibility(View.GONE);
+        }
 
         initToolbar();
         setFonts();
@@ -3194,7 +3607,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
     }
 
-    private void profileDetails(boolean setNames, boolean setGender, boolean setProfileImage, boolean setAadharNumber) {
+    private void profileDetails(boolean setNames, boolean setGender, boolean setProfileImage,
+                                boolean setAadharNumber) {
 
         TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
 
@@ -3228,8 +3642,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             if (setAadharNumber) {
                 TableAadharMaster tableAadharMaster = new TableAadharMaster(databaseHandler);
 
-                ProfileDataOperationAadharNumber profileDataOperationAadharNumber = tableAadharMaster.
-                        getAadharDetailFromPmId(Integer.parseInt(getUserPmId()));
+                ProfileDataOperationAadharNumber profileDataOperationAadharNumber =
+                        tableAadharMaster.
+                                getAadharDetailFromPmId(Integer.parseInt(getUserPmId()));
                 if (profileDataOperationAadharNumber != null) {
                     if (profileDataOperationAadharNumber.getAadharNumber() != null) {
                         inputAadharNumber.setText(profileDataOperationAadharNumber.getAadharNumber() + "");
@@ -3364,12 +3779,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     .getImImPrivacy()));
             arrayListSocialContactObject.add(imAccount);
 
-            if (arrayListImAccount.get(i).getImImProtocol().equalsIgnoreCase(getString(R.string
-                    .facebook))
-                    || arrayListImAccount.get(i).getImImProtocol().equalsIgnoreCase(getString(R
-                    .string.google_plus))
-                    || arrayListImAccount.get(i).getImImProtocol().equalsIgnoreCase(getString(R
-                    .string.linked_in))) {
+            if (arrayListImAccount.get(i).getImImProtocol().equalsIgnoreCase(getString(R.string.facebook))
+                    || arrayListImAccount.get(i).getImImProtocol().equalsIgnoreCase(getString(R.string.twitter))
+                    || arrayListImAccount.get(i).getImImProtocol().equalsIgnoreCase(getString(R.string.google_plus))
+                    || arrayListImAccount.get(i).getImImProtocol().equalsIgnoreCase(getString(R.string.instagram))
+                    || arrayListImAccount.get(i).getImImProtocol().equalsIgnoreCase(getString(R.string.pinterest))
+                    || arrayListImAccount.get(i).getImImProtocol().equalsIgnoreCase(getString(R.string.linked_in))) {
                 socialTypeList.remove(arrayListImAccount.get(i).getImImProtocol());
             }
         }
@@ -4075,13 +4490,21 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             textIsPublic.setText(String.valueOf(imAccount.getIMAccountPublic()));
 
             if (imAccount.getIMAccountProtocol().equalsIgnoreCase(getString(R.string.facebook))
-                    || imAccount.getIMAccountProtocol().equalsIgnoreCase(getString(R.string
-                    .google_plus))
-                    || imAccount.getIMAccountProtocol().equalsIgnoreCase(getString(R.string
-                    .linked_in))) {
+                    || imAccount.getIMAccountProtocol().equalsIgnoreCase(getString(R.string.google_plus))
+                    || imAccount.getIMAccountProtocol().equalsIgnoreCase(getString(R.string.instagram))
+                    || imAccount.getIMAccountProtocol().equalsIgnoreCase(getString(R.string.pinterest))
+                    || imAccount.getIMAccountProtocol().equalsIgnoreCase(getString(R.string.twitter))
+                    || imAccount.getIMAccountProtocol().equalsIgnoreCase(getString(R.string.linked_in))) {
 
                 inputValue.setEnabled(false);
-                linearContent.setVisibility(View.GONE);
+
+                if (!StringUtils.isBlank(imAccount.getIMAccountFirstName()) &&
+                        !StringUtils.isBlank(imAccount.getIMAccountLastName())) {
+                    linearContent.setVisibility(View.GONE);
+                } else {
+                    linearContent.setVisibility(View.VISIBLE);
+                }
+
                 imageViewSocialProfile.setVisibility(View.VISIBLE);
 
                 imAccountProfileImage.setText(imAccount.getIMAccountProfileImage());
@@ -4165,15 +4588,18 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             .input_protocol);
 
                     if (textProtocol != null) {
-                        if (textProtocol.getText().toString().trim().equalsIgnoreCase(getString(R
-                                .string.facebook))) {
+                        if (textProtocol.getText().toString().trim().equalsIgnoreCase(getString(R.string.facebook))) {
                             socialTypeList.add(getString(R.string.facebook));
-                        } else if (textProtocol.getText().toString().trim().equalsIgnoreCase
-                                (getString(R.string.google_plus))) {
+                        } else if (textProtocol.getText().toString().trim().equalsIgnoreCase(getString(R.string.google_plus))) {
                             socialTypeList.add(getString(R.string.google_plus));
-                        } else if (textProtocol.getText().toString().trim().equalsIgnoreCase
-                                (getString(R.string.linked_in))) {
+                        } else if (textProtocol.getText().toString().trim().equalsIgnoreCase(getString(R.string.linked_in))) {
                             socialTypeList.add(getString(R.string.linked_in));
+                        } else if (textProtocol.getText().toString().trim().equalsIgnoreCase(getString(R.string.instagram))) {
+                            socialTypeList.add(getString(R.string.instagram));
+                        } else if (textProtocol.getText().toString().trim().equalsIgnoreCase(getString(R.string.twitter))) {
+                            socialTypeList.add(getString(R.string.twitter));
+                        } else if (textProtocol.getText().toString().trim().equalsIgnoreCase(getString(R.string.pinterest))) {
+                            socialTypeList.add(getString(R.string.pinterest));
                         }
                     }
 
@@ -4184,15 +4610,18 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     TextView textProtocol = view.findViewById(R.id.input_protocol);
 
                     if (textProtocol != null) {
-                        if (textProtocol.getText().toString().trim().equalsIgnoreCase(getString(R
-                                .string.facebook))) {
+                        if (textProtocol.getText().toString().trim().equalsIgnoreCase(getString(R.string.facebook))) {
                             socialTypeList.add(getString(R.string.facebook));
-                        } else if (textProtocol.getText().toString().trim().equalsIgnoreCase
-                                (getString(R.string.google_plus))) {
+                        } else if (textProtocol.getText().toString().trim().equalsIgnoreCase(getString(R.string.google_plus))) {
                             socialTypeList.add(getString(R.string.google_plus));
-                        } else if (textProtocol.getText().toString().trim().equalsIgnoreCase
-                                (getString(R.string.linked_in))) {
+                        } else if (textProtocol.getText().toString().trim().equalsIgnoreCase(getString(R.string.linked_in))) {
                             socialTypeList.add(getString(R.string.linked_in));
+                        } else if (textProtocol.getText().toString().trim().equalsIgnoreCase(getString(R.string.instagram))) {
+                            socialTypeList.add(getString(R.string.instagram));
+                        } else if (textProtocol.getText().toString().trim().equalsIgnoreCase(getString(R.string.twitter))) {
+                            socialTypeList.add(getString(R.string.twitter));
+                        } else if (textProtocol.getText().toString().trim().equalsIgnoreCase(getString(R.string.pinterest))) {
+                            socialTypeList.add(getString(R.string.pinterest));
                         }
                     }
                 }
@@ -4929,6 +5358,18 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             case LINKEDIN_LOGIN_PERMISSION:
                 linkedInSignIn();
                 break;
+
+            case INSTAGRAM_LOGIN_PERMISSION:
+                instagramLogin();
+                break;
+
+            case TWITTER_LOGIN_PERMISSION:
+                twitterSignIn();
+                break;
+
+            case PINTEREST_LOGIN_PERMISSION:
+                pinterestLogin();
+                break;
         }
     }
 
@@ -5363,20 +5804,19 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             .RCP_TYPE_PRIMARY) {
                         organization.setOmOrganizationType(arrayListOrganization.get(i)
                                 .getOrgIndustryType());
-                        organization.setOmEnterpriseOrgId(arrayListOrganization.get(i)
-                                .getOrgEntId());
                         organization.setOmOrganizationLogo(arrayListOrganization.get(i)
                                 .getOrgLogo());
                     } else {
                         organization.setOmOrganizationType("");
-                        organization.setOmEnterpriseOrgId("");
                         organization.setOmOrganizationLogo("");
                     }
                 else {
                     organization.setOmOrganizationType("");
-                    organization.setOmEnterpriseOrgId("");
                     organization.setOmOrganizationLogo("");
                 }
+
+                organization.setOmEnterpriseOrgId(arrayListOrganization.get(i)
+                        .getOrgEntId());
                 organization.setOmIsVerified(String.valueOf(arrayListOrganization.get(i)
                         .getIsVerify()));
                 organization.setRcProfileMasterPmId(profileDetail.getRcpPmId());
@@ -5508,7 +5948,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         tableAadharMaster.deleteAadharDetails(getUserPmId());
 
         if (profileDetail.getPbAadhar() != null) {
-            ProfileDataOperationAadharNumber profileDataOperationAadharNumber = profileDetail.getPbAadhar();
+            ProfileDataOperationAadharNumber profileDataOperationAadharNumber = profileDetail
+                    .getPbAadhar();
             profileDataOperationAadharNumber.setRcProfileMasterPmId(getUserPmId());
             tableAadharMaster.addAadharDetail(profileDataOperationAadharNumber);
         }

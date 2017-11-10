@@ -24,6 +24,9 @@ public class IntegerConstants {
     public static int REGISTRATION_VIA_FACEBOOK = 1;
     public static int REGISTRATION_VIA_GOOGLE = 2;
     public static int REGISTRATION_VIA_LINED_IN = 3;
+    public static int REGISTRATION_VIA_TWITTER = 4;
+    public static int REGISTRATION_VIA_INSTAGRAM = 5;
+    public static int REGISTRATION_VIA_PINTEREST = 6;
 
     // User Profile Verification Constants
     public static int PROFILE_NOT_VERIFIED = 0;

@@ -241,5 +241,4 @@ public class PhoneBookContactDetailAdapter extends RecyclerView
 
         }
     }
-
 }

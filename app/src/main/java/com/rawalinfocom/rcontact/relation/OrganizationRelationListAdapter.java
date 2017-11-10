@@ -55,9 +55,12 @@ public class OrganizationRelationListAdapter extends RecyclerView.Adapter<Organi
         holder.textMain.setText(organization.getOrgName());
         holder.checkbox.setChecked(position == (AddNewRelationActivity.orgPosition));
 
-        if (clickListener != null) {
-            clickListener.onClick(arrayListOrganization.get(AddNewRelationActivity.orgPosition).getOrgId(),
-                    arrayListOrganization.get(AddNewRelationActivity.orgPosition).getOrgName());
+        if (position == (AddNewRelationActivity.orgPosition)) {
+            if (clickListener != null) {
+                clickListener.onClick(arrayListOrganization.get(AddNewRelationActivity.orgPosition)
+                        .getOrgEntId(), arrayListOrganization.get(AddNewRelationActivity.orgPosition)
+                        .getOrgName());
+            }
         }
     }
 

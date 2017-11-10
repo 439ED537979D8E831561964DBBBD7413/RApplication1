@@ -12,7 +12,9 @@ public class RelationRecommendationType implements Serializable {
     private String firstName;
     private String lastName;
     private String number;
+    private String pmId;
     private String dateAndTime;
+    private String profileImage;
 
     private ArrayList<IndividualRelationType> individualRelationTypeList;
 
@@ -54,5 +56,21 @@ public class RelationRecommendationType implements Serializable {
 
     public void setDateAndTime(String dateAndTime) {
         this.dateAndTime = dateAndTime;
+    }
+
+    public String getPmId() {
+        return pmId;
+    }
+
+    public void setPmId(String pmId) {
+        this.pmId = pmId;
+    }
+
+    public String getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
     }
 }

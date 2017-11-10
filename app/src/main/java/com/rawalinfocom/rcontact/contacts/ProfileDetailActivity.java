@@ -157,6 +157,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     @BindView(R.id.include_toolbar)
     Toolbar includeToolbar;
     TextView textToolbarTitle;
+    //    Toolbar toolbarProfileDetail;
     RippleView rippleActionBack;
     RippleView rippleActionRelation;
     RippleView rippleActionRightLeft;
@@ -327,6 +328,16 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     @Nullable
     @BindView(R.id.include_elevation_top)
     View includeElevationTop;
+
+    @Nullable
+    @BindView(R.id.text_tap_continue)
+    TextView textTapContinue;
+    @Nullable
+    @BindView(R.id.frame_tutorial)
+    FrameLayout frameTutorial;
+    @Nullable
+    @BindView(R.id.image_tutorial_edit)
+    ImageView imageTutorialEdit;
 
     String callLogCloudName;
     boolean isCallLogRcpUser, isRatingUpdate = false;
@@ -1166,22 +1177,23 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     @Override
     public void onBackPressed() {
+        if (!Utils.getBooleanPreference(this, AppConstants.PREF_SHOW_WALK_THROUGH, true)) {
+            if (isRatingUpdate) {
 
-        if (isRatingUpdate) {
+                Intent localBroadcastIntent1 = new Intent(AppConstants
+                        .ACTION_LOCAL_BROADCAST_RATING_UPDATE);
+                localBroadcastIntent1.putExtra(AppConstants.EXTRA_RCONTACT_POSITION, getIntent()
+                        .getIntExtra(AppConstants.EXTRA_RCONTACT_POSITION, 0));
+                localBroadcastIntent1.putExtra(AppConstants.EXTRA_RATING_UPDATE, isRatingUpdate);
+                LocalBroadcastManager.getInstance(ProfileDetailActivity.this).sendBroadcast
+                        (localBroadcastIntent1);
+            }
 
-            Intent localBroadcastIntent1 = new Intent(AppConstants
-                    .ACTION_LOCAL_BROADCAST_RATING_UPDATE);
-            localBroadcastIntent1.putExtra(AppConstants.EXTRA_RCONTACT_POSITION, getIntent()
-                    .getIntExtra(AppConstants.EXTRA_RCONTACT_POSITION, 0));
-            localBroadcastIntent1.putExtra(AppConstants.EXTRA_RATING_UPDATE, isRatingUpdate);
-            LocalBroadcastManager.getInstance(ProfileDetailActivity.this).sendBroadcast
-                    (localBroadcastIntent1);
+            Intent backIntent = getIntent();
+            setResult(RESULT_OK, backIntent);
+            finish();
+            overridePendingTransition(R.anim.pop_enter, R.anim.pop_exit);
         }
-
-        Intent backIntent = getIntent();
-        setResult(RESULT_OK, backIntent);
-        finish();
-        overridePendingTransition(R.anim.pop_enter, R.anim.pop_exit);
     }
 
     @Override
@@ -1824,6 +1836,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
 
             if (displayOwnProfile) {
+
                 TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
                 final UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer
                         .parseInt(pmId));
@@ -1992,7 +2005,79 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         }
     }
 
+    private void displayWalkThrough() {
+
+        frameTutorial.setVisibility(View.VISIBLE);
+
+        FrameLayout.LayoutParams layoutParamsFrame = new FrameLayout.LayoutParams(FrameLayout
+                .LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+
+        final LinearLayout linearDescription = new LinearLayout(this);
+        linearDescription.setLayoutParams(layoutParamsFrame);
+        linearDescription.setOrientation(LinearLayout.VERTICAL);
+
+        final LinearLayout.LayoutParams descriptionLayoutParam = new LinearLayout.LayoutParams
+                (LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        descriptionLayoutParam.leftMargin = (int) getResources().getDimension(R.dimen
+                .activity_horizontal_margin);
+        descriptionLayoutParam.rightMargin = (int) getResources().getDimension(R.dimen
+                .activity_horizontal_margin);
+
+        final LinearLayout.LayoutParams headerLayoutParam = new LinearLayout.LayoutParams
+                (LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        headerLayoutParam.leftMargin = (int) getResources().getDimension(R.dimen
+                .activity_horizontal_margin);
+        headerLayoutParam.rightMargin = (int) getResources().getDimension(R.dimen
+                .activity_horizontal_margin);
+
+        /*new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                descriptionLayoutParam.topMargin = includeToolbar.getHeight() + (int)
+                        getResources().getDimension(R.dimen.nav_header_height);
+            }
+        }, 2000);*/
+
+        descriptionLayoutParam.topMargin = (int) (Utils.getDeviceHeight(ProfileDetailActivity
+                .this) / 2.5);
+
+        textTapContinue.setText("TAP ON THE EDIT ICON");
+
+        TextView textHeader = new TextView(this);
+        textHeader.setTextColor(ContextCompat.getColor(this, R.color.colorWhite));
+        textHeader.setTypeface(Utils.typefaceBold(this));
+        textHeader.setLayoutParams(descriptionLayoutParam);
+        textHeader.setTextSize(18);
+        textHeader.setPaintFlags(textHeader.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        textHeader.setText("Edit Profile");
+        linearDescription.addView(textHeader);
+
+        TextView textDescription = new TextView(this);
+        textDescription.setTextColor(ContextCompat.getColor(this, R.color.colorWhite));
+        textDescription.setTypeface(Utils.typefaceRegular(this));
+        textDescription.setLayoutParams(headerLayoutParam);
+        textDescription.setTextSize(14);
+        textDescription.setText("Add your info for your Contacts\nto know you better!");
+        linearDescription.addView(textDescription);
+
+        imageTutorialEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        frameTutorial.setVisibility(View.GONE);
+                    }
+                }, 700);
+                startActivityIntent(ProfileDetailActivity.this, EditProfileActivity.class, null);
+            }
+        });
+
+        frameTutorial.addView(linearDescription);
+    }
+
     private void init() {
+//        toolbarProfileDetail = ButterKnife.findById(includeToolbar, R.id.toolbar_profile_detail);
         rippleActionBack = ButterKnife.findById(includeToolbar, R.id.ripple_action_back);
         textToolbarTitle = ButterKnife.findById(includeToolbar, R.id.text_toolbar_title);
         imageRelation = ButterKnife.findById(includeToolbar, R.id.image_relation);
@@ -2095,6 +2180,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             } else {
                 // Non-RC Profile
                 setUpView(null);
+            }
+        } else {
+            if (Utils.getBooleanPreference(ProfileDetailActivity.this, AppConstants
+                    .PREF_SHOW_WALK_THROUGH, true)) {
+                displayWalkThrough();
+            } else {
+                frameTutorial.setVisibility(View.GONE);
             }
         }
 
@@ -2952,49 +3044,72 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         @Override
                         public void onClick(View view) {
                             PrivacySettingPopupDialog privacySettingPopupDialog = new
-                                    PrivacySettingPopupDialog(null, ProfileDetailActivity.this, new PrivacySettingPopupDialog.DialogCallback() {
-                                @Override
-                                public void onSettingSaved(ProfileDetailAdapter.ProfileDetailViewHolder view, int whichItem, int newPrivacy, int itemPosition, int oldPrivacy, String cloudId) {
+                                    PrivacySettingPopupDialog(null, ProfileDetailActivity.this,
+                                    new PrivacySettingPopupDialog.DialogCallback() {
+                                        @Override
+                                        public void onSettingSaved(ProfileDetailAdapter
+                                                                           .ProfileDetailViewHolder view, int whichItem, int newPrivacy, int
+                                                                           itemPosition, int
+                                                                           oldPrivacy, String
+                                                                           cloudId) {
 
-                                    if (oldPrivacy == newPrivacy + 1) {
-                                        return;
-                                    }
+                                            if (oldPrivacy == newPrivacy + 1) {
+                                                return;
+                                            }
 
-                                    WsRequestObject wsRequestObject = new WsRequestObject();
+                                            WsRequestObject wsRequestObject = new WsRequestObject();
 
-                                    PrivacyEntityItem privacyEntityItem = new PrivacyEntityItem();
-                                    privacyEntityItem.setId(cloudId);
-                                    privacyEntityItem.setValue(newPrivacy + 1);
-                                    ArrayList<PrivacyEntityItem> privacyEntityItems = new ArrayList<>();
-                                    privacyEntityItems.add(privacyEntityItem);
-                                    ArrayList<PrivacyDataItem> privacyItems = new ArrayList<>();
-                                    PrivacyDataItem privacyDataItem = new PrivacyDataItem();
-                                    switch (whichItem) {
-                                        case AppConstants.AADHAR_NUMBER:
-                                            privacyDataItem.setPbAadhaar(privacyEntityItems);
-                                            break;
-                                    }
-                                    privacyItems.add(privacyDataItem);
-                                    wsRequestObject.setPrivacyData(privacyItems);
+                                            PrivacyEntityItem privacyEntityItem = new
+                                                    PrivacyEntityItem();
+                                            privacyEntityItem.setId(cloudId);
+                                            privacyEntityItem.setValue(newPrivacy + 1);
+                                            ArrayList<PrivacyEntityItem> privacyEntityItems = new
+                                                    ArrayList<>();
+                                            privacyEntityItems.add(privacyEntityItem);
+                                            ArrayList<PrivacyDataItem> privacyItems = new
+                                                    ArrayList<>();
+                                            PrivacyDataItem privacyDataItem = new PrivacyDataItem();
+                                            switch (whichItem) {
+                                                case AppConstants.AADHAR_NUMBER:
+                                                    privacyDataItem.setPbAadhaar
+                                                            (privacyEntityItems);
+                                                    break;
+                                            }
+                                            privacyItems.add(privacyDataItem);
+                                            wsRequestObject.setPrivacyData(privacyItems);
 //        wsRequestObject.setPmId(pmId);
-                                    if (Utils.isNetworkAvailable(ProfileDetailActivity.this)) {
-                                        new AsyncWebServiceCall(ProfileDetailActivity.this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
-                                                wsRequestObject, null, WsResponseObject.class, WsConstants
-                                                .REQ_SET_PRIVACY_SETTING, ProfileDetailActivity.this.getResources().getString(R.string
-                                                .msg_please_wait), true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                                                WsConstants.WS_ROOT + WsConstants.REQ_SET_PRIVACY_SETTING);
-                                    } else {
-                                        //show no toast
-                                        Toast.makeText(ProfileDetailActivity.this,
-                                                ProfileDetailActivity.this.getResources().getString(R.string.msg_no_network),
-                                                Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            }, AppConstants
+                                            if (Utils.isNetworkAvailable(ProfileDetailActivity
+                                                    .this)) {
+                                                new AsyncWebServiceCall(ProfileDetailActivity.this,
+                                                        WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                                                        wsRequestObject, null, WsResponseObject
+                                                        .class,
+                                                        WsConstants
+                                                                .REQ_SET_PRIVACY_SETTING,
+                                                        ProfileDetailActivity
+                                                                .this.getResources().getString(R
+                                                                .string
+                                                                .msg_please_wait), true)
+                                                        .executeOnExecutor
+                                                                (AsyncTask.THREAD_POOL_EXECUTOR,
+                                                                        WsConstants.WS_ROOT +
+                                                                                WsConstants
+                                                                                        .REQ_SET_PRIVACY_SETTING);
+                                            } else {
+                                                //show no toast
+                                                Toast.makeText(ProfileDetailActivity.this,
+                                                        ProfileDetailActivity.this.getResources()
+                                                                .getString(R.string.msg_no_network),
+                                                        Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    }, AppConstants
                                     .AADHAR_NUMBER,
-                                    0, aadharDetails.getAadharPublic(), aadharDetails.getAadharId() + "");
-                            privacySettingPopupDialog.setDialogTitle(ProfileDetailActivity.this.getResources().getString(R
-                                    .string.privacy_dialog_title));
+                                    0, aadharDetails.getAadharPublic(), aadharDetails.getAadharId
+                                    () + "");
+                            privacySettingPopupDialog.setDialogTitle(ProfileDetailActivity.this
+                                    .getResources().getString(R
+                                            .string.privacy_dialog_title));
                             privacySettingPopupDialog.showDialog();
                         }
                     });
@@ -4560,20 +4675,21 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 if (arrayListOrganization.get(i).getIsVerify() != null)
                     if (arrayListOrganization.get(i).getIsVerify() == IntegerConstants
                             .RCP_TYPE_PRIMARY) {
-                        organization.setOmOrganizationType(arrayListOrganization.get(i).getOrgIndustryType());
-                        organization.setOmEnterpriseOrgId(arrayListOrganization.get(i).getOrgEntId());
-                        organization.setOmOrganizationLogo(arrayListOrganization.get(i).getOrgLogo());
+                        organization.setOmOrganizationType(arrayListOrganization.get(i)
+                                .getOrgIndustryType());
+                        organization.setOmOrganizationLogo(arrayListOrganization.get(i)
+                                .getOrgLogo());
                     } else {
                         organization.setOmOrganizationType("");
-                        organization.setOmEnterpriseOrgId("");
                         organization.setOmOrganizationLogo("");
                     }
                 else {
                     organization.setOmOrganizationType("");
-                    organization.setOmEnterpriseOrgId("");
                     organization.setOmOrganizationLogo("");
                 }
 
+                organization.setOmEnterpriseOrgId(arrayListOrganization.get(i)
+                        .getOrgEntId());
                 organization.setOmIsVerified(String.valueOf(arrayListOrganization.get(i)
                         .getIsVerify()));
                 organization.setRcProfileMasterPmId(profileDetail.getRcpPmId());

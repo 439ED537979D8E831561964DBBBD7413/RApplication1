@@ -17,6 +17,8 @@ import android.widget.TextView;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.database.TableRelationMappingMaster;
+import com.rawalinfocom.rcontact.database.TableRelationMaster;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.IndividualRelationType;
@@ -56,6 +58,7 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
 
     private Activity activity;
     private ExistingRelationListAdapter listAdapter;
+    private TableRelationMappingMaster tableRelationMappingMaster;
 
     // For relation
     // Business - 0
@@ -84,6 +87,8 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
 
     private void init() {
 
+        tableRelationMappingMaster = new TableRelationMappingMaster(databaseHandler);
+
         activity = ExistingRelationActivity.this;
         textNoRelation.setTypeface(Utils.typefaceRegular(this));
         inputSearch.setTypeface(Utils.typefaceRegular(this));
@@ -91,7 +96,7 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
         textNoRelation.setVisibility(View.GONE);
         recycleViewRelation.setVisibility(View.VISIBLE);
 
-        makeTempDataAndSetAdapter();
+        getExistingRelationData();
 
         inputSearch.addTextChangedListener(new TextWatcher() {
             @Override
@@ -144,6 +149,32 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
                 intent.putExtra(AppConstants.EXTRA_IS_FROM, "own");
                 startActivity(intent);
                 break;
+        }
+    }
+
+    private void getExistingRelationData() {
+
+        final ArrayList<RelationRecommendationType> existingRelationList = tableRelationMappingMaster
+                .getAllExistingRelation();
+
+        if (existingRelationList.size() > 0) {
+            listAdapter = new ExistingRelationListAdapter(activity, existingRelationList,
+                    new ExistingRelationListAdapter.OnClickListener() {
+                        @Override
+                        public void onClick(int position) {
+
+                            Intent intent = new Intent(activity, AddNewRelationActivity.class);
+                            intent.putExtra(AppConstants.EXTRA_EXISTING_RELATION_DETAILS,
+                                    existingRelationList.get(position));
+                            intent.putExtra(AppConstants.EXTRA_PM_ID,
+                                    existingRelationList.get(position).getPmId());
+                            intent.putExtra(AppConstants.EXTRA_IS_FROM, "existing");
+                            startActivity(intent);
+
+                        }
+                    });
+            recycleViewRelation.setLayoutManager(new LinearLayoutManager(this));
+            recycleViewRelation.setAdapter(listAdapter);
         }
     }
 
@@ -280,7 +311,7 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
         }
 
         if (existingRelationList.size() > 0) {
-            listAdapter = new ExistingRelationListAdapter(activity, existingRelationList);
+//            listAdapter = new ExistingRelationListAdapter(activity, existingRelationList);
             recycleViewRelation.setLayoutManager(new LinearLayoutManager(this));
             recycleViewRelation.setAdapter(listAdapter);
         }
