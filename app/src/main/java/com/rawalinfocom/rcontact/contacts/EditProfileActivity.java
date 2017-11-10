@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -46,6 +47,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -370,6 +372,11 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     @BindView(R.id.linear_aadhar_number)
     LinearLayout linearAadharNumber;
 
+    @BindView(R.id.text_tap_continue)
+    TextView textTapContinue;
+    @BindView(R.id.frame_tutorial)
+    FrameLayout frameTutorial;
+
     private File mFileTemp;
     private Uri fileUri;
 
@@ -467,6 +474,71 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         } else {
             init(true);
         }
+    }
+
+    private void displayWalkThrough() {
+
+        FrameLayout.LayoutParams layoutParamsFrame = new FrameLayout.LayoutParams(FrameLayout
+                .LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+
+        final LinearLayout linearDescription = new LinearLayout(this);
+        linearDescription.setLayoutParams(layoutParamsFrame);
+        linearDescription.setOrientation(LinearLayout.VERTICAL);
+
+        final LinearLayout.LayoutParams descriptionLayoutParam = new LinearLayout.LayoutParams
+                (LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        descriptionLayoutParam.leftMargin = (int) getResources().getDimension(R.dimen
+                .activity_horizontal_margin);
+        descriptionLayoutParam.rightMargin = (int) getResources().getDimension(R.dimen
+                .activity_horizontal_margin);
+
+        final LinearLayout.LayoutParams headerLayoutParam = new LinearLayout.LayoutParams
+                (LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        headerLayoutParam.leftMargin = (int) getResources().getDimension(R.dimen
+                .activity_horizontal_margin);
+        headerLayoutParam.rightMargin = (int) getResources().getDimension(R.dimen
+                .activity_horizontal_margin);
+
+        /*new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                descriptionLayoutParam.topMargin = includeToolbar.getHeight() + (int)
+                        getResources().getDimension(R.dimen.nav_header_height);
+            }
+        }, 2000);*/
+
+        descriptionLayoutParam.topMargin = (int) (Utils.getDeviceHeight(EditProfileActivity.this)
+                / 2.5);
+
+        textTapContinue.setText("TAP ANYWHERE AND GET STARTED");
+
+        TextView textHeader = new TextView(this);
+        textHeader.setTextColor(ContextCompat.getColor(this, R.color.colorWhite));
+        textHeader.setTypeface(Utils.typefaceBold(this));
+        textHeader.setLayoutParams(descriptionLayoutParam);
+        textHeader.setTextSize(18);
+        textHeader.setPaintFlags(textHeader.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        textHeader.setText("Edit Profile");
+        linearDescription.addView(textHeader);
+
+        TextView textDescription = new TextView(this);
+        textDescription.setTextColor(ContextCompat.getColor(this, R.color.colorWhite));
+        textDescription.setTypeface(Utils.typefaceRegular(this));
+        textDescription.setLayoutParams(headerLayoutParam);
+        textDescription.setTextSize(14);
+        textDescription.setText("Now fill in your info and\nhave an attractive profile!");
+        linearDescription.addView(textDescription);
+
+        frameTutorial.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                frameTutorial.setVisibility(View.GONE);
+                Utils.setBooleanPreference(EditProfileActivity.this, AppConstants
+                        .PREF_SHOW_WALK_THROUGH, false);
+            }
+        });
+
+        frameTutorial.addView(linearDescription);
     }
 
 
@@ -2318,16 +2390,20 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
             //<editor-fold desc="button_aadhar_update">
             case R.id.button_aadhar_update:
-                ProfileDataOperationAadharNumber profileDataOperationAadharNumber = new ProfileDataOperationAadharNumber();
+                ProfileDataOperationAadharNumber profileDataOperationAadharNumber = new
+                        ProfileDataOperationAadharNumber();
                 if (!StringUtils.isEmpty(inputAadharNumber.getText().toString().trim())
                         && inputAadharNumber.getText().toString().trim().length() == 12) {
-                    profileDataOperationAadharNumber.setAadharNumber(Long.parseLong(inputAadharNumber.getText().toString().trim()));
+                    profileDataOperationAadharNumber.setAadharNumber(Long.parseLong
+                            (inputAadharNumber.getText().toString().trim()));
                     profileDataOperationAadharNumber.setAadharId(1);
                     profileDataOperationAadharNumber.setAadharIsVerified(0);
-                    TableAadharMaster tableAadharMaster = new TableAadharMaster(getDatabaseHandler());
+                    TableAadharMaster tableAadharMaster = new TableAadharMaster
+                            (getDatabaseHandler());
                     if (profileDataOperationAadharNumber != null) {
                         Integer aadharPublic = tableAadharMaster.
-                                getAadharPublicValueFromAadharNumber(profileDataOperationAadharNumber.getAadharNumber());
+                                getAadharPublicValueFromAadharNumber
+                                        (profileDataOperationAadharNumber.getAadharNumber());
                         if (aadharPublic != 3 && aadharPublic != 0) {
                             profileDataOperationAadharNumber.setAadharPublic(aadharPublic);
                         } else {
@@ -2451,10 +2527,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
     @Override
     public void onBackPressed() {
-        if (isUpdated) {
-            showBackConfirmationDialog();
-        } else {
-            super.onBackPressed();
+        if (!Utils.getBooleanPreference(this, AppConstants.PREF_SHOW_WALK_THROUGH, true)) {
+            if (isUpdated) {
+                showBackConfirmationDialog();
+            } else {
+                super.onBackPressed();
+            }
         }
     }
 
@@ -2463,6 +2541,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     //<editor-fold desc="Private Methods">
 
     private void init(boolean showAddress) {
+
+        if (Utils.getBooleanPreference(EditProfileActivity.this, AppConstants
+                .PREF_SHOW_WALK_THROUGH, true)) {
+            displayWalkThrough();
+        } else {
+            frameTutorial.setVisibility(View.GONE);
+        }
 
         initToolbar();
         setFonts();
@@ -3194,7 +3279,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
     }
 
-    private void profileDetails(boolean setNames, boolean setGender, boolean setProfileImage, boolean setAadharNumber) {
+    private void profileDetails(boolean setNames, boolean setGender, boolean setProfileImage,
+                                boolean setAadharNumber) {
 
         TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
 
@@ -3228,8 +3314,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             if (setAadharNumber) {
                 TableAadharMaster tableAadharMaster = new TableAadharMaster(databaseHandler);
 
-                ProfileDataOperationAadharNumber profileDataOperationAadharNumber = tableAadharMaster.
-                        getAadharDetailFromPmId(Integer.parseInt(getUserPmId()));
+                ProfileDataOperationAadharNumber profileDataOperationAadharNumber =
+                        tableAadharMaster.
+                                getAadharDetailFromPmId(Integer.parseInt(getUserPmId()));
                 if (profileDataOperationAadharNumber != null) {
                     if (profileDataOperationAadharNumber.getAadharNumber() != null) {
                         inputAadharNumber.setText(profileDataOperationAadharNumber.getAadharNumber() + "");
@@ -5508,7 +5595,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         tableAadharMaster.deleteAadharDetails(getUserPmId());
 
         if (profileDetail.getPbAadhar() != null) {
-            ProfileDataOperationAadharNumber profileDataOperationAadharNumber = profileDetail.getPbAadhar();
+            ProfileDataOperationAadharNumber profileDataOperationAadharNumber = profileDetail
+                    .getPbAadhar();
             profileDataOperationAadharNumber.setRcProfileMasterPmId(getUserPmId());
             tableAadharMaster.addAadharDetail(profileDataOperationAadharNumber);
         }
