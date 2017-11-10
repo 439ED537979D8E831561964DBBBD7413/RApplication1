@@ -33,6 +33,11 @@ class ExistingRelationListAdapter extends RecyclerView.Adapter
     private ArrayList<RelationRecommendationType> filteredList;
     private Activity activity;
     private CustomFilter mFilter;
+    private OnClickListener clickListener;
+
+    public interface OnClickListener {
+        void onClick(int position);
+    }
 
     @Override
     public ExistingRelationViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -41,8 +46,10 @@ class ExistingRelationListAdapter extends RecyclerView.Adapter
         return new ExistingRelationViewHolder(v);
     }
 
-    ExistingRelationListAdapter(Activity activity, ArrayList<RelationRecommendationType> list) {
+    ExistingRelationListAdapter(Activity activity, ArrayList<RelationRecommendationType> list,
+                                OnClickListener clickListener) {
         this.mActivity = activity;
+        this.clickListener = clickListener;
         this.arrayListRelationType = list;
         this.filteredList = new ArrayList<>();
         this.filteredList.addAll(list);
@@ -53,10 +60,10 @@ class ExistingRelationListAdapter extends RecyclerView.Adapter
     public void onBindViewHolder(ExistingRelationViewHolder holder, int position) {
 
         RelationRecommendationType relationRecommendationType = arrayListRelationType.get(position);
-        holder.textName.setText(relationRecommendationType.getFirstName() + " " +
-                relationRecommendationType.getLastName());
+        holder.textName.setText(String.format("%s %s", relationRecommendationType.getFirstName(),
+                relationRecommendationType.getLastName()));
         holder.textNumber.setText(relationRecommendationType.getNumber());
-//        viewHolder.textDateAndTime.setText(relationRecommendationType.getDateAndTime());
+//        holder.textDateAndTime.setText(relationRecommendationType.getDateAndTime());
 
         ArrayList<IndividualRelationType> list = relationRecommendationType.getIndividualRelationTypeList();
         if (list.size() > 0) {
@@ -65,6 +72,16 @@ class ExistingRelationListAdapter extends RecyclerView.Adapter
             holder.recycleIndividualRelationList.setLayoutManager(new LinearLayoutManager(mActivity));
             holder.recycleIndividualRelationList.setAdapter(adapter);
         }
+
+        holder.llRootRelation.setTag(position);
+        holder.llRootRelation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (clickListener != null)
+                    clickListener.onClick((int) view.getTag());
+            }
+        });
     }
 
     @Override
@@ -162,6 +179,8 @@ class ExistingRelationListAdapter extends RecyclerView.Adapter
         ImageView imageViewDelete;
         @BindView(R.id.ll_person_detail)
         LinearLayout llPersonDetail;
+        @BindView(R.id.ll_root_relation)
+        LinearLayout llRootRelation;
         @BindView(R.id.recycle_individual_relation_list)
         RecyclerView recycleIndividualRelationList;
 

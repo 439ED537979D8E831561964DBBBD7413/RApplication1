@@ -26,9 +26,9 @@ public class TableRelationMaster {
     static final String TABLE_RC_RELATION_MASTER = "rc_relation_master";
 
     // Column Names
-    private static final String COLUMN_ID = "id";
-    private static final String COLUMN_RM_PARTICULAR = "rm_particular";
-    private static final String COLUMN_RM_TYPE = "rm_type";
+    public static final String COLUMN_ID = "id";
+    public static final String COLUMN_RM_PARTICULAR = "rm_particular";
+    public static final String COLUMN_RM_TYPE = "rm_type";
 
 
     // Table Create Statements

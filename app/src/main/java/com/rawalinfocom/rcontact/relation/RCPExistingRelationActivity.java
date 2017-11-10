@@ -27,12 +27,14 @@ import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.database.TableOrganizationMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
+import com.rawalinfocom.rcontact.database.TableRelationMappingMaster;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.IndividualRelationType;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
+import com.rawalinfocom.rcontact.model.RelationRecommendationType;
 import com.rawalinfocom.rcontact.model.UserProfile;
 
 import org.apache.commons.lang3.StringUtils;
@@ -124,6 +126,8 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
     private String contactName = "", thumbnailUrl, contactNumber = "";
     private ArrayList<ProfileDataOperationOrganization> arrayListOrganization;
     private String pmId;
+    private TableRelationMappingMaster tableRelationMappingMaster;
+    private ArrayList<RelationRecommendationType> existingRelationList;
 
     // For relation
     // Business - 0
@@ -147,7 +151,7 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
     protected void onStart() {
         super.onStart();
         displayRCPUserData();
-        makeTempDataAndSetAdapter();
+        getExistingRelationData();
     }
 
     @Override
@@ -179,6 +183,8 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
 
     private void init() {
 
+        tableRelationMappingMaster = new TableRelationMappingMaster(databaseHandler);
+
         rippleActionRelation.setVisibility(View.GONE);
         rippleActionRightLeft.setVisibility(View.GONE);
         rippleActionRightCenter.setVisibility(View.GONE);
@@ -203,13 +209,9 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
             public void onClick(View view) {
 
                 Intent intent = new Intent(activity, AddNewRelationActivity.class);
-                intent.putExtra(AppConstants.EXTRA_CONTACT_NAME, contactName);
-                intent.putExtra(AppConstants.EXTRA_CONTACT_NUMBER, contactNumber);
-                intent.putExtra(AppConstants.EXTRA_PROFILE_IMAGE_URL, thumbnailUrl);
+                intent.putExtra(AppConstants.EXTRA_EXISTING_RELATION_DETAILS, existingRelationList);
                 intent.putExtra(AppConstants.EXTRA_PM_ID, pmId);
-                intent.putExtra(AppConstants.EXTRA_FAMILY_RELATION, "brother");
-                intent.putExtra(AppConstants.EXTRA_FRIEND_RELATION, "Friend");
-                intent.putExtra(AppConstants.EXTRA_IS_FROM, "rcp");
+                intent.putExtra(AppConstants.EXTRA_IS_FROM, "existing");
                 startActivity(intent);
             }
         });
@@ -416,69 +418,19 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
         dialog.show();
     }
 
-    private void makeTempDataAndSetAdapter() {
+    private void getExistingRelationData() {
 
-        ArrayList<IndividualRelationType> arrayList = new ArrayList<>();
+        existingRelationList = tableRelationMappingMaster.getExistingRelation("8317");
 
-        IndividualRelationType individualRelationType;
+        if (existingRelationList.size() > 0) {
 
-        // All
-        individualRelationType = new IndividualRelationType();
-        individualRelationType.setRelationId("1");
-        individualRelationType.setRelationName("Co-worker");
-        individualRelationType.setOrganizationName("Hungama");
-        individualRelationType.setFamilyName("");
-        individualRelationType.setIsFriendRelation(false);
+            ArrayList<IndividualRelationType> individualRelationTypes = existingRelationList.get(0)
+                    .getIndividualRelationTypeList();
 
-        arrayList.add(individualRelationType);
+            listAdapter = new IndividualRelationRecommendationListAdapter(activity, individualRelationTypes, "rcp");
+            recycleViewRelation.setLayoutManager(new LinearLayoutManager(this));
+            recycleViewRelation.setAdapter(listAdapter);
 
-        individualRelationType = new IndividualRelationType();
-        individualRelationType.setRelationId("2");
-        individualRelationType.setRelationName("Co-worker");
-        individualRelationType.setOrganizationName("RawalInfocom");
-        individualRelationType.setFamilyName("");
-        individualRelationType.setIsFriendRelation(false);
-
-        arrayList.add(individualRelationType);
-
-        individualRelationType = new IndividualRelationType();
-        individualRelationType.setRelationId("3");
-        individualRelationType.setRelationName("Co-worker");
-        individualRelationType.setOrganizationName("Peacock Technologies");
-        individualRelationType.setFamilyName("");
-        individualRelationType.setIsFriendRelation(false);
-
-        arrayList.add(individualRelationType);
-
-        individualRelationType = new IndividualRelationType();
-        individualRelationType.setRelationId("4");
-        individualRelationType.setRelationName("");
-        individualRelationType.setOrganizationName("");
-        individualRelationType.setFamilyName("Brother");
-        individualRelationType.setIsFriendRelation(false);
-
-        arrayList.add(individualRelationType);
-
-        individualRelationType = new IndividualRelationType();
-        individualRelationType.setRelationId("5");
-        individualRelationType.setRelationName("");
-        individualRelationType.setOrganizationName("");
-        individualRelationType.setFamilyName("Uncle");
-        individualRelationType.setIsFriendRelation(false);
-
-        arrayList.add(individualRelationType);
-
-        individualRelationType = new IndividualRelationType();
-        individualRelationType.setRelationId("6");
-        individualRelationType.setRelationName("");
-        individualRelationType.setOrganizationName("");
-        individualRelationType.setFamilyName("");
-        individualRelationType.setIsFriendRelation(true);
-
-        arrayList.add(individualRelationType);
-
-        listAdapter = new IndividualRelationRecommendationListAdapter(activity, arrayList, "rcp");
-        recycleViewRelation.setLayoutManager(new LinearLayoutManager(this));
-        recycleViewRelation.setAdapter(listAdapter);
+        }
     }
 }

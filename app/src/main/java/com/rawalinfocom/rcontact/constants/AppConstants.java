@@ -31,6 +31,7 @@ public class AppConstants {
     public static final int ORGANIZATION = 7;
     public static final int PROFILE_IMAGE = 8;
     public static final int NAME = 9;
+    public static final int RELATION = 10;
     public static boolean isRecentCallFromSMSTab = false;
     //</editor-fold>
 
@@ -131,6 +132,7 @@ public class AppConstants {
     public static String EXTRA_IS_FROM_FORGOT_PASSWORD = "extra_is_from_forgot_password";
     public static String EXTRA_IS_FROM_RE_LOGIN = "extra_is_from_re_login";
     public static String EXTRA_LOCAL_BROADCAST_MESSAGE = "message";
+    public static String EXTRA_EXISTING_RELATION_DETAILS = "contact_name";
     public static String EXTRA_CONTACT_NAME = "contact_name";
     public static String EXTRA_CONTACT_NUMBER = "contact_number";
     public static String EXTRA_FAMILY_RELATION = "family_relation";
