@@ -61,8 +61,8 @@ public class WsConstants {
     //<editor-fold desc="QA">
 
     // API ROOT
-    public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
-    public static final String WS_ROOT_V2 = "http://apiqa.rcontacts.in/api/v2/";
+//    public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
+//    public static final String WS_ROOT_V2 = "http://apiqa.rcontacts.in/api/v2/";
     // TERMS-CONDITIONS URL
     public static final String URL_TERMS_CONDITIONS = "http://webqa.rcontacts.in/global/terms";
     // FAQ URL
@@ -91,6 +91,11 @@ public class WsConstants {
 
     // Hardik
 //    public static final String WS_ROOT = "http://10.0.30.11/api/v1/";
+//    public static final String WS_ROOT_V2 = "http://10.0.30.11/api/v2/";
+
+    // Darshan
+    public static final String WS_ROOT = "http://10.0.21.202/api/v1/";
+    public static final String WS_ROOT_V2 = "http://10.0.21.202/api/v2/";
 
     // Shailesh
 //    public static final String WS_ROOT = "http://10.0.21.14:8001/api/v1/";
@@ -179,4 +184,5 @@ public class WsConstants {
     public static final String REQ_GET_RCP_CONTACT = "get-rcp-contact";
     public static final String REQ_GET_CHECK_VERSION = "check-version";
     public static final String REQ_GET_ORGANIZATIONS = "get-organizations";
+    public static final String REQ_SEND_RELATION_REQUEST = "send-relation-request";
 }

@@ -60,29 +60,6 @@ android {
             minifyEnabled false
         }
     }
-
-    productFlavors {
-        qa {
-            applicationIdSuffix ".free"
-            //packageName "com.rawalinfocom.rcontact.staging"
-            getProps('./config/qa.props').each { p ->
-                buildConfigField 'String', p.key, p.value
-            }
-
-        }
-        staging {
-            //packageName "com.rawalinfocom.rcontact"
-            getProps('./config/staging.props').each { p ->
-                buildConfigField 'String', p.key, p.value
-            }
-        }
-        production {
-            getProps('./config/production.props').each { p ->
-                buildConfigField 'String', p.key, p.value
-            }
-        }
-    }
-
     lintOptions {
         abortOnError false
     }
@@ -110,8 +87,8 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
 
     /* androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-                exclude group: 'com.android.support', module: 'support-annotations'
-            })*/
+                    exclude group: 'com.android.support', module: 'support-annotations'
+                })*/
     compile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
         transitive = true;
     }
@@ -124,7 +101,6 @@ dependencies {
     compile "com.android.support:design:$SUPPORT_LIBRARY_VERSION"
     compile "com.android.support:recyclerview-v7:$SUPPORT_LIBRARY_VERSION"
     compile "com.android.support:palette-v7:$SUPPORT_LIBRARY_VERSION"
-
     compile "com.google.android.gms:play-services-gcm:$PLAY_SERVICES_VERSION"
     compile "com.google.firebase:firebase-messaging:$PLAY_SERVICES_VERSION"
     compile "com.google.android.gms:play-services-auth:$PLAY_SERVICES_VERSION"
@@ -132,21 +108,19 @@ dependencies {
     compile "com.google.android.gms:play-services-maps:$PLAY_SERVICES_VERSION"
     compile "com.google.android.gms:play-services-places:$PLAY_SERVICES_VERSION"
     compile "com.google.android.gms:play-services-drive:$PLAY_SERVICES_VERSION"
-
     compile "com.fasterxml.jackson.core:jackson-core:$JACKSON_CORE_VERSION"
     compile "com.fasterxml.jackson.core:jackson-databind:$JACKSON_CORE_VERSION"
     compile "com.fasterxml.jackson.core:jackson-annotations:$JACKSON_CORE_VERSION"
-
     compile "com.jakewharton:butterknife:$BUTTER_KNIFE_VERSION"
     apt "com.jakewharton:butterknife-compiler:$BUTTER_KNIFE_VERSION"
+
     //    compile 'com.android.support.test.espresso:espresso-core:2.2.2'
+
     //    compile 'com.android.support.constraint:constraint-layout:1.0.0'
 
     /* Web View */
-
-
-//    compile "com.android.support:exifinterface:${SUPPORT_LIBRARY_VERSION}"
-    compile'com.google.code.gson:gson:2.8.1'
+    compile "com.android.support:exifinterface:${SUPPORT_LIBRARY_VERSION}"
+    compile 'com.google.code.gson:gson:2.8.1'
     compile 'com.github.bumptech.glide:glide:3.8.0'
     compile 'org.apache.commons:commons-lang3:3.6'
     compile 'com.facebook.android:facebook-android-sdk:4.25.0'
@@ -159,7 +133,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     apt 'com.thefinestartist:compilers:0.9.0'
     debugCompile 'com.amitshekhar.android:debug-db:0.4.0'
-    compile "com.android.support:exifinterface:$SUPPORT_LIBRARY_VERSION"
+    compile files('libs/twitter4j-core-4.0.1.jar')
 }
 
 apply plugin: 'com.google.gms.google-services'

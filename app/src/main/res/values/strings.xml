@@ -157,8 +157,6 @@
         <item>@string/google_plus</item>
         <item>@string/instagram</item>
         <item>@string/pinterest</item>
-        <item>@string/other</item>
-        <item>@string/custom</item>
     </string-array>
 
     <string-array name="types_Event">

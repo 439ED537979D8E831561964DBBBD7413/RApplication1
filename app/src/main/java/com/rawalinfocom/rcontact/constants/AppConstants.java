@@ -32,7 +32,24 @@ public class AppConstants {
     public static final int PROFILE_IMAGE = 8;
     public static final int NAME = 9;
     public static final int AADHAR_NUMBER = 10;
+    public static final int RELATION = 11;
     public static boolean isRecentCallFromSMSTab = false;
+    //</editor-fold>
+
+    //<editor-fold desc="Instagram Section">
+    public static String CLIENT_ID = "7b51698a7a5b40409fa7d28cd051d125";
+    public static String CLIENT_SECRET = "5afd8e843d1d4a8686ec3d168a2beba0";
+    public static String REDIRECT_URI = "http://www.rcontacts.in";
+    //</editor-fold>
+
+    // <editor-fold desc="Twitter Section">
+    public static String CONSUMER_KEY = "MimJ9Yavuu3O2IeGCGJQgyRb8";
+    public static String CONSUMER_SECRET = "2IXb9rLPJxvYqYkeJFRAgvqBpBTTvAGZLv0wYGFFmt150nIi9G";
+    //</editor-fold>
+
+    // <editor-fold desc="Pinterest Section">
+    public static String appID = "4932442687895776973";
+    public static String KEY_PINTEREST_LOIN_PREFERENCES = "key_pinterest_loin_preferences";
     //</editor-fold>
 
     //<editor-fold desc="App Specific final constants">
@@ -76,11 +93,11 @@ public class AppConstants {
 
     //<editor-fold desc="Family Relation">
 
-    public static String[] FAMILY_RELATION = {"Father", "Father-in-law", "Step Father", "Grand father", "Son", "Son-in-law",
-            "Step-son", "Grand son", "Brother", "Brother-in-law", "Cousin brother", "Step brother", "Uncle", "Maternal Uncle",
-            "Nephew", "Husband", "Mother", "Mother-in-law", "Step mother", "Grand mother", "Daughter", "Daughter-in-law",
-            "Granddaughter", "Step daughter", "Sister", "Step sister", "Cousin sister", "Sister-in-law", "Aunt", "Maternal Aunt",
-            "Niece", "Wife"};
+//    public static String[] FAMILY_RELATION = {"Father", "Father-in-law", "Step Father", "Grand father", "Son", "Son-in-law",
+//            "Step-son", "Grand son", "Brother", "Brother-in-law", "Cousin brother", "Step brother", "Uncle", "Maternal Uncle",
+//            "Nephew", "Husband", "Mother", "Mother-in-law", "Step mother", "Grand mother", "Daughter", "Daughter-in-law",
+//            "Granddaughter", "Step daughter", "Sister", "Step sister", "Cousin sister", "Sister-in-law", "Aunt", "Maternal Aunt",
+//            "Niece", "Wife"};
 
     //<editor-fold">
 
@@ -116,6 +133,7 @@ public class AppConstants {
     public static String EXTRA_IS_FROM_FORGOT_PASSWORD = "extra_is_from_forgot_password";
     public static String EXTRA_IS_FROM_RE_LOGIN = "extra_is_from_re_login";
     public static String EXTRA_LOCAL_BROADCAST_MESSAGE = "message";
+    public static String EXTRA_EXISTING_RELATION_DETAILS = "contact_name";
     public static String EXTRA_CONTACT_NAME = "contact_name";
     public static String EXTRA_CONTACT_NUMBER = "contact_number";
     public static String EXTRA_FAMILY_RELATION = "family_relation";
@@ -310,7 +328,6 @@ public class AppConstants {
     public static String PREF_DONTSHOWAGAIN_POPUP = "pref_dontshowagain_popup";
     public static String PREF_RATE_APP_DATE = "pref_rate_app_date";
     public static String PREF_SHOW_WALK_THROUGH = "pref_show_walk_through";
-
 
     public static String[] arrayPrefKeys = {PREF_SELECTED_COUNTRY_OBJECT, PREF_DEVICE_TOKEN_ID,
             PREF_LAUNCH_SCREEN_INT, PREF_REGS_USER_OBJECT, PREF_REGS_MOBILE_NUMBER,

@@ -6,7 +6,7 @@ package com.rawalinfocom.rcontact.model;
 
 public class Relation {
 
-    private String rmId;
+    private int rmId;
     private String rmRelationName;
     private String rmRelationType;
     private String rmCustomType;
@@ -15,11 +15,11 @@ public class Relation {
     private String rmRelationPrivacy;
     private String rcProfileMasterPmId;
 
-    public String getRmId() {
+    public int getRmId() {
         return rmId;
     }
 
-    public void setRmId(String rmId) {
+    public void setRmId(int rmId) {
         this.rmId = rmId;
     }
 
