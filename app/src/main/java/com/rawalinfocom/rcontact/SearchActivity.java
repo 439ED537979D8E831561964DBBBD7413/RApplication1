@@ -399,10 +399,10 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                             } else {
                                 globalSearchAdapter.notifyDataSetChanged();
                             }
-                            if (search.getText().toString().length() > 0){
+                            if (search.getText().toString().length() > 0) {
                                 Pattern numberPat = Pattern.compile(".*[a-zA-Z].*");
                                 Matcher matcher1 = numberPat.matcher(search.getText().toString());
-                                if(!matcher1.find()){
+                                if (!matcher1.find()) {
                                     initSwipeForGlobal();
                                 }
                             }
@@ -455,7 +455,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
     private void setGlobalSearchAdapter() {
         if (globalSearchTypeArrayListMain != null && globalSearchTypeArrayListMain.size() > 0) {
             globalSearchAdapter = new GlobalSearchAdapter(SearchActivity.this,
-                    globalSearchTypeArrayListMain,search.getText().toString());
+                    globalSearchTypeArrayListMain, search.getText().toString());
             recycleViewGlobalContact.setAdapter(globalSearchAdapter);
         }
     }
@@ -725,7 +725,8 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
 
             @Override
             public void afterTextChanged(Editable arg0) {
-                if (arg0.length() > 0) {
+                String searchText = arg0.toString().trim();
+                if (searchText.length() > 0 && !StringUtils.isEmpty(searchText)) {
                     if (globalSearchTypeArrayListMain.size() <= 0 && globalSearchAdapter == null) {
                         textNoRecords.setVisibility(View.GONE);
                         rippleViewSearchOnGlobal.setVisibility(View.VISIBLE);
@@ -745,9 +746,9 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                     }
                     Pattern numberPat = Pattern.compile("\\d+");
 //                    Pattern numberPat = Pattern.compile("[+][0-9]+");
-                    Matcher matcher1 = numberPat.matcher(arg0);
+                    Matcher matcher1 = numberPat.matcher(searchText);
                     if (matcher1.find()) {
-                        String text = arg0.toString();
+                        String text = searchText;
                         if (allContactAdapter != null) {
                             allContactAdapter.filter(text);
                             if (allContactAdapter.getSearchCount() == 0) {
@@ -810,7 +811,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                         }
 
                     } else {
-                        String text = arg0.toString().toLowerCase(Locale.getDefault());
+                        String text = searchText.toLowerCase(Locale.getDefault());
                         if (allContactAdapter != null /*&& allContactAdapter.getSearchCount()>0*/) {
 //                            ArrayList<Object> objectArrayList = allContactAdapter
 // .getArrayListUserContact();
@@ -861,7 +862,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                             recycleViewPbContact.setAdapter(allContactAdapter);
                         } else {
                             Pattern numberPat1 = Pattern.compile("\\d+");
-                            Matcher matcher11 = numberPat1.matcher(arg0);
+                            Matcher matcher11 = numberPat1.matcher(searchText);
                             if (matcher11.find()) {
                                 // 21/08/17 check for Rcontacts
                                 if (simpleCallLogListAdapter != null) {
@@ -872,7 +873,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                                             simpleCallLogListAdapter = new
                                                     SimpleCallLogListAdapter(SearchActivity.this,
                                                     callLogTypeArrayListMain);
-                                            simpleCallLogListAdapter.filter(arg0.toString());
+                                            simpleCallLogListAdapter.filter(searchText.toString());
                                             if (simpleCallLogListAdapter.getArrayListCallLogs()
                                                     .size() > 0) {
                                                 int countOfCallLogs = simpleCallLogListAdapter
@@ -900,7 +901,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                                                     smsListAdapter = new SmsListAdapter
                                                             (SearchActivity.this,
                                                                     tempList, recycleViewPbContact);
-                                                    smsListAdapter.filter(arg0.toString());
+                                                    smsListAdapter.filter(searchText.toString());
                                                     if (smsListAdapter.getTypeArrayList().size()
                                                             > 0) {
                                                         int countOfSmsLogs = smsListAdapter
@@ -950,7 +951,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                                     /*if (smsDataTypeArrayList != null) {
                                         smsListAdapter = new SmsListAdapter(SearchActivity.this,
                                                 smsDataTypeArrayList, recycleViewPbContact);
-                                        smsListAdapter.filter(arg0.toString());
+                                        smsListAdapter.filter(searchText.toString());
                                         if (smsListAdapter.getSearchCount() > 0) {
                                             if (smsListAdapter.getTypeArrayList().size() > 0) {
                                                 rlTitle.setVisibility(View.VISIBLE);
@@ -990,7 +991,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                                                 smsListAdapter = new SmsListAdapter
                                                 (SearchActivity.this,
                                                         tempList, recycleViewPbContact);
-                                                smsListAdapter.filter(arg0.toString());
+                                                smsListAdapter.filter(searchText.toString());
                                                 rlTitle.setVisibility(View.VISIBLE);
                                                 recycleViewPbContact.setAdapter(smsListAdapter);
                                             }
@@ -1005,7 +1006,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                     }
                 }
 
-                if (arg0.length() == 0) {
+                if (searchText.length() == 0) {
                     objectArrayListContact.clear();
 //                    callLogTypeArrayListMain.clear();
                     arrayListRContact.clear();
@@ -1062,11 +1063,11 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
             } else {
                 Pattern pattern = Pattern.compile("[0-9]");
                 Matcher matches = pattern.matcher(searchQuery);
-                if(matches.find()){
+                if (matches.find()) {
                     deviceDetailObject.setType("phone_number");
                     if (!searchQuery.startsWith("+91"))
                         searchQuery = "+91" + searchQuery;
-                }else {
+                } else {
                     deviceDetailObject.setType("name");
                 }
             }

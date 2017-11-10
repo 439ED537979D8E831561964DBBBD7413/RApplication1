@@ -669,7 +669,7 @@
                                             android:layout_height="wrap_content"
                                             android:layout_marginStart="@dimen/margin_tiny"
                                             android:layout_marginTop="@dimen/margin_small_tiny"
-                                            android:text="@string/str_aadhar_card"
+                                            android:text="@string/str_aadhar_number"
                                             android:textColor="@color/dialogButtonTextColor" />
 
                                        <RelativeLayout
