@@ -43,8 +43,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL(TableImMaster.CREATE_TABLE_RC_IM_MASTER);
         db.execSQL(TableOfflineBackupMaster.CREATE_TABLE_PB_OFFLINE_BACKUP_MASTER);
         db.execSQL(TableOrganizationMaster.CREATE_TABLE_RC_ORGANIZATION_MASTER);
-        db.execSQL(TableRelationMaster.CREATE_TABLE_RC_RELATION_MASTER);
-        db.execSQL(TableRelationMappingMaster.CREATE_TABLE_RC_RCP_RELATION_MAPPING);
+//        db.execSQL(TableRelationMaster.CREATE_TABLE_RC_RELATION_MASTER);
+//        db.execSQL(TableRelationMappingMaster.CREATE_TABLE_RC_RCP_RELATION_MAPPING);
         db.execSQL(TableWebsiteMaster.CREATE_TABLE_RC_WEBSITE_MASTER);
         /*db.execSQL(TableContactRatingMaster.CREATE_TABLE_RC_CONTACT_RATING_MASTER);*/
         db.execSQL(TableCommentMaster.CREATE_TABLE_RC_COMMENT_MASTER);
@@ -123,29 +123,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 db.execSQL("DROP TABLE IF EXISTS '" + TableEmailMaster.TABLE_RC_EMAIL_MASTER + "'");
                 db.execSQL("ALTER TABLE " + TableEmailMaster.TABLE_RC_EMAIL_MASTER_TEMP
                         + " RENAME TO " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + ";");
-
-            /*case 4:
-                System.out.println("RContact db upgrade case 4 email --> ");
-                // For version 5
-                db.execSQL(TableEmailMaster.CREATE_TABLE_RC_EMAIL_MASTER_1);
-                db.execSQL("INSERT INTO " + TableEmailMaster.TABLE_RC_EMAIL_MASTER_TEMP + "
-                (em_id,em_email_address," +
-                        "em_email_type,em_record_index_id,em_email_privacy,em_is_private,
-                        em_is_verified,rc_profile_master_pm_id)" +
-                        " SELECT em_id,em_email_address,em_email_type,em_record_index_id,
-                        em_email_privacy,em_is_private," +
-                        "em_is_verified,rc_profile_master_pm_id FROM " + TableEmailMaster
-                        .TABLE_RC_EMAIL_MASTER + ";");
-                db.execSQL("DROP TABLE IF EXISTS '" + TableEmailMaster.TABLE_RC_EMAIL_MASTER + "'");
-                db.execSQL("ALTER TABLE " + TableEmailMaster.TABLE_RC_EMAIL_MASTER_TEMP
-                        + " RENAME TO " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + ";");*/
-
-               /* db.execSQL("ALTER TABLE " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + " ADD "
-                        + "COLUMN " + TableEmailMaster.COLUMN_EM_SOCIAL_TYPE + " text ");
-
-                // For Country
-                db.execSQL("ALTER TABLE " + TableCountryMaster.TABLE_RC_COUNTRY_MASTER + " ADD "
-                        + "COLUMN " + TableCountryMaster.COLUMN_CM_MIN_DIGITS + " integer ");*/
             case 4:
                 // For version 5
                 db.execSQL("ALTER TABLE " + TableCountryMaster.TABLE_RC_COUNTRY_MASTER + " ADD "
@@ -171,10 +148,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 // For version 6
                 db.execSQL(TableAadharMaster.CREATE_TABLE_AADHAR_MASTER);
 
-                System.out.println("RContact db upgrade case 5 relation --> ");
-                db.execSQL("DROP TABLE IF EXISTS '" + TableRelationMaster.TABLE_RC_RELATION_MASTER + "'");
-                db.execSQL(TableRelationMaster.CREATE_TABLE_RC_RELATION_MASTER);
-                db.execSQL(TableRelationMappingMaster.CREATE_TABLE_RC_RCP_RELATION_MAPPING);
+//                System.out.println("RContact db upgrade case 5 relation --> ");
+//                db.execSQL("DROP TABLE IF EXISTS '" + TableRelationMaster.TABLE_RC_RELATION_MASTER + "'");
+//                db.execSQL(TableRelationMaster.CREATE_TABLE_RC_RELATION_MASTER);
+//                db.execSQL(TableRelationMappingMaster.CREATE_TABLE_RC_RCP_RELATION_MAPPING);
         }
 
         // create new tables
