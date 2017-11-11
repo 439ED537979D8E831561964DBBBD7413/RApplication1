@@ -13,7 +13,6 @@ import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.contacts.EditProfileActivity;
 import com.rawalinfocom.rcontact.helper.*;
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
