@@ -397,25 +397,33 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     String callLogRcpVerfiedId = "";
     boolean isFromNotification;
     AsyncWebServiceCall asyncGetProfileDetails;
+    @Nullable
     @BindView(R.id.image_aadhar_card)
     ImageView imageAadharCard;
+    @Nullable
     @BindView(R.id.text_label_aadhar_card)
     TextView textLabelAadharCard;
+    @Nullable
     @BindView(R.id.button_privacy)
     ImageView buttonPrivacy;
+    @Nullable
     @BindView(R.id.text_aadhar_number)
     TextView textAadharNumber;
+    @Nullable
     @BindView(R.id.relative_aadhar_number)
     RelativeLayout relativeAadharNumber;
+    @Nullable
     @BindView(R.id.text_label_UIDAI_number)
     TextView textLabelUIDAINumber;
+    @Nullable
     @BindView(R.id.linear_aadhar_card)
     LinearLayout linearAadharCard;
+    @Nullable
     @BindView(R.id.image_action_back)
     ImageView imageActionBack;
+    @Nullable
     @BindView(R.id.button_request)
     AppCompatButton buttonRequest;
-
     //<editor-fold desc="Override Methods">
 
     @Override
@@ -3005,9 +3013,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         }
                     } else {
                         if ((MoreObjects.firstNonNull(aadharDetails.getAadharPublic(), 3)) == IntegerConstants
-                                .PRIVACY_PRIVATE) {
+                                .PRIVACY_PRIVATE && aadharDetails.getAadharNumber() == 0) {
                             buttonRequest.setVisibility(View.VISIBLE);
                             buttonPrivacy.setVisibility(View.GONE);
+                        } else {
+                            if ((MoreObjects.firstNonNull(aadharDetails.getAadharPublic(), 3)) != IntegerConstants
+                                    .PRIVACY_PRIVATE && aadharDetails.getAadharNumber() == 0) {
+                                buttonRequest.setVisibility(View.VISIBLE);
+                                buttonPrivacy.setVisibility(View.GONE);
+                            }
                         }
                     }
 
@@ -3117,7 +3131,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     ||
                     (!Utils.isArraylistNullOrEmpty(arrayListImAccount) || !Utils
                             .isArraylistNullOrEmpty(arrayListPhoneBookImAccount))
-                    || (profileDetail.getPbAadhar() != null)) {
+                    || (profileDetail != null
+                    && (profileDetail.getPbAadhar().getAadharNumber() > 0))) {
                 rippleViewMore.setVisibility(View.VISIBLE);
             } else {
                 rippleViewMore.setVisibility(View.GONE);

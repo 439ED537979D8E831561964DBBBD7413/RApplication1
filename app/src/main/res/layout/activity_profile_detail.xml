@@ -667,14 +667,14 @@
                                             android:layout_height="wrap_content"
                                             android:orientation="vertical">
 
-                                            <TextView
-                                                android:id="@+id/text_label_aadhar_card"
-                                                android:layout_width="wrap_content"
-                                                android:layout_height="wrap_content"
-                                                android:layout_marginStart="@dimen/margin_tiny"
-                                                android:layout_marginTop="@dimen/margin_small_tiny"
-                                                android:text="@string/str_aadhar_card"
-                                                android:textColor="@color/dialogButtonTextColor"/>
+                                        <TextView
+                                            android:id="@+id/text_label_aadhar_card"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="@dimen/margin_tiny"
+                                            android:layout_marginTop="@dimen/margin_small_tiny"
+                                            android:text="@string/str_aadhar_number"
+                                            android:textColor="@color/dialogButtonTextColor" />
 
                                             <RelativeLayout
                                                 android:id="@+id/relative_aadhar_number"
