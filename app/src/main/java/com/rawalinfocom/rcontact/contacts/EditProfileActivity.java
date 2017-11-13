@@ -75,6 +75,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.BaseActivity;
+import com.rawalinfocom.rcontact.BuildConfig;
 import com.rawalinfocom.rcontact.EnterPriseOrganizationListActivity;
 import com.rawalinfocom.rcontact.LinkedinLoginActivity;
 import com.rawalinfocom.rcontact.R;
@@ -6011,7 +6012,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     editProfileObject, null, WsResponseObject.class, WsConstants
                     .REQ_PROFILE_UPDATE + ":" + type, getResources().getString(R.string
                     .msg_please_wait), true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                    WsConstants.WS_ROOT_V2 + WsConstants
+                    BuildConfig.WS_ROOT_V2 + WsConstants
                             .REQ_PROFILE_UPDATE);
         } else {
             Utils.showErrorSnackBar(this, relativeRootEditProfile, getResources()
@@ -6029,7 +6030,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 //                    editProfileObject, null, WsResponseObject.class, WsConstants
 //                    .REQ_PROFILE_UPDATE + ":" + type, getResources().getString(R.string
 //                    .msg_please_wait), true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-//                    WsConstants.WS_ROOT_V2 + WsConstants
+//                    BuildConfig.WS_ROOT_V2 + WsConstants
 //                            .REQ_PROFILE_UPDATE);
 //        } else {
 //            Utils.showErrorSnackBar(this, relativeRootEditProfile, getResources()
@@ -6043,7 +6044,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), null, null,
                     WsResponseObject.class, WsConstants.REQ_COUNTRY_CODE_DETAIL, getString(R.string
                     .msg_please_wait), false).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                    WsConstants.WS_ROOT_V2 + WsConstants.REQ_COUNTRY_CODE_DETAIL);
+                    BuildConfig.WS_ROOT_V2 + WsConstants.REQ_COUNTRY_CODE_DETAIL);
         } else {
             Utils.showErrorSnackBar(this, relativeRootEditProfile, getResources()
                     .getString(R.string.msg_no_network));
@@ -6057,7 +6058,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), null, null,
                     WsResponseObject.class, WsConstants.REQ_STATE_DETAILS + ":" + position, null,
                     false)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT_V2 +
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT_V2 +
                             WsConstants.REQ_STATE_DETAILS + "/" + countryId);
         } else {
             Utils.showErrorSnackBar(this, relativeRootEditProfile, getResources()
@@ -6072,7 +6073,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), null, null,
                     WsResponseObject.class, WsConstants.REQ_CITY_DETAILS + ":" + position, null,
                     false).executeOnExecutor(AsyncTask
-                    .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT_V2 + WsConstants.REQ_CITY_DETAILS
+                    .THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT_V2 + WsConstants.REQ_CITY_DETAILS
                     + "/" +
                     stateId);
         } else {

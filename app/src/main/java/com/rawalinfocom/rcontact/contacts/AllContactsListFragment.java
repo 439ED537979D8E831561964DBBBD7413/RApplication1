@@ -2188,7 +2188,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     uploadContactObject, null, WsResponseObject.class, WsConstants
                     .REQ_UPLOAD_CONTACTS + "_" + previouslySyncedData, null, true)
                     .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                            WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_CONTACTS);
+                            BuildConfig.WS_ROOT + WsConstants.REQ_UPLOAD_CONTACTS);
         } else {
             Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, getResources()
                     .getString(R.string.msg_no_network));
@@ -2206,7 +2206,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     savePackageObject, null, WsResponseObject.class, WsConstants
                     .REQ_SAVE_PACKAGE, null, true).executeOnExecutor(AsyncTask
-                    .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants.REQ_SAVE_PACKAGE);
+                    .THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT + WsConstants.REQ_SAVE_PACKAGE);
         } else {
             Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, getResources()
                     .getString(R.string.msg_no_network));
@@ -2222,7 +2222,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         if (Utils.isNetworkAvailable(getActivity())) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), checkVersionObject, null,
                     WsResponseObject.class, WsConstants.REQ_GET_CHECK_VERSION, null, true)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT + WsConstants
                             .REQ_GET_CHECK_VERSION);
         } else {
             Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, getResources().getString(R.string.msg_no_network));

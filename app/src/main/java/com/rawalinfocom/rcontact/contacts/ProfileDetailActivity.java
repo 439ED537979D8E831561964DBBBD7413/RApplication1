@@ -893,9 +893,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                     targetedShareIntent.setType("text/plain");
                                     String shareBody;
                                     if (StringUtils.isBlank(userProfile.getPmBadge())) {
-                                        shareBody = WsConstants.WS_PROFILE_VIEW_BADGE_ROOT + number;
+                                        shareBody = BuildConfig.WS_PROFILE_VIEW_BADGE_ROOT + number;
                                     } else {
-                                        shareBody = WsConstants.WS_PROFILE_VIEW_BADGE_ROOT +
+                                        shareBody = BuildConfig.WS_PROFILE_VIEW_BADGE_ROOT +
                                                 userProfile.getPmBadge();
                                     }
                                     targetedShareIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
@@ -3078,7 +3078,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                                                 .msg_please_wait), true)
                                                         .executeOnExecutor
                                                                 (AsyncTask.THREAD_POOL_EXECUTOR,
-                                                                        WsConstants.WS_ROOT +
+                                                                        BuildConfig.WS_ROOT +
                                                                                 WsConstants
                                                                                         .REQ_SET_PRIVACY_SETTING);
                                             } else {
@@ -3241,7 +3241,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     requestObj, null, WsResponseObject.class, WsConstants
                     .REQ_PROFILE_PRIVACY_REQUEST, this.getResources().getString(R.string
                     .msg_please_wait), true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                    WsConstants.WS_ROOT + WsConstants.REQ_PROFILE_PRIVACY_REQUEST);
+                    BuildConfig.WS_ROOT + WsConstants.REQ_PROFILE_PRIVACY_REQUEST);
         } else {
             //show no net
             Toast.makeText(this, this.getResources().getString(R.string.msg_no_network),
@@ -3706,7 +3706,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     // RCP profile or Own Profile
                     Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                     sharingIntent.setType("text/plain");
-                    String shareBody = WsConstants.WS_PROFILE_VIEW_ROOT + firstName
+                    String shareBody = BuildConfig.WS_PROFILE_VIEW_ROOT + firstName
                             + "." + lastName + "." + pmId;
                     sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
                     startActivity(Intent.createChooser(sharingIntent, getString(R.string
@@ -4839,7 +4839,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     favouriteStatusObject, null, WsResponseObject.class, WsConstants
                     .REQ_MARK_AS_FAVOURITE, null, true).executeOnExecutor(AsyncTask
-                    .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants
+                    .THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT + WsConstants
                     .REQ_MARK_AS_FAVOURITE);
         } else {
             Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources().getString(R
@@ -4859,7 +4859,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     ratingObject, null, WsResponseObject.class, WsConstants.REQ_PROFILE_RATING,
-                    null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants
+                    null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig
                     .WS_ROOT + WsConstants.REQ_PROFILE_RATING);
         } else {
             Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources().getString(R
@@ -4878,7 +4878,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     uploadContactObject, null, WsResponseObject.class, WsConstants
                     .REQ_RCP_PROFILE_SHARING, getResources().getString(R.string.msg_please_wait),
-                    true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT +
+                    true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT +
                     WsConstants.REQ_RCP_PROFILE_SHARING);
         } else {
             Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources()
@@ -4892,7 +4892,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     .REQUEST_TYPE_JSON.getValue(), null, null, WsResponseObject.class, WsConstants
                     .REQ_GET_PROFILE_DETAILS, getResources().getString(R.string.msg_please_wait),
                     true);
-            asyncGetProfileDetails.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants
+            asyncGetProfileDetails.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig
                     .WS_ROOT + WsConstants.REQ_GET_PROFILE_DETAILS + "/" + pmId);
         } else {
             Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources()
@@ -4909,7 +4909,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     profileVisitObject, null, WsResponseObject.class, WsConstants
                     .REQ_ADD_PROFILE_VISIT, null, true).executeOnExecutor(AsyncTask
-                    .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants
+                    .THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT + WsConstants
                     .REQ_ADD_PROFILE_VISIT);
         } else {
             Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources()
@@ -4929,7 +4929,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     inviteContactObject, null, WsResponseObject.class, WsConstants
                     .REQ_SEND_INVITATION, null, true).executeOnExecutor(AsyncTask
                             .THREAD_POOL_EXECUTOR,
-                    WsConstants.WS_ROOT + WsConstants.REQ_SEND_INVITATION);
+                    BuildConfig.WS_ROOT + WsConstants.REQ_SEND_INVITATION);
         }
         /*else {
             Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, getResources()
@@ -4946,7 +4946,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     deviceDetailObject, null, WsResponseObject.class, WsConstants
                     .REQ_GET_CALL_LOG_HISTORY_REQUEST, null, true).executeOnExecutor(AsyncTask
                             .THREAD_POOL_EXECUTOR,
-                    WsConstants.WS_ROOT + WsConstants.REQ_GET_CALL_LOG_HISTORY_REQUEST);
+                    BuildConfig.WS_ROOT + WsConstants.REQ_GET_CALL_LOG_HISTORY_REQUEST);
         } else {
             Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources()
                     .getString(R.string.msg_no_network));

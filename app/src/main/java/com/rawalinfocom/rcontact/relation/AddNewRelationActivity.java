@@ -26,6 +26,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.BaseActivity;
+import com.rawalinfocom.rcontact.BuildConfig;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
@@ -1021,7 +1022,7 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
                     sendRelationRequestObject, null, WsResponseObject.class, WsConstants
                     .REQ_SEND_RELATION_REQUEST, getResources().getString(R.string.msg_please_wait),
                     true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                    WsConstants.WS_ROOT + WsConstants.REQ_SEND_RELATION_REQUEST);
+                    BuildConfig.WS_ROOT + WsConstants.REQ_SEND_RELATION_REQUEST);
         } else {
             Utils.showErrorSnackBar(this, relativeRootNewRelation, getResources()
                     .getString(R.string.msg_no_network));

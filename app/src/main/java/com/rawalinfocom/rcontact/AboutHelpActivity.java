@@ -120,7 +120,7 @@ public class AboutHelpActivity extends BaseActivity implements RippleView
             public void onClick(View v) {
 
                 Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(WsConstants.URL_TERMS_CONDITIONS));
+                i.setData(Uri.parse(BuildConfig.URL_TERMS_CONDITIONS));
                 startActivity(i);
 //                showWebView(getString(R.string.str_terms), WsConstants.URL_TERMS_CONDITIONS);
             }
@@ -131,7 +131,7 @@ public class AboutHelpActivity extends BaseActivity implements RippleView
             public void onClick(View v) {
 
                 Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(WsConstants.URL_FAQ));
+                i.setData(Uri.parse(BuildConfig.URL_FAQ));
                 startActivity(i);
 //                showWebView(getString(R.string.str_faq), WsConstants.URL_FAQ);
             }
@@ -218,7 +218,7 @@ public class AboutHelpActivity extends BaseActivity implements RippleView
                 public void onClick(View v) {
 
                     Intent i = new Intent(Intent.ACTION_VIEW);
-                    i.setData(Uri.parse(WsConstants.URL_TERMS_CONDITIONS));
+                    i.setData(Uri.parse(BuildConfig.URL_TERMS_CONDITIONS));
                     startActivity(i);
 //                    showWebView(getString(R.string.str_terms), WsConstants.URL_TERMS_CONDITIONS);
                 }

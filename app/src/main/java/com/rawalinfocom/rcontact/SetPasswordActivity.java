@@ -364,7 +364,7 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     setPassWordObject, null, WsResponseObject.class, WsConstants.REQ_SAVE_PASSWORD,
                     getString(R.string.msg_please_wait), true).executeOnExecutor(AsyncTask
-                    .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT +
+                    .THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT +
                     WsConstants.REQ_SAVE_PASSWORD);
         } else {
             Utils.showErrorSnackBar(this, layoutRoot, getResources()
@@ -394,7 +394,7 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
                     deviceDetailObject, null, WsResponseObject.class, WsConstants
                     .REQ_STORE_DEVICE_DETAILS, null, true).executeOnExecutor(AsyncTask
                             .THREAD_POOL_EXECUTOR,
-                    WsConstants.WS_ROOT + WsConstants.REQ_STORE_DEVICE_DETAILS);
+                    BuildConfig.WS_ROOT + WsConstants.REQ_STORE_DEVICE_DETAILS);
         }
         /*else {
             Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getResources()

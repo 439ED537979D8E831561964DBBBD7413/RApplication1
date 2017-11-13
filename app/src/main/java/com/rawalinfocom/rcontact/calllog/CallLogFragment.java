@@ -1515,7 +1515,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 //                        deviceDetailObject, null, WsResponseObject.class, WsConstants
 //                        .REQ_UPLOAD_CALL_LOGS, null, true).executeOnExecutor(AsyncTask
 // .THREAD_POOL_EXECUTOR,
-//                        WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_CALL_LOGS);
+//                        BuildConfig.WS_ROOT + WsConstants.REQ_UPLOAD_CALL_LOGS);
 //            } else {
 //                Utils.showErrorSnackBar(getActivity(), linearCallLogMain, getResources()
 //                        .getString(R.string.msg_no_network));

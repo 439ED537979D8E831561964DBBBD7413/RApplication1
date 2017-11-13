@@ -1105,7 +1105,7 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                     .REQUEST_TYPE_JSON.getValue(), null, null, WsResponseObject.class, WsConstants
                     .REQ_GET_PROFILE_DETAILS, getResources().getString(R.string.msg_please_wait),
                     true);
-            asyncGetProfileDetails.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants
+            asyncGetProfileDetails.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig
                     .WS_ROOT + WsConstants.REQ_GET_PROFILE_DETAILS + "/" + pmId);
         } else {
             Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources()
