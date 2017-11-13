@@ -25,6 +25,16 @@ public class ProfileDataOperationOrganization implements Serializable {
     private String orgToDate;
     private String orgLogo;
 
+    public String getIsInUse() {
+        return isInUse;
+    }
+
+    public void setIsInUse(String isInUse) {
+        this.isInUse = isInUse;
+    }
+
+    private String isInUse;
+
 //    private String orgType;
 //    private String orgJobDescription;
 //    private String orgOfficeLocation;

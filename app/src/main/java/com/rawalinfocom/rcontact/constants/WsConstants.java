@@ -185,4 +185,5 @@ public class WsConstants {
     public static final String REQ_GET_CHECK_VERSION = "check-version";
     public static final String REQ_GET_ORGANIZATIONS = "get-organizations";
     public static final String REQ_SEND_RELATION_REQUEST = "send-relation-request";
+    public static final String REQ_GET_RELATION = "get-relation";
 }

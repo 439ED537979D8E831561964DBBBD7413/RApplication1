@@ -3,12 +3,14 @@ package com.rawalinfocom.rcontact.relation;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -23,8 +25,9 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.asynctasks.AsyncGetWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
-import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
+import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.TableOrganizationMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.database.TableRelationMappingMaster;
@@ -35,12 +38,14 @@ import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.IndividualRelationType;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
 import com.rawalinfocom.rcontact.model.RelationRecommendationType;
+import com.rawalinfocom.rcontact.model.RelationRequest;
+import com.rawalinfocom.rcontact.model.RelationRequestResponse;
 import com.rawalinfocom.rcontact.model.UserProfile;
+import com.rawalinfocom.rcontact.model.WsResponseObject;
 
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -104,6 +109,8 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
     RelativeLayout relativeBasicDetail;
     @BindView(R.id.text_no_relation)
     TextView textNoRelation;
+    @BindView(R.id.title_establish_relation)
+    TextView titleEstablishRelation;
     @BindView(R.id.recycle_view_relation)
     RecyclerView recycleViewRelation;
     @BindView(R.id.relative_root_existing_relation)
@@ -151,13 +158,50 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
     protected void onStart() {
         super.onStart();
         displayRCPUserData();
-        getExistingRelationData();
+        getUserExistingRelation();
     }
+
 
     @Override
     public void onDeliveryResponse(String serviceType, Object data, Exception error) {
 
+        if (error == null) {
+
+            //<editor-fold desc="REQ_GET_RELATION">
+            if (serviceType.contains(WsConstants.REQ_GET_RELATION)) {
+                WsResponseObject sendRelationRequestObject = (WsResponseObject) data;
+                Utils.hideProgressDialog();
+                if (sendRelationRequestObject != null && StringUtils.equalsIgnoreCase
+                        (sendRelationRequestObject.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+
+                    ArrayList<RelationRequest> allExistingRelationList = sendRelationRequestObject.
+                            getAllExistingRelationList();
+
+//                    Utils.showSuccessSnackBar(activity, relativeRootExistingRelation,
+//                            "New Relation Added Successfully!!!");
+                    storeProfileDataToDb(allExistingRelationList);
+                    getExistingRelationData();
+
+                } else {
+                    if (sendRelationRequestObject != null) {
+                        Log.e("error response", sendRelationRequestObject.getMessage());
+                        Utils.showErrorSnackBar(this, relativeRootExistingRelation,
+                                sendRelationRequestObject.getMessage());
+                    } else {
+                        Log.e("onDeliveryResponse: ", "sendRelationRequestResponse null");
+                        Utils.showErrorSnackBar(this, relativeRootExistingRelation, getString(R
+                                .string.msg_try_later));
+                    }
+                }
+            }
+            //</editor-fold>
+
+        } else {
+            Utils.showErrorSnackBar(this, relativeRootExistingRelation, "" + error
+                    .getLocalizedMessage());
+        }
     }
+
 
     @Override
     public void onClick(View view) {
@@ -166,9 +210,6 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
 
             case R.id.image_action_back:
                 finish();
-                break;
-            case R.id.image_add_new:
-                startActivity(new Intent(activity, AddNewRelationActivity.class));
                 break;
         }
     }
@@ -182,6 +223,9 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
     }
 
     private void init() {
+
+        textNoRelation.setVisibility(View.GONE);
+        recycleViewRelation.setVisibility(View.VISIBLE);
 
         tableRelationMappingMaster = new TableRelationMappingMaster(databaseHandler);
 
@@ -202,6 +246,7 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
         Utils.setRatingColor(activity, ratingUser);
 
         textNoRelation.setTypeface(Utils.typefaceRegular(this));
+        titleEstablishRelation.setTypeface(Utils.typefaceRegular(this));
         recycleViewRelation.setVisibility(View.VISIBLE);
 
         fabAdd.setOnClickListener(new View.OnClickListener() {
@@ -209,9 +254,17 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
             public void onClick(View view) {
 
                 Intent intent = new Intent(activity, AddNewRelationActivity.class);
-                intent.putExtra(AppConstants.EXTRA_EXISTING_RELATION_DETAILS, existingRelationList);
                 intent.putExtra(AppConstants.EXTRA_PM_ID, pmId);
                 intent.putExtra(AppConstants.EXTRA_IS_FROM, "existing");
+
+                if (existingRelationList.size() > 0) {
+                    intent.putExtra(AppConstants.EXTRA_EXISTING_RELATION_DETAILS, existingRelationList.get(0));
+                } else {
+                    intent.putExtra(AppConstants.EXTRA_CONTACT_NAME, contactName);
+                    intent.putExtra(AppConstants.EXTRA_PROFILE_IMAGE_URL, thumbnailUrl);
+                    intent.putExtra(AppConstants.EXTRA_CONTACT_NUMBER, contactNumber);
+                }
+
                 startActivity(intent);
             }
         });
@@ -280,29 +333,6 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
 
             if (intent.hasExtra(AppConstants.EXTRA_PM_ID)) {
                 pmId = intent.getStringExtra(AppConstants.EXTRA_PM_ID);
-                if (!StringUtils.isEmpty(pmId)) {
-                    if (!pmId.equalsIgnoreCase("-1") && !pmId.equalsIgnoreCase(getUserPmId())) {
-                        if (!Utils.isNetworkAvailable(this)) {
-
-                            HashMap<String, String> mapProfileViews = new HashMap<>();
-                            if (Utils.getHashMapPreference(this, AppConstants
-                                    .PREF_PROFILE_VIEWS) != null) {
-                                mapProfileViews.putAll(Utils.getHashMapPreference(this, AppConstants
-                                        .PREF_PROFILE_VIEWS));
-                            }
-                            if (mapProfileViews.containsKey(pmId)) {
-                                int count = Integer.parseInt(mapProfileViews.get(pmId));
-                                mapProfileViews.put(pmId, String.valueOf(++count));
-                            } else {
-                                mapProfileViews.put(pmId, "1");
-                            }
-                            Utils.setHashMapPreference(this, AppConstants.PREF_PROFILE_VIEWS,
-                                    mapProfileViews);
-                        }
-                    }
-                } else {
-                    pmId = "-1";
-                }
             } else {
                 pmId = "-1";
             }
@@ -411,18 +441,106 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
                     @Override
                     public void onClick(String orgId, String orgName) {
                     }
-                });
+                }, "");
 
         recyclerViewDialogList.setAdapter(adapter);
 
         dialog.show();
     }
 
+    private void storeProfileDataToDb(ArrayList<RelationRequest> relationRequestResponse) {
+
+        //<editor-fold desc="Relation Mapping Master">
+        TableRelationMappingMaster tableRelationMappingMaster = new
+                TableRelationMappingMaster(databaseHandler);
+
+        if (!Utils.isArraylistNullOrEmpty(relationRequestResponse)) {
+
+            ArrayList<RelationRequestResponse> relationResponseList = new ArrayList<>();
+
+            for (int i = 0; i < relationRequestResponse.size(); i++) {
+
+                RelationRequest relationRequest = relationRequestResponse.get(i);
+
+                //<editor-fold desc="Family Relation">
+                ArrayList<RelationRequest> familyRelation = relationRequest.getFamilyRelationList();
+                if (!Utils.isArraylistNullOrEmpty(familyRelation)) {
+
+                    for (int j = 0; j < familyRelation.size(); j++) {
+
+                        RelationRequestResponse relationResponse = new RelationRequestResponse();
+
+                        relationResponse.setId(familyRelation.get(j).getId());
+                        relationResponse.setRcRelationMasterId(familyRelation.get(j).getRcRelationMasterId());
+                        relationResponse.setRrmToPmId(familyRelation.get(j).getRrmToPmId());
+                        relationResponse.setRrmType(familyRelation.get(j).getRrmType());
+                        relationResponse.setRrmFromPmId(familyRelation.get(j).getRrmFromPmId());
+                        relationResponse.setRcStatus(familyRelation.get(j).getRcStatus());
+                        relationResponse.setRcOrgId(familyRelation.get(j).getRcOrgId());
+                        relationResponse.setCreatedAt(familyRelation.get(j).getCreatedAt());
+
+                        relationResponseList.add(relationResponse);
+                    }
+                }
+                //</editor-fold>
+
+                //<editor-fold desc="Friend Relation">
+                ArrayList<RelationRequest> friendRelation = relationRequest.getFriendRelationList();
+                if (!Utils.isArraylistNullOrEmpty(friendRelation)) {
+
+                    for (int j = 0; j < friendRelation.size(); j++) {
+
+                        RelationRequestResponse relationResponse = new RelationRequestResponse();
+
+                        relationResponse.setId(friendRelation.get(j).getId());
+                        relationResponse.setRcRelationMasterId(friendRelation.get(j).getRcRelationMasterId());
+                        relationResponse.setRrmToPmId(friendRelation.get(j).getRrmToPmId());
+                        relationResponse.setRrmType(friendRelation.get(j).getRrmType());
+                        relationResponse.setRrmFromPmId(friendRelation.get(j).getRrmFromPmId());
+                        relationResponse.setRcStatus(friendRelation.get(j).getRcStatus());
+                        relationResponse.setRcOrgId(friendRelation.get(j).getRcOrgId());
+                        relationResponse.setCreatedAt(friendRelation.get(j).getCreatedAt());
+
+                        relationResponseList.add(relationResponse);
+                    }
+                }
+                //</editor-fold>
+
+                //<editor-fold desc="Business Relation">
+                ArrayList<RelationRequest> businessRelation = relationRequest.getBusinessRelationList();
+                if (!Utils.isArraylistNullOrEmpty(businessRelation)) {
+
+                    for (int j = 0; j < businessRelation.size(); j++) {
+
+                        RelationRequestResponse relationResponse = new RelationRequestResponse();
+
+                        relationResponse.setId(businessRelation.get(j).getId());
+                        relationResponse.setRcRelationMasterId(businessRelation.get(j).getRcRelationMasterId());
+                        relationResponse.setRrmToPmId(businessRelation.get(j).getRrmToPmId());
+                        relationResponse.setRrmType(businessRelation.get(j).getRrmType());
+                        relationResponse.setRrmFromPmId(businessRelation.get(j).getRrmFromPmId());
+                        relationResponse.setRcStatus(businessRelation.get(j).getRcStatus());
+                        relationResponse.setRcOrgId(businessRelation.get(j).getRcOrgId());
+                        relationResponse.setCreatedAt(businessRelation.get(j).getCreatedAt());
+
+                        relationResponseList.add(relationResponse);
+                    }
+                }
+            }
+
+            tableRelationMappingMaster.deleteRelationMapping(String.valueOf(pmId));
+            tableRelationMappingMaster.addRelationMapping(relationResponseList);
+        }
+    }
+
     private void getExistingRelationData() {
 
-        existingRelationList = tableRelationMappingMaster.getExistingRelation("8317");
+        existingRelationList = tableRelationMappingMaster.getExistingRelation(pmId);
 
         if (existingRelationList.size() > 0) {
+
+            textNoRelation.setVisibility(View.GONE);
+            recycleViewRelation.setVisibility(View.VISIBLE);
 
             ArrayList<IndividualRelationType> individualRelationTypes = existingRelationList.get(0)
                     .getIndividualRelationTypeList();
@@ -431,6 +549,23 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
             recycleViewRelation.setLayoutManager(new LinearLayoutManager(this));
             recycleViewRelation.setAdapter(listAdapter);
 
+        } else {
+
+            textNoRelation.setVisibility(View.VISIBLE);
+            recycleViewRelation.setVisibility(View.GONE);
+        }
+    }
+
+    private void getUserExistingRelation() {
+
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncGetWebServiceCall(this, WsResponseObject.class, WsConstants
+                    .REQ_GET_RELATION, getResources().getString(R.string.msg_please_wait))
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT +
+                            WsConstants.REQ_GET_RELATION + "?startAt=0&user_id=" + pmId);
+        } else {
+            Utils.showErrorSnackBar(this, relativeRootExistingRelation, getResources()
+                    .getString(R.string.msg_no_network));
         }
     }
 }

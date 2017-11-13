@@ -35,7 +35,7 @@ public class WebServiceGet {
     private Activity activity;
     private ObjectMapper mapper = null;
 
-    public WebServiceGet(Activity activity, String url) {
+    WebServiceGet(Activity activity, String url) {
         url = url.replace(" ", "%20");
         this.url = url;
         this.activity = activity;
@@ -61,10 +61,21 @@ public class WebServiceGet {
             urlConnection.setRequestProperty("Accept", "application/json");
             urlConnection.setRequestMethod("GET");
 
+            System.out.println("RContact set header token --> " + Utils
+                    .getStringPreference
+                            (activity, AppConstants.PREF_ACCESS_TOKEN, ""));
+
+            urlConnection.addRequestProperty(WsConstants.REQ_HEADER, Utils
+                    .getStringPreference
+                            (activity, AppConstants.PREF_ACCESS_TOKEN, ""));
+
+
             urlConnection.connect();
 
             /* Get Response and execute WebService request*/
             statusCode = urlConnection.getResponseCode();
+
+            System.out.println("RContact statusCode --> " + url + " --> " + statusCode);
 
             /* 200 represents HTTP OK */
             if (statusCode == HttpsURLConnection.HTTP_OK) {

@@ -203,7 +203,7 @@ public class QueryManager {
                 .COLUMN_OM_ORGANIZATION_FROM_DATE + ",org." + TableOrganizationMaster
                 .COLUMN_OM_ORGANIZATION_TO_DATE + ",org." + TableOrganizationMaster
                 .COLUMN_OM_ORGANIZATION_IS_VERIFIED + ",org." + TableOrganizationMaster
-                        .COLUMN_OM_ORGANIZATION_IS_CURRENT + ",org." + TableOrganizationMaster
+                .COLUMN_OM_ORGANIZATION_IS_CURRENT + ",org." + TableOrganizationMaster
                 .COLUMN_OM_ORGANIZATION_DESIGNATION + " from " + TableOrganizationMaster
                 .TABLE_RC_ORGANIZATION_MASTER + " org WHERE org." + TableOrganizationMaster
                 .COLUMN_RC_PROFILE_MASTER_PM_ID + " = " + rcpId + " ORDER BY org." +
@@ -250,11 +250,11 @@ public class QueryManager {
                                     .COLUMN_OM_ORGANIZATION_IS_CURRENT))));
                     if (!StringUtils.isBlank(organizationCursor.getString
                             (organizationCursor.getColumnIndexOrThrow(TableOrganizationMaster
-                                    .COLUMN_OM_ORGANIZATION_IS_VERIFIED)))){
+                                    .COLUMN_OM_ORGANIZATION_IS_VERIFIED)))) {
                         organization.setIsVerify(Integer.parseInt(organizationCursor.getString
                                 (organizationCursor.getColumnIndexOrThrow(TableOrganizationMaster
                                         .COLUMN_OM_ORGANIZATION_IS_VERIFIED))));
-                    }else{
+                    } else {
                         organization.setIsVerify(0);
                     }
 
