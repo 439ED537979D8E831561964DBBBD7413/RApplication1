@@ -37,6 +37,8 @@ class ExistingRelationListAdapter extends RecyclerView.Adapter
 
     public interface OnClickListener {
         void onClick(int position);
+
+        void onDeleteClick(int position, String name, String pmId);
     }
 
     @Override
@@ -57,7 +59,7 @@ class ExistingRelationListAdapter extends RecyclerView.Adapter
     }
 
     @Override
-    public void onBindViewHolder(ExistingRelationViewHolder holder, int position) {
+    public void onBindViewHolder(ExistingRelationViewHolder holder, final int position) {
 
         RelationRecommendationType relationRecommendationType = arrayListRelationType.get(position);
         holder.textName.setText(String.format("%s %s", relationRecommendationType.getFirstName(),
@@ -80,6 +82,20 @@ class ExistingRelationListAdapter extends RecyclerView.Adapter
 
                 if (clickListener != null)
                     clickListener.onClick((int) view.getTag());
+            }
+        });
+
+        holder.imageViewDelete.setTag(position);
+        holder.imageViewDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                int pos = (int) view.getTag();
+                String name =  arrayListRelationType.get(pos).getFirstName() + " " +
+                        arrayListRelationType.get(pos).getLastName();
+
+                if (clickListener != null)
+                    clickListener.onDeleteClick(pos,name,arrayListRelationType.get(pos).getPmId());
             }
         });
     }

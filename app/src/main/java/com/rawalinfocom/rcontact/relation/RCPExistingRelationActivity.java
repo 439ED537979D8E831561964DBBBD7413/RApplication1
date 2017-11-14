@@ -24,6 +24,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.BaseActivity;
+import com.rawalinfocom.rcontact.BuildConfig;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.asynctasks.AsyncGetWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
@@ -570,7 +571,7 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
         if (Utils.isNetworkAvailable(this)) {
             new AsyncGetWebServiceCall(this, WsResponseObject.class, WsConstants
                     .REQ_GET_RELATION, getResources().getString(R.string.msg_please_wait))
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT +
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT +
                             WsConstants.REQ_GET_RELATION + "?startAt=0&user_id=" + pmId);
         } else {
             Utils.showErrorSnackBar(this, relativeRootExistingRelation, getResources()

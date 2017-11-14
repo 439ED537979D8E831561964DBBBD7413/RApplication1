@@ -60,6 +60,7 @@ public class TableRelationMappingMaster {
         for (int i = 0; i < relationRequestResponses.size(); i++) {
 
             ContentValues values = new ContentValues();
+            values.put(COLUMN_ID, relationRequestResponses.get(i).getId());
             values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, relationRequestResponses.get(i).getRrmToPmId());
             values.put(COLUMN_RC_RELATIONS_MASTER_ID, relationRequestResponses.get(i).getRcRelationMasterId());
             values.put(COLUMN_RRM_TYPE, relationRequestResponses.get(i).getRrmType());
@@ -176,11 +177,14 @@ public class TableRelationMappingMaster {
     }
 
     // Deleting single relation
-    public void deleteRelationMapping(String pmId) {
+    public boolean deleteRelationMapping(String pmId) {
+        boolean isDelete = false;
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
-        db.delete(TABLE_RC_RCP_RELATION_MAPPING, COLUMN_ID + " = ?",
-                new String[]{String.valueOf(pmId)});
+        isDelete = db.delete(TABLE_RC_RCP_RELATION_MAPPING, COLUMN_RC_PROFILE_MASTER_PM_ID +
+                " = ?", new String[]{String.valueOf(pmId)}) > 0;
         db.close();
+
+        return isDelete;
     }
 
     public ArrayList<RelationRecommendationType> getExistingRelation(String pmId) {
@@ -324,7 +328,7 @@ public class TableRelationMappingMaster {
 
             for (int i = 0; i < pmIdList.size(); i++) {
 
-                String selectQuery = "SELECT b.rc_profile_master_pm_id,b.rc_relations_master_id,b.rrm_type," +
+                String selectQuery = "SELECT b.id,b.rc_profile_master_pm_id,b.rc_relations_master_id,b.rrm_type," +
                         "c.rm_particular," + "e.om_organization_company," + "e.om_organization_ent_id FROM " +
                         "rc_rcp_relation_mapping b " +
                         "left Join rc_profile_master a on a.pm_rcp_id = b.rc_profile_master_pm_id " +
@@ -353,6 +357,8 @@ public class TableRelationMappingMaster {
 
                     String type = cursor1.getString(cursor1.getColumnIndexOrThrow(COLUMN_RRM_TYPE));
                     individualRelationTypeList.setRelationType(Integer.parseInt(type));
+                    individualRelationTypeList.setId(cursor1.getString(cursor1.getColumnIndexOrThrow
+                            (COLUMN_ID)));
 
                     if (type.equalsIgnoreCase("3")) {
 

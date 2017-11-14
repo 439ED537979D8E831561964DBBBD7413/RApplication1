@@ -3817,8 +3817,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             }
             for (int i = 0; i < linearSocialContactDetails.getChildCount(); i++) {
                 View linearSocialContact = linearSocialContactDetails.getChildAt(i);
-                EditText socialContact = linearSocialContact.findViewById(R.id
-                        .input_value);
+                EditText socialContact = linearSocialContact.findViewById(R.id.input_value);
                 socialContact.addTextChangedListener(valueTextWatcher);
             }
         }

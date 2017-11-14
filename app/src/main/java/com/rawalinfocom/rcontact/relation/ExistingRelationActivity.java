@@ -1,6 +1,7 @@
 package com.rawalinfocom.rcontact.relation;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -11,19 +12,22 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.BaseActivity;
+import com.rawalinfocom.rcontact.BuildConfig;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.asynctasks.AsyncGetWebServiceCall;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.TableRelationMappingMaster;
-import com.rawalinfocom.rcontact.database.TableRelationMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
@@ -71,7 +75,10 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
     private Activity activity;
     private ExistingRelationListAdapter listAdapter;
     private TableRelationMappingMaster tableRelationMappingMaster;
-    private Integer pmId;
+    //    private Integer pmId;
+    private ArrayList<RelationRecommendationType> existingRelationList;
+    private String deletePmId = "";
+    private int deleteRelationPosition = -1;
 
     // For relation
     // Business - 0
@@ -191,6 +198,38 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
             }
             //</editor-fold>
 
+            //<editor-fold desc="REQ_DELETE_RELATION">
+            if (serviceType.contains(WsConstants.REQ_DELETE_RELATION)) {
+                WsResponseObject deleteRelationObject = (WsResponseObject) data;
+                Utils.hideProgressDialog();
+                if (deleteRelationObject != null && StringUtils.equalsIgnoreCase
+                        (deleteRelationObject.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+
+                    Utils.showSuccessSnackBar(activity, relativeRootExistingRelation,
+                            deleteRelationObject.getMessage());
+
+                    tableRelationMappingMaster.deleteRelationMapping(deletePmId);
+                    deletePmId = "";
+
+                    existingRelationList.remove(deleteRelationPosition);
+                    listAdapter.notifyDataSetChanged();
+
+                    deleteRelationPosition = -1;
+
+                } else {
+                    if (deleteRelationObject != null) {
+                        Log.e("error response", deleteRelationObject.getMessage());
+                        Utils.showErrorSnackBar(this, relativeRootExistingRelation,
+                                deleteRelationObject.getMessage());
+                    } else {
+                        Log.e("onDeliveryResponse: ", "deleteRelationResponse null");
+                        Utils.showErrorSnackBar(this, relativeRootExistingRelation, getString(R
+                                .string.msg_try_later));
+                    }
+                }
+            }
+            //</editor-fold>
+
         } else {
             Utils.showErrorSnackBar(this, relativeRootExistingRelation, "" + error
                     .getLocalizedMessage());
@@ -221,12 +260,12 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
 
         if (!Utils.isArraylistNullOrEmpty(relationRequestResponse)) {
 
-            ArrayList<RelationRequestResponse> relationResponseList = new ArrayList<>();
-
             for (int i = 0; i < relationRequestResponse.size(); i++) {
 
+                ArrayList<RelationRequestResponse> relationResponseList = new ArrayList<>();
                 RelationRequest relationRequest = relationRequestResponse.get(i);
-                pmId = relationRequest.getRrmToPmId();
+                tableRelationMappingMaster.deleteRelationMapping(String.valueOf(relationRequest.
+                        getRrmToPmId()));
 
                 //<editor-fold desc="Family Relation">
                 ArrayList<RelationRequest> familyRelation = relationRequest.getFamilyRelationList();
@@ -292,16 +331,15 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
                         relationResponseList.add(relationResponse);
                     }
                 }
-            }
 
-            tableRelationMappingMaster.deleteRelationMapping(String.valueOf(pmId));
-            tableRelationMappingMaster.addRelationMapping(relationResponseList);
+                tableRelationMappingMaster.addRelationMapping(relationResponseList);
+            }
         }
     }
 
     private void getExistingRelationData() {
 
-        final ArrayList<RelationRecommendationType> existingRelationList = tableRelationMappingMaster
+        existingRelationList = tableRelationMappingMaster
                 .getAllExistingRelation();
 
         if (existingRelationList.size() > 0) {
@@ -319,6 +357,13 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
                             startActivity(intent);
 
                         }
+
+                        @Override
+                        public void onDeleteClick(int position, String name, String pmId) {
+                            deletePmId = pmId;
+                            deleteRelationPosition = position;
+                            dialogDeleteRelation(position, name);
+                        }
                     });
             recycleViewRelation.setLayoutManager(new LinearLayoutManager(this));
             recycleViewRelation.setAdapter(listAdapter);
@@ -330,13 +375,94 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
         }
     }
 
+    private void dialogDeleteRelation(final int position, String RcpUserName) {
+
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_privacy_policy);
+        dialog.setCancelable(false);
+
+        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+        layoutParams.copyFrom(dialog.getWindow().getAttributes());
+        layoutParams.width = (int) (getResources().getDisplayMetrics().widthPixels * 0.90);
+        layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+        dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
+
+        TextView textDialogTitle = dialog.findViewById(R.id.tvDialogTitle);
+        textDialogTitle.setText(getString(R.string.delete_relation));
+        textDialogTitle.setTypeface(Utils.typefaceSemiBold(this));
+
+        TextView textDeleteHint = dialog.findViewById(R.id.txtDeleteHint);
+        textDeleteHint.setVisibility(View.VISIBLE);
+        textDeleteHint.setTypeface(Utils.typefaceRegular(this));
+        textDeleteHint.setText(String.format("Are you sure you want to delete relationship with %s ?",
+                RcpUserName));
+
+        Button buttonRight = dialog.findViewById(R.id.ok_button);
+        Button buttonLeft = dialog.findViewById(R.id.cancel_button);
+        LinearLayout linear_call_dialog_list = dialog.findViewById(R.id.linear_call_dialog_list);
+        linear_call_dialog_list.setVisibility(View.GONE);
+
+        buttonRight.setTypeface(Utils.typefaceRegular(this));
+        buttonRight.setText(R.string.action_ok);
+        buttonLeft.setTypeface(Utils.typefaceRegular(this));
+        buttonLeft.setText(R.string.str_cancel);
+
+        buttonLeft.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                deletePmId = "";
+                deleteRelationPosition = -1;
+                dialog.dismiss();
+            }
+        });
+
+        buttonRight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+
+                ArrayList<String> relationIds = new ArrayList<>();
+
+                ArrayList<IndividualRelationType> individualRelationTypes =
+                        existingRelationList.get(position).getIndividualRelationTypeList();
+
+                for (int i = 0; i < individualRelationTypes.size(); i++) {
+                    relationIds.add(individualRelationTypes.get(i).getId());
+                }
+
+                deleteRelation(relationIds);
+            }
+        });
+
+        dialog.show();
+    }
+
     private void getAllExistingRelation() {
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncGetWebServiceCall(this, WsResponseObject.class, WsConstants
                     .REQ_GET_RELATION, getResources().getString(R.string.msg_please_wait))
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT +
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT +
                             WsConstants.REQ_GET_RELATION + "?startAt=0");
+        } else {
+            Utils.showErrorSnackBar(this, relativeRootExistingRelation, getResources()
+                    .getString(R.string.msg_no_network));
+        }
+    }
+
+    private void deleteRelation(ArrayList<String> relationIds) {
+
+        WsRequestObject deleteRelationObject = new WsRequestObject();
+        deleteRelationObject.setRelationIds(relationIds);
+
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), deleteRelationObject,
+                    null, WsResponseObject.class, WsConstants.REQ_DELETE_RELATION, getString(R.string
+                    .msg_please_wait), true)
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT +
+                            WsConstants.REQ_DELETE_RELATION);
         } else {
             Utils.showErrorSnackBar(this, relativeRootExistingRelation, getResources()
                     .getString(R.string.msg_no_network));

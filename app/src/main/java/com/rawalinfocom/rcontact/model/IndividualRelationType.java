@@ -11,6 +11,7 @@ public class IndividualRelationType implements Serializable {
 
     private Integer relationType;
     private String relationId;
+    private String id;
     private String relationName;
     private String organizationName;
     private String organizationId;
@@ -89,5 +90,22 @@ public class IndividualRelationType implements Serializable {
 
     public void setOrganizationId(String organizationId) {
         this.organizationId = organizationId;
+    }
+
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public boolean isFriendRelation() {
+        return isFriendRelation;
+    }
+
+    public void setFriendRelation(boolean friendRelation) {
+        isFriendRelation = friendRelation;
     }
 }
