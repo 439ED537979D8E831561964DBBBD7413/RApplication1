@@ -64,7 +64,7 @@
                 android:id="@+id/ripple_action_relation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="visible"
+                android:visibility="gone"
                 app:rv_alpha="@integer/alpha_ripple"
                 app:rv_centered="true"
                 app:rv_color="@color/colorWhite"
