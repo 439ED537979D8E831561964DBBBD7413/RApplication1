@@ -185,9 +185,10 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
             if (serviceType.contains(WsConstants.REQ_GET_CHECK_VERSION)) {
                 WsResponseObject checkVersionResponse = (WsResponseObject) data;
 
+                Utils.hideProgressDialog();
+
                 if (checkVersionResponse != null && StringUtils.equalsIgnoreCase
                         (checkVersionResponse.getMessage(), "force update")) {
-                    Utils.hideProgressDialog();
                     Utils.showForceUpdateDialog(MobileNumberRegistrationActivity.this);
                 } else {
                     sendOtp();
@@ -297,8 +298,12 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), otpObject,
                     null, WsResponseObject.class, WsConstants.REQ_CHECK_NUMBER, getString(R.string.msg_please_wait), false)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT +
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT +
                             WsConstants.REQ_CHECK_NUMBER);
+           /* new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), otpObject,
+                    null, WsResponseObject.class, WsConstants.REQ_CHECK_NUMBER, getString(R.string.msg_please_wait), false)
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT +
+                            WsConstants.REQ_CHECK_NUMBER);*/
         } else {
             Utils.showErrorSnackBar(this, relativeRootMobileRegistration, getResources()
                     .getString(R.string.msg_no_network));
@@ -314,7 +319,7 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
         if (Utils.isNetworkAvailable(MobileNumberRegistrationActivity.this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), checkVersionObject, null,
                     WsResponseObject.class, WsConstants.REQ_GET_CHECK_VERSION, getString(R.string.msg_please_wait), false)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT + WsConstants
                             .REQ_GET_CHECK_VERSION);
         } else {
             Utils.showErrorSnackBar(this, relativeRootMobileRegistration, getResources().getString(R.string.msg_no_network));

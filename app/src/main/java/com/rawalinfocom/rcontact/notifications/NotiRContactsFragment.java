@@ -28,6 +28,7 @@ import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.BaseNotificationFragment;
+import com.rawalinfocom.rcontact.BuildConfig;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.adapters.NotiRContactsAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
@@ -168,7 +169,7 @@ public class NotiRContactsFragment extends BaseNotificationFragment implements W
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     allUpdatesObject, null, WsResponseObject.class, WsConstants
                     .REQ_GET_RCONTACT_UPDATES, "Getting updates..", true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                    WsConstants.WS_ROOT_V2 + WsConstants.REQ_GET_RCONTACT_UPDATES);
+                    BuildConfig.WS_ROOT_V2 + WsConstants.REQ_GET_RCONTACT_UPDATES);
         } else {
             Toast.makeText(getActivity(), getActivity().getString(R.string.msg_no_internet),
                     Toast.LENGTH_SHORT).show();

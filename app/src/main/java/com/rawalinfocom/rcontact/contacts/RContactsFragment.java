@@ -35,6 +35,7 @@ import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.BaseFragment;
+import com.rawalinfocom.rcontact.BuildConfig;
 import com.rawalinfocom.rcontact.MainActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.adapters.RContactListAdapter;
@@ -464,7 +465,7 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
         if (Utils.isNetworkAvailable(getActivity())) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), deviceDetailObject, null,
                     WsResponseObject.class, url, getResources().getString(R.string.msg_please_wait), true)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + url);
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT + url);
         } else {
             Utils.showErrorSnackBar(getActivity(), relativeRootRcontacts, getResources().getString(R.string.msg_no_network));
             swipeRefreshLayout.setRefreshing(false);
@@ -776,7 +777,8 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
                                 if (arrayListOrganization.get(j).getIsVerify() == IntegerConstants.RCP_TYPE_PRIMARY) {
                                     organization.setOmOrganizationType(arrayListOrganization.get(j).getOrgIndustryType());
                                     organization.setOmEnterpriseOrgId(arrayListOrganization.get(j).getOrgEntId());
-                                    organization.setOmOrganizationLogo(arrayListOrganization.get(j).getOrgLogo());
+                                    organization.setOmOrganizationLogo(arrayListOrganization.get(j)
+                                            .getEomLogoPath() + "/" + arrayListOrganization.get(j).getEomLogoName());
                                 } else {
                                     organization.setOmOrganizationType("");
                                     organization.setOmEnterpriseOrgId("");

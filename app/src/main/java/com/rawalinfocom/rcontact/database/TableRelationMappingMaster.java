@@ -176,10 +176,10 @@ public class TableRelationMappingMaster {
     }
 
     // Deleting single relation
-    public void deleteRelationMapping(Relation relation) {
+    public void deleteRelationMapping(String pmId) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
         db.delete(TABLE_RC_RCP_RELATION_MAPPING, COLUMN_ID + " = ?",
-                new String[]{String.valueOf(relation.getRmId())});
+                new String[]{String.valueOf(pmId)});
         db.close();
     }
 
@@ -192,88 +192,87 @@ public class TableRelationMappingMaster {
 
             SQLiteDatabase db = databaseHandler.getWritableDatabase();
 
-            String selectQuery = "SELECT b.rc_profile_master_pm_id," + "b.rc_relations_master_id,b.rrm_type," +
-                    "c.rm_particular," + "e.om_organization_company," + "e.om_organization_ent_id FROM " +
-                    "rc_rcp_relation_mapping b" + " left Join " + "rc_profile_master a on a.pm_rcp_id = " +
-                    "b.rc_profile_master_pm_id left join " + "rc_relation_master c on c.id = " +
-                    "b.rc_relations_master_id " + "left join rc_organization_master e on " +
-                    "e.om_organization_ent_id = b.rrm_org_ent_id " + "where" + " b.rc_profile_master_pm_id" +
-                    " = '" + pmId + "' order by b.rrm_type DESC";
+            String selectQuery = "SELECT a.pm_first_name,a.pm_last_name,a.pm_profile_image,d.mnm_mobile_number," +
+                    "b.rc_profile_master_pm_id,b.rc_relations_master_id,b.created_at,b.rrm_type, c.rm_particular," +
+                    "e.om_organization_company,e.om_organization_ent_id FROM rc_rcp_relation_mapping b " +
+                    "left join rc_profile_master a on a.pm_rcp_id = b.rc_profile_master_pm_id " +
+                    "left join rc_mobile_number_master d on d.rc_profile_master_pm_id = a.pm_rcp_id " +
+                    "left join rc_relation_master c on c.id = b.rc_relations_master_id " +
+                    "left join rc_organization_master e on e.om_organization_ent_id = b.rrm_org_ent_id " +
+                    "where b.rc_profile_master_pm_id" + " = '" + pmId + "' " + "group by b.rc_relations_master_id " +
+                    "order by b.rrm_type DESC";
 
             Cursor cursor = db.rawQuery(selectQuery, null);
-
-            RelationRecommendationType recommendationType = new RelationRecommendationType();
-
-            recommendationType.setFirstName(cursor.getString(cursor.getColumnIndexOrThrow(
-                    TableProfileMaster.COLUMN_PM_FIRST_NAME)));
-            recommendationType.setLastName(cursor.getString(cursor.getColumnIndexOrThrow(
-                    TableProfileMaster.COLUMN_PM_LAST_NAME)));
-            recommendationType.setNumber(cursor.getString(cursor.getColumnIndexOrThrow
-                    (TableMobileMaster.COLUMN_MNM_MOBILE_NUMBER)));
-            recommendationType.setPmId(cursor.getString(cursor.getColumnIndexOrThrow
-                    (COLUMN_RC_PROFILE_MASTER_PM_ID)));
-            recommendationType.setDateAndTime(cursor.getString(cursor.getColumnIndexOrThrow
-                    (COLUMN_CREATED_AT)));
-            recommendationType.setProfileImage(cursor.getString(cursor.getColumnIndexOrThrow
-                    (TableProfileMaster.COLUMN_PM_PROFILE_IMAGE)));
-
             cursor.moveToFirst();
 
-            System.out.println("RContacts new count --> " + cursor.getCount());
+            if (cursor.getCount() > 0) {
+                RelationRecommendationType recommendationType = new RelationRecommendationType();
 
-            do {
+                recommendationType.setFirstName(cursor.getString(cursor.getColumnIndexOrThrow(
+                        TableProfileMaster.COLUMN_PM_FIRST_NAME)));
+                recommendationType.setLastName(cursor.getString(cursor.getColumnIndexOrThrow(
+                        TableProfileMaster.COLUMN_PM_LAST_NAME)));
+                recommendationType.setNumber(cursor.getString(cursor.getColumnIndexOrThrow
+                        (TableMobileMaster.COLUMN_MNM_MOBILE_NUMBER)));
+                recommendationType.setPmId(cursor.getString(cursor.getColumnIndexOrThrow
+                        (COLUMN_RC_PROFILE_MASTER_PM_ID)));
+                recommendationType.setDateAndTime(cursor.getString(cursor.getColumnIndexOrThrow
+                        (COLUMN_CREATED_AT)));
+                recommendationType.setProfileImage(cursor.getString(cursor.getColumnIndexOrThrow
+                        (TableProfileMaster.COLUMN_PM_PROFILE_IMAGE)));
 
-                IndividualRelationType individualRelationTypeList = new IndividualRelationType();
+                do {
 
-                String type = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_RRM_TYPE));
-                individualRelationTypeList.setRelationType(Integer.parseInt(type));
+                    IndividualRelationType individualRelationTypeList = new IndividualRelationType();
 
-                if (type.equalsIgnoreCase("3")) {
+                    String type = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_RRM_TYPE));
+                    individualRelationTypeList.setRelationType(Integer.parseInt(type));
 
-                    individualRelationTypeList.setRelationId(cursor.getString(cursor.getColumnIndexOrThrow
-                            (COLUMN_RC_RELATIONS_MASTER_ID)));
-                    individualRelationTypeList.setRelationName(cursor.getString(cursor.getColumnIndexOrThrow
-                            (TableRelationMaster.COLUMN_RM_PARTICULAR)));
-                    individualRelationTypeList.setOrganizationName(cursor.getString(cursor.getColumnIndexOrThrow
-                            (TableOrganizationMaster.COLUMN_OM_ORGANIZATION_COMPANY)));
-                    individualRelationTypeList.setFamilyName("");
-                    individualRelationTypeList.setOrganizationId(cursor.getString(cursor.getColumnIndexOrThrow
-                            (TableOrganizationMaster.COLUMN_OM_ORGANIZATION_ENT_ID)));
-                    individualRelationTypeList.setIsFriendRelation(false);
-                    individualRelationTypeList.setIsVerify("1");
+                    if (type.equalsIgnoreCase("3")) {
 
-                } else if (type.equalsIgnoreCase("1")) {
+                        individualRelationTypeList.setRelationId(cursor.getString(cursor.getColumnIndexOrThrow
+                                (COLUMN_RC_RELATIONS_MASTER_ID)));
+                        individualRelationTypeList.setRelationName(cursor.getString(cursor.getColumnIndexOrThrow
+                                (TableRelationMaster.COLUMN_RM_PARTICULAR)));
+                        individualRelationTypeList.setOrganizationName(cursor.getString(cursor.getColumnIndexOrThrow
+                                (TableOrganizationMaster.COLUMN_OM_ORGANIZATION_COMPANY)));
+                        individualRelationTypeList.setFamilyName("");
+                        individualRelationTypeList.setOrganizationId(cursor.getString(cursor.getColumnIndexOrThrow
+                                (TableOrganizationMaster.COLUMN_OM_ORGANIZATION_ENT_ID)));
+                        individualRelationTypeList.setIsFriendRelation(false);
+                        individualRelationTypeList.setIsVerify("1");
 
-                    individualRelationTypeList.setRelationId(cursor.getString(cursor.getColumnIndexOrThrow
-                            (COLUMN_RC_RELATIONS_MASTER_ID)));
-                    individualRelationTypeList.setRelationName("");
-                    individualRelationTypeList.setOrganizationName("");
-                    individualRelationTypeList.setFamilyName("");
-                    individualRelationTypeList.setOrganizationId("");
-                    individualRelationTypeList.setIsFriendRelation(true);
-                    individualRelationTypeList.setIsVerify("1");
+                    } else if (type.equalsIgnoreCase("1")) {
 
-                } else if (type.equalsIgnoreCase("2")) {
+                        individualRelationTypeList.setRelationId(cursor.getString(cursor.getColumnIndexOrThrow
+                                (COLUMN_RC_RELATIONS_MASTER_ID)));
+                        individualRelationTypeList.setRelationName("");
+                        individualRelationTypeList.setOrganizationName("");
+                        individualRelationTypeList.setFamilyName("");
+                        individualRelationTypeList.setOrganizationId("");
+                        individualRelationTypeList.setIsFriendRelation(true);
+                        individualRelationTypeList.setIsVerify("1");
 
-                    individualRelationTypeList.setRelationId(cursor.getString(cursor.getColumnIndexOrThrow
-                            (COLUMN_RC_RELATIONS_MASTER_ID)));
-                    individualRelationTypeList.setRelationName("");
-                    individualRelationTypeList.setOrganizationName("");
-                    individualRelationTypeList.setFamilyName(cursor.getString(cursor.getColumnIndexOrThrow
-                            (TableRelationMaster.COLUMN_RM_PARTICULAR)));
-                    individualRelationTypeList.setOrganizationId("");
-                    individualRelationTypeList.setIsFriendRelation(false);
-                    individualRelationTypeList.setIsVerify("1");
+                    } else if (type.equalsIgnoreCase("2")) {
 
+                        individualRelationTypeList.setRelationId(cursor.getString(cursor.getColumnIndexOrThrow
+                                (COLUMN_RC_RELATIONS_MASTER_ID)));
+                        individualRelationTypeList.setRelationName("");
+                        individualRelationTypeList.setOrganizationName("");
+                        individualRelationTypeList.setFamilyName(cursor.getString(cursor.getColumnIndexOrThrow
+                                (TableRelationMaster.COLUMN_RM_PARTICULAR)));
+                        individualRelationTypeList.setOrganizationId("");
+                        individualRelationTypeList.setIsFriendRelation(false);
+                        individualRelationTypeList.setIsVerify("1");
+
+                    }
+
+                    arrayList.add(individualRelationTypeList);
                 }
-
-                arrayList.add(individualRelationTypeList);
+                while (cursor.moveToNext());
+                recommendationType.setIndividualRelationTypeList(arrayList);
+                existingRelationList.add(recommendationType);
             }
-            while (cursor.moveToNext());
-
-            recommendationType.setIndividualRelationTypeList(arrayList);
-            existingRelationList.add(recommendationType);
-
             cursor.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -300,36 +299,39 @@ public class TableRelationMappingMaster {
             Cursor cursor = db.rawQuery(query, null);
             cursor.moveToFirst();
 
-            do {
-                RelationRecommendationType recommendationType = new RelationRecommendationType();
+            if (cursor.getCount() > 0) {
+                do {
+                    RelationRecommendationType recommendationType = new RelationRecommendationType();
 
-                recommendationType.setFirstName(cursor.getString(cursor.getColumnIndexOrThrow
-                        (TableProfileMaster.COLUMN_PM_FIRST_NAME)));
-                recommendationType.setLastName(cursor.getString(cursor.getColumnIndexOrThrow
-                        (TableProfileMaster.COLUMN_PM_LAST_NAME)));
-                recommendationType.setNumber(cursor.getString(cursor.getColumnIndexOrThrow
-                        (TableMobileMaster.COLUMN_MNM_MOBILE_NUMBER)));
-                recommendationType.setPmId(cursor.getString(cursor.getColumnIndexOrThrow
-                        (COLUMN_RC_PROFILE_MASTER_PM_ID)));
-                recommendationType.setDateAndTime(cursor.getString(cursor.getColumnIndexOrThrow
-                        (COLUMN_CREATED_AT)));
-                recommendationType.setProfileImage(cursor.getString(cursor.getColumnIndexOrThrow
-                        (TableProfileMaster.COLUMN_PM_PROFILE_IMAGE)));
+                    recommendationType.setFirstName(cursor.getString(cursor.getColumnIndexOrThrow
+                            (TableProfileMaster.COLUMN_PM_FIRST_NAME)));
+                    recommendationType.setLastName(cursor.getString(cursor.getColumnIndexOrThrow
+                            (TableProfileMaster.COLUMN_PM_LAST_NAME)));
+                    recommendationType.setNumber(cursor.getString(cursor.getColumnIndexOrThrow
+                            (TableMobileMaster.COLUMN_MNM_MOBILE_NUMBER)));
+                    recommendationType.setPmId(cursor.getString(cursor.getColumnIndexOrThrow
+                            (COLUMN_RC_PROFILE_MASTER_PM_ID)));
+                    recommendationType.setDateAndTime(cursor.getString(cursor.getColumnIndexOrThrow
+                            (COLUMN_CREATED_AT)));
+                    recommendationType.setProfileImage(cursor.getString(cursor.getColumnIndexOrThrow
+                            (TableProfileMaster.COLUMN_PM_PROFILE_IMAGE)));
 
-                pmIdList.add(recommendationType);
-            } while (cursor.moveToNext());
+                    pmIdList.add(recommendationType);
+                } while (cursor.moveToNext());
+            }
 
             cursor.close();
 
             for (int i = 0; i < pmIdList.size(); i++) {
 
-                String selectQuery = "SELECT b.rc_profile_master_pm_id," + "b.rc_relations_master_id,b.rrm_type," +
+                String selectQuery = "SELECT b.rc_profile_master_pm_id,b.rc_relations_master_id,b.rrm_type," +
                         "c.rm_particular," + "e.om_organization_company," + "e.om_organization_ent_id FROM " +
-                        "rc_rcp_relation_mapping b" + " left Join " + "rc_profile_master a on a.pm_rcp_id = " +
-                        "b.rc_profile_master_pm_id left join " + "rc_relation_master c on c.id = " +
-                        "b.rc_relations_master_id " + "left join rc_organization_master e on " +
-                        "e.om_organization_ent_id = b.rrm_org_ent_id " + "where" + " b.rc_profile_master_pm_id" +
-                        " = '" + pmIdList.get(i).getPmId() + "' order by b.rrm_type DESC";
+                        "rc_rcp_relation_mapping b " +
+                        "left Join rc_profile_master a on a.pm_rcp_id = b.rc_profile_master_pm_id " +
+                        "left join rc_relation_master c on c.id = b.rc_relations_master_id " +
+                        "left join rc_organization_master e on e.om_organization_ent_id = b.rrm_org_ent_id " +
+                        "where" + " b.rc_profile_master_pm_id" + " = '" + pmIdList.get(i).getPmId() + "' " +
+                        "group by b.rc_relations_master_id order by b.rrm_type DESC";
 
                 Cursor cursor1 = db.rawQuery(selectQuery, null);
                 cursor1.moveToFirst();

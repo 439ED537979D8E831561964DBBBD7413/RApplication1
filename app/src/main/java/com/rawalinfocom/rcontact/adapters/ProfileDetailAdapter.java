@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.common.base.MoreObjects;
+import com.rawalinfocom.rcontact.BuildConfig;
 import com.rawalinfocom.rcontact.PublicProfileDetailActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
@@ -1024,7 +1025,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                     wsRequestObject, null, WsResponseObject.class, WsConstants
                     .REQ_SET_PRIVACY_SETTING, activity.getResources().getString(R.string
                     .msg_please_wait), true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                    WsConstants.WS_ROOT + WsConstants.REQ_SET_PRIVACY_SETTING);
+                    BuildConfig.WS_ROOT + WsConstants.REQ_SET_PRIVACY_SETTING);
         } else {
             //show no toast
             Toast.makeText(activity, activity.getResources().getString(R.string.msg_no_network),
@@ -1045,7 +1046,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                     requestObj, null, WsResponseObject.class, WsConstants
                     .REQ_PROFILE_PRIVACY_REQUEST, activity.getResources().getString(R.string
                     .msg_please_wait), true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                    WsConstants.WS_ROOT + WsConstants.REQ_PROFILE_PRIVACY_REQUEST);
+                    BuildConfig.WS_ROOT + WsConstants.REQ_PROFILE_PRIVACY_REQUEST);
         } else {
             //show no net
             Toast.makeText(activity, activity.getResources().getString(R.string.msg_no_network),

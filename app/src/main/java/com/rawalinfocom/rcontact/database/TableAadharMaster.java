@@ -34,13 +34,11 @@ public class TableAadharMaster {
     public static String CREATE_TABLE_AADHAR_MASTER = "CREATE TABLE IF NOT EXISTS " +
             TABLE_AADHAR_MASTER + " (" +
             " " + COLUMN_AADHAR_ID + " integer," +
-            " " + COLUMN_AADHAR_NUMBER + " ," +
+            " " + COLUMN_AADHAR_NUMBER + " integer ," +
             " " + COLUMN_AADHAR_IS_VARIFIED + " integer," +
             " " + COLUMN_AADHAR_PUBLIC + " integer," +
             " " + COLUMN_RC_PROFILE_MASTER_PM_ID + " integer" +
             ");";
-
-
 
     // Adding new Mobile Number
     public void addAadharDetail(ProfileDataOperationAadharNumber profileDataOperationAadharNumber) {
@@ -67,7 +65,7 @@ public class TableAadharMaster {
                 COLUMN_AADHAR_ID + ", " +
                 COLUMN_AADHAR_NUMBER + ", " +
                 COLUMN_AADHAR_IS_VARIFIED + ", " +
-                COLUMN_AADHAR_PUBLIC  + " FROM " +
+                COLUMN_AADHAR_PUBLIC + " FROM " +
                 TABLE_AADHAR_MASTER + " WHERE " +
                 COLUMN_RC_PROFILE_MASTER_PM_ID + " = " + pmid;
 
@@ -78,16 +76,15 @@ public class TableAadharMaster {
         if (cursor.moveToFirst()) {
 
             profileDataOperationAadharNumber.setAadharId(cursor.getInt(cursor.getColumnIndex
-                        (COLUMN_AADHAR_ID)));
+                    (COLUMN_AADHAR_ID)));
             profileDataOperationAadharNumber.setAadharNumber(cursor.getLong(cursor.getColumnIndex
-                        (COLUMN_AADHAR_NUMBER)));
+                    (COLUMN_AADHAR_NUMBER)));
             profileDataOperationAadharNumber.setAadharIsVerified(cursor.getInt(cursor.getColumnIndex
-                        (COLUMN_AADHAR_IS_VARIFIED)));
+                    (COLUMN_AADHAR_IS_VARIFIED)));
             profileDataOperationAadharNumber.setAadharPublic(cursor.getInt(cursor.getColumnIndex
-                        (COLUMN_AADHAR_PUBLIC)));
+                    (COLUMN_AADHAR_PUBLIC)));
 
             cursor.close();
-
         }
 
         db.close();
@@ -99,10 +96,10 @@ public class TableAadharMaster {
     // Getting All Aadhar Public value from Aadhar number
     public int getAadharPublicValueFromAadharNumber(long aadharNumber) {
         ProfileDataOperationAadharNumber profileDataOperationAadharNumber = new ProfileDataOperationAadharNumber();
-        int aadharPublicId = 0 ;
+        int aadharPublicId = 0;
         // Select All Query
         String selectQuery = "SELECT " +
-                COLUMN_AADHAR_PUBLIC  + " FROM " +
+                COLUMN_AADHAR_PUBLIC + " FROM " +
                 TABLE_AADHAR_MASTER + " WHERE " +
                 COLUMN_AADHAR_NUMBER + " = " + aadharNumber;
 
@@ -111,12 +108,10 @@ public class TableAadharMaster {
 
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
-
-           aadharPublicId =  cursor.getInt(cursor.getColumnIndex
+            aadharPublicId =  cursor.getInt(cursor.getColumnIndex
                    (COLUMN_AADHAR_PUBLIC));
 
             cursor.close();
-
         }
 
         db.close();
@@ -125,7 +120,6 @@ public class TableAadharMaster {
         return aadharPublicId;
     }
 
-
     // Deleting AadharDetails From RcpId
     public void deleteAadharDetails(String pmID) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
@@ -133,7 +127,4 @@ public class TableAadharMaster {
                 new String[]{String.valueOf(pmID)});
         db.close();
     }
-
-
-
 }

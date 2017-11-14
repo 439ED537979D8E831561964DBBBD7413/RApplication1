@@ -132,9 +132,14 @@ public class ContactsFragment extends BaseFragment {
 
     private void init() {
 
-        if (Utils.getBooleanPreference(getActivity(), AppConstants.PREF_SHOW_WALK_THROUGH, true)) {
+       /* if (Utils.getBooleanPreference(getActivity(), AppConstants.PREF_SHOW_WALK_THROUGH,
+       true)) {
             displayWalkThrough();
         } else {
+            ((MainActivity) getActivity()).frameTutorial.setVisibility(View.GONE);
+        }*/
+
+        if (getActivity() instanceof MainActivity) {
             ((MainActivity) getActivity()).frameTutorial.setVisibility(View.GONE);
         }
 
@@ -274,13 +279,26 @@ public class ContactsFragment extends BaseFragment {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                layoutParamsLinear.topMargin = ((MainActivity) getActivity()).toolbar.getHeight()
-                        + ((MainActivity) getActivity()).tabMain.getHeight();
-                /*descriptionLayoutParam.topMargin = ((MainActivity) getActivity()).toolbar
-                        .getHeight() + ((MainActivity) getActivity()).tabMain.getHeight() + (int)
-                        getResources().getDimension(R.dimen.nav_header_height);*/
+                layoutParamsLinear.topMargin = ((MainActivity) getActivity()).toolbar
+                        .getHeight() + ((MainActivity) getActivity()).tabMain.getHeight();
+
+                /*ViewTreeObserver vto = ((MainActivity) getActivity()).tabMain
+                .getViewTreeObserver();
+                vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        int[] location = new int[2];
+                        ((MainActivity) getActivity()).tabMain.getLocationOnScreen(location);
+                        ((MainActivity) getActivity()).tabMain.getViewTreeObserver()
+                                .removeGlobalOnLayoutListener(this);
+
+                        layoutParamsLinear.topMargin = location[1] + (int) getResources()
+                                .getDimension(R.dimen.padding_around_content_area);
+                    }
+                });*/
             }
         }, 500);
+
 
         descriptionLayoutParam.topMargin = (int) (Utils.getDeviceHeight(getActivity()) / 2.5);
 
@@ -353,14 +371,6 @@ public class ContactsFragment extends BaseFragment {
         ((MainActivity) getActivity()).frameTutorial.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*int sequence = Utils.getIntegerPreference(getActivity(), AppConstants
-                        .PREF_WALK_THROUGH_SEQUENCE, 0);
-                setTutorialViewVisibilaty(sequence);
-                sequence++;
-                Utils.setIntegerPreference(getActivity(), AppConstants
-                        .PREF_WALK_THROUGH_SEQUENCE, sequence);*/
-                /*int sequence = Utils.getIntegerPreference(getActivity(), AppConstants
-                        .PREF_WALK_THROUGH_SEQUENCE, 0);*/
                 if (sequence < 6) {
                     setTutorialViewVisibility(sequence);
                     sequence++;

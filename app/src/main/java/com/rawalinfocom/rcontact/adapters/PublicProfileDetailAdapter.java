@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.common.base.MoreObjects;
+import com.rawalinfocom.rcontact.BuildConfig;
 import com.rawalinfocom.rcontact.PublicProfileDetailActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
@@ -30,8 +31,6 @@ import com.rawalinfocom.rcontact.contacts.PrivacySettingPopupDialog;
 import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.Utils;
-import com.rawalinfocom.rcontact.model.PrivacyDataItem;
-import com.rawalinfocom.rcontact.model.PrivacyEntityItem;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEvent;
@@ -136,7 +135,8 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
             @TargetApi(Build.VERSION_CODES.M)
             @Override
             public void onClick(View view) {
-                if (!holder.textMain.getText().toString().contains("xx") && !holder.textMain.getText().toString().contains("XX")) {
+                if (!holder.textMain.getText().toString().contains("xx") && !holder.textMain
+                        .getText().toString().contains("XX")) {
 
                     if (ContextCompat.checkSelfPermission(activity, android.Manifest
                             .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
@@ -147,7 +147,8 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
                             ((PublicProfileDetailActivity) activity).callNumber = number;
                         }
                     } else {
-                        if (!holder.textMain.getText().toString().contains("xx") && !holder.textMain.getText().toString().contains("XX"))
+                        if (!holder.textMain.getText().toString().contains("xx") && !holder
+                                .textMain.getText().toString().contains("XX"))
                             Utils.callIntent(activity, number);
                     }
                 }
@@ -174,7 +175,8 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
         holder.textMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!holder.textMain.getText().toString().contains("xx") && !holder.textMain.getText().toString().contains("XX")) {
+                if (!holder.textMain.getText().toString().contains("xx") && !holder.textMain
+                        .getText().toString().contains("XX")) {
                     if (ContextCompat.checkSelfPermission(activity, android.Manifest
                             .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                         activity.requestPermissions(new String[]{Manifest.permission
@@ -184,7 +186,8 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
                             ((PublicProfileDetailActivity) activity).callNumber = number;
                         }
                     } else {
-                        if (!holder.textMain.getText().toString().contains("xx") && !holder.textMain.getText().toString().contains("XX"))
+                        if (!holder.textMain.getText().toString().contains("xx") && !holder
+                                .textMain.getText().toString().contains("XX"))
                             Utils.callIntent(activity, number);
                     }
                 }
@@ -234,7 +237,9 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
 //        if (activity instanceof PublicProfileDetailActivity) {
         if (pbRcpType == IntegerConstants.RCP_TYPE_PRIMARY) {
             String newNumber = "+" + holder.textMain.getText();
-//            holder.textMain.setText(Utils.setMultipleTypeface(activity, newNumber + " " + activity.getString(R.string.im_icon_verify), 0, (StringUtils.length(newNumber) + 1), ((StringUtils.length(newNumber) + 1) + 1)));
+//            holder.textMain.setText(Utils.setMultipleTypeface(activity, newNumber + " " +
+// activity.getString(R.string.im_icon_verify), 0, (StringUtils.length(newNumber) + 1), (
+// (StringUtils.length(newNumber) + 1) + 1)));
             holder.textMain.setText(newNumber);
         } else {
             holder.textMain.setText("+" + holder.textMain.getText());
@@ -242,18 +247,23 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
 
         if (showNumber == false) {
             if (pbRcpType == IntegerConstants.RCP_TYPE_PRIMARY) {
-                holder.textMain.setText(StringUtils.replacePattern(holder.textMain.getText().toString(), "[0-9]", "X"));
-                holder.textMain.setText(Utils.setMultipleTypeface(activity, holder.textMain.getText() + " " + activity
+                holder.textMain.setText(StringUtils.replacePattern(holder.textMain.getText()
+                        .toString(), "[0-9]", "X"));
+                holder.textMain.setText(Utils.setMultipleTypeface(activity, holder.textMain
+                                .getText() + " " + activity
                                 .getString(R.string.im_icon_verify), 0,
-                        (StringUtils.length(holder.textMain.getText()) + 1), ((StringUtils.length(holder.textMain.getText()) + 1) + 1)));
+                        (StringUtils.length(holder.textMain.getText()) + 1), ((StringUtils.length
+                                (holder.textMain.getText()) + 1) + 1)));
                 holder.buttonRequest.setVisibility(View.VISIBLE);
             }
         } else {
             if (pbRcpType == IntegerConstants.RCP_TYPE_PRIMARY) {
                 String numberToShow = "+" + phoneNumber.getOriginalNumber();
-                holder.textMain.setText(Utils.setMultipleTypeface(activity, numberToShow + " " + activity
+                holder.textMain.setText(Utils.setMultipleTypeface(activity, numberToShow + " " +
+                                activity
                                 .getString(R.string.im_icon_verify), 0,
-                        (StringUtils.length(numberToShow) + 1), ((StringUtils.length(numberToShow) + 1) + 1)));
+                        (StringUtils.length(numberToShow) + 1), ((StringUtils.length
+                                (numberToShow) + 1) + 1)));
 
                 holder.buttonRequest.setVisibility(View.GONE);
             }
@@ -471,7 +481,8 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
         holder.textSub.setText(address.getAddressType());
         holder.textSub.setVisibility(View.VISIBLE);
 
-        if (!holder.textMain.getText().toString().startsWith("XX") && !holder.textMain.getText().toString().startsWith("xx")) {
+        if (!holder.textMain.getText().toString().startsWith("XX") && !holder.textMain.getText()
+                .toString().startsWith("xx")) {
             holder.imgActionType.setImageResource(R.drawable.ico_address_svg);
         }
         holder.imgActionType.setOnClickListener(new View.OnClickListener() {
@@ -572,7 +583,8 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
                 .get(position);
 
         if (!imAccount.getIMAccountFirstName().equalsIgnoreCase(""))
-            holder.textMain.setText(imAccount.getIMAccountFirstName() + " " + imAccount.getIMAccountLastName());
+            holder.textMain.setText(imAccount.getIMAccountFirstName() + " " + imAccount
+                    .getIMAccountLastName());
         else
             holder.textMain.setText(imAccount.getIMAccountDetails());
 
@@ -591,7 +603,8 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
                 holder.imgActionType.setImageResource(R.drawable.ico_google_plus_svg);
             } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains("skype")) {
                 holder.imgActionType.setImageResource(R.drawable.ico_skype_svg);
-            } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains("whatsapp")) {
+            } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
+                    ("whatsapp")) {
                 holder.imgActionType.setImageResource(R.drawable.ico_whatsapp_svg);
             } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("instagram")) {
                 holder.imgActionType.setImageResource(R.drawable.ico_instagram_svg);
@@ -618,7 +631,8 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
                         } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("twitter")) {
                             url = "https://twitter.com/" + imAccount.getIMAccountDetails();
                         } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("linkedin")) {
-                            if (!imAccount.getIMAccountDetails().startsWith("https://www.linkedin.com"))
+                            if (!imAccount.getIMAccountDetails().startsWith("https://www.linkedin" +
+                                    ".com"))
                                 url = "https://www.linkedin.com/" + imAccount.getIMAccountDetails();
                             else
                                 url = imAccount.getIMAccountDetails();
@@ -639,9 +653,12 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
                         } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
                                 ("pinterest")) {
                             url = "https://www.pinterest.com/" + imAccount.getIMAccountDetails();
-                        } else if (StringUtils.lowerCase(imAccount.getIMAccountDetails()).startsWith("https://")
-                                || StringUtils.lowerCase(imAccount.getIMAccountDetails()).startsWith("http://")
-                                || StringUtils.lowerCase(imAccount.getIMAccountDetails()).startsWith("www.")) {
+                        } else if (StringUtils.lowerCase(imAccount.getIMAccountDetails())
+                                .startsWith("https://")
+                                || StringUtils.lowerCase(imAccount.getIMAccountDetails())
+                                .startsWith("http://")
+                                || StringUtils.lowerCase(imAccount.getIMAccountDetails())
+                                .startsWith("www.")) {
                             url = imAccount.getIMAccountDetails();
                         }
 
@@ -836,7 +853,7 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
                     requestObj, null, WsResponseObject.class, WsConstants
                     .REQ_PROFILE_PRIVACY_REQUEST, activity.getResources().getString(R.string
                     .msg_please_wait), true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                    WsConstants.WS_ROOT + WsConstants.REQ_PROFILE_PRIVACY_REQUEST);
+                    BuildConfig.WS_ROOT + WsConstants.REQ_PROFILE_PRIVACY_REQUEST);
         } else {
             //show no net
             Toast.makeText(activity, activity.getResources().getString(R.string.msg_no_network),

@@ -103,6 +103,18 @@ public class WsResponseObject {
         this.arrayListRelationRequestResponse = arrayListRelationRequestResponse;
     }
 
+    @JsonProperty("relationList")
+    private ArrayList<RelationRequest> allExistingRelationList;
+
+    public ArrayList<RelationRequest> getAllExistingRelationList() {
+        return allExistingRelationList;
+    }
+
+    public void setAllExistingRelationList(ArrayList<RelationRequest>
+                                                   allExistingRelationList) {
+        this.allExistingRelationList = allExistingRelationList;
+    }
+
     @JsonProperty("response_data")
     private ArrayList<ContactRequestResponseDataItem> responseData;
 

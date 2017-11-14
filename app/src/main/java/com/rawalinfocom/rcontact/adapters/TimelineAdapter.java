@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.rawalinfocom.rcontact.BuildConfig;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
@@ -275,14 +276,14 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
                         addCommentObject, null, WsResponseObject.class, WsConstants
                         .REQ_PROFILE_RATING, activity.getResources().getString(R.string
                         .msg_please_wait), true)
-                        .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT +
+                        .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT +
                                 WsConstants.REQ_PROFILE_RATING);
             } else {
                 new AsyncWebServiceCall(activity, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                         addCommentObject, null, WsResponseObject.class, WsConstants
                         .REQ_ADD_EVENT_COMMENT, activity.getResources().getString(R.string
                         .msg_please_wait), true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                        WsConstants.WS_ROOT + WsConstants.REQ_ADD_EVENT_COMMENT);
+                        BuildConfig.WS_ROOT + WsConstants.REQ_ADD_EVENT_COMMENT);
             }
         } else {
             //show no toast

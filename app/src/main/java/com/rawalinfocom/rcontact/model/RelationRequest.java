@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.ArrayList;
+
 /**
  * Created by user on 29/11/16.
  */
@@ -24,6 +26,15 @@ public class RelationRequest {
     private Integer rcOrgId;
     private String omName;
     private String createdAt;
+
+    @JsonProperty("friend")
+    private ArrayList<RelationRequest> friendRelationList = new ArrayList<>();
+
+    @JsonProperty("family")
+    private ArrayList<RelationRequest> familyRelationList = new ArrayList<>();
+
+    @JsonProperty("business")
+    private ArrayList<RelationRequest> businessRelationList = new ArrayList<>();
 
     @JsonProperty("rrm_to_pm_id")
     public Integer getRrmToPmId() {
@@ -113,5 +124,30 @@ public class RelationRequest {
 
     public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
+    }
+
+
+    public ArrayList<RelationRequest> getFriendRelationList() {
+        return friendRelationList;
+    }
+
+    public void setFriendRelationList(ArrayList<RelationRequest> friendRelationList) {
+        this.friendRelationList = friendRelationList;
+    }
+
+    public ArrayList<RelationRequest> getFamilyRelationList() {
+        return familyRelationList;
+    }
+
+    public void setFamilyRelationList(ArrayList<RelationRequest> familyRelationList) {
+        this.familyRelationList = familyRelationList;
+    }
+
+    public ArrayList<RelationRequest> getBusinessRelationList() {
+        return businessRelationList;
+    }
+
+    public void setBusinessRelationList(ArrayList<RelationRequest> businessRelationList) {
+        this.businessRelationList = businessRelationList;
     }
 }

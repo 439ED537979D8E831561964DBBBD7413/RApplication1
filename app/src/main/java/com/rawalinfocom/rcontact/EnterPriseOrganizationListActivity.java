@@ -231,9 +231,10 @@ public class EnterPriseOrganizationListActivity extends BaseActivity implements 
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
-                    organizationObject, null, WsResponseObject.class, WsConstants.REQ_GET_ORGANIZATIONS,
-                    /*activity.getResources().getString(R.string.msg_please_wait)*/null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants
-                    .WS_ROOT + WsConstants.REQ_GET_ORGANIZATIONS);
+                    organizationObject, null, WsResponseObject.class, WsConstants
+                    .REQ_GET_ORGANIZATIONS, /*activity.getResources().getString(R.string
+                    .msg_please_wait)*/null, true).executeOnExecutor(AsyncTask
+                    .THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT + WsConstants.REQ_GET_ORGANIZATIONS);
         } else {
             Utils.showErrorSnackBar(this, relativeRootOrganization, getResources().getString(R
                     .string.msg_no_network));

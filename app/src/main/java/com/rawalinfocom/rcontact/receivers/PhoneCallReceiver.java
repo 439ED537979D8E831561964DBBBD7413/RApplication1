@@ -33,6 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.rawalinfocom.rcontact.BuildConfig;
 import com.rawalinfocom.rcontact.PublicProfileDetailActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.SearchActivity;
@@ -373,7 +374,7 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                     //</editor-fold>
                 }
             }).execute(
-                    WsConstants.WS_ROOT + WsConstants.REQ_MAKE_SPAM);
+                    BuildConfig.WS_ROOT + WsConstants.REQ_MAKE_SPAM);
 
         }
     }
@@ -465,7 +466,7 @@ public class PhoneCallReceiver extends BroadcastReceiver {
 
                 }
             }).execute(
-                    WsConstants.WS_ROOT + WsConstants.REQ_GET_PROFILE_DATA);
+                    BuildConfig.WS_ROOT + WsConstants.REQ_GET_PROFILE_DATA);
         }
     }
 

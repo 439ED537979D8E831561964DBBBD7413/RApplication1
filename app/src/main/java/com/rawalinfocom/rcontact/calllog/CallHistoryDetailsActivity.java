@@ -1,9 +1,6 @@
 package com.rawalinfocom.rcontact.calllog;
 
 import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
@@ -12,8 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
-import android.graphics.Point;
-import android.graphics.Rect;
 import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -35,7 +30,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -49,6 +43,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.BaseActivity;
+import com.rawalinfocom.rcontact.BuildConfig;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.CallHistoryListAdapter;
@@ -59,7 +54,6 @@ import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
-import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.database.QueryManager;
 import com.rawalinfocom.rcontact.database.TableCommentMaster;
@@ -697,7 +691,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                         Intent smsIntent = new Intent(Intent.ACTION_SENDTO);
                         smsIntent.addCategory(Intent.CATEGORY_DEFAULT);
                         smsIntent.setType("vnd.android-dir/mms-sms");
-                        smsIntent.putExtra("sms_body", AppConstants.PLAY_STORE_LINK + getPackageName());
+                        smsIntent.putExtra("sms_body", AppConstants.PLAY_STORE_LINK +
+                                getPackageName());
                         smsIntent.setData(Uri.parse("sms:" + phoneNumbers.get(0).getPhoneNumber()));
                         startActivity(smsIntent);
 
@@ -1173,7 +1168,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                     deviceDetailObject, null, WsResponseObject.class, WsConstants
                     .REQ_GET_CALL_LOG_HISTORY_REQUEST, null, true).executeOnExecutor(AsyncTask
                             .THREAD_POOL_EXECUTOR,
-                    WsConstants.WS_ROOT + WsConstants.REQ_GET_CALL_LOG_HISTORY_REQUEST);
+                    BuildConfig.WS_ROOT + WsConstants.REQ_GET_CALL_LOG_HISTORY_REQUEST);
         } else {
             Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources()
                     .getString(R.string.msg_no_network));
@@ -1444,7 +1439,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 //                }
                 if (!StringUtils.isEmpty(profileThumbnail)) {
 
-                    Utils.zoomImageFromThumb(CallHistoryDetailsActivity.this, imageProfile, profileThumbnail,
+                    Utils.zoomImageFromThumb(CallHistoryDetailsActivity.this, imageProfile,
+                            profileThumbnail,
                             frameImageEnlarge, imageEnlarge, frameContainer);
 
                 }
@@ -1842,11 +1838,15 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 textTime.setVisibility(View.GONE);
             }
 
-            if (MoreObjects.firstNonNull(tempOrganization.get(0).getIsVerify(), 0) == IntegerConstants.RCP_TYPE_PRIMARY) {
+            if (MoreObjects.firstNonNull(tempOrganization.get(0).getIsVerify(), 0) ==
+                    IntegerConstants.RCP_TYPE_PRIMARY) {
 
-                String s = Utils.setMultipleTypeface(CallHistoryDetailsActivity.this, tempOrganization.get(0).getOrgName() + " <font color" + "='#00796B'>" +
-                                getString(R.string.im_icon_verify) + "</font>", 0, (StringUtils.length(tempOrganization.get(0).getOrgName()) + 1),
-                        ((StringUtils.length(tempOrganization.get(0).getOrgName()) + 1) + 1)).toString();
+                String s = Utils.setMultipleTypeface(CallHistoryDetailsActivity.this,
+                        tempOrganization.get(0).getOrgName() + " <font color" + "='#00796B'>" +
+                                getString(R.string.im_icon_verify) + "</font>", 0, (StringUtils
+                                .length(tempOrganization.get(0).getOrgName()) + 1),
+                        ((StringUtils.length(tempOrganization.get(0).getOrgName()) + 1) + 1))
+                        .toString();
 
                 textOrganization.setText(Html.fromHtml(s));
 
@@ -2422,7 +2422,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     ratingObject, null, WsResponseObject.class, WsConstants.REQ_PROFILE_RATING,
-                    null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants
+                    null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig
                     .WS_ROOT + WsConstants.REQ_PROFILE_RATING);
         } else {
             Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources().getString(R
@@ -2439,7 +2439,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     profileVisitObject, null, WsResponseObject.class, WsConstants
                     .REQ_ADD_PROFILE_VISIT, null, true).executeOnExecutor(AsyncTask
-                    .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants
+                    .THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT + WsConstants
                     .REQ_ADD_PROFILE_VISIT);
         } else {
             Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources()
@@ -2457,7 +2457,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     favouriteStatusObject, null, WsResponseObject.class, WsConstants
                     .REQ_MARK_AS_FAVOURITE, null, true).executeOnExecutor(AsyncTask
-                    .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants
+                    .THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT + WsConstants
                     .REQ_MARK_AS_FAVOURITE);
         } else {
             Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources().getString(R
@@ -2956,7 +2956,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                     inviteContactObject, null, WsResponseObject.class, WsConstants
                     .REQ_SEND_INVITATION, null, true).executeOnExecutor(AsyncTask
                             .THREAD_POOL_EXECUTOR,
-                    WsConstants.WS_ROOT + WsConstants.REQ_SEND_INVITATION);
+                    BuildConfig.WS_ROOT + WsConstants.REQ_SEND_INVITATION);
         }
         /*else {
             Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, getResources()

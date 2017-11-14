@@ -133,7 +133,7 @@ public class AppConstants {
     public static String EXTRA_IS_FROM_FORGOT_PASSWORD = "extra_is_from_forgot_password";
     public static String EXTRA_IS_FROM_RE_LOGIN = "extra_is_from_re_login";
     public static String EXTRA_LOCAL_BROADCAST_MESSAGE = "message";
-    public static String EXTRA_EXISTING_RELATION_DETAILS = "contact_name";
+    public static String EXTRA_EXISTING_RELATION_DETAILS = "existing_relation_details";
     public static String EXTRA_CONTACT_NAME = "contact_name";
     public static String EXTRA_CONTACT_NUMBER = "contact_number";
     public static String EXTRA_FAMILY_RELATION = "family_relation";
@@ -278,6 +278,7 @@ public class AppConstants {
     public static String PREF_IS_LOGIN = "pref_is_login";
 
     public static String PREF_TEMP_LOGOUT = "pref_temp_logout";
+    public static String PREF_GET_RELATION = "pref_get_relation";
     public static String PREF_SELECTED_COUNTRY_OBJECT = "pref_selected_country_object";
     public static String PREF_DEVICE_TOKEN_ID = "pref_device_token_id";
     public static String PREF_LAUNCH_SCREEN_INT = "pref_launch_screen_int";
