@@ -1463,7 +1463,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
             //<editor-fold desc="Address">
             if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbAddress())) {
-                percentage += 20;
+                percentage += 10;
                 if (arrayListRemainingFields.contains(getString(R.string.str_address))) {
                     arrayListRemainingFields.remove(getString(R.string.str_address));
                 }
