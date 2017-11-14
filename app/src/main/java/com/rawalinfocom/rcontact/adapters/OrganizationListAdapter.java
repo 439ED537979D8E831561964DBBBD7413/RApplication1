@@ -78,7 +78,6 @@ public class OrganizationListAdapter extends RecyclerView.Adapter<OrganizationLi
 //            String s = Utils.setMultipleTypeface(context, organization.getOrgName() + " <font color" + "='#00796B'>" + context.getString(R.string.im_icon_verify)
 //                    + "</font>", 0, (StringUtils.length(organization.getOrgName()) + 1), ((StringUtils.length(organization.getOrgName()) + 1) + 1)).toString();
 
-//            holder.textMain.setText(Html.fromHtml(s));
             holder.textMain.setText(organization.getOrgName());
             holder.textMain.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ico_double_tick_svg, 0);
             holder.textType.setText(Html.fromHtml("<small> (" + organization.getOrgIndustryType() + ") </small>"));
