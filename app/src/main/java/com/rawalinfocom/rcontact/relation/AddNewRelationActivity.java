@@ -480,51 +480,8 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
                 friendRelation = "";
             }
 
-//            if (intent.hasExtra(AppConstants.EXTRA_CONTACT_NAME)) {
-//                contactName = intent.getStringExtra(AppConstants.EXTRA_CONTACT_NAME);
-//            } else {
-//                contactName = "";
-//            }
-//
-//            if (intent.hasExtra(AppConstants.EXTRA_CONTACT_NUMBER)) {
-//                contactNumber = intent.getStringExtra(AppConstants.EXTRA_CONTACT_NUMBER);
-//            } else {
-//                contactNumber = "";
-//            }
-//
-//            if (intent.hasExtra(AppConstants.EXTRA_PROFILE_IMAGE_URL)) {
-//                profileImage = intent.getStringExtra(AppConstants.EXTRA_PROFILE_IMAGE_URL);
-//            } else {
-//                profileImage = "";
-//            }
-
             if (intent.hasExtra(AppConstants.EXTRA_PM_ID)) {
                 pmId = intent.getStringExtra(AppConstants.EXTRA_PM_ID);
-//                if (!StringUtils.isEmpty(pmId)) {
-//                    if (!pmId.equalsIgnoreCase("-1") && !pmId.equalsIgnoreCase(getUserPmId())) {
-//                        if (!Utils.isNetworkAvailable(this)) {
-//
-//                            HashMap<String, String> mapProfileViews = new HashMap<>();
-//                            if (Utils.getHashMapPreference(this, AppConstants
-//                                    .PREF_PROFILE_VIEWS) != null) {
-//                                mapProfileViews.putAll(Utils.getHashMapPreference(this, AppConstants
-//                                        .PREF_PROFILE_VIEWS));
-//                            }
-//                            if (mapProfileViews.containsKey(pmId)) {
-//                                int count = Integer.parseInt(mapProfileViews.get(pmId));
-//                                mapProfileViews.put(pmId, String.valueOf(++count));
-//                            } else {
-//                                mapProfileViews.put(pmId, "1");
-//                            }
-//                            Utils.setHashMapPreference(this, AppConstants.PREF_PROFILE_VIEWS,
-//                                    mapProfileViews);
-//                        }
-//                    }
-//                } else {
-//                    pmId = "-1";
-//                }
-//            } else {
-//                pmId = "-1";
             }
         }
     }

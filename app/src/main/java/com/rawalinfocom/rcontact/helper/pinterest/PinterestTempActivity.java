@@ -101,8 +101,6 @@ public class PinterestTempActivity extends AppCompatActivity {
                 Log.e(getClass().getName(), exception.getDetailMessage());
                 PinterestTempActivity.this.finish();//finishing activity
             }
-
-
         });
     }
 }
