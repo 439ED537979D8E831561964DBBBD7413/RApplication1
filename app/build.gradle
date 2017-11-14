@@ -26,12 +26,12 @@ def getProps(path) {
 }
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion '26.0.1'
+    compileSdkVersion 27
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "com.rawalinfocom.rcontact"
         minSdkVersion 19
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode 11
         versionName "1.1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -100,8 +100,8 @@ android {
     }
 }
 
-final SUPPORT_LIBRARY_VERSION = '26.0.1'
-final PLAY_SERVICES_VERSION = '11.0.4'
+final SUPPORT_LIBRARY_VERSION = '27.0.0'
+final PLAY_SERVICES_VERSION = '11.6.0'
 final JACKSON_CORE_VERSION = '2.8.3'
 final BUTTER_KNIFE_VERSION = '8.8.1'
 
@@ -130,6 +130,7 @@ dependencies {
     compile "com.google.android.gms:play-services-maps:$PLAY_SERVICES_VERSION"
     compile "com.google.android.gms:play-services-places:$PLAY_SERVICES_VERSION"
     compile "com.google.android.gms:play-services-drive:$PLAY_SERVICES_VERSION"
+
     compile "com.fasterxml.jackson.core:jackson-core:$JACKSON_CORE_VERSION"
     compile "com.fasterxml.jackson.core:jackson-databind:$JACKSON_CORE_VERSION"
     compile "com.fasterxml.jackson.core:jackson-annotations:$JACKSON_CORE_VERSION"
