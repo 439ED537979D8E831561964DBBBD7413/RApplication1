@@ -61,26 +61,26 @@ android {
         }
     }
 
-//    productFlavors {
-//        qa {
-//            //packageName "com.rawalinfocom.rcontact.staging"
-//            getProps('./config/qa.props').each { p ->
-//                buildConfigField 'String', p.key, p.value
-//            }
-//
-//        }
-//        staging {
-//            //packageName "com.rawalinfocom.rcontact"
-//            getProps('./config/staging.props').each { p ->
-//                buildConfigField 'String', p.key, p.value
-//            }
-//        }
-//        production {
-//            getProps('./config/production.props').each { p ->
-//                buildConfigField 'String', p.key, p.value
-//            }
-//        }
-//    }
+    productFlavors {
+        qa {
+            //packageName "com.rawalinfocom.rcontact.staging"
+            getProps('./config/qa.props').each { p ->
+                buildConfigField 'String', p.key, p.value
+            }
+
+        }
+        staging {
+            //packageName "com.rawalinfocom.rcontact"
+            getProps('./config/staging.props').each { p ->
+                buildConfigField 'String', p.key, p.value
+            }
+        }
+        production {
+            getProps('./config/production.props').each { p ->
+                buildConfigField 'String', p.key, p.value
+            }
+        }
+    }
 
     lintOptions {
         abortOnError false
