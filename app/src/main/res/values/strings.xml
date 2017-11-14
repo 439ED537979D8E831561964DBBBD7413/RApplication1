@@ -446,6 +446,7 @@
     <string name="str_confirmed_your_request_for">confirmed your request to view %1$s</string>
 
     <!-- Profile -->
+    <string name="str_copy_aadhar_number">Copied Aadhar Number</string>
     <string name="str_copy_number">Copied Number</string>
     <string name="str_copy_email">Copied Email</string>
     <string name="str_copy_website">Copied Website</string>
