@@ -57,7 +57,7 @@ public class OnlineDataSync {
             new AsyncWebServiceCall(activity, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     requestObject, null, WsResponseObject.class, requestApi, null, true)
                     .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                    WsConstants.WS_ROOT + requestApi);
+                    BuildConfig.WS_ROOT + requestApi);
         }
     }
 }

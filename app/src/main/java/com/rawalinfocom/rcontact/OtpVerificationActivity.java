@@ -316,7 +316,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), otpObject,
                     null, WsResponseObject.class, WsConstants.REQ_CHECK_NUMBER, getString(R.string
                     .msg_please_wait), false)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT +
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT +
                             WsConstants.REQ_CHECK_NUMBER);
             Utils.showSuccessSnackBar(OtpVerificationActivity.this,
                     relativeRootOtpVerification, getString(R.string.msg_success_otp_request));
@@ -339,7 +339,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), otpObject,
                     null, WsResponseObject.class, WsConstants.REQ_OTP_CONFIRMED, getString(R
                     .string.msg_please_wait), false)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT +
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT +
                             WsConstants.REQ_OTP_CONFIRMED);
         } else {
             Utils.showErrorSnackBar(this, relativeRootOtpVerification, getResources()

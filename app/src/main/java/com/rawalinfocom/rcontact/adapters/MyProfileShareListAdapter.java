@@ -120,7 +120,7 @@ public class MyProfileShareListAdapter extends RecyclerView.Adapter<MyProfileSha
                 if (value.equalsIgnoreCase(context.getString(R.string.average_rate_sharing))) {
                     if (!StringUtils.equalsAnyIgnoreCase(pmID, "-1")) {
                         String sharingUrl = "Click link to see " + contactName + "'s average rating." + "\n"
-                                + WsConstants.WS_AVG_RATING_SHARE_BADGE_ROOT + userProfile.getPmBadge();
+                                + BuildConfig.WS_AVG_RATING_SHARE_BADGE_ROOT + userProfile.getPmBadge();
                         if (Utils.isNetworkAvailable(context)) {
                             shareAverageRating(sharingUrl);
                             //shareAverageRating(sharingUrl);
@@ -145,9 +145,9 @@ public class MyProfileShareListAdapter extends RecyclerView.Adapter<MyProfileSha
                             sharingIntent.setType("text/plain");
                             String shareBody;
                             if (StringUtils.isBlank(userProfile.getPmBadge())) {
-                                shareBody = WsConstants.WS_PROFILE_VIEW_BADGE_ROOT + number;
+                                shareBody = BuildConfig.WS_PROFILE_VIEW_BADGE_ROOT + number;
                             } else {
-                                shareBody = WsConstants.WS_PROFILE_VIEW_BADGE_ROOT + userProfile
+                                shareBody = BuildConfig.WS_PROFILE_VIEW_BADGE_ROOT + userProfile
                                         .getPmBadge();
                             }
                             sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
@@ -273,7 +273,7 @@ public class MyProfileShareListAdapter extends RecyclerView.Adapter<MyProfileSha
                     //</editor-fold>
                 }
             }).execute(
-                    WsConstants.WS_ROOT + WsConstants.REQ_RCP_PROFILE_SHARING);
+                    BuildConfig.WS_ROOT + WsConstants.REQ_RCP_PROFILE_SHARING);
 
         } else {
 //            Utils.showErrorSnackBar(context, llRoot, context.getResources()

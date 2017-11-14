@@ -66,6 +66,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.rawalinfocom.rcontact.BuildConfig;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.constants.AppConstants;
@@ -1048,7 +1049,7 @@ public class Utils {
     }
 
     public static void openWebSite(Context context) {
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(WsConstants
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(BuildConfig
                 .WS_WEBSITE_URL));
         browserIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(browserIntent);

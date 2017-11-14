@@ -186,7 +186,7 @@ public class ContactUsActivity extends BaseActivity implements RippleView
 
             case R.id.edit_text_read_faq:
                 Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(WsConstants.URL_FAQ));
+                i.setData(Uri.parse(BuildConfig.URL_FAQ));
                 startActivity(i);
                 break;
             case R.id.frameImageView1:
@@ -612,7 +612,7 @@ public class ContactUsActivity extends BaseActivity implements RippleView
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     contactus, null, WsResponseObject.class, WsConstants
                     .REQ_CONTACT_US, getResources().getString(R.string.msg_please_wait), true).executeOnExecutor(AsyncTask
-                    .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants.REQ_CONTACT_US);
+                    .THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT + WsConstants.REQ_CONTACT_US);
         } else {
             Utils.showErrorSnackBar(activity, activityContactUs, getResources().getString(R.string.msg_no_network));
         }

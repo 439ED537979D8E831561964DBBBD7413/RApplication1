@@ -23,7 +23,6 @@ import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
-import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 
@@ -116,7 +115,7 @@ public class TermsConditionsActivity extends BaseActivity implements RippleView
             @Override
             public void onClick(View textView) {
                 Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(WsConstants.URL_TERMS_CONDITIONS));
+                i.setData(Uri.parse(BuildConfig.URL_TERMS_CONDITIONS));
                 startActivity(i);
             }
 

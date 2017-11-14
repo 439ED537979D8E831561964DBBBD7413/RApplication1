@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.BaseActivity;
+import com.rawalinfocom.rcontact.BuildConfig;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
@@ -188,7 +189,7 @@ public class NotiProfileAdapter extends RecyclerView.Adapter<NotiProfileAdapter.
                     requestObj, null, WsResponseObject.class, WsConstants
                     .REQ_PROFILE_PRIVACY_REQUEST, activity.getResources().getString(R.string
                     .msg_please_wait), true)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT +
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT +
                             WsConstants.REQ_PROFILE_PRIVACY_REQUEST);
         } else {
             //show no net
