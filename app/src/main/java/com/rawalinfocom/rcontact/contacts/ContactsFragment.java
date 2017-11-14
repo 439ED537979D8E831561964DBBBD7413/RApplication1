@@ -132,9 +132,14 @@ public class ContactsFragment extends BaseFragment {
 
     private void init() {
 
-        if (Utils.getBooleanPreference(getActivity(), AppConstants.PREF_SHOW_WALK_THROUGH, true)) {
+       /* if (Utils.getBooleanPreference(getActivity(), AppConstants.PREF_SHOW_WALK_THROUGH,
+       true)) {
             displayWalkThrough();
         } else {
+            ((MainActivity) getActivity()).frameTutorial.setVisibility(View.GONE);
+        }*/
+
+        if (getActivity() instanceof MainActivity) {
             ((MainActivity) getActivity()).frameTutorial.setVisibility(View.GONE);
         }
 

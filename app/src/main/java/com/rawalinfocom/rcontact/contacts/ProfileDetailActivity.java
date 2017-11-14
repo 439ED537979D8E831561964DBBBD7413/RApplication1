@@ -1177,7 +1177,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     @Override
     public void onBackPressed() {
-        if (!Utils.getBooleanPreference(this, AppConstants.PREF_SHOW_WALK_THROUGH, true)) {
+//        if (!Utils.getBooleanPreference(this, AppConstants.PREF_SHOW_WALK_THROUGH, true)) {
             if (isRatingUpdate) {
 
                 Intent localBroadcastIntent1 = new Intent(AppConstants
@@ -1193,7 +1193,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             setResult(RESULT_OK, backIntent);
             finish();
             overridePendingTransition(R.anim.pop_enter, R.anim.pop_exit);
-        }
+//        }
     }
 
     @Override
@@ -2182,10 +2182,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 setUpView(null);
             }
         } else {
-            if (Utils.getBooleanPreference(ProfileDetailActivity.this, AppConstants
+            /*if (Utils.getBooleanPreference(ProfileDetailActivity.this, AppConstants
                     .PREF_SHOW_WALK_THROUGH, true)) {
                 displayWalkThrough();
             } else {
+                frameTutorial.setVisibility(View.GONE);
+            }*/
+            if (frameTutorial != null) {
                 frameTutorial.setVisibility(View.GONE);
             }
         }
@@ -3012,13 +3015,16 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             buttonPrivacy.setImageResource(R.drawable.ico_privacy_onlyme);
                         }
                     } else {
-                        if ((MoreObjects.firstNonNull(aadharDetails.getAadharPublic(), 3)) == IntegerConstants
-                                .PRIVACY_PRIVATE && aadharDetails.getAadharNumber() == 0) {
+                        if ((MoreObjects.firstNonNull(aadharDetails.getAadharPublic(), 3)) ==
+                                IntegerConstants
+                                        .PRIVACY_PRIVATE && aadharDetails.getAadharNumber() == 0) {
                             buttonRequest.setVisibility(View.VISIBLE);
                             buttonPrivacy.setVisibility(View.GONE);
                         } else {
-                            if ((MoreObjects.firstNonNull(aadharDetails.getAadharPublic(), 3)) != IntegerConstants
-                                    .PRIVACY_PRIVATE && aadharDetails.getAadharNumber() == 0) {
+                            if ((MoreObjects.firstNonNull(aadharDetails.getAadharPublic(), 3)) !=
+                                    IntegerConstants
+                                            .PRIVACY_PRIVATE && aadharDetails.getAadharNumber()
+                                    == 0) {
                                 buttonRequest.setVisibility(View.VISIBLE);
                                 buttonPrivacy.setVisibility(View.GONE);
                             }
@@ -3029,8 +3035,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         @Override
                         public void onClick(View v) {
                             int pmTo = Integer.parseInt(pmId);
-                            // sendAccessRequest(int toPMId, String carFiledType, String recordIndexId)
-                            sendAccessRequest(pmTo, "pb_aadhaar", String.valueOf(aadharDetails.getAadharId()));
+                            // sendAccessRequest(int toPMId, String carFiledType, String
+                            // recordIndexId)
+                            sendAccessRequest(pmTo, "pb_aadhaar", String.valueOf(aadharDetails
+                                    .getAadharId()));
                         }
                     });
 
@@ -4833,7 +4841,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         tableAadharMaster.deleteAadharDetails(profileDetail.getRcpPmId());
 
         if (profileDetail.getPbAadhar() != null) {
-            ProfileDataOperationAadharNumber profileDataOperationAadharNumber = profileDetail.getPbAadhar();
+            ProfileDataOperationAadharNumber profileDataOperationAadharNumber = profileDetail
+                    .getPbAadhar();
             profileDataOperationAadharNumber.setRcProfileMasterPmId(profileDetail.getRcpPmId());
             tableAadharMaster.addAadharDetail(profileDataOperationAadharNumber);
         }
