@@ -229,6 +229,9 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
                             "New Relation Added Successfully!!!");
                     storeProfileDataToDb(relationRequestResponse);
 
+                    Utils.setBooleanPreference(AddNewRelationActivity.this,
+                            AppConstants.PREF_GET_RELATION, false);
+
                     finish();
 
                 } else {

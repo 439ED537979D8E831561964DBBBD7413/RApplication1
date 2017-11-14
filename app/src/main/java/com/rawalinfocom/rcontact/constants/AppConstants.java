@@ -278,6 +278,7 @@ public class AppConstants {
     public static String PREF_IS_LOGIN = "pref_is_login";
 
     public static String PREF_TEMP_LOGOUT = "pref_temp_logout";
+    public static String PREF_GET_RELATION = "pref_get_relation";
     public static String PREF_SELECTED_COUNTRY_OBJECT = "pref_selected_country_object";
     public static String PREF_DEVICE_TOKEN_ID = "pref_device_token_id";
     public static String PREF_LAUNCH_SCREEN_INT = "pref_launch_screen_int";

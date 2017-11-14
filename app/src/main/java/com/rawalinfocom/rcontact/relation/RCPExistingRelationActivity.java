@@ -158,7 +158,13 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
     protected void onStart() {
         super.onStart();
         displayRCPUserData();
-        getUserExistingRelation();
+
+        if (Utils.getBooleanPreference(RCPExistingRelationActivity.this,
+                AppConstants.PREF_GET_RELATION, true)) {
+            getUserExistingRelation();
+        } else {
+            getExistingRelationData();
+        }
     }
 
 
@@ -181,6 +187,9 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
 //                            "New Relation Added Successfully!!!");
                     storeProfileDataToDb(allExistingRelationList);
                     getExistingRelationData();
+
+                    Utils.setBooleanPreference(RCPExistingRelationActivity.this,
+                            AppConstants.PREF_GET_RELATION, false);
 
                 } else {
                     if (sendRelationRequestObject != null) {

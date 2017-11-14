@@ -207,7 +207,6 @@ public class QueryManager {
                 .COLUMN_OM_ORGANIZATION_DESIGNATION + " from " + TableOrganizationMaster
                 .TABLE_RC_ORGANIZATION_MASTER + " org WHERE org." + TableOrganizationMaster
                 .COLUMN_RC_PROFILE_MASTER_PM_ID + " = " + rcpId + " ORDER BY org." +
-                TableOrganizationMaster.COLUMN_OM_ORGANIZATION_IS_VERIFIED + " DESC, " +
                 TableOrganizationMaster.COLUMN_OM_ORGANIZATION_IS_CURRENT + " DESC, date(org." +
                 TableOrganizationMaster.COLUMN_OM_ORGANIZATION_FROM_DATE + ") DESC";
 

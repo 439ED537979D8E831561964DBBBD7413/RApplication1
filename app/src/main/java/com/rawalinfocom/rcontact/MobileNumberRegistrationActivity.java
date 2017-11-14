@@ -185,9 +185,10 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
             if (serviceType.contains(WsConstants.REQ_GET_CHECK_VERSION)) {
                 WsResponseObject checkVersionResponse = (WsResponseObject) data;
 
+                Utils.hideProgressDialog();
+
                 if (checkVersionResponse != null && StringUtils.equalsIgnoreCase
                         (checkVersionResponse.getMessage(), "force update")) {
-                    Utils.hideProgressDialog();
                     Utils.showForceUpdateDialog(MobileNumberRegistrationActivity.this);
                 } else {
                     sendOtp();
