@@ -470,7 +470,7 @@ public class RestorationActivity extends BaseActivity implements WsResponseListe
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     deviceDetailObject, null, WsResponseObject.class, url, null, true).executeOnExecutor(AsyncTask
-                    .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + url);
+                    .THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT + url);
         }
     }
 }

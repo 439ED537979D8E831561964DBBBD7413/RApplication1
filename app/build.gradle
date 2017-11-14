@@ -26,12 +26,12 @@ def getProps(path) {
 }
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion '26.0.1'
+    compileSdkVersion 27
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "com.rawalinfocom.rcontact"
         minSdkVersion 19
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode 11
         versionName "1.1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -40,7 +40,7 @@ android {
 
     signingConfigs {
         release {
-            storeFile file("/Users/operative/rcontacts.jks") // My Local path
+            storeFile file('/Users/user/Desktop/apk/rcontacts.jks') // My Local path
             storePassword "rcontacts"
             keyAlias "rcontacts"
             keyPassword "rcontacts"
@@ -100,8 +100,8 @@ android {
     }
 }
 
-final SUPPORT_LIBRARY_VERSION = '26.0.1'
-final PLAY_SERVICES_VERSION = '11.0.4'
+final SUPPORT_LIBRARY_VERSION = '27.0.0'
+final PLAY_SERVICES_VERSION = '11.6.0'
 final JACKSON_CORE_VERSION = '2.8.3'
 final BUTTER_KNIFE_VERSION = '8.8.1'
 
@@ -109,8 +109,8 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
 
     /* androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-                    exclude group: 'com.android.support', module: 'support-annotations'
-                })*/
+                        exclude group: 'com.android.support', module: 'support-annotations'
+                    })*/
     compile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
         transitive = true;
     }
@@ -140,7 +140,6 @@ dependencies {
     apt "com.jakewharton:butterknife-compiler:$BUTTER_KNIFE_VERSION"
 
     //    compile 'com.android.support.test.espresso:espresso-core:2.2.2'
-
     //    compile 'com.android.support.constraint:constraint-layout:1.0.0'
 
     /* Web View */

@@ -868,7 +868,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                     profileRegistrationObject, null, WsResponseObject.class, WsConstants
                     .REQ_REGISTER_WITH_SOCIAL_MEDIA, getString(R.string.msg_please_wait), true)
                     .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                            WsConstants.WS_ROOT_V2 + WsConstants.REQ_REGISTER_WITH_SOCIAL_MEDIA);
+                            BuildConfig.WS_ROOT_V2 + WsConstants.REQ_REGISTER_WITH_SOCIAL_MEDIA);
         } else {
             Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getResources()
                     .getString(R.string.msg_no_network));
@@ -895,7 +895,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                             profileRegistrationObject, null, WsResponseObject.class, WsConstants
                             .REQ_PROFILE_REGISTRATION, getString(R.string.msg_please_wait), true)
                             .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                                    WsConstants.WS_ROOT + WsConstants.REQ_PROFILE_REGISTRATION);
+                                    BuildConfig.WS_ROOT + WsConstants.REQ_PROFILE_REGISTRATION);
                 } else {
                     Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getResources()
                             .getString(R.string.msg_no_network));
@@ -932,7 +932,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                     deviceDetailObject, null, WsResponseObject.class, WsConstants
                     .REQ_STORE_DEVICE_DETAILS, null, true).executeOnExecutor(AsyncTask
                             .THREAD_POOL_EXECUTOR,
-                    WsConstants.WS_ROOT + WsConstants.REQ_STORE_DEVICE_DETAILS);
+                    BuildConfig.WS_ROOT + WsConstants.REQ_STORE_DEVICE_DETAILS);
         }
         /*else {
             Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getResources()

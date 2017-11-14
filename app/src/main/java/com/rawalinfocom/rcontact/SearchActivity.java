@@ -1079,7 +1079,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                         deviceDetailObject, null, WsResponseObject.class, WsConstants
                         .REQ_GET_GLOBAL_SEARCH_RECORDS, null, true).executeOnExecutor(AsyncTask
                                 .THREAD_POOL_EXECUTOR,
-                        WsConstants.WS_ROOT + WsConstants.REQ_GET_GLOBAL_SEARCH_RECORDS);
+                        BuildConfig.WS_ROOT + WsConstants.REQ_GET_GLOBAL_SEARCH_RECORDS);
             } else {
                 Utils.showErrorSnackBar(this, rlSearchRoot, getResources()
                         .getString(R.string.msg_no_network));

@@ -537,7 +537,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                     uploadContactObject, null, WsResponseObject.class, WsConstants
                     .REQ_RCP_PROFILE_SHARING + "_RCP", getResources().getString(R.string
                     .msg_please_wait),
-                    true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT +
+                    true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT +
                     WsConstants.REQ_RCP_PROFILE_SHARING);
         } else {
             Utils.showErrorSnackBar(this, activityContactListing, getResources()
@@ -558,7 +558,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                     uploadContactObject, null, WsResponseObject.class, WsConstants
                     .REQ_RCP_PROFILE_SHARING + "_NON", getResources().getString(R.string
                     .msg_please_wait),
-                    true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT +
+                    true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT +
                     WsConstants.REQ_RCP_PROFILE_SHARING);
         } else {
             Utils.showErrorSnackBar(this, activityContactListing, getResources()
@@ -579,7 +579,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                     inviteContactObject, null, WsResponseObject.class, WsConstants
                     .REQ_SEND_INVITATION, getString(R.string.invitation_sending), true)
                     .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                            WsConstants.WS_ROOT + WsConstants.REQ_SEND_INVITATION);
+                            BuildConfig.WS_ROOT + WsConstants.REQ_SEND_INVITATION);
         } else {
             Utils.showErrorSnackBar(this, activityContactListing, getResources()
                     .getString(R.string.msg_no_network));

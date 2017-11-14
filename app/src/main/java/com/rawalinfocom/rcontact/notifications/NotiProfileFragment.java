@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.BaseNotificationFragment;
+import com.rawalinfocom.rcontact.BuildConfig;
 import com.rawalinfocom.rcontact.MainActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.adapters.NotiProfileAdapter;
@@ -251,7 +252,7 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
                     requestObject, null, WsResponseObject.class, WsConstants
                     .REQ_GET_PROFILE_PRIVACY_REQUEST, getResources().getString(R.string
                     .msg_please_wait), true)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT +
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT +
                             WsConstants.REQ_GET_PROFILE_PRIVACY_REQUEST);
         } else {
             Toast.makeText(getActivity(), getResources().getString(R.string.msg_no_network),
@@ -783,7 +784,7 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
         if (Utils.isNetworkAvailable(getActivity())) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), deviceDetailObject, null,
                     WsResponseObject.class, url, getResources().getString(R.string.msg_please_wait), true)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + url);
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT + url);
         } else {
             Utils.showErrorSnackBar(getActivity(), layoutRoot, getResources().getString(R.string.msg_no_network));
             swipeRefreshLayout.setRefreshing(false);

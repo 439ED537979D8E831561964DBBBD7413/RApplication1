@@ -405,7 +405,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 //                String shareBody = WsConstants.PLAY_STORE_LINK + getPackageName() +
 //                        "&utm_source" + "=" + number + "&utm_medium=" + number;
 
-                String shareBody = WsConstants.PLAY_STORE_LINK + getPmBadge();
+                String shareBody = BuildConfig.PLAY_STORE_LINK + getPmBadge();
                 sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
                 startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_via)));
 
@@ -458,14 +458,14 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
     @Override
     public void onBackPressed() {
-        if (!Utils.getBooleanPreference(this, AppConstants.PREF_SHOW_WALK_THROUGH, true)) {
+//        if (!Utils.getBooleanPreference(this, AppConstants.PREF_SHOW_WALK_THROUGH, true)) {
             DrawerLayout drawer = findViewById(R.id.drawer_layout);
             if (drawer.isDrawerOpen(GravityCompat.START)) {
                 drawer.closeDrawer(GravityCompat.START);
             } else {
                 super.onBackPressed();
             }
-        }
+//        }
     }
 
     @Override
@@ -3494,7 +3494,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                         deviceDetailObject, null, WsResponseObject.class, WsConstants
                         .REQ_UPLOAD_CALL_LOGS, null, true).executeOnExecutor(AsyncTask
                                 .THREAD_POOL_EXECUTOR,
-                        WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_CALL_LOGS);
+                        BuildConfig.WS_ROOT + WsConstants.REQ_UPLOAD_CALL_LOGS);
             }
         }
 
@@ -3509,7 +3509,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     deviceDetailObject, null, WsResponseObject.class, WsConstants
                     .REQ_GET_PROFILE_DATA, null, true).execute(
-                    WsConstants.WS_ROOT + WsConstants.REQ_GET_PROFILE_DATA);
+                    BuildConfig.WS_ROOT + WsConstants.REQ_GET_PROFILE_DATA);
 
         }
     }
@@ -3527,7 +3527,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     uploadContactObject, null, WsResponseObject.class, WsConstants
                     .REQ_UPLOAD_CONTACTS + "_" + currentStamp, null, true).executeOnExecutor
-                    (AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants
+                    (AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT + WsConstants
                             .REQ_UPLOAD_CONTACTS);
         }
     }
@@ -3909,7 +3909,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     deviceDetailObject, null, WsResponseObject.class, url, null, true)
                     .executeOnExecutor(AsyncTask
-                            .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + url);
+                            .THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT + url);
         }
     }
 
@@ -3922,7 +3922,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     deviceDetailObject, null, WsResponseObject.class, url, null, true)
                     .executeOnExecutor(AsyncTask
-                            .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + url);
+                            .THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT + url);
         }
     }
 
@@ -4249,7 +4249,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                         deviceDetailObject, null, WsResponseObject.class, WsConstants
                         .REQ_UPLOAD_SMS_LOGS, null, true).executeOnExecutor(AsyncTask
                                 .THREAD_POOL_EXECUTOR,
-                        WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_SMS_LOGS);
+                        BuildConfig.WS_ROOT + WsConstants.REQ_UPLOAD_SMS_LOGS);
             }
         }
 

@@ -820,7 +820,7 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), otpObject,
                     null, WsResponseObject.class, WsConstants.REQ_CHECK_NUMBER, getString(R.string
                     .msg_please_wait), false)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT +
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT +
                             WsConstants.REQ_CHECK_NUMBER);
         } else {
             Utils.showErrorSnackBar(this, relativeRootEnterPassword, getResources()
@@ -847,7 +847,7 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
                     reLoginObject,
                     null, WsResponseObject.class, WsConstants.REQ_CHECK_LOGIN, getString(R.string
                     .msg_please_wait), false)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT +
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT +
                             WsConstants.REQ_CHECK_LOGIN);
         } else {
             Utils.showErrorSnackBar(this, relativeRootEnterPassword, getResources()
@@ -875,7 +875,7 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
                     reLoginObject, null, WsResponseObject.class, WsConstants
                     .REQ_LOGIN_WITH_SOCIAL_MEDIA, getString(R.string.msg_please_wait), true)
                     .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                            WsConstants.WS_ROOT_V2 + WsConstants.REQ_LOGIN_WITH_SOCIAL_MEDIA);
+                            BuildConfig.WS_ROOT_V2 + WsConstants.REQ_LOGIN_WITH_SOCIAL_MEDIA);
         } else {
             Utils.showErrorSnackBar(this, relativeRootEnterPassword, getResources()
                     .getString(R.string.msg_no_network));
@@ -904,7 +904,7 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
                     deviceDetailObject, null, WsResponseObject.class, WsConstants
                     .REQ_STORE_DEVICE_DETAILS, null, true).executeOnExecutor(AsyncTask
                             .THREAD_POOL_EXECUTOR,
-                    WsConstants.WS_ROOT + WsConstants.REQ_STORE_DEVICE_DETAILS);
+                    BuildConfig.WS_ROOT + WsConstants.REQ_STORE_DEVICE_DETAILS);
         }
         /*else {
             Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getResources()
