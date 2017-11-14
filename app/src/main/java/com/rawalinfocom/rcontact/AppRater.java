@@ -27,7 +27,7 @@ import com.rawalinfocom.rcontact.helper.Utils;
 
 public class AppRater {
 
-    private final static int DAYS_UNTIL_PROMPT = 5 ;//Min number of days
+    private final static int DAYS_UNTIL_PROMPT = 0 ;//Min number of days
 
     public static void app_launched(Context mContext) {
         if (Utils.getBooleanPreference(mContext, AppConstants.PREF_DONTSHOWAGAIN_POPUP, false)) {

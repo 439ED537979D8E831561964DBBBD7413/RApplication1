@@ -4,20 +4,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
-import com.rawalinfocom.rcontact.contacts.EditProfileActivity;
-import com.rawalinfocom.rcontact.helper.*;
+import com.rawalinfocom.rcontact.helper.Utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.rawalinfocom.rcontact.helper.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -108,8 +101,6 @@ public class PinterestTempActivity extends AppCompatActivity {
                 Log.e(getClass().getName(), exception.getDetailMessage());
                 PinterestTempActivity.this.finish();//finishing activity
             }
-
-
         });
     }
 }
