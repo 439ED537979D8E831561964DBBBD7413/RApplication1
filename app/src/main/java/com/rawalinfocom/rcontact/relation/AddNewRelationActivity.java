@@ -53,7 +53,6 @@ import com.rawalinfocom.rcontact.model.WsResponseObject;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -130,7 +129,7 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
     private RelationRecommendationType recommendationType;
     private ArrayList<IndividualRelationType> arrayList;
     private int businessPosition;
-    private boolean isAdd = false;
+    private boolean isAdd = false, isFamilyAlreadyAdded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -184,6 +183,8 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
         buttonNameCancel.setTypeface(Utils.typefaceRegular(this));
         buttonNameCancel.setOnClickListener(this);
 
+        arrayList = new ArrayList<>();
+
         if (isFrom.equalsIgnoreCase("existing")) {
             setExistingRelation();
         } else {
@@ -200,7 +201,6 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
                     .load(R.drawable.home_screen_profile)
                     .bitmapTransform(new CropCircleTransformation(activity))
                     .into(imageProfile);
-
         }
     }
 
@@ -216,7 +216,7 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
 
         if (error == null) {
 
-            //<editor-fold desc="REQ_PROFILE_UPDATE">
+            //<editor-fold desc="REQ_SEND_RELATION_REQUEST">
             if (serviceType.contains(WsConstants.REQ_SEND_RELATION_REQUEST)) {
                 WsResponseObject sendRelationRequestObject = (WsResponseObject) data;
                 Utils.hideProgressDialog();
@@ -230,6 +230,9 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
                             "New Relation Added Successfully!!!");
                     storeProfileDataToDb(relationRequestResponse);
 
+                    Utils.setBooleanPreference(AddNewRelationActivity.this,
+                            AppConstants.PREF_GET_RELATION, false);
+
                     finish();
 
                 } else {
@@ -238,7 +241,7 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
                         Utils.showErrorSnackBar(this, relativeRootNewRelation,
                                 sendRelationRequestObject.getMessage());
                     } else {
-                        Log.e("onDeliveryResponse: ", "otpDetailResponse null");
+                        Log.e("onDeliveryResponse: ", "sendRelationRequestResponse null");
                         Utils.showErrorSnackBar(this, relativeRootNewRelation, getString(R
                                 .string.msg_try_later));
                     }
@@ -304,41 +307,47 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
 
                             relationRequests.add(friendRelationRequest);
                         }
-                    } else {
-                        friendRelationRequest.setRcRelationMasterId(1);
-                        friendRelationRequest.setRrmToPmId(Integer.parseInt(pmId));
-                        friendRelationRequest.setRrmType(1);
-
-                        relationRequests.add(friendRelationRequest);
                     }
+//                    else {
+//                        friendRelationRequest.setRcRelationMasterId(1);
+//                        friendRelationRequest.setRrmToPmId(Integer.parseInt(pmId));
+//                        friendRelationRequest.setRrmType(1);
+
+//                        relationRequests.add(friendRelationRequest);
+//                    }
 
 
                     RelationRequest familyRelationRequest = new RelationRequest();
 
                     if (!StringUtils.isBlank(familyRelation)) {
-                        familyRelationRequest.setRcRelationMasterId(familyRelationId);
-                        familyRelationRequest.setRrmToPmId(Integer.parseInt(pmId));
-                        familyRelationRequest.setRrmType(2);
-                        familyRelationRequest.setGender(strGender.equals("Male") ? 1 : 2);
 
-                        relationRequests.add(familyRelationRequest);
+                        if (!isFamilyAlreadyAdded) {
+                            familyRelationRequest.setRcRelationMasterId(familyRelationId);
+                            familyRelationRequest.setRrmToPmId(Integer.parseInt(pmId));
+                            familyRelationRequest.setRrmType(2);
+                            familyRelationRequest.setGender(strGender.equals("Male") ? 1 : 2);
+
+                            relationRequests.add(familyRelationRequest);
+                        }
                     }
 
                     if (isFrom.equalsIgnoreCase("existing")) {
 
                         for (int i = 0; i < arrayList.size(); i++) {
 
-                            RelationRequest businessRelationRequest = new RelationRequest();
+                            if (arrayList.get(i).getIsVerify().equalsIgnoreCase("0")) {
+                                RelationRequest businessRelationRequest = new RelationRequest();
 
-                            businessRelationRequest.setRcRelationMasterId(Integer.parseInt(
-                                    arrayList.get(i).getRelationId()));
-                            businessRelationRequest.setRrmToPmId(Integer.parseInt(pmId));
-                            businessRelationRequest.setRcOrgId(Integer.parseInt(
-                                    arrayList.get(i).getOrganizationId()));
-                            businessRelationRequest.setRrmType(3);
-                            businessRelationRequest.setOmName(arrayList.get(i).getOrganizationName());
+                                businessRelationRequest.setRcRelationMasterId(Integer.parseInt(
+                                        arrayList.get(i).getRelationId()));
+                                businessRelationRequest.setRrmToPmId(Integer.parseInt(pmId));
+                                businessRelationRequest.setRcOrgId(Integer.parseInt(
+                                        arrayList.get(i).getOrganizationId()));
+                                businessRelationRequest.setRrmType(3);
+                                businessRelationRequest.setOmName(arrayList.get(i).getOrganizationName());
 
-                            relationRequests.add(businessRelationRequest);
+                                relationRequests.add(businessRelationRequest);
+                            }
                         }
                     } else {
 
@@ -355,8 +364,8 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
                         }
                     }
 
-                    System.out.println("Service call");
-//                    sendRelationRequest(relationRequests);
+//                    System.out.println("Service call");
+                    sendRelationRequest(relationRequests);
                 }
                 break;
             case R.id.button_name_cancel:
@@ -483,6 +492,18 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
             if (intent.hasExtra(AppConstants.EXTRA_PM_ID)) {
                 pmId = intent.getStringExtra(AppConstants.EXTRA_PM_ID);
             }
+
+            if (intent.hasExtra(AppConstants.EXTRA_CONTACT_NAME)) {
+                contactName = intent.getStringExtra(AppConstants.EXTRA_CONTACT_NAME);
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_PROFILE_IMAGE_URL)) {
+                profileImage = intent.getStringExtra(AppConstants.EXTRA_PROFILE_IMAGE_URL);
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_CONTACT_NUMBER)) {
+                contactNumber = intent.getStringExtra(AppConstants.EXTRA_CONTACT_NUMBER);
+            }
         }
     }
 
@@ -491,57 +512,72 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
         linearSingleBusinessRelation.setVisibility(View.GONE);
         linearBusinessRelation.setVisibility(View.VISIBLE);
 
-        contactName = recommendationType.getFirstName() + " " + recommendationType.getLastName();
-        profileImage = recommendationType.getProfileImage();
-        contactNumber = recommendationType.getNumber();
+        if (recommendationType != null) {
+
+            contactName = recommendationType.getFirstName() + " " + recommendationType.getLastName();
+            profileImage = recommendationType.getProfileImage();
+            contactNumber = recommendationType.getNumber();
+
+            ArrayList<IndividualRelationType> individualRelationTypes = recommendationType
+                    .getIndividualRelationTypeList();
+
+            for (int i = 0; i < individualRelationTypes.size(); i++) {
+
+                if (individualRelationTypes.get(i).getRelationType() == 1) {
+
+                    friendRelation = "Friend";
+                    inputValueFriend.setText(friendRelation);
+
+                    imgFriendClear.setVisibility(View.VISIBLE);
+                    imgFriendClear.setImageResource(R.drawable.ico_relation_lock_svg);
+                    imgFriendClear.setEnabled(false);
+                    inputValueFriend.setEnabled(false);
+                    checkboxFriend.setVisibility(View.GONE);
+                    inputValueFriend.setVisibility(View.VISIBLE);
+
+                } else if (individualRelationTypes.get(i).getRelationType() == 2) {
+
+                    isFamilyAlreadyAdded = true;
+
+                    familyRelationId = Integer.parseInt(individualRelationTypes.get(i).getRelationId());
+                    familyRelation = individualRelationTypes.get(i).getFamilyName();
+                    inputValueFamily.setText(familyRelation);
+
+                    imgFamilyClear.setVisibility(View.VISIBLE);
+                    imgFamilyClear.setImageResource(R.drawable.ico_relation_lock_svg);
+                    imgFamilyClear.setEnabled(false);
+                    inputValueFamily.setEnabled(false);
+
+                } else {
+
+                    organizationName = individualRelationTypes.get(i).getOrganizationName();
+
+                    IndividualRelationType relationType = new IndividualRelationType();
+                    relationType.setRelationId(individualRelationTypes.get(i).getRelationId());
+                    relationType.setRelationName(individualRelationTypes.get(i).getRelationName());
+                    relationType.setOrganizationName(individualRelationTypes.get(i).getOrganizationName());
+                    relationType.setOrganizationId(individualRelationTypes.get(i).getOrganizationId());
+                    relationType.setIsVerify(individualRelationTypes.get(i).getIsVerify());
+                    arrayList.add(relationType);
+
+//                imgClear.setEnabled(false);
+//                imgClear.setImageResource(R.drawable.ico_relation_lock_svg);
+                }
+            }
+
+        } else {
+
+            inputValueFamily.setFocusable(false);
+            imgFamilyClear.setOnClickListener(this);
+
+            checkboxFriend.setVisibility(View.VISIBLE);
+            inputValueFriend.setVisibility(View.GONE);
+
+        }
 
         inputValueAddName.setEnabled(false);
         inputValueAddName.setText(Html.fromHtml("<font color='#00796B'> " + contactName +
                 "</font><br/>" + contactNumber));
-
-        ArrayList<IndividualRelationType> individualRelationTypes = recommendationType
-                .getIndividualRelationTypeList();
-        arrayList = new ArrayList<>();
-
-        for (int i = 0; i < individualRelationTypes.size(); i++) {
-
-            if (individualRelationTypes.get(i).getRelationType() == 1) {
-
-                friendRelation = "Friend";
-                inputValueFriend.setText(friendRelation);
-
-                imgFriendClear.setVisibility(View.VISIBLE);
-                imgFriendClear.setImageResource(R.drawable.ico_relation_lock_svg);
-                imgFriendClear.setEnabled(false);
-                inputValueFriend.setEnabled(false);
-                checkboxFriend.setVisibility(View.GONE);
-                inputValueFriend.setVisibility(View.VISIBLE);
-
-            } else if (individualRelationTypes.get(i).getRelationType() == 2) {
-
-                familyRelationId = Integer.parseInt(individualRelationTypes.get(i).getRelationId());
-                familyRelation = individualRelationTypes.get(i).getFamilyName();
-                inputValueFamily.setText(familyRelation);
-
-                imgFamilyClear.setVisibility(View.VISIBLE);
-                imgFamilyClear.setImageResource(R.drawable.ico_relation_lock_svg);
-                imgFamilyClear.setEnabled(false);
-                inputValueFamily.setEnabled(false);
-
-            } else {
-
-                IndividualRelationType relationType = new IndividualRelationType();
-                relationType.setRelationId(individualRelationTypes.get(i).getRelationId());
-                relationType.setRelationName(individualRelationTypes.get(i).getRelationName());
-                relationType.setOrganizationName(individualRelationTypes.get(i).getOrganizationName());
-                relationType.setOrganizationId(individualRelationTypes.get(i).getOrganizationId());
-                relationType.setIsVerify(individualRelationTypes.get(i).getIsVerify());
-                arrayList.add(relationType);
-
-//                imgClear.setEnabled(false);
-//                imgClear.setImageResource(R.drawable.ico_relation_lock_svg);
-            }
-        }
 
         businessRelationDetails();
 
@@ -556,13 +592,13 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
 
     private void businessRelationDetails() {
 
-        if (arrayList.size() > 0) {
+        if (arrayList.size() == 0) {
+            addBusinessRelationView(0, null);
+        } else {
             for (int i = 0; i < arrayList.size(); i++) {
                 addBusinessRelationView(i, arrayList.get(i));
             }
             addBusinessRelationView(arrayList.size(), null);
-        } else {
-            addBusinessRelationView(0, null);
         }
     }
 
@@ -647,9 +683,8 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
 
                         addBusinessDetailsToList();
 
-                        if (arrayList.size() == 0) {
-                            addBusinessRelationView(arrayList.size(), null);
-                        }
+                        linearBusinessRelation.removeAllViews();
+                        businessRelationDetails();
                     }
                 } else if (linearBusinessRelation.getChildCount() == 1) {
                     if (!textVerify.getText().toString().trim().equalsIgnoreCase("1"))
@@ -695,6 +730,23 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
             }
 
             arrayList.add(relationType);
+        }
+
+        for (int j = 0; j < arrayListOrganization.size(); j++) {
+
+            ProfileDataOperationOrganization organization = new ProfileDataOperationOrganization();
+            organization.setOrgId(arrayListOrganization.get(j).getOrgId());
+            organization.setOrgName(arrayListOrganization.get(j).getOrgName());
+            organization.setOrgJobTitle(arrayListOrganization.get(j).getOrgJobTitle());
+            organization.setOrgIndustryType(arrayListOrganization.get(j).getOrgIndustryType());
+            organization.setOrgEntId(arrayListOrganization.get(j).getOrgEntId());
+            organization.setOrgLogo(arrayListOrganization.get(j).getOrgLogo());
+            organization.setOrgFromDate(arrayListOrganization.get(j).getOrgFromDate());
+            organization.setOrgToDate(arrayListOrganization.get(j).getOrgToDate());
+            organization.setIsVerify(arrayListOrganization.get(j).getIsVerify());
+            organization.setOrgRcpType(arrayListOrganization.get(j).getOrgRcpType());
+            organization.setIsInUse("0");
+            arrayListOrganization.set(j, organization);
         }
     }
 
@@ -742,14 +794,14 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
 
         businessRelationDialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
 
-        TextView textDialogTitle = (TextView) businessRelationDialog.findViewById(R.id.text_dialog_title);
+        TextView textDialogTitle = businessRelationDialog.findViewById(R.id.text_dialog_title);
         textDialogTitle.setText(getString(R.string.business_relation));
         textDialogTitle.setTypeface(Utils.typefaceSemiBold(this));
 
-        Button buttonRight = (Button) businessRelationDialog.findViewById(R.id.button_right);
-        Button buttonLeft = (Button) businessRelationDialog.findViewById(R.id.button_left);
-        RippleView rippleRight = (RippleView) businessRelationDialog.findViewById(R.id.ripple_right);
-        RippleView rippleLeft = (RippleView) businessRelationDialog.findViewById(R.id.ripple_left);
+        Button buttonRight = businessRelationDialog.findViewById(R.id.button_right);
+        Button buttonLeft = businessRelationDialog.findViewById(R.id.button_left);
+        RippleView rippleRight = businessRelationDialog.findViewById(R.id.ripple_right);
+        RippleView rippleLeft = businessRelationDialog.findViewById(R.id.ripple_left);
 
         buttonRight.setTypeface(Utils.typefaceRegular(this));
         buttonRight.setText(R.string.str_next);
@@ -776,7 +828,7 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
 //        relationList.add(AppConstants.RELATION_COMPETITOR);
 //        relationList.add(AppConstants.RELATION_CUSTOMER);
 
-        RecyclerView recyclerViewDialogList = (RecyclerView) businessRelationDialog.findViewById(R.id
+        RecyclerView recyclerViewDialogList = businessRelationDialog.findViewById(R.id
                 .recycler_view_dialog_list);
         recyclerViewDialogList.setLayoutManager(new LinearLayoutManager(this));
 
@@ -795,6 +847,20 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
     }
 
     private void showAllOrganizations() {
+
+        if (arrayList.size() > 0) {
+            for (int i = 0; i < arrayList.size(); i++) {
+
+                setOrganizationArrayList(i);
+
+//                if (arrayList.get(i).getRelationName().equalsIgnoreCase(businessRelationName)) {
+//
+//                } else {
+//                    setOrganizationArrayList(i, "add");
+//                }
+            }
+        }
+
         final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_all_organization);
@@ -807,14 +873,14 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
 
         dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
 
-        TextView textDialogTitle = (TextView) dialog.findViewById(R.id.text_dialog_title);
+        TextView textDialogTitle = dialog.findViewById(R.id.text_dialog_title);
         textDialogTitle.setText(getString(R.string.title_all_organizations));
         textDialogTitle.setTypeface(Utils.typefaceSemiBold(this));
 
-        Button buttonRight = (Button) dialog.findViewById(R.id.button_right);
-        Button buttonLeft = (Button) dialog.findViewById(R.id.button_left);
-        RippleView rippleRight = (RippleView) dialog.findViewById(R.id.ripple_right);
-        RippleView rippleLeft = (RippleView) dialog.findViewById(R.id.ripple_left);
+        Button buttonRight = dialog.findViewById(R.id.button_right);
+        Button buttonLeft = dialog.findViewById(R.id.button_left);
+        RippleView rippleRight = dialog.findViewById(R.id.ripple_right);
+        RippleView rippleLeft = dialog.findViewById(R.id.ripple_left);
 
         buttonRight.setTypeface(Utils.typefaceRegular(this));
         buttonRight.setText(R.string.str_done);
@@ -839,7 +905,7 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
 
                     if (businessPosition == arrayList.size()) {
 
-                        relationType.setRelationId("0");
+                        relationType.setRelationId(String.valueOf(businessRelationId));
                         relationType.setIsVerify("0");
                         relationType.setOrganizationId(String.valueOf(organizationId));
                         arrayList.add(relationType);
@@ -848,7 +914,7 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
 
                     } else {
 
-                        IndividualRelationType relationType1 = (IndividualRelationType) arrayList.
+                        IndividualRelationType relationType1 = arrayList.
                                 get(businessPosition);
 
                         relationType.setRelationId(relationType1.getRelationId());
@@ -884,7 +950,7 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
             }
         });
 
-        RecyclerView recyclerViewDialogList = (RecyclerView) dialog.findViewById(R.id
+        RecyclerView recyclerViewDialogList = dialog.findViewById(R.id
                 .recycler_view_dialog_list);
         recyclerViewDialogList.setLayoutManager(new LinearLayoutManager(this));
 
@@ -896,11 +962,44 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
                         organizationId = (int) Long.parseLong(orgId);
                         organizationName = orgName;
                     }
-                });
+                }, businessRelationName);
 
         recyclerViewDialogList.setAdapter(adapter);
 
         dialog.show();
+    }
+
+    private void setOrganizationArrayList(int i) {
+
+        for (int j = 0; j < arrayListOrganization.size(); j++) {
+
+            ProfileDataOperationOrganization organization = new ProfileDataOperationOrganization();
+            organization.setOrgId(arrayListOrganization.get(j).getOrgId());
+            organization.setOrgName(arrayListOrganization.get(j).getOrgName());
+            organization.setOrgJobTitle(arrayListOrganization.get(j).getOrgJobTitle());
+            organization.setOrgIndustryType(arrayListOrganization.get(j).getOrgIndustryType());
+            organization.setOrgEntId(arrayListOrganization.get(j).getOrgEntId());
+            organization.setOrgLogo(arrayListOrganization.get(j).getOrgLogo());
+            organization.setOrgFromDate(arrayListOrganization.get(j).getOrgFromDate());
+            organization.setOrgToDate(arrayListOrganization.get(j).getOrgToDate());
+            organization.setIsVerify(arrayListOrganization.get(j).getIsVerify());
+            organization.setOrgRcpType(arrayListOrganization.get(j).getOrgRcpType());
+
+            if (arrayListOrganization.get(j).getOrgName().equalsIgnoreCase(
+                    arrayList.get(i).getOrganizationName())) {
+                organization.setIsInUse("1");
+                arrayListOrganization.set(j, organization);
+            } else {
+
+                if (arrayListOrganization.get(j).getIsInUse().equalsIgnoreCase("1")) {
+                    organization.setIsInUse("1");
+                    arrayListOrganization.set(j, organization);
+                } else {
+                    organization.setIsInUse("0");
+                    arrayListOrganization.set(j, organization);
+                }
+            }
+        }
     }
 
     private void dialogFamilyRelation() {
@@ -919,14 +1018,14 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
 
         familyDialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
 
-        TextView textDialogTitle = (TextView) familyDialog.findViewById(R.id.text_dialog_title);
+        TextView textDialogTitle = familyDialog.findViewById(R.id.text_dialog_title);
         textDialogTitle.setText(getString(R.string.family_relation));
         textDialogTitle.setTypeface(Utils.typefaceSemiBold(this));
 
-        Button buttonRight = (Button) familyDialog.findViewById(R.id.button_right);
-        Button buttonLeft = (Button) familyDialog.findViewById(R.id.button_left);
-        RippleView rippleRight = (RippleView) familyDialog.findViewById(R.id.ripple_right);
-        RippleView rippleLeft = (RippleView) familyDialog.findViewById(R.id.ripple_left);
+        Button buttonRight = familyDialog.findViewById(R.id.button_right);
+        Button buttonLeft = familyDialog.findViewById(R.id.button_left);
+        RippleView rippleRight = familyDialog.findViewById(R.id.ripple_right);
+        RippleView rippleLeft = familyDialog.findViewById(R.id.ripple_left);
 
         buttonRight.setTypeface(Utils.typefaceRegular(this));
         buttonRight.setText(R.string.str_done);
@@ -938,6 +1037,7 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
             public void onComplete(RippleView rippleView) {
                 familyDialog.dismiss();
 
+                isFamilyAlreadyAdded = false;
                 inputValueFamily.setText(familyRelation);
                 imgFamilyClear.setVisibility(View.VISIBLE);
             }
@@ -950,7 +1050,7 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
             }
         });
 
-        RecyclerView recyclerViewDialogList = (RecyclerView) familyDialog.findViewById(R.id
+        RecyclerView recyclerViewDialogList = familyDialog.findViewById(R.id
                 .recycler_view_dialog_list);
         recyclerViewDialogList.setLayoutManager(new LinearLayoutManager(this));
 

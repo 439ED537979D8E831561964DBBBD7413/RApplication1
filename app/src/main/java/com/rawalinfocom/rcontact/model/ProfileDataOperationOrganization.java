@@ -24,6 +24,18 @@ public class ProfileDataOperationOrganization implements Serializable {
     private String orgFromDate;
     private String orgToDate;
     private String orgLogo;
+    private String eomLogoPath;
+    private String eomLogoName;
+
+    public String getIsInUse() {
+        return isInUse;
+    }
+
+    public void setIsInUse(String isInUse) {
+        this.isInUse = isInUse;
+    }
+
+    private String isInUse;
 
 //    private String orgType;
 //    private String orgJobDescription;
@@ -78,7 +90,6 @@ public class ProfileDataOperationOrganization implements Serializable {
         this.orgIndustryType = orgIndustryType;
     }
 
-    @JsonProperty("org_logo")
     public String getOrgLogo() {
         return StringUtils.defaultString(this.orgLogo);
     }
@@ -147,5 +158,23 @@ public class ProfileDataOperationOrganization implements Serializable {
 
     public void setIsPrivate(Integer isPrivate) {
         this.isPrivate = isPrivate;
+    }
+
+    @JsonProperty("eom_logo_path")
+    public String getEomLogoPath() {
+        return eomLogoPath;
+    }
+
+    public void setEomLogoPath(String eomLogoPath) {
+        this.eomLogoPath = eomLogoPath;
+    }
+
+    @JsonProperty("eom_logo_name")
+    public String getEomLogoName() {
+        return eomLogoName;
+    }
+
+    public void setEomLogoName(String eomLogoName) {
+        this.eomLogoName = eomLogoName;
     }
 }

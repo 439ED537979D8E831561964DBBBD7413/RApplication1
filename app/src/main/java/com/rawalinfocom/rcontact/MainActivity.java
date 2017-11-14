@@ -1667,8 +1667,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                                             (j).getOrgIndustryType());
                                     organization.setOmEnterpriseOrgId(arrayListOrganization.get
                                             (j).getOrgEntId());
-                                    organization.setOmOrganizationLogo(arrayListOrganization.get
-                                            (j).getOrgLogo());
+                                    organization.setOmOrganizationLogo(arrayListOrganization.get(j)
+                                            .getEomLogoPath() + "/" + arrayListOrganization.get(j).getEomLogoName());
                                 } else {
                                     organization.setOmOrganizationType("");
                                     organization.setOmEnterpriseOrgId("");

@@ -14,6 +14,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
+        android:layout_margin="@dimen/margin_5dp"
         android:background="@color/colorWhite"
         android:orientation="horizontal">
 
@@ -44,7 +45,8 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="4dp"
             android:layout_marginStart="4dp"
-            android:background="@color/colorDarkGray" />
+            android:background="@color/colorDarkGray"
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/img_filter"
@@ -54,7 +56,8 @@
             android:layout_marginEnd="4dp"
             android:contentDescription="@string/app_name"
             android:padding="6dp"
-            android:src="@drawable/ico_filter_svg" />
+            android:src="@drawable/ico_filter_svg"
+            android:visibility="gone" />
 
     </LinearLayout>
 

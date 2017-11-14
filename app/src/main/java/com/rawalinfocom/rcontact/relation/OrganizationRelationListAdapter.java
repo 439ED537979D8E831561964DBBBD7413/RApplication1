@@ -26,6 +26,7 @@ public class OrganizationRelationListAdapter extends RecyclerView.Adapter<Organi
 
     private Context context;
     private ArrayList<ProfileDataOperationOrganization> arrayListOrganization;
+    private String businessRelationName;
 
     private OnClickListener clickListener;
 
@@ -34,7 +35,7 @@ public class OrganizationRelationListAdapter extends RecyclerView.Adapter<Organi
     }
 
     public OrganizationRelationListAdapter(Context context, ArrayList<ProfileDataOperationOrganization>
-            arrayListOrganization, OnClickListener clickListener) {
+            arrayListOrganization, OnClickListener clickListener, String businessRelationName) {
         this.context = context;
         this.clickListener = clickListener;
         this.arrayListOrganization = arrayListOrganization;
@@ -54,6 +55,11 @@ public class OrganizationRelationListAdapter extends RecyclerView.Adapter<Organi
 
         holder.textMain.setText(organization.getOrgName());
         holder.checkbox.setChecked(position == (AddNewRelationActivity.orgPosition));
+
+        if (organization.getIsInUse().equalsIgnoreCase("1")) {
+            holder.textMain.setEnabled(false);
+            holder.checkbox.setVisibility(View.GONE);
+        }
 
         if (position == (AddNewRelationActivity.orgPosition)) {
             if (clickListener != null) {

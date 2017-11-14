@@ -1061,7 +1061,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                             if (arrayListOrganization.get(j).getIsVerify() == IntegerConstants.RCP_TYPE_PRIMARY) {
                                 organization.setOmOrganizationType(arrayListOrganization.get(j).getOrgIndustryType());
                                 organization.setOmEnterpriseOrgId(arrayListOrganization.get(j).getOrgEntId());
-                                organization.setOmOrganizationLogo(arrayListOrganization.get(j).getOrgLogo());
+                                organization.setOmOrganizationLogo(arrayListOrganization.get(j)
+                                        .getEomLogoPath() + "/" + arrayListOrganization.get(j).getEomLogoName());
                             } else {
                                 organization.setOmOrganizationType("");
                                 organization.setOmEnterpriseOrgId("");

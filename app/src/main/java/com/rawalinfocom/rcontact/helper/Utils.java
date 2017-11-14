@@ -1187,7 +1187,8 @@ public class Utils {
                 if (arrayListOrganization.get(i).getIsVerify() != null)
                     if (arrayListOrganization.get(i).getIsVerify() == IntegerConstants.RCP_TYPE_PRIMARY) {
                         organization.setOmOrganizationType(arrayListOrganization.get(i).getOrgIndustryType());
-                        organization.setOmOrganizationLogo(arrayListOrganization.get(i).getOrgLogo());
+                        organization.setOmOrganizationLogo(arrayListOrganization.get(i)
+                                .getEomLogoPath() + "/" + arrayListOrganization.get(i).getEomLogoName());
                     } else {
                         organization.setOmOrganizationType("");
                         organization.setOmOrganizationLogo("");

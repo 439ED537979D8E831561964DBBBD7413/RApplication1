@@ -479,9 +479,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         arrayListProfile = new ArrayList<>();
 
         FacebookSdk.sdkInitialize(getApplicationContext());
-        mInstagram = new Instagram(this, AppConstants.CLIENT_ID, AppConstants.CLIENT_SECRET,
-                AppConstants.REDIRECT_URI);
-        mInstagramSession = mInstagram.getSession();
+//        mInstagram = new Instagram(this, AppConstants.CLIENT_ID, AppConstants.CLIENT_SECRET,
+//                AppConstants.REDIRECT_URI);
+//        mInstagramSession = mInstagram.getSession();
 
         twitter = new TwitterFactory().getInstance();
         twitter.setOAuthConsumer(AppConstants.CONSUMER_KEY, AppConstants.CONSUMER_SECRET);
@@ -1198,6 +1198,11 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     }
 
     public void instagramLogin() {
+
+        mInstagram = new Instagram(this, AppConstants.CLIENT_ID, AppConstants.CLIENT_SECRET,
+                AppConstants.REDIRECT_URI);
+        mInstagramSession = mInstagram.getSession();
+
         mInstagram.authorize(mAuthListener);
     }
 
@@ -1229,6 +1234,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 socialTypeList.remove("Instagram");
 
                 mInstagramSession.reset();
+                mInstagram.resetSession();
+
                 addSocialConnectView(arrayListSocialContactObject.get
                         (arrayListSocialContactObject.size() - 1), "");
             }
@@ -1238,6 +1245,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         public void onError(String error) {
             Utils.showErrorSnackBar(EditProfileActivity.this, relativeRootEditProfile, error);
             mInstagramSession.reset();
+            mInstagram.resetSession();
         }
 
         @Override
@@ -1245,6 +1253,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             Utils.showErrorSnackBar(EditProfileActivity.this, relativeRootEditProfile,
                     "OK. Maybe later?");
             mInstagramSession.reset();
+            mInstagram.resetSession();
         }
     };
 
@@ -5835,7 +5844,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         organization.setOmOrganizationType(arrayListOrganization.get(i)
                                 .getOrgIndustryType());
                         organization.setOmOrganizationLogo(arrayListOrganization.get(i)
-                                .getOrgLogo());
+                                .getEomLogoPath() + "/" + arrayListOrganization.get(i).getEomLogoName());
                     } else {
                         organization.setOmOrganizationType("");
                         organization.setOmOrganizationLogo("");

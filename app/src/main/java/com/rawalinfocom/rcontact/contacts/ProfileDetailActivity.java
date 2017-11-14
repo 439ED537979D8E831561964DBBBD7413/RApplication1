@@ -932,6 +932,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             //<editor-fold desc="Favourites">
             case R.id.ripple_action_relation:
 
+                Utils.setBooleanPreference(ProfileDetailActivity.this,
+                        AppConstants.PREF_GET_RELATION, true);
+
                 if (displayOwnProfile) {
                     startActivity(new Intent(ProfileDetailActivity.this, ExistingRelationActivity
                             .class));
@@ -3975,7 +3978,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         return contactName;
     }
 
-
     private String getPhoneNumberType(int type) {
         switch (type) {
             case ContactsContract.CommonDataKinds.Phone.TYPE_HOME:
@@ -4686,7 +4688,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         organization.setOmOrganizationType(arrayListOrganization.get(i)
                                 .getOrgIndustryType());
                         organization.setOmOrganizationLogo(arrayListOrganization.get(i)
-                                .getOrgLogo());
+                                .getEomLogoPath() + "/" + arrayListOrganization.get(i).getEomLogoName());
                     } else {
                         organization.setOmOrganizationType("");
                         organization.setOmOrganizationLogo("");
