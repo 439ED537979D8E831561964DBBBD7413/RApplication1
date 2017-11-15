@@ -339,7 +339,7 @@ public class TableOrganizationMaster {
                 COLUMN_OM_ORGANIZATION_PRIVACY + ", " +
                 COLUMN_RC_PROFILE_MASTER_PM_ID + " FROM " +
                 TABLE_RC_ORGANIZATION_MASTER + " WHERE " +
-                COLUMN_RC_PROFILE_MASTER_PM_ID + " = " + pmId;
+                COLUMN_RC_PROFILE_MASTER_PM_ID + " = " + pmId + " group by " + COLUMN_OM_ORGANIZATION_ENT_ID;
 
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);

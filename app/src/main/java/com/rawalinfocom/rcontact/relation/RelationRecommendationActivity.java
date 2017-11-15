@@ -57,12 +57,14 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
     LinearLayout relativeBack;
 
     private RelationRecommendationListAdapter listAdapter;
+    private ArrayList<RelationRecommendationType> recommendationRelationList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_relation_recommendation);
         ButterKnife.bind(this);
+        initToolBar();
         init();
     }
 
@@ -88,17 +90,19 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
     }
 
     private void init() {
-        initToolBar();
+
+        recycleViewRelation.setLayoutManager(new LinearLayoutManager(this));
+
+        recommendationRelationList = new ArrayList<>();
         makeTempDataAndSetAdapter();
     }
 
     private void initToolBar() {
+
         rippleActionBack.setOnRippleCompleteListener(this);
         rippleActionSearch.setOnRippleCompleteListener(this);
         textToolbarTitle.setTypeface(Utils.typefaceSemiBold(this));
         textToolbarTitle.setText(R.string.toolbar_title);
-
-        inputSearch.setTypeface(Utils.typefaceRegular(this));
 
         imageBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -135,8 +139,6 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
     }
 
     private void makeTempDataAndSetAdapter() {
-
-        ArrayList<RelationRecommendationType> recommendationRelationList = new ArrayList<>();
 
         for (int i = 0; i < 5; i++) {
             RelationRecommendationType relationRecommendationType = new RelationRecommendationType();
@@ -276,7 +278,6 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
 
         if (recommendationRelationList.size() > 0) {
             listAdapter = new RelationRecommendationListAdapter(this, recommendationRelationList);
-            recycleViewRelation.setLayoutManager(new LinearLayoutManager(this));
             recycleViewRelation.setAdapter(listAdapter);
         }
     }

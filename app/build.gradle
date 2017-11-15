@@ -67,7 +67,6 @@ android {
             getProps('./config/qa.props').each { p ->
                 buildConfigField 'String', p.key, p.value
             }
-
         }
         staging {
             //packageName "com.rawalinfocom.rcontact"
@@ -77,6 +76,11 @@ android {
         }
         production {
             getProps('./config/production.props').each { p ->
+                buildConfigField 'String', p.key, p.value
+            }
+        }
+        local {
+            getProps('./config/local.props').each { p ->
                 buildConfigField 'String', p.key, p.value
             }
         }

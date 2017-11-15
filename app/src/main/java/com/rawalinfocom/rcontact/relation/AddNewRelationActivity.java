@@ -128,6 +128,7 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
 
     private RelationRecommendationType recommendationType;
     private ArrayList<IndividualRelationType> arrayList;
+    private ArrayList<String> arrayListOrgName, arrayListOrgId;
     private int businessPosition;
     private boolean isAdd = false, isFamilyAlreadyAdded = false;
 
@@ -184,6 +185,8 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
         buttonNameCancel.setOnClickListener(this);
 
         arrayList = new ArrayList<>();
+        arrayListOrgName = new ArrayList<>();
+        arrayListOrgId = new ArrayList<>();
 
         if (isFrom.equalsIgnoreCase("existing")) {
             setExistingRelation();
@@ -560,6 +563,9 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
                     relationType.setIsVerify(individualRelationTypes.get(i).getIsVerify());
                     arrayList.add(relationType);
 
+                    arrayListOrgName.add(individualRelationTypes.get(i).getOrganizationName());
+                    arrayListOrgId.add(individualRelationTypes.get(i).getOrganizationId());
+
 //                imgClear.setEnabled(false);
 //                imgClear.setImageResource(R.drawable.ico_relation_lock_svg);
                 }
@@ -848,18 +854,14 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
 
     private void showAllOrganizations() {
 
-        if (arrayList.size() > 0) {
-            for (int i = 0; i < arrayList.size(); i++) {
-
-                setOrganizationArrayList(i);
-
-//                if (arrayList.get(i).getRelationName().equalsIgnoreCase(businessRelationName)) {
-//
-//                } else {
-//                    setOrganizationArrayList(i, "add");
-//                }
-            }
-        }
+//        if (arrayList.size() > 0) {
+////            for (int i = 0; i < arrayListOrganization.size(); i++) {
+////                setOrganizationArrayList(i);
+////            }
+//            for (int i = 0; i < arrayList.size(); i++) {
+//                setOrganizationArrayList(i);
+//            }
+//        }
 
         final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -954,7 +956,8 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
                 .recycler_view_dialog_list);
         recyclerViewDialogList.setLayoutManager(new LinearLayoutManager(this));
 
-        OrganizationRelationListAdapter adapter = new OrganizationRelationListAdapter(this, arrayListOrganization,
+        OrganizationRelationListAdapter adapter = new OrganizationRelationListAdapter(this,
+                arrayListOrganization, arrayListOrgName, arrayListOrgId,
                 new OrganizationRelationListAdapter.OnClickListener() {
                     @Override
                     public void onClick(String orgId, String orgName) {
@@ -971,7 +974,7 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
 
     private void setOrganizationArrayList(int i) {
 
-        for (int j = 0; j < arrayListOrganization.size(); j++) {
+        for (int j = 0; j < arrayList.size(); j++) {
 
             ProfileDataOperationOrganization organization = new ProfileDataOperationOrganization();
             organization.setOrgId(arrayListOrganization.get(j).getOrgId());
@@ -987,13 +990,34 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
 
             if (arrayListOrganization.get(j).getOrgName().equalsIgnoreCase(
                     arrayList.get(i).getOrganizationName())) {
-                organization.setIsInUse("1");
-                arrayListOrganization.set(j, organization);
-            } else {
 
-                if (arrayListOrganization.get(j).getIsInUse().equalsIgnoreCase("1")) {
+                System.out.println("RContacts data getOrgName --> " + arrayListOrganization.get(j).getOrgName()
+                        + " " + arrayList.get(i).getOrganizationName());
+                System.out.println("RContacts data getOrgEntId --> " + arrayListOrganization.get(j).getOrgEntId()
+                        + " " + arrayList.get(i).getOrganizationId());
+
+                if (arrayListOrganization.get(j).getOrgEntId().equalsIgnoreCase(
+                        arrayList.get(i).getOrganizationId())) {
                     organization.setIsInUse("1");
                     arrayListOrganization.set(j, organization);
+                } else {
+                    organization.setIsInUse("0");
+                    arrayListOrganization.set(j, organization);
+                }
+            } else {
+
+                System.out.println("RContacts data getIsInUse --> " + arrayListOrganization.get(j).getIsInUse());
+                if (arrayListOrganization.get(j).getIsInUse().equalsIgnoreCase("1")) {
+//                    organization.setIsInUse("1");
+//                    arrayListOrganization.set(j, organization);
+                    if (arrayListOrganization.get(j).getOrgEntId().equalsIgnoreCase(
+                            arrayList.get(i).getOrganizationId())) {
+                        organization.setIsInUse("1");
+                        arrayListOrganization.set(j, organization);
+                    } else {
+                        organization.setIsInUse("0");
+                        arrayListOrganization.set(j, organization);
+                    }
                 } else {
                     organization.setIsInUse("0");
                     arrayListOrganization.set(j, organization);

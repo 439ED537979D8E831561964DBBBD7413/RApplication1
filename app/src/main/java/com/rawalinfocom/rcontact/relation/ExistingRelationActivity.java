@@ -264,8 +264,6 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
 
                 ArrayList<RelationRequestResponse> relationResponseList = new ArrayList<>();
                 RelationRequest relationRequest = relationRequestResponse.get(i);
-                tableRelationMappingMaster.deleteRelationMapping(String.valueOf(relationRequest.
-                        getRrmToPmId()));
 
                 //<editor-fold desc="Family Relation">
                 ArrayList<RelationRequest> familyRelation = relationRequest.getFamilyRelationList();
@@ -332,6 +330,8 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
                     }
                 }
 
+                tableRelationMappingMaster.deleteRelationMapping(String.valueOf(relationRequest.
+                        getRrmToPmId()));
                 tableRelationMappingMaster.addRelationMapping(relationResponseList);
             }
         }

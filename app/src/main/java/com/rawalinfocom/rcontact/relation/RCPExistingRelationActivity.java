@@ -447,11 +447,11 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
         recyclerViewDialogList.setLayoutManager(new LinearLayoutManager(this));
 
         OrganizationRelationListAdapter adapter = new OrganizationRelationListAdapter(this, arrayListOrganization,
-                new OrganizationRelationListAdapter.OnClickListener() {
-                    @Override
-                    public void onClick(String orgId, String orgName) {
-                    }
-                }, "");
+                null, null, new OrganizationRelationListAdapter.OnClickListener() {
+            @Override
+            public void onClick(String orgId, String orgName) {
+            }
+        }, "");
 
         recyclerViewDialogList.setAdapter(adapter);
 

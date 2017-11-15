@@ -891,7 +891,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         organization.setOrgToDate("");
                         organization.setOrgJobTitle("");
                         organization.setOrgId("");
-                        organization.setIsVerify(0);
+                        organization.setIsVerify(data.getIntExtra("isVerify", 0));
                         organization.setOrgEntId(data.getStringExtra("orgId"));
                         organization.setIsCurrent(1);
 
@@ -911,7 +911,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         organization.setOrgJobTitle(operationOrganization.getOrgJobTitle());
                         organization.setOrgId(operationOrganization.getOrgId());
                         organization.setOrgEntId(data.getStringExtra("orgId"));
-                        organization.setIsVerify(0);
+                        organization.setIsVerify(data.getIntExtra("isVerify", 0));
                         organization.setIsCurrent(operationOrganization.getIsCurrent());
 
                         arrayListOrganizationObject.set(organisationPosition, organization);
@@ -3899,7 +3899,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             organization.setOrgId(arrayListOrganization.get(i).getOmRecordIndexId());
             organization.setOrgEntId(arrayListOrganization.get(i).getOmEnterpriseOrgId());
             organization.setOrgLogo(arrayListOrganization.get(i).getOmOrganizationLogo());
-            organization.setOrgRcpType(arrayListOrganization.get(i).getOmOrganizationLogo());
+//            organization.setOrgRcpType(arrayListOrganization.get(i).getOmOrganizationLogo());
             organization.setIsCurrent(Integer.parseInt(arrayListOrganization.get(i)
                     .getOmIsCurrent()));
             organization.setOrgIndustryType(arrayListOrganization.get(i).getOmOrganizationType());

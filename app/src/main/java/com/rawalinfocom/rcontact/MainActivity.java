@@ -459,12 +459,12 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     @Override
     public void onBackPressed() {
 //        if (!Utils.getBooleanPreference(this, AppConstants.PREF_SHOW_WALK_THROUGH, true)) {
-            DrawerLayout drawer = findViewById(R.id.drawer_layout);
-            if (drawer.isDrawerOpen(GravityCompat.START)) {
-                drawer.closeDrawer(GravityCompat.START);
-            } else {
-                super.onBackPressed();
-            }
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
 //        }
     }
 
@@ -2055,6 +2055,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     }
 
     private void replaceFragment(Fragment fragment) {
+
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.frame_container_main_tab, fragment);
