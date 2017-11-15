@@ -62,9 +62,8 @@ public class RContactApplication extends Application {
 
         mInstance = this;
 //        hashKey();
-
 //         Fabric Initialization
-//        Fabric.with(this, new Crashlytics());
+        Fabric.with(this, new Crashlytics());
 
 /*        Realm.init(this);
         RealmConfiguration config = new RealmConfiguration.Builder().name("rcontacts.realm")

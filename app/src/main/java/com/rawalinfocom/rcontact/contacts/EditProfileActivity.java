@@ -6,6 +6,8 @@ import android.annotation.TargetApi;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
@@ -891,7 +893,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         organization.setOrgToDate("");
                         organization.setOrgJobTitle("");
                         organization.setOrgId("");
-                        organization.setIsVerify(0);
+                        organization.setIsVerify(data.getIntExtra("isVerify", 0));
                         organization.setOrgEntId(data.getStringExtra("orgId"));
                         organization.setIsCurrent(1);
 
@@ -911,7 +913,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         organization.setOrgJobTitle(operationOrganization.getOrgJobTitle());
                         organization.setOrgId(operationOrganization.getOrgId());
                         organization.setOrgEntId(data.getStringExtra("orgId"));
-                        organization.setIsVerify(0);
+                        organization.setIsVerify(data.getIntExtra("isVerify", 0));
                         organization.setIsCurrent(operationOrganization.getIsCurrent());
 
                         arrayListOrganizationObject.set(organisationPosition, organization);
@@ -2334,6 +2336,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     TextView textEnterpriseOrgId = linearOrganization.findViewById(R.id
                             .text_enterprise_org_id);
                     TextView textOrgName = linearOrganization.findViewById(R.id.text_org_name);
+                    TextView textIsVerified = linearOrganization.findViewById(R.id.text_is_verified);
 
                     EditText inputFromDate = linearOrganization.findViewById(R.id.input_from_date);
                     EditText inputToDate = linearOrganization.findViewById(R.id.input_to_date);
@@ -2348,6 +2351,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     organization.setIsCurrent(checkboxOrganization.isChecked() ? 1 : 0);
                     organization.setOrgPublic(IntegerConstants.PRIVACY_EVERYONE);
                     organization.setOrgEntId(textEnterpriseOrgId.getText().toString().trim());
+                    organization.setIsVerify(Integer.parseInt(textIsVerified.getText().toString().trim()));
                     // organization.setOrgLogo(textOrgLogo.getText().toString().trim());
 
                     ColorStateList colorStateList = ColorStateList.valueOf(ContextCompat.getColor
@@ -2446,10 +2450,27 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 if (isValid) {
                      /*   profileDataOperation.setPbOrganization(arrayListNewOrganization);
                         editProfile(profileDataOperation, AppConstants.ORGANIZATION);*/
+                    boolean containsVerifiedOrgan = false;
                     if (arrayListNewOrganization.size() > 0) {
-                        profileDataOperation.setPbOrganization(arrayListNewOrganization);
-                        editProfile(profileDataOperation, AppConstants.ORGANIZATION);
-//                        if (!isCurrentSelected) {
+                        for (int i = 0; i < arrayListNewOrganization.size(); i++) {
+                            ProfileDataOperationOrganization organization = arrayListNewOrganization.get(i);
+                            if (organization.getIsVerify() == 1) {
+                                //Show popup
+                                containsVerifiedOrgan = true;
+                                showOrganizationPrivacyDialog(EditProfileActivity.this,
+                                        arrayListNewOrganization, profileDataOperation);
+                                break;
+                            }
+                        }
+
+                        if (!containsVerifiedOrgan) {
+
+                            profileDataOperation.setPbOrganization(arrayListNewOrganization);
+                            editProfile(profileDataOperation, AppConstants.ORGANIZATION);
+
+                        }
+
+                        //if (!isCurrentSelected) {
 //                            Utils.showErrorSnackBar(this, relativeRootEditProfile, getString(R
 //                                    .string.error_current_organization));
 //                        } else {
@@ -2457,9 +2478,24 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 //                            editProfile(profileDataOperation, AppConstants.ORGANIZATION);
 //                        }
                     } else {
+                        containsVerifiedOrgan = false;
                         if (arrayListOrganizationObject.size() > 0) {
-                            profileDataOperation.setPbOrganization(arrayListNewOrganization);
-                            editProfile(profileDataOperation, AppConstants.ORGANIZATION);
+                            for (int i = 0; i < arrayListOrganizationObject.size(); i++) {
+                                ProfileDataOperationOrganization organization = (ProfileDataOperationOrganization) arrayListOrganizationObject.get(i);
+                                if (organization.getIsVerify() == 1) {
+                                    //Show popup
+                                    containsVerifiedOrgan = true;
+                                    showOrganizationPrivacyDialog(EditProfileActivity.this,
+                                            arrayListNewOrganization, profileDataOperation);
+                                }
+                            }
+
+                            if (!containsVerifiedOrgan) {
+                                profileDataOperation.setPbOrganization(arrayListNewOrganization);
+                                editProfile(profileDataOperation, AppConstants.ORGANIZATION);
+                            }
+//                            profileDataOperation.setPbOrganization(arrayListNewOrganization);
+//                            editProfile(profileDataOperation, AppConstants.ORGANIZATION);
                         } else {
                             Utils.showErrorSnackBar(this, relativeRootEditProfile, getString(R
                                     .string.error_no_update));
@@ -2766,6 +2802,80 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
         }
 
+    }
+
+
+    public void showOrganizationPrivacyDialog(final Context mContext,
+                                              final ArrayList<ProfileDataOperationOrganization> organizationArrayList,
+                                              final ProfileDataOperation profileDataOperation) {
+        final Dialog dialog = new Dialog(mContext);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_rate_app);
+
+        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+        layoutParams.copyFrom(dialog.getWindow().getAttributes());
+        layoutParams.width = (int) (mContext.getResources().getDisplayMetrics().widthPixels * 0.90);
+        layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
+
+        TextView tvDialogTitle = (TextView) dialog.findViewById(R.id.tvDialogTitle);
+        TextView tvDialogBody = (TextView) dialog.findViewById(R.id.tvDialogBody);
+        RippleView rippleLeft = (RippleView) dialog.findViewById(R.id.rippleLeft);
+        RippleView rippleRight = (RippleView) dialog.findViewById(R.id.rippleRight);
+
+        Button btnLeft = (Button) dialog.findViewById(R.id.btnLeft);
+        Button btnRight = (Button) dialog.findViewById(R.id.btnRight);
+
+        tvDialogTitle.setTypeface(Utils.typefaceBold(mContext));
+        tvDialogBody.setTypeface(Utils.typefaceRegular(mContext));
+        btnLeft.setTypeface(Utils.typefaceRegular(mContext));
+        btnRight.setTypeface(Utils.typefaceRegular(mContext));
+
+        tvDialogTitle.setText(mContext.getResources().getString(R.string.str_profile_details_privacy));
+        tvDialogTitle.setTextColor(mContext.getResources().getColor(R.color.colorAccent));
+
+        tvDialogBody.setText(mContext.getResources().getString(R.string.str_organisation_privacy_body));
+        btnLeft.setText(mContext.getResources().getString(R.string.str_cancel));
+        btnRight.setText(mContext.getResources().getString(R.string.action_ok));
+
+        RippleView.OnRippleCompleteListener cancelListener = new RippleView
+                .OnRippleCompleteListener() {
+
+            @Override
+            public void onComplete(RippleView rippleView) {
+                switch (rippleView.getId()) {
+                    case R.id.rippleLeft:
+                        dialog.dismiss();
+                        for(int i=0; i<organizationArrayList.size(); i++){
+                            ProfileDataOperationOrganization organization =  organizationArrayList.get(i);
+                            if(organization.getIsVerify() == 1){
+                                organizationArrayList.remove(organization);
+                            }
+                        }
+                        arrayListOrganizationObject.clear();
+                        arrayListOrganizationObject.addAll(organizationArrayList);
+                        linearOrganizationDetails.removeAllViews();
+
+                        for (int i = 0; i < arrayListOrganizationObject.size(); i++) {
+                            addOrganizationView(i, arrayListOrganizationObject.get(i));
+                        }
+
+                        profileDataOperation.setPbOrganization(organizationArrayList);
+                        editProfile(profileDataOperation, AppConstants.ORGANIZATION);
+                        break;
+
+                    case R.id.rippleRight:
+                        dialog.dismiss();
+                        profileDataOperation.setPbOrganization(organizationArrayList);
+                        editProfile(profileDataOperation, AppConstants.ORGANIZATION);
+                        break;
+                }
+            }
+        };
+
+        rippleLeft.setOnRippleCompleteListener(cancelListener);
+        rippleRight.setOnRippleCompleteListener(cancelListener);
+        dialog.show();
     }
 
     @OnClick({R.id.button_name_cancel, R.id.button_phone_cancel, R.id.button_email_cancel, R.id
