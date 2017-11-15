@@ -457,6 +457,7 @@ public class ContactsFragment extends BaseFragment {
         tabContact.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
+                frameContainerCallTab.removeAllViews();
                 currentTabPosition = tab.getPosition();
                 setCurrentTabFragment(tab.getPosition());
             }

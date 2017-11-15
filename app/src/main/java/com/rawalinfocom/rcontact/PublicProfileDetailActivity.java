@@ -346,7 +346,8 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
     private void getIntentDetails(Intent intent) {
         if (intent != null) {
 
-            if (intent.hasExtra(AppConstants.PREF_USER_NUMBER)) {
+            if (intent.hasExtra(AppConstants.PREF_USER_NUMBER))
+            {
                 hasNumber = intent.getBooleanExtra(AppConstants.PREF_USER_NUMBER, false);
             }
 
@@ -733,14 +734,22 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                     if ((MoreObjects.firstNonNull(aadharDetails.getAadharPublic(), 3)) ==
                             IntegerConstants
                                     .PRIVACY_PRIVATE && aadharDetails.getAadharNumber() == 0) {
-                        buttonRequest.setVisibility(View.VISIBLE);
+                        if(hasNumber)
+                            buttonRequest.setVisibility(View.VISIBLE);
+                        else
+                            buttonRequest.setVisibility(View.GONE);
+
                         buttonPrivacy.setVisibility(View.GONE);
                     } else {
                         if ((MoreObjects.firstNonNull(aadharDetails.getAadharPublic(), 3)) !=
                                 IntegerConstants
                                         .PRIVACY_PRIVATE && aadharDetails.getAadharNumber()
                                 == 0) {
-                            buttonRequest.setVisibility(View.VISIBLE);
+                            if(hasNumber)
+                                buttonRequest.setVisibility(View.VISIBLE);
+                            else
+                                buttonRequest.setVisibility(View.GONE);
+
                             buttonPrivacy.setVisibility(View.GONE);
                         }
                     }
