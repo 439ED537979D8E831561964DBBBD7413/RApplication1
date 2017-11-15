@@ -121,6 +121,7 @@ public class EnterPriseOrganizationListActivity extends BaseActivity implements 
                     intent.putExtra("organizationName", searchBox.getText().toString().trim());
                     intent.putExtra("organizationType", "");
                     intent.putExtra("logo", "");
+                    intent.putExtra("isVerify", 0);
                     intent.putExtra("isBack", "0");
                     setResult(Activity.RESULT_OK, intent);
                     finish();//finishing activity
@@ -254,6 +255,7 @@ public class EnterPriseOrganizationListActivity extends BaseActivity implements 
                         intent.putExtra("organizationName", organizationName);
                         intent.putExtra("organizationType", organizationType);
                         intent.putExtra("logo", logo);
+                        intent.putExtra("isVerify", 1);
                         intent.putExtra("isBack", "0");
                         setResult(Activity.RESULT_OK, intent);
                         finish();//finishing activity
