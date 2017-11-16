@@ -733,7 +733,7 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                             IntegerConstants
                                     .PRIVACY_PRIVATE && aadharDetails.getAadharNumber() == 0) {
                         if(hasNumber)
-                            buttonRequest.setVisibility(View.VISIBLE);
+                            buttonRequest.setVisibility(View.GONE);
                         else
                             buttonRequest.setVisibility(View.GONE);
 
@@ -744,14 +744,13 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                                         .PRIVACY_PRIVATE && aadharDetails.getAadharNumber()
                                 == 0) {
                             if(hasNumber)
-                                buttonRequest.setVisibility(View.VISIBLE);
+                                buttonRequest.setVisibility(View.GONE);
                             else
                                 buttonRequest.setVisibility(View.GONE);
 
                             buttonPrivacy.setVisibility(View.GONE);
                         }
                     }
-
 
                     buttonRequest.setOnClickListener(new View.OnClickListener() {
                         @Override
