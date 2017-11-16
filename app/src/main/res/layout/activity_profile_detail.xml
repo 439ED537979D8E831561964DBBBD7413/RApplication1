@@ -652,7 +652,7 @@
                                         android:id="@+id/linear_aadhar_card"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:layout_below="@id/linear_address"
+                                        android:layout_below="@id/linear_social_contact"
                                         android:orientation="horizontal">
 
                                         <ImageView
@@ -737,7 +737,7 @@
                                         android:id="@+id/linear_social_contact"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:layout_below="@id/linear_aadhar_card"
+                                        android:layout_below="@id/linear_address"
                                         android:orientation="horizontal">
 
                                         <ImageView

@@ -97,6 +97,9 @@
     <string name="str_later">ASK ME LATER</string>
     <string name="str_like_this_application">LIKE THIS APPLICATION</string>
     <string name="str_rate_app_body">If you like our app, please take a moment to rate us!</string>
+    <string name="str_profile_details_privacy">PROFILE DETAILS PRIVACY</string>
+    <string name="str_organisation_privacy_body">Your profile details will be visible to the selected organisation from the organisation
+        list against privacy setting.</string>
 
 
     <!--<string name="str_designation">Designation</string>-->
@@ -446,6 +449,7 @@
     <string name="str_confirmed_your_request_for">confirmed your request to view %1$s</string>
 
     <!-- Profile -->
+    <string name="str_copy_aadhar_number">Copied Aadhar Number</string>
     <string name="str_copy_number">Copied Number</string>
     <string name="str_copy_email">Copied Email</string>
     <string name="str_copy_website">Copied Website</string>

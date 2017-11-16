@@ -108,7 +108,9 @@ public class TableAadharMaster {
 
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
-            aadharPublicId = profileDataOperationAadharNumber.getAadharPublic();
+            aadharPublicId =  cursor.getInt(cursor.getColumnIndex
+                   (COLUMN_AADHAR_PUBLIC));
+
             cursor.close();
         }
 

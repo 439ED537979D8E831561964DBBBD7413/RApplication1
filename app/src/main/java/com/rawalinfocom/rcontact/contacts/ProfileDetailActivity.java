@@ -3137,6 +3137,22 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 linearAadharCard.setVisibility(View.GONE);
             }
 
+
+            textAadharNumber.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(!textAadharNumber.getText().toString().contains("X")){
+                        Utils.copyToClipboard(ProfileDetailActivity.this,
+                                getResources().getString(R.string.str_copy_aadhar_number),
+                                textAadharNumber.getText().toString());
+                        Toast.makeText(rContactApplication, "Aadhar number copied.", Toast.LENGTH_SHORT).show();
+                        String url = "https://resident.uidai.gov.in/aadhaarverification";
+                        Intent i = new Intent(Intent.ACTION_VIEW);
+                        i.setData(Uri.parse(url));
+                        startActivity(i);
+                    }
+                }
+            });
             //</editor-fold>
 
             if ((!Utils.isArraylistNullOrEmpty(arrayListWebsite) || !Utils.isArraylistNullOrEmpty

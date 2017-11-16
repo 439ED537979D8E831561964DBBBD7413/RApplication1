@@ -2,9 +2,6 @@ package com.rawalinfocom.rcontact;
 
 import android.Manifest;
 import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,8 +9,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Point;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -22,6 +17,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,7 +26,6 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -41,18 +36,25 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.adapters.OrganizationListAdapter;
+import com.rawalinfocom.rcontact.adapters.ProfileDetailAdapter;
 import com.rawalinfocom.rcontact.adapters.PublicProfileDetailAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
+import com.rawalinfocom.rcontact.contacts.PrivacySettingPopupDialog;
 import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
+import com.rawalinfocom.rcontact.model.PrivacyDataItem;
+import com.rawalinfocom.rcontact.model.PrivacyEntityItem;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
+import com.rawalinfocom.rcontact.model.ProfileDataOperationAadharNumber;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEvent;
@@ -60,6 +62,7 @@ import com.rawalinfocom.rcontact.model.ProfileDataOperationImAccount;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationPhoneNumber;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationWebAddress;
+import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 
 import org.apache.commons.lang3.StringUtils;
@@ -153,7 +156,7 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
     RatingBar ratingUser;
     @BindView(R.id.relative_profile_percentage)
     RelativeLayout relativeProfilePercentage;
-     @BindView(R.id.linear_call_sms)
+    @BindView(R.id.linear_call_sms)
     LinearLayout linearCallSms;
    /*@BindView(R.id.relative_call_history)
     RelativeLayout relativeCallHistory;
@@ -173,6 +176,22 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
     FrameLayout frameContainer;
 
     ProfileDataOperation profileDataOperationVcard;
+    @BindView(R.id.image_aadhar_card)
+    ImageView imageAadharCard;
+    @BindView(R.id.text_label_aadhar_card)
+    TextView textLabelAadharCard;
+    @BindView(R.id.button_request)
+    AppCompatButton buttonRequest;
+    @BindView(R.id.button_privacy)
+    ImageView buttonPrivacy;
+    @BindView(R.id.text_aadhar_number)
+    TextView textAadharNumber;
+    @BindView(R.id.relative_aadhar_number)
+    RelativeLayout relativeAadharNumber;
+    @BindView(R.id.text_label_UIDAI_number)
+    TextView textLabelUIDAINumber;
+    @BindView(R.id.linear_aadhar_card)
+    LinearLayout linearAadharCard;
 
     private Animator mCurrentAnimator;
     private int mShortAnimationDuration;
@@ -323,10 +342,12 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
     public RelativeLayout getRootRelativeLayout() {
         return relativeRootProfileDetail;
     }
+
     private void getIntentDetails(Intent intent) {
         if (intent != null) {
 
-            if (intent.hasExtra(AppConstants.PREF_USER_NUMBER)) {
+            if (intent.hasExtra(AppConstants.PREF_USER_NUMBER))
+            {
                 hasNumber = intent.getBooleanExtra(AppConstants.PREF_USER_NUMBER, false);
             }
 
@@ -366,9 +387,7 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
             } else {
                 pmId = "-1";
             }
-
         }
-
     }
 
     private void layoutVisibility() {
@@ -702,6 +721,155 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                 rippleViewMore.setVisibility(View.GONE);
             }
 
+
+            // <editor-fold desc="Aadhar card details">
+            if (profileDetail != null) {
+                final ProfileDataOperationAadharNumber aadharDetails;
+                if (profileDetail.getPbAadhar() != null) {
+                    linearAadharCard.setVisibility(View.VISIBLE);
+                    aadharDetails = profileDetail.getPbAadhar();
+
+                    if ((MoreObjects.firstNonNull(aadharDetails.getAadharPublic(), 3)) ==
+                            IntegerConstants
+                                    .PRIVACY_PRIVATE && aadharDetails.getAadharNumber() == 0) {
+                        if(hasNumber)
+                            buttonRequest.setVisibility(View.VISIBLE);
+                        else
+                            buttonRequest.setVisibility(View.GONE);
+
+                        buttonPrivacy.setVisibility(View.GONE);
+                    } else {
+                        if ((MoreObjects.firstNonNull(aadharDetails.getAadharPublic(), 3)) !=
+                                IntegerConstants
+                                        .PRIVACY_PRIVATE && aadharDetails.getAadharNumber()
+                                == 0) {
+                            if(hasNumber)
+                                buttonRequest.setVisibility(View.VISIBLE);
+                            else
+                                buttonRequest.setVisibility(View.GONE);
+
+                            buttonPrivacy.setVisibility(View.GONE);
+                        }
+                    }
+
+
+                    buttonRequest.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            int pmTo = Integer.parseInt(pmId);
+                            // sendAccessRequest(int toPMId, String carFiledType, String
+                            // recordIndexId)
+                            sendAccessRequest(pmTo, "pb_aadhaar", String.valueOf(aadharDetails
+                                    .getAadharId()));
+                        }
+                    });
+
+                    textAadharNumber.setTypeface(Utils.typefaceRegular(this));
+                    if (aadharDetails.getAadharNumber() == 0) {
+                        textAadharNumber.setText("XXXX-XXXX-XXXX");
+                    } else
+                        textAadharNumber.setText(aadharDetails.getAadharNumber() + "");
+
+                    buttonPrivacy.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            PrivacySettingPopupDialog privacySettingPopupDialog = new
+                                    PrivacySettingPopupDialog(null, PublicProfileDetailActivity.this,
+                                    new PrivacySettingPopupDialog.DialogCallback() {
+                                        @Override
+                                        public void onSettingSaved(ProfileDetailAdapter
+                                                                           .ProfileDetailViewHolder view, int whichItem, int newPrivacy, int
+                                                                           itemPosition, int
+                                                                           oldPrivacy, String
+                                                                           cloudId) {
+
+                                            if (oldPrivacy == newPrivacy + 1) {
+                                                return;
+                                            }
+
+                                            WsRequestObject wsRequestObject = new WsRequestObject();
+
+                                            PrivacyEntityItem privacyEntityItem = new
+                                                    PrivacyEntityItem();
+                                            privacyEntityItem.setId(cloudId);
+                                            privacyEntityItem.setValue(newPrivacy + 1);
+                                            ArrayList<PrivacyEntityItem> privacyEntityItems = new
+                                                    ArrayList<>();
+                                            privacyEntityItems.add(privacyEntityItem);
+                                            ArrayList<PrivacyDataItem> privacyItems = new
+                                                    ArrayList<>();
+                                            PrivacyDataItem privacyDataItem = new PrivacyDataItem();
+                                            switch (whichItem) {
+                                                case AppConstants.AADHAR_NUMBER:
+                                                    privacyDataItem.setPbAadhaar
+                                                            (privacyEntityItems);
+                                                    break;
+                                            }
+                                            privacyItems.add(privacyDataItem);
+                                            wsRequestObject.setPrivacyData(privacyItems);
+//        wsRequestObject.setPmId(pmId);
+                                            if (Utils.isNetworkAvailable(PublicProfileDetailActivity
+                                                    .this)) {
+                                                new AsyncWebServiceCall(PublicProfileDetailActivity.this,
+                                                        WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                                                        wsRequestObject, null, WsResponseObject
+                                                        .class,
+                                                        WsConstants
+                                                                .REQ_SET_PRIVACY_SETTING,
+                                                        PublicProfileDetailActivity
+                                                                .this.getResources().getString(R
+                                                                .string
+                                                                .msg_please_wait), true)
+                                                        .executeOnExecutor
+                                                                (AsyncTask.THREAD_POOL_EXECUTOR,
+                                                                        BuildConfig.WS_ROOT +
+                                                                                WsConstants
+                                                                                        .REQ_SET_PRIVACY_SETTING);
+                                            } else {
+                                                //show no toast
+                                                Toast.makeText(PublicProfileDetailActivity.this,
+                                                        PublicProfileDetailActivity.this.getResources()
+                                                                .getString(R.string.msg_no_network),
+                                                        Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    }, AppConstants
+                                    .AADHAR_NUMBER,
+                                    0, aadharDetails.getAadharPublic(), aadharDetails.getAadharId
+                                    () + "");
+                            privacySettingPopupDialog.setDialogTitle(PublicProfileDetailActivity.this
+                                    .getResources().getString(R
+                                            .string.privacy_dialog_title));
+                            privacySettingPopupDialog.showDialog();
+                        }
+                    });
+
+                } else {
+                    linearAadharCard.setVisibility(View.GONE);
+                }
+            } else {
+                linearAadharCard.setVisibility(View.GONE);
+            }
+
+
+            textAadharNumber.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (!textAadharNumber.getText().toString().contains("X")) {
+                        Utils.copyToClipboard(PublicProfileDetailActivity.this,
+                                getResources().getString(R.string.str_copy_aadhar_number),
+                                textAadharNumber.getText().toString());
+                        Toast.makeText(rContactApplication, "Aadhar number copied.", Toast.LENGTH_SHORT).show();
+                        String url = "https://resident.uidai.gov.in/aadhaarverification";
+                        Intent i = new Intent(Intent.ACTION_VIEW);
+                        i.setData(Uri.parse(url));
+                        startActivity(i);
+                    }
+                }
+            });
+            //</editor-fold>
+
+
             // <editor-fold desc="Event">
 
             // From Cloud
@@ -738,8 +906,27 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
+    private void sendAccessRequest(int toPMId, String carFiledType, String recordIndexId) {
 
+        WsRequestObject requestObj = new WsRequestObject();
+        requestObj.setCarPmIdTo(toPMId);
+        requestObj.setCarFiledType(carFiledType);
+        requestObj.setCarStatus(0);
+        requestObj.setCarMongoDbRecordIndex(recordIndexId);
+
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    requestObj, null, WsResponseObject.class, WsConstants
+                    .REQ_PROFILE_PRIVACY_REQUEST, this.getResources().getString(R.string
+                    .msg_please_wait), true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                    BuildConfig.WS_ROOT + WsConstants.REQ_PROFILE_PRIVACY_REQUEST);
+        } else {
+            //show no net
+            Toast.makeText(this, this.getResources().getString(R.string.msg_no_network),
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void showAllOrganizations(ArrayList<ProfileDataOperationOrganization>
