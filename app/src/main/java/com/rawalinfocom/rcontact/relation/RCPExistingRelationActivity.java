@@ -27,6 +27,7 @@ import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.BuildConfig;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.adapters.OrganizationListAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncGetWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
@@ -154,9 +155,9 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
         activity = RCPExistingRelationActivity.this;
 
         ButterKnife.bind(this);
+        getIntentDetails(getIntent());
         initToolbar();
         init();
-        getIntentDetails(getIntent());
     }
 
     @Override
@@ -448,6 +449,10 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
     }
 
     private void showAllOrganizations() {
+
+        ArrayList<String> arrayListOrgName = new ArrayList<>();
+        ArrayList<String> arrayListOrgId = new ArrayList<>();
+
         final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_all_organization);
@@ -492,13 +497,7 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
                 .recycler_view_dialog_list);
         recyclerViewDialogList.setLayoutManager(new LinearLayoutManager(this));
 
-        OrganizationRelationListAdapter adapter = new OrganizationRelationListAdapter(this, arrayListOrganization,
-                null, null, new OrganizationRelationListAdapter.OnClickListener() {
-            @Override
-            public void onClick(String orgId, String orgName) {
-            }
-        }, "");
-
+        OrganizationListAdapter adapter = new OrganizationListAdapter(this, arrayListOrganization);
         recyclerViewDialogList.setAdapter(adapter);
 
         dialog.show();
