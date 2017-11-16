@@ -2452,7 +2452,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         editProfile(profileDataOperation, AppConstants.ORGANIZATION);*/
                     boolean containsVerifiedOrgan = false;
                     if (arrayListNewOrganization.size() > 0) {
-                        for (int i = 0; i < arrayListNewOrganization.size(); i++) {
+                        /*for (int i = 0; i < arrayListNewOrganization.size(); i++) {
                             ProfileDataOperationOrganization organization = arrayListNewOrganization.get(i);
                             if (organization.getIsVerify() == 1) {
                                 //Show popup
@@ -2461,7 +2461,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                         arrayListNewOrganization, profileDataOperation);
                                 break;
                             }
-                        }
+                        }*/
 
                         if (!containsVerifiedOrgan) {
 
@@ -2480,7 +2480,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     } else {
                         containsVerifiedOrgan = false;
                         if (arrayListOrganizationObject.size() > 0) {
-                            for (int i = 0; i < arrayListOrganizationObject.size(); i++) {
+                            /*for (int i = 0; i < arrayListOrganizationObject.size(); i++) {
                                 ProfileDataOperationOrganization organization = (ProfileDataOperationOrganization) arrayListOrganizationObject.get(i);
                                 if (organization.getIsVerify() == 1) {
                                     //Show popup
@@ -2488,7 +2488,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                     showOrganizationPrivacyDialog(EditProfileActivity.this,
                                             arrayListNewOrganization, profileDataOperation);
                                 }
-                            }
+                            }*/
 
                             if (!containsVerifiedOrgan) {
                                 profileDataOperation.setPbOrganization(arrayListNewOrganization);
