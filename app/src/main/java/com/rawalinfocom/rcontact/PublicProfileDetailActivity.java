@@ -720,7 +720,6 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                 rippleViewMore.setVisibility(View.GONE);
             }
 
-
             // <editor-fold desc="Aadhar card details">
             if (profileDetail != null) {
                 final ProfileDataOperationAadharNumber aadharDetails;
