@@ -121,9 +121,13 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
         textNoRelation.setVisibility(View.GONE);
         recycleViewRelation.setVisibility(View.VISIBLE);
 
-        if (Utils.getBooleanPreference(ExistingRelationActivity.this,
-                AppConstants.PREF_GET_RELATION, true)) {
-            getAllExistingRelation();
+        if (Utils.isNetworkAvailable(this)) {
+            if (Utils.getBooleanPreference(ExistingRelationActivity.this,
+                    AppConstants.PREF_GET_RELATION, true)) {
+                getAllExistingRelation();
+            } else {
+                getExistingRelationData();
+            }
         } else {
             getExistingRelationData();
         }

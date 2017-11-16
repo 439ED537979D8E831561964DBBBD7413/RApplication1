@@ -1181,21 +1181,21 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     @Override
     public void onBackPressed() {
 //        if (!Utils.getBooleanPreference(this, AppConstants.PREF_SHOW_WALK_THROUGH, true)) {
-            if (isRatingUpdate) {
+        if (isRatingUpdate) {
 
-                Intent localBroadcastIntent1 = new Intent(AppConstants
-                        .ACTION_LOCAL_BROADCAST_RATING_UPDATE);
-                localBroadcastIntent1.putExtra(AppConstants.EXTRA_RCONTACT_POSITION, getIntent()
-                        .getIntExtra(AppConstants.EXTRA_RCONTACT_POSITION, 0));
-                localBroadcastIntent1.putExtra(AppConstants.EXTRA_RATING_UPDATE, isRatingUpdate);
-                LocalBroadcastManager.getInstance(ProfileDetailActivity.this).sendBroadcast
-                        (localBroadcastIntent1);
-            }
+            Intent localBroadcastIntent1 = new Intent(AppConstants
+                    .ACTION_LOCAL_BROADCAST_RATING_UPDATE);
+            localBroadcastIntent1.putExtra(AppConstants.EXTRA_RCONTACT_POSITION, getIntent()
+                    .getIntExtra(AppConstants.EXTRA_RCONTACT_POSITION, 0));
+            localBroadcastIntent1.putExtra(AppConstants.EXTRA_RATING_UPDATE, isRatingUpdate);
+            LocalBroadcastManager.getInstance(ProfileDetailActivity.this).sendBroadcast
+                    (localBroadcastIntent1);
+        }
 
-            Intent backIntent = getIntent();
-            setResult(RESULT_OK, backIntent);
-            finish();
-            overridePendingTransition(R.anim.pop_enter, R.anim.pop_exit);
+        Intent backIntent = getIntent();
+        setResult(RESULT_OK, backIntent);
+        finish();
+        overridePendingTransition(R.anim.pop_enter, R.anim.pop_exit);
 //        }
     }
 
@@ -2482,6 +2482,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         organizationOperation.setOrgJobTitle(contactOrganizationCursor.getString
                                 (contactOrganizationCursor.getColumnIndex(ContactsContract
                                         .CommonDataKinds.Organization.TITLE)));
+                        organization.setIsVerify(0);
 
                         if (!arrayListOrganization.contains(organization)) {
                             arrayListPhoneBookOrganization.add(organization);
@@ -2531,17 +2532,21 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 if (MoreObjects.firstNonNull(tempOrganization.get(0).getIsVerify(), 0) ==
                         IntegerConstants.RCP_TYPE_PRIMARY) {
 
-                    String s = Utils.setMultipleTypeface(ProfileDetailActivity.this,
-                            tempOrganization.get(0).getOrgName() + " <font color" + "='#00796B'>" +
-                                    getString(R.string.im_icon_verify) + "</font>", 0,
-                            (StringUtils.length(tempOrganization.get(0).getOrgName()) + 1),
-                            ((StringUtils.length(tempOrganization.get(0).getOrgName()) + 1) + 1))
-                            .toString();
+//                    String s = Utils.setMultipleTypeface(ProfileDetailActivity.this,
+//                            tempOrganization.get(0).getOrgName() + " <font color" + "='#00796B'>" +
+//                                    getString(R.string.im_icon_verify) + "</font>", 0,
+//                            (StringUtils.length(tempOrganization.get(0).getOrgName()) + 1),
+//                            ((StringUtils.length(tempOrganization.get(0).getOrgName()) + 1) + 1))
+//                            .toString();
 
-                    textOrganization.setText(Html.fromHtml(s));
+                    textOrganization.setText(tempOrganization.get(0).getOrgName());
+                    textOrganization.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+                            R.drawable.ico_double_tick_green_svg, 0);
 
                 } else {
                     textOrganization.setText(tempOrganization.get(0).getOrgName());
+                    textOrganization.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+                            R.drawable.ico_relation_single_tick_green_svg, 0);
                 }
 
                 textDesignation.setText(tempOrganization.get(0).getOrgJobTitle());

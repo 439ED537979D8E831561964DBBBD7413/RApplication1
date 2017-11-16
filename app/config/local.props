@@ -1,5 +1,5 @@
-WS_ROOT = "http://10.0.21.122/api/v1/"
-WS_ROOT_V2 = "http://10.0.21.122/api/v2/"
+WS_ROOT = "http://10.0.51.119/api/v1/"
+WS_ROOT_V2 = "http://10.0.51.119/api/v2/"
 URL_TERMS_CONDITIONS = "http://webqa.rcontacts.in/global/terms"
 URL_FAQ = "http://webqa.rcontacts.in/global/faqs"
 WS_PROFILE_VIEW_ROOT = "http://webqa.rcontacts.in/global/public/"
