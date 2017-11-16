@@ -387,9 +387,7 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
             } else {
                 pmId = "-1";
             }
-
         }
-
     }
 
     private void layoutVisibility() {
