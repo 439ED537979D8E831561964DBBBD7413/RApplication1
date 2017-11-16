@@ -339,7 +339,9 @@ public class TableOrganizationMaster {
                 COLUMN_OM_ORGANIZATION_PRIVACY + ", " +
                 COLUMN_RC_PROFILE_MASTER_PM_ID + " FROM " +
                 TABLE_RC_ORGANIZATION_MASTER + " WHERE " +
-                COLUMN_RC_PROFILE_MASTER_PM_ID + " = " + pmId;
+                COLUMN_RC_PROFILE_MASTER_PM_ID + " = " + pmId + " ORDER BY " +
+                TableOrganizationMaster.COLUMN_OM_ORGANIZATION_IS_CURRENT + " DESC, date(" +
+                TableOrganizationMaster.COLUMN_OM_ORGANIZATION_FROM_DATE + ") DESC";
 
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);

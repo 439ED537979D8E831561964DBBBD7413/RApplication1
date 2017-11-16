@@ -124,6 +124,7 @@ public class WsRequestObject {
     private ProfileDataOperation contactData;
 
     private ArrayList<String> arrayListScreenShot;
+    private ArrayList<String> relationIds;
 
     private ArrayList<String> arrayListContactNumber;
     private ArrayList<String> arrayListEmailAddress;
@@ -550,6 +551,15 @@ public class WsRequestObject {
 
     public void setArrayListScreenShot(ArrayList<String> arrayListScreenShot) {
         this.arrayListScreenShot = arrayListScreenShot;
+    }
+
+    @JsonProperty("relation_ids")
+    public ArrayList<String> getRelationIds() {
+        return relationIds;
+    }
+
+    public void setRelationIds(ArrayList<String> relationIds) {
+        this.relationIds = relationIds;
     }
 
     @JsonProperty("email_address")

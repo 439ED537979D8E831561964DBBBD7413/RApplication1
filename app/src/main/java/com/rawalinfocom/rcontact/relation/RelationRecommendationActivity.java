@@ -1,10 +1,12 @@
 package com.rawalinfocom.rcontact.relation;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -13,12 +15,23 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.BaseActivity;
+import com.rawalinfocom.rcontact.BuildConfig;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.asynctasks.AsyncGetWebServiceCall;
+import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
+import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.constants.WsConstants;
+import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.IndividualRelationType;
 import com.rawalinfocom.rcontact.model.RelationRecommendationType;
+import com.rawalinfocom.rcontact.model.RelationRequest;
+import com.rawalinfocom.rcontact.model.WsRequestObject;
+import com.rawalinfocom.rcontact.model.WsResponseObject;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 
@@ -55,20 +68,94 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
     ImageView imgClose;
     @BindView(R.id.relative_back)
     LinearLayout relativeBack;
+    @BindView(R.id.relative_root_recommendation_relation)
+    RelativeLayout relativeRootRecommendationRelation;
 
     private RelationRecommendationListAdapter listAdapter;
+    private ArrayList<RelationRecommendationType> recommendationRelationList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_relation_recommendation);
         ButterKnife.bind(this);
+        initToolBar();
         init();
     }
 
     @Override
     public void onDeliveryResponse(String serviceType, Object data, Exception error) {
 
+        if (error == null) {
+
+            //<editor-fold desc="REQ_GET_RELATION">
+            if (serviceType.contains(WsConstants.REQ_GET_RELATION)) {
+                WsResponseObject sendRelationRequestObject = (WsResponseObject) data;
+                Utils.hideProgressDialog();
+                if (sendRelationRequestObject != null && StringUtils.equalsIgnoreCase
+                        (sendRelationRequestObject.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+
+                    ArrayList<RelationRequest> allExistingRelationList = sendRelationRequestObject.
+                            getAllExistingRelationList();
+
+//                    Utils.showSuccessSnackBar(activity, relativeRootRecommendationRelation,
+//                            "New Relation Added Successfully!!!");
+//                    storeProfileDataToDb(allExistingRelationList);
+//                    getExistingRelationData();
+
+                    Utils.setBooleanPreference(RelationRecommendationActivity.this,
+                            AppConstants.PREF_GET_RELATION, false);
+
+                } else {
+                    if (sendRelationRequestObject != null) {
+                        Log.e("error response", sendRelationRequestObject.getMessage());
+                        Utils.showErrorSnackBar(this, relativeRootRecommendationRelation,
+                                sendRelationRequestObject.getMessage());
+                    } else {
+                        Log.e("onDeliveryResponse: ", "sendRelationRequestResponse null");
+                        Utils.showErrorSnackBar(this, relativeRootRecommendationRelation, getString(R
+                                .string.msg_try_later));
+                    }
+                }
+            }
+            //</editor-fold>
+
+            //<editor-fold desc="REQ_DELETE_RELATION">
+            if (serviceType.contains(WsConstants.REQ_DELETE_RELATION)) {
+                WsResponseObject deleteRelationObject = (WsResponseObject) data;
+                Utils.hideProgressDialog();
+                if (deleteRelationObject != null && StringUtils.equalsIgnoreCase
+                        (deleteRelationObject.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+
+                    Utils.showSuccessSnackBar(RelationRecommendationActivity.this,
+                            relativeRootRecommendationRelation, deleteRelationObject.getMessage());
+
+//                    tableRelationMappingMaster.deleteRelationMapping(deletePmId);
+//                    deletePmId = "";
+
+//                    existingRelationList.remove(deleteRelationPosition);
+//                    listAdapter.notifyDataSetChanged();
+
+//                    deleteRelationPosition = -1;
+
+                } else {
+                    if (deleteRelationObject != null) {
+                        Log.e("error response", deleteRelationObject.getMessage());
+                        Utils.showErrorSnackBar(this, relativeRootRecommendationRelation,
+                                deleteRelationObject.getMessage());
+                    } else {
+                        Log.e("onDeliveryResponse: ", "deleteRelationResponse null");
+                        Utils.showErrorSnackBar(this, relativeRootRecommendationRelation, getString(R
+                                .string.msg_try_later));
+                    }
+                }
+            }
+            //</editor-fold>
+
+        } else {
+            Utils.showErrorSnackBar(this, relativeRootRecommendationRelation, "" + error
+                    .getLocalizedMessage());
+        }
     }
 
     @Override
@@ -87,18 +174,12 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
         }
     }
 
-    private void init() {
-        initToolBar();
-        makeTempDataAndSetAdapter();
-    }
-
     private void initToolBar() {
+
         rippleActionBack.setOnRippleCompleteListener(this);
         rippleActionSearch.setOnRippleCompleteListener(this);
         textToolbarTitle.setTypeface(Utils.typefaceSemiBold(this));
         textToolbarTitle.setText(R.string.toolbar_title);
-
-        inputSearch.setTypeface(Utils.typefaceRegular(this));
 
         imageBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -134,9 +215,24 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
         });
     }
 
-    private void makeTempDataAndSetAdapter() {
+    private void init() {
 
-        ArrayList<RelationRecommendationType> recommendationRelationList = new ArrayList<>();
+        recycleViewRelation.setLayoutManager(new LinearLayoutManager(this));
+
+        recommendationRelationList = new ArrayList<>();
+
+        if (Utils.isNetworkAvailable(this)) {
+            getRelationRecommendation();
+        } else {
+            getRelationRecommendationData();
+        }
+    }
+
+    private void getRelationRecommendationData() {
+
+    }
+
+    private void makeTempDataAndSetAdapter() {
 
         for (int i = 0; i < 5; i++) {
             RelationRecommendationType relationRecommendationType = new RelationRecommendationType();
@@ -226,7 +322,6 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
                 individualRelationType.setIsFriendRelation(true);
 
                 arrayList.add(individualRelationType);
-
 //                individualRelationType = new IndividualRelationType();
 //                individualRelationType.setRelationName("");
 //                individualRelationType.setOrganizationName("");
@@ -276,8 +371,20 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
 
         if (recommendationRelationList.size() > 0) {
             listAdapter = new RelationRecommendationListAdapter(this, recommendationRelationList);
-            recycleViewRelation.setLayoutManager(new LinearLayoutManager(this));
             recycleViewRelation.setAdapter(listAdapter);
+        }
+    }
+
+    private void getRelationRecommendation() {
+
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncGetWebServiceCall(this, WsResponseObject.class, WsConstants
+                    .REQ_GET_RELATION, getResources().getString(R.string.msg_please_wait))
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT +
+                            WsConstants.REQ_GET_RELATION + "?startAt=0&status=1");
+        } else {
+            Utils.showErrorSnackBar(this, relativeRootRecommendationRelation, getResources()
+                    .getString(R.string.msg_no_network));
         }
     }
 }

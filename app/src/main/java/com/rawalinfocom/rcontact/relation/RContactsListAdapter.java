@@ -99,6 +99,8 @@ public class RContactsListAdapter extends RecyclerView.Adapter<RContactsListAdap
             @Override
             public void onClick(View view) {
 
+                Utils.hideKeyBoard(activity);
+
                 int pos = (int) view.getTag();
                 TextView textName = view.findViewById(R.id.text_contact_name);
 

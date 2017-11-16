@@ -82,9 +82,17 @@
                                 android:id="@+id/text_organization"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:drawablePadding="@dimen/margin_5dp"
+                                android:gravity="center|start"
                                 android:singleLine="true"
                                 android:textColor="@color/colorAccent"
                                 tools:text="Blazze Apps" />
+
+                            <TextView
+                                android:id="@+id/text_time"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="@dimen/text_size_12sp" />
 
                             <TextView
                                 android:id="@+id/text_view_all_organization"

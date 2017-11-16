@@ -751,7 +751,6 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                         }
                     }
 
-
                     buttonRequest.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {

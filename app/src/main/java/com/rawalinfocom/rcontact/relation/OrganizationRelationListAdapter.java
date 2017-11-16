@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.model.IndividualRelationType;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
 
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ public class OrganizationRelationListAdapter extends RecyclerView.Adapter<Organi
 
     private Context context;
     private ArrayList<ProfileDataOperationOrganization> arrayListOrganization;
+    private ArrayList<String> arrayListOrgName, arrayListOrgId;
     private String businessRelationName;
 
     private OnClickListener clickListener;
@@ -35,10 +37,13 @@ public class OrganizationRelationListAdapter extends RecyclerView.Adapter<Organi
     }
 
     public OrganizationRelationListAdapter(Context context, ArrayList<ProfileDataOperationOrganization>
-            arrayListOrganization, OnClickListener clickListener, String businessRelationName) {
+            arrayListOrganization, ArrayList<String> arrayListOrgName, ArrayList<String> arrayListOrgId,
+                                           OnClickListener clickListener, String businessRelationName) {
         this.context = context;
         this.clickListener = clickListener;
         this.arrayListOrganization = arrayListOrganization;
+        this.arrayListOrgId = arrayListOrgId;
+        this.arrayListOrgName = arrayListOrgName;
     }
 
     @Override
@@ -56,10 +61,21 @@ public class OrganizationRelationListAdapter extends RecyclerView.Adapter<Organi
         holder.textMain.setText(organization.getOrgName());
         holder.checkbox.setChecked(position == (AddNewRelationActivity.orgPosition));
 
-        if (organization.getIsInUse().equalsIgnoreCase("1")) {
-            holder.textMain.setEnabled(false);
-            holder.checkbox.setVisibility(View.GONE);
+        if (arrayListOrgName.size() > 0) {
+            if (arrayListOrgName.contains(organization.getOrgName())
+                    && arrayListOrgId.contains(organization.getOrgEntId())) {
+                holder.textMain.setEnabled(false);
+                holder.checkbox.setVisibility(View.GONE);
+            } else {
+                holder.textMain.setEnabled(true);
+                holder.checkbox.setVisibility(View.VISIBLE);
+            }
         }
+
+//        if (organization.getIsInUse().equalsIgnoreCase("1")) {
+//            holder.textMain.setEnabled(false);
+//            holder.checkbox.setVisibility(View.GONE);
+//        }
 
         if (position == (AddNewRelationActivity.orgPosition)) {
             if (clickListener != null) {

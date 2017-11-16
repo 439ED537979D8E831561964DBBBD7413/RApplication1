@@ -391,8 +391,6 @@ public class ContactsFragment extends BaseFragment {
                     textDescription.setText("Click to view your profile");
                     ((MainActivity) getActivity()).textTapContinue.setText("TAP ANYWHERE ON YOUR " +
                             "DETAILS");
-
-
                 }
             }
         });
@@ -437,11 +435,12 @@ public class ContactsFragment extends BaseFragment {
     }
 
     private void replaceFragment(Fragment fragment, String tag) {
+
         FragmentManager fm = getChildFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.frame_container_call_tab, fragment, tag);
-        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        ft.commitAllowingStateLoss();
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+        ft.commit();
     }
 
     private void setupTabLayout() {
