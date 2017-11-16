@@ -18,17 +18,19 @@ import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.BuildConfig;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.asynctasks.AsyncGetWebServiceCall;
-import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
-import com.rawalinfocom.rcontact.enumerations.WSRequestType;
+import com.rawalinfocom.rcontact.database.TableOrganizationMaster;
+import com.rawalinfocom.rcontact.database.TableRelationMaster;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
+import com.rawalinfocom.rcontact.model.ExistingRelationRequest;
 import com.rawalinfocom.rcontact.model.IndividualRelationType;
 import com.rawalinfocom.rcontact.model.RelationRecommendationType;
 import com.rawalinfocom.rcontact.model.RelationRequest;
-import com.rawalinfocom.rcontact.model.WsRequestObject;
+import com.rawalinfocom.rcontact.model.RelationRequestResponse;
+import com.rawalinfocom.rcontact.model.RelationUserProfile;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 
 import org.apache.commons.lang3.StringUtils;
@@ -55,8 +57,8 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
     LinearLayout linearActionRight;
     @BindView(R.id.relative_action_back)
     RelativeLayout relativeActionBack;
-    @BindView(R.id.no_record_to_display)
-    TextView noRecordToDisplay;
+    @BindView(R.id.text_no_relation)
+    TextView textNoRelation;
     @BindView(R.id.recycle_view_relation)
     RecyclerView recycleViewRelation;
 
@@ -95,8 +97,16 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
                 if (sendRelationRequestObject != null && StringUtils.equalsIgnoreCase
                         (sendRelationRequestObject.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                    ArrayList<RelationRequest> allExistingRelationList = sendRelationRequestObject.
-                            getAllExistingRelationList();
+                    ArrayList<ExistingRelationRequest> allExistingRelationList =
+                            sendRelationRequestObject.getAllExistingRelationList();
+
+                    if (allExistingRelationList.size() > 0) {
+                        getData(allExistingRelationList);
+                        getRelationRecommendationData();
+                    } else {
+                        textNoRelation.setVisibility(View.VISIBLE);
+                        recycleViewRelation.setVisibility(View.GONE);
+                    }
 
 //                    Utils.showSuccessSnackBar(activity, relativeRootRecommendationRelation,
 //                            "New Relation Added Successfully!!!");
@@ -184,9 +194,11 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
         imageBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                inputSearch.getText().clear();
                 relativeBack.setVisibility(View.GONE);
                 relativeActionBack.setVisibility(View.VISIBLE);
-                listAdapter.getFilter().filter("");
+                if (listAdapter != null)
+                    listAdapter.getFilter().filter("");
             }
         });
 
@@ -198,7 +210,8 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                listAdapter.getFilter().filter(charSequence.toString());
+                if (listAdapter != null)
+                    listAdapter.getFilter().filter(charSequence.toString());
             }
 
             @Override
@@ -210,7 +223,11 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
         imgClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                listAdapter.getFilter().filter("");
+                inputSearch.getText().clear();
+                relativeBack.setVisibility(View.GONE);
+                relativeActionBack.setVisibility(View.VISIBLE);
+                if (listAdapter != null)
+                    listAdapter.getFilter().filter("");
             }
         });
     }
@@ -230,148 +247,120 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
 
     private void getRelationRecommendationData() {
 
-    }
-
-    private void makeTempDataAndSetAdapter() {
-
-        for (int i = 0; i < 5; i++) {
-            RelationRecommendationType relationRecommendationType = new RelationRecommendationType();
-
-            ArrayList<IndividualRelationType> arrayList = new ArrayList<>();
-
-            IndividualRelationType individualRelationType;
-
-            if (i == 0) {
-
-                relationRecommendationType.setFirstName("Aniruddh");
-                relationRecommendationType.setLastName("Pal");
-                relationRecommendationType.setNumber("+91 886638723");
-                relationRecommendationType.setDateAndTime("02 Oct, 17");
-
-                // All
-                individualRelationType = new IndividualRelationType();
-                individualRelationType.setRelationName("Co-worker");
-                individualRelationType.setOrganizationName("Hungama");
-                individualRelationType.setFamilyName("");
-                individualRelationType.setIsFriendRelation(false);
-
-                arrayList.add(individualRelationType);
-
-                individualRelationType = new IndividualRelationType();
-                individualRelationType.setRelationName("Co-worker");
-                individualRelationType.setOrganizationName("RawalInfocom");
-                individualRelationType.setFamilyName("");
-                individualRelationType.setIsFriendRelation(false);
-
-                arrayList.add(individualRelationType);
-
-                individualRelationType = new IndividualRelationType();
-                individualRelationType.setRelationName("");
-                individualRelationType.setOrganizationName("");
-                individualRelationType.setFamilyName("Brother");
-                individualRelationType.setIsFriendRelation(true);
-
-                arrayList.add(individualRelationType);
-
-//                individualRelationType = new IndividualRelationType();
-//                individualRelationType.setRelationName("");
-//                individualRelationType.setOrganizationName("");
-//                individualRelationType.setFamilyName("");
-//                individualRelationType.setIsFriendRelation(true);
-//
-//                arrayList.add(individualRelationType);
-            }
-
-            if (i == 1) {
-
-                relationRecommendationType.setFirstName("Darshan");
-                relationRecommendationType.setLastName("Gajera");
-                relationRecommendationType.setNumber("+91 9712978901");
-                relationRecommendationType.setDateAndTime("05 Oct, 17");
-
-                // Business and Family
-                individualRelationType = new IndividualRelationType();
-                individualRelationType.setRelationName("Co-worker");
-                individualRelationType.setOrganizationName("RawalInfocom");
-                individualRelationType.setFamilyName("");
-                individualRelationType.setIsFriendRelation(false);
-
-                arrayList.add(individualRelationType);
-
-                individualRelationType = new IndividualRelationType();
-                individualRelationType.setRelationName("");
-                individualRelationType.setOrganizationName("");
-                individualRelationType.setFamilyName("Brother");
-                individualRelationType.setIsFriendRelation(false);
-
-                arrayList.add(individualRelationType);
-            }
-
-            if (i == 2) {
-
-                relationRecommendationType.setFirstName("Manish");
-                relationRecommendationType.setLastName("Bhikadiya");
-                relationRecommendationType.setNumber("+91 9123457859");
-                relationRecommendationType.setDateAndTime("07 Oct, 17");
-
-                // Family and Friend
-                individualRelationType = new IndividualRelationType();
-                individualRelationType.setRelationName("");
-                individualRelationType.setOrganizationName("");
-                individualRelationType.setFamilyName("Uncle");
-                individualRelationType.setIsFriendRelation(true);
-
-                arrayList.add(individualRelationType);
-//                individualRelationType = new IndividualRelationType();
-//                individualRelationType.setRelationName("");
-//                individualRelationType.setOrganizationName("");
-//                individualRelationType.setFamilyName("");
-//                individualRelationType.setIsFriendRelation(true);
-//
-//                arrayList.add(individualRelationType);
-            }
-
-            if (i == 3) {
-
-                relationRecommendationType.setFirstName("Viraj");
-                relationRecommendationType.setLastName("Kakadiya");
-                relationRecommendationType.setNumber("+91 9879879870");
-                relationRecommendationType.setDateAndTime("07 Oct, 17");
-
-                // Friend
-                individualRelationType = new IndividualRelationType();
-                individualRelationType.setRelationName("");
-                individualRelationType.setOrganizationName("");
-                individualRelationType.setFamilyName("");
-                individualRelationType.setIsFriendRelation(true);
-
-                arrayList.add(individualRelationType);
-            }
-
-            if (i == 4) {
-
-                relationRecommendationType.setFirstName("Ashish");
-                relationRecommendationType.setLastName("Dungrani");
-                relationRecommendationType.setNumber("+91 9876549871");
-                relationRecommendationType.setDateAndTime("07 Oct, 17");
-
-                // Family
-                individualRelationType = new IndividualRelationType();
-                individualRelationType.setRelationName("");
-                individualRelationType.setOrganizationName("");
-                individualRelationType.setFamilyName("Father");
-                individualRelationType.setIsFriendRelation(false);
-
-                arrayList.add(individualRelationType);
-            }
-
-            relationRecommendationType.setIndividualRelationTypeList(arrayList);
-            recommendationRelationList.add(relationRecommendationType);
-        }
+        textNoRelation.setVisibility(View.GONE);
+        recycleViewRelation.setVisibility(View.VISIBLE);
 
         if (recommendationRelationList.size() > 0) {
             listAdapter = new RelationRecommendationListAdapter(this, recommendationRelationList);
             recycleViewRelation.setAdapter(listAdapter);
+        } else {
+            textNoRelation.setVisibility(View.VISIBLE);
+            recycleViewRelation.setVisibility(View.GONE);
+        }
+    }
+
+
+    private void getData(ArrayList<ExistingRelationRequest> allExistingRelationList) {
+
+        for (int i = 0; i < allExistingRelationList.size(); i++) {
+
+            ExistingRelationRequest existingRelationRequest = allExistingRelationList.get(i);
+
+            RelationUserProfile relationUserProfile = existingRelationRequest.getRelationUserProfile();
+
+            RelationRecommendationType recommendationType = new RelationRecommendationType();
+            recommendationType.setFirstName(relationUserProfile.getPmFirstName());
+            recommendationType.setLastName(relationUserProfile.getPmLastName());
+            recommendationType.setNumber(relationUserProfile.getMobileNumber());
+            recommendationType.setPmId(String.valueOf(allExistingRelationList.get(i).getRrmToPmId()));
+            recommendationType.setDateAndTime("");
+            recommendationType.setProfileImage("");
+
+            ArrayList<IndividualRelationType> relationRecommendations = new ArrayList<>();
+
+            ArrayList<RelationRequest> familyRecommendation = existingRelationRequest
+                    .getFamilyRelationList();
+
+            if (!Utils.isArraylistNullOrEmpty(familyRecommendation)) {
+
+                for (int j = 0; j < familyRecommendation.size(); j++) {
+
+//                    RelationRequest relationRequest = new RelationRequest();
+                    IndividualRelationType individualRelationType = new IndividualRelationType();
+
+                    individualRelationType.setRelationId(String.valueOf(familyRecommendation.get(j).
+                            getRcRelationMasterId()));
+                    individualRelationType.setRelationName("");
+                    individualRelationType.setOrganizationName("");
+                    individualRelationType.setFamilyName(familyRecommendation.get(j).getRelationMaster()
+                            .getRmParticular());
+                    individualRelationType.setOrganizationId("");
+                    individualRelationType.setIsFriendRelation(true);
+                    individualRelationType.setIsVerify("1");
+
+                    relationRecommendations.add(individualRelationType);
+                }
+            }
+
+            ArrayList<RelationRequest> friendRecommendation = existingRelationRequest
+                    .getFriendRelationList();
+
+            if (!Utils.isArraylistNullOrEmpty(friendRecommendation)) {
+
+                for (int j = 0; j < friendRecommendation.size(); j++) {
+
+//                    RelationRequest relationRequest = new RelationRequest();
+                    IndividualRelationType individualRelationType = new IndividualRelationType();
+
+                    individualRelationType.setRelationId(String.valueOf(friendRecommendation.get(j).
+                            getRcRelationMasterId()));
+                    individualRelationType.setRelationName("");
+                    individualRelationType.setOrganizationName("");
+                    individualRelationType.setFamilyName(friendRecommendation.get(j).getRelationMaster()
+                            .getRmParticular());
+                    individualRelationType.setOrganizationId("");
+                    individualRelationType.setIsFriendRelation(false);
+                    individualRelationType.setIsVerify("1");
+
+                    relationRecommendations.add(individualRelationType);
+                }
+            }
+
+            ArrayList<RelationRequest> businessRecommendation = existingRelationRequest
+                    .getBusinessRelationList();
+
+            if (!Utils.isArraylistNullOrEmpty(businessRecommendation)) {
+
+                for (int j = 0; j < businessRecommendation.size(); j++) {
+
+//                    RelationRequest relationRequest = new RelationRequest();
+                    IndividualRelationType individualRelationType = new IndividualRelationType();
+
+                    individualRelationType.setRelationName("");
+                    individualRelationType.setOrganizationName("");
+                    individualRelationType.setFamilyName(friendRecommendation.get(j).getRelationMaster()
+                            .getRmParticular());
+                    individualRelationType.setOrganizationId("");
+                    individualRelationType.setIsFriendRelation(false);
+                    individualRelationType.setIsVerify("1");
+
+                    individualRelationType.setRelationId(String.valueOf(friendRecommendation.get(j).
+                            getRcRelationMasterId()));
+                    individualRelationType.setRelationName(friendRecommendation.get(j).getRelationMaster()
+                            .getRmParticular());
+                    individualRelationType.setOrganizationName(friendRecommendation.get(j).getOrganization()
+                            .getRmParticular());
+                    individualRelationType.setFamilyName("");
+                    individualRelationType.setOrganizationId(String.valueOf(friendRecommendation.get(j).getRcOrgId()));
+                    individualRelationType.setIsFriendRelation(false);
+                    individualRelationType.setIsVerify("1");
+
+                    relationRecommendations.add(individualRelationType);
+                }
+            }
+
+            recommendationType.setIndividualRelationTypeList(relationRecommendations);
+            recommendationRelationList.add(recommendationType);
         }
     }
 

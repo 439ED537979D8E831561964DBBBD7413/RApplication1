@@ -60,8 +60,8 @@ class RelationRecommendationListAdapter extends RecyclerView.Adapter<RecyclerVie
         ArrayList<IndividualRelationType> list = relationRecommendationType.getIndividualRelationTypeList();
         if (list.size() > 0) {
 
-            IndividualRelationRecommendationListAdapter adapter = new IndividualRelationRecommendationListAdapter(activity,
-                    list, "recommendation");
+            IndividualRelationRecommendationListAdapter adapter = new IndividualRelationRecommendationListAdapter(
+                    activity, list, "recommendation");
 
             viewHolder.recycleIndividualRelationList.setLayoutManager(new LinearLayoutManager(activity));
             viewHolder.recycleIndividualRelationList.setAdapter(adapter);

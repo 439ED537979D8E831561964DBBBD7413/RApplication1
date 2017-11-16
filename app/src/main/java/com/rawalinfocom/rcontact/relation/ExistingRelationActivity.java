@@ -31,6 +31,7 @@ import com.rawalinfocom.rcontact.database.TableRelationMappingMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
+import com.rawalinfocom.rcontact.model.ExistingRelationRequest;
 import com.rawalinfocom.rcontact.model.IndividualRelationType;
 import com.rawalinfocom.rcontact.model.RelationRecommendationType;
 import com.rawalinfocom.rcontact.model.RelationRequest;
@@ -177,7 +178,7 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
                 if (sendRelationRequestObject != null && StringUtils.equalsIgnoreCase
                         (sendRelationRequestObject.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                    ArrayList<RelationRequest> allExistingRelationList = sendRelationRequestObject.
+                    ArrayList<ExistingRelationRequest> allExistingRelationList = sendRelationRequestObject.
                             getAllExistingRelationList();
 
 //                    Utils.showSuccessSnackBar(activity, relativeRootExistingRelation,
@@ -256,7 +257,7 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
         }
     }
 
-    private void storeProfileDataToDb(ArrayList<RelationRequest> relationRequestResponse) {
+    private void storeProfileDataToDb(ArrayList<ExistingRelationRequest> relationRequestResponse) {
 
         //<editor-fold desc="Relation Mapping Master">
         TableRelationMappingMaster tableRelationMappingMaster = new
@@ -267,7 +268,7 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
             for (int i = 0; i < relationRequestResponse.size(); i++) {
 
                 ArrayList<RelationRequestResponse> relationResponseList = new ArrayList<>();
-                RelationRequest relationRequest = relationRequestResponse.get(i);
+                ExistingRelationRequest relationRequest = relationRequestResponse.get(i);
 
                 //<editor-fold desc="Family Relation">
                 ArrayList<RelationRequest> familyRelation = relationRequest.getFamilyRelationList();
@@ -334,8 +335,7 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
                     }
                 }
 
-                tableRelationMappingMaster.deleteRelationMapping(String.valueOf(relationRequest.
-                        getRrmToPmId()));
+                tableRelationMappingMaster.deleteRelationMapping(String.valueOf(relationRequest.getRrmToPmId()));
                 tableRelationMappingMaster.addRelationMapping(relationResponseList);
             }
         }

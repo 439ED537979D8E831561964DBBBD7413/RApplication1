@@ -50,8 +50,8 @@ class IndividualRelationRecommendationListAdapter extends RecyclerView.Adapter
         IndividualRelationType type = individualRelationRecommendationTypeList.get(position);
 
         if (from.equalsIgnoreCase("rcp")) {
-            holder.checkboxRelationFriend.setVisibility(View.GONE);
-            holder.checkboxRelationFamily.setVisibility(View.GONE);
+//            holder.checkboxRelationFriend.setVisibility(View.GONE);
+//            holder.checkboxRelationFamily.setVisibility(View.GONE);
             holder.checkboxRelation.setVisibility(View.GONE);
         }
 
@@ -65,33 +65,98 @@ class IndividualRelationRecommendationListAdapter extends RecyclerView.Adapter
             holder.imageRelation.setImageResource(R.drawable.ico_relation_business_svg);
             holder.textRelationName.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ico_relation_double_tick_svg, 0);
 
-        } else {
-            holder.llBusinessRelation.setVisibility(View.GONE);
+            if (!from.equalsIgnoreCase("rcp")) {
+                holder.checkboxRelation.setVisibility(View.VISIBLE);
+                if (type.getIsSelected()) {
+                    holder.checkboxRelation.setChecked(true);
+                } else {
+                    holder.checkboxRelation.setChecked(false);
+                }
+            }
+
         }
+//        else {
+//            holder.llBusinessRelation.setVisibility(View.GONE);
+//        }
 
         if (!StringUtils.isEmpty(type.getFamilyName())) {
 
-            holder.llFamilyRelation.setVisibility(View.VISIBLE);
+            holder.llBusinessRelation.setVisibility(View.VISIBLE);
+            holder.llRelationOrganization.setVisibility(View.GONE);
+            holder.textOrganizationName.setVisibility(View.GONE);
 
-            holder.textRelationFamily.setText(type.getFamilyName());
-            holder.imageRelationFamily.setImageResource(R.drawable.ico_realtion_family_svg);
-            holder.textRelationFamily.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ico_relation_single_tick_svg, 0);
+            holder.textRelationName.setText(type.getFamilyName());
+            holder.imageRelation.setImageResource(R.drawable.ico_realtion_family_svg);
+            holder.textRelationName.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ico_relation_single_tick_svg, 0);
 
-        } else {
-            holder.llFamilyRelation.setVisibility(View.GONE);
+            if (!from.equalsIgnoreCase("rcp")) {
+                holder.checkboxRelation.setVisibility(View.VISIBLE);
+                if (type.getIsSelected()) {
+                    holder.checkboxRelation.setChecked(true);
+                } else {
+                    holder.checkboxRelation.setChecked(false);
+                }
+            }
+
+//            holder.llFamilyRelation.setVisibility(View.VISIBLE);
+
+//            holder.textRelationFamily.setText(type.getFamilyName());
+//            holder.imageRelationFamily.setImageResource(R.drawable.ico_realtion_family_svg);
+//            holder.textRelationFamily.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ico_relation_single_tick_svg, 0);
+//
+//            if (!from.equalsIgnoreCase("rcp")) {
+//                holder.checkboxRelationFamily.setVisibility(View.VISIBLE);
+//                if (type.getIsSelected()) {
+//                    holder.checkboxRelationFamily.setChecked(true);
+//                } else {
+//                    holder.checkboxRelationFamily.setChecked(false);
+//                }
+//            }
+
         }
+//        else {
+//            holder.llBusinessRelation.setVisibility(View.GONE);
+//        }
 
         if (type.getIsFriendRelation()) {
 
-            holder.llFriendRelation.setVisibility(View.VISIBLE);
+            holder.llBusinessRelation.setVisibility(View.VISIBLE);
+            holder.llRelationOrganization.setVisibility(View.GONE);
+            holder.textOrganizationName.setVisibility(View.GONE);
 
-            holder.textRelationFriend.setText(mActivity.getString(R.string.str_friend));
-            holder.imageRelationFriend.setImageResource(R.drawable.ico_relation_friend_svg);
-            holder.textRelationFriend.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ico_relation_single_tick_svg, 0);
+            holder.textRelationName.setText(mActivity.getString(R.string.str_friend));
+            holder.imageRelation.setImageResource(R.drawable.ico_relation_friend_svg);
+            holder.textRelationName.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ico_relation_single_tick_svg, 0);
 
-        } else {
-            holder.llFriendRelation.setVisibility(View.GONE);
+            if (!from.equalsIgnoreCase("rcp")) {
+                holder.checkboxRelation.setVisibility(View.VISIBLE);
+                if (type.getIsSelected()) {
+                    holder.checkboxRelation.setChecked(true);
+                } else {
+                    holder.checkboxRelation.setChecked(false);
+                }
+            }
+
+//            holder.llFriendRelation.setVisibility(View.VISIBLE);
+//
+//            holder.textRelationFriend.setText(mActivity.getString(R.string.str_friend));
+//            holder.imageRelationFriend.setImageResource(R.drawable.ico_relation_friend_svg);
+//            holder.textRelationFriend.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ico_relation_single_tick_svg, 0);
+//
+//            if (!from.equalsIgnoreCase("rcp")) {
+//                holder.checkboxRelationFriend.setTag(position);
+//                holder.checkboxRelationFriend.setVisibility(View.VISIBLE);
+//                if (type.getIsSelected()) {
+//                    holder.checkboxRelationFriend.setChecked(true);
+//                } else {
+//                    holder.checkboxRelationFriend.setChecked(false);
+//                }
+//            }
+
         }
+//        else {
+//            holder.llBusinessRelation.setVisibility(View.GONE);
+//        }
     }
 
     @Override
@@ -117,22 +182,22 @@ class IndividualRelationRecommendationListAdapter extends RecyclerView.Adapter
         CheckBox checkboxRelation;
         @BindView(R.id.ll_business_relation)
         LinearLayout llBusinessRelation;
-        @BindView(R.id.image_relation_family)
-        ImageView imageRelationFamily;
-        @BindView(R.id.text_relation_family)
-        TextView textRelationFamily;
-        @BindView(R.id.checkbox_relation_family)
-        CheckBox checkboxRelationFamily;
-        @BindView(R.id.ll_family_relation)
-        LinearLayout llFamilyRelation;
-        @BindView(R.id.image_relation_friend)
-        ImageView imageRelationFriend;
-        @BindView(R.id.text_relation_friend)
-        TextView textRelationFriend;
-        @BindView(R.id.checkbox_relation_friend)
-        CheckBox checkboxRelationFriend;
-        @BindView(R.id.ll_friend_relation)
-        LinearLayout llFriendRelation;
+        //        @BindView(R.id.image_relation_family)
+//        ImageView imageRelationFamily;
+//        @BindView(R.id.text_relation_family)
+//        TextView textRelationFamily;
+//        @BindView(R.id.checkbox_relation_family)
+//        CheckBox checkboxRelationFamily;
+//        @BindView(R.id.ll_family_relation)
+//        LinearLayout llFamilyRelation;
+//        @BindView(R.id.image_relation_friend)
+//        ImageView imageRelationFriend;
+//        @BindView(R.id.text_relation_friend)
+//        TextView textRelationFriend;
+//        @BindView(R.id.checkbox_relation_friend)
+//        CheckBox checkboxRelationFriend;
+//        @BindView(R.id.ll_friend_relation)
+//        LinearLayout llFriendRelation;
         @BindView(R.id.rl_root_relation)
         LinearLayout rlRootRelation;
 
@@ -145,10 +210,10 @@ class IndividualRelationRecommendationListAdapter extends RecyclerView.Adapter
             llBusinessRelation.setVisibility(View.GONE);
 
             // family
-            llFamilyRelation.setVisibility(View.GONE);
+//            llFamilyRelation.setVisibility(View.GONE);
 
             // friend
-            llFriendRelation.setVisibility(View.GONE);
+//            llFriendRelation.setVisibility(View.GONE);
         }
     }
 }

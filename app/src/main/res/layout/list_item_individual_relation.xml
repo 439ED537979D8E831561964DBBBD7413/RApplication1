@@ -37,8 +37,8 @@
                 android:layout_height="wrap_content"
                 android:drawablePadding="@dimen/padding_10dp"
                 android:gravity="center|start"
-                android:textSize="@dimen/text_size_12sp"
-                android:textColor="@color/grey_hex_ac" />
+                android:textColor="@color/grey_hex_ac"
+                android:textSize="@dimen/text_size_12sp" />
 
             <LinearLayout
                 android:id="@+id/ll_relation_organization"
@@ -59,8 +59,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/margin_5dp"
-                    android:textSize="@dimen/text_size_14sp"
                     android:textColor="@color/grey_hex_75"
+                    android:textSize="@dimen/text_size_14sp"
                     android:textStyle="bold"
                     tools:text="Rawal Infocom Pvt Ltd." />
 
@@ -80,7 +80,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/image_relation_family"
@@ -101,8 +102,8 @@
                 android:layout_marginStart="@dimen/margin_10dp"
                 android:drawablePadding="@dimen/padding_10dp"
                 android:gravity="center|start"
-                android:textSize="@dimen/text_size_12sp"
-                android:textColor="@color/grey_hex_ac" />
+                android:textColor="@color/grey_hex_ac"
+                android:textSize="@dimen/text_size_12sp" />
         </LinearLayout>
 
         <CheckBox
@@ -117,7 +118,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/image_relation_friend"
@@ -135,11 +137,11 @@
                 android:id="@+id/text_relation_friend"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/text_size_12sp"
                 android:layout_marginStart="@dimen/margin_10dp"
                 android:drawablePadding="@dimen/padding_10dp"
                 android:gravity="center|start"
-                android:textColor="@color/grey_hex_ac" />
+                android:textColor="@color/grey_hex_ac"
+                android:textSize="@dimen/text_size_12sp" />
         </LinearLayout>
 
         <CheckBox
