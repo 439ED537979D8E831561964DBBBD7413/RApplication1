@@ -294,7 +294,6 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                     ProfileDataOperation profileDetail = getProfileResponse.getProfileDetail();
                     setUpView(profileDetail);
                     /*storeProfileDataToDb(profileDetail);
-
                     getDataFromDB();*/
 
                 }
