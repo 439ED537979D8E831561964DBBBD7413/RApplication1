@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relative_root_recommendation_relation"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/veryVeryLightGray"
@@ -20,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:text="No Relation Found"
+        android:text="@string/str_no_relation_found"
         android:visibility="gone" />
 
     <android.support.v7.widget.RecyclerView
@@ -29,6 +28,5 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/include_toolbar"
         android:visibility="visible" />
-
 
 </RelativeLayout>

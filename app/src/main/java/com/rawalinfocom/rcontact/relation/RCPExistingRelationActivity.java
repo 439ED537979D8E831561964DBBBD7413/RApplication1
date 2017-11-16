@@ -23,11 +23,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.BuildConfig;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.adapters.OrganizationListAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncGetWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.TableOrganizationMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
@@ -92,6 +95,8 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
     TextView textDesignation;
     @BindView(R.id.text_organization)
     TextView textOrganization;
+    @BindView(R.id.text_time)
+    TextView textTime;
     @BindView(R.id.text_view_all_organization)
     TextView textViewAllOrganization;
     @BindView(R.id.linear_organization_detail)
@@ -150,9 +155,9 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
         activity = RCPExistingRelationActivity.this;
 
         ButterKnife.bind(this);
+        getIntentDetails(getIntent());
         initToolbar();
         init();
-        getIntentDetails(getIntent());
     }
 
     @Override
@@ -359,8 +364,10 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
         arrayListOrganization = tableOrganizationMaster.getAllOrganizationsFromPmId(Integer.parseInt(pmId));
 
         if (arrayListOrganization.size() == 1) {
+            textTime.setVisibility(View.VISIBLE);
             textViewAllOrganization.setVisibility(View.GONE);
         } else {
+            textTime.setVisibility(View.GONE);
             textViewAllOrganization.setVisibility(View.VISIBLE);
         }
 
@@ -368,8 +375,48 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
             textDesignation.setTextColor(ContextCompat.getColor(activity, R.color.colorAccent));
             textOrganization.setTextColor(ContextCompat.getColor(activity, R.color.colorAccent));
 
+            if (MoreObjects.firstNonNull(arrayListOrganization.get(0).getIsVerify(), 0) ==
+                    IntegerConstants.RCP_TYPE_PRIMARY) {
+
+                textOrganization.setText(arrayListOrganization.get(0).getOrgName());
+                textOrganization.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+                        R.drawable.ico_double_tick_green_svg, 0);
+
+            } else {
+                textOrganization.setText(arrayListOrganization.get(0).getOrgName());
+                textOrganization.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+                        R.drawable.ico_relation_single_tick_green_svg, 0);
+            }
+
             textDesignation.setText(arrayListOrganization.get(0).getOrgJobTitle());
-            textOrganization.setText(arrayListOrganization.get(0).getOrgName());
+
+            if (StringUtils.equalsIgnoreCase(arrayListOrganization.get(0).getOrgToDate(), "")) {
+                if (!StringUtils.isEmpty(arrayListOrganization.get(0).getOrgFromDate())) {
+                    String formattedFromDate = Utils.convertDateFormat(arrayListOrganization.get
+                                    (0).getOrgFromDate(),
+                            "yyyy-MM-dd", Utils.getEventDateFormat(arrayListOrganization
+                                    .get(0).getOrgFromDate()));
+
+                    textTime.setText(String.format("%s to Present ", formattedFromDate));
+                } else {
+                    textTime.setVisibility(View.GONE);
+                }
+            } else {
+                if (!StringUtils.isEmpty(arrayListOrganization.get(0).getOrgFromDate()) &&
+                        !StringUtils.isEmpty(arrayListOrganization.get(0).getOrgToDate())) {
+                    String formattedFromDate = Utils.convertDateFormat(arrayListOrganization.get
+                                    (0).getOrgFromDate(),
+                            "yyyy-MM-dd", Utils.getEventDateFormat(arrayListOrganization
+                                    .get(0).getOrgFromDate()));
+                    String formattedToDate = Utils.convertDateFormat(arrayListOrganization.get(0)
+                                    .getOrgToDate(),
+                            "yyyy-MM-dd", Utils.getEventDateFormat(arrayListOrganization
+                                    .get(0).getOrgToDate()));
+
+                    textTime.setText(String.format("%s to %s ", formattedFromDate,
+                            formattedToDate));
+                }
+            }
 
         } else {
             linearOrganizationDetail.setVisibility(View.INVISIBLE);
@@ -402,6 +449,10 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
     }
 
     private void showAllOrganizations() {
+
+        ArrayList<String> arrayListOrgName = new ArrayList<>();
+        ArrayList<String> arrayListOrgId = new ArrayList<>();
+
         final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_all_organization);
@@ -446,13 +497,7 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
                 .recycler_view_dialog_list);
         recyclerViewDialogList.setLayoutManager(new LinearLayoutManager(this));
 
-        OrganizationRelationListAdapter adapter = new OrganizationRelationListAdapter(this, arrayListOrganization,
-                new OrganizationRelationListAdapter.OnClickListener() {
-                    @Override
-                    public void onClick(String orgId, String orgName) {
-                    }
-                }, "");
-
+        OrganizationListAdapter adapter = new OrganizationListAdapter(this, arrayListOrganization);
         recyclerViewDialogList.setAdapter(adapter);
 
         dialog.show();

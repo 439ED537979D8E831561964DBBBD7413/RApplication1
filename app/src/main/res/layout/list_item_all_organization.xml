@@ -37,6 +37,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawablePadding="@dimen/margin_5dp"
+                    android:gravity="center|start"
                     android:padding="2dp"
                     tools:text="Big Labs Pvt. Ltd." />
 
@@ -47,7 +48,6 @@
                     android:layout_marginStart="4dp"
                     android:contentDescription="@string/app_name"
                     android:gravity="center|start"
-                    android:src="@drawable/ico_double_tick_svg"
                     android:visibility="gone" />
 
             </TableRow>

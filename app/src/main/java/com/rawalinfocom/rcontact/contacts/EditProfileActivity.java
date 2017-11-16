@@ -2452,16 +2452,16 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         editProfile(profileDataOperation, AppConstants.ORGANIZATION);*/
                     boolean containsVerifiedOrgan = false;
                     if (arrayListNewOrganization.size() > 0) {
-                        for (int i = 0; i < arrayListNewOrganization.size(); i++) {
-                            ProfileDataOperationOrganization organization = arrayListNewOrganization.get(i);
-                            if (organization.getIsVerify() == 1) {
-                                //Show popup
-                                containsVerifiedOrgan = true;
-                                showOrganizationPrivacyDialog(EditProfileActivity.this,
-                                        arrayListNewOrganization, profileDataOperation);
-                                break;
-                            }
-                        }
+//                        for (int i = 0; i < arrayListNewOrganization.size(); i++) {
+//                            ProfileDataOperationOrganization organization = arrayListNewOrganization.get(i);
+//                            if (organization.getIsVerify() == 1) {
+//                                //Show popup
+//                                containsVerifiedOrgan = true;
+//                                showOrganizationPrivacyDialog(EditProfileActivity.this,
+//                                        arrayListNewOrganization, profileDataOperation);
+//                                break;
+//                            }
+//                        }
 
                         if (!containsVerifiedOrgan) {
 
@@ -2480,15 +2480,15 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     } else {
                         containsVerifiedOrgan = false;
                         if (arrayListOrganizationObject.size() > 0) {
-                            for (int i = 0; i < arrayListOrganizationObject.size(); i++) {
-                                ProfileDataOperationOrganization organization = (ProfileDataOperationOrganization) arrayListOrganizationObject.get(i);
-                                if (organization.getIsVerify() == 1) {
-                                    //Show popup
-                                    containsVerifiedOrgan = true;
-                                    showOrganizationPrivacyDialog(EditProfileActivity.this,
-                                            arrayListNewOrganization, profileDataOperation);
-                                }
-                            }
+//                            for (int i = 0; i < arrayListOrganizationObject.size(); i++) {
+//                                ProfileDataOperationOrganization organization = (ProfileDataOperationOrganization) arrayListOrganizationObject.get(i);
+//                                if (organization.getIsVerify() == 1) {
+//                                    //Show popup
+//                                    containsVerifiedOrgan = true;
+//                                    showOrganizationPrivacyDialog(EditProfileActivity.this,
+//                                            arrayListNewOrganization, profileDataOperation);
+//                                }
+//                            }
 
                             if (!containsVerifiedOrgan) {
                                 profileDataOperation.setPbOrganization(arrayListNewOrganization);
@@ -3927,8 +3927,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             }
             for (int i = 0; i < linearSocialContactDetails.getChildCount(); i++) {
                 View linearSocialContact = linearSocialContactDetails.getChildAt(i);
-                EditText socialContact = linearSocialContact.findViewById(R.id
-                        .input_value);
+                EditText socialContact = linearSocialContact.findViewById(R.id.input_value);
                 socialContact.addTextChangedListener(valueTextWatcher);
             }
         }
@@ -4010,7 +4009,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             organization.setOrgId(arrayListOrganization.get(i).getOmRecordIndexId());
             organization.setOrgEntId(arrayListOrganization.get(i).getOmEnterpriseOrgId());
             organization.setOrgLogo(arrayListOrganization.get(i).getOmOrganizationLogo());
-            organization.setOrgRcpType(arrayListOrganization.get(i).getOmOrganizationLogo());
+//            organization.setOrgRcpType(arrayListOrganization.get(i).getOmOrganizationLogo());
             organization.setIsCurrent(Integer.parseInt(arrayListOrganization.get(i)
                     .getOmIsCurrent()));
             organization.setOrgIndustryType(arrayListOrganization.get(i).getOmOrganizationType());
