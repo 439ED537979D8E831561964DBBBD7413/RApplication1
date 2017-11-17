@@ -1,6 +1,8 @@
 package com.rawalinfocom.rcontact.adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,10 +14,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.rawalinfocom.rcontact.BuildConfig;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.model.VerifiedOrganizationData;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 
@@ -94,6 +99,21 @@ public class EnterpriseOrganizationsAdapter extends RecyclerView
             }
         });
 
+        holder.relViewLink.setTag(position);
+        holder.relViewLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int pos = (int) view.getTag();
+                String orgPublicLink =  BuildConfig.ORANISATION_PUBLIC_LINK + arrayListOrganization.get(pos).getOmOrgId();
+                if (!StringUtils.isEmpty(orgPublicLink)) {
+                    String url = orgPublicLink;
+                    Intent i = new Intent(Intent.ACTION_VIEW);
+                    i.setData(Uri.parse(url));
+                    context.startActivity(i);
+                }
+            }
+        });
+
     }
 
     @Override
@@ -111,6 +131,8 @@ public class EnterpriseOrganizationsAdapter extends RecyclerView
         TextView textOrganizationDetails;
         @BindView(R.id.linear_root_item_organization)
         LinearLayout linearRootItemOrganization;
+        @BindView(R.id.rel_view_link)
+        LinearLayout relViewLink;
 
         OrganizationViewHolder(View itemView) {
             super(itemView);

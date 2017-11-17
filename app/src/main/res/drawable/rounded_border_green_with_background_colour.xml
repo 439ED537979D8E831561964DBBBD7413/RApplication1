@@ -8,6 +8,6 @@
         android:color="@color/colorAccent" />
 
     <corners
-        android:radius="@dimen/margin_5dp" />
+        android:radius="@dimen/margin_3dp" />
 
 </shape>

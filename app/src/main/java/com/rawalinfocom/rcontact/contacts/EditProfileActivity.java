@@ -2772,8 +2772,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         ProfileDataOperationAadharNumber();
                 if (!StringUtils.isEmpty(inputAadharNumber.getText().toString().trim())
                         && inputAadharNumber.getText().toString().trim().length() == 12) {
-                    profileDataOperationAadharNumber.setAadharNumber(Long.parseLong
-                            (inputAadharNumber.getText().toString().trim()));
+                    profileDataOperationAadharNumber.setAadharNumber(inputAadharNumber.getText().toString().trim());
                     profileDataOperationAadharNumber.setAadharId(1);
                     profileDataOperationAadharNumber.setAadharIsVerified(0);
                     TableAadharMaster tableAadharMaster = new TableAadharMaster

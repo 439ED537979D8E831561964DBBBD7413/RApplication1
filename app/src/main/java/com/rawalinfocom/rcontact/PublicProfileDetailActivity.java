@@ -729,7 +729,7 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
 
                     if ((MoreObjects.firstNonNull(aadharDetails.getAadharPublic(), 3)) ==
                             IntegerConstants
-                                    .PRIVACY_PRIVATE && aadharDetails.getAadharNumber() == 0) {
+                                    .PRIVACY_PRIVATE && aadharDetails.getAadharNumber() .equalsIgnoreCase("0")) {
                         if(hasNumber)
                             buttonRequest.setVisibility(View.GONE);
                         else
@@ -740,7 +740,7 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                         if ((MoreObjects.firstNonNull(aadharDetails.getAadharPublic(), 3)) !=
                                 IntegerConstants
                                         .PRIVACY_PRIVATE && aadharDetails.getAadharNumber()
-                                == 0) {
+                                .equalsIgnoreCase("0")) {
                             if(hasNumber)
                                 buttonRequest.setVisibility(View.GONE);
                             else
@@ -762,7 +762,7 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                     });
 
                     textAadharNumber.setTypeface(Utils.typefaceRegular(this));
-                    if (aadharDetails.getAadharNumber() == 0) {
+                    if (aadharDetails.getAadharNumber() .equalsIgnoreCase("0")) {
                         textAadharNumber.setText("XXXX-XXXX-XXXX");
                     } else
                         textAadharNumber.setText(aadharDetails.getAadharNumber() + "");

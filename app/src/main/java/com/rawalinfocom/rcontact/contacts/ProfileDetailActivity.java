@@ -2586,6 +2586,21 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     }
                 });
 
+                textOrganization.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if(tempOrganization.get(0).getIsVerify() == 1){
+                            String orgPublicLink =  BuildConfig.ORANISATION_PUBLIC_LINK + tempOrganization.get(0).getOrgEntId();
+                            if (!StringUtils.isEmpty(orgPublicLink)) {
+                                String url = orgPublicLink;
+                                Intent i = new Intent(Intent.ACTION_VIEW);
+                                i.setData(Uri.parse(url));
+                                startActivity(i);
+                            }
+                        }
+                    }
+                });
+
             } else {
                 linearOrganizationDetail.setVisibility(View.INVISIBLE);
             }
@@ -3025,14 +3040,14 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     } else {
                         if ((MoreObjects.firstNonNull(aadharDetails.getAadharPublic(), 3)) ==
                                 IntegerConstants
-                                        .PRIVACY_PRIVATE && aadharDetails.getAadharNumber() == 0) {
+                                        .PRIVACY_PRIVATE && aadharDetails.getAadharNumber().equalsIgnoreCase("0")) {
                             buttonRequest.setVisibility(View.VISIBLE);
                             buttonPrivacy.setVisibility(View.GONE);
                         } else {
                             if ((MoreObjects.firstNonNull(aadharDetails.getAadharPublic(), 3)) !=
                                     IntegerConstants
                                             .PRIVACY_PRIVATE && aadharDetails.getAadharNumber()
-                                    == 0) {
+                                    .equalsIgnoreCase("0")) {
                                 buttonRequest.setVisibility(View.VISIBLE);
                                 buttonPrivacy.setVisibility(View.GONE);
                             }
@@ -3051,7 +3066,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     });
 
                     textAadharNumber.setTypeface(Utils.typefaceRegular(this));
-                    if (aadharDetails.getAadharNumber() == 0) {
+                    if (aadharDetails.getAadharNumber() .equalsIgnoreCase("0")) {
                         textAadharNumber.setText("XXXX-XXXX-XXXX");
                     } else
                         textAadharNumber.setText(aadharDetails.getAadharNumber() + "");
@@ -3164,7 +3179,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     (!Utils.isArraylistNullOrEmpty(arrayListImAccount) || !Utils
                             .isArraylistNullOrEmpty(arrayListPhoneBookImAccount))
                     || (profileDetail != null
-                    && (profileDetail.getPbAadhar().getAadharNumber() > 0))) {
+                    && (profileDetail.getPbAadhar().getAadharNumber().length()>0))) {
                 rippleViewMore.setVisibility(View.VISIBLE);
             } else {
                 rippleViewMore.setVisibility(View.GONE);
