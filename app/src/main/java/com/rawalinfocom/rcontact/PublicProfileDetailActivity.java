@@ -671,7 +671,6 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
             //</editor-fold>
 
             // <editor-fold desc="Address">
-
             // From Cloud
             ArrayList<ProfileDataOperationAddress> arrayListAddress = new ArrayList<>();
             if (profileDetail != null && !Utils.isArraylistNullOrEmpty(profileDetail.getPbAddress
