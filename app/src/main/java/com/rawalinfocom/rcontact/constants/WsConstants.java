@@ -187,4 +187,5 @@ public class WsConstants {
     public static final String REQ_SEND_RELATION_REQUEST = "send-relation-request";
     public static final String REQ_GET_RELATION = "get-relation";
     public static final String REQ_DELETE_RELATION = "delete-relation";
+    public static final String REQ_RELATION_ACTION = "relation-action";
 }

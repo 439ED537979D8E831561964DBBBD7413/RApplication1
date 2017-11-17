@@ -10,6 +10,7 @@ import java.util.ArrayList;
 public class IndividualRelationType implements Serializable {
 
     private Integer relationType;
+    private Integer rcStatus;
     private String relationId;
     private String id;
     private String relationName;
@@ -116,5 +117,13 @@ public class IndividualRelationType implements Serializable {
 
     public void setIsSelected(boolean isSelected) {
         this.isSelected = isSelected;
+    }
+
+    public Integer getRcStatus() {
+        return rcStatus;
+    }
+
+    public void setRcStatus(Integer rcStatus) {
+        this.rcStatus = rcStatus;
     }
 }

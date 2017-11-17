@@ -601,7 +601,13 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
             ArrayList<IndividualRelationType> individualRelationTypes = existingRelationList.get(0)
                     .getIndividualRelationTypeList();
 
-            listAdapter = new IndividualRelationRecommendationListAdapter(activity, individualRelationTypes, "rcp");
+            listAdapter = new IndividualRelationRecommendationListAdapter(activity, individualRelationTypes, "rcp",
+                    new IndividualRelationRecommendationListAdapter.OnClickListener() {
+                        @Override
+                        public void onClick(int innerPosition) {
+
+                        }
+                    });
             recycleViewRelation.setLayoutManager(new LinearLayoutManager(this));
             recycleViewRelation.setAdapter(listAdapter);
 

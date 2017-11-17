@@ -6,11 +6,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.model.AppLanguage;
 import com.rawalinfocom.rcontact.model.IndividualRelationType;
 
 import org.apache.commons.lang3.StringUtils;
@@ -31,6 +33,12 @@ class IndividualRelationRecommendationListAdapter extends RecyclerView.Adapter
     private ArrayList<IndividualRelationType> individualRelationRecommendationTypeList;
     private String from;
 
+    private OnClickListener clickListener;
+
+    public interface OnClickListener {
+        void onClick(int innerPosition);
+    }
+
     @Override
     public IndividualRelationRecommendationViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_individual_relation, parent, false);
@@ -38,9 +46,10 @@ class IndividualRelationRecommendationListAdapter extends RecyclerView.Adapter
     }
 
     IndividualRelationRecommendationListAdapter(Activity mActivity, ArrayList<IndividualRelationType>
-            individualRelationRecommendationTypeList, String from) {
+            individualRelationRecommendationTypeList, String from, OnClickListener clickListener) {
         this.mActivity = mActivity;
         this.from = from;
+        this.clickListener = clickListener;
         this.individualRelationRecommendationTypeList = individualRelationRecommendationTypeList;
     }
 
@@ -50,113 +59,115 @@ class IndividualRelationRecommendationListAdapter extends RecyclerView.Adapter
         IndividualRelationType type = individualRelationRecommendationTypeList.get(position);
 
         if (from.equalsIgnoreCase("rcp")) {
-//            holder.checkboxRelationFriend.setVisibility(View.GONE);
-//            holder.checkboxRelationFamily.setVisibility(View.GONE);
             holder.checkboxRelation.setVisibility(View.GONE);
         }
 
+        holder.llBusinessRelation.setVisibility(View.VISIBLE);
+
         if (!StringUtils.isEmpty(type.getRelationName())) {
 
-            holder.llBusinessRelation.setVisibility(View.VISIBLE);
             holder.llRelationOrganization.setVisibility(View.VISIBLE);
 
             holder.textRelationName.setText(type.getRelationName());
             holder.textOrganizationName.setText(type.getOrganizationName());
             holder.imageRelation.setImageResource(R.drawable.ico_relation_business_svg);
-            holder.textRelationName.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ico_relation_double_tick_svg, 0);
+
+            if (type.getRcStatus() == 3)
+                holder.textRelationName.setCompoundDrawablesWithIntrinsicBounds
+                        (0, 0, R.drawable.ico_relation_double_tick_svg, 0);
+            else
+                holder.textRelationName.setCompoundDrawablesWithIntrinsicBounds
+                        (0, 0, R.drawable.ico_relation_single_tick_svg, 0);
 
             if (!from.equalsIgnoreCase("rcp")) {
-                holder.checkboxRelation.setVisibility(View.VISIBLE);
-                if (type.getIsSelected()) {
-                    holder.checkboxRelation.setChecked(true);
+
+                if (type.getRcStatus() == 3) {
+                    holder.checkboxRelation.setVisibility(View.GONE);
                 } else {
-                    holder.checkboxRelation.setChecked(false);
+                    holder.checkboxRelation.setVisibility(View.VISIBLE);
+                    if (type.getIsSelected()) {
+                        holder.checkboxRelation.setChecked(true);
+                    } else {
+                        holder.checkboxRelation.setChecked(false);
+                    }
                 }
             }
-
         }
-//        else {
-//            holder.llBusinessRelation.setVisibility(View.GONE);
-//        }
 
         if (!StringUtils.isEmpty(type.getFamilyName())) {
 
-            holder.llBusinessRelation.setVisibility(View.VISIBLE);
             holder.llRelationOrganization.setVisibility(View.GONE);
-            holder.textOrganizationName.setVisibility(View.GONE);
 
             holder.textRelationName.setText(type.getFamilyName());
             holder.imageRelation.setImageResource(R.drawable.ico_realtion_family_svg);
-            holder.textRelationName.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ico_relation_single_tick_svg, 0);
+
+            if (type.getRcStatus() == 3)
+                holder.textRelationName.setCompoundDrawablesWithIntrinsicBounds
+                        (0, 0, R.drawable.ico_relation_double_tick_svg, 0);
+            else
+                holder.textRelationName.setCompoundDrawablesWithIntrinsicBounds
+                        (0, 0, R.drawable.ico_relation_single_tick_svg, 0);
 
             if (!from.equalsIgnoreCase("rcp")) {
-                holder.checkboxRelation.setVisibility(View.VISIBLE);
-                if (type.getIsSelected()) {
-                    holder.checkboxRelation.setChecked(true);
+
+                if (type.getRcStatus() == 3) {
+                    holder.checkboxRelation.setVisibility(View.GONE);
                 } else {
-                    holder.checkboxRelation.setChecked(false);
+                    holder.checkboxRelation.setVisibility(View.VISIBLE);
+                    if (type.getIsSelected()) {
+                        holder.checkboxRelation.setChecked(true);
+                    } else {
+                        holder.checkboxRelation.setChecked(false);
+                    }
                 }
             }
-
-//            holder.llFamilyRelation.setVisibility(View.VISIBLE);
-
-//            holder.textRelationFamily.setText(type.getFamilyName());
-//            holder.imageRelationFamily.setImageResource(R.drawable.ico_realtion_family_svg);
-//            holder.textRelationFamily.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ico_relation_single_tick_svg, 0);
-//
-//            if (!from.equalsIgnoreCase("rcp")) {
-//                holder.checkboxRelationFamily.setVisibility(View.VISIBLE);
-//                if (type.getIsSelected()) {
-//                    holder.checkboxRelationFamily.setChecked(true);
-//                } else {
-//                    holder.checkboxRelationFamily.setChecked(false);
-//                }
-//            }
-
         }
-//        else {
-//            holder.llBusinessRelation.setVisibility(View.GONE);
-//        }
 
         if (type.getIsFriendRelation()) {
 
-            holder.llBusinessRelation.setVisibility(View.VISIBLE);
             holder.llRelationOrganization.setVisibility(View.GONE);
-            holder.textOrganizationName.setVisibility(View.GONE);
 
             holder.textRelationName.setText(mActivity.getString(R.string.str_friend));
             holder.imageRelation.setImageResource(R.drawable.ico_relation_friend_svg);
-            holder.textRelationName.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ico_relation_single_tick_svg, 0);
+
+            if (type.getRcStatus() == 3)
+                holder.textRelationName.setCompoundDrawablesWithIntrinsicBounds
+                        (0, 0, R.drawable.ico_relation_double_tick_svg, 0);
+            else
+                holder.textRelationName.setCompoundDrawablesWithIntrinsicBounds
+                        (0, 0, R.drawable.ico_relation_single_tick_svg, 0);
 
             if (!from.equalsIgnoreCase("rcp")) {
-                holder.checkboxRelation.setVisibility(View.VISIBLE);
-                if (type.getIsSelected()) {
-                    holder.checkboxRelation.setChecked(true);
+
+                if (type.getRcStatus() == 3) {
+                    holder.checkboxRelation.setVisibility(View.GONE);
                 } else {
-                    holder.checkboxRelation.setChecked(false);
+                    holder.checkboxRelation.setVisibility(View.VISIBLE);
+                    if (type.getIsSelected()) {
+                        holder.checkboxRelation.setChecked(true);
+                    } else {
+                        holder.checkboxRelation.setChecked(false);
+                    }
                 }
             }
-
-//            holder.llFriendRelation.setVisibility(View.VISIBLE);
-//
-//            holder.textRelationFriend.setText(mActivity.getString(R.string.str_friend));
-//            holder.imageRelationFriend.setImageResource(R.drawable.ico_relation_friend_svg);
-//            holder.textRelationFriend.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ico_relation_single_tick_svg, 0);
-//
-//            if (!from.equalsIgnoreCase("rcp")) {
-//                holder.checkboxRelationFriend.setTag(position);
-//                holder.checkboxRelationFriend.setVisibility(View.VISIBLE);
-//                if (type.getIsSelected()) {
-//                    holder.checkboxRelationFriend.setChecked(true);
-//                } else {
-//                    holder.checkboxRelationFriend.setChecked(false);
-//                }
-//            }
-
         }
 //        else {
 //            holder.llBusinessRelation.setVisibility(View.GONE);
 //        }
+
+//        holder.checkboxRelation.setTag(position);
+//        holder.checkboxRelation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+//
+//                int pos = (int) compoundButton.getTag();
+//
+//                if (b) {
+//                    if (clickListener != null)
+//                        clickListener.onClick(pos);
+//                }
+//            }
+//        });
     }
 
     @Override
@@ -214,6 +225,16 @@ class IndividualRelationRecommendationListAdapter extends RecyclerView.Adapter
 
             // friend
 //            llFriendRelation.setVisibility(View.GONE);
+
+//            checkboxRelation.performClick();
+            rlRootRelation.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    if (clickListener != null)
+                        clickListener.onClick(getAdapterPosition());
+                }
+            });
         }
     }
 }

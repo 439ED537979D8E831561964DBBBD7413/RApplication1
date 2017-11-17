@@ -217,7 +217,7 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
                     deletePmId = "";
 
                     existingRelationList.remove(deleteRelationPosition);
-                    listAdapter.notifyDataSetChanged();
+                    listAdapter.notifyItemRemoved(deleteRelationPosition);
 
                     deleteRelationPosition = -1;
 

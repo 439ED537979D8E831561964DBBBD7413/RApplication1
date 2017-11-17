@@ -197,8 +197,8 @@ public class TableRelationMappingMaster {
             SQLiteDatabase db = databaseHandler.getWritableDatabase();
 
             String selectQuery = "SELECT a.pm_first_name,a.pm_last_name,a.pm_profile_image,d.mnm_mobile_number," +
-                    "b.rc_profile_master_pm_id,b.rc_relations_master_id,b.created_at,b.rrm_type, c.rm_particular," +
-                    "e.om_organization_company,e.om_organization_ent_id FROM rc_rcp_relation_mapping b " +
+                    "b.rc_profile_master_pm_id,b.rc_relations_master_id,b.created_at,b.rrm_type,b.rrm_status," +
+                    "c.rm_particular,e.om_organization_company,e.om_organization_ent_id FROM rc_rcp_relation_mapping b " +
                     "left join rc_profile_master a on a.pm_rcp_id = b.rc_profile_master_pm_id " +
                     "left join rc_mobile_number_master d on d.rc_profile_master_pm_id = a.pm_rcp_id " +
                     "left join rc_relation_master c on c.id = b.rc_relations_master_id " +
@@ -244,6 +244,8 @@ public class TableRelationMappingMaster {
                         individualRelationTypeList.setOrganizationId(cursor.getString(cursor.getColumnIndexOrThrow
                                 (TableOrganizationMaster.COLUMN_OM_ORGANIZATION_ENT_ID)));
                         individualRelationTypeList.setIsFriendRelation(false);
+                        individualRelationTypeList.setRcStatus(cursor.getInt(cursor.getColumnIndexOrThrow
+                                (COLUMN_RRM_STATUS)));
                         individualRelationTypeList.setIsVerify("1");
 
                     } else if (type.equalsIgnoreCase("1")) {
@@ -255,6 +257,8 @@ public class TableRelationMappingMaster {
                         individualRelationTypeList.setFamilyName("");
                         individualRelationTypeList.setOrganizationId("");
                         individualRelationTypeList.setIsFriendRelation(true);
+                        individualRelationTypeList.setRcStatus(cursor.getInt(cursor.getColumnIndexOrThrow
+                                (COLUMN_RRM_STATUS)));
                         individualRelationTypeList.setIsVerify("1");
 
                     } else if (type.equalsIgnoreCase("2")) {
@@ -267,6 +271,8 @@ public class TableRelationMappingMaster {
                                 (TableRelationMaster.COLUMN_RM_PARTICULAR)));
                         individualRelationTypeList.setOrganizationId("");
                         individualRelationTypeList.setIsFriendRelation(false);
+                        individualRelationTypeList.setRcStatus(cursor.getInt(cursor.getColumnIndexOrThrow
+                                (COLUMN_RRM_STATUS)));
                         individualRelationTypeList.setIsVerify("1");
 
                     }
@@ -329,7 +335,7 @@ public class TableRelationMappingMaster {
             for (int i = 0; i < pmIdList.size(); i++) {
 
                 String selectQuery = "SELECT b.id,b.rc_profile_master_pm_id,b.rc_relations_master_id,b.rrm_type," +
-                        "c.rm_particular," + "e.om_organization_company," + "e.om_organization_ent_id FROM " +
+                        "b.rrm_status,c.rm_particular,e.om_organization_company,e.om_organization_ent_id FROM " +
                         "rc_rcp_relation_mapping b " +
                         "left Join rc_profile_master a on a.pm_rcp_id = b.rc_profile_master_pm_id " +
                         "left join rc_relation_master c on c.id = b.rc_relations_master_id " +
@@ -372,6 +378,8 @@ public class TableRelationMappingMaster {
                         individualRelationTypeList.setOrganizationId(cursor1.getString(cursor1.getColumnIndexOrThrow
                                 (TableOrganizationMaster.COLUMN_OM_ORGANIZATION_ENT_ID)));
                         individualRelationTypeList.setIsFriendRelation(false);
+                        individualRelationTypeList.setRcStatus(cursor1.getInt(cursor1.getColumnIndexOrThrow
+                                (COLUMN_RRM_STATUS)));
                         individualRelationTypeList.setIsVerify("1");
 
                     } else if (type.equalsIgnoreCase("1")) {
@@ -383,6 +391,8 @@ public class TableRelationMappingMaster {
                         individualRelationTypeList.setFamilyName("");
                         individualRelationTypeList.setOrganizationId("");
                         individualRelationTypeList.setIsFriendRelation(true);
+                        individualRelationTypeList.setRcStatus(cursor1.getInt(cursor1.getColumnIndexOrThrow
+                                (COLUMN_RRM_STATUS)));
                         individualRelationTypeList.setIsVerify("1");
 
                     } else if (type.equalsIgnoreCase("2")) {
@@ -395,8 +405,9 @@ public class TableRelationMappingMaster {
                                 (TableRelationMaster.COLUMN_RM_PARTICULAR)));
                         individualRelationTypeList.setOrganizationId("");
                         individualRelationTypeList.setIsFriendRelation(false);
+                        individualRelationTypeList.setRcStatus(cursor1.getInt(cursor1.getColumnIndexOrThrow
+                                (COLUMN_RRM_STATUS)));
                         individualRelationTypeList.setIsVerify("1");
-
                     }
 
                     arrayList.add(individualRelationTypeList);
