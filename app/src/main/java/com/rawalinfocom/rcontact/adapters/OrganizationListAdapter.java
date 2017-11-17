@@ -1,6 +1,8 @@
 package com.rawalinfocom.rcontact.adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -8,10 +10,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.google.common.base.MoreObjects;
+import com.rawalinfocom.rcontact.BuildConfig;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.helper.Utils;
@@ -120,6 +124,23 @@ public class OrganizationListAdapter extends RecyclerView.Adapter<OrganizationLi
                 holder.textTime.setText(String.format("%s to %s ", formattedFromDate, formattedToDate));
             }
         }
+
+        holder.llMain.setTag(position);
+        holder.llMain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int pos = (int) view.getTag();
+                if(arrayListOrganization.get(pos).getIsVerify() == 1){
+                    String orgPublicLink =  BuildConfig.ORANISATION_PUBLIC_LINK + arrayListOrganization.get(pos).getOrgEntId();
+                    if (!StringUtils.isEmpty(orgPublicLink)) {
+                        String url = orgPublicLink;
+                        Intent i = new Intent(Intent.ACTION_VIEW);
+                        i.setData(Uri.parse(url));
+                        context.startActivity(i);
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -141,6 +162,8 @@ public class OrganizationListAdapter extends RecyclerView.Adapter<OrganizationLi
         ImageView imageOrgProfile;
         @BindView(R.id.img_tic)
         ImageView imgTic;
+        @BindView(R.id.ll_main)
+        LinearLayout llMain;
 
         OrganizationViewHolder(View itemView) {
             super(itemView);

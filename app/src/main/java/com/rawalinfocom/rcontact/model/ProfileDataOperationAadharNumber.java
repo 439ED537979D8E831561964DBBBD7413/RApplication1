@@ -15,7 +15,7 @@ import java.io.Serializable;
 public class ProfileDataOperationAadharNumber implements Serializable {
 
     Integer aadharId;
-    Long aadharNumber;
+    String aadharNumber;
     Integer aadharIsVerified;
     Integer aadharPublic;
     String rcProfileMasterPmId;
@@ -30,11 +30,11 @@ public class ProfileDataOperationAadharNumber implements Serializable {
     }
 
     @JsonProperty("aadhaar_number")
-    public Long getAadharNumber() {
+    public String getAadharNumber() {
         return aadharNumber;
     }
 
-    public void setAadharNumber(Long aadharNumber) {
+    public void setAadharNumber(String aadharNumber) {
         this.aadharNumber = aadharNumber;
     }
 

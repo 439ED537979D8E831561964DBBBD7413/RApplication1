@@ -34,7 +34,7 @@ public class TableAadharMaster {
     public static String CREATE_TABLE_AADHAR_MASTER = "CREATE TABLE IF NOT EXISTS " +
             TABLE_AADHAR_MASTER + " (" +
             " " + COLUMN_AADHAR_ID + " integer," +
-            " " + COLUMN_AADHAR_NUMBER + " integer ," +
+            " " + COLUMN_AADHAR_NUMBER + " text ," +
             " " + COLUMN_AADHAR_IS_VARIFIED + " integer," +
             " " + COLUMN_AADHAR_PUBLIC + " integer," +
             " " + COLUMN_RC_PROFILE_MASTER_PM_ID + " integer" +
@@ -77,7 +77,7 @@ public class TableAadharMaster {
 
             profileDataOperationAadharNumber.setAadharId(cursor.getInt(cursor.getColumnIndex
                     (COLUMN_AADHAR_ID)));
-            profileDataOperationAadharNumber.setAadharNumber(cursor.getLong(cursor.getColumnIndex
+            profileDataOperationAadharNumber.setAadharNumber(cursor.getString(cursor.getColumnIndex
                     (COLUMN_AADHAR_NUMBER)));
             profileDataOperationAadharNumber.setAadharIsVerified(cursor.getInt(cursor.getColumnIndex
                     (COLUMN_AADHAR_IS_VARIFIED)));
@@ -94,7 +94,7 @@ public class TableAadharMaster {
     }
 
     // Getting All Aadhar Public value from Aadhar number
-    public int getAadharPublicValueFromAadharNumber(long aadharNumber) {
+    public int getAadharPublicValueFromAadharNumber(String aadharNumber) {
         ProfileDataOperationAadharNumber profileDataOperationAadharNumber = new ProfileDataOperationAadharNumber();
         int aadharPublicId = 0;
         // Select All Query

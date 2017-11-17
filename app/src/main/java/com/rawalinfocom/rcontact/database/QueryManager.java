@@ -439,7 +439,7 @@ public class QueryManager {
             if (aadharCardCursor.moveToFirst()) {
                 aadharDetails.setAadharId(aadharCardCursor.getInt(aadharCardCursor.
                         getColumnIndexOrThrow(TableAadharMaster.COLUMN_AADHAR_ID)));
-                aadharDetails.setAadharNumber(aadharCardCursor.getLong(aadharCardCursor.
+                aadharDetails.setAadharNumber(aadharCardCursor.getString(aadharCardCursor.
                         getColumnIndexOrThrow(TableAadharMaster.COLUMN_AADHAR_NUMBER)));
                 aadharDetails.setAadharIsVerified(aadharCardCursor.getInt(aadharCardCursor.
                         getColumnIndexOrThrow(TableAadharMaster.COLUMN_AADHAR_IS_VARIFIED)));
