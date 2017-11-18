@@ -499,7 +499,6 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
             }
 
             if (listType == 0) {
-
                 item.setProfileNotiType(0);
                 item.setNotiInfo(String.format(item.getPersonName() + " " + getActivity().getString(R.string
                         .str_requested_for_your) + " ", request.getPpmTag()));
