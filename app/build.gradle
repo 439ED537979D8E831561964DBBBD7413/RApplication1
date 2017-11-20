@@ -10,7 +10,7 @@ buildscript {
 
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
-apply plugin: 'android-apt'
+//apply plugin: 'android-apt'
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
@@ -28,11 +28,13 @@ def getProps(path) {
 android {
     compileSdkVersion 27
     buildToolsVersion '26.0.2'
+    flavorDimensions 'default'
     defaultConfig {
         applicationId "com.rawalinfocom.rcontact"
         minSdkVersion 19
         targetSdkVersion 27
         versionCode 11
+        vectorDrawables.useSupportLibrary = true
         versionName "1.1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
@@ -40,7 +42,7 @@ android {
 
     signingConfigs {
         release {
-            storeFile file('/Users/user/Desktop/apk/rcontacts.jks') // My Local path
+            storeFile file('/Users/user/Desktop/apk/rcontacts.jks')
             storePassword "rcontacts"
             keyAlias "rcontacts"
             keyPassword "rcontacts"
@@ -141,7 +143,7 @@ dependencies {
     compile "com.fasterxml.jackson.core:jackson-annotations:$JACKSON_CORE_VERSION"
 
     compile "com.jakewharton:butterknife:$BUTTER_KNIFE_VERSION"
-    apt "com.jakewharton:butterknife-compiler:$BUTTER_KNIFE_VERSION"
+    annotationProcessor "com.jakewharton:butterknife-compiler:$BUTTER_KNIFE_VERSION"
 
     //    compile 'com.android.support.test.espresso:espresso-core:2.2.2'
     //    compile 'com.android.support.constraint:constraint-layout:1.0.0'
@@ -159,7 +161,7 @@ dependencies {
     compile 'com.nineoldandroids:library:2.4.0'
     compile 'com.thefinestartist:utils:0.9.0'
     testCompile 'junit:junit:4.12'
-    apt 'com.thefinestartist:compilers:0.9.0'
+    annotationProcessor 'com.thefinestartist:compilers:0.9.0'
     debugCompile 'com.amitshekhar.android:debug-db:0.4.0'
     compile files('libs/twitter4j-core-4.0.1.jar')
 }

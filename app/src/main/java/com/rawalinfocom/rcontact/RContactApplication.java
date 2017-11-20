@@ -6,6 +6,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.support.multidex.MultiDex;
+import android.support.v7.app.AppCompatDelegate;
 import android.util.Base64;
 import android.util.Log;
 
@@ -56,6 +57,10 @@ public class RContactApplication extends Application {
     ArrayList<SpamDataType> arrayListSpamDataType;
 //    ArrayList<String> arrayListSmsLogsHeaders;
 
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -101,6 +106,7 @@ public class RContactApplication extends Application {
             Log.d("Error", e.getMessage(), e);
         }
     }
+
 
     public static synchronized RContactApplication getInstance() {
         return mInstance;
