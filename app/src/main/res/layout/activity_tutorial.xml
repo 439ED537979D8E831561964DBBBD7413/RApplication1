@@ -59,7 +59,7 @@
             android:gravity="center"
             android:padding="@dimen/activity_half_horizontal_margin"
             android:textAppearance="?android:textAppearanceMedium"
-            tools:text="Skip>>" />
+            tools:text="Skip>>"/>
 
         <LinearLayout
             android:id="@+id/linear_indicator"
@@ -75,8 +75,8 @@
                 android:layout_height="12dp"
                 android:layout_marginEnd="@dimen/margin_tiny"
                 android:contentDescription="@string/str_content_description"
-                android:src="@drawable/ic_filled_indicator"
-                tools:tint="@color/colorAccent" />
+                app:srcCompat="@drawable/ic_filled_indicator"
+                tools:tint="@color/colorAccent"/>
 
             <ImageView
                 android:id="@+id/image_tutorial_2"
@@ -85,8 +85,8 @@
                 android:layout_marginEnd="@dimen/margin_tiny"
                 android:layout_marginStart="@dimen/margin_tiny"
                 android:contentDescription="@string/str_content_description"
-                android:src="@drawable/ic_filled_indicator"
-                tools:tint="@color/lightGrey" />
+                app:srcCompat="@drawable/ic_filled_indicator"
+                tools:tint="@color/lightGrey"/>
 
             <ImageView
                 android:id="@+id/image_tutorial_3"
@@ -95,8 +95,8 @@
                 android:layout_marginEnd="@dimen/margin_tiny"
                 android:layout_marginStart="@dimen/margin_tiny"
                 android:contentDescription="@string/str_content_description"
-                android:src="@drawable/ic_filled_indicator"
-                tools:tint="@color/lightGrey" />
+                app:srcCompat="@drawable/ic_filled_indicator"
+                tools:tint="@color/lightGrey"/>
 
             <ImageView
                 android:id="@+id/image_tutorial_4"
@@ -105,8 +105,8 @@
                 android:layout_marginEnd="@dimen/margin_tiny"
                 android:layout_marginStart="@dimen/margin_tiny"
                 android:contentDescription="@string/str_content_description"
-                android:src="@drawable/ic_filled_indicator"
-                tools:tint="@color/lightGrey" />
+                app:srcCompat="@drawable/ic_filled_indicator"
+                tools:tint="@color/lightGrey"/>
 
             <ImageView
                 android:id="@+id/image_tutorial_5"
@@ -114,8 +114,8 @@
                 android:layout_height="12dp"
                 android:layout_marginStart="@dimen/margin_tiny"
                 android:contentDescription="@string/str_content_description"
-                android:src="@drawable/ic_filled_indicator"
-                tools:tint="@color/lightGrey" />
+                app:srcCompat="@drawable/ic_filled_indicator"
+                tools:tint="@color/lightGrey"/>
 
             <ImageView
                 android:id="@+id/image_tutorial_6"
@@ -123,8 +123,8 @@
                 android:layout_height="12dp"
                 android:layout_marginStart="@dimen/margin_tiny"
                 android:contentDescription="@string/str_content_description"
-                android:src="@drawable/ic_filled_indicator"
-                tools:tint="@color/lightGrey" />
+                app:srcCompat="@drawable/ic_filled_indicator"
+                tools:tint="@color/lightGrey"/>
 
         </LinearLayout>
 
@@ -137,7 +137,7 @@
             android:gravity="center_horizontal"
             android:padding="@dimen/activity_half_horizontal_margin"
             android:textAppearance="?android:textAppearanceMedium"
-            tools:text="And?" />
+            tools:text="And?"/>
 
     </RelativeLayout>
 
@@ -147,6 +147,6 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/relative_indicator"
         android:layout_below="@+id/switcher_tutorial_content"
-        android:overScrollMode="never" />
+        android:overScrollMode="never"/>
 
 </RelativeLayout>
