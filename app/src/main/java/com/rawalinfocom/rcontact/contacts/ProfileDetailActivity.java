@@ -4342,18 +4342,17 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         }
     }
 
-    @SuppressWarnings("unused")
-    private ArrayList<CallLogType> getNumbersFromName(String number) {
+    private ArrayList<CallLogType> getNumbersFromName(String name) {
         Cursor cursor;
         ArrayList<CallLogType> listNumber = new ArrayList<>();
         try {
             final Uri Person = Uri.withAppendedPath(
                     ContactsContract.CommonDataKinds.Phone.CONTENT_FILTER_URI,
-                    Uri.encode(number));
+                    Uri.encode(name));
 
             cursor = this.getContentResolver().query(Person, null,
                     ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " =?", new
-                            String[]{number}, null);
+                            String[]{name}, null);
 
             if (cursor != null) {
                 if (cursor.getCount() > 0) {
@@ -4364,7 +4363,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         CallLogType callLogType = new CallLogType();
                         String profileNumber = cursor.getString(number1);
                         String formattedNumber = Utils.getFormattedNumber(this, profileNumber);
-                        callLogType.setName(number);
+                        callLogType.setName(name);
                         callLogType.setNumber(formattedNumber);
                         listNumber.add(callLogType);
                     }

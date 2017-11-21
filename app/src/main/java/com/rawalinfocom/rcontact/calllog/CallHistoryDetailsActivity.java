@@ -410,18 +410,24 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                     }
 
                 } else {
-                    if (!StringUtils.isEmpty(historyNumber)) {
-                        fetchAllCallLogHistory(historyNumber);
-                    } else {
-                        if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase
-                                ("[Unknown]")) {
-                            fetchAllCallLogHistory(contactName);
+                    if(!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase
+                            ("[Unknown]")){
+                        fetchAllCallLogHistory(contactName);
+                    }else{
+                        if (!StringUtils.isEmpty(historyNumber)) {
+                            fetchAllCallLogHistory(historyNumber);
                         } else {
-                            if (!TextUtils.isEmpty(profileContactNumber)) {
-                                fetchAllCallLogHistory(profileContactNumber);
+                            if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase
+                                    ("[Unknown]")) {
+                                fetchAllCallLogHistory(contactName);
+                            } else {
+                                if (!TextUtils.isEmpty(profileContactNumber)) {
+                                    fetchAllCallLogHistory(profileContactNumber);
+                                }
                             }
                         }
                     }
+
                 }
 
             } catch (Exception e) {

@@ -356,10 +356,12 @@ public class NotificationFCMService extends FirebaseMessagingService {
                                 ObjectMapper mapper = new ObjectMapper();
                                 String data = m.get("car_contact");
                                 try {
-                                    ContactRequestData obj = mapper.readValue(data,
-                                            ContactRequestData.class);
-                                    updatePrivacySetting(m.get("car_ppm_particular"), m.get
-                                            ("car_mongodb_record_index"), obj, databaseHandler);
+                                    if(data != null){
+                                        ContactRequestData obj = mapper.readValue(data,
+                                                ContactRequestData.class);
+                                        updatePrivacySetting(m.get("car_ppm_particular"), m.get
+                                                ("car_mongodb_record_index"), obj, databaseHandler);
+                                    }
                                     if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_PUSH, false))
                                         sendNotification(msg, AppConstants
                                                 .NOTIFICATION_TYPE_PROFILE_RESPONSE);
@@ -373,7 +375,6 @@ public class NotificationFCMService extends FirebaseMessagingService {
                         }
                         break;
                 }
-
                 updateNotificationCount(databaseHandler);
             }
         }
