@@ -1039,7 +1039,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                     /*this.getString(R.string.view_in_ac), this.getString(R
                                     .string.view_in_rc),
                                     this.getString(R.string.call_reminder),
-                                    this.getString(R.string.unblock),*/ this.getString(R.string
+                                    this.getString(R.string.unblock),*/ this.getString(R.string.call_reminder),this.getString(R.string
                                             .delete),
                                     this.getString(R.string.clear_call_log)));
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
@@ -1057,7 +1057,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                                         .getString(R.string.view_profile),
                                                 this.getString(R.string.copy_phone_number),
                                         /*this.getString(R.string.call_reminder), this.getString
-                                        (R.string.unblock),*/
+                                        (R.string.unblock),*/this.getString(R.string.call_reminder),
                                                 this.getString(R.string.delete), this.getString(R
                                                         .string
                                                         .clear_call_log)));
@@ -1078,7 +1078,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                     /*this.getString(R.string.view_in_ac), this.getString(R
                                     .string.view_in_rc),
                                     this.getString(R.string.call_reminder),
-                                    this.getString(R.string.block),*/ this.getString(R.string
+                                    this.getString(R.string.block),*/this.getString(R.string.call_reminder), this.getString(R.string
                                             .delete),
                                     this.getString(R.string.clear_call_log)));
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
@@ -1097,7 +1097,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                                 /*this.getString(R.string.view_profile),*/
                                                 this.getString(R.string.copy_phone_number),
                                         /*this.getString(R.string.call_reminder), this.getString
-                                        (R.string.block),*/
+                                        (R.string.block),*/this.getString(R.string.call_reminder),
                                                 this.getString(R.string.delete), this.getString(R
                                                         .string
                                                         .clear_call_log)));

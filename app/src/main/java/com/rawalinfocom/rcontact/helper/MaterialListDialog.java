@@ -84,6 +84,11 @@ public class MaterialListDialog {
                     callLogDateToDelete, contactName, uniqueRowId, key);
             recycleViewDialog.setAdapter(materialListAdapter);
             setRecyclerViewLayoutManager(recycleViewDialog);
+        }else {
+            CallLogDialogListAdapter materialListAdapter = new CallLogDialogListAdapter(context, stringArrayList, "",
+                    0, "", "", "");
+            recycleViewDialog.setAdapter(materialListAdapter);
+            setRecyclerViewLayoutManager(recycleViewDialog);
         }
     }
 

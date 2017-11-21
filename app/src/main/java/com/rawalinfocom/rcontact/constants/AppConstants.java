@@ -306,6 +306,7 @@ public class AppConstants {
     public static String PREF_BLOCK_CONTACT_LIST = "pref_block_contact_list";
     public static String PREF_BLOCK_PROFILE = "pref_block_profile";
     public static String PREF_CALL_LOG_LIST = "pref_call_log_list";
+    public static String PREF_CALL_REMINDER = "pref_call_reminder";
     public static String PREF_CONTACT_LAST_SYNC_TIME = "pref_contact_last_sync_time";
     public static String PREF_CALL_LOGS_ID_SET = "pref_call_logs_id_set";
     public static String PREF_CALL_LOG_SYNCED_COUNT = "pref_call_log_synced_count";

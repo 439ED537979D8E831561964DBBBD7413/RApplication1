@@ -1,6 +1,8 @@
 package com.rawalinfocom.rcontact.adapters;
 
 import android.annotation.TargetApi;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -16,8 +18,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.R;
@@ -220,6 +224,40 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
                     myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
 
                 } else if (value.equalsIgnoreCase(context.getString(R.string.call_reminder))) {
+                    long timeToSet =  0;
+                    if(value.equalsIgnoreCase(context.getString(R.string.min15))){
+                        timeToSet =  System.currentTimeMillis() + (15*60*1000);
+                        Utils.setLongPreference(context,AppConstants.PREF_CALL_REMINDER,timeToSet);
+                    }else if(value.equalsIgnoreCase(context.getString(R.string.hour1))){
+                        timeToSet = 0;
+                        timeToSet =  System.currentTimeMillis() + (60*60*1000);
+                        Utils.setLongPreference(context,AppConstants.PREF_CALL_REMINDER,timeToSet);
+
+                    }else if(value.equalsIgnoreCase(context.getString(R.string.hour2))){
+                        timeToSet = 0;
+                        timeToSet =  System.currentTimeMillis() + (2*60*60*1000);
+                        Utils.setLongPreference(context,AppConstants.PREF_CALL_REMINDER,timeToSet);
+                    }else if(value.equalsIgnoreCase(context.getString(R.string.hour6))){
+                        timeToSet = 0;
+                        timeToSet =  System.currentTimeMillis() + (6*60*60*1000);
+                        Utils.setLongPreference(context,AppConstants.PREF_CALL_REMINDER,timeToSet);
+
+                    }else if(value.equalsIgnoreCase(context.getString(R.string.setDateAndTime))){
+                        long datePickerTime = 0;
+                        //Open time picker
+                        showDateTimePicker();
+                        Utils.setLongPreference(context,AppConstants.PREF_CALL_REMINDER,datePickerTime);
+
+                    }else {
+                        long datePickerTimeEdit =  Utils.getLongPreference(context,AppConstants.PREF_CALL_REMINDER,0);
+                        if(datePickerTimeEdit>0){
+                            datePickerTimeEdit = 0;
+                            Utils.setLongPreference(context,AppConstants.PREF_CALL_REMINDER,0);
+                            // open time picker
+                            Utils.setLongPreference(context,AppConstants.PREF_CALL_REMINDER,datePickerTimeEdit);
+                        }
+
+                    }
 
                 } else {
 
@@ -239,6 +277,27 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
         });
 
     }
+
+    Calendar date;
+    public void showDateTimePicker() {
+        final Calendar currentDate = Calendar.getInstance();
+        date = Calendar.getInstance();
+        new DatePickerDialog(context, new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                date.set(year, monthOfYear, dayOfMonth);
+                new TimePickerDialog(context, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                        date.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                        date.set(Calendar.MINUTE, minute);
+                        Log.v("call_reminder", "The choosen one " + date.getTime());
+                    }
+                }, currentDate.get(Calendar.HOUR_OF_DAY), currentDate.get(Calendar.MINUTE), false).show();
+            }
+        }, currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH), currentDate.get(Calendar.DATE)).show();
+    }
+
 
     private void deleteCallLogByNumber(String number) {
         try {
