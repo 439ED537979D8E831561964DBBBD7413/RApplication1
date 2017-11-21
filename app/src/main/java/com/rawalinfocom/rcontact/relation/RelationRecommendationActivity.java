@@ -146,12 +146,13 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
                     Utils.showSuccessSnackBar(RelationRecommendationActivity.this,
                             relativeRootRecommendationRelation, deleteRelationObject.getMessage());
 
-                    if (type.equalsIgnoreCase("reject")) {
-                        recommendationRelationList.remove(deleteRelationPosition);
-                        listAdapter.notifyItemRemoved(deleteRelationPosition);
-                    } else {
+                    getRelationRecommendation();
 
-                    }
+//                    if (type.equalsIgnoreCase("reject")) {
+//                        recommendationRelationList.remove(deleteRelationPosition);
+//                        listAdapter.notifyItemRemoved(deleteRelationPosition);
+//                    } else {
+//                    }
 
                     deleteRelationPosition = -1;
 
@@ -248,7 +249,10 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
         if (Utils.isNetworkAvailable(this)) {
             getRelationRecommendation();
         } else {
-            getRelationRecommendationData();
+            Utils.showErrorSnackBar(this, relativeRootRecommendationRelation, getResources()
+                    .getString(R.string.msg_no_network));
+            textNoRelation.setVisibility(View.VISIBLE);
+            recycleViewRelation.setVisibility(View.GONE);
         }
     }
 
@@ -285,6 +289,8 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
 
 
     private void getData(ArrayList<ExistingRelationRequest> allExistingRelationList) {
+
+        recommendationRelationList = new ArrayList<>();
 
         for (int i = 0; i < allExistingRelationList.size(); i++) {
 
@@ -459,10 +465,10 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
                         relationIds.add(individualRelationTypes.get(i).getId());
                 }
 
-//                if (type.equalsIgnoreCase("reject"))
-//                    rejectRelationRequest(relationIds);
-//                else
-//                    acceptRelationRequest(relationIds);
+                if (type.equalsIgnoreCase("reject"))
+                    rejectRelationRequest(relationIds);
+                else
+                    acceptRelationRequest(relationIds);
             }
         });
 

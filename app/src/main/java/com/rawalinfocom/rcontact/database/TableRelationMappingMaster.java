@@ -177,14 +177,25 @@ public class TableRelationMappingMaster {
     }
 
     // Deleting single relation
-    public boolean deleteRelationMapping(String pmId) {
-        boolean isDelete = false;
-        SQLiteDatabase db = databaseHandler.getWritableDatabase();
-        isDelete = db.delete(TABLE_RC_RCP_RELATION_MAPPING, COLUMN_RC_PROFILE_MASTER_PM_ID +
-                " = ?", new String[]{String.valueOf(pmId)}) > 0;
-        db.close();
+    public void deleteRelationMapping(String pmId) {
 
-        return isDelete;
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        db.delete(TABLE_RC_RCP_RELATION_MAPPING, COLUMN_RC_PROFILE_MASTER_PM_ID +
+                " = ?", new String[]{String.valueOf(pmId)});
+        db.close();
+    }
+
+    // Deleting single relation
+    public void deleteRelationMapping(String pmId, ArrayList<String> relationIds) {
+
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+        for (int i = 0; i < relationIds.size(); i++) {
+            db.delete(TABLE_RC_RCP_RELATION_MAPPING, COLUMN_RC_PROFILE_MASTER_PM_ID +
+                            " = ? and " + COLUMN_ID + " = ? ",
+                    new String[]{String.valueOf(pmId), relationIds.get(i)});
+        }
+        db.close();
     }
 
     public ArrayList<RelationRecommendationType> getExistingRelation(String pmId) {
@@ -381,6 +392,7 @@ public class TableRelationMappingMaster {
                         individualRelationTypeList.setRcStatus(cursor1.getInt(cursor1.getColumnIndexOrThrow
                                 (COLUMN_RRM_STATUS)));
                         individualRelationTypeList.setIsVerify("1");
+                        individualRelationTypeList.setIsSelected(false);
 
                     } else if (type.equalsIgnoreCase("1")) {
 
@@ -394,6 +406,7 @@ public class TableRelationMappingMaster {
                         individualRelationTypeList.setRcStatus(cursor1.getInt(cursor1.getColumnIndexOrThrow
                                 (COLUMN_RRM_STATUS)));
                         individualRelationTypeList.setIsVerify("1");
+                        individualRelationTypeList.setIsSelected(false);
 
                     } else if (type.equalsIgnoreCase("2")) {
 
@@ -408,6 +421,7 @@ public class TableRelationMappingMaster {
                         individualRelationTypeList.setRcStatus(cursor1.getInt(cursor1.getColumnIndexOrThrow
                                 (COLUMN_RRM_STATUS)));
                         individualRelationTypeList.setIsVerify("1");
+                        individualRelationTypeList.setIsSelected(false);
                     }
 
                     arrayList.add(individualRelationTypeList);

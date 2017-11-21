@@ -80,15 +80,15 @@ public class OrganizationListAdapter extends RecyclerView.Adapter<OrganizationLi
 
             holder.textMain.setText(organization.getOrgName());
             holder.textMain.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-                    R.drawable.ico_double_tick_green_svg, 0);
+                    R.drawable.ico_relation_single_tick_green_svg, 0);
             holder.textType.setText(Html.fromHtml("<small> (" + organization.getOrgIndustryType() + ") </small>"));
 //            holder.imgTic.setImageResource(R.drawable.ico_double_tick_svg);
 
         } else {
 
             holder.textMain.setText(organization.getOrgName());
-            holder.textMain.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-                    R.drawable.ico_relation_single_tick_green_svg, 0);
+//            holder.textMain.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+//                    R.drawable.ico_relation_single_tick_green_svg, 0);
             holder.textType.setVisibility(View.GONE);
 //            holder.imgTic.setImageResource(R.drawable.ico_relation_single_tick_svg);
         }

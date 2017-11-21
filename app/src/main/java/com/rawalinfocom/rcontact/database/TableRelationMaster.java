@@ -105,43 +105,14 @@ public class TableRelationMaster {
     public void insertData() {
 
         SQLiteDatabase db = databaseHandler.getReadableDatabase();
-        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Friend', 1);");
-        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Father', 2);");
-        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Father-in-law', 2);");
-        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Stepfather', 2);");
-        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Grandfather', 2);");
-        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Son', 2);");
-        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Son-in-law', 2);");
-        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Stepson', 2);");
-        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Grandson', 2);");
-        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Brother', 2);");
-        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Brother-in-law', 2);");
-        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Cousin Brother', 2);");
-        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Stepbrother', 2);");
-        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Uncle', 2);");
-        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Maternal Uncle', 2);");
-        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Nephew', 2);");
-        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Husband', 2);");
-        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Mother', 2);");
-        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Mother-in-law', 2);");
-        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Stepmother', 2);");
-        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Grandmother', 2);");
-        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Daughter', 2);");
-        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Daughter-in-law', 2);");
-        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Granddaughter', 2);");
-        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Stepdaughter', 2);");
-        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Sister', 2);");
-        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Stepsister', 2);");
-        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Cousin Sister', 2);");
-        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Sister-in-law', 2);");
-        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Aunt', 2);");
-        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Maternal Aunt', 2);");
-        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Niece', 2);");
-        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Wife', 2);");
-        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Co-Worker', 3);");
-        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Competitor', 3);");
-        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Supplier', 3);");
-        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Customer', 3);");
+        db.execSQL("INSERT INTO rc_relation_master (rm_particular, rm_type) VALUES ('Friend', 1),('Father', 2)," +
+                "('Father-in-law', 2),('Stepfather', 2),('Grandfather', 2),('Son', 2),('Son-in-law', 2)," +
+                "('Stepson', 2),('Grandson', 2),('Brother', 2),('Brother-in-law', 2),('Cousin Brother', 2)," +
+                "('Stepbrother', 2),('Uncle', 2),('Maternal Uncle', 2),('Nephew', 2),('Husband', 2),('Mother', 2)," +
+                "('Mother-in-law', 2),('Stepmother', 2),('Grandmother', 2),('Daughter', 2),('Daughter-in-law', 2)," +
+                "('Granddaughter', 2),('Stepdaughter', 2),('Sister', 2),('Stepsister', 2),('Cousin Sister', 2)," +
+                "('Sister-in-law', 2),('Aunt', 2),('Maternal Aunt', 2),('Niece', 2),('Wife', 2),('Co-Worker', 3)," +
+                "('Competitor', 3),('Supplier', 3),('Customer', 3);");
 
         db.close();
     }

@@ -52,7 +52,7 @@ class IndividualExistingRelationListAdapter extends RecyclerView.Adapter
             holder.textBusinessRelationName.setVisibility(View.VISIBLE);
             holder.textBusinessRelationName.setText(type.getRelationName());
 
-            if (type.getRcStatus() == 3)
+            if (type.getRcStatus() == 2)
                 holder.textBusinessRelationName.setCompoundDrawablesWithIntrinsicBounds
                         (R.drawable.ico_relation_business_svg, 0, R.drawable.ico_relation_double_tick_svg, 0);
             else
@@ -71,7 +71,7 @@ class IndividualExistingRelationListAdapter extends RecyclerView.Adapter
             holder.llFamilyRelation.setVisibility(View.VISIBLE);
             holder.textFamilyName.setText(type.getFamilyName());
 
-            if (type.getRcStatus() == 3)
+            if (type.getRcStatus() == 2)
                 holder.textFamilyName.setCompoundDrawablesWithIntrinsicBounds
                         (R.drawable.ico_realtion_family_svg, 0, R.drawable.ico_relation_double_tick_svg, 0);
             else
@@ -87,7 +87,7 @@ class IndividualExistingRelationListAdapter extends RecyclerView.Adapter
             holder.llFriendRelation.setVisibility(View.VISIBLE);
             holder.textFriendName.setText(activity.getString(R.string.str_friend));
 
-            if (type.getRcStatus() == 3)
+            if (type.getRcStatus() == 2)
                 holder.textFriendName.setCompoundDrawablesWithIntrinsicBounds
                         (R.drawable.ico_relation_friend_svg, 0, R.drawable.ico_relation_double_tick_svg, 0);
             else

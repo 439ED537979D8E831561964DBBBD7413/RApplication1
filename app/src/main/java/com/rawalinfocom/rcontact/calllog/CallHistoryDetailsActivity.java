@@ -1822,12 +1822,12 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
                 textOrganization.setText(tempOrganization.get(0).getOrgName());
                 textOrganization.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-                        R.drawable.ico_double_tick_green_svg, 0);
+                        R.drawable.ico_relation_single_tick_green_svg, 0);
 
             } else {
                 textOrganization.setText(tempOrganization.get(0).getOrgName());
-                textOrganization.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-                        R.drawable.ico_relation_single_tick_green_svg, 0);
+//                textOrganization.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+//                        R.drawable.ico_relation_single_tick_green_svg, 0);
             }
 
             textDesignation.setText(tempOrganization.get(0).getOrgJobTitle());

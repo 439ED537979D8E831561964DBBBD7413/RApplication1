@@ -7,12 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
-import com.rawalinfocom.rcontact.model.AppLanguage;
 import com.rawalinfocom.rcontact.model.IndividualRelationType;
 
 import org.apache.commons.lang3.StringUtils;
@@ -54,7 +55,7 @@ class IndividualRelationRecommendationListAdapter extends RecyclerView.Adapter
     }
 
     @Override
-    public void onBindViewHolder(IndividualRelationRecommendationViewHolder holder, int position) {
+    public void onBindViewHolder(final IndividualRelationRecommendationViewHolder holder, int position) {
 
         IndividualRelationType type = individualRelationRecommendationTypeList.get(position);
 
@@ -72,7 +73,7 @@ class IndividualRelationRecommendationListAdapter extends RecyclerView.Adapter
             holder.textOrganizationName.setText(type.getOrganizationName());
             holder.imageRelation.setImageResource(R.drawable.ico_relation_business_svg);
 
-            if (type.getRcStatus() == 3)
+            if (type.getRcStatus() == 2)
                 holder.textRelationName.setCompoundDrawablesWithIntrinsicBounds
                         (0, 0, R.drawable.ico_relation_double_tick_svg, 0);
             else
@@ -81,7 +82,7 @@ class IndividualRelationRecommendationListAdapter extends RecyclerView.Adapter
 
             if (!from.equalsIgnoreCase("rcp")) {
 
-                if (type.getRcStatus() == 3) {
+                if (type.getRcStatus() == 2) {
                     holder.checkboxRelation.setVisibility(View.GONE);
                 } else {
                     holder.checkboxRelation.setVisibility(View.VISIBLE);
@@ -101,7 +102,7 @@ class IndividualRelationRecommendationListAdapter extends RecyclerView.Adapter
             holder.textRelationName.setText(type.getFamilyName());
             holder.imageRelation.setImageResource(R.drawable.ico_realtion_family_svg);
 
-            if (type.getRcStatus() == 3)
+            if (type.getRcStatus() == 2)
                 holder.textRelationName.setCompoundDrawablesWithIntrinsicBounds
                         (0, 0, R.drawable.ico_relation_double_tick_svg, 0);
             else
@@ -110,7 +111,7 @@ class IndividualRelationRecommendationListAdapter extends RecyclerView.Adapter
 
             if (!from.equalsIgnoreCase("rcp")) {
 
-                if (type.getRcStatus() == 3) {
+                if (type.getRcStatus() == 2) {
                     holder.checkboxRelation.setVisibility(View.GONE);
                 } else {
                     holder.checkboxRelation.setVisibility(View.VISIBLE);
@@ -130,7 +131,7 @@ class IndividualRelationRecommendationListAdapter extends RecyclerView.Adapter
             holder.textRelationName.setText(mActivity.getString(R.string.str_friend));
             holder.imageRelation.setImageResource(R.drawable.ico_relation_friend_svg);
 
-            if (type.getRcStatus() == 3)
+            if (type.getRcStatus() == 2)
                 holder.textRelationName.setCompoundDrawablesWithIntrinsicBounds
                         (0, 0, R.drawable.ico_relation_double_tick_svg, 0);
             else
@@ -139,7 +140,7 @@ class IndividualRelationRecommendationListAdapter extends RecyclerView.Adapter
 
             if (!from.equalsIgnoreCase("rcp")) {
 
-                if (type.getRcStatus() == 3) {
+                if (type.getRcStatus() == 2) {
                     holder.checkboxRelation.setVisibility(View.GONE);
                 } else {
                     holder.checkboxRelation.setVisibility(View.VISIBLE);
@@ -155,19 +156,17 @@ class IndividualRelationRecommendationListAdapter extends RecyclerView.Adapter
 //            holder.llBusinessRelation.setVisibility(View.GONE);
 //        }
 
-//        holder.checkboxRelation.setTag(position);
-//        holder.checkboxRelation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-//
-//                int pos = (int) compoundButton.getTag();
-//
-//                if (b) {
-//                    if (clickListener != null)
-//                        clickListener.onClick(pos);
-//                }
-//            }
-//        });
+        holder.checkboxRelation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+
+                if (b) {
+                    if (clickListener != null)
+                        clickListener.onClick(holder.getAdapterPosition());
+                }
+            }
+        });
+
     }
 
     @Override
@@ -192,25 +191,11 @@ class IndividualRelationRecommendationListAdapter extends RecyclerView.Adapter
         @BindView(R.id.checkbox_relation)
         CheckBox checkboxRelation;
         @BindView(R.id.ll_business_relation)
-        LinearLayout llBusinessRelation;
-        //        @BindView(R.id.image_relation_family)
-//        ImageView imageRelationFamily;
-//        @BindView(R.id.text_relation_family)
-//        TextView textRelationFamily;
-//        @BindView(R.id.checkbox_relation_family)
-//        CheckBox checkboxRelationFamily;
-//        @BindView(R.id.ll_family_relation)
-//        LinearLayout llFamilyRelation;
-//        @BindView(R.id.image_relation_friend)
-//        ImageView imageRelationFriend;
-//        @BindView(R.id.text_relation_friend)
-//        TextView textRelationFriend;
-//        @BindView(R.id.checkbox_relation_friend)
-//        CheckBox checkboxRelationFriend;
-//        @BindView(R.id.ll_friend_relation)
-//        LinearLayout llFriendRelation;
+        RelativeLayout llBusinessRelation;
+        @BindView(R.id.ll_relation)
+        LinearLayout llRelation;
         @BindView(R.id.rl_root_relation)
-        LinearLayout rlRootRelation;
+        FrameLayout rlRootRelation;
 
         IndividualRelationRecommendationViewHolder(View itemView) {
             super(itemView);
@@ -226,13 +211,14 @@ class IndividualRelationRecommendationListAdapter extends RecyclerView.Adapter
             // friend
 //            llFriendRelation.setVisibility(View.GONE);
 
-//            checkboxRelation.performClick();
-            rlRootRelation.setOnClickListener(new View.OnClickListener() {
+            llRelation.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
-                    if (clickListener != null)
-                        clickListener.onClick(getAdapterPosition());
+                    checkboxRelation.performClick();
+
+//                    if (clickListener != null)
+//                        clickListener.onClick(getAdapterPosition());
                 }
             });
         }

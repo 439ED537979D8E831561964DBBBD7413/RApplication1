@@ -125,19 +125,6 @@ class RelationRecommendationListAdapter extends RecyclerView.Adapter<
             setData(relationType, position, innerPosition, true); // true
         }
 
-//        for (int i = 0; i < arrayListRelationType.get(position).getIndividualRelationTypeList().size(); i++) {
-//
-//            IndividualRelationType relationType1 = arrayListRelationType.get(position)
-//                    .getIndividualRelationTypeList().get(i);
-//
-//            if (i == innerPosition) {
-//                setData(relationType1, position, innerPosition, true); // true
-//            }
-////            else {
-////                setData(relationType1, position, i, false); //  false
-////            }
-//        }
-
         notifyDataSetChanged();
     }
 
