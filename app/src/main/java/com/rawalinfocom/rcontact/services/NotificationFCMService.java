@@ -375,7 +375,6 @@ public class NotificationFCMService extends FirebaseMessagingService {
                         }
                         break;
                 }
-
                 updateNotificationCount(databaseHandler);
             }
         }
