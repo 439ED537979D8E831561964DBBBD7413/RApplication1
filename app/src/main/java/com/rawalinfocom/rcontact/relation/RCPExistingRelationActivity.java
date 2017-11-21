@@ -385,8 +385,6 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
 
             } else {
                 textOrganization.setText(arrayListOrganization.get(0).getOrgName());
-//                textOrganization.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-//                        R.drawable.ico_relation_single_tick_green_svg, 0);
             }
 
             textDesignation.setText(arrayListOrganization.get(0).getOrgJobTitle());

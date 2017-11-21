@@ -2532,21 +2532,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 if (MoreObjects.firstNonNull(tempOrganization.get(0).getIsVerify(), 0) ==
                         IntegerConstants.RCP_TYPE_PRIMARY) {
 
-//                    String s = Utils.setMultipleTypeface(ProfileDetailActivity.this,
-//                            tempOrganization.get(0).getOrgName() + " <font color" + "='#00796B'>" +
-//                                    getString(R.string.im_icon_verify) + "</font>", 0,
-//                            (StringUtils.length(tempOrganization.get(0).getOrgName()) + 1),
-//                            ((StringUtils.length(tempOrganization.get(0).getOrgName()) + 1) + 1))
-//                            .toString();
-
                     textOrganization.setText(tempOrganization.get(0).getOrgName());
                     textOrganization.setCompoundDrawablesWithIntrinsicBounds(0, 0,
                             R.drawable.ico_relation_single_tick_green_svg, 0);
 
                 } else {
                     textOrganization.setText(tempOrganization.get(0).getOrgName());
-//                    textOrganization.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-//                            R.drawable.ico_relation_single_tick_green_svg, 0);
                 }
 
                 textDesignation.setText(tempOrganization.get(0).getOrgJobTitle());
@@ -2589,8 +2580,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 textOrganization.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if(tempOrganization.get(0).getIsVerify() == 1){
-                            String orgPublicLink =  BuildConfig.ORANISATION_PUBLIC_LINK + tempOrganization.get(0).getOrgEntId();
+                        if (tempOrganization.get(0).getIsVerify() == 1) {
+                            String orgPublicLink = BuildConfig.ORANISATION_PUBLIC_LINK + tempOrganization.get(0).getOrgEntId();
                             if (!StringUtils.isEmpty(orgPublicLink)) {
                                 String url = orgPublicLink;
                                 Intent i = new Intent(Intent.ACTION_VIEW);
@@ -3066,7 +3057,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     });
 
                     textAadharNumber.setTypeface(Utils.typefaceRegular(this));
-                    if (aadharDetails.getAadharNumber() .equalsIgnoreCase("0")) {
+                    if (aadharDetails.getAadharNumber().equalsIgnoreCase("0")) {
                         textAadharNumber.setText("XXXX-XXXX-XXXX");
                     } else
                         textAadharNumber.setText(aadharDetails.getAadharNumber() + "");
@@ -3152,7 +3143,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 linearAadharCard.setVisibility(View.GONE);
             }
 
-
             textAadharNumber.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -3179,7 +3169,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     (!Utils.isArraylistNullOrEmpty(arrayListImAccount) || !Utils
                             .isArraylistNullOrEmpty(arrayListPhoneBookImAccount))
                     || (profileDetail != null
-                    && (profileDetail.getPbAadhar().getAadharNumber().length()>0))) {
+                    && (profileDetail.getPbAadhar().getAadharNumber().length() > 0))) {
                 rippleViewMore.setVisibility(View.VISIBLE);
             } else {
                 rippleViewMore.setVisibility(View.GONE);
@@ -3279,7 +3269,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 cardOtherDetails.setVisibility(View.VISIBLE);
             }
 
-
             if (displayOwnProfile && profileDetail != null) {
                 showProfilePercentage(profileDetail);
             }
@@ -3288,7 +3277,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             e.printStackTrace();
         }
     }
-
 
     private void sendAccessRequest(int toPMId, String carFiledType, String recordIndexId) {
 
