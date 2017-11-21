@@ -104,13 +104,13 @@ public class WsResponseObject {
     }
 
     @JsonProperty("relationList")
-    private ArrayList<RelationRequest> allExistingRelationList;
+    private ArrayList<ExistingRelationRequest> allExistingRelationList;
 
-    public ArrayList<RelationRequest> getAllExistingRelationList() {
+    public ArrayList<ExistingRelationRequest> getAllExistingRelationList() {
         return allExistingRelationList;
     }
 
-    public void setAllExistingRelationList(ArrayList<RelationRequest>
+    public void setAllExistingRelationList(ArrayList<ExistingRelationRequest>
                                                    allExistingRelationList) {
         this.allExistingRelationList = allExistingRelationList;
     }

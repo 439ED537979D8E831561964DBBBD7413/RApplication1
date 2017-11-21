@@ -1,5 +1,6 @@
 package com.rawalinfocom.rcontact.relation;
 
+import android.app.Dialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,6 +9,9 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -25,9 +29,11 @@ import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
+import com.rawalinfocom.rcontact.model.ExistingRelationRequest;
 import com.rawalinfocom.rcontact.model.IndividualRelationType;
 import com.rawalinfocom.rcontact.model.RelationRecommendationType;
 import com.rawalinfocom.rcontact.model.RelationRequest;
+import com.rawalinfocom.rcontact.model.RelationUserProfile;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 
@@ -55,8 +61,8 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
     LinearLayout linearActionRight;
     @BindView(R.id.relative_action_back)
     RelativeLayout relativeActionBack;
-    @BindView(R.id.no_record_to_display)
-    TextView noRecordToDisplay;
+    @BindView(R.id.text_no_relation)
+    TextView textNoRelation;
     @BindView(R.id.recycle_view_relation)
     RecyclerView recycleViewRelation;
 
@@ -73,6 +79,8 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
 
     private RelationRecommendationListAdapter listAdapter;
     private ArrayList<RelationRecommendationType> recommendationRelationList;
+    private String deletePmId = "", type = "";
+    private int deleteRelationPosition = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,8 +103,16 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
                 if (sendRelationRequestObject != null && StringUtils.equalsIgnoreCase
                         (sendRelationRequestObject.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                    ArrayList<RelationRequest> allExistingRelationList = sendRelationRequestObject.
-                            getAllExistingRelationList();
+                    ArrayList<ExistingRelationRequest> allExistingRelationList =
+                            sendRelationRequestObject.getAllExistingRelationList();
+
+                    if (allExistingRelationList.size() > 0) {
+                        getData(allExistingRelationList);
+                        getRelationRecommendationData();
+                    } else {
+                        textNoRelation.setVisibility(View.VISIBLE);
+                        recycleViewRelation.setVisibility(View.GONE);
+                    }
 
 //                    Utils.showSuccessSnackBar(activity, relativeRootRecommendationRelation,
 //                            "New Relation Added Successfully!!!");
@@ -120,8 +136,8 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
             }
             //</editor-fold>
 
-            //<editor-fold desc="REQ_DELETE_RELATION">
-            if (serviceType.contains(WsConstants.REQ_DELETE_RELATION)) {
+            //<editor-fold desc="REQ_RELATION_ACTION">
+            if (serviceType.contains(WsConstants.REQ_RELATION_ACTION)) {
                 WsResponseObject deleteRelationObject = (WsResponseObject) data;
                 Utils.hideProgressDialog();
                 if (deleteRelationObject != null && StringUtils.equalsIgnoreCase
@@ -130,13 +146,15 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
                     Utils.showSuccessSnackBar(RelationRecommendationActivity.this,
                             relativeRootRecommendationRelation, deleteRelationObject.getMessage());
 
-//                    tableRelationMappingMaster.deleteRelationMapping(deletePmId);
-//                    deletePmId = "";
+                    getRelationRecommendation();
 
-//                    existingRelationList.remove(deleteRelationPosition);
-//                    listAdapter.notifyDataSetChanged();
+//                    if (type.equalsIgnoreCase("reject")) {
+//                        recommendationRelationList.remove(deleteRelationPosition);
+//                        listAdapter.notifyItemRemoved(deleteRelationPosition);
+//                    } else {
+//                    }
 
-//                    deleteRelationPosition = -1;
+                    deleteRelationPosition = -1;
 
                 } else {
                     if (deleteRelationObject != null) {
@@ -184,9 +202,11 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
         imageBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                inputSearch.getText().clear();
                 relativeBack.setVisibility(View.GONE);
                 relativeActionBack.setVisibility(View.VISIBLE);
-                listAdapter.getFilter().filter("");
+                if (listAdapter != null)
+                    listAdapter.getFilter().filter("");
             }
         });
 
@@ -198,7 +218,8 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                listAdapter.getFilter().filter(charSequence.toString());
+                if (listAdapter != null)
+                    listAdapter.getFilter().filter(charSequence.toString());
             }
 
             @Override
@@ -210,7 +231,11 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
         imgClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                listAdapter.getFilter().filter("");
+                inputSearch.getText().clear();
+                relativeBack.setVisibility(View.GONE);
+                relativeActionBack.setVisibility(View.VISIBLE);
+                if (listAdapter != null)
+                    listAdapter.getFilter().filter("");
             }
         });
     }
@@ -224,155 +249,230 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
         if (Utils.isNetworkAvailable(this)) {
             getRelationRecommendation();
         } else {
-            getRelationRecommendationData();
+            Utils.showErrorSnackBar(this, relativeRootRecommendationRelation, getResources()
+                    .getString(R.string.msg_no_network));
+            textNoRelation.setVisibility(View.VISIBLE);
+            recycleViewRelation.setVisibility(View.GONE);
         }
     }
 
     private void getRelationRecommendationData() {
 
-    }
-
-    private void makeTempDataAndSetAdapter() {
-
-        for (int i = 0; i < 5; i++) {
-            RelationRecommendationType relationRecommendationType = new RelationRecommendationType();
-
-            ArrayList<IndividualRelationType> arrayList = new ArrayList<>();
-
-            IndividualRelationType individualRelationType;
-
-            if (i == 0) {
-
-                relationRecommendationType.setFirstName("Aniruddh");
-                relationRecommendationType.setLastName("Pal");
-                relationRecommendationType.setNumber("+91 886638723");
-                relationRecommendationType.setDateAndTime("02 Oct, 17");
-
-                // All
-                individualRelationType = new IndividualRelationType();
-                individualRelationType.setRelationName("Co-worker");
-                individualRelationType.setOrganizationName("Hungama");
-                individualRelationType.setFamilyName("");
-                individualRelationType.setIsFriendRelation(false);
-
-                arrayList.add(individualRelationType);
-
-                individualRelationType = new IndividualRelationType();
-                individualRelationType.setRelationName("Co-worker");
-                individualRelationType.setOrganizationName("RawalInfocom");
-                individualRelationType.setFamilyName("");
-                individualRelationType.setIsFriendRelation(false);
-
-                arrayList.add(individualRelationType);
-
-                individualRelationType = new IndividualRelationType();
-                individualRelationType.setRelationName("");
-                individualRelationType.setOrganizationName("");
-                individualRelationType.setFamilyName("Brother");
-                individualRelationType.setIsFriendRelation(true);
-
-                arrayList.add(individualRelationType);
-
-//                individualRelationType = new IndividualRelationType();
-//                individualRelationType.setRelationName("");
-//                individualRelationType.setOrganizationName("");
-//                individualRelationType.setFamilyName("");
-//                individualRelationType.setIsFriendRelation(true);
-//
-//                arrayList.add(individualRelationType);
-            }
-
-            if (i == 1) {
-
-                relationRecommendationType.setFirstName("Darshan");
-                relationRecommendationType.setLastName("Gajera");
-                relationRecommendationType.setNumber("+91 9712978901");
-                relationRecommendationType.setDateAndTime("05 Oct, 17");
-
-                // Business and Family
-                individualRelationType = new IndividualRelationType();
-                individualRelationType.setRelationName("Co-worker");
-                individualRelationType.setOrganizationName("RawalInfocom");
-                individualRelationType.setFamilyName("");
-                individualRelationType.setIsFriendRelation(false);
-
-                arrayList.add(individualRelationType);
-
-                individualRelationType = new IndividualRelationType();
-                individualRelationType.setRelationName("");
-                individualRelationType.setOrganizationName("");
-                individualRelationType.setFamilyName("Brother");
-                individualRelationType.setIsFriendRelation(false);
-
-                arrayList.add(individualRelationType);
-            }
-
-            if (i == 2) {
-
-                relationRecommendationType.setFirstName("Manish");
-                relationRecommendationType.setLastName("Bhikadiya");
-                relationRecommendationType.setNumber("+91 9123457859");
-                relationRecommendationType.setDateAndTime("07 Oct, 17");
-
-                // Family and Friend
-                individualRelationType = new IndividualRelationType();
-                individualRelationType.setRelationName("");
-                individualRelationType.setOrganizationName("");
-                individualRelationType.setFamilyName("Uncle");
-                individualRelationType.setIsFriendRelation(true);
-
-                arrayList.add(individualRelationType);
-//                individualRelationType = new IndividualRelationType();
-//                individualRelationType.setRelationName("");
-//                individualRelationType.setOrganizationName("");
-//                individualRelationType.setFamilyName("");
-//                individualRelationType.setIsFriendRelation(true);
-//
-//                arrayList.add(individualRelationType);
-            }
-
-            if (i == 3) {
-
-                relationRecommendationType.setFirstName("Viraj");
-                relationRecommendationType.setLastName("Kakadiya");
-                relationRecommendationType.setNumber("+91 9879879870");
-                relationRecommendationType.setDateAndTime("07 Oct, 17");
-
-                // Friend
-                individualRelationType = new IndividualRelationType();
-                individualRelationType.setRelationName("");
-                individualRelationType.setOrganizationName("");
-                individualRelationType.setFamilyName("");
-                individualRelationType.setIsFriendRelation(true);
-
-                arrayList.add(individualRelationType);
-            }
-
-            if (i == 4) {
-
-                relationRecommendationType.setFirstName("Ashish");
-                relationRecommendationType.setLastName("Dungrani");
-                relationRecommendationType.setNumber("+91 9876549871");
-                relationRecommendationType.setDateAndTime("07 Oct, 17");
-
-                // Family
-                individualRelationType = new IndividualRelationType();
-                individualRelationType.setRelationName("");
-                individualRelationType.setOrganizationName("");
-                individualRelationType.setFamilyName("Father");
-                individualRelationType.setIsFriendRelation(false);
-
-                arrayList.add(individualRelationType);
-            }
-
-            relationRecommendationType.setIndividualRelationTypeList(arrayList);
-            recommendationRelationList.add(relationRecommendationType);
-        }
+        textNoRelation.setVisibility(View.GONE);
+        recycleViewRelation.setVisibility(View.VISIBLE);
 
         if (recommendationRelationList.size() > 0) {
-            listAdapter = new RelationRecommendationListAdapter(this, recommendationRelationList);
+            listAdapter = new RelationRecommendationListAdapter(this, recommendationRelationList,
+                    new RelationRecommendationListAdapter.OnClickListener() {
+                        @Override
+                        public void onClick(int position, String name, String pmId) {
+                            type = "accept";
+                            deletePmId = pmId;
+                            deleteRelationPosition = position;
+                            dialogActionRelation(position, name);
+                        }
+
+                        @Override
+                        public void onDeleteClick(int position, String name, String pmId) {
+                            type = "reject";
+                            deletePmId = pmId;
+                            deleteRelationPosition = position;
+                            dialogActionRelation(position, name);
+                        }
+                    });
             recycleViewRelation.setAdapter(listAdapter);
+        } else {
+            textNoRelation.setVisibility(View.VISIBLE);
+            recycleViewRelation.setVisibility(View.GONE);
         }
+    }
+
+
+    private void getData(ArrayList<ExistingRelationRequest> allExistingRelationList) {
+
+        recommendationRelationList = new ArrayList<>();
+
+        for (int i = 0; i < allExistingRelationList.size(); i++) {
+
+            ExistingRelationRequest existingRelationRequest = allExistingRelationList.get(i);
+
+            RelationUserProfile relationUserProfile = existingRelationRequest.getRelationUserProfile();
+
+            RelationRecommendationType recommendationType = new RelationRecommendationType();
+            recommendationType.setFirstName(relationUserProfile.getPmFirstName());
+            recommendationType.setLastName(relationUserProfile.getPmLastName());
+            recommendationType.setNumber(relationUserProfile.getMobileNumber());
+            recommendationType.setPmId(String.valueOf(allExistingRelationList.get(i).getRrmToPmId()));
+            recommendationType.setDateAndTime("");
+            recommendationType.setProfileImage("");
+
+            ArrayList<IndividualRelationType> relationRecommendations = new ArrayList<>();
+
+            // businessRecommendation
+            ArrayList<RelationRequest> businessRecommendation = existingRelationRequest
+                    .getBusinessRelationList();
+
+            if (!Utils.isArraylistNullOrEmpty(businessRecommendation)) {
+
+                for (int j = 0; j < businessRecommendation.size(); j++) {
+
+                    IndividualRelationType individualRelationType = new IndividualRelationType();
+
+                    individualRelationType.setId(String.valueOf(businessRecommendation.get(j).
+                            getId()));
+                    individualRelationType.setRelationId(String.valueOf(businessRecommendation.get(j).
+                            getRcRelationMasterId()));
+                    individualRelationType.setRelationName(businessRecommendation.get(j).getRelationMaster()
+                            .getRmParticular());
+                    individualRelationType.setOrganizationName(businessRecommendation.get(j).getOrganization()
+                            .getRmParticular());
+                    individualRelationType.setFamilyName("");
+                    individualRelationType.setOrganizationId(String.valueOf(businessRecommendation.get(j).getRcOrgId()));
+                    individualRelationType.setIsFriendRelation(false);
+                    individualRelationType.setIsVerify("1");
+                    individualRelationType.setRelationType(businessRecommendation.get(j).getRrmType());
+                    individualRelationType.setRcStatus(businessRecommendation.get(j).getRcStatus());
+                    individualRelationType.setIsSelected(false);
+
+                    relationRecommendations.add(individualRelationType);
+                }
+            }
+
+            // familyRecommendation
+            ArrayList<RelationRequest> familyRecommendation = existingRelationRequest
+                    .getFamilyRelationList();
+
+            if (!Utils.isArraylistNullOrEmpty(familyRecommendation)) {
+
+                for (int j = 0; j < familyRecommendation.size(); j++) {
+
+                    IndividualRelationType individualRelationType = new IndividualRelationType();
+
+                    individualRelationType.setId(String.valueOf(familyRecommendation.get(j).
+                            getId()));
+                    individualRelationType.setRelationId(String.valueOf(familyRecommendation.get(j).
+                            getRcRelationMasterId()));
+                    individualRelationType.setRelationName("");
+                    individualRelationType.setOrganizationName("");
+                    individualRelationType.setFamilyName(familyRecommendation.get(j).getRelationMaster()
+                            .getRmParticular());
+                    individualRelationType.setOrganizationId("");
+                    individualRelationType.setIsFriendRelation(false);
+                    individualRelationType.setIsVerify("1");
+                    individualRelationType.setRelationType(familyRecommendation.get(j).getRrmType());
+                    individualRelationType.setRcStatus(familyRecommendation.get(j).getRcStatus());
+                    individualRelationType.setIsSelected(false);
+
+                    relationRecommendations.add(individualRelationType);
+                }
+            }
+
+            // friendRecommendation
+            ArrayList<RelationRequest> friendRecommendation = existingRelationRequest
+                    .getFriendRelationList();
+
+            if (!Utils.isArraylistNullOrEmpty(friendRecommendation)) {
+
+                for (int j = 0; j < friendRecommendation.size(); j++) {
+
+                    IndividualRelationType individualRelationType = new IndividualRelationType();
+
+                    individualRelationType.setId(String.valueOf(friendRecommendation.get(j).
+                            getId()));
+                    individualRelationType.setRelationId(String.valueOf(friendRecommendation.get(j).
+                            getRcRelationMasterId()));
+                    individualRelationType.setRelationName("");
+                    individualRelationType.setOrganizationName("");
+                    individualRelationType.setFamilyName("");
+                    individualRelationType.setOrganizationId("");
+                    individualRelationType.setIsFriendRelation(true);
+                    individualRelationType.setIsVerify("1");
+                    individualRelationType.setRelationType(friendRecommendation.get(j).getRrmType());
+                    individualRelationType.setRcStatus(friendRecommendation.get(j).getRcStatus());
+                    individualRelationType.setIsSelected(false);
+
+                    relationRecommendations.add(individualRelationType);
+                }
+            }
+
+            recommendationType.setIndividualRelationTypeList(relationRecommendations);
+            recommendationRelationList.add(recommendationType);
+        }
+    }
+
+    private void dialogActionRelation(final int position, String RcpUserName) {
+
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_privacy_policy);
+        dialog.setCancelable(false);
+
+        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+        layoutParams.copyFrom(dialog.getWindow().getAttributes());
+        layoutParams.width = (int) (getResources().getDisplayMetrics().widthPixels * 0.90);
+        layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+        dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
+
+        TextView textDialogTitle = dialog.findViewById(R.id.tvDialogTitle);
+        textDialogTitle.setTypeface(Utils.typefaceSemiBold(this));
+
+        TextView textDeleteHint = dialog.findViewById(R.id.txtDeleteHint);
+        textDeleteHint.setVisibility(View.VISIBLE);
+        textDeleteHint.setTypeface(Utils.typefaceRegular(this));
+
+        if (type.equalsIgnoreCase("reject")) {
+            textDialogTitle.setText(getString(R.string.delete_relation));
+            textDeleteHint.setText(String.format("Are you sure you want to delete relationship with %s ?",
+                    RcpUserName));
+        } else {
+            textDialogTitle.setText(getString(R.string.accept_relation));
+            textDeleteHint.setText(String.format("Are you sure you want to accept relationship with %s ?",
+                    RcpUserName));
+        }
+
+        Button buttonRight = dialog.findViewById(R.id.ok_button);
+        Button buttonLeft = dialog.findViewById(R.id.cancel_button);
+        LinearLayout linear_call_dialog_list = dialog.findViewById(R.id.linear_call_dialog_list);
+        linear_call_dialog_list.setVisibility(View.GONE);
+
+        buttonRight.setTypeface(Utils.typefaceRegular(this));
+        buttonRight.setText(R.string.action_ok);
+        buttonLeft.setTypeface(Utils.typefaceRegular(this));
+        buttonLeft.setText(R.string.str_cancel);
+
+        buttonLeft.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                deletePmId = "";
+                deleteRelationPosition = -1;
+                dialog.dismiss();
+            }
+        });
+
+        buttonRight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+
+                ArrayList<String> relationIds = new ArrayList<>();
+
+                ArrayList<IndividualRelationType> individualRelationTypes =
+                        recommendationRelationList.get(position).getIndividualRelationTypeList();
+
+                for (int i = 0; i < individualRelationTypes.size(); i++) {
+                    if (individualRelationTypes.get(i).getIsSelected())
+                        relationIds.add(individualRelationTypes.get(i).getId());
+                }
+
+                if (type.equalsIgnoreCase("reject"))
+                    rejectRelationRequest(relationIds);
+                else
+                    acceptRelationRequest(relationIds);
+            }
+        });
+
+        dialog.show();
     }
 
     private void getRelationRecommendation() {
@@ -382,6 +482,40 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
                     .REQ_GET_RELATION, getResources().getString(R.string.msg_please_wait))
                     .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT +
                             WsConstants.REQ_GET_RELATION + "?startAt=0&status=1");
+        } else {
+            Utils.showErrorSnackBar(this, relativeRootRecommendationRelation, getResources()
+                    .getString(R.string.msg_no_network));
+        }
+    }
+
+    private void acceptRelationRequest(ArrayList<String> relationIds) {
+
+        WsRequestObject deleteRelationObject = new WsRequestObject();
+        deleteRelationObject.setRelationIds(relationIds);
+
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), deleteRelationObject,
+                    null, WsResponseObject.class, WsConstants.REQ_RELATION_ACTION, getString(R.string
+                    .msg_please_wait), true)
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT +
+                            WsConstants.REQ_RELATION_ACTION + "/accept");
+        } else {
+            Utils.showErrorSnackBar(this, relativeRootRecommendationRelation, getResources()
+                    .getString(R.string.msg_no_network));
+        }
+    }
+
+    private void rejectRelationRequest(ArrayList<String> relationIds) {
+
+        WsRequestObject deleteRelationObject = new WsRequestObject();
+        deleteRelationObject.setRelationIds(relationIds);
+
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), deleteRelationObject,
+                    null, WsResponseObject.class, WsConstants.REQ_RELATION_ACTION, getString(R.string
+                    .msg_please_wait), true)
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT +
+                            WsConstants.REQ_RELATION_ACTION + "/reject");
         } else {
             Utils.showErrorSnackBar(this, relativeRootRecommendationRelation, getResources()
                     .getString(R.string.msg_no_network));

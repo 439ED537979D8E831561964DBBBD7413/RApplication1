@@ -548,8 +548,18 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                             .this, R.color.colorBlack));
                     textTime.setVisibility(View.GONE);
                 }
+
+                if (MoreObjects.firstNonNull(tempOrganization.get(0).getIsVerify(), 0) ==
+                        IntegerConstants.RCP_TYPE_PRIMARY) {
+
+                    textOrganization.setText(tempOrganization.get(0).getOrgName());
+                    textOrganization.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+                            R.drawable.ico_relation_single_tick_green_svg, 0);
+
+                } else {
+                    textOrganization.setText(tempOrganization.get(0).getOrgName());
+                }
                 textDesignation.setText(tempOrganization.get(0).getOrgJobTitle());
-                textOrganization.setText(tempOrganization.get(0).getOrgName());
 
                 if (StringUtils.equalsIgnoreCase(tempOrganization.get(0).getOrgToDate(), "")) {
                     if (!StringUtils.isEmpty(tempOrganization.get(0).getOrgFromDate())) {

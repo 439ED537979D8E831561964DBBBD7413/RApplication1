@@ -10,6 +10,7 @@ import java.util.ArrayList;
 public class IndividualRelationType implements Serializable {
 
     private Integer relationType;
+    private Integer rcStatus;
     private String relationId;
     private String id;
     private String relationName;
@@ -19,6 +20,7 @@ public class IndividualRelationType implements Serializable {
     private String relationDate;
     private boolean isFriendRelation;
     private String isVerify;
+    private boolean isSelected;
 
     public String getOrganizationName() {
         return organizationName;
@@ -107,5 +109,21 @@ public class IndividualRelationType implements Serializable {
 
     public void setFriendRelation(boolean friendRelation) {
         isFriendRelation = friendRelation;
+    }
+
+    public boolean getIsSelected() {
+        return isSelected;
+    }
+
+    public void setIsSelected(boolean isSelected) {
+        this.isSelected = isSelected;
+    }
+
+    public Integer getRcStatus() {
+        return rcStatus;
+    }
+
+    public void setRcStatus(Integer rcStatus) {
+        this.rcStatus = rcStatus;
     }
 }

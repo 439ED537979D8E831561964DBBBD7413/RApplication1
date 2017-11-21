@@ -748,6 +748,7 @@
     <string name="choose_relation">Choose Relation</string>
     <string name="choose_name">Choose Name</string>
     <string name="business_relation">Business Relation</string>
+    <string name="accept_relation">Accept Relationship</string>
     <string name="delete_relation">Delete Relationship</string>
     <string name="family_relation">Family Relation</string>
     <string name="friend_relation">Friend Relation</string>

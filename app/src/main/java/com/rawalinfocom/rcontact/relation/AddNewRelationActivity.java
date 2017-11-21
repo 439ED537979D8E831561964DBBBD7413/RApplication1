@@ -170,6 +170,10 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
         inputValueBusiness.setTypeface(Utils.typefaceRegular(this));
         inputValueFamily.setTypeface(Utils.typefaceRegular(this));
 
+        inputValueAddName.setFocusable(false);
+        inputValueBusiness.setFocusable(false);
+        inputValueFamily.setFocusable(false);
+
         inputValueAddName.setOnClickListener(this);
         inputValueBusiness.setOnClickListener(this);
         inputValueFamily.setOnClickListener(this);
@@ -192,10 +196,6 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
             setExistingRelation();
         } else {
 
-            inputValueAddName.setFocusable(false);
-            inputValueBusiness.setFocusable(false);
-            inputValueFamily.setFocusable(false);
-
             imgClear.setOnClickListener(this);
             imgBusinessClear.setOnClickListener(this);
             imgFamilyClear.setOnClickListener(this);
@@ -208,8 +208,8 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
         getGender();
         getOrganizationsList();
     }
@@ -780,6 +780,10 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
 
         if (StringUtils.isEmpty(strGender)) {
             inputValueFamily.setText(R.string.str_hint_add_family);
+            inputValueFamily.setTextColor(colorPineGreen);
+        } else {
+            inputValueFamily.setFocusable(false);
+            inputValueFamily.setText("");
             inputValueFamily.setTextColor(colorPineGreen);
         }
     }

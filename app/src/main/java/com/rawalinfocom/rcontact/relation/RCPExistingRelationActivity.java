@@ -39,6 +39,7 @@ import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
+import com.rawalinfocom.rcontact.model.ExistingRelationRequest;
 import com.rawalinfocom.rcontact.model.IndividualRelationType;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
 import com.rawalinfocom.rcontact.model.RelationRecommendationType;
@@ -186,7 +187,7 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
                 if (sendRelationRequestObject != null && StringUtils.equalsIgnoreCase
                         (sendRelationRequestObject.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                    ArrayList<RelationRequest> allExistingRelationList = sendRelationRequestObject.
+                    ArrayList<ExistingRelationRequest> allExistingRelationList = sendRelationRequestObject.
                             getAllExistingRelationList();
 
 //                    Utils.showSuccessSnackBar(activity, relativeRootExistingRelation,
@@ -380,12 +381,10 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
 
                 textOrganization.setText(arrayListOrganization.get(0).getOrgName());
                 textOrganization.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-                        R.drawable.ico_double_tick_green_svg, 0);
+                        R.drawable.ico_relation_single_tick_green_svg, 0);
 
             } else {
                 textOrganization.setText(arrayListOrganization.get(0).getOrgName());
-                textOrganization.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-                        R.drawable.ico_relation_single_tick_green_svg, 0);
             }
 
             textDesignation.setText(arrayListOrganization.get(0).getOrgJobTitle());
@@ -503,7 +502,7 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
         dialog.show();
     }
 
-    private void storeProfileDataToDb(ArrayList<RelationRequest> relationRequestResponse) {
+    private void storeProfileDataToDb(ArrayList<ExistingRelationRequest> relationRequestResponse) {
 
         //<editor-fold desc="Relation Mapping Master">
         TableRelationMappingMaster tableRelationMappingMaster = new
@@ -515,7 +514,7 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
 
             for (int i = 0; i < relationRequestResponse.size(); i++) {
 
-                RelationRequest relationRequest = relationRequestResponse.get(i);
+                ExistingRelationRequest relationRequest = relationRequestResponse.get(i);
 
                 //<editor-fold desc="Family Relation">
                 ArrayList<RelationRequest> familyRelation = relationRequest.getFamilyRelationList();
@@ -600,7 +599,13 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
             ArrayList<IndividualRelationType> individualRelationTypes = existingRelationList.get(0)
                     .getIndividualRelationTypeList();
 
-            listAdapter = new IndividualRelationRecommendationListAdapter(activity, individualRelationTypes, "rcp");
+            listAdapter = new IndividualRelationRecommendationListAdapter(activity, individualRelationTypes, "rcp",
+                    new IndividualRelationRecommendationListAdapter.OnClickListener() {
+                        @Override
+                        public void onClick(int innerPosition) {
+
+                        }
+                    });
             recycleViewRelation.setLayoutManager(new LinearLayoutManager(this));
             recycleViewRelation.setAdapter(listAdapter);
 

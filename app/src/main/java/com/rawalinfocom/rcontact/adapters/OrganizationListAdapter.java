@@ -79,22 +79,17 @@ public class OrganizationListAdapter extends RecyclerView.Adapter<OrganizationLi
 
         if (MoreObjects.firstNonNull(organization.getIsVerify(), 0) == IntegerConstants.RCP_TYPE_PRIMARY) {
 
-//            String s = Utils.setMultipleTypeface(context, organization.getOrgName() + " <font color" + "='#00796B'>" + context.getString(R.string.im_icon_verify)
-//                    + "</font>", 0, (StringUtils.length(organization.getOrgName()) + 1), ((StringUtils.length(organization.getOrgName()) + 1) + 1)).toString();
-
             holder.textMain.setText(organization.getOrgName());
             holder.textMain.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-                    R.drawable.ico_double_tick_green_svg, 0);
+                    R.drawable.ico_relation_single_tick_green_svg, 0);
             holder.textType.setText(Html.fromHtml("<small> (" + organization.getOrgIndustryType() + ") </small>"));
-//            holder.imgTic.setImageResource(R.drawable.ico_double_tick_svg);
 
         } else {
 
             holder.textMain.setText(organization.getOrgName());
-            holder.textMain.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-                    R.drawable.ico_relation_single_tick_green_svg, 0);
+//            holder.textMain.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+//                    R.drawable.ico_relation_single_tick_green_svg, 0);
             holder.textType.setVisibility(View.GONE);
-//            holder.imgTic.setImageResource(R.drawable.ico_relation_single_tick_svg);
         }
 
         Glide.with(context)
@@ -130,8 +125,8 @@ public class OrganizationListAdapter extends RecyclerView.Adapter<OrganizationLi
             @Override
             public void onClick(View view) {
                 int pos = (int) view.getTag();
-                if(arrayListOrganization.get(pos).getIsVerify() == 1){
-                    String orgPublicLink =  BuildConfig.ORANISATION_PUBLIC_LINK + arrayListOrganization.get(pos).getOrgEntId();
+                if (arrayListOrganization.get(pos).getIsVerify() == 1) {
+                    String orgPublicLink = BuildConfig.ORANISATION_PUBLIC_LINK + arrayListOrganization.get(pos).getOrgEntId();
                     if (!StringUtils.isEmpty(orgPublicLink)) {
                         String url = orgPublicLink;
                         Intent i = new Intent(Intent.ACTION_VIEW);

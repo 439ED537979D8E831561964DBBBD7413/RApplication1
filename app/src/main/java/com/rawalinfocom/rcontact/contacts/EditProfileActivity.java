@@ -2845,9 +2845,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 switch (rippleView.getId()) {
                     case R.id.rippleLeft:
                         dialog.dismiss();
-                        for(int i=0; i<organizationArrayList.size(); i++){
-                            ProfileDataOperationOrganization organization =  organizationArrayList.get(i);
-                            if(organization.getIsVerify() == 1){
+                        for (int i = 0; i < organizationArrayList.size(); i++) {
+                            ProfileDataOperationOrganization organization = organizationArrayList.get(i);
+                            if (organization.getIsVerify() == 1) {
                                 organizationArrayList.remove(organization);
                             }
                         }
@@ -4819,7 +4819,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         inputDesignationName.setInputType(InputType.TYPE_CLASS_TEXT | InputType
                 .TYPE_TEXT_FLAG_CAP_WORDS);
 
-        inputCompanyName.setTypeface(Utils.typefaceIcons(this));
+        inputCompanyName.setTypeface(Utils.typefaceRegular(this));
         inputDesignationName.setTypeface(Utils.typefaceRegular(this));
         inputCompanyName.setFocusable(false);
 
@@ -4853,15 +4853,17 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             if (MoreObjects.firstNonNull(organization.getIsVerify(), 0) == IntegerConstants
                     .RCP_TYPE_PRIMARY) {
 
-                String s = Utils.setMultipleTypeface(EditProfileActivity.this, organization
-                                .getOrgName() + " <font color" +
-                                "='#00796B'>" + getString(R.string.im_icon_verify) +
-                                "</font><br>", 0,
-                        (StringUtils.length
-                                (organization.getOrgName()) + 1), ((StringUtils.length(organization
-                                .getOrgName()) + 1) + 1)).toString();
+//                String s = Utils.setMultipleTypeface(EditProfileActivity.this, organization
+//                                .getOrgName() + " <font color" +
+//                                "='#00796B'>" + getString(R.string.im_icon_verify) +
+//                                "</font><br>", 0,
+//                        (StringUtils.length
+//                                (organization.getOrgName()) + 1), ((StringUtils.length(organization
+//                                .getOrgName()) + 1) + 1)).toString();
 
-                inputCompanyName.setText(Html.fromHtml(s));
+                inputCompanyName.setText(organization.getOrgName());
+                inputCompanyName.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+                        R.drawable.ico_relation_single_tick_green_svg, 0);
                 textIsVerified.setText(String.valueOf(organization.getIsVerify()));
 
             } else {
