@@ -448,7 +448,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 break;
 
             case R.id.nav_ll_relation:
-//                startActivity(new Intent(MainActivity.this, RelationRecommendationActivity.class));
+                startActivity(new Intent(MainActivity.this, RelationRecommendationActivity.class));
                 break;
         }
 

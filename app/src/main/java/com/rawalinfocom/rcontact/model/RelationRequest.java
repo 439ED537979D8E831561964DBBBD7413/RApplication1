@@ -27,14 +27,10 @@ public class RelationRequest {
     private String omName;
     private String createdAt;
 
-    @JsonProperty("friend")
-    private ArrayList<RelationRequest> friendRelationList = new ArrayList<>();
-
-    @JsonProperty("family")
-    private ArrayList<RelationRequest> familyRelationList = new ArrayList<>();
-
-    @JsonProperty("business")
-    private ArrayList<RelationRequest> businessRelationList = new ArrayList<>();
+    private RelationMaster relationMaster = new RelationMaster();
+    private OrganizationMaster organization = new OrganizationMaster();
+    private String rmParticular;
+    private String orgName;
 
     @JsonProperty("rrm_to_pm_id")
     public Integer getRrmToPmId() {
@@ -126,28 +122,37 @@ public class RelationRequest {
         this.createdAt = createdAt;
     }
 
-
-    public ArrayList<RelationRequest> getFriendRelationList() {
-        return friendRelationList;
+    @JsonProperty("relation_master")
+    public RelationMaster getRelationMaster() {
+        return relationMaster;
     }
 
-    public void setFriendRelationList(ArrayList<RelationRequest> friendRelationList) {
-        this.friendRelationList = friendRelationList;
+    public void setRelationMaster(RelationMaster relationMaster) {
+        this.relationMaster = relationMaster;
     }
 
-    public ArrayList<RelationRequest> getFamilyRelationList() {
-        return familyRelationList;
+    @JsonProperty("organization")
+    public OrganizationMaster getOrganization() {
+        return organization;
     }
 
-    public void setFamilyRelationList(ArrayList<RelationRequest> familyRelationList) {
-        this.familyRelationList = familyRelationList;
+    public void setOrganization(OrganizationMaster organization) {
+        this.organization = organization;
     }
 
-    public ArrayList<RelationRequest> getBusinessRelationList() {
-        return businessRelationList;
+    public String getRmParticular() {
+        return rmParticular;
     }
 
-    public void setBusinessRelationList(ArrayList<RelationRequest> businessRelationList) {
-        this.businessRelationList = businessRelationList;
+    public void setRmParticular(String rmParticular) {
+        this.rmParticular = rmParticular;
+    }
+
+    public String getOrgName() {
+        return orgName;
+    }
+
+    public void setOrgName(String orgName) {
+        this.orgName = orgName;
     }
 }

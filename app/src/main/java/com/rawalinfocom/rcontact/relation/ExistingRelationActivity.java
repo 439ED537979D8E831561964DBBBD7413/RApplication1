@@ -29,8 +29,10 @@ import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.TableRelationMappingMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
+import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
+import com.rawalinfocom.rcontact.model.ExistingRelationRequest;
 import com.rawalinfocom.rcontact.model.IndividualRelationType;
 import com.rawalinfocom.rcontact.model.RelationRecommendationType;
 import com.rawalinfocom.rcontact.model.RelationRequest;
@@ -77,6 +79,7 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
     private TableRelationMappingMaster tableRelationMappingMaster;
     //    private Integer pmId;
     private ArrayList<RelationRecommendationType> existingRelationList;
+    private ArrayList<String> relationIds;
     private String deletePmId = "";
     private int deleteRelationPosition = -1;
 
@@ -177,7 +180,7 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
                 if (sendRelationRequestObject != null && StringUtils.equalsIgnoreCase
                         (sendRelationRequestObject.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                    ArrayList<RelationRequest> allExistingRelationList = sendRelationRequestObject.
+                    ArrayList<ExistingRelationRequest> allExistingRelationList = sendRelationRequestObject.
                             getAllExistingRelationList();
 
 //                    Utils.showSuccessSnackBar(activity, relativeRootExistingRelation,
@@ -212,11 +215,10 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
                     Utils.showSuccessSnackBar(activity, relativeRootExistingRelation,
                             deleteRelationObject.getMessage());
 
-                    tableRelationMappingMaster.deleteRelationMapping(deletePmId);
+                    tableRelationMappingMaster.deleteRelationMapping(deletePmId, relationIds);
                     deletePmId = "";
 
-                    existingRelationList.remove(deleteRelationPosition);
-                    listAdapter.notifyDataSetChanged();
+                    getExistingRelationData();
 
                     deleteRelationPosition = -1;
 
@@ -256,7 +258,7 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
         }
     }
 
-    private void storeProfileDataToDb(ArrayList<RelationRequest> relationRequestResponse) {
+    private void storeProfileDataToDb(ArrayList<ExistingRelationRequest> relationRequestResponse) {
 
         //<editor-fold desc="Relation Mapping Master">
         TableRelationMappingMaster tableRelationMappingMaster = new
@@ -267,7 +269,7 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
             for (int i = 0; i < relationRequestResponse.size(); i++) {
 
                 ArrayList<RelationRequestResponse> relationResponseList = new ArrayList<>();
-                RelationRequest relationRequest = relationRequestResponse.get(i);
+                ExistingRelationRequest relationRequest = relationRequestResponse.get(i);
 
                 //<editor-fold desc="Family Relation">
                 ArrayList<RelationRequest> familyRelation = relationRequest.getFamilyRelationList();
@@ -334,14 +336,15 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
                     }
                 }
 
-                tableRelationMappingMaster.deleteRelationMapping(String.valueOf(relationRequest.
-                        getRrmToPmId()));
+                tableRelationMappingMaster.deleteRelationMapping(String.valueOf(relationRequest.getRrmToPmId()));
                 tableRelationMappingMaster.addRelationMapping(relationResponseList);
             }
         }
     }
 
     private void getExistingRelationData() {
+
+        existingRelationList = new ArrayList<>();
 
         existingRelationList = tableRelationMappingMaster
                 .getAllExistingRelation();
@@ -366,7 +369,7 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
                         public void onDeleteClick(int position, String name, String pmId) {
                             deletePmId = pmId;
                             deleteRelationPosition = position;
-                            dialogDeleteRelation(position, name);
+                            showAllRelations(position, name);
                         }
                     });
             recycleViewRelation.setLayoutManager(new LinearLayoutManager(this));
@@ -379,7 +382,84 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
         }
     }
 
-    private void dialogDeleteRelation(final int position, String RcpUserName) {
+    private void showAllRelations(final int position, final String name) {
+
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_all_organization);
+        dialog.setCancelable(false);
+
+        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+        layoutParams.copyFrom(dialog.getWindow().getAttributes());
+        layoutParams.width = (int) (getResources().getDisplayMetrics().widthPixels * 0.90);
+        layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+        dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
+
+        TextView textDialogTitle = dialog.findViewById(R.id.text_dialog_title);
+        textDialogTitle.setText(String.format("Relation with %s", name));
+        textDialogTitle.setTypeface(Utils.typefaceSemiBold(this));
+
+        Button buttonRight = dialog.findViewById(R.id.button_right);
+        Button buttonLeft = dialog.findViewById(R.id.button_left);
+        RippleView rippleRight = dialog.findViewById(R.id.ripple_right);
+        RippleView rippleLeft = dialog.findViewById(R.id.ripple_left);
+
+        buttonRight.setTypeface(Utils.typefaceRegular(this));
+        buttonRight.setText(R.string.str_done);
+        buttonLeft.setTypeface(Utils.typefaceRegular(this));
+        buttonLeft.setText(R.string.str_back);
+
+        rippleRight.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
+            @Override
+            public void onComplete(RippleView rippleView) {
+
+                relationIds = new ArrayList<>();
+
+                ArrayList<IndividualRelationType> individualRelationTypes =
+                        existingRelationList.get(position).getIndividualRelationTypeList();
+
+                for (int i = 0; i < individualRelationTypes.size(); i++) {
+                    if (individualRelationTypes.get(i).getIsSelected())
+                        relationIds.add(individualRelationTypes.get(i).getId());
+                }
+
+                if (relationIds.size() > 0) {
+                    dialog.dismiss();
+                    dialogDeleteRelation(name, relationIds);
+                } else {
+                    Utils.showErrorSnackBar(ExistingRelationActivity.this, relativeRootExistingRelation,
+                            "Please select at least one relation to delete!!!");
+                }
+            }
+        });
+
+        rippleLeft.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
+            @Override
+            public void onComplete(RippleView rippleView) {
+                dialog.dismiss();
+            }
+        });
+
+        RecyclerView recyclerViewDialogList = dialog.findViewById(R.id
+                .recycler_view_dialog_list);
+        recyclerViewDialogList.setLayoutManager(new LinearLayoutManager(this));
+
+        OrganizationRelationListAdapter adapter = new OrganizationRelationListAdapter(this,
+                existingRelationList.get(position).getIndividualRelationTypeList(),
+                new OrganizationRelationListAdapter.OnClickListener() {
+                    @Override
+                    public void onClick(String orgId, String orgName) {
+
+                    }
+                }, "existing");
+
+        recyclerViewDialogList.setAdapter(adapter);
+
+        dialog.show();
+    }
+
+    private void dialogDeleteRelation(String RcpUserName, final ArrayList<String> relationIds) {
 
         final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -426,16 +506,6 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
-
-                ArrayList<String> relationIds = new ArrayList<>();
-
-                ArrayList<IndividualRelationType> individualRelationTypes =
-                        existingRelationList.get(position).getIndividualRelationTypeList();
-
-                for (int i = 0; i < individualRelationTypes.size(); i++) {
-                    relationIds.add(individualRelationTypes.get(i).getId());
-                }
-
                 deleteRelation(relationIds);
             }
         });
