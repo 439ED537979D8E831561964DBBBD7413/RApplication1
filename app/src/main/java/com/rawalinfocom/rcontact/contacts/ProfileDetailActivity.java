@@ -438,9 +438,16 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     @Nullable
     @BindView(R.id.button_request_all)
     AppCompatButton buttonRequestAll;
+    //    @Nullable
+//    @BindView(R.id.linear_last_seen)
+//    RelativeLayout linearLastSeen;
     @Nullable
     @BindView(R.id.linear_last_seen)
     LinearLayout linearLastSeen;
+    @Nullable
+    @BindView(R.id.card_last_seen_details)
+    CardView cardLastSeenDetails;
+
     //<editor-fold desc="Override Methods">
 
     @Override
@@ -3183,60 +3190,65 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                 buttonRequestAll.setVisibility(View.VISIBLE);
 
-                if (profileDetail != null) {
+                if (pmId.equalsIgnoreCase("-1")) {
+                    cardLastSeenDetails.setVisibility(View.GONE);
+                } else {
 
-                    if (!StringUtils.isBlank(profileDetail.getPmLastSeen())) {
+                    if (profileDetail != null) {
 
-                        lastSeenViewVisibility(View.VISIBLE);
+                        if (!StringUtils.isBlank(profileDetail.getPmLastSeen())) {
 
-                        long elapsedDays = 0;
+                            linearLastSeen.setVisibility(View.VISIBLE);
 
-                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd " +
-                                "hh:mm:ss", Locale.getDefault());
+                            long elapsedDays = 0;
+
+                            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd " +
+                                    "hh:mm:ss", Locale.getDefault());
 
 //                        String startDate = simpleDateFormat.format(profileDetail.getPmLastSeen());
-                        String endDate = simpleDateFormat.format(new Date(System.currentTimeMillis()));
+                            String endDate = simpleDateFormat.format(new Date(System.currentTimeMillis()));
 
-                        try {
+                            try {
 
-                            long difference = simpleDateFormat.parse(endDate).getTime() -
-                                    simpleDateFormat.parse(profileDetail.getPmLastSeen()).getTime();
+                                long difference = simpleDateFormat.parse(endDate).getTime() -
+                                        simpleDateFormat.parse(profileDetail.getPmLastSeen()).getTime();
 
-                            long secondsInMilli = 1000;
-                            long minutesInMilli = secondsInMilli * 60;
-                            long hoursInMilli = minutesInMilli * 60;
-                            long daysInMilli = hoursInMilli * 24;
+                                long secondsInMilli = 1000;
+                                long minutesInMilli = secondsInMilli * 60;
+                                long hoursInMilli = minutesInMilli * 60;
+                                long daysInMilli = hoursInMilli * 24;
 
-                            elapsedDays = difference / daysInMilli;
+                                elapsedDays = difference / daysInMilli;
 
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
 
-                        if (elapsedDays > 1) {
-                            textLabelLastSeen.setText(String.format("Last seen on %s days ago ",
-                                    String.valueOf(elapsedDays)));
-                        } else if (elapsedDays > 0) {
-                            textLabelLastSeen.setText(String.format("Last seen on %s day ago ",
-                                    String.valueOf(elapsedDays)));
+                            if (elapsedDays > 1) {
+                                textLabelLastSeen.setText(String.format("Last seen on %s days ago ",
+                                        String.valueOf(elapsedDays)));
+                            } else if (elapsedDays > 0) {
+                                textLabelLastSeen.setText(String.format("Last seen on %s day ago ",
+                                        String.valueOf(elapsedDays)));
+                            } else {
+
+                                String date = Utils.convertDateFormat(profileDetail.getPmLastSeen(),
+                                        "yyyy-MM-dd hh:mm:ss", "HH:mm a");
+
+                                textLabelLastSeen.setText(String.format("Last seen today at %s", date));
+                            }
+
                         } else {
-
-                            String date = Utils.convertDateFormat(profileDetail.getPmLastSeen(),
-                                    "yyyy-MM-dd hh:mm:ss", "HH:mm a");
-
-                            textLabelLastSeen.setText(String.format("Last seen today at %s", date));
+                            textLabelLastSeen.setText("Last seen at Yesterday");
+                            textLabelLastSeen.setVisibility(View.VISIBLE);
                         }
 
                     } else {
-                        lastSeenViewVisibility(View.GONE);
+                        linearLastSeen.setVisibility(View.GONE);
                     }
-
-                } else {
-                    lastSeenViewVisibility(View.GONE);
                 }
             } else {
-                lastSeenViewVisibility(View.GONE);
-                buttonRequestAll.setVisibility(View.GONE);
+                cardLastSeenDetails.setVisibility(View.GONE);
             }
 
             // </editor-fold>
@@ -3356,15 +3368,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    private void lastSeenViewVisibility(int visible) {
-        if (imageLastSeen != null) {
-            imageLastSeen.setVisibility(visible);
-        }
-        if (textLabelLastSeen != null) {
-            textLabelLastSeen.setVisibility(visible);
         }
     }
 
