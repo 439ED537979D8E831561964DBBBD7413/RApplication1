@@ -15,6 +15,7 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -62,13 +63,16 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
     private ArrayList<Object> arrayList;
     private int profileDetailType;
 
+    private ArrayList<String> requestAllIdList = new ArrayList<>();
+
     private int colorBlack, colorPineGreen;
     private PrivacySettingPopupDialog.DialogCallback listner;
     private boolean isOwnProfile = false;
     private String pmId;
+    private Button buttonRequestAll;
 
     public ProfileDetailAdapter(Activity activity, ArrayList<Object> arrayList, int
-            profileDetailType, boolean isOwnProfile, String pmId) {
+            profileDetailType, boolean isOwnProfile, String pmId, Button buttonRequestAll) {
         this.activity = activity;
         this.profileDetailType = profileDetailType;
         this.arrayList = arrayList;
@@ -76,8 +80,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         colorBlack = ContextCompat.getColor(activity, R.color.colorBlack);
         colorPineGreen = ContextCompat.getColor(activity, R.color.colorAccent);
         this.pmId = pmId;
+        this.buttonRequestAll = buttonRequestAll;
         listner = this;
-
     }
 
     @Override
@@ -234,6 +238,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                     holder.imgActionType.setVisibility(View.GONE);
                     holder.imgActionWhatsapp.setVisibility(View.GONE);
+
+                    requestAllIdList.add(phoneNumber.getPhoneId());
                 }
             }
         } else if (pbRcpType == IntegerConstants.RCP_TYPE_SECONDARY) {
@@ -264,6 +270,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                     holder.imgActionType.setVisibility(View.GONE);
                     holder.imgActionWhatsapp.setVisibility(View.GONE);
+
+                    requestAllIdList.add(phoneNumber.getPhoneId());
                 }
             }
             holder.llPrivacy.setOnClickListener(new View.OnClickListener() {
@@ -377,6 +385,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                         .IS_PRIVATE) {
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                     holder.imgActionType.setVisibility(View.GONE);
+                    requestAllIdList.add(email.getEmId());
                 }
             }
         } else {
@@ -431,6 +440,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                         .IS_PRIVATE) {
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                     holder.imgActionType.setVisibility(View.GONE);
+                    requestAllIdList.add(email.getEmId());
                 }
             }
             holder.llPrivacy.setOnClickListener(new View.OnClickListener() {
@@ -627,6 +637,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 //                    holder.imageView2.setVisibility(View.GONE);
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                     holder.imgActionType.setVisibility(View.GONE);
+                    requestAllIdList.add(address.getAddId());
                 }
             }
             holder.llPrivacy.setOnClickListener(new View.OnClickListener() {
@@ -789,6 +800,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 //                    holder.imageView2.setVisibility(View.GONE);
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                     holder.imgActionType.setVisibility(View.GONE);
+                    requestAllIdList.add(imAccount.getIMId());
                 }
             }
             holder.llPrivacy.setOnClickListener(new View.OnClickListener() {
@@ -910,6 +922,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 //                    holder.imageView2.setVisibility(View.GONE);
                         holder.buttonRequest.setVisibility(View.VISIBLE);
                         holder.imgActionType.setVisibility(View.GONE);
+                        requestAllIdList.add(event.getEventId());
                     }
                 }
 

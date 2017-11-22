@@ -623,6 +623,7 @@
     <string name="str_call_log">कॉल लॉग</string>
     <string name="str_duration">अवधि:</string>
     <string name="str_request">निवेदन</string>
+    <string name="str_request_all">सबसे निवेदन करो</string>
 
     <!--Account-->
     <string name="action_bar_title">खाता</string>

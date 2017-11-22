@@ -643,6 +643,7 @@
     <string name="str_call_log">Call Log</string>
     <string name="str_duration">Duration :</string>
     <string name="str_request">Request</string>
+    <string name="str_request_all">Request All</string>
     <string name="error_aadhar_validation">Please enter 12 digit aadhar number</string>
 
     <!--Account-->

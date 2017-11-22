@@ -39,7 +39,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Editable;
-import android.text.Html;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -62,6 +61,7 @@ import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.BuildConfig;
 import com.rawalinfocom.rcontact.ContactListingActivity;
+import com.rawalinfocom.rcontact.MainActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.CallHistoryListAdapter;
@@ -133,11 +133,13 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -424,6 +426,21 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     @Nullable
     @BindView(R.id.button_request)
     AppCompatButton buttonRequest;
+    @BindView(R.id.img_user_rating)
+    ImageView imgUserRating;
+
+    @Nullable
+    @BindView(R.id.image_last_seen)
+    ImageView imageLastSeen;
+    @Nullable
+    @BindView(R.id.text_label_last_seen)
+    TextView textLabelLastSeen;
+    @Nullable
+    @BindView(R.id.button_request_all)
+    AppCompatButton buttonRequestAll;
+    @Nullable
+    @BindView(R.id.linear_last_seen)
+    LinearLayout linearLastSeen;
     //<editor-fold desc="Override Methods">
 
     @Override
@@ -2674,7 +2691,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                 linearPhone.setVisibility(View.VISIBLE);
                 phoneDetailAdapter = new ProfileDetailAdapter(this,
-                        tempPhoneNumber, AppConstants.PHONE_NUMBER, displayOwnProfile, pmId);
+                        tempPhoneNumber, AppConstants.PHONE_NUMBER, displayOwnProfile, pmId, buttonRequestAll);
                 recyclerViewContactNumber.setAdapter(phoneDetailAdapter);
             } else {
                 linearPhone.setVisibility(View.GONE);
@@ -2743,7 +2760,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 tempEmail.addAll(arrayListPhoneBookEmail);
                 linearEmail.setVisibility(View.VISIBLE);
                 ProfileDetailAdapter emailDetailAdapter = new ProfileDetailAdapter(this, tempEmail,
-                        AppConstants.EMAIL, displayOwnProfile, pmId);
+                        AppConstants.EMAIL, displayOwnProfile, pmId, buttonRequestAll);
                 recyclerViewEmail.setAdapter(emailDetailAdapter);
             } else {
                 linearEmail.setVisibility(View.GONE);
@@ -2812,7 +2829,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                 linearWebsite.setVisibility(View.VISIBLE);
                 ProfileDetailAdapter websiteDetailAdapter = new ProfileDetailAdapter(this,
-                        tempWebsite, AppConstants.WEBSITE, displayOwnProfile, pmId);
+                        tempWebsite, AppConstants.WEBSITE, displayOwnProfile, pmId, buttonRequestAll);
                 recyclerViewWebsite.setAdapter(websiteDetailAdapter);
             } else {
                 linearWebsite.setVisibility(View.GONE);
@@ -2934,7 +2951,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 tempAddress.addAll(arrayListPhoneBookAddress);
                 linearAddress.setVisibility(View.VISIBLE);
                 ProfileDetailAdapter addressDetailAdapter = new ProfileDetailAdapter(this,
-                        tempAddress, AppConstants.ADDRESS, displayOwnProfile, pmId);
+                        tempAddress, AppConstants.ADDRESS, displayOwnProfile, pmId, buttonRequestAll);
                 recyclerViewAddress.setAdapter(addressDetailAdapter);
             } else {
                 linearAddress.setVisibility(View.GONE);
@@ -3003,7 +3020,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 tempImAccount.addAll(arrayListPhoneBookImAccount);
                 linearSocialContact.setVisibility(View.VISIBLE);
                 ProfileDetailAdapter imAccountDetailAdapter = new ProfileDetailAdapter(this,
-                        tempImAccount, AppConstants.IM_ACCOUNT, displayOwnProfile, pmId);
+                        tempImAccount, AppConstants.IM_ACCOUNT, displayOwnProfile, pmId, buttonRequestAll);
                 recyclerViewSocialContact.setAdapter(imAccountDetailAdapter);
             } else {
                 linearSocialContact.setVisibility(View.GONE);
@@ -3160,6 +3177,70 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             });
             //</editor-fold>
 
+            // <editor-fold desc="Last seen details">
+
+            if (!displayOwnProfile) {
+
+                buttonRequestAll.setVisibility(View.VISIBLE);
+
+                if (profileDetail != null) {
+
+                    if (!StringUtils.isBlank(profileDetail.getPmLastSeen())) {
+
+                        lastSeenViewVisibility(View.VISIBLE);
+
+                        long elapsedDays = 0;
+
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd " +
+                                "hh:mm:ss", Locale.getDefault());
+
+//                        String startDate = simpleDateFormat.format(profileDetail.getPmLastSeen());
+                        String endDate = simpleDateFormat.format(new Date(System.currentTimeMillis()));
+
+                        try {
+
+                            long difference = simpleDateFormat.parse(endDate).getTime() -
+                                    simpleDateFormat.parse(profileDetail.getPmLastSeen()).getTime();
+
+                            long secondsInMilli = 1000;
+                            long minutesInMilli = secondsInMilli * 60;
+                            long hoursInMilli = minutesInMilli * 60;
+                            long daysInMilli = hoursInMilli * 24;
+
+                            elapsedDays = difference / daysInMilli;
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                        if (elapsedDays > 1) {
+                            textLabelLastSeen.setText(String.format("Last seen on %s days ago ",
+                                    String.valueOf(elapsedDays)));
+                        } else if (elapsedDays > 0) {
+                            textLabelLastSeen.setText(String.format("Last seen on %s day ago ",
+                                    String.valueOf(elapsedDays)));
+                        } else {
+
+                            String date = Utils.convertDateFormat(profileDetail.getPmLastSeen(),
+                                    "yyyy-MM-dd hh:mm:ss", "HH:mm a");
+
+                            textLabelLastSeen.setText(String.format("Last seen today at %s", date));
+                        }
+
+                    } else {
+                        lastSeenViewVisibility(View.GONE);
+                    }
+
+                } else {
+                    lastSeenViewVisibility(View.GONE);
+                }
+            } else {
+                lastSeenViewVisibility(View.GONE);
+                buttonRequestAll.setVisibility(View.GONE);
+            }
+
+            // </editor-fold>
+
             if ((!Utils.isArraylistNullOrEmpty(arrayListWebsite) || !Utils.isArraylistNullOrEmpty
                     (arrayListPhoneBookWebsite))
                     ||
@@ -3238,7 +3319,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 tempEvent.addAll(arrayListPhoneBookEvent);
                 linearEvent.setVisibility(View.VISIBLE);
                 ProfileDetailAdapter eventDetailAdapter = new ProfileDetailAdapter(this, tempEvent,
-                        AppConstants.EVENT, displayOwnProfile, pmId);
+                        AppConstants.EVENT, displayOwnProfile, pmId, buttonRequestAll);
                 recyclerViewEvent.setAdapter(eventDetailAdapter);
             } else {
                 linearEvent.setVisibility(View.GONE);
@@ -3275,6 +3356,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void lastSeenViewVisibility(int visible) {
+        if (imageLastSeen != null) {
+            imageLastSeen.setVisibility(visible);
+        }
+        if (textLabelLastSeen != null) {
+            textLabelLastSeen.setVisibility(visible);
         }
     }
 
@@ -4598,6 +4688,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         userProfile.setPmProfileImage(profileDetail.getPbProfilePhoto());
         userProfile.setPmGender(profileDetail.getPbGender());
         userProfile.setPmBadge(profileDetail.getPmBadge());
+        userProfile.setPmLastSeen(profileDetail.getPmLastSeen());
 
         tableProfileMaster.addProfile(userProfile);
         //</editor-fold>

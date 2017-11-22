@@ -14,7 +14,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     // All Static variables
     // Database Version
-    private static final int DATABASE_VERSION = 6;  //update to 6 for production/staging/QA
+    private static final int DATABASE_VERSION = 7;  //update to 6 for production/staging/QA
 
     // Database Name
     public static final String DATABASE_NAME = "RContact.db";
@@ -152,6 +152,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 db.execSQL("DROP TABLE IF EXISTS '" + TableRelationMaster.TABLE_RC_RELATION_MASTER + "'");
                 db.execSQL(TableRelationMaster.CREATE_TABLE_RC_RELATION_MASTER);
                 db.execSQL(TableRelationMappingMaster.CREATE_TABLE_RC_RCP_RELATION_MAPPING);
+
+            case 6:
+                // For version 7
+                db.execSQL("ALTER TABLE " + TableProfileMaster.TABLE_RC_PROFILE_MASTER + " ADD "
+                        + "COLUMN " + TableProfileMaster.COLUMN_PM_LAST_SEEN + " text ");
+
         }
 
         // create new tables

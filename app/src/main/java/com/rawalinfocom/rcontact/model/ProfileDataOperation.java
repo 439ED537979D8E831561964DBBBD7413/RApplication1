@@ -55,6 +55,7 @@ public class ProfileDataOperation implements Serializable {
     private String pbGender;
     private String pbProfilePhoto;
     private String pmBadge;
+    private String pmLastSeen;
 
     private String lookupKey;
     private long id;
@@ -418,6 +419,15 @@ public class ProfileDataOperation implements Serializable {
 
     public void setPmBadge(String pmBadge) {
         this.pmBadge = pmBadge;
+    }
+
+    @JsonProperty("pm_last_seen")
+    public String getPmLastSeen() {
+        return pmLastSeen;
+    }
+
+    public void setPmLastSeen(String pmLastSeen) {
+        this.pmLastSeen = pmLastSeen;
     }
 
     @JsonIgnore

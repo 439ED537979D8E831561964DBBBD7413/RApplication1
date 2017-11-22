@@ -1108,6 +1108,7 @@ public class Utils {
         userProfile.setPmProfileImage(profileDetail.getPbProfilePhoto());
         userProfile.setPmGender(profileDetail.getPbGender());
         userProfile.setPmBadge(profileDetail.getPmBadge());
+        userProfile.setPmLastSeen(profileDetail.getPmLastSeen());
 
         tableProfileMaster.addProfile(userProfile);
         //</editor-fold>
