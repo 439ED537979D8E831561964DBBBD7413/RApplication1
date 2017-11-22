@@ -743,6 +743,10 @@
     <string name="youAreNotUpdatedTitle">Update Available</string>
     <string name="youAreNotUpdatedMessage">A new version of RContacts Application is available. Please update to version\s</string>
     <string name="youAreNotUpdatedMessage1">\s now</string>
+    <string name="school_college_name">"શાળા / કૉલેજ નામ"</string>
+    <string name="field_of_study">અભ્યાસનું ક્ષેત્ર</string>
+    <string name="i_currently_study_here">હાલમાં હું અહીં અભ્યાસ કરું છું</string>
+    <string name="str_education">શિક્ષણ વિગતો</string>
 
 
 </resources>

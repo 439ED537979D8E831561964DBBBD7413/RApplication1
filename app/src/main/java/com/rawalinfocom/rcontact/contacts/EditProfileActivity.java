@@ -6,7 +6,6 @@ import android.annotation.TargetApi;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -90,6 +89,7 @@ import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.TableAadharMaster;
 import com.rawalinfocom.rcontact.database.TableAddressMaster;
 import com.rawalinfocom.rcontact.database.TableCountryMaster;
+import com.rawalinfocom.rcontact.database.TableEducationMaster;
 import com.rawalinfocom.rcontact.database.TableEmailMaster;
 import com.rawalinfocom.rcontact.database.TableEventMaster;
 import com.rawalinfocom.rcontact.database.TableImMaster;
@@ -116,6 +116,7 @@ import com.rawalinfocom.rcontact.helper.pinterest.PinterestTempActivity;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.Address;
 import com.rawalinfocom.rcontact.model.Country;
+import com.rawalinfocom.rcontact.model.Education;
 import com.rawalinfocom.rcontact.model.Email;
 import com.rawalinfocom.rcontact.model.Event;
 import com.rawalinfocom.rcontact.model.ImAccount;
@@ -124,6 +125,7 @@ import com.rawalinfocom.rcontact.model.Organization;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAadharNumber;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
+import com.rawalinfocom.rcontact.model.ProfileDataOperationEducation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEvent;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationImAccount;
@@ -211,6 +213,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     ImageView imageEmailExpand;
     @BindView(R.id.linear_email_details)
     LinearLayout linearEmailDetails;
+    @BindView(R.id.linear_education_details)
+    LinearLayout linearEducationDetails;
     @BindView(R.id.button_email_add_field)
     Button buttonEmailAddField;
     @BindView(R.id.button_email_update)
@@ -409,6 +413,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     private ArrayList<Object> arrayListAddressObject;
     private ArrayList<Object> arrayListEventObject;
     private ArrayList<Object> arrayListOrganizationObject;
+    private ArrayList<Object> arrayListEducationObject;
     DatePickerDialog.OnDateSetListener dataPicker;
     EditText editTextEvent;
     //    EditText inputValue;
@@ -2336,7 +2341,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     TextView textEnterpriseOrgId = linearOrganization.findViewById(R.id
                             .text_enterprise_org_id);
                     TextView textOrgName = linearOrganization.findViewById(R.id.text_org_name);
-                    TextView textIsVerified = linearOrganization.findViewById(R.id.text_is_verified);
+                    TextView textIsVerified = linearOrganization.findViewById(R.id
+                            .text_is_verified);
 
                     EditText inputFromDate = linearOrganization.findViewById(R.id.input_from_date);
                     EditText inputToDate = linearOrganization.findViewById(R.id.input_to_date);
@@ -2351,7 +2357,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     organization.setIsCurrent(checkboxOrganization.isChecked() ? 1 : 0);
                     organization.setOrgPublic(IntegerConstants.PRIVACY_EVERYONE);
                     organization.setOrgEntId(textEnterpriseOrgId.getText().toString().trim());
-                    organization.setIsVerify(Integer.parseInt(textIsVerified.getText().toString().trim()));
+                    organization.setIsVerify(Integer.parseInt(textIsVerified.getText().toString()
+                            .trim()));
                     // organization.setOrgLogo(textOrgLogo.getText().toString().trim());
 
                     ColorStateList colorStateList = ColorStateList.valueOf(ContextCompat.getColor
@@ -2453,7 +2460,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     boolean containsVerifiedOrgan = false;
                     if (arrayListNewOrganization.size() > 0) {
                         for (int i = 0; i < arrayListNewOrganization.size(); i++) {
-                            ProfileDataOperationOrganization organization = arrayListNewOrganization.get(i);
+                            ProfileDataOperationOrganization organization =
+                                    arrayListNewOrganization.get(i);
                             if (organization.getIsVerify() == 1) {
                                 //Show popup
                                 containsVerifiedOrgan = true;
@@ -2481,7 +2489,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         containsVerifiedOrgan = false;
                         if (arrayListOrganizationObject.size() > 0) {
                             for (int i = 0; i < arrayListOrganizationObject.size(); i++) {
-                                ProfileDataOperationOrganization organization = (ProfileDataOperationOrganization) arrayListOrganizationObject.get(i);
+                                ProfileDataOperationOrganization organization =
+                                        (ProfileDataOperationOrganization)
+                                                arrayListOrganizationObject
+                                                        .get(i);
                                 if (organization.getIsVerify() == 1) {
                                     //Show popup
                                     containsVerifiedOrgan = true;
@@ -2772,7 +2783,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         ProfileDataOperationAadharNumber();
                 if (!StringUtils.isEmpty(inputAadharNumber.getText().toString().trim())
                         && inputAadharNumber.getText().toString().trim().length() == 12) {
-                    profileDataOperationAadharNumber.setAadharNumber(inputAadharNumber.getText().toString().trim());
+                    profileDataOperationAadharNumber.setAadharNumber(inputAadharNumber.getText()
+                            .toString().trim());
                     profileDataOperationAadharNumber.setAadharId(1);
                     profileDataOperationAadharNumber.setAadharIsVerified(0);
                     TableAadharMaster tableAadharMaster = new TableAadharMaster
@@ -2805,7 +2817,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
 
     public void showOrganizationPrivacyDialog(final Context mContext,
-                                              final ArrayList<ProfileDataOperationOrganization> organizationArrayList,
+                                              final ArrayList<ProfileDataOperationOrganization>
+                                                      organizationArrayList,
                                               final ProfileDataOperation profileDataOperation) {
         final Dialog dialog = new Dialog(mContext);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -2830,10 +2843,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         btnLeft.setTypeface(Utils.typefaceRegular(mContext));
         btnRight.setTypeface(Utils.typefaceRegular(mContext));
 
-        tvDialogTitle.setText(mContext.getResources().getString(R.string.str_profile_details_privacy));
+        tvDialogTitle.setText(mContext.getResources().getString(R.string
+                .str_profile_details_privacy));
         tvDialogTitle.setTextColor(mContext.getResources().getColor(R.color.colorAccent));
 
-        tvDialogBody.setText(mContext.getResources().getString(R.string.str_organisation_privacy_body));
+        tvDialogBody.setText(mContext.getResources().getString(R.string
+                .str_organisation_privacy_body));
         btnLeft.setText(mContext.getResources().getString(R.string.str_cancel));
         btnRight.setText(mContext.getResources().getString(R.string.action_ok));
 
@@ -2845,9 +2860,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 switch (rippleView.getId()) {
                     case R.id.rippleLeft:
                         dialog.dismiss();
-                        for(int i=0; i<organizationArrayList.size(); i++){
-                            ProfileDataOperationOrganization organization =  organizationArrayList.get(i);
-                            if(organization.getIsVerify() == 1){
+                        for (int i = 0; i < organizationArrayList.size(); i++) {
+                            ProfileDataOperationOrganization organization = organizationArrayList
+                                    .get(i);
+                            if (organization.getIsVerify() == 1) {
                                 organizationArrayList.remove(organization);
                             }
                         }
@@ -3007,6 +3023,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         phoneNumberDetails();
         emailDetails();
         organizationDetails();
+        educationDetails();
         websiteDetails();
         if (showAddress) {
             addressDetails();
@@ -4039,6 +4056,57 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         }
     }
 
+    private void educationDetails() {
+        TableEducationMaster tableEducationMaster = new TableEducationMaster(databaseHandler);
+
+        ArrayList<Education> arrayListEducation = tableEducationMaster
+                .getEducationsFromPmId(Integer.parseInt(getUserPmId()));
+        arrayListEducationObject = new ArrayList<>();
+        for (int i = 0; i < arrayListEducation.size(); i++) {
+
+            String formattedFromDate = "", formattedToDate = "";
+
+            ProfileDataOperationEducation education = new ProfileDataOperationEducation();
+            education.setEduName(arrayListEducation.get(i).getEdmSchoolCollegeName());
+
+            if (!StringUtils.isEmpty(arrayListEducation.get(i).getEdmEducationFromDate())) {
+                formattedFromDate = Utils.convertDateFormat(arrayListEducation.get(i)
+                                .getEdmEducationFromDate(),
+                        "yyyy-MM-dd", getEventDateFormat(arrayListEducation.get(i)
+                                .getEdmEducationFromDate()));
+            }
+            if (!StringUtils.isEmpty(arrayListEducation.get(i).getEdmEducationToDate())) {
+                formattedToDate = Utils.convertDateFormat(arrayListEducation.get(i)
+                                .getEdmEducationToDate(),
+                        "yyyy-MM-dd", getEventDateFormat(arrayListEducation.get(i)
+                                .getEdmEducationToDate()));
+            }
+
+            education.setEduFromDate(formattedFromDate);
+            education.setEduToDate(formattedToDate);
+            education.setEduCourse(arrayListEducation.get(i).getEdmCourse());
+            education.setEduId(arrayListEducation.get(i).getEdmRecordIndexId());
+            education.setIsCurrent(Integer.parseInt(arrayListEducation.get(i)
+                    .getEdmEducationIsCurrent()));
+
+            arrayListEducationObject.add(education);
+        }
+
+        if (arrayListEducationObject.size() > 0) {
+            for (int i = 0; i < arrayListEducationObject.size(); i++) {
+                addEducationView(i, arrayListEducationObject.get(i));
+            }
+            EditText inputSchoolName = linearEducationDetails.findViewById(R.id
+                    .input_school_name);
+            EditText inputFieldOfStudy = linearEducationDetails.findViewById(R.id
+                    .input_field_of_study);
+            inputSchoolName.addTextChangedListener(valueTextWatcher);
+            inputFieldOfStudy.addTextChangedListener(valueTextWatcher);
+        } else {
+            addEducationView((arrayListEducationObject.size()), null);
+        }
+    }
+
     private void addressDetails() {
         TableAddressMaster tableAddressMaster = new TableAddressMaster(databaseHandler);
 
@@ -4963,6 +5031,126 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         });
 
         linearOrganizationDetails.addView(view);
+    }
+
+    // TODO: 21/11/17 Education View
+    private void addEducationView(int position, Object detailObject) {
+        View view = LayoutInflater.from(this).inflate(R.layout
+                .list_item_edit_profile_education, null);
+        ImageView deleteEducation = view.findViewById(R.id.delete_education);
+        final EditText inputSchoolName = view.findViewById(R.id.input_school_name);
+        final EditText inputFieldOfStudy = view.findViewById(R.id.input_field_of_study);
+        final CheckBox checkboxEducation = view.findViewById(R.id.checkbox_education);
+
+        final EditText inputFromDate = view.findViewById(R.id.input_from_date);
+        final EditText inputToDate = view.findViewById(R.id.input_to_date);
+
+        inputFromDate.setHint(R.string.hint_choose_from_date);
+        inputFromDate.setFocusable(false);
+
+        inputToDate.setHint(R.string.hint_choose_to_date);
+        inputToDate.setFocusable(false);
+
+        final ImageView imageFromDate = view.findViewById(R.id.image_from_date);
+        final ImageView imageToDate = view.findViewById(R.id.image_to_date);
+
+        checkboxEducation.setTag(linearEducationDetails.getChildCount());
+
+        final RelativeLayout relativeRowEditProfile = view.findViewById(R.id
+                .relative_row_edit_profile);
+
+        inputSchoolName.setInputType(InputType.TYPE_CLASS_TEXT | InputType
+                .TYPE_TEXT_FLAG_CAP_WORDS);
+        inputFieldOfStudy.setInputType(InputType.TYPE_CLASS_TEXT | InputType
+                .TYPE_TEXT_FLAG_CAP_WORDS);
+
+        inputSchoolName.setTypeface(Utils.typefaceIcons(this));
+        inputFieldOfStudy.setTypeface(Utils.typefaceRegular(this));
+
+        ProfileDataOperationEducation education = (ProfileDataOperationEducation) detailObject;
+
+        if (detailObject != null) {
+
+            relativeRowEditProfile.setTag(education.getEduId());
+            inputSchoolName.setText(education.getEduName());
+            checkboxEducation.setChecked(education.getIsCurrent() == 1);
+
+            if (education.getIsCurrent() == 1) {
+                inputToDate.setEnabled(false);
+                imageToDate.setEnabled(false);
+                inputFromDate.setText(education.getEduFromDate());
+            } else {
+                inputFromDate.setText(education.getEduFromDate());
+                inputToDate.setText(education.getEduToDate());
+            }
+
+        } else {
+            checkboxEducation.setChecked(true);
+            inputToDate.setEnabled(false);
+            imageToDate.setEnabled(false);
+
+        }
+
+        checkboxEducation.setOnCheckedChangeListener(new CompoundButton
+                .OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    for (int i = 0; i < linearEducationDetails.getChildCount(); i++) {
+                        View view = linearEducationDetails.getChildAt(i);
+                        CheckBox checkbox = view.findViewById(R.id.checkbox_education);
+                        if (checkbox != null) {
+
+                            inputToDate.setEnabled(false);
+                            imageToDate.setEnabled(false);
+
+                            inputToDate.setText("");
+                            inputToDate.setHint(R.string.hint_choose_to_date);
+                        }
+                    }
+                } else {
+
+                    inputToDate.setEnabled(true);
+                    imageToDate.setEnabled(true);
+                }
+            }
+        });
+
+        deleteEducation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isUpdated = true;
+                if (linearOrganizationDetails.getChildCount() > 1) {
+                    linearOrganizationDetails.removeView(relativeRowEditProfile);
+                    addOrganizationDetailsToList();
+                } else if (linearOrganizationDetails.getChildCount() == 1) {
+                    inputSchoolName.getText().clear();
+                    inputFieldOfStudy.getText().clear();
+                    inputFromDate.getText().clear();
+                    inputToDate.getText().clear();
+                    checkboxEducation.setChecked(true);
+//                    arrayListOrganizationObject.clear();
+                }
+            }
+        });
+
+        /*imageFromDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isOrganization = true;
+                updateOrganizationText(inputFromDate);
+            }
+        });
+
+        imageToDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isOrganization = true;
+                updateOrganizationText(inputToDate);
+            }
+        });*/
+
+        linearEducationDetails.addView(view);
     }
 
     @SuppressLint("InflateParams")
@@ -5953,7 +6141,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         organization.setOmOrganizationType(arrayListOrganization.get(i)
                                 .getOrgIndustryType());
                         organization.setOmOrganizationLogo(arrayListOrganization.get(i)
-                                .getEomLogoPath() + "/" + arrayListOrganization.get(i).getEomLogoName());
+                                .getEomLogoPath() + "/" + arrayListOrganization.get(i)
+                                .getEomLogoName());
                     } else {
                         organization.setOmOrganizationType("");
                         organization.setOmOrganizationLogo("");

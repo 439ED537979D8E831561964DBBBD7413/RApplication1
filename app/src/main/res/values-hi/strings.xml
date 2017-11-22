@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">RContacts</string>
 
@@ -743,6 +744,8 @@
     <string name="youAreNotUpdatedTitle">Update Available</string>
     <string name="youAreNotUpdatedMessage">A new version of RContacts Application is available. Please update to version\s</string>
     <string name="youAreNotUpdatedMessage1">\s now</string>
-
-
+    <string name="school_college_name">स्कूल / कॉलेज का नाम</string>
+    <string name="field_of_study">अध्ययन के क्षेत्र</string>
+    <string name="i_currently_study_here">वर्तमान में मैं यहां पढ़ रहा हूं</string>
+    <string name="str_education">शिक्षा विवरण</string>
 </resources>
