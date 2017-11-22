@@ -645,6 +645,11 @@
     <string name="str_request">Request</string>
     <string name="error_aadhar_validation">Please enter 12 digit aadhar number</string>
 
+    <string name="error_required_edu_course">Field of  study is required!</string>
+    <string name="error_required_edu_name">School /  College name is required!</string>
+    <string name="error_required_edu_from_date">From date is required!</string>
+    <string name="error_required_edu_to_date">To date is required!</string>
+
     <!--Account-->
     <string name="action_bar_title">Account</string>
     <string name="view_account">View account</string>

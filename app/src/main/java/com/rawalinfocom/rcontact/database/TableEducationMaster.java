@@ -207,7 +207,7 @@ public class TableEducationMaster {
                     (COLUMN_EDM_EDUCATION_FROM_DATE)));
             education.setEdmEducationToDate(cursor.getString(cursor.getColumnIndex
                     (COLUMN_EDM_EDUCATION_TO_DATE)));
-            education.setEdmEducationIsCurrent(cursor.getString(cursor.getColumnIndex
+            education.setEdmEducationIsCurrent(cursor.getInt(cursor.getColumnIndex
                     (COLUMN_EDM_EDUCATION_IS_CURRENT)));
             education.setEdmEducationIsPrivate(cursor.getInt(cursor.getColumnIndex
                     (COLUMN_EDM_EDUCATION_IS_PRIVATE)));
@@ -259,7 +259,7 @@ public class TableEducationMaster {
                         (COLUMN_EDM_EDUCATION_FROM_DATE)));
                 education.setEdmEducationToDate(cursor.getString(cursor.getColumnIndex
                         (COLUMN_EDM_EDUCATION_TO_DATE)));
-                education.setEdmEducationIsCurrent(cursor.getString(cursor.getColumnIndex
+                education.setEdmEducationIsCurrent(cursor.getInt(cursor.getColumnIndex
                         (COLUMN_EDM_EDUCATION_IS_CURRENT)));
                 education.setEdmEducationIsPrivate(cursor.getInt(cursor.getColumnIndex
                         (COLUMN_EDM_EDUCATION_IS_PRIVATE)));
@@ -359,7 +359,7 @@ public class TableEducationMaster {
                         (COLUMN_EDM_SCHOOL_COLLEGE_NAME)));
                 education.setEdmCourse(cursor.getString(cursor.getColumnIndex
                         (COLUMN_EDM_COURSE)));
-                education.setEdmEducationIsCurrent(cursor.getString(cursor.getColumnIndex
+                education.setEdmEducationIsCurrent(cursor.getInt(cursor.getColumnIndex
                         (COLUMN_EDM_EDUCATION_IS_CURRENT)));
                 education.setEdmEducationIsPrivate(cursor.getInt(cursor.getColumnIndex
                         (COLUMN_EDM_EDUCATION_IS_PRIVATE)));

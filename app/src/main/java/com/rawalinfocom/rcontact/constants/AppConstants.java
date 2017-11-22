@@ -33,6 +33,7 @@ public class AppConstants {
     public static final int NAME = 9;
     public static final int AADHAR_NUMBER = 10;
     public static final int RELATION = 11;
+    public static final int EDUCATION = 12;
     public static boolean isRecentCallFromSMSTab = false;
     //</editor-fold>
 

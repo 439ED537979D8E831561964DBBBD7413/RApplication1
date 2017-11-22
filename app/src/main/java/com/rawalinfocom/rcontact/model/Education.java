@@ -12,7 +12,7 @@ public class Education {
     private String edmCourse;
     private String edmEducationFromDate;
     private String edmEducationToDate;
-    private String edmEducationIsCurrent;
+    private Integer edmEducationIsCurrent;
     private Integer edmEducationIsPrivate;
     private String edmEducationPrivacy;
     private String rcProfileMasterPmId;
@@ -65,11 +65,11 @@ public class Education {
         this.edmEducationToDate = edmEducationToDate;
     }
 
-    public String getEdmEducationIsCurrent() {
+    public Integer getEdmEducationIsCurrent() {
         return edmEducationIsCurrent;
     }
 
-    public void setEdmEducationIsCurrent(String edmEducationIsCurrent) {
+    public void setEdmEducationIsCurrent(Integer edmEducationIsCurrent) {
         this.edmEducationIsCurrent = edmEducationIsCurrent;
     }
 
