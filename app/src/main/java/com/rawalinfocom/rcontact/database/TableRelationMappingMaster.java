@@ -5,11 +5,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.rawalinfocom.rcontact.model.IndividualRelationType;
-import com.rawalinfocom.rcontact.model.Relation;
 import com.rawalinfocom.rcontact.model.RelationRecommendationType;
 import com.rawalinfocom.rcontact.model.RelationRequestResponse;
-
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 
@@ -88,62 +85,6 @@ public class TableRelationMappingMaster {
         db.close(); // Closing database connection
     }
 
-    // Getting single Relation
-    public Relation getRelationMapping(int rmId) {
-        SQLiteDatabase db = databaseHandler.getReadableDatabase();
-
-        Cursor cursor = db.query(TABLE_RC_RCP_RELATION_MAPPING, new String[]{COLUMN_ID,
-                        COLUMN_RRM_PROFILE_DETAILS, COLUMN_RRM_TYPE},
-                COLUMN_ID + "=?", new String[]{String.valueOf(rmId)}, null, null, null, null);
-        if (cursor != null)
-            cursor.moveToFirst();
-
-        Relation relation = new Relation();
-        if (cursor != null) {
-            relation.setRmId(cursor.getInt(0));
-            relation.setRmRelationName(cursor.getString(1));
-            relation.setRmRelationType(cursor.getString(2));
-
-            cursor.close();
-        }
-
-        db.close();
-
-        // return relation
-        return relation;
-    }
-
-    // Getting All relations
-    public ArrayList<Relation> getAllRelationsMapping() {
-        ArrayList<Relation> arrayListRelation = new ArrayList<>();
-        // Select All Query
-        String selectQuery = "SELECT  * FROM " + TABLE_RC_RCP_RELATION_MAPPING;
-
-        SQLiteDatabase db = databaseHandler.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
-
-        // looping through all rows and adding to list
-        if (cursor.moveToFirst()) {
-            do {
-                Relation relation = new Relation();
-                relation.setRmId(cursor.getInt(0));
-                relation.setRmRelationName(cursor.getString(1));
-                relation.setRmRelationType(cursor.getString(2));
-
-                // Adding relation to list
-                arrayListRelation.add(relation);
-            } while (cursor.moveToNext());
-
-            cursor.close();
-
-        }
-
-        db.close();
-
-        // return Relation list
-        return arrayListRelation;
-    }
-
     // Getting Relation Count
     public int getRelationCount() {
         String countQuery = "SELECT  * FROM " + TABLE_RC_RCP_RELATION_MAPPING;
@@ -156,24 +97,6 @@ public class TableRelationMappingMaster {
 
         // return count
         return count;
-    }
-
-    // Updating single Relation
-    public int updateRelationMapping(Relation relation) {
-        SQLiteDatabase db = databaseHandler.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_ID, relation.getRmId());
-        values.put(COLUMN_RRM_PROFILE_DETAILS, relation.getRmRelationName());
-        values.put(COLUMN_RRM_TYPE, relation.getRmRelationType());
-
-        // updating row
-        int isUpdated = db.update(TABLE_RC_RCP_RELATION_MAPPING, values, COLUMN_ID + " = ?",
-                new String[]{String.valueOf(relation.getRmId())});
-
-        db.close();
-
-        return isUpdated;
     }
 
     // Deleting single relation

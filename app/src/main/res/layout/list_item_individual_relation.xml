@@ -28,6 +28,7 @@
             android:id="@+id/ll_relation_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
             android:layout_marginStart="@dimen/margin_10dp"
             android:layout_toEndOf="@+id/image_relation"
             android:orientation="vertical">
@@ -35,7 +36,7 @@
             <TextView
                 android:id="@+id/text_relation_name"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:drawablePadding="@dimen/padding_10dp"
                 android:gravity="center|start"
                 android:textColor="@color/grey_hex_ac"
@@ -62,8 +63,7 @@
                     android:layout_marginStart="@dimen/margin_5dp"
                     android:textColor="@color/grey_hex_75"
                     android:textSize="@dimen/text_size_14sp"
-                    android:textStyle="bold"
-                    tools:text="Rawal Infocom Pvt Ltd." />
+                    android:textStyle="bold" />
 
             </LinearLayout>
 

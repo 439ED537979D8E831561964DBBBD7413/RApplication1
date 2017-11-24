@@ -12,7 +12,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.model.IndividualRelationType;
 import com.rawalinfocom.rcontact.model.RelationRecommendationType;
 
@@ -60,13 +62,20 @@ class RelationRecommendationListAdapter extends RecyclerView.Adapter<
     }
 
     @Override
-    public void onBindViewHolder(RelationRecommendationViewHolder holder, final int position) {
-        RelationRecommendationViewHolder viewHolder = (RelationRecommendationViewHolder) holder;
+    public void onBindViewHolder(RelationRecommendationViewHolder viewHolder, final int position) {
         RelationRecommendationType relationRecommendationType = arrayListRelationType.get(position);
         viewHolder.textName.setText(String.format("%s %s", relationRecommendationType.getFirstName(),
                 relationRecommendationType.getLastName()));
         viewHolder.textNumber.setText(relationRecommendationType.getNumber());
         viewHolder.textDateAndTime.setText(relationRecommendationType.getDateAndTime());
+
+        Glide.with(activity)
+                .load(relationRecommendationType.getProfileImage())
+                .placeholder(R.drawable.home_screen_profile)
+                .error(R.drawable.home_screen_profile)
+                .bitmapTransform(new CropCircleTransformation(activity))
+                .override(512, 512)
+                .into(viewHolder.imageProfile);
 
         ArrayList<IndividualRelationType> list = relationRecommendationType.getIndividualRelationTypeList();
         if (list.size() > 0) {
@@ -84,10 +93,10 @@ class RelationRecommendationListAdapter extends RecyclerView.Adapter<
             viewHolder.recycleIndividualRelationList.setAdapter(adapter);
         }
 
-        holder.imageViewCorrect.setTag(position);
-        holder.imageViewDelete.setTag(position);
+        viewHolder.imageViewCorrect.setTag(position);
+        viewHolder.imageViewDelete.setTag(position);
 
-        holder.imageViewCorrect.setOnClickListener(new View.OnClickListener() {
+        viewHolder.imageViewCorrect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -100,8 +109,8 @@ class RelationRecommendationListAdapter extends RecyclerView.Adapter<
             }
         });
 
-        holder.imageViewDelete.setTag(position);
-        holder.imageViewDelete.setOnClickListener(new View.OnClickListener() {
+        viewHolder.imageViewDelete.setTag(position);
+        viewHolder.imageViewDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 

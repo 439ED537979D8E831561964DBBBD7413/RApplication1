@@ -39,20 +39,6 @@ public class TableRelationMaster {
             " " + COLUMN_RM_TYPE + " text NOT NULL" +
             ");";
 
-    // Adding new Relation
-    public void addRelation(Relation relation) {
-        SQLiteDatabase db = databaseHandler.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_ID, relation.getRmId());
-        values.put(COLUMN_RM_PARTICULAR, relation.getRmRelationName());
-        values.put(COLUMN_RM_TYPE, relation.getRmRelationType());
-
-        // Inserting Row
-        db.insert(TABLE_RC_RELATION_MASTER, null, values);
-        // insertWithOnConflict
-        db.close(); // Closing database connection
-    }
 
     // Getting Relation Name
     public ArrayList<Relation> getRelation(int rmType) {
@@ -117,36 +103,36 @@ public class TableRelationMaster {
         db.close();
     }
 
-    // Getting All relations
-    public ArrayList<Relation> getAllRelations() {
-        ArrayList<Relation> arrayListRelation = new ArrayList<>();
-        // Select All Query
-        String selectQuery = "SELECT  * FROM " + TABLE_RC_RELATION_MASTER;
-
-        SQLiteDatabase db = databaseHandler.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
-
-        // looping through all rows and adding to list
-        if (cursor.moveToFirst()) {
-            do {
-                Relation relation = new Relation();
-                relation.setRmId(cursor.getInt(0));
-                relation.setRmRelationName(cursor.getString(1));
-                relation.setRmRelationType(cursor.getString(2));
-
-                // Adding relation to list
-                arrayListRelation.add(relation);
-            } while (cursor.moveToNext());
-
-            cursor.close();
-
-        }
-
-        db.close();
-
-        // return Relation list
-        return arrayListRelation;
-    }
+//    // Getting All relations
+//    public ArrayList<Relation> getAllRelations() {
+//        ArrayList<Relation> arrayListRelation = new ArrayList<>();
+//        // Select All Query
+//        String selectQuery = "SELECT  * FROM " + TABLE_RC_RELATION_MASTER;
+//
+//        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+//        Cursor cursor = db.rawQuery(selectQuery, null);
+//
+//        // looping through all rows and adding to list
+//        if (cursor.moveToFirst()) {
+//            do {
+//                Relation relation = new Relation();
+//                relation.setRmId(cursor.getInt(0));
+//                relation.setRmRelationName(cursor.getString(1));
+//                relation.setRmRelationType(cursor.getString(2));
+//
+//                // Adding relation to list
+//                arrayListRelation.add(relation);
+//            } while (cursor.moveToNext());
+//
+//            cursor.close();
+//
+//        }
+//
+//        db.close();
+//
+//        // return Relation list
+//        return arrayListRelation;
+//    }
 
     // Getting Relation Count
     public int getRelationCount() {
@@ -160,31 +146,5 @@ public class TableRelationMaster {
 
         // return count
         return count;
-    }
-
-    // Updating single Relation
-    public int updateRelation(Relation relation) {
-        SQLiteDatabase db = databaseHandler.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_ID, relation.getRmId());
-        values.put(COLUMN_RM_PARTICULAR, relation.getRmRelationName());
-        values.put(COLUMN_RM_TYPE, relation.getRmRelationType());
-
-        // updating row
-        int isUpdated = db.update(TABLE_RC_RELATION_MASTER, values, COLUMN_ID + " = ?",
-                new String[]{String.valueOf(relation.getRmId())});
-
-        db.close();
-
-        return isUpdated;
-    }
-
-    // Deleting single relation
-    public void deleteRelation(Relation relation) {
-        SQLiteDatabase db = databaseHandler.getWritableDatabase();
-        db.delete(TABLE_RC_RELATION_MASTER, COLUMN_ID + " = ?",
-                new String[]{String.valueOf(relation.getRmId())});
-        db.close();
     }
 }

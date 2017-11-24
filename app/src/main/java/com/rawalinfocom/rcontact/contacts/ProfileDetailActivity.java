@@ -94,6 +94,7 @@ import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.circleprogressview.CircleProgressView;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
+import com.rawalinfocom.rcontact.helper.instagram.util.StringUtil;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.Address;
 import com.rawalinfocom.rcontact.model.CallLogHistoryType;
@@ -3261,8 +3262,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     ||
                     (!Utils.isArraylistNullOrEmpty(arrayListImAccount) || !Utils
                             .isArraylistNullOrEmpty(arrayListPhoneBookImAccount))
-                    || (profileDetail != null
-                    && (profileDetail.getPbAadhar().getAadharNumber().length() > 0))) {
+                    || (profileDetail != null && profileDetail.getPbAadhar() != null)) {
                 rippleViewMore.setVisibility(View.VISIBLE);
             } else {
                 rippleViewMore.setVisibility(View.GONE);

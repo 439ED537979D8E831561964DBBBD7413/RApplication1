@@ -9,10 +9,6 @@ public class Relation {
     private int rmId;
     private String rmRelationName;
     private String rmRelationType;
-    private String rmCustomType;
-    private String rmRelatedPmId;
-    private String rmIsValid;
-    private String rmRelationPrivacy;
     private String rcProfileMasterPmId;
 
     public int getRmId() {
@@ -37,38 +33,6 @@ public class Relation {
 
     public void setRmRelationType(String rmRelationType) {
         this.rmRelationType = rmRelationType;
-    }
-
-    public String getRmCustomType() {
-        return rmCustomType;
-    }
-
-    public void setRmCustomType(String rmCustomType) {
-        this.rmCustomType = rmCustomType;
-    }
-
-    public String getRmRelatedPmId() {
-        return rmRelatedPmId;
-    }
-
-    public void setRmRelatedPmId(String rmRelatedPmId) {
-        this.rmRelatedPmId = rmRelatedPmId;
-    }
-
-    public String getRmIsValid() {
-        return rmIsValid;
-    }
-
-    public void setRmIsValid(String rmIsValid) {
-        this.rmIsValid = rmIsValid;
-    }
-
-    public String getRmRelationPrivacy() {
-        return rmRelationPrivacy;
-    }
-
-    public void setRmRelationPrivacy(String rmRelationPrivacy) {
-        this.rmRelationPrivacy = rmRelationPrivacy;
     }
 
     public String getRcProfileMasterPmId() {

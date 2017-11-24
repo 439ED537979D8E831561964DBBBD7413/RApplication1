@@ -18,6 +18,7 @@ public class RelationUserProfile {
     private String pmLastName;
     private String pmBadge;
     private String mobileNumber;
+    private String profilePhoto;
 
     public Integer getRrmToPmId() {
         return rrmToPmId;
@@ -61,5 +62,14 @@ public class RelationUserProfile {
 
     public void setMobileNumber(String mobileNumber) {
         this.mobileNumber = mobileNumber;
+    }
+
+    @JsonProperty("pm_profile_photo")
+    public String getProfilePhoto() {
+        return profilePhoto;
+    }
+
+    public void setProfilePhoto(String profilePhoto) {
+        this.profilePhoto = profilePhoto;
     }
 }

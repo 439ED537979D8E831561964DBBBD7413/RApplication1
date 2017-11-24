@@ -32,7 +32,7 @@ import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.ExistingRelationRequest;
 import com.rawalinfocom.rcontact.model.IndividualRelationType;
 import com.rawalinfocom.rcontact.model.RelationRecommendationType;
-import com.rawalinfocom.rcontact.model.RelationRequest;
+import com.rawalinfocom.rcontact.model.RelationResponse;
 import com.rawalinfocom.rcontact.model.RelationUserProfile;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
@@ -96,15 +96,15 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
 
         if (error == null) {
 
-            //<editor-fold desc="REQ_GET_RELATION">
-            if (serviceType.contains(WsConstants.REQ_GET_RELATION)) {
+            //<editor-fold desc="REQ_GET_RECOMMENDATION">
+            if (serviceType.contains(WsConstants.REQ_GET_RECOMMENDATION)) {
                 WsResponseObject sendRelationRequestObject = (WsResponseObject) data;
                 Utils.hideProgressDialog();
                 if (sendRelationRequestObject != null && StringUtils.equalsIgnoreCase
                         (sendRelationRequestObject.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
                     ArrayList<ExistingRelationRequest> allExistingRelationList =
-                            sendRelationRequestObject.getAllExistingRelationList();
+                            sendRelationRequestObject.getRecommendationsRelationList();
 
                     if (allExistingRelationList.size() > 0) {
                         getData(allExistingRelationList);
@@ -162,7 +162,7 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
                         Utils.showErrorSnackBar(this, relativeRootRecommendationRelation,
                                 deleteRelationObject.getMessage());
                     } else {
-                        Log.e("onDeliveryResponse: ", "deleteRelationResponse null");
+                        Log.e("onDeliveryResponse: ", "DeleteAcceptRelationResponse null");
                         Utils.showErrorSnackBar(this, relativeRootRecommendationRelation, getString(R
                                 .string.msg_try_later));
                     }
@@ -185,6 +185,8 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
 
             case R.id.ripple_action_search:
 
+                Utils.showKeyBoard(RelationRecommendationActivity.this);
+
                 relativeBack.setVisibility(View.VISIBLE);
                 relativeActionBack.setVisibility(View.GONE);
 
@@ -202,6 +204,7 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
         imageBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Utils.hideSoftKeyboard(RelationRecommendationActivity.this, inputSearch);
                 inputSearch.getText().clear();
                 relativeBack.setVisibility(View.GONE);
                 relativeActionBack.setVisibility(View.VISIBLE);
@@ -231,6 +234,7 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
         imgClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Utils.hideSoftKeyboard(RelationRecommendationActivity.this, inputSearch);
                 inputSearch.getText().clear();
                 relativeBack.setVisibility(View.GONE);
                 relativeActionBack.setVisibility(View.VISIBLE);
@@ -304,12 +308,12 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
             recommendationType.setNumber(relationUserProfile.getMobileNumber());
             recommendationType.setPmId(String.valueOf(allExistingRelationList.get(i).getRrmToPmId()));
             recommendationType.setDateAndTime("");
-            recommendationType.setProfileImage("");
+            recommendationType.setProfileImage(relationUserProfile.getProfilePhoto());
 
             ArrayList<IndividualRelationType> relationRecommendations = new ArrayList<>();
 
             // businessRecommendation
-            ArrayList<RelationRequest> businessRecommendation = existingRelationRequest
+            ArrayList<RelationResponse> businessRecommendation = existingRelationRequest
                     .getBusinessRelationList();
 
             if (!Utils.isArraylistNullOrEmpty(businessRecommendation)) {
@@ -339,7 +343,7 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
             }
 
             // familyRecommendation
-            ArrayList<RelationRequest> familyRecommendation = existingRelationRequest
+            ArrayList<RelationResponse> familyRecommendation = existingRelationRequest
                     .getFamilyRelationList();
 
             if (!Utils.isArraylistNullOrEmpty(familyRecommendation)) {
@@ -368,7 +372,7 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
             }
 
             // friendRecommendation
-            ArrayList<RelationRequest> friendRecommendation = existingRelationRequest
+            ArrayList<RelationResponse> friendRecommendation = existingRelationRequest
                     .getFriendRelationList();
 
             if (!Utils.isArraylistNullOrEmpty(friendRecommendation)) {
@@ -479,9 +483,9 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncGetWebServiceCall(this, WsResponseObject.class, WsConstants
-                    .REQ_GET_RELATION, getResources().getString(R.string.msg_please_wait))
+                    .REQ_GET_RECOMMENDATION, getResources().getString(R.string.msg_please_wait))
                     .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT +
-                            WsConstants.REQ_GET_RELATION + "?startAt=0&status=1");
+                            WsConstants.REQ_GET_RECOMMENDATION + "?startAt=0");
         } else {
             Utils.showErrorSnackBar(this, relativeRootRecommendationRelation, getResources()
                     .getString(R.string.msg_no_network));

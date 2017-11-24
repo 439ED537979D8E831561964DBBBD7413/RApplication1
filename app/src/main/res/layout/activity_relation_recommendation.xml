@@ -29,7 +29,7 @@
             android:drawableTop="@drawable/ico_relation_1_svg"
             android:text="@string/str_no_relation_found"
             android:textColor="@color/colorAccent"
-            android:textSize="@dimen/text_size_26sp"
+            android:textSize="@dimen/text_size_22sp"
             android:visibility="gone" />
 
         <android.support.v7.widget.RecyclerView

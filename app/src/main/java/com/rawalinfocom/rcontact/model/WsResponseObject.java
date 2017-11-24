@@ -115,6 +115,18 @@ public class WsResponseObject {
         this.allExistingRelationList = allExistingRelationList;
     }
 
+    @JsonProperty("recommendations")
+    private ArrayList<ExistingRelationRequest> recommendationsRelationList;
+
+    public ArrayList<ExistingRelationRequest> getRecommendationsRelationList() {
+        return recommendationsRelationList;
+    }
+
+    public void setRecommendationsRelationList(ArrayList<ExistingRelationRequest>
+                                                       recommendationsRelationList) {
+        this.recommendationsRelationList = recommendationsRelationList;
+    }
+
     @JsonProperty("response_data")
     private ArrayList<ContactRequestResponseDataItem> responseData;
 

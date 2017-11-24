@@ -12,7 +12,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.model.IndividualRelationType;
 import com.rawalinfocom.rcontact.model.RelationRecommendationType;
 
@@ -31,7 +33,6 @@ class ExistingRelationListAdapter extends RecyclerView.Adapter
     private ArrayList<RelationRecommendationType> arrayListRelationType;
     private Activity mActivity;
     private ArrayList<RelationRecommendationType> filteredList;
-    private Activity activity;
     private CustomFilter mFilter;
     private OnClickListener clickListener;
 
@@ -67,6 +68,14 @@ class ExistingRelationListAdapter extends RecyclerView.Adapter
         holder.textNumber.setText(relationRecommendationType.getNumber());
 //        holder.textDateAndTime.setText(relationRecommendationType.getDateAndTime());
 
+        Glide.with(mActivity)
+                .load(relationRecommendationType.getProfileImage())
+                .placeholder(R.drawable.home_screen_profile)
+                .error(R.drawable.home_screen_profile)
+                .bitmapTransform(new CropCircleTransformation(mActivity))
+                .override(512, 512)
+                .into(holder.imageProfile);
+
         ArrayList<IndividualRelationType> list = relationRecommendationType.getIndividualRelationTypeList();
         if (list.size() > 0) {
             IndividualExistingRelationListAdapter adapter = new IndividualExistingRelationListAdapter(mActivity, list);
@@ -91,11 +100,11 @@ class ExistingRelationListAdapter extends RecyclerView.Adapter
             public void onClick(View view) {
 
                 int pos = (int) view.getTag();
-                String name =  arrayListRelationType.get(pos).getFirstName() + " " +
+                String name = arrayListRelationType.get(pos).getFirstName() + " " +
                         arrayListRelationType.get(pos).getLastName();
 
                 if (clickListener != null)
-                    clickListener.onDeleteClick(pos,name,arrayListRelationType.get(pos).getPmId());
+                    clickListener.onDeleteClick(pos, name, arrayListRelationType.get(pos).getPmId());
             }
         });
     }

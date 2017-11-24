@@ -27,7 +27,6 @@ import com.rawalinfocom.rcontact.asynctasks.AsyncGetWebServiceCall;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
-import com.rawalinfocom.rcontact.database.TableRelationMappingMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
@@ -35,8 +34,8 @@ import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.ExistingRelationRequest;
 import com.rawalinfocom.rcontact.model.IndividualRelationType;
 import com.rawalinfocom.rcontact.model.RelationRecommendationType;
-import com.rawalinfocom.rcontact.model.RelationRequest;
-import com.rawalinfocom.rcontact.model.RelationRequestResponse;
+import com.rawalinfocom.rcontact.model.RelationResponse;
+import com.rawalinfocom.rcontact.model.RelationUserProfile;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 
@@ -76,7 +75,7 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
 
     private Activity activity;
     private ExistingRelationListAdapter listAdapter;
-    private TableRelationMappingMaster tableRelationMappingMaster;
+    //    private TableRelationMappingMaster tableRelationMappingMaster;
     //    private Integer pmId;
     private ArrayList<RelationRecommendationType> existingRelationList;
     private ArrayList<String> relationIds;
@@ -96,7 +95,7 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
         ButterKnife.bind(this);
         initToolbar();
 
-        tableRelationMappingMaster = new TableRelationMappingMaster(databaseHandler);
+//        tableRelationMappingMaster = new TableRelationMappingMaster(databaseHandler);
 
         activity = ExistingRelationActivity.this;
         textNoRelation.setTypeface(Utils.typefaceRegular(this));
@@ -125,15 +124,16 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
         recycleViewRelation.setVisibility(View.VISIBLE);
 
         if (Utils.isNetworkAvailable(this)) {
-            if (Utils.getBooleanPreference(ExistingRelationActivity.this,
-                    AppConstants.PREF_GET_RELATION, true)) {
-                getAllExistingRelation();
-            } else {
-                getExistingRelationData();
-            }
-        } else {
-            getExistingRelationData();
+//            if (Utils.getBooleanPreference(ExistingRelationActivity.this,
+//                    AppConstants.PREF_GET_RELATION, true)) {
+            getAllExistingRelation();
+//            } else {
+//                getExistingRelationData();
+//            }
         }
+//        else {
+//            getExistingRelationData();
+//        }
 
         inputSearch.addTextChangedListener(new TextWatcher() {
             @Override
@@ -143,8 +143,10 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                listAdapter.getFilter().filter(charSequence.toString());
 
+                if (listAdapter != null) {
+                    listAdapter.getFilter().filter(charSequence.toString());
+                }
                 if (charSequence.toString().trim().length() == 0) {
                     imgClear.setVisibility(View.GONE);
                 } else {
@@ -161,9 +163,12 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
         imgClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Utils.hideSoftKeyboard(activity, inputSearch);
                 imgClear.setVisibility(View.GONE);
-                listAdapter.getFilter().filter("");
                 inputSearch.getText().clear();
+
+                if (listAdapter != null)
+                    listAdapter.getFilter().filter("");
             }
         });
     }
@@ -185,8 +190,9 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
 
 //                    Utils.showSuccessSnackBar(activity, relativeRootExistingRelation,
 //                            "New Relation Added Successfully!!!");
-                    storeProfileDataToDb(allExistingRelationList);
-                    getExistingRelationData();
+//                    storeProfileDataToDb(allExistingRelationList);
+                    setExistingRelationData(allExistingRelationList);
+//                    getExistingRelationData();
 
                     Utils.setBooleanPreference(ExistingRelationActivity.this,
                             AppConstants.PREF_GET_RELATION, false);
@@ -215,12 +221,13 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
                     Utils.showSuccessSnackBar(activity, relativeRootExistingRelation,
                             deleteRelationObject.getMessage());
 
-                    tableRelationMappingMaster.deleteRelationMapping(deletePmId, relationIds);
-                    deletePmId = "";
+//                    tableRelationMappingMaster.deleteRelationMapping(deletePmId, relationIds);
+//                    deletePmId = "";
 
-                    getExistingRelationData();
+                    getAllExistingRelation();
+//                    getExistingRelationData();
 
-                    deleteRelationPosition = -1;
+//                    deleteRelationPosition = -1;
 
                 } else {
                     if (deleteRelationObject != null) {
@@ -258,96 +265,240 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
         }
     }
 
-    private void storeProfileDataToDb(ArrayList<ExistingRelationRequest> relationRequestResponse) {
+//    private void storeProfileDataToDb(ArrayList<ExistingRelationRequest> relationRequestResponse) {
+//
+//        //<editor-fold desc="Relation Mapping Master">
+//        TableRelationMappingMaster tableRelationMappingMaster = new
+//                TableRelationMappingMaster(databaseHandler);
+//
+//        if (!Utils.isArraylistNullOrEmpty(relationRequestResponse)) {
+//
+//            for (int i = 0; i < relationRequestResponse.size(); i++) {
+//
+//                ArrayList<RelationRequestResponse> relationResponseList = new ArrayList<>();
+//                ExistingRelationRequest relationRequest = relationRequestResponse.get(i);
+//
+//                //<editor-fold desc="Family Relation">
+//                ArrayList<RelationResponse> familyRelation = relationRequest.getFamilyRelationList();
+//                if (!Utils.isArraylistNullOrEmpty(familyRelation)) {
+//
+//                    for (int j = 0; j < familyRelation.size(); j++) {
+//
+//                        RelationRequestResponse relationResponse = new RelationRequestResponse();
+//
+//                        relationResponse.setId(familyRelation.get(j).getId());
+//                        relationResponse.setRcRelationMasterId(familyRelation.get(j).getRcRelationMasterId());
+//                        relationResponse.setRrmToPmId(familyRelation.get(j).getRrmToPmId());
+//                        relationResponse.setRrmType(familyRelation.get(j).getRrmType());
+//                        relationResponse.setRrmFromPmId(familyRelation.get(j).getRrmFromPmId());
+//                        relationResponse.setRcStatus(familyRelation.get(j).getRcStatus());
+//                        relationResponse.setRcOrgId(familyRelation.get(j).getRcOrgId());
+//                        relationResponse.setCreatedAt(familyRelation.get(j).getCreatedAt());
+//
+//                        relationResponseList.add(relationResponse);
+//                    }
+//                }
+//                //</editor-fold>
+//
+//                //<editor-fold desc="Friend Relation">
+//                ArrayList<RelationResponse> friendRelation = relationRequest.getFriendRelationList();
+//                if (!Utils.isArraylistNullOrEmpty(friendRelation)) {
+//
+//                    for (int j = 0; j < friendRelation.size(); j++) {
+//
+//                        RelationRequestResponse relationResponse = new RelationRequestResponse();
+//
+//                        relationResponse.setId(friendRelation.get(j).getId());
+//                        relationResponse.setRcRelationMasterId(friendRelation.get(j).getRcRelationMasterId());
+//                        relationResponse.setRrmToPmId(friendRelation.get(j).getRrmToPmId());
+//                        relationResponse.setRrmType(friendRelation.get(j).getRrmType());
+//                        relationResponse.setRrmFromPmId(friendRelation.get(j).getRrmFromPmId());
+//                        relationResponse.setRcStatus(friendRelation.get(j).getRcStatus());
+//                        relationResponse.setRcOrgId(friendRelation.get(j).getRcOrgId());
+//                        relationResponse.setCreatedAt(friendRelation.get(j).getCreatedAt());
+//
+//                        relationResponseList.add(relationResponse);
+//                    }
+//                }
+//                //</editor-fold>
+//
+//                //<editor-fold desc="Business Relation">
+//                ArrayList<RelationResponse> businessRelation = relationRequest.getBusinessRelationList();
+//                if (!Utils.isArraylistNullOrEmpty(businessRelation)) {
+//
+//                    for (int j = 0; j < businessRelation.size(); j++) {
+//
+//                        RelationRequestResponse relationResponse = new RelationRequestResponse();
+//
+//                        relationResponse.setId(businessRelation.get(j).getId());
+//                        relationResponse.setRcRelationMasterId(businessRelation.get(j).getRcRelationMasterId());
+//                        relationResponse.setRrmToPmId(businessRelation.get(j).getRrmToPmId());
+//                        relationResponse.setRrmType(businessRelation.get(j).getRrmType());
+//                        relationResponse.setRrmFromPmId(businessRelation.get(j).getRrmFromPmId());
+//                        relationResponse.setRcStatus(businessRelation.get(j).getRcStatus());
+//                        relationResponse.setRcOrgId(businessRelation.get(j).getRcOrgId());
+//                        relationResponse.setCreatedAt(businessRelation.get(j).getCreatedAt());
+//
+//                        relationResponseList.add(relationResponse);
+//                    }
+//                }
+//
+//                tableRelationMappingMaster.deleteRelationMapping(String.valueOf(relationRequest.getRrmToPmId()));
+//                tableRelationMappingMaster.addRelationMapping(relationResponseList);
+//            }
+//        }
+//    }
 
-        //<editor-fold desc="Relation Mapping Master">
-        TableRelationMappingMaster tableRelationMappingMaster = new
-                TableRelationMappingMaster(databaseHandler);
+//    private void getExistingRelationData() {
+//
+//        existingRelationList = new ArrayList<>();
+//
+////        existingRelationList = tableRelationMappingMaster
+////                .getAllExistingRelation();
+//
+//        if (existingRelationList.size() > 0) {
+//            listAdapter = new ExistingRelationListAdapter(activity, existingRelationList,
+//                    new ExistingRelationListAdapter.OnClickListener() {
+//                        @Override
+//                        public void onClick(int position) {
+//
+//                            Intent intent = new Intent(activity, AddNewRelationActivity.class);
+//                            intent.putExtra(AppConstants.EXTRA_EXISTING_RELATION_DETAILS,
+//                                    existingRelationList.get(position));
+//                            intent.putExtra(AppConstants.EXTRA_PM_ID,
+//                                    existingRelationList.get(position).getPmId());
+//                            intent.putExtra(AppConstants.EXTRA_IS_FROM, "existing");
+//                            startActivity(intent);
+//
+//                        }
+//
+//                        @Override
+//                        public void onDeleteClick(int position, String name, String pmId) {
+//                            deletePmId = pmId;
+//                            deleteRelationPosition = position;
+//                            showAllRelations(position, name);
+//                        }
+//                    });
+//            recycleViewRelation.setLayoutManager(new LinearLayoutManager(this));
+//            recycleViewRelation.setAdapter(listAdapter);
+//
+//        } else {
+//
+//            textNoRelation.setVisibility(View.VISIBLE);
+//            recycleViewRelation.setVisibility(View.GONE);
+//        }
+//    }
 
-        if (!Utils.isArraylistNullOrEmpty(relationRequestResponse)) {
-
-            for (int i = 0; i < relationRequestResponse.size(); i++) {
-
-                ArrayList<RelationRequestResponse> relationResponseList = new ArrayList<>();
-                ExistingRelationRequest relationRequest = relationRequestResponse.get(i);
-
-                //<editor-fold desc="Family Relation">
-                ArrayList<RelationRequest> familyRelation = relationRequest.getFamilyRelationList();
-                if (!Utils.isArraylistNullOrEmpty(familyRelation)) {
-
-                    for (int j = 0; j < familyRelation.size(); j++) {
-
-                        RelationRequestResponse relationResponse = new RelationRequestResponse();
-
-                        relationResponse.setId(familyRelation.get(j).getId());
-                        relationResponse.setRcRelationMasterId(familyRelation.get(j).getRcRelationMasterId());
-                        relationResponse.setRrmToPmId(familyRelation.get(j).getRrmToPmId());
-                        relationResponse.setRrmType(familyRelation.get(j).getRrmType());
-                        relationResponse.setRrmFromPmId(familyRelation.get(j).getRrmFromPmId());
-                        relationResponse.setRcStatus(familyRelation.get(j).getRcStatus());
-                        relationResponse.setRcOrgId(familyRelation.get(j).getRcOrgId());
-                        relationResponse.setCreatedAt(familyRelation.get(j).getCreatedAt());
-
-                        relationResponseList.add(relationResponse);
-                    }
-                }
-                //</editor-fold>
-
-                //<editor-fold desc="Friend Relation">
-                ArrayList<RelationRequest> friendRelation = relationRequest.getFriendRelationList();
-                if (!Utils.isArraylistNullOrEmpty(friendRelation)) {
-
-                    for (int j = 0; j < friendRelation.size(); j++) {
-
-                        RelationRequestResponse relationResponse = new RelationRequestResponse();
-
-                        relationResponse.setId(friendRelation.get(j).getId());
-                        relationResponse.setRcRelationMasterId(friendRelation.get(j).getRcRelationMasterId());
-                        relationResponse.setRrmToPmId(friendRelation.get(j).getRrmToPmId());
-                        relationResponse.setRrmType(friendRelation.get(j).getRrmType());
-                        relationResponse.setRrmFromPmId(friendRelation.get(j).getRrmFromPmId());
-                        relationResponse.setRcStatus(friendRelation.get(j).getRcStatus());
-                        relationResponse.setRcOrgId(friendRelation.get(j).getRcOrgId());
-                        relationResponse.setCreatedAt(friendRelation.get(j).getCreatedAt());
-
-                        relationResponseList.add(relationResponse);
-                    }
-                }
-                //</editor-fold>
-
-                //<editor-fold desc="Business Relation">
-                ArrayList<RelationRequest> businessRelation = relationRequest.getBusinessRelationList();
-                if (!Utils.isArraylistNullOrEmpty(businessRelation)) {
-
-                    for (int j = 0; j < businessRelation.size(); j++) {
-
-                        RelationRequestResponse relationResponse = new RelationRequestResponse();
-
-                        relationResponse.setId(businessRelation.get(j).getId());
-                        relationResponse.setRcRelationMasterId(businessRelation.get(j).getRcRelationMasterId());
-                        relationResponse.setRrmToPmId(businessRelation.get(j).getRrmToPmId());
-                        relationResponse.setRrmType(businessRelation.get(j).getRrmType());
-                        relationResponse.setRrmFromPmId(businessRelation.get(j).getRrmFromPmId());
-                        relationResponse.setRcStatus(businessRelation.get(j).getRcStatus());
-                        relationResponse.setRcOrgId(businessRelation.get(j).getRcOrgId());
-                        relationResponse.setCreatedAt(businessRelation.get(j).getCreatedAt());
-
-                        relationResponseList.add(relationResponse);
-                    }
-                }
-
-                tableRelationMappingMaster.deleteRelationMapping(String.valueOf(relationRequest.getRrmToPmId()));
-                tableRelationMappingMaster.addRelationMapping(relationResponseList);
-            }
-        }
-    }
-
-    private void getExistingRelationData() {
+    private void setExistingRelationData(ArrayList<ExistingRelationRequest> allExistingRelationList) {
 
         existingRelationList = new ArrayList<>();
 
-        existingRelationList = tableRelationMappingMaster
-                .getAllExistingRelation();
+        for (int i = 0; i < allExistingRelationList.size(); i++) {
+
+            ExistingRelationRequest existingRelationRequest = allExistingRelationList.get(i);
+
+            RelationUserProfile relationUserProfile = existingRelationRequest.getRelationUserProfile();
+
+            RelationRecommendationType recommendationType = new RelationRecommendationType();
+            recommendationType.setFirstName(relationUserProfile.getPmFirstName());
+            recommendationType.setLastName(relationUserProfile.getPmLastName());
+            recommendationType.setNumber(relationUserProfile.getMobileNumber());
+            recommendationType.setPmId(String.valueOf(allExistingRelationList.get(i).getRrmToPmId()));
+            recommendationType.setDateAndTime("");
+            recommendationType.setProfileImage(relationUserProfile.getProfilePhoto());
+
+            ArrayList<IndividualRelationType> relationRecommendations = new ArrayList<>();
+
+            // businessRelation
+            ArrayList<RelationResponse> businessRecommendation = existingRelationRequest
+                    .getBusinessRelationList();
+
+            if (!Utils.isArraylistNullOrEmpty(businessRecommendation)) {
+
+                for (int j = 0; j < businessRecommendation.size(); j++) {
+
+                    IndividualRelationType individualRelationType = new IndividualRelationType();
+
+                    individualRelationType.setId(String.valueOf(businessRecommendation.get(j).
+                            getId()));
+                    individualRelationType.setRelationId(String.valueOf(businessRecommendation.get(j).
+                            getRcRelationMasterId()));
+                    individualRelationType.setRelationName(businessRecommendation.get(j).getRelationMaster()
+                            .getRmParticular());
+                    individualRelationType.setOrganizationName(businessRecommendation.get(j).getOrganization()
+                            .getRmParticular());
+                    individualRelationType.setFamilyName("");
+                    individualRelationType.setOrganizationId(String.valueOf(businessRecommendation.get(j).getRcOrgId()));
+                    individualRelationType.setIsFriendRelation(false);
+                    individualRelationType.setIsVerify("1");
+                    individualRelationType.setRelationType(businessRecommendation.get(j).getRrmType());
+                    individualRelationType.setRcStatus(businessRecommendation.get(j).getRcStatus());
+                    individualRelationType.setIsSelected(false);
+
+                    relationRecommendations.add(individualRelationType);
+                }
+            }
+
+            // familyRelation
+            ArrayList<RelationResponse> familyRecommendation = existingRelationRequest
+                    .getFamilyRelationList();
+
+            if (!Utils.isArraylistNullOrEmpty(familyRecommendation)) {
+
+                for (int j = 0; j < familyRecommendation.size(); j++) {
+
+                    IndividualRelationType individualRelationType = new IndividualRelationType();
+
+                    individualRelationType.setId(String.valueOf(familyRecommendation.get(j).
+                            getId()));
+                    individualRelationType.setRelationId(String.valueOf(familyRecommendation.get(j).
+                            getRcRelationMasterId()));
+                    individualRelationType.setRelationName("");
+                    individualRelationType.setOrganizationName("");
+                    individualRelationType.setFamilyName(familyRecommendation.get(j).getRelationMaster()
+                            .getRmParticular());
+                    individualRelationType.setOrganizationId("");
+                    individualRelationType.setIsFriendRelation(false);
+                    individualRelationType.setIsVerify("1");
+                    individualRelationType.setRelationType(familyRecommendation.get(j).getRrmType());
+                    individualRelationType.setRcStatus(familyRecommendation.get(j).getRcStatus());
+                    individualRelationType.setIsSelected(false);
+
+                    relationRecommendations.add(individualRelationType);
+                }
+            }
+
+            // friendRelation
+            ArrayList<RelationResponse> friendRecommendation = existingRelationRequest
+                    .getFriendRelationList();
+
+            if (!Utils.isArraylistNullOrEmpty(friendRecommendation)) {
+
+                for (int j = 0; j < friendRecommendation.size(); j++) {
+
+                    IndividualRelationType individualRelationType = new IndividualRelationType();
+
+                    individualRelationType.setId(String.valueOf(friendRecommendation.get(j).
+                            getId()));
+                    individualRelationType.setRelationId(String.valueOf(friendRecommendation.get(j).
+                            getRcRelationMasterId()));
+                    individualRelationType.setRelationName("");
+                    individualRelationType.setOrganizationName("");
+                    individualRelationType.setFamilyName("");
+                    individualRelationType.setOrganizationId("");
+                    individualRelationType.setIsFriendRelation(true);
+                    individualRelationType.setIsVerify("1");
+                    individualRelationType.setRelationType(friendRecommendation.get(j).getRrmType());
+                    individualRelationType.setRcStatus(friendRecommendation.get(j).getRcStatus());
+                    individualRelationType.setIsSelected(false);
+
+                    relationRecommendations.add(individualRelationType);
+                }
+            }
+
+            recommendationType.setIndividualRelationTypeList(relationRecommendations);
+            existingRelationList.add(recommendationType);
+        }
 
         if (existingRelationList.size() > 0) {
             listAdapter = new ExistingRelationListAdapter(activity, existingRelationList,
@@ -358,8 +509,11 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
                             Intent intent = new Intent(activity, AddNewRelationActivity.class);
                             intent.putExtra(AppConstants.EXTRA_EXISTING_RELATION_DETAILS,
                                     existingRelationList.get(position));
-                            intent.putExtra(AppConstants.EXTRA_PM_ID,
-                                    existingRelationList.get(position).getPmId());
+                            intent.putExtra(AppConstants.EXTRA_CONTACT_NAME,
+                                    existingRelationList.get(position).getFirstName() + " " + existingRelationList.get(position).getLastName());
+                            intent.putExtra(AppConstants.EXTRA_PROFILE_IMAGE_URL, existingRelationList.get(position).getProfileImage());
+                            intent.putExtra(AppConstants.EXTRA_CONTACT_NUMBER, existingRelationList.get(position).getNumber());
+                            intent.putExtra(AppConstants.EXTRA_PM_ID, existingRelationList.get(position).getPmId());
                             intent.putExtra(AppConstants.EXTRA_IS_FROM, "existing");
                             startActivity(intent);
 

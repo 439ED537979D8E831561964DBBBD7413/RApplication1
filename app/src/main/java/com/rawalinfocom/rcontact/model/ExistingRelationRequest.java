@@ -17,9 +17,9 @@ public class ExistingRelationRequest {
 
     private Integer rrmToPmId;
     private RelationUserProfile relationUserProfile = new RelationUserProfile();
-    private ArrayList<RelationRequest> friendRelationList = new ArrayList<>();
-    private ArrayList<RelationRequest> familyRelationList = new ArrayList<>();
-    private ArrayList<RelationRequest> businessRelationList = new ArrayList<>();
+    private ArrayList<RelationResponse> friendRelationList = new ArrayList<>();
+    private ArrayList<RelationResponse> familyRelationList = new ArrayList<>();
+    private ArrayList<RelationResponse> businessRelationList = new ArrayList<>();
 
     @JsonProperty("toProfile")
     public RelationUserProfile getRelationUserProfile() {
@@ -31,29 +31,29 @@ public class ExistingRelationRequest {
     }
 
     @JsonProperty("friend")
-    public ArrayList<RelationRequest> getFriendRelationList() {
+    public ArrayList<RelationResponse> getFriendRelationList() {
         return friendRelationList;
     }
 
-    public void setFriendRelationList(ArrayList<RelationRequest> friendRelationList) {
+    public void setFriendRelationList(ArrayList<RelationResponse> friendRelationList) {
         this.friendRelationList = friendRelationList;
     }
 
     @JsonProperty("family")
-    public ArrayList<RelationRequest> getFamilyRelationList() {
+    public ArrayList<RelationResponse> getFamilyRelationList() {
         return familyRelationList;
     }
 
-    public void setFamilyRelationList(ArrayList<RelationRequest> familyRelationList) {
+    public void setFamilyRelationList(ArrayList<RelationResponse> familyRelationList) {
         this.familyRelationList = familyRelationList;
     }
 
     @JsonProperty("business")
-    public ArrayList<RelationRequest> getBusinessRelationList() {
+    public ArrayList<RelationResponse> getBusinessRelationList() {
         return businessRelationList;
     }
 
-    public void setBusinessRelationList(ArrayList<RelationRequest> businessRelationList) {
+    public void setBusinessRelationList(ArrayList<RelationResponse> businessRelationList) {
         this.businessRelationList = businessRelationList;
     }
 
