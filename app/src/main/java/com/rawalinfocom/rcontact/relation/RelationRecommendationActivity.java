@@ -114,11 +114,6 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
                         recycleViewRelation.setVisibility(View.GONE);
                     }
 
-//                    Utils.showSuccessSnackBar(activity, relativeRootRecommendationRelation,
-//                            "New Relation Added Successfully!!!");
-//                    storeProfileDataToDb(allExistingRelationList);
-//                    getExistingRelationData();
-
                     Utils.setBooleanPreference(RelationRecommendationActivity.this,
                             AppConstants.PREF_GET_RELATION, false);
 
@@ -147,12 +142,6 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
                             relativeRootRecommendationRelation, deleteRelationObject.getMessage());
 
                     getRelationRecommendation();
-
-//                    if (type.equalsIgnoreCase("reject")) {
-//                        recommendationRelationList.remove(deleteRelationPosition);
-//                        listAdapter.notifyItemRemoved(deleteRelationPosition);
-//                    } else {
-//                    }
 
                     deleteRelationPosition = -1;
 

@@ -164,17 +164,8 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
     protected void onStart() {
         super.onStart();
         displayRCPUserData();
-
         getUserExistingRelation();
-
-//        if (Utils.getBooleanPreference(RCPExistingRelationActivity.this,
-//                AppConstants.PREF_GET_RELATION, true)) {
-//            getUserExistingRelation();
-//        } else {
-//            getExistingRelationData();
-//        }
     }
-
 
     @Override
     public void onDeliveryResponse(String serviceType, Object data, Exception error) {
@@ -191,10 +182,7 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
                     ArrayList<ExistingRelationRequest> allExistingRelationList = sendRelationRequestObject.
                             getAllExistingRelationList();
 
-//                    Utils.showSuccessSnackBar(activity, relativeRootExistingRelation,
-//                            "New Relation Added Successfully!!!");
                     setExistingRelationData(allExistingRelationList);
-//                    getExistingRelationData();
 
                     Utils.setBooleanPreference(RCPExistingRelationActivity.this,
                             AppConstants.PREF_GET_RELATION, false);
@@ -278,15 +266,6 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
                 intent.putExtra(AppConstants.EXTRA_PROFILE_IMAGE_URL, thumbnailUrl);
                 intent.putExtra(AppConstants.EXTRA_CONTACT_NUMBER, contactNumber);
                 intent.putExtra(AppConstants.EXTRA_IS_FROM, "existing");
-
-//                if (existingRelationList.size() > 0) {
-//                    intent.putExtra(AppConstants.EXTRA_EXISTING_RELATION_DETAILS, existingRelationList.get(0));
-//                } else {
-//                    intent.putExtra(AppConstants.EXTRA_CONTACT_NAME, contactName);
-//                    intent.putExtra(AppConstants.EXTRA_PROFILE_IMAGE_URL, thumbnailUrl);
-//                    intent.putExtra(AppConstants.EXTRA_CONTACT_NUMBER, contactNumber);
-//                }
-
                 startActivity(intent);
             }
         });

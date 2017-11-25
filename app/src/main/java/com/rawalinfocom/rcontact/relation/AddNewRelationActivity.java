@@ -195,13 +195,13 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
         arrayListOrgId = new ArrayList<>();
 
         if (isFrom.equalsIgnoreCase("existing")) {
-//            setExistingRelation();
 
             inputValueAddName.setEnabled(false);
             inputValueAddName.setText(Html.fromHtml("<font color='#00796B'> " + contactName +
                     "</font><br/>" + contactNumber));
 
             getRCPExistingRelation();
+
         } else {
 
             imgClear.setOnClickListener(this);
@@ -239,7 +239,6 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
 
                     Utils.showSuccessSnackBar(activity, relativeRootNewRelation,
                             "New Relation Added Successfully!!!");
-//                    storeProfileDataToDb(relationRequestResponse);
 
                     Utils.setBooleanPreference(AddNewRelationActivity.this,
                             AppConstants.PREF_GET_RELATION, false);
@@ -348,14 +347,6 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
                             relationRequests.add(friendRelationRequest);
                         }
                     }
-//                    else {
-//                        friendRelationRequest.setRcRelationMasterId(1);
-//                        friendRelationRequest.setRrmToPmId(Integer.parseInt(pmId));
-//                        friendRelationRequest.setRrmType(1);
-
-//                        relationRequests.add(friendRelationRequest);
-//                    }
-
 
                     RelationRequest familyRelationRequest = new RelationRequest();
 
@@ -365,7 +356,6 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
                             familyRelationRequest.setRcRelationMasterId(familyRelationId);
                             familyRelationRequest.setRrmToPmId(Integer.parseInt(pmId));
                             familyRelationRequest.setRrmType(2);
-//                            familyRelationRequest.setGender(strGender.equals("Male") ? 1 : 2);
 
                             relationRequests.add(familyRelationRequest);
                         }
@@ -404,7 +394,6 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
                         }
                     }
 
-//                    System.out.println("Service call");
                     sendRelationRequest(relationRequests);
                 }
                 break;
@@ -624,7 +613,6 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
                         arrayListOrgId.add(String.valueOf(businessRelation.get(j).getRcOrgId()));
                     }
                 }
-
             }
 
             if (recommendationsRelationList.size() > 0) {
@@ -685,7 +673,6 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
                     checkboxFriend.setVisibility(View.GONE);
                     inputValueFriend.setVisibility(View.VISIBLE);
                 }
-
             }
 
             businessRelationDetails();
@@ -708,92 +695,6 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
 
         }
     }
-
-//    private void setExistingRelation() {
-//
-//        linearSingleBusinessRelation.setVisibility(View.GONE);
-//        linearBusinessRelation.setVisibility(View.VISIBLE);
-//
-//        if (recommendationType != null) {
-//
-//            contactName = recommendationType.getFirstName() + " " + recommendationType.getLastName();
-//            profileImage = recommendationType.getProfileImage();
-//            contactNumber = recommendationType.getNumber();
-//
-//            ArrayList<IndividualRelationType> individualRelationTypes = recommendationType
-//                    .getIndividualRelationTypeList();
-//
-//            for (int i = 0; i < individualRelationTypes.size(); i++) {
-//
-//                if (individualRelationTypes.get(i).getRelationType() == 1) {
-//
-//                    friendRelation = "Friend";
-//                    inputValueFriend.setText(friendRelation);
-//
-//                    imgFriendClear.setVisibility(View.VISIBLE);
-//                    imgFriendClear.setImageResource(R.drawable.ico_relation_lock_svg);
-//                    imgFriendClear.setEnabled(false);
-//                    inputValueFriend.setEnabled(false);
-//                    checkboxFriend.setVisibility(View.GONE);
-//                    inputValueFriend.setVisibility(View.VISIBLE);
-//
-//                } else if (individualRelationTypes.get(i).getRelationType() == 2) {
-//
-//                    isFamilyAlreadyAdded = true;
-//
-//                    familyRelationId = Integer.parseInt(individualRelationTypes.get(i).getRelationId());
-//                    familyRelation = individualRelationTypes.get(i).getFamilyName();
-//                    inputValueFamily.setText(familyRelation);
-//
-//                    imgFamilyClear.setVisibility(View.VISIBLE);
-//                    imgFamilyClear.setImageResource(R.drawable.ico_relation_lock_svg);
-//                    imgFamilyClear.setEnabled(false);
-//                    inputValueFamily.setEnabled(false);
-//
-//                } else {
-//
-//                    organizationName = individualRelationTypes.get(i).getOrganizationName();
-//
-//                    IndividualRelationType relationType = new IndividualRelationType();
-//                    relationType.setRelationId(individualRelationTypes.get(i).getRelationId());
-//                    relationType.setRelationName(individualRelationTypes.get(i).getRelationName());
-//                    relationType.setOrganizationName(individualRelationTypes.get(i).getOrganizationName());
-//                    relationType.setOrganizationId(individualRelationTypes.get(i).getOrganizationId());
-//                    relationType.setIsVerify(individualRelationTypes.get(i).getIsVerify());
-//                    arrayList.add(relationType);
-//
-//                    arrayListOrgName.add(individualRelationTypes.get(i).getOrganizationName());
-//                    arrayListOrgId.add(individualRelationTypes.get(i).getOrganizationId());
-//
-////                imgClear.setEnabled(false);
-////                imgClear.setImageResource(R.drawable.ico_relation_lock_svg);
-//                }
-//            }
-//
-//        } else {
-//
-//            inputValueFamily.setFocusable(false);
-//            imgFamilyClear.setOnClickListener(this);
-//
-//            checkboxFriend.setVisibility(View.VISIBLE);
-//            inputValueFriend.setVisibility(View.GONE);
-//
-//        }
-//
-//        inputValueAddName.setEnabled(false);
-//        inputValueAddName.setText(Html.fromHtml("<font color='#00796B'> " + contactName +
-//                "</font><br/>" + contactNumber));
-//
-//        businessRelationDetails();
-//
-//        Glide.with(activity)
-//                .load(profileImage)
-//                .placeholder(R.drawable.home_screen_profile)
-//                .error(R.drawable.home_screen_profile)
-//                .bitmapTransform(new CropCircleTransformation(activity))
-//                .override(512, 512)
-//                .into(imageProfile);
-//    }
 
     private void businessRelationDetails() {
 
@@ -1032,11 +933,6 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
             }
         });
 
-//        relationList.add(AppConstants.RELATION_COWORKER);
-//        relationList.add(AppConstants.RELATION_SUPPLIER);
-//        relationList.add(AppConstants.RELATION_COMPETITOR);
-//        relationList.add(AppConstants.RELATION_CUSTOMER);
-
         RecyclerView recyclerViewDialogList = businessRelationDialog.findViewById(R.id
                 .recycler_view_dialog_list);
         recyclerViewDialogList.setLayoutManager(new LinearLayoutManager(this));
@@ -1056,15 +952,6 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
     }
 
     private void showAllOrganizations() {
-
-//        if (arrayList.size() > 0) {
-////            for (int i = 0; i < arrayListOrganization.size(); i++) {
-////                setOrganizationArrayList(i);
-////            }
-//            for (int i = 0; i < arrayList.size(); i++) {
-//                setOrganizationArrayList(i);
-//            }
-//        }
 
         final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -1175,59 +1062,51 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
         dialog.show();
     }
 
-    private void setOrganizationArrayList(int i) {
-
-        for (int j = 0; j < arrayList.size(); j++) {
-
-            ProfileDataOperationOrganization organization = new ProfileDataOperationOrganization();
-            organization.setOrgId(arrayListOrganization.get(j).getOrgId());
-            organization.setOrgName(arrayListOrganization.get(j).getOrgName());
-            organization.setOrgJobTitle(arrayListOrganization.get(j).getOrgJobTitle());
-            organization.setOrgIndustryType(arrayListOrganization.get(j).getOrgIndustryType());
-            organization.setOrgEntId(arrayListOrganization.get(j).getOrgEntId());
-            organization.setOrgLogo(arrayListOrganization.get(j).getOrgLogo());
-            organization.setOrgFromDate(arrayListOrganization.get(j).getOrgFromDate());
-            organization.setOrgToDate(arrayListOrganization.get(j).getOrgToDate());
-            organization.setIsVerify(arrayListOrganization.get(j).getIsVerify());
-            organization.setOrgRcpType(arrayListOrganization.get(j).getOrgRcpType());
-
-            if (arrayListOrganization.get(j).getOrgName().equalsIgnoreCase(
-                    arrayList.get(i).getOrganizationName())) {
-
-                System.out.println("RContacts data getOrgName --> " + arrayListOrganization.get(j).getOrgName()
-                        + " " + arrayList.get(i).getOrganizationName());
-                System.out.println("RContacts data getOrgEntId --> " + arrayListOrganization.get(j).getOrgEntId()
-                        + " " + arrayList.get(i).getOrganizationId());
-
-                if (arrayListOrganization.get(j).getOrgEntId().equalsIgnoreCase(
-                        arrayList.get(i).getOrganizationId())) {
-                    organization.setIsInUse("1");
-                    arrayListOrganization.set(j, organization);
-                } else {
-                    organization.setIsInUse("0");
-                    arrayListOrganization.set(j, organization);
-                }
-            } else {
-
-                System.out.println("RContacts data getIsInUse --> " + arrayListOrganization.get(j).getIsInUse());
-                if (arrayListOrganization.get(j).getIsInUse().equalsIgnoreCase("1")) {
+//    private void setOrganizationArrayList(int i) {
+//
+//        for (int j = 0; j < arrayList.size(); j++) {
+//
+//            ProfileDataOperationOrganization organization = new ProfileDataOperationOrganization();
+//            organization.setOrgId(arrayListOrganization.get(j).getOrgId());
+//            organization.setOrgName(arrayListOrganization.get(j).getOrgName());
+//            organization.setOrgJobTitle(arrayListOrganization.get(j).getOrgJobTitle());
+//            organization.setOrgIndustryType(arrayListOrganization.get(j).getOrgIndustryType());
+//            organization.setOrgEntId(arrayListOrganization.get(j).getOrgEntId());
+//            organization.setOrgLogo(arrayListOrganization.get(j).getOrgLogo());
+//            organization.setOrgFromDate(arrayListOrganization.get(j).getOrgFromDate());
+//            organization.setOrgToDate(arrayListOrganization.get(j).getOrgToDate());
+//            organization.setIsVerify(arrayListOrganization.get(j).getIsVerify());
+//            organization.setOrgRcpType(arrayListOrganization.get(j).getOrgRcpType());
+//
+//            if (arrayListOrganization.get(j).getOrgName().equalsIgnoreCase(
+//                    arrayList.get(i).getOrganizationName())) {
+//
+//                if (arrayListOrganization.get(j).getOrgEntId().equalsIgnoreCase(
+//                        arrayList.get(i).getOrganizationId())) {
 //                    organization.setIsInUse("1");
 //                    arrayListOrganization.set(j, organization);
-                    if (arrayListOrganization.get(j).getOrgEntId().equalsIgnoreCase(
-                            arrayList.get(i).getOrganizationId())) {
-                        organization.setIsInUse("1");
-                        arrayListOrganization.set(j, organization);
-                    } else {
-                        organization.setIsInUse("0");
-                        arrayListOrganization.set(j, organization);
-                    }
-                } else {
-                    organization.setIsInUse("0");
-                    arrayListOrganization.set(j, organization);
-                }
-            }
-        }
-    }
+//                } else {
+//                    organization.setIsInUse("0");
+//                    arrayListOrganization.set(j, organization);
+//                }
+//            } else {
+//
+//                if (arrayListOrganization.get(j).getIsInUse().equalsIgnoreCase("1")) {
+//                    if (arrayListOrganization.get(j).getOrgEntId().equalsIgnoreCase(
+//                            arrayList.get(i).getOrganizationId())) {
+//                        organization.setIsInUse("1");
+//                        arrayListOrganization.set(j, organization);
+//                    } else {
+//                        organization.setIsInUse("0");
+//                        arrayListOrganization.set(j, organization);
+//                    }
+//                } else {
+//                    organization.setIsInUse("0");
+//                    arrayListOrganization.set(j, organization);
+//                }
+//            }
+//        }
+//    }
 
     private void dialogFamilyRelation() {
 

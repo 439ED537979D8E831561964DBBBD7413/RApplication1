@@ -188,9 +188,6 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
                     ArrayList<ExistingRelationRequest> allExistingRelationList = sendRelationRequestObject.
                             getAllExistingRelationList();
 
-//                    Utils.showSuccessSnackBar(activity, relativeRootExistingRelation,
-//                            "New Relation Added Successfully!!!");
-//                    storeProfileDataToDb(allExistingRelationList);
                     setExistingRelationData(allExistingRelationList);
 //                    getExistingRelationData();
 
@@ -221,13 +218,7 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
                     Utils.showSuccessSnackBar(activity, relativeRootExistingRelation,
                             deleteRelationObject.getMessage());
 
-//                    tableRelationMappingMaster.deleteRelationMapping(deletePmId, relationIds);
-//                    deletePmId = "";
-
                     getAllExistingRelation();
-//                    getExistingRelationData();
-
-//                    deleteRelationPosition = -1;
 
                 } else {
                     if (deleteRelationObject != null) {
