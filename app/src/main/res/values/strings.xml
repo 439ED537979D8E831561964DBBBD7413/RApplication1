@@ -38,6 +38,7 @@
     <string name="str_done">Done</string>
     <string name="str_vcf_done">VCF file generated successfully!!</string>
     <string name="verify_now">Verify now</string>
+    <string name="str_search_name">Name or Number</string>
 
     <!-- Other -->
     <string name="error_facebook_login_cancelled">Facebook Login Cancelled!!</string>
@@ -92,7 +93,6 @@
     <string name="type_here_hint">Type here...</string>
     <string name="search_no_organisation">Organisation is not verified</string>
     <string name="str_org">Organizations</string>
-    <string name="str_search_name">Name or Number</string>
     <string name="str_rate_app">RATE APP</string>
     <string name="str_later">ASK ME LATER</string>
     <string name="str_like_this_application">LIKE THIS APPLICATION</string>
@@ -739,7 +739,7 @@
     <string name="str_complete_profile">COMPLETE YOUR PROFILE</string>
     <string name="str_complete_profile_description">Fill in your %1$s to\nachieve 360° completion of your digital details.</string>
 
-    <!-- Relation -->
+    <!-- Relation & Relation Recommendation -->
     <string name="toolbar_title">Relation Recommendation</string>
     <string name="search_here">Search...</string>
     <string name="str_no_relation_found">No Relation Found</string>
@@ -758,7 +758,7 @@
     <string name="str_next">Next</string>
     <string name="str_hint_add_organization">Please add organization to add Business Relation</string>
     <string name="str_hint_add_family">Please set your gender to add Family Relation</string>
-    <string name="str_establish_relation">Established Relation</string>
+    <string name="str_establish_relation">Established Relations</string>
 
     <!-- Force update -->
     <string name="youAreNotUpdatedTitle">Update Available</string>

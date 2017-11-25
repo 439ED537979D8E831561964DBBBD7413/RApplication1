@@ -15,6 +15,7 @@ import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
 import com.rawalinfocom.rcontact.helper.RippleView;
+import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.alphabetsIndexFastScrollRecycler.IndexFastScrollRecyclerView;
 import com.rawalinfocom.rcontact.model.UserProfile;
 
@@ -78,7 +79,8 @@ public class RContactsListActivity extends BaseActivity implements RippleView
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                rContactListAdapter.getFilter().filter(charSequence.toString());
+                if (rContactListAdapter != null)
+                    rContactListAdapter.getFilter().filter(charSequence.toString());
             }
 
             @Override
@@ -91,8 +93,10 @@ public class RContactsListActivity extends BaseActivity implements RippleView
             @Override
             public void onClick(View view) {
 
+                Utils.hideSoftKeyboard(activity, inputSearch);
                 if (inputSearch.getText().toString().trim().length() > 0) {
-                    rContactListAdapter.getFilter().filter("");
+                    if (rContactListAdapter != null)
+                        rContactListAdapter.getFilter().filter("");
                 } else {
                     finish();
                 }
@@ -103,6 +107,11 @@ public class RContactsListActivity extends BaseActivity implements RippleView
     @Override
     public void onComplete(RippleView rippleView) {
         switch (rippleView.getId()) {
+
+            case R.id.image_action_back:
+                finish();
+                Utils.hideSoftKeyboard(activity, inputSearch);
+                break;
 
             //<editor-fold desc="Back">
             case R.id.ripple_action_back:

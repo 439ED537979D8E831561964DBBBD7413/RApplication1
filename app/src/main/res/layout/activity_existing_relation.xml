@@ -70,11 +70,17 @@
         android:orientation="vertical"
         android:padding="2dp">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycle_view_relation"
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_refresh_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone" />
+            android:visibility="gone">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycle_view_relation"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </android.support.v4.widget.SwipeRefreshLayout>
 
         <TextView
             android:id="@+id/text_no_relation"

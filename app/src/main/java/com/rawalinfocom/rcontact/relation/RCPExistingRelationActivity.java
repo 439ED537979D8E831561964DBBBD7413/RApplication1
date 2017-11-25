@@ -258,15 +258,20 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
             @Override
             public void onClick(View view) {
 
-                Intent intent = new Intent(activity, AddNewRelationActivity.class);
-                intent.putExtra(AppConstants.EXTRA_PM_ID, pmId);
-                if (existingRelationList.size() > 0)
-                    intent.putExtra(AppConstants.EXTRA_EXISTING_RELATION_DETAILS, existingRelationList.get(0));
-                intent.putExtra(AppConstants.EXTRA_CONTACT_NAME, contactName);
-                intent.putExtra(AppConstants.EXTRA_PROFILE_IMAGE_URL, thumbnailUrl);
-                intent.putExtra(AppConstants.EXTRA_CONTACT_NUMBER, contactNumber);
-                intent.putExtra(AppConstants.EXTRA_IS_FROM, "existing");
-                startActivity(intent);
+                if (Utils.isNetworkAvailable(activity)) {
+                    Intent intent = new Intent(activity, AddNewRelationActivity.class);
+                    intent.putExtra(AppConstants.EXTRA_PM_ID, pmId);
+                    if (existingRelationList.size() > 0)
+                        intent.putExtra(AppConstants.EXTRA_EXISTING_RELATION_DETAILS, existingRelationList.get(0));
+                    intent.putExtra(AppConstants.EXTRA_CONTACT_NAME, contactName);
+                    intent.putExtra(AppConstants.EXTRA_PROFILE_IMAGE_URL, thumbnailUrl);
+                    intent.putExtra(AppConstants.EXTRA_CONTACT_NUMBER, contactNumber);
+                    intent.putExtra(AppConstants.EXTRA_IS_FROM, "existing");
+                    startActivity(intent);
+                } else {
+                    Utils.showErrorSnackBar(activity, relativeRootExistingRelation, getResources()
+                            .getString(R.string.msg_no_network));
+                }
             }
         });
 

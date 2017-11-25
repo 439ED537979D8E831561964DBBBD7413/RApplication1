@@ -361,7 +361,7 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
                         }
                     }
 
-                    if (isFrom.equalsIgnoreCase("existing")) {
+                    if (linearBusinessRelation.getVisibility() == View.VISIBLE) {
 
                         for (int i = 0; i < arrayList.size(); i++) {
 
@@ -403,28 +403,39 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
 
             case R.id.img_clear:
 
+                // clear selected rcp data
                 pmId = "";
                 contactName = "";
                 profileImage = "";
-                businessRelationName = "";
-                organizationId = 0;
-                organizationName = "";
-                familyRelation = "";
-
-                orgPosition = 0;
-                businessRelationPosition = 0;
-
                 imgClear.setVisibility(View.GONE);
-                imgBusinessClear.setVisibility(View.GONE);
-                imgFamilyClear.setVisibility(View.GONE);
                 inputValueAddName.setText(contactName);
-                inputValueBusiness.setText(organizationName);
-                inputValueFamily.setText(familyRelation);
 
                 Glide.with(activity)
                         .load(R.drawable.home_screen_profile)
                         .bitmapTransform(new CropCircleTransformation(activity))
                         .into(imageProfile);
+
+                // clear business relation
+                businessRelationName = "";
+                organizationId = 0;
+                organizationName = "";
+                imgBusinessClear.setVisibility(View.GONE);
+                inputValueBusiness.setText(organizationName);
+                orgPosition = 0;
+                businessRelationPosition = 0;
+
+                clearBusinessData();
+                clearFamilyData();
+                clearFriendData();
+
+                // TODO : Hardik
+                if (arrayList.size() > 0) {
+                    linearSingleBusinessRelation.setVisibility(View.VISIBLE);
+                    linearBusinessRelation.setVisibility(View.GONE);
+                    arrayList.clear();
+                    arrayListOrgId.clear();
+                    arrayListOrgName.clear();
+                }
 
                 break;
 
@@ -460,6 +471,8 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
 
         if (resultCode == RESULT_OK && requestCode == 101) {
 
+            Utils.hideKeyBoard(activity);
+
             if (data != null) {
                 if (data.getStringExtra("isBack").equalsIgnoreCase("0")) {
                     //If everything went Ok, change to another activity.
@@ -489,6 +502,42 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
                 Utils.showErrorSnackBar(this, relativeRootNewRelation, "You didn't select any RContact!");
             }
         }
+    }
+
+    private void clearBusinessData() {
+
+        // clear business relation
+        businessRelationName = "";
+        organizationId = 0;
+        organizationName = "";
+        imgBusinessClear.setVisibility(View.GONE);
+        inputValueBusiness.setText(organizationName);
+        orgPosition = 0;
+        businessRelationPosition = 0;
+
+    }
+
+    private void clearFamilyData() {
+
+        isFamilyAlreadyAdded = false;
+
+        // clear family relation
+        familyRelation = "";
+        familyRelationId = -1;
+        imgFamilyClear.setVisibility(View.GONE);
+        inputValueFamily.setText(familyRelation);
+        inputValueFamily.setFocusable(false);
+        inputValueFamily.setEnabled(true);
+    }
+
+    private void clearFriendData() {
+
+        // clear friend relation
+        friendRelation = "";
+        inputValueFriend.setText(friendRelation);
+        checkboxFriend.setVisibility(View.VISIBLE);
+        inputValueFriend.setVisibility(View.GONE);
+        imgFriendClear.setVisibility(View.GONE);
     }
 
     private void getIntentDetails(Intent intent) {
@@ -540,10 +589,15 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
 
     private void setData(ArrayList<ExistingRelationRequest> allExistingRelationList, ArrayList<ExistingRelationRequest> recommendationsRelationList) {
 
-        if (allExistingRelationList.size() > 0 || recommendationsRelationList.size() > 0) {
+        arrayList.clear();
+        arrayListOrgName.clear();
+        arrayListOrgId.clear();
 
-            linearSingleBusinessRelation.setVisibility(View.GONE);
-            linearBusinessRelation.setVisibility(View.VISIBLE);
+        linearSingleBusinessRelation.setVisibility(View.GONE);
+        linearBusinessRelation.setVisibility(View.VISIBLE);
+        linearBusinessRelation.removeAllViews();
+
+        if (allExistingRelationList.size() > 0 || recommendationsRelationList.size() > 0) {
 
             if (allExistingRelationList.size() > 0) {
 
@@ -574,6 +628,9 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
                     imgFamilyClear.setImageResource(R.drawable.ico_relation_lock_svg);
                     imgFamilyClear.setEnabled(false);
                     inputValueFamily.setEnabled(false);
+
+                } else {
+                    clearFamilyData();
                 }
 
                 // friendRelation
@@ -590,6 +647,8 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
                     inputValueFriend.setEnabled(false);
                     checkboxFriend.setVisibility(View.GONE);
                     inputValueFriend.setVisibility(View.VISIBLE);
+                } else {
+                    clearFriendData();
                 }
 
                 // businessRelation
@@ -656,6 +715,8 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
                     imgFamilyClear.setImageResource(R.drawable.ico_relation_lock_svg);
                     imgFamilyClear.setEnabled(false);
                     inputValueFamily.setEnabled(false);
+                } else {
+                    clearFamilyData();
                 }
 
                 // friendRelation
@@ -672,6 +733,8 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
                     inputValueFriend.setEnabled(false);
                     checkboxFriend.setVisibility(View.GONE);
                     inputValueFriend.setVisibility(View.VISIBLE);
+                } else {
+                    clearFriendData();
                 }
             }
 
@@ -687,12 +750,12 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
 
         } else {
 
-            inputValueFamily.setFocusable(false);
-            imgFamilyClear.setOnClickListener(this);
+            linearSingleBusinessRelation.setVisibility(View.VISIBLE);
+            linearBusinessRelation.setVisibility(View.GONE);
 
-            checkboxFriend.setVisibility(View.VISIBLE);
-            inputValueFriend.setVisibility(View.GONE);
-
+            clearBusinessData();
+            clearFamilyData();
+            clearFriendData();
         }
     }
 
@@ -782,10 +845,15 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
             public void onClick(View view) {
 
                 TextView textVerify = linearRowBusinessRelationItem.findViewById(R.id.text_verify);
+                TextView textOrganizationName = linearRowBusinessRelationItem.findViewById(R.id.text_organization_name);
+                TextView textOrganizationId = linearRowBusinessRelationItem.findViewById(R.id.text_organization_id);
 
                 if (linearBusinessRelation.getChildCount() > 1) {
                     if (!textVerify.getText().toString().trim().equalsIgnoreCase("1")) {
                         linearBusinessRelation.removeView(linearRowBusinessRelationItem);
+
+                        arrayListOrgName.remove(textOrganizationName.getText().toString().trim());
+                        arrayListOrgId.remove(textOrganizationId.getText().toString().trim());
 
                         addBusinessDetailsToList();
 
@@ -986,9 +1054,7 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
                     businessRelationDialog.dismiss();
                 dialog.dismiss();
 
-
-                if (isFrom.equalsIgnoreCase("rcp") ||
-                        isFrom.equalsIgnoreCase("existing")) {
+                if (linearBusinessRelation.getVisibility() == View.VISIBLE) {
 
                     IndividualRelationType relationType = new IndividualRelationType();
 
@@ -1015,6 +1081,11 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
                         arrayList.set(businessPosition, relationType);
 
                         isAdd = false;
+                    }
+
+                    if (!arrayListOrgName.contains(organizationName)) {
+                        arrayListOrgName.add(organizationName);
+                        arrayListOrgId.add(String.valueOf(organizationId));
                     }
 
                     linearBusinessRelation.removeAllViews();

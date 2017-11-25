@@ -3,6 +3,7 @@ package com.rawalinfocom.rcontact.relation;
 import android.app.Dialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -76,6 +77,8 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
     LinearLayout relativeBack;
     @BindView(R.id.relative_root_recommendation_relation)
     RelativeLayout relativeRootRecommendationRelation;
+    @BindView(R.id.swipe_refresh_layout)
+    SwipeRefreshLayout swipeRefreshLayout;
 
     private RelationRecommendationListAdapter listAdapter;
     private ArrayList<RelationRecommendationType> recommendationRelationList;
@@ -106,12 +109,12 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
                     ArrayList<ExistingRelationRequest> allExistingRelationList =
                             sendRelationRequestObject.getRecommendationsRelationList();
 
+                    swipeRefreshLayout.setRefreshing(false);
+
                     if (allExistingRelationList.size() > 0) {
-                        getData(allExistingRelationList);
-                        getRelationRecommendationData();
+                        getRelationRecommendationData(allExistingRelationList);
                     } else {
-                        textNoRelation.setVisibility(View.VISIBLE);
-                        recycleViewRelation.setVisibility(View.GONE);
+                        setVisibility(getString(R.string.str_no_relation_found), View.VISIBLE, View.GONE);
                     }
 
                     Utils.setBooleanPreference(RelationRecommendationActivity.this,
@@ -237,51 +240,45 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
 
         recycleViewRelation.setLayoutManager(new LinearLayoutManager(this));
 
+        textNoRelation.setVisibility(View.GONE);
+        recycleViewRelation.setVisibility(View.VISIBLE);
+        swipeRefreshLayout.setVisibility(View.VISIBLE);
+
         recommendationRelationList = new ArrayList<>();
 
         if (Utils.isNetworkAvailable(this)) {
             getRelationRecommendation();
         } else {
-            Utils.showErrorSnackBar(this, relativeRootRecommendationRelation, getResources()
-                    .getString(R.string.msg_no_network));
-            textNoRelation.setVisibility(View.VISIBLE);
-            recycleViewRelation.setVisibility(View.GONE);
+            setVisibility(getString(R.string.msg_no_network), View.VISIBLE, View.GONE);
         }
+
+        // implement setOnRefreshListener event on SwipeRefreshLayout
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+                swipeRefreshLayout.setRefreshing(true);
+                if (Utils.isNetworkAvailable(RelationRecommendationActivity.this)) {
+                    getRelationRecommendation();
+                } else {
+                    swipeRefreshLayout.setRefreshing(false);
+                    setVisibility(getString(R.string.msg_no_network), View.VISIBLE, View.GONE);
+                }
+            }
+        });
     }
 
-    private void getRelationRecommendationData() {
+    private void setVisibility(String text, int textVisibility, int viewVisibility) {
 
-        textNoRelation.setVisibility(View.GONE);
-        recycleViewRelation.setVisibility(View.VISIBLE);
+        Utils.showErrorSnackBar(RelationRecommendationActivity.this, relativeRootRecommendationRelation, text);
 
-        if (recommendationRelationList.size() > 0) {
-            listAdapter = new RelationRecommendationListAdapter(this, recommendationRelationList,
-                    new RelationRecommendationListAdapter.OnClickListener() {
-                        @Override
-                        public void onClick(int position, String name, String pmId) {
-                            type = "accept";
-                            deletePmId = pmId;
-                            deleteRelationPosition = position;
-                            dialogActionRelation(position, name);
-                        }
-
-                        @Override
-                        public void onDeleteClick(int position, String name, String pmId) {
-                            type = "reject";
-                            deletePmId = pmId;
-                            deleteRelationPosition = position;
-                            dialogActionRelation(position, name);
-                        }
-                    });
-            recycleViewRelation.setAdapter(listAdapter);
-        } else {
-            textNoRelation.setVisibility(View.VISIBLE);
-            recycleViewRelation.setVisibility(View.GONE);
-        }
+        textNoRelation.setVisibility(textVisibility);
+        textNoRelation.setText(text);
+        recycleViewRelation.setVisibility(viewVisibility);
+        swipeRefreshLayout.setVisibility(viewVisibility);
     }
 
-
-    private void getData(ArrayList<ExistingRelationRequest> allExistingRelationList) {
+    private void getRelationRecommendationData(ArrayList<ExistingRelationRequest> allExistingRelationList) {
 
         recommendationRelationList = new ArrayList<>();
 
@@ -390,6 +387,30 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
 
             recommendationType.setIndividualRelationTypeList(relationRecommendations);
             recommendationRelationList.add(recommendationType);
+        }
+
+        if (recommendationRelationList.size() > 0) {
+            listAdapter = new RelationRecommendationListAdapter(this, recommendationRelationList,
+                    new RelationRecommendationListAdapter.OnClickListener() {
+                        @Override
+                        public void onClick(int position, String name, String pmId) {
+                            type = "accept";
+                            deletePmId = pmId;
+                            deleteRelationPosition = position;
+                            dialogActionRelation(position, name);
+                        }
+
+                        @Override
+                        public void onDeleteClick(int position, String name, String pmId) {
+                            type = "reject";
+                            deletePmId = pmId;
+                            deleteRelationPosition = position;
+                            dialogActionRelation(position, name);
+                        }
+                    });
+            recycleViewRelation.setAdapter(listAdapter);
+        } else {
+            setVisibility(getString(R.string.str_no_relation_found), View.VISIBLE, View.GONE);
         }
     }
 

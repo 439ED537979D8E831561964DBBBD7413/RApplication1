@@ -89,6 +89,17 @@
     <string name="str_last">अंतिम</string>
     <string name="str_organization">संगठन</string>
     <string name="str_company_name">कंपनी का नाम</string>
+    <string name="enter_or_select_your_organisation">दर्ज करें या अपना संगठन चुनें</string>
+    <string name="type_here_hint">यहा लिखो...</string>
+    <string name="search_no_organisation">संगठन सत्यापित नहीं है</string>
+    <string name="str_org">संगठन</string>
+    <string name="str_rate_app">RATE APP</string>
+    <string name="str_later">ASK ME LATER</string>
+    <string name="str_like_this_application">LIKE THIS APPLICATION</string>
+    <string name="str_rate_app_body">If you like our app, please take a moment to rate us!</string>
+    <string name="str_profile_details_privacy">PROFILE DETAILS PRIVACY</string>
+    <string name="str_organisation_privacy_body">Your profile details will be visible to the selected organisation from the organisation
+        list against privacy setting.</string>
 
     <!-- <string name="str_designation">Designation</string>  -->
 
@@ -132,6 +143,15 @@
         <item>कस्टम</item>
     </string-array>
 
+    <string name="facebook">Facebook</string>
+    <string name="twitter">Twitter</string>
+    <string name="linked_in">LinkedIn</string>
+    <string name="google_plus">GooglePlus</string>
+    <string name="instagram">Instagram</string>
+    <string name="pinterest">Pinterest</string>
+    <string name="other">Other</string>
+    <string name="custom">Custom</string>
+
     <string-array name="types_social_media">
         <item>Facebook</item>
         <item>Twitter</item>
@@ -139,8 +159,6 @@
         <item>GooglePlus</item>
         <item>Instagram</item>
         <item>Pinterest</item>
-        <item>अन्य</item>
-        <item>कस्टम</item>
     </string-array>
 
     <string-array name="types_Event">
@@ -430,6 +448,7 @@
     <string name="str_confirmed_your_request_for">ने आपका %1$s देखनेका का निवेदन स्वीकार कर लिया हे</string>
 
     <!--  Profile  -->
+    <string name="str_copy_aadhar_number">आधार नम्बर कॉपी किया गया</string>
     <string name="str_copy_number">नम्बर कॉपी किया गया</string>
     <string name="str_copy_email">ईमेल कॉपी किया गया</string>
     <string name="str_copy_website">वेबसाइट कॉपी की गई</string>
@@ -461,6 +480,7 @@
     <string name="str_male">पुस्र्ष</string>
     <string name="str_event">इवेंट</string>
     <string name="str_gender">लिंग</string>
+    <string name="str_profile_photo">प्रोफाइल फोटो</string>
     <string name="str_number">नंबर</string>
     <string name="str_name">नाम</string>
     <string name="str_phone">फ़ोन</string>
@@ -624,6 +644,7 @@
     <string name="str_duration">अवधि:</string>
     <string name="str_request">निवेदन</string>
     <string name="str_request_all">सबसे निवेदन करो</string>
+    <string name="error_aadhar_validation">कृपया 12 अंक का आधार नम्बर दर्ज करें</string>
 
     <!--Account-->
     <string name="action_bar_title">खाता</string>
@@ -706,7 +727,6 @@
     <string name="crop_image_menu_flip">Flip</string>
     <string name="crop_image_menu_flip_horizontally">Flip horizontally</string>
     <string name="crop_image_menu_flip_vertically">Flip vertically</string>
-
     <string name="pick_image_intent_chooser_title">Select source</string>
     <string name="crop_failed">काटना असफल रहा</string>
 
@@ -719,31 +739,29 @@
     <string name="str_complete_profile">अपनी प्रोफ़ाइल पूरी करें</string>
     <string name="str_complete_profile_description">अपने डिजिटल विवरणों के 360° पूरा करने के लिए अपने %1$s को भरें।</string>
 
-    <!--Relation Recommendation-->
+    <!-- Relation & Relation Recommendation -->
     <string name="toolbar_title">संबंध सिफारिश</string>
-
-    <!-- Relation -->
-    <!--<string name="toolbar_title">Relation Recommendation</string>-->
     <string name="search_here">Search...</string>
-    <string name="str_no_relation_found">No Relation Found</string>
-    <string name="relation_toolbar_title">Existing Relation</string>
-    <string name="add_relation_toolbar_title">Add Relation</string>
-    <string name="str_add_name">Add Name</string>
-    <string name="choose_relation">Choose Relation</string>
-    <string name="choose_name">Choose Name</string>
-    <string name="business_relation">Business Relation</string>
-    <string name="family_relation">Family Relation</string>
-    <string name="friend_relation">Friend Relation</string>
-    <string name="str_friend">Friend</string>
+    <string name="str_no_relation_found">कोई संबंध नहीं मिला</string>
+    <string name="relation_toolbar_title">मौजूदा संबंध</string>
+    <string name="add_relation_toolbar_title">संबंध जोड़ें</string>
+    <string name="str_add_name">नाम जोड़ें</string>
+    <string name="choose_relation">संबंध चुनें</string>
+    <string name="choose_name">नाम चुनें</string>
+    <string name="business_relation">कारोबारी संबंध</string>
+    <string name="accept_relation">संबंध स्वीकार करें</string>
+    <string name="delete_relation">संबंध हटाएं</string>
+    <string name="family_relation">पारिवारिक संबंध</string>
+    <string name="friend_relation">मित्र संबंध</string>
+    <string name="str_friend">मित्र</string>
     <string name="str_back">Back</string>
     <string name="str_next">Next</string>
-    <string name="str_hint_add_organization">Please add organization to add Business Relation</string>
-    <string name="str_hint_add_family">Please set your gender to add Family Relation</string>
+    <string name="str_hint_add_organization">व्यापार संबंध जोड़ने के लिए कृपया संगठन जोड़ें</string>
+    <string name="str_hint_add_family">कृपया अपने जेंडर को पारिवारिक संबंध जोड़ने के लिए सेट करें</string>
+    <string name="str_establish_relation">स्थापित संबंध</string>
 
     <!-- Force update -->
-    <string name="youAreNotUpdatedTitle">Update Available</string>
-    <string name="youAreNotUpdatedMessage">A new version of RContacts Application is available. Please update to version\s</string>
-    <string name="youAreNotUpdatedMessage1">\s now</string>
-
-
+    <string name="youAreNotUpdatedTitle">अपडेट उपलब्ध</string>
+    <string name="youAreNotUpdatedMessage">RContacts एप्लिकेशन का नया संस्करण उपलब्ध है। कृपया नवीनतम संस्करण में अपडेट करें</string>
+    <string name="search_above_to_get_organization_list">संगठन सूची प्राप्त करने के लिए ऊपर खोजें</string>
 </resources>

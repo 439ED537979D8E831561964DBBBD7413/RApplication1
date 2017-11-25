@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -72,6 +73,8 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
     ImageView imgFilter;
     @BindView(R.id.img_clear)
     ImageView imgClear;
+    @BindView(R.id.swipe_refresh_layout)
+    SwipeRefreshLayout swipeRefreshLayout;
 
     private Activity activity;
     private ExistingRelationListAdapter listAdapter;
@@ -122,18 +125,13 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
 
         textNoRelation.setVisibility(View.GONE);
         recycleViewRelation.setVisibility(View.VISIBLE);
+        swipeRefreshLayout.setVisibility(View.VISIBLE);
 
         if (Utils.isNetworkAvailable(this)) {
-//            if (Utils.getBooleanPreference(ExistingRelationActivity.this,
-//                    AppConstants.PREF_GET_RELATION, true)) {
             getAllExistingRelation();
-//            } else {
-//                getExistingRelationData();
-//            }
+        } else {
+            setVisibility(getString(R.string.msg_no_network), View.VISIBLE, View.GONE);
         }
-//        else {
-//            getExistingRelationData();
-//        }
 
         inputSearch.addTextChangedListener(new TextWatcher() {
             @Override
@@ -171,7 +169,33 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
                     listAdapter.getFilter().filter("");
             }
         });
+
+        // implement setOnRefreshListener event on SwipeRefreshLayout
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+                swipeRefreshLayout.setRefreshing(true);
+                if (Utils.isNetworkAvailable(ExistingRelationActivity.this)) {
+                    getAllExistingRelation();
+                } else {
+                    swipeRefreshLayout.setRefreshing(false);
+                    setVisibility(getString(R.string.msg_no_network), View.VISIBLE, View.GONE);
+                }
+            }
+        });
     }
+
+    private void setVisibility(String text, int textVisibility, int viewVisibility) {
+
+        Utils.showErrorSnackBar(ExistingRelationActivity.this, relativeRootExistingRelation, text);
+
+        textNoRelation.setVisibility(textVisibility);
+        textNoRelation.setText(text);
+        recycleViewRelation.setVisibility(viewVisibility);
+        swipeRefreshLayout.setVisibility(viewVisibility);
+    }
+
 
     @Override
     public void onDeliveryResponse(String serviceType, Object data, Exception error) {
@@ -188,8 +212,9 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
                     ArrayList<ExistingRelationRequest> allExistingRelationList = sendRelationRequestObject.
                             getAllExistingRelationList();
 
+                    swipeRefreshLayout.setRefreshing(false);
+
                     setExistingRelationData(allExistingRelationList);
-//                    getExistingRelationData();
 
                     Utils.setBooleanPreference(ExistingRelationActivity.this,
                             AppConstants.PREF_GET_RELATION, false);
@@ -249,9 +274,16 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
                 finish();
                 break;
             case R.id.image_add_new:
-                Intent intent = new Intent(activity, AddNewRelationActivity.class);
-                intent.putExtra(AppConstants.EXTRA_IS_FROM, "own");
-                startActivity(intent);
+
+                if (Utils.isNetworkAvailable(activity)) {
+                    Intent intent = new Intent(activity, AddNewRelationActivity.class);
+                    intent.putExtra(AppConstants.EXTRA_IS_FROM, "own");
+                    startActivity(intent);
+                } else {
+                    Utils.showErrorSnackBar(activity, relativeRootExistingRelation, getResources()
+                            .getString(R.string.msg_no_network));
+                }
+
                 break;
         }
     }
@@ -492,22 +524,27 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
         }
 
         if (existingRelationList.size() > 0) {
+
             listAdapter = new ExistingRelationListAdapter(activity, existingRelationList,
                     new ExistingRelationListAdapter.OnClickListener() {
                         @Override
                         public void onClick(int position) {
 
-                            Intent intent = new Intent(activity, AddNewRelationActivity.class);
-                            intent.putExtra(AppConstants.EXTRA_EXISTING_RELATION_DETAILS,
-                                    existingRelationList.get(position));
-                            intent.putExtra(AppConstants.EXTRA_CONTACT_NAME,
-                                    existingRelationList.get(position).getFirstName() + " " + existingRelationList.get(position).getLastName());
-                            intent.putExtra(AppConstants.EXTRA_PROFILE_IMAGE_URL, existingRelationList.get(position).getProfileImage());
-                            intent.putExtra(AppConstants.EXTRA_CONTACT_NUMBER, existingRelationList.get(position).getNumber());
-                            intent.putExtra(AppConstants.EXTRA_PM_ID, existingRelationList.get(position).getPmId());
-                            intent.putExtra(AppConstants.EXTRA_IS_FROM, "existing");
-                            startActivity(intent);
-
+                            if (Utils.isNetworkAvailable(activity)) {
+                                Intent intent = new Intent(activity, AddNewRelationActivity.class);
+                                intent.putExtra(AppConstants.EXTRA_EXISTING_RELATION_DETAILS,
+                                        existingRelationList.get(position));
+                                intent.putExtra(AppConstants.EXTRA_CONTACT_NAME,
+                                        existingRelationList.get(position).getFirstName() + " " + existingRelationList.get(position).getLastName());
+                                intent.putExtra(AppConstants.EXTRA_PROFILE_IMAGE_URL, existingRelationList.get(position).getProfileImage());
+                                intent.putExtra(AppConstants.EXTRA_CONTACT_NUMBER, existingRelationList.get(position).getNumber());
+                                intent.putExtra(AppConstants.EXTRA_PM_ID, existingRelationList.get(position).getPmId());
+                                intent.putExtra(AppConstants.EXTRA_IS_FROM, "existing");
+                                startActivity(intent);
+                            } else {
+                                Utils.showErrorSnackBar(activity, relativeRootExistingRelation, getResources()
+                                        .getString(R.string.msg_no_network));
+                            }
                         }
 
                         @Override
@@ -521,9 +558,7 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
             recycleViewRelation.setAdapter(listAdapter);
 
         } else {
-
-            textNoRelation.setVisibility(View.VISIBLE);
-            recycleViewRelation.setVisibility(View.GONE);
+            setVisibility(getString(R.string.str_no_relation_found), View.VISIBLE, View.GONE);
         }
     }
 
