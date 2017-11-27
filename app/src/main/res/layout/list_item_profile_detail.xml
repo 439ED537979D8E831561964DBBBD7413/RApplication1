@@ -1,11 +1,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/view_own_profile"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/activity_half_vertical_margin"
-    android:orientation="vertical">
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:id="@+id/view_own_profile"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginBottom="@dimen/activity_half_vertical_margin"
+              android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/ll_profile_data"
@@ -34,7 +34,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center|start"
                     android:textColor="@color/colorAccent"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"/>
 
                 <ImageView
                     android:id="@+id/img_tic"
@@ -44,7 +44,7 @@
                     android:contentDescription="@string/app_name"
                     android:gravity="center|start"
                     android:src="@drawable/ico_double_tick_svg"
-                    android:visibility="gone" />
+                    android:visibility="gone"/>
 
             </LinearLayout>
 
@@ -53,7 +53,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/text_size_12sp"
-                tools:text="Home" />
+                tools:text="Home"/>
 
         </LinearLayout>
 
@@ -75,7 +75,7 @@
                     android:layout_marginEnd="@dimen/margin_small"
                     android:contentDescription="@string/app_name"
                     android:paddingStart="@dimen/margin_small"
-                    android:src="@drawable/ico_whatsapp_svg" />
+                    android:src="@drawable/ico_whatsapp_svg"/>
 
                 <ImageView
                     android:id="@+id/img_action_type"
@@ -83,7 +83,7 @@
                     android:layout_height="wrap_content"
                     android:contentDescription="@string/app_name"
                     android:paddingEnd="@dimen/margin_small"
-                    tools:src="@drawable/ico_phone_alt_svg" />
+                    tools:src="@drawable/ico_phone_alt_svg"/>
 
             </LinearLayout>
 
@@ -99,7 +99,7 @@
                 android:textSize="@dimen/text_size_12sp"
                 android:visibility="gone"
                 app:backgroundTint="@color/dialogUserNameTextColor"
-                tools:visibility="gone" />
+                tools:visibility="gone"/>
 
             <LinearLayout
                 android:id="@+id/ll_privacy"
@@ -115,7 +115,7 @@
                     android:layout_marginEnd="10dp"
                     android:layout_marginStart="2dp"
                     android:contentDescription="@string/str_content_description"
-                    android:src="@drawable/ico_privacy_public" />
+                    app:srcCompat="@drawable/ico_privacy_public"/>
 
             </LinearLayout>
 

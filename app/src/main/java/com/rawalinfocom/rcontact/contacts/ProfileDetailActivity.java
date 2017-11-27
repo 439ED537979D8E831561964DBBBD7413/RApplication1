@@ -39,7 +39,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Editable;
-import android.text.Html;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -110,6 +109,7 @@ import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAadharNumber;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
+import com.rawalinfocom.rcontact.model.ProfileDataOperationEducation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEvent;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationImAccount;
@@ -210,8 +210,14 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     TextView textLabelEmail;
     @BindView(R.id.recycler_view_email)
     RecyclerView recyclerViewEmail;
+    @Nullable
+    @BindView(R.id.recycler_view_education)
+    RecyclerView recyclerViewEducation;
     @BindView(R.id.linear_email)
     LinearLayout linearEmail;
+    @Nullable
+    @BindView(R.id.linear_education)
+    LinearLayout linearEducation;
     @BindView(R.id.image_website)
     ImageView imageWebsite;
     @BindView(R.id.text_label_website)
@@ -389,6 +395,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     ArrayList<Object> tempPhoneNumber;
     ArrayList<Object> tempEmail;
+    ArrayList<Object> tempEducation;
 
     boolean isFromReceiver = false;
     boolean isContactEdited = false;
@@ -2103,6 +2110,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         recyclerViewContactNumber.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewEmail.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewWebsite.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewEducation.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewAddress.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewEvent.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewSocialContact.setLayoutManager(new LinearLayoutManager(this));
@@ -2110,6 +2118,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         recyclerViewContactNumber.setNestedScrollingEnabled(false);
         recyclerViewEmail.setNestedScrollingEnabled(false);
         recyclerViewWebsite.setNestedScrollingEnabled(false);
+        recyclerViewEducation.setNestedScrollingEnabled(false);
         recyclerViewAddress.setNestedScrollingEnabled(false);
         recyclerViewEvent.setNestedScrollingEnabled(false);
         recyclerViewSocialContact.setNestedScrollingEnabled(false);
@@ -2533,7 +2542,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         IntegerConstants.RCP_TYPE_PRIMARY) {
 
 //                    String s = Utils.setMultipleTypeface(ProfileDetailActivity.this,
-//                            tempOrganization.get(0).getOrgName() + " <font color" + "='#00796B'>" +
+//                            tempOrganization.get(0).getOrgName() + " <font color" +
+// "='#00796B'>" +
 //                                    getString(R.string.im_icon_verify) + "</font>", 0,
 //                            (StringUtils.length(tempOrganization.get(0).getOrgName()) + 1),
 //                            ((StringUtils.length(tempOrganization.get(0).getOrgName()) + 1) + 1))
@@ -2589,8 +2599,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 textOrganization.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if(tempOrganization.get(0).getIsVerify() == 1){
-                            String orgPublicLink =  BuildConfig.ORANISATION_PUBLIC_LINK + tempOrganization.get(0).getOrgEntId();
+                        if (tempOrganization.get(0).getIsVerify() == 1) {
+                            String orgPublicLink = BuildConfig.ORANISATION_PUBLIC_LINK +
+                                    tempOrganization.get(0).getOrgEntId();
                             if (!StringUtils.isEmpty(orgPublicLink)) {
                                 String url = orgPublicLink;
                                 Intent i = new Intent(Intent.ACTION_VIEW);
@@ -2756,6 +2767,27 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 recyclerViewEmail.setAdapter(emailDetailAdapter);
             } else {
                 linearEmail.setVisibility(View.GONE);
+            }
+            //</editor-fold>
+
+            // <editor-fold desc="Education">
+
+            // From Cloud
+            ArrayList<ProfileDataOperationEducation> arrayListEducation = new ArrayList<>();
+            if (profileDetail != null && !Utils.isArraylistNullOrEmpty(profileDetail
+                    .getPbEducation())) {
+                arrayListEducation.addAll(profileDetail.getPbEducation());
+            }
+
+            tempEducation = new ArrayList<>();
+            if (!Utils.isArraylistNullOrEmpty(arrayListEducation)) {
+                tempEducation.addAll(arrayListEducation);
+                linearEducation.setVisibility(View.VISIBLE);
+                ProfileDetailAdapter educationDetailAdapter = new ProfileDetailAdapter(this,
+                        tempEducation, AppConstants.EDUCATION, displayOwnProfile, pmId);
+                recyclerViewEducation.setAdapter(educationDetailAdapter);
+            } else {
+                linearEducation.setVisibility(View.GONE);
             }
             //</editor-fold>
 
@@ -3040,7 +3072,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     } else {
                         if ((MoreObjects.firstNonNull(aadharDetails.getAadharPublic(), 3)) ==
                                 IntegerConstants
-                                        .PRIVACY_PRIVATE && aadharDetails.getAadharNumber().equalsIgnoreCase("0")) {
+                                        .PRIVACY_PRIVATE && aadharDetails.getAadharNumber()
+                                .equalsIgnoreCase("0")) {
                             buttonRequest.setVisibility(View.VISIBLE);
                             buttonPrivacy.setVisibility(View.GONE);
                         } else {
@@ -3066,7 +3099,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     });
 
                     textAadharNumber.setTypeface(Utils.typefaceRegular(this));
-                    if (aadharDetails.getAadharNumber() .equalsIgnoreCase("0")) {
+                    if (aadharDetails.getAadharNumber().equalsIgnoreCase("0")) {
                         textAadharNumber.setText("XXXX-XXXX-XXXX");
                     } else
                         textAadharNumber.setText(aadharDetails.getAadharNumber() + "");
@@ -3156,11 +3189,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             textAadharNumber.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(!textAadharNumber.getText().toString().contains("X")){
+                    if (!textAadharNumber.getText().toString().contains("X")) {
                         Utils.copyToClipboard(ProfileDetailActivity.this,
                                 getResources().getString(R.string.str_copy_aadhar_number),
                                 textAadharNumber.getText().toString());
-                        Toast.makeText(rContactApplication, "Aadhar number copied.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(rContactApplication, "Aadhar number copied.", Toast
+                                .LENGTH_SHORT).show();
                         String url = "https://resident.uidai.gov.in/aadhaarverification";
                         Intent i = new Intent(Intent.ACTION_VIEW);
                         i.setData(Uri.parse(url));
@@ -3179,7 +3213,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     (!Utils.isArraylistNullOrEmpty(arrayListImAccount) || !Utils
                             .isArraylistNullOrEmpty(arrayListPhoneBookImAccount))
                     || (profileDetail != null
-                    && (profileDetail.getPbAadhar().getAadharNumber().length()>0))) {
+                    && (profileDetail.getPbAadhar().getAadharNumber().length() > 0))
+                    || (profileDetail != null
+                    && (!Utils.isArraylistNullOrEmpty(profileDetail
+                    .getPbEducation())))) {
                 rippleViewMore.setVisibility(View.VISIBLE);
             } else {
                 rippleViewMore.setVisibility(View.GONE);
@@ -4724,7 +4761,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         organization.setOmOrganizationType(arrayListOrganization.get(i)
                                 .getOrgIndustryType());
                         organization.setOmOrganizationLogo(arrayListOrganization.get(i)
-                                .getEomLogoPath() + "/" + arrayListOrganization.get(i).getEomLogoName());
+                                .getEomLogoPath() + "/" + arrayListOrganization.get(i)
+                                .getEomLogoName());
                     } else {
                         organization.setOmOrganizationType("");
                         organization.setOmOrganizationLogo("");

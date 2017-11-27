@@ -4850,7 +4850,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         linearOrganizationDetails.addView(view);
     }
 
-    // TODO: 21/11/17 Education View
     private void addEducationView(int position, Object detailObject) {
         View view = LayoutInflater.from(this).inflate(R.layout
                 .list_item_edit_profile_education, null);

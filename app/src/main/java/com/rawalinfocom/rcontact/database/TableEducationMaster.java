@@ -32,7 +32,7 @@ public class TableEducationMaster {
 
     // Column Names
     private static final String COLUMN_EDM_ID = "edm_id";
-    private static final String COLUMN_EDM_RECORD_INDEX_ID = "edm_record_index_id";
+    static final String COLUMN_EDM_RECORD_INDEX_ID = "edm_record_index_id";
     static final String COLUMN_EDM_SCHOOL_COLLEGE_NAME = "edm_school_college_name";
     static final String COLUMN_EDM_COURSE = "edm_course";
     static final String COLUMN_EDM_EDUCATION_FROM_DATE = "edm_education_from_date";
