@@ -46,6 +46,7 @@ import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.database.QueryManager;
 import com.rawalinfocom.rcontact.database.TableAddressMaster;
+import com.rawalinfocom.rcontact.database.TableEducationMaster;
 import com.rawalinfocom.rcontact.database.TableEmailMaster;
 import com.rawalinfocom.rcontact.database.TableEventMaster;
 import com.rawalinfocom.rcontact.database.TableImMaster;
@@ -62,6 +63,7 @@ import com.rawalinfocom.rcontact.helper.RecyclerItemDecoration;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.Address;
+import com.rawalinfocom.rcontact.model.Education;
 import com.rawalinfocom.rcontact.model.Email;
 import com.rawalinfocom.rcontact.model.Event;
 import com.rawalinfocom.rcontact.model.ImAccount;
@@ -70,6 +72,7 @@ import com.rawalinfocom.rcontact.model.Organization;
 import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
+import com.rawalinfocom.rcontact.model.ProfileDataOperationEducation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEvent;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationImAccount;
@@ -748,6 +751,40 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
                         TableEmailMaster tableEmailMaster = new TableEmailMaster
                                 (getDatabaseHandler());
                         tableEmailMaster.addArrayEmail(arrayListEmail);
+                    }
+                    //</editor-fold>
+
+                    // <editor-fold desc="Education Master">
+                    if (!Utils.isArraylistNullOrEmpty(profileData.get(i).getPbEducation())) {
+                        ArrayList<ProfileDataOperationEducation> arrayListEducation = profileData.get
+                                (i).getPbEducation();
+                        ArrayList<Education> arrayListEdu = new ArrayList<>();
+                        for (int j = 0; j < arrayListEducation.size(); j++) {
+
+                            Education education = new Education();
+
+
+                            education.setEdmRecordIndexId(arrayListEducation.get(j).getEduId());
+
+                            education.setEdmSchoolCollegeName(arrayListEducation.get(j).getEduName());
+                            education.setEdmCourse(arrayListEducation.get(j).getEduCourse());
+                            education.setEdmEducationFromDate(arrayListEducation.get(j)
+                                    .getEduFromDate());
+                            education.setEdmEducationToDate(arrayListEducation.get(j).getEduToDate());
+                            education.setEdmEducationIsCurrent(arrayListEducation.get(j).getIsCurrent
+                                    ());
+//                        education.setEdmEducationIsPrivate(arrayListEducation.get(j).geti());
+                            education.setEdmEducationPrivacy(String.valueOf(arrayListEducation.get(j)
+                                    .getEduPublic()));
+
+                            education.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
+
+                            arrayListEdu.add(education);
+                        }
+
+                        TableEducationMaster tableEducationMaster = new TableEducationMaster
+                                (getDatabaseHandler());
+                        tableEducationMaster.addArrayEducation(arrayListEdu);
                     }
                     //</editor-fold>
 

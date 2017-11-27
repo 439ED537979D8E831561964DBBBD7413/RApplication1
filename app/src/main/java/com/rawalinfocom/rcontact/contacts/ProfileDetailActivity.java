@@ -2110,7 +2110,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         recyclerViewContactNumber.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewEmail.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewWebsite.setLayoutManager(new LinearLayoutManager(this));
-        recyclerViewEducation.setLayoutManager(new LinearLayoutManager(this));
+        if (recyclerViewEducation != null) {
+            recyclerViewEducation.setLayoutManager(new LinearLayoutManager(this));
+        }
         recyclerViewAddress.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewEvent.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewSocialContact.setLayoutManager(new LinearLayoutManager(this));
@@ -2118,7 +2120,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         recyclerViewContactNumber.setNestedScrollingEnabled(false);
         recyclerViewEmail.setNestedScrollingEnabled(false);
         recyclerViewWebsite.setNestedScrollingEnabled(false);
-        recyclerViewEducation.setNestedScrollingEnabled(false);
+        if (recyclerViewEducation != null) {
+            recyclerViewEducation.setNestedScrollingEnabled(false);
+        }
         recyclerViewAddress.setNestedScrollingEnabled(false);
         recyclerViewEvent.setNestedScrollingEnabled(false);
         recyclerViewSocialContact.setNestedScrollingEnabled(false);
