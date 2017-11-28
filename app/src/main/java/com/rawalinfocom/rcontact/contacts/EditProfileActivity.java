@@ -4905,19 +4905,26 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
         } else {
             checkboxEducation.setChecked(true);
+            for (int i = 0; i < linearEducationDetails.getChildCount(); i++) {
+                CheckBox checkbox = linearEducationDetails.getChildAt(i).findViewById(R.id
+                        .checkbox_education);
+                if (checkbox.isChecked()) {
+                    checkboxEducation.setChecked(false);
+                    break;
+                }
+            }
             inputToDate.setEnabled(false);
             imageToDate.setEnabled(false);
-
         }
 
-        checkboxEducation.setOnCheckedChangeListener(new CompoundButton
-                .OnCheckedChangeListener() {
+        checkboxEducation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     for (int i = 0; i < linearEducationDetails.getChildCount(); i++) {
                         View view = linearEducationDetails.getChildAt(i);
                         CheckBox checkbox = view.findViewById(R.id.checkbox_education);
+                        checkbox.setTag(i);
                         if (checkbox != null) {
 
                             inputToDate.setEnabled(false);
@@ -4925,10 +4932,17 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                             inputToDate.setText("");
                             inputToDate.setHint(R.string.hint_choose_to_date);
+
+                            if (!buttonView.getTag().toString().equalsIgnoreCase(checkbox.getTag()
+                                    .toString())) {
+                                checkbox.setChecked(false);
+                            }
+
+
                         }
                     }
-                } else {
 
+                } else {
                     inputToDate.setEnabled(true);
                     imageToDate.setEnabled(true);
                 }
