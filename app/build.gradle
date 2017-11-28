@@ -81,11 +81,11 @@ android {
                 buildConfigField 'String', p.key, p.value
             }
         }
-        local {
+        /*local {
             getProps('./config/local.props').each { p ->
                 buildConfigField 'String', p.key, p.value
             }
-        }
+        }*/
     }
 
     lintOptions {
