@@ -2548,6 +2548,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                     EditText inputFromDate = linearEducation.findViewById(R.id.input_from_date);
                     EditText inputToDate = linearEducation.findViewById(R.id.input_to_date);
+                    TextView textIsPublic = linearEducation.findViewById(R.id.text_is_public);
 
                     RelativeLayout relativeRowEditProfile = linearEducation
                             .findViewById(R.id.relative_row_edit_profile);
@@ -2557,7 +2558,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     education.setEduCourse(inputFieldOfStudy.getText().toString().trim());
                     education.setEduId((String) relativeRowEditProfile.getTag());
                     education.setIsCurrent(checkboxEducation.isChecked() ? 1 : 0);
-                    education.setEduPublic(IntegerConstants.PRIVACY_EVERYONE);
+
+                    if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
+                        education.setEduPublic(Integer.parseInt(textIsPublic.getText().toString()
+                                .trim()));
+                    } else {
+                        education.setEduPublic(IntegerConstants.PRIVACY_MY_CONTACT);
+                    }
 
                     ColorStateList colorStateList = ColorStateList.valueOf(ContextCompat.getColor
                             (EditProfileActivity
@@ -3874,6 +3881,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             education.setEduCourse(arrayListEducation.get(i).getEdmCourse());
             education.setEduId(arrayListEducation.get(i).getEdmRecordIndexId());
             education.setIsCurrent(arrayListEducation.get(i).getEdmEducationIsCurrent());
+            education.setEduPublic(Integer.valueOf(arrayListEducation.get(i).getEdmEducationPrivacy()));
 
             arrayListEducationObject.add(education);
         }
@@ -4857,6 +4865,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         final EditText inputSchoolName = view.findViewById(R.id.input_school_name);
         final EditText inputFieldOfStudy = view.findViewById(R.id.input_field_of_study);
         final CheckBox checkboxEducation = view.findViewById(R.id.checkbox_education);
+        final TextView textIsPublic = view.findViewById(R.id.text_is_public);
 
         final EditText inputFromDate = view.findViewById(R.id.input_from_date);
         final EditText inputToDate = view.findViewById(R.id.input_to_date);
@@ -4892,6 +4901,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             relativeRowEditProfile.setTag(education.getEduId());
             inputSchoolName.setText(education.getEduName());
             inputFieldOfStudy.setText(education.getEduCourse());
+            textIsPublic.setText(String.valueOf(education.getEduPublic()));
             checkboxEducation.setChecked(education.getIsCurrent() == 1);
 
             if (education.getIsCurrent() == 1) {
@@ -4937,8 +4947,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                     .toString())) {
                                 checkbox.setChecked(false);
                             }
-
-
                         }
                     }
 

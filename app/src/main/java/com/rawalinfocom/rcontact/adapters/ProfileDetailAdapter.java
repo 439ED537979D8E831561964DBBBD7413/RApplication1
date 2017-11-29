@@ -470,11 +470,10 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         final ProfileDataOperationEducation education = (ProfileDataOperationEducation) arrayList
                 .get(position);
 //        String emailId = email.getEmEmailId();
-//        holder.textSub.setText(education.getEduFromDate() + " to " + education.getEduToDate());
         holder.textSub.setVisibility(View.VISIBLE);
 
         holder.imgActionType.setImageResource(R.drawable.ico_education_svg);
-        holder.imgActionType.setVisibility(View.GONE);
+//        holder.imgActionType.setVisibility(View.GONE);
 
         holder.textMain.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -557,20 +556,20 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             }
         }
 
-        /* holder.llPrivacy.setOnClickListener(new View.OnClickListener() {
+        holder.llPrivacy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 PrivacySettingPopupDialog privacySettingPopupDialog = new
-                        PrivacySettingPopupDialog(holder, activity, listner, AppConstants
-                        .EMAIL,
-                        position, email.getEmPublic(), email.getEmId());
+                        PrivacySettingPopupDialog(holder, activity, listner, AppConstants.EDUCATION,
+                        position, education.getEduPublic(), education.getEduId());
                 privacySettingPopupDialog.setDialogTitle(activity.getResources().getString(R
                         .string.privacy_dialog_title));
                 privacySettingPopupDialog.showDialog();
+//                Toast.makeText(activity, "clicked", Toast.LENGTH_SHORT).show();
             }
         });
 
-        holder.buttonRequest.setOnClickListener(new View.OnClickListener() {
+       /*  holder.buttonRequest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //Toast.makeText(activity, "requesting profile", Toast.LENGTH_SHORT).show();
@@ -1132,6 +1131,10 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
             case AppConstants.EMAIL:
                 privacyDataItem.setPbEmailId(privacyEntityItems);
+                break;
+
+                case AppConstants.EDUCATION:
+                privacyDataItem.setPbEducation(privacyEntityItems);
                 break;
 
             case AppConstants.ADDRESS:

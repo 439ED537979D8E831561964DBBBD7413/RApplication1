@@ -235,7 +235,7 @@ public class QueryManager {
                                     .COLUMN_EDM_EDUCATION_TO_DATE))));
                     education.setEduPublic(Integer.parseInt(StringUtils.defaultString
                             (educationCursor.getString(educationCursor.getColumnIndexOrThrow
-                                    (TableEducationMaster.COLUMN_EDM_EDUCATION_IS_PRIVATE)), "0")));
+                                    (TableEducationMaster.COLUMN_EDM_EDUCATION_PRIVACY)), "2")));
                     education.setEduId(StringUtils.defaultString(educationCursor.getString
                             (educationCursor.getColumnIndexOrThrow(TableEducationMaster
                                     .COLUMN_EDM_RECORD_INDEX_ID))));

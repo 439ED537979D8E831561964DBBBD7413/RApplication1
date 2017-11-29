@@ -77,6 +77,7 @@ import com.rawalinfocom.rcontact.database.QueryManager;
 import com.rawalinfocom.rcontact.database.TableAadharMaster;
 import com.rawalinfocom.rcontact.database.TableAddressMaster;
 import com.rawalinfocom.rcontact.database.TableCommentMaster;
+import com.rawalinfocom.rcontact.database.TableEducationMaster;
 import com.rawalinfocom.rcontact.database.TableEmailMaster;
 import com.rawalinfocom.rcontact.database.TableEventMaster;
 import com.rawalinfocom.rcontact.database.TableImMaster;
@@ -98,6 +99,7 @@ import com.rawalinfocom.rcontact.model.Address;
 import com.rawalinfocom.rcontact.model.CallLogHistoryType;
 import com.rawalinfocom.rcontact.model.CallLogType;
 import com.rawalinfocom.rcontact.model.Comment;
+import com.rawalinfocom.rcontact.model.Education;
 import com.rawalinfocom.rcontact.model.Email;
 import com.rawalinfocom.rcontact.model.Event;
 import com.rawalinfocom.rcontact.model.ImAccount;
@@ -4218,17 +4220,17 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
 
-        final LinearLayout relativeRootDialogList = (LinearLayout) dialog.findViewById(R.id
+        final LinearLayout relativeRootDialogList = dialog.findViewById(R.id
                 .relative_root_dialog_list);
-        TextView textDialogTitle = (TextView) dialog.findViewById(R.id.text_dialog_title);
+        TextView textDialogTitle = dialog.findViewById(R.id.text_dialog_title);
         textDialogTitle.setText(String.format("%s %s", getString(R.string.str_invite),
                 contactName));
         textDialogTitle.setTypeface(Utils.typefaceSemiBold(this));
 
-        Button buttonRight = (Button) dialog.findViewById(R.id.button_right);
-        Button buttonLeft = (Button) dialog.findViewById(R.id.button_left);
-        RippleView rippleRight = (RippleView) dialog.findViewById(R.id.ripple_right);
-        RippleView rippleLeft = (RippleView) dialog.findViewById(R.id.ripple_left);
+        Button buttonRight = dialog.findViewById(R.id.button_right);
+        Button buttonLeft = dialog.findViewById(R.id.button_left);
+        RippleView rippleRight = dialog.findViewById(R.id.ripple_right);
+        RippleView rippleLeft = dialog.findViewById(R.id.ripple_left);
 
         rippleRight.setVisibility(View.GONE);
         rippleLeft.setVisibility(View.GONE);
@@ -4245,7 +4247,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
         });
 
-        RecyclerView recyclerViewDialogList = (RecyclerView) dialog.findViewById(R.id
+        RecyclerView recyclerViewDialogList = dialog.findViewById(R.id
                 .recycler_view_dialog_list);
         recyclerViewDialogList.setLayoutManager(new LinearLayoutManager(this));
 
@@ -4487,6 +4489,37 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
 
             tableEmailMaster.addArrayEmail(arrayListEmail);
+        }
+        //</editor-fold>
+
+        // <editor-fold desc="Education Master">
+
+        TableEducationMaster tableEducationMaster = new TableEducationMaster(databaseHandler);
+
+        // Remove Existing Number
+        tableEducationMaster.deleteEducation(getUserPmId());
+
+        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEducation())) {
+            ArrayList<ProfileDataOperationEducation> arrayListEducation = profileDetail
+                    .getPbEducation();
+            ArrayList<Education> arrayListEdu = new ArrayList<>();
+            for (int i = 0; i < arrayListEducation.size(); i++) {
+                Education education = new Education();
+                education.setEdmRecordIndexId(arrayListEducation.get(i).getEduId());
+                education.setEdmSchoolCollegeName(arrayListEducation.get(i).getEduName());
+                education.setEdmCourse(arrayListEducation.get(i).getEduCourse());
+                education.setEdmEducationFromDate(arrayListEducation.get(i).getEduFromDate());
+                education.setEdmEducationToDate(String.valueOf(arrayListEducation.get(i)
+                        .getEduToDate()));
+                education.setEdmEducationIsCurrent(arrayListEducation.get(i).getIsCurrent());
+                education.setEdmEducationPrivacy(String.valueOf(arrayListEducation.get(i)
+                        .getEduPublic()));
+                education.setRcProfileMasterPmId(getUserPmId());
+                arrayListEdu.add(education);
+            }
+
+
+            tableEducationMaster.addArrayEducation(arrayListEdu);
         }
         //</editor-fold>
 
