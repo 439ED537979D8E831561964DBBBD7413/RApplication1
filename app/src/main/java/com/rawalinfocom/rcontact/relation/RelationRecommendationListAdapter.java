@@ -134,7 +134,9 @@ class RelationRecommendationListAdapter extends RecyclerView.Adapter<
             setData(relationType, position, innerPosition, true); // true
         }
 
-        notifyDataSetChanged();
+        notifyItemChanged(position);
+
+//        notifyDataSetChanged();
     }
 
     private void setData(IndividualRelationType relationType, int position, int innerPosition, boolean b) {

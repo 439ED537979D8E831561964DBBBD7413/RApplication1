@@ -43,6 +43,8 @@ import com.rawalinfocom.rcontact.model.ProfileMobileMapping;
 import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.notifications.NotificationsDetailActivity;
 import com.rawalinfocom.rcontact.notifications.TimelineActivity;
+import com.rawalinfocom.rcontact.relation.ExistingRelationActivity;
+import com.rawalinfocom.rcontact.relation.RelationRecommendationActivity;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -114,6 +116,14 @@ public class NotificationFCMService extends FirebaseMessagingService {
                     return;
                 }
                 String msg = m.get("msg");
+                if (api.equalsIgnoreCase("relationshipRequest")) {
+                    sendNotification(msg, AppConstants.NOTIFICATION_TYPE_RELATION_REQUEST);
+                    return;
+                }
+                if (api.equalsIgnoreCase("relationshipAccept")) {
+                    sendNotification(msg, AppConstants.NOTIFICATION_TYPE_RELATION_ACCEPT);
+                    return;
+                }
                 if (api.equalsIgnoreCase("newUserRegistration")) {
                     String first_name = m.get("first_name");
                     String last_name = m.get("last_name");
@@ -356,7 +366,7 @@ public class NotificationFCMService extends FirebaseMessagingService {
                                 ObjectMapper mapper = new ObjectMapper();
                                 String data = m.get("car_contact");
                                 try {
-                                    if(data != null){
+                                    if (data != null) {
                                         ContactRequestData obj = mapper.readValue(data,
                                                 ContactRequestData.class);
                                         updatePrivacySetting(m.get("car_ppm_particular"), m.get
@@ -492,6 +502,12 @@ public class NotificationFCMService extends FirebaseMessagingService {
             case AppConstants.NOTIFICATION_TYPE_RUPDATE:
                 aClass = NotificationsDetailActivity.class;
                 tabIndex = NotificationsDetailActivity.TAB_RCONTACTS;
+                break;
+            case AppConstants.NOTIFICATION_TYPE_RELATION_REQUEST:
+                aClass = RelationRecommendationActivity.class;
+                break;
+            case AppConstants.NOTIFICATION_TYPE_RELATION_ACCEPT:
+                aClass = ExistingRelationActivity.class;
                 break;
 
         }

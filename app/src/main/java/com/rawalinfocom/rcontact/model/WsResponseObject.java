@@ -44,6 +44,7 @@ public class WsResponseObject {
 
     private String status;
     private String message;
+    private Integer count;
     private Integer flag;
     private Integer reSync;
     private String callDateAndTime;
@@ -277,6 +278,15 @@ public class WsResponseObject {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    @JsonProperty("count")
+    public Integer getCount() {
+        return count;
+    }
+
+    public void setCount(Integer count) {
+        this.count = count;
     }
 
     @JsonProperty("resync")

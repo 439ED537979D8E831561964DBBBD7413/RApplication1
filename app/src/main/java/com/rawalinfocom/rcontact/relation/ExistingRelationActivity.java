@@ -2,6 +2,8 @@ package com.rawalinfocom.rcontact.relation;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -95,12 +97,12 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_existing_relation);
 
+        activity = ExistingRelationActivity.this;
+
         ButterKnife.bind(this);
+        removeNotification();
         initToolbar();
 
-//        tableRelationMappingMaster = new TableRelationMappingMaster(databaseHandler);
-
-        activity = ExistingRelationActivity.this;
         textNoRelation.setTypeface(Utils.typefaceRegular(this));
         inputSearch.setTypeface(Utils.typefaceRegular(this));
     }
@@ -188,8 +190,6 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
 
     private void setVisibility(String text, int textVisibility, int viewVisibility) {
 
-        Utils.showErrorSnackBar(ExistingRelationActivity.this, relativeRootExistingRelation, text);
-
         textNoRelation.setVisibility(textVisibility);
         textNoRelation.setText(text);
         recycleViewRelation.setVisibility(viewVisibility);
@@ -216,14 +216,14 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
 
                     setExistingRelationData(allExistingRelationList);
 
-                    Utils.setBooleanPreference(ExistingRelationActivity.this,
-                            AppConstants.PREF_GET_RELATION, false);
+//                    Utils.setBooleanPreference(ExistingRelationActivity.this,
+//                            AppConstants.PREF_GET_RELATION, false);
 
                 } else {
                     if (sendRelationRequestObject != null) {
                         Log.e("error response", sendRelationRequestObject.getMessage());
-                        Utils.showErrorSnackBar(this, relativeRootExistingRelation,
-                                sendRelationRequestObject.getMessage());
+//                        Utils.showErrorSnackBar(this, relativeRootExistingRelation,
+//                                sendRelationRequestObject.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "sendRelationRequestResponse null");
                         Utils.showErrorSnackBar(this, relativeRootExistingRelation, getString(R
@@ -708,18 +708,30 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
 
     private void deleteRelation(ArrayList<String> relationIds) {
 
-        WsRequestObject deleteRelationObject = new WsRequestObject();
-        deleteRelationObject.setRelationIds(relationIds);
+        if (relationIds.size() > 0) {
+            WsRequestObject deleteRelationObject = new WsRequestObject();
+            deleteRelationObject.setRelationIds(relationIds);
 
-        if (Utils.isNetworkAvailable(this)) {
-            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), deleteRelationObject,
-                    null, WsResponseObject.class, WsConstants.REQ_DELETE_RELATION, getString(R.string
-                    .msg_please_wait), true)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT +
-                            WsConstants.REQ_DELETE_RELATION);
+            if (Utils.isNetworkAvailable(this)) {
+                new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), deleteRelationObject,
+                        null, WsResponseObject.class, WsConstants.REQ_DELETE_RELATION, getString(R.string
+                        .msg_please_wait), true)
+                        .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT +
+                                WsConstants.REQ_DELETE_RELATION);
+            } else {
+                Utils.showErrorSnackBar(this, relativeRootExistingRelation, getResources()
+                        .getString(R.string.msg_no_network));
+            }
         } else {
-            Utils.showErrorSnackBar(this, relativeRootExistingRelation, getResources()
-                    .getString(R.string.msg_no_network));
+            Utils.showErrorSnackBar(this, relativeRootExistingRelation, "Please select " +
+                    "any relation to delete");
+        }
+    }
+
+    private void removeNotification() {
+        NotificationManager notificationManager = (NotificationManager) activity.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (notificationManager != null) {
+            notificationManager.cancelAll();
         }
     }
 }

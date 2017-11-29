@@ -1,6 +1,8 @@
 package com.rawalinfocom.rcontact.relation;
 
 import android.app.Dialog;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -90,6 +92,7 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_relation_recommendation);
         ButterKnife.bind(this);
+        removeNotification();
         initToolBar();
         init();
     }
@@ -114,11 +117,11 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
                     if (allExistingRelationList.size() > 0) {
                         getRelationRecommendationData(allExistingRelationList);
                     } else {
-                        setVisibility(getString(R.string.str_no_relation_found), View.VISIBLE, View.GONE);
+                        setVisibility(getString(R.string.str_no_relation_recommendation_found), View.VISIBLE, View.GONE);
                     }
 
-                    Utils.setBooleanPreference(RelationRecommendationActivity.this,
-                            AppConstants.PREF_GET_RELATION, false);
+//                    Utils.setBooleanPreference(RelationRecommendationActivity.this,
+//                            AppConstants.PREF_GET_RELATION, false);
 
                 } else {
                     if (sendRelationRequestObject != null) {
@@ -178,6 +181,8 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
             case R.id.ripple_action_search:
 
                 Utils.showKeyBoard(RelationRecommendationActivity.this);
+
+                inputSearch.requestFocus();
 
                 relativeBack.setVisibility(View.VISIBLE);
                 relativeActionBack.setVisibility(View.GONE);
@@ -269,8 +274,6 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
     }
 
     private void setVisibility(String text, int textVisibility, int viewVisibility) {
-
-        Utils.showErrorSnackBar(RelationRecommendationActivity.this, relativeRootRecommendationRelation, text);
 
         textNoRelation.setVisibility(textVisibility);
         textNoRelation.setText(text);
@@ -410,7 +413,7 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
                     });
             recycleViewRelation.setAdapter(listAdapter);
         } else {
-            setVisibility(getString(R.string.str_no_relation_found), View.VISIBLE, View.GONE);
+            setVisibility(getString(R.string.str_no_relation_recommendation_found), View.VISIBLE, View.GONE);
         }
     }
 
@@ -504,35 +507,53 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
 
     private void acceptRelationRequest(ArrayList<String> relationIds) {
 
-        WsRequestObject deleteRelationObject = new WsRequestObject();
-        deleteRelationObject.setRelationIds(relationIds);
+        if (relationIds.size() > 0) {
+            WsRequestObject deleteRelationObject = new WsRequestObject();
+            deleteRelationObject.setRelationIds(relationIds);
 
-        if (Utils.isNetworkAvailable(this)) {
-            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), deleteRelationObject,
-                    null, WsResponseObject.class, WsConstants.REQ_RELATION_ACTION, getString(R.string
-                    .msg_please_wait), true)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT +
-                            WsConstants.REQ_RELATION_ACTION + "/accept");
+            if (Utils.isNetworkAvailable(this)) {
+                new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), deleteRelationObject,
+                        null, WsResponseObject.class, WsConstants.REQ_RELATION_ACTION, getString(R.string
+                        .msg_please_wait), true)
+                        .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT +
+                                WsConstants.REQ_RELATION_ACTION + "/accept");
+            } else {
+                Utils.showErrorSnackBar(this, relativeRootRecommendationRelation, getResources()
+                        .getString(R.string.msg_no_network));
+            }
         } else {
-            Utils.showErrorSnackBar(this, relativeRootRecommendationRelation, getResources()
-                    .getString(R.string.msg_no_network));
+            Utils.showErrorSnackBar(this, relativeRootRecommendationRelation,
+                    "Please select at least one relation to accept!!!");
         }
     }
 
     private void rejectRelationRequest(ArrayList<String> relationIds) {
 
-        WsRequestObject deleteRelationObject = new WsRequestObject();
-        deleteRelationObject.setRelationIds(relationIds);
+        if (relationIds.size() > 0) {
+            WsRequestObject deleteRelationObject = new WsRequestObject();
+            deleteRelationObject.setRelationIds(relationIds);
 
-        if (Utils.isNetworkAvailable(this)) {
-            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), deleteRelationObject,
-                    null, WsResponseObject.class, WsConstants.REQ_RELATION_ACTION, getString(R.string
-                    .msg_please_wait), true)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT +
-                            WsConstants.REQ_RELATION_ACTION + "/reject");
+            if (Utils.isNetworkAvailable(this)) {
+                new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), deleteRelationObject,
+                        null, WsResponseObject.class, WsConstants.REQ_RELATION_ACTION, getString(R.string
+                        .msg_please_wait), true)
+                        .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT +
+                                WsConstants.REQ_RELATION_ACTION + "/reject");
+            } else {
+                Utils.showErrorSnackBar(this, relativeRootRecommendationRelation, getResources()
+                        .getString(R.string.msg_no_network));
+            }
         } else {
-            Utils.showErrorSnackBar(this, relativeRootRecommendationRelation, getResources()
-                    .getString(R.string.msg_no_network));
+            Utils.showErrorSnackBar(this, relativeRootRecommendationRelation,
+                    "Please select at least one relation to delete!!!");
+        }
+    }
+
+    private void removeNotification() {
+        NotificationManager notificationManager = (NotificationManager) RelationRecommendationActivity.this
+                .getSystemService(Context.NOTIFICATION_SERVICE);
+        if (notificationManager != null) {
+            notificationManager.cancelAll();
         }
     }
 }

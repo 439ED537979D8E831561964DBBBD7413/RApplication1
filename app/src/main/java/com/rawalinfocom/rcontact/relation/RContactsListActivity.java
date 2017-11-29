@@ -28,8 +28,7 @@ import butterknife.ButterKnife;
  * Created by admin on 25/09/17.
  */
 
-public class RContactsListActivity extends BaseActivity implements RippleView
-        .OnRippleCompleteListener {
+public class RContactsListActivity extends BaseActivity implements View.OnClickListener {
     @BindView(R.id.image_action_back)
     ImageView imageActionBack;
     @BindView(R.id.input_search)
@@ -61,6 +60,8 @@ public class RContactsListActivity extends BaseActivity implements RippleView
     }
 
     private void init() {
+
+        imageActionBack.setOnClickListener(this);
 
         recyclerViewContactList.setLayoutManager(new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false));
 
@@ -94,31 +95,24 @@ public class RContactsListActivity extends BaseActivity implements RippleView
             public void onClick(View view) {
 
                 Utils.hideSoftKeyboard(activity, inputSearch);
-                if (inputSearch.getText().toString().trim().length() > 0) {
-                    if (rContactListAdapter != null)
-                        rContactListAdapter.getFilter().filter("");
-                } else {
-                    finish();
-                }
+                if (rContactListAdapter != null)
+                    rContactListAdapter.getFilter().filter("");
+                inputSearch.getText().clear();
             }
         });
     }
 
     @Override
-    public void onComplete(RippleView rippleView) {
-        switch (rippleView.getId()) {
+    public void onClick(View view) {
+
+        switch (view.getId()) {
 
             case R.id.image_action_back:
                 finish();
                 Utils.hideSoftKeyboard(activity, inputSearch);
                 break;
-
-            //<editor-fold desc="Back">
-            case R.id.ripple_action_back:
-                onBackPressed();
-                break;
-            //</editor-fold>
         }
+
     }
 
     private void getRContactFromDB() {

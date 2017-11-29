@@ -158,12 +158,12 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
         getIntentDetails(getIntent());
         initToolbar();
         init();
+        displayRCPUserData();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        displayRCPUserData();
         getUserExistingRelation();
     }
 
@@ -184,8 +184,8 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
 
                     setExistingRelationData(allExistingRelationList);
 
-                    Utils.setBooleanPreference(RCPExistingRelationActivity.this,
-                            AppConstants.PREF_GET_RELATION, false);
+//                    Utils.setBooleanPreference(RCPExistingRelationActivity.this,
+//                            AppConstants.PREF_GET_RELATION, false);
 
                 } else {
                     if (sendRelationRequestObject != null) {
@@ -463,19 +463,12 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
         RippleView rippleRight = (RippleView) dialog.findViewById(R.id.ripple_right);
         RippleView rippleLeft = (RippleView) dialog.findViewById(R.id.ripple_left);
 
+        rippleLeft.setVisibility(View.GONE);
+
         buttonRight.setTypeface(Utils.typefaceRegular(this));
-        buttonRight.setText(R.string.str_done);
-        buttonLeft.setTypeface(Utils.typefaceRegular(this));
-        buttonLeft.setText(R.string.str_back);
+        buttonRight.setText(R.string.action_close);
 
         rippleRight.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
-            @Override
-            public void onComplete(RippleView rippleView) {
-                dialog.dismiss();
-            }
-        });
-
-        rippleLeft.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
             @Override
             public void onComplete(RippleView rippleView) {
                 dialog.dismiss();

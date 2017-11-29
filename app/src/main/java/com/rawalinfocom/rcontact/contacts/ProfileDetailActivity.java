@@ -957,8 +957,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             //<editor-fold desc="Favourites">
             case R.id.ripple_action_relation:
 
-                Utils.setBooleanPreference(ProfileDetailActivity.this,
-                        AppConstants.PREF_GET_RELATION, true);
+//                Utils.setBooleanPreference(ProfileDetailActivity.this,
+//                        AppConstants.PREF_GET_RELATION, true);
 
                 if (displayOwnProfile) {
                     startActivity(new Intent(ProfileDetailActivity.this, ExistingRelationActivity
@@ -2208,6 +2208,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             } else {
                 // Non-RC Profile
                 setUpView(null);
+                rippleActionRelation.setVisibility(View.GONE);
             }
         } else {
             /*if (Utils.getBooleanPreference(ProfileDetailActivity.this, AppConstants
@@ -2220,7 +2221,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 frameTutorial.setVisibility(View.GONE);
             }
         }
-
 
         initSwipe();
 
