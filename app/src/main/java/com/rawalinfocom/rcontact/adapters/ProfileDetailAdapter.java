@@ -569,15 +569,15 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             }
         });
 
-       /*  holder.buttonRequest.setOnClickListener(new View.OnClickListener() {
+         holder.buttonRequest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //Toast.makeText(activity, "requesting profile", Toast.LENGTH_SHORT).show();
                 int pmTo = Integer.parseInt(pmId);
                 // sendAccessRequest(int toPMId, String carFiledType, String recordIndexId)
-                sendAccessRequest(pmTo, "pb_email_id", email.getEmId());
+                sendAccessRequest(pmTo, "pb_education", education.getEduId());
             }
-        });*/
+        });
 //        }
     }
 
