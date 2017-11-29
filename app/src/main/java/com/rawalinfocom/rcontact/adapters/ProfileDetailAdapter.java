@@ -525,9 +525,10 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         } else {
             holder.llPrivacy.setVisibility(View.GONE);
             if ((MoreObjects.firstNonNull(education.getEduPublic(), 0)) == IntegerConstants
-                    .IS_PRIVATE) {
+                    .PRIVACY_PRIVATE) {
                 holder.buttonRequest.setVisibility(View.VISIBLE);
                 holder.imgActionType.setVisibility(View.GONE);
+                holder.textSub.setVisibility(View.GONE);
             }
         }
 
