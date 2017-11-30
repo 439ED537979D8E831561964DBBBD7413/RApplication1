@@ -42,7 +42,7 @@ android {
 
     signingConfigs {
         release {
-            storeFile file('/Users/admin/Desktop/apk/rcontacts.jks')
+            storeFile file('/home/rajesh/Desktop/apk/rcontacts.jks')
             storePassword "rcontacts"
             keyAlias "rcontacts"
             keyPassword "rcontacts"
@@ -81,11 +81,11 @@ android {
                 buildConfigField 'String', p.key, p.value
             }
         }
-        local {
+        /*local {
             getProps('./config/local.props').each { p ->
                 buildConfigField 'String', p.key, p.value
             }
-        }
+        }*/
     }
 
     lintOptions {
