@@ -32,6 +32,7 @@ import com.rawalinfocom.rcontact.asynctasks.AsyncGetWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
+import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.database.TableOrganizationMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.helper.RippleView;
@@ -366,9 +367,15 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
             if (MoreObjects.firstNonNull(arrayListOrganization.get(0).getIsVerify(), 0) ==
                     IntegerConstants.RCP_TYPE_PRIMARY) {
 
-                textOrganization.setText(arrayListOrganization.get(0).getOrgName());
-                textOrganization.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-                        R.drawable.ico_relation_single_tick_green_svg, 0);
+                textOrganization.setText(Utils.setMultipleTypeface(RCPExistingRelationActivity.this,
+                        arrayListOrganization.get(0).getOrgName() + " " + getString(R.string
+                                .im_icon_unverify), 0, (StringUtils.length(arrayListOrganization.get(0)
+                                .getOrgName()) + 1), ((StringUtils.length(arrayListOrganization.get(0).
+                                getOrgName()) + 1) + 1)));
+
+//                textOrganization.setText(arrayListOrganization.get(0).getOrgName());
+//                textOrganization.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+//                        R.drawable.ico_relation_single_tick_green_svg, 0);
 
             } else {
                 textOrganization.setText(arrayListOrganization.get(0).getOrgName());

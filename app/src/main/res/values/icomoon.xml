@@ -18,6 +18,7 @@
     <string name="im_icon_male">&#xe94c;</string>
     <string name="im_icon_female">&#xe92e;</string>
     <string name="im_icon_verify">&#xe994;</string>
+    <string name="im_icon_unverify">&#xe921;</string>
 
     <!-- Navigation Drawer -->
     <string name="im_icon_user">&#xe98b;</string>
