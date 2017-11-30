@@ -216,9 +216,6 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
 
                     setExistingRelationData(allExistingRelationList);
 
-//                    Utils.setBooleanPreference(ExistingRelationActivity.this,
-//                            AppConstants.PREF_GET_RELATION, false);
-
                 } else {
                     if (sendRelationRequestObject != null) {
                         Log.e("error response", sendRelationRequestObject.getMessage());

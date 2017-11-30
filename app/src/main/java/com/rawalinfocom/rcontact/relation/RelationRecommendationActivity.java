@@ -84,8 +84,7 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
 
     private RelationRecommendationListAdapter listAdapter;
     private ArrayList<RelationRecommendationType> recommendationRelationList;
-    private String deletePmId = "", type = "";
-    private int deleteRelationPosition = -1;
+    private String type = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,9 +119,6 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
                         setVisibility(getString(R.string.str_no_relation_recommendation_found), View.VISIBLE, View.GONE);
                     }
 
-//                    Utils.setBooleanPreference(RelationRecommendationActivity.this,
-//                            AppConstants.PREF_GET_RELATION, false);
-
                 } else {
                     if (sendRelationRequestObject != null) {
                         Log.e("error response", sendRelationRequestObject.getMessage());
@@ -149,7 +145,7 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
 
                     getRelationRecommendation();
 
-                    deleteRelationPosition = -1;
+//                    deleteRelationPosition = -1;
 
                 } else {
                     if (deleteRelationObject != null) {
@@ -398,16 +394,16 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
                         @Override
                         public void onClick(int position, String name, String pmId) {
                             type = "accept";
-                            deletePmId = pmId;
-                            deleteRelationPosition = position;
+//                            deletePmId = pmId;
+//                            deleteRelationPosition = position;
                             dialogActionRelation(position, name);
                         }
 
                         @Override
                         public void onDeleteClick(int position, String name, String pmId) {
                             type = "reject";
-                            deletePmId = pmId;
-                            deleteRelationPosition = position;
+//                            deletePmId = pmId;
+//                            deleteRelationPosition = position;
                             dialogActionRelation(position, name);
                         }
                     });
@@ -461,8 +457,8 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
         buttonLeft.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                deletePmId = "";
-                deleteRelationPosition = -1;
+//                deletePmId = "";
+//                deleteRelationPosition = -1;
                 dialog.dismiss();
             }
         });

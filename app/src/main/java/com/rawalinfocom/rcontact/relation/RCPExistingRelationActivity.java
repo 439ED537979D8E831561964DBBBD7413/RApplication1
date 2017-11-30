@@ -184,9 +184,6 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
 
                     setExistingRelationData(allExistingRelationList);
 
-//                    Utils.setBooleanPreference(RCPExistingRelationActivity.this,
-//                            AppConstants.PREF_GET_RELATION, false);
-
                 } else {
                     if (sendRelationRequestObject != null) {
                         Log.e("error response", sendRelationRequestObject.getMessage());
