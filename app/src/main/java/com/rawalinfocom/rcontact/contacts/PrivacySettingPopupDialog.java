@@ -52,15 +52,15 @@ public class PrivacySettingPopupDialog {
         layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
         currentPrivacy = privacy - 1;
         dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
-        tvDialogTitle = (TextView) dialog.findViewById(R.id.tvDialogTitle);
-        cancelButton = (Button) dialog.findViewById(R.id.cancel_button);
+        tvDialogTitle = dialog.findViewById(R.id.tvDialogTitle);
+        cancelButton = dialog.findViewById(R.id.cancel_button);
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog.cancel();
             }
         });
-        okButton = (Button) dialog.findViewById(R.id.ok_button);
+        okButton = dialog.findViewById(R.id.ok_button);
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -71,7 +71,7 @@ public class PrivacySettingPopupDialog {
 
 
         tvDialogTitle.setTypeface(Utils.typefaceSemiBold(context));
-        recycleViewDialog = (RecyclerView) dialog.findViewById(R.id.recycle_view_dialog);
+        recycleViewDialog = dialog.findViewById(R.id.recycle_view_dialog);
         dialogTitle = getDialogTitle();
         if (!TextUtils.isEmpty(dialogTitle))
             tvDialogTitle.setText(dialogTitle);

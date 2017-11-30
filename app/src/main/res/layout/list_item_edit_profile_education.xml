@@ -1,40 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/relative_row_edit_profile"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal">
-
-    <TextView
-        android:id="@+id/text_org_logo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
-
-    <TextView
-        android:id="@+id/text_org_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
-
-    <TextView
-        android:id="@+id/text_org_type"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
-
-    <TextView
-        android:id="@+id/text_enterprise_org_id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
-
-    <TextView
-        android:id="@+id/text_is_verified"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -42,54 +13,47 @@
         android:layout_margin="@dimen/margin_tiny"
         android:orientation="vertical">
 
+        <TextView
+            android:id="@+id/text_is_public"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
+
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <ImageView
-                android:id="@+id/image_org_profile"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_alignParentStart="true"
-                android:contentDescription="@string/str_content_description"
-                android:padding="3dp"
-                android:src="@drawable/home_screen_profile"
-                android:visibility="visible" />
-
             <EditText
-                android:id="@+id/input_company_name"
+                android:id="@+id/input_school_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin_5dp"
-                android:layout_toEndOf="@+id/image_org_profile"
-                android:layout_toStartOf="@+id/deleteOrganization"
-                android:drawableEnd="@drawable/ico_relation_single_tick_green_svg"
-                android:hint="@string/hint_organization_name"
+                android:layout_toStartOf="@+id/delete_education"
+                android:hint="@string/school_college_name"
                 android:inputType="textMultiLine"
                 android:textColor="@color/colorAccent"
-                android:textSize="16sp" />
+                android:textSize="16sp"/>
 
             <ImageView
-                android:id="@+id/deleteOrganization"
+                android:id="@+id/delete_education"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:contentDescription="@string/app_name"
                 android:visibility="visible"
-                app:srcCompat="@drawable/ic_delete" />
+                app:srcCompat="@drawable/ic_delete"/>
         </RelativeLayout>
 
         <EditText
-            android:id="@+id/input_designation_name"
+            android:id="@+id/input_field_of_study"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_5dp"
-            android:hint="@string/hint_organization_designation"
-            android:inputType="textPersonName"
+            android:hint="@string/field_of_study"
             android:textColor="@color/colorAccent"
-            android:textSize="16sp" />
+            android:textSize="16sp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -108,7 +72,7 @@
                 android:hint="@string/hint_choose_from_date"
                 android:inputType="datetime"
                 android:textColor="@color/colorAccent"
-                android:textSize="@dimen/text_size_14sp" />
+                android:textSize="@dimen/text_size_14sp"/>
 
             <ImageView
                 android:id="@+id/image_from_date"
@@ -117,7 +81,7 @@
                 android:layout_marginStart="@dimen/margin_5dp"
                 android:contentDescription="@string/str_content_description"
                 android:visibility="visible"
-                app:srcCompat="@drawable/ic_date_picker" />
+                app:srcCompat="@drawable/ic_date_picker"/>
 
             <EditText
                 android:id="@+id/input_to_date"
@@ -129,7 +93,7 @@
                 android:hint="@string/hint_choose_to_date"
                 android:inputType="datetime"
                 android:textColor="@color/colorAccent"
-                android:textSize="@dimen/text_size_14sp" />
+                android:textSize="@dimen/text_size_14sp"/>
 
             <ImageView
                 android:id="@+id/image_to_date"
@@ -138,7 +102,7 @@
                 android:layout_marginStart="@dimen/margin_5dp"
                 android:contentDescription="@string/str_content_description"
                 android:visibility="visible"
-                app:srcCompat="@drawable/ic_date_picker" />
+                app:srcCompat="@drawable/ic_date_picker"/>
 
         </LinearLayout>
 
@@ -147,21 +111,12 @@
             android:layout_height="wrap_content">
 
             <CheckBox
-                android:id="@+id/checkbox_organization"
+                android:id="@+id/checkbox_education"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/margin_5dp"
-                android:text="@string/check_text_current_organization"
-                android:textColor="@color/darkGray" />
-
-            <!--<TextView
-                android:id="@+id/text_label_checkbox"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/margin_tiny"
-                android:layout_marginStart="@dimen/margin_tiny"
-                android:text="@string/str_i_currently_work_here"
-                android:visibility="gone"/>-->
+                android:text="@string/i_currently_study_here"
+                android:textColor="@color/darkGray"/>
 
         </LinearLayout>
 

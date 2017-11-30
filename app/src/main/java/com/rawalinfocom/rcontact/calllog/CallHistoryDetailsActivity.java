@@ -22,6 +22,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.telecom.Call;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextUtils;
@@ -54,6 +55,7 @@ import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
+import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.database.QueryManager;
 import com.rawalinfocom.rcontact.database.TableCommentMaster;
@@ -1819,9 +1821,15 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
             if (MoreObjects.firstNonNull(tempOrganization.get(0).getIsVerify(), 0) ==
                     IntegerConstants.RCP_TYPE_PRIMARY) {
 
-                textOrganization.setText(tempOrganization.get(0).getOrgName());
-                textOrganization.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-                        R.drawable.ico_relation_single_tick_green_svg, 0);
+                textOrganization.setText(Utils.setMultipleTypeface(CallHistoryDetailsActivity.this,
+                        tempOrganization.get(0).getOrgName() + " " + getString(R.string
+                                .im_icon_unverify), 0, (StringUtils.length(tempOrganization.get(0)
+                                .getOrgName()) + 1), ((StringUtils.length(tempOrganization.get(0).
+                                getOrgName()) + 1) + 1)));
+
+//                textOrganization.setText(tempOrganization.get(0).getOrgName());
+//                textOrganization.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+//                        R.drawable.ico_relation_single_tick_green_svg, 0);
 
             } else {
                 textOrganization.setText(tempOrganization.get(0).getOrgName());

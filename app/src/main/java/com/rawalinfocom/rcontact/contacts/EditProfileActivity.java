@@ -6,7 +6,6 @@ import android.annotation.TargetApi;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -90,6 +89,7 @@ import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.TableAadharMaster;
 import com.rawalinfocom.rcontact.database.TableAddressMaster;
 import com.rawalinfocom.rcontact.database.TableCountryMaster;
+import com.rawalinfocom.rcontact.database.TableEducationMaster;
 import com.rawalinfocom.rcontact.database.TableEmailMaster;
 import com.rawalinfocom.rcontact.database.TableEventMaster;
 import com.rawalinfocom.rcontact.database.TableImMaster;
@@ -116,6 +116,7 @@ import com.rawalinfocom.rcontact.helper.pinterest.PinterestTempActivity;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.Address;
 import com.rawalinfocom.rcontact.model.Country;
+import com.rawalinfocom.rcontact.model.Education;
 import com.rawalinfocom.rcontact.model.Email;
 import com.rawalinfocom.rcontact.model.Event;
 import com.rawalinfocom.rcontact.model.ImAccount;
@@ -124,6 +125,7 @@ import com.rawalinfocom.rcontact.model.Organization;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAadharNumber;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
+import com.rawalinfocom.rcontact.model.ProfileDataOperationEducation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEvent;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationImAccount;
@@ -211,6 +213,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     ImageView imageEmailExpand;
     @BindView(R.id.linear_email_details)
     LinearLayout linearEmailDetails;
+    @BindView(R.id.linear_education_details)
+    LinearLayout linearEducationDetails;
     @BindView(R.id.button_email_add_field)
     Button buttonEmailAddField;
     @BindView(R.id.button_email_update)
@@ -364,6 +368,11 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     @BindView(R.id.relative_action_back)
     RelativeLayout relativeActionBack;
 
+    @BindView(R.id.image_education_expand)
+    ImageView imageEducationExpand;
+    @BindView(R.id.linear_education_buttons)
+    LinearLayout linearEducationButtons;
+
     ArrayAdapter<String> spinnerPhoneAdapter, spinnerEmailAdapter, spinnerAddressAdapter,
             spinnerCountryAdapter, spinnerWebsiteAdapter, spinnerEventAdapter;
 
@@ -409,6 +418,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     private ArrayList<Object> arrayListAddressObject;
     private ArrayList<Object> arrayListEventObject;
     private ArrayList<Object> arrayListOrganizationObject;
+    private ArrayList<Object> arrayListEducationObject;
     DatePickerDialog.OnDateSetListener dataPicker;
     EditText editTextEvent;
     //    EditText inputValue;
@@ -417,6 +427,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     boolean isBirthday = false;
     boolean isEvent = false;
     boolean isOrganization = false;
+    boolean isEducation = false;
     boolean isMale = false, isFemale = false;
     boolean isUpdated = false;
     boolean isAdd = true;
@@ -452,7 +463,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     private RequestToken requestToken = null;
     private AccessToken accessToken;
 
-    private String oauth_url, oauth_verifier, profile_url;
+    private String oauth_url, oauth_verifier;
     private Dialog auth_dialog;
     private WebView web;
     private ProgressDialog progress;
@@ -462,7 +473,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     private SocialConnectListAdapter socialConnectListAdapter;
     private String socialId = "";
     int organisationPosition;
-    private TextView organizationDateView;
+    private TextView organizationDateView, educationDateView;
 
     private String[] requiredPermissions = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest
             .permission.WRITE_EXTERNAL_STORAGE};
@@ -1516,6 +1527,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             linearAddressDetails.removeAllViews();
                             addressDetails();
                             break;
+                        case AppConstants.EDUCATION:
+                            linearEducationDetails.removeAllViews();
+                            educationDetails();
+                            break;
                         case AppConstants.GENDER:
                             profileDetails(false, true, false, false);
                             break;
@@ -1831,8 +1846,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
     @OnClick({R.id.button_phone_add_field, R.id.button_email_add_field, R.id
             .button_address_add_field, R.id.button_organization_add_field, R.id
-            .button_website_add_field, R.id.button_social_contact_add_field, R.id
-            .button_event_add_field, R.id.linear_male, R.id.linear_female, R.id.image_profile})
+            .button_education_add_field, R.id.button_website_add_field, R.id
+            .button_social_contact_add_field, R.id.button_event_add_field, R.id.linear_male, R.id
+            .linear_female, R.id.image_profile})
     public void onClick(View view) {
 
         switch (view.getId()) {
@@ -1876,6 +1892,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             // <editor-fold desc="button_organization_add_field">
             case R.id.button_organization_add_field:
                 checkBeforeOrganizationViewAdd();
+                break;
+            //</editor-fold>
+
+            // <editor-fold desc="button_education_add_field">
+            case R.id.button_education_add_field:
+                checkBeforeEducationViewAdd();
                 break;
             //</editor-fold>
 
@@ -2024,8 +2046,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
     @OnClick({R.id.button_name_update, R.id.button_phone_update, R.id.button_email_update, R.id
             .button_website_update, R.id.button_social_contact_update, R.id
-            .button_organization_update, R.id.button_gender_update, R.id.button_event_update, R
-            .id.button_address_update, R.id.button_aadhar_update})
+            .button_organization_update, R
+            .id.button_education_update, R.id.button_gender_update, R.id.button_event_update, R.id
+            .button_address_update, R.id.button_aadhar_update})
     public void onUpdateClick(View view) {
 
         ProfileDataOperation profileDataOperation = new ProfileDataOperation();
@@ -2317,7 +2340,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 break;
             //</editor-fold>
 
-            // TODO : Hardik
             // <editor-fold desc="button_organization_update">
             case R.id.button_organization_update:
                 ArrayList<ProfileDataOperationOrganization> arrayListNewOrganization = new
@@ -2336,7 +2358,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     TextView textEnterpriseOrgId = linearOrganization.findViewById(R.id
                             .text_enterprise_org_id);
                     TextView textOrgName = linearOrganization.findViewById(R.id.text_org_name);
-                    TextView textIsVerified = linearOrganization.findViewById(R.id.text_is_verified);
+                    TextView textIsVerified = linearOrganization.findViewById(R.id
+                            .text_is_verified);
 
                     EditText inputFromDate = linearOrganization.findViewById(R.id.input_from_date);
                     EditText inputToDate = linearOrganization.findViewById(R.id.input_to_date);
@@ -2351,7 +2374,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     organization.setIsCurrent(checkboxOrganization.isChecked() ? 1 : 0);
                     organization.setOrgPublic(IntegerConstants.PRIVACY_EVERYONE);
                     organization.setOrgEntId(textEnterpriseOrgId.getText().toString().trim());
-                    organization.setIsVerify(Integer.parseInt(textIsVerified.getText().toString().trim()));
+                    organization.setIsVerify(Integer.parseInt(textIsVerified.getText().toString()
+                            .trim()));
                     // organization.setOrgLogo(textOrgLogo.getText().toString().trim());
 
                     ColorStateList colorStateList = ColorStateList.valueOf(ContextCompat.getColor
@@ -2453,7 +2477,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     boolean containsVerifiedOrgan = false;
                     if (arrayListNewOrganization.size() > 0) {
                         for (int i = 0; i < arrayListNewOrganization.size(); i++) {
-                            ProfileDataOperationOrganization organization = arrayListNewOrganization.get(i);
+                            ProfileDataOperationOrganization organization =
+                                    arrayListNewOrganization.get(i);
                             if (organization.getIsVerify() == 1) {
                                 //Show popup
                                 containsVerifiedOrgan = true;
@@ -2481,7 +2506,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         containsVerifiedOrgan = false;
                         if (arrayListOrganizationObject.size() > 0) {
                             for (int i = 0; i < arrayListOrganizationObject.size(); i++) {
-                                ProfileDataOperationOrganization organization = (ProfileDataOperationOrganization) arrayListOrganizationObject.get(i);
+                                ProfileDataOperationOrganization organization =
+                                        (ProfileDataOperationOrganization)
+                                                arrayListOrganizationObject
+                                                        .get(i);
                                 if (organization.getIsVerify() == 1) {
                                     //Show popup
                                     containsVerifiedOrgan = true;
@@ -2494,6 +2522,180 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                 profileDataOperation.setPbOrganization(arrayListNewOrganization);
                                 editProfile(profileDataOperation, AppConstants.ORGANIZATION);
                             }
+//                            profileDataOperation.setPbOrganization(arrayListNewOrganization);
+//                            editProfile(profileDataOperation, AppConstants.ORGANIZATION);
+                        } else {
+                            Utils.showErrorSnackBar(this, relativeRootEditProfile, getString(R
+                                    .string.error_no_update));
+                        }
+                    }
+                }
+                break;
+            //</editor-fold>
+
+            // <editor-fold desc="button_education_update">
+            case R.id.button_education_update:
+                ArrayList<ProfileDataOperationEducation> arrayListNewEducation = new ArrayList<>();
+                isValid = true;
+                for (int i = 0; i < linearEducationDetails.getChildCount(); i++) {
+                    ProfileDataOperationEducation education = new
+                            ProfileDataOperationEducation();
+                    View linearEducation = linearEducationDetails.getChildAt(i);
+                    EditText inputSchoolName = linearEducation.findViewById(R.id
+                            .input_school_name);
+                    EditText inputFieldOfStudy = linearEducation.findViewById(R.id
+                            .input_field_of_study);
+
+                    EditText inputFromDate = linearEducation.findViewById(R.id.input_from_date);
+                    EditText inputToDate = linearEducation.findViewById(R.id.input_to_date);
+                    TextView textIsPublic = linearEducation.findViewById(R.id.text_is_public);
+
+                    RelativeLayout relativeRowEditProfile = linearEducation
+                            .findViewById(R.id.relative_row_edit_profile);
+                    CheckBox checkboxEducation = linearEducation.findViewById(R
+                            .id.checkbox_education);
+                    education.setEduName(inputSchoolName.getText().toString().trim());
+                    education.setEduCourse(inputFieldOfStudy.getText().toString().trim());
+                    education.setEduId((String) relativeRowEditProfile.getTag());
+                    education.setIsCurrent(checkboxEducation.isChecked() ? 1 : 0);
+
+                    if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
+                        education.setEduPublic(Integer.parseInt(textIsPublic.getText().toString()
+                                .trim()));
+                    } else {
+                        education.setEduPublic(IntegerConstants.PRIVACY_MY_CONTACT);
+                    }
+
+                    ColorStateList colorStateList = ColorStateList.valueOf(ContextCompat.getColor
+                            (EditProfileActivity
+                                    .this, R.color.colorDarkGray));
+                    ViewCompat.setBackgroundTintList(inputFromDate, colorStateList);
+                    ViewCompat.setBackgroundTintList(inputToDate, colorStateList);
+
+                    if (checkboxEducation.isChecked()) {
+                        ColorStateList colorState = ColorStateList.valueOf(ContextCompat.getColor
+                                (EditProfileActivity.this, R.color.grayishMagenta));
+                        ViewCompat.setBackgroundTintList(inputToDate, colorState);
+                    }
+
+                    if (!StringUtils.isBlank(inputToDate.getText().toString().trim())) {
+                        education.setEduToDate(
+                                Utils.convertDateFormat(inputToDate.getText()
+                                        .toString().trim(), getEventDateFormatForUpdate
+                                        (inputToDate.getText()
+                                                .toString().trim()), "yyyy-MM-dd HH:mm:ss"));
+
+                    } else {
+                        education.setEduToDate(inputToDate.getText().toString().trim());
+                    }
+
+                    education.setEduFromDate(
+                            Utils.convertDateFormat(inputFromDate.getText()
+                                    .toString().trim(), getEventDateFormatForUpdate(inputFromDate
+                                    .getText()
+                                    .toString().trim()), "yyyy-MM-dd HH:mm:ss"));
+
+                    if (!StringUtils.isBlank(education.getEduName()) ||
+                            !StringUtils.isBlank(education.getEduCourse()) ||
+                            !StringUtils.isBlank(education.getEduFromDate())) {
+                        if (!StringUtils.isBlank(education.getEduName())) {
+                            if (StringUtils.isBlank(education.getEduCourse())) {
+                                Utils.showErrorSnackBar(this, relativeRootEditProfile,
+                                        getString(R.string.error_required_edu_course));
+                                isValid = false;
+                            } else if (StringUtils.isBlank(education.getEduFromDate())) {
+                                Utils.showErrorSnackBar(this, relativeRootEditProfile,
+                                        getString(R.string.error_required_edu_from_date));
+
+                                ColorStateList colorStateList1 = ColorStateList.valueOf
+                                        (ContextCompat.getColor(EditProfileActivity
+                                                .this, R.color.colorSnackBarNegative));
+                                ViewCompat.setBackgroundTintList(inputFromDate, colorStateList1);
+
+                                isValid = false;
+                                break;
+                            } else if (!checkboxEducation.isChecked() && StringUtils.isBlank
+                                    (education.getEduToDate())) {
+                                Utils.showErrorSnackBar(this, relativeRootEditProfile,
+                                        getString(R.string.error_required_edu_to_date));
+//                                inputToDate.setHighlightColor(ContextCompat.getColor
+// (EditProfileActivity
+//                                        .this, R.color.colorSnackBarNegative));
+
+                                ColorStateList colorStateList1 = ColorStateList.valueOf
+                                        (ContextCompat.getColor(EditProfileActivity
+                                                .this, R.color.colorSnackBarNegative));
+                                ViewCompat.setBackgroundTintList(inputToDate, colorStateList1);
+
+                                isValid = false;
+                                break;
+                            } else {
+                                arrayListNewEducation.add(education);
+                            }
+                        } else {
+                            Utils.showErrorSnackBar(this, relativeRootEditProfile,
+                                    getString(R.string.error_required_edu_name));
+                            isValid = false;
+                        }
+                    } else {
+                        if (i != 0) {
+                            Utils.showErrorSnackBar(this, relativeRootEditProfile,
+                                    getString(R.string.error_required_edu_name));
+                            isValid = false;
+                        }
+                        break;
+                    }
+                }
+                boolean isEduCurrentSelected = false;
+                for (int i = 0; i < arrayListNewEducation.size(); i++) {
+                    if ((MoreObjects.firstNonNull(arrayListNewEducation.get(i).getIsCurrent(), 0)
+                    ) == 1) {
+                        isEduCurrentSelected = true;
+                        break;
+                    }
+                }
+                if (isValid) {
+                     /*   profileDataOperation.setPbOrganization(arrayListNewOrganization);
+                        editProfile(profileDataOperation, AppConstants.ORGANIZATION);*/
+//                    boolean containsVerifiedOrgan = false;
+                    if (arrayListNewEducation.size() > 0) {
+                        /*for (int i = 0; i < arrayListNewEducation.size(); i++) {
+                            ProfileDataOperationEducation education = arrayListNewEducation.get(i);
+                            if (organization.getIsVerify() == 1) {
+                                //Show popup
+                                containsVerifiedOrgan = true;
+                                showOrganizationPrivacyDialog(EditProfileActivity.this,
+                                        arrayListNewOrganization, profileDataOperation);
+                                break;
+                            }
+                        }*/
+
+//                        if (!containsVerifiedOrgan) {
+
+                        profileDataOperation.setPbEducation(arrayListNewEducation);
+                        editProfile(profileDataOperation, AppConstants.EDUCATION);
+
+//                        }
+
+                    } else {
+//                        containsVerifiedOrgan = false;
+                        if (arrayListEducationObject.size() > 0) {
+                            /*for (int i = 0; i < arrayListEducationObject.size(); i++) {
+                                ProfileDataOperationEducation education =
+                                        (ProfileDataOperationEducation)
+                                                arrayListEducationObject.get(i);
+                                if (organization.getIsVerify() == 1) {
+                                    //Show popup
+                                    containsVerifiedOrgan = true;
+                                    showOrganizationPrivacyDialog(EditProfileActivity.this,
+                                            arrayListNewOrganization, profileDataOperation);
+                                }
+                            }*/
+
+//                            if (!containsVerifiedOrgan) {
+                            profileDataOperation.setPbEducation(arrayListNewEducation);
+                            editProfile(profileDataOperation, AppConstants.EDUCATION);
+//                            }
 //                            profileDataOperation.setPbOrganization(arrayListNewOrganization);
 //                            editProfile(profileDataOperation, AppConstants.ORGANIZATION);
                         } else {
@@ -2772,7 +2974,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         ProfileDataOperationAadharNumber();
                 if (!StringUtils.isEmpty(inputAadharNumber.getText().toString().trim())
                         && inputAadharNumber.getText().toString().trim().length() == 12) {
-                    profileDataOperationAadharNumber.setAadharNumber(inputAadharNumber.getText().toString().trim());
+                    profileDataOperationAadharNumber.setAadharNumber(inputAadharNumber.getText()
+                            .toString().trim());
                     profileDataOperationAadharNumber.setAadharId(1);
                     profileDataOperationAadharNumber.setAadharIsVerified(0);
                     TableAadharMaster tableAadharMaster = new TableAadharMaster
@@ -2805,7 +3008,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
 
     public void showOrganizationPrivacyDialog(final Context mContext,
-                                              final ArrayList<ProfileDataOperationOrganization> organizationArrayList,
+                                              final ArrayList<ProfileDataOperationOrganization>
+                                                      organizationArrayList,
                                               final ProfileDataOperation profileDataOperation) {
         final Dialog dialog = new Dialog(mContext);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -2830,10 +3034,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         btnLeft.setTypeface(Utils.typefaceRegular(mContext));
         btnRight.setTypeface(Utils.typefaceRegular(mContext));
 
-        tvDialogTitle.setText(mContext.getResources().getString(R.string.str_profile_details_privacy));
+        tvDialogTitle.setText(mContext.getResources().getString(R.string
+                .str_profile_details_privacy));
         tvDialogTitle.setTextColor(mContext.getResources().getColor(R.color.colorAccent));
 
-        tvDialogBody.setText(mContext.getResources().getString(R.string.str_organisation_privacy_body));
+        tvDialogBody.setText(mContext.getResources().getString(R.string
+                .str_organisation_privacy_body));
         btnLeft.setText(mContext.getResources().getString(R.string.str_cancel));
         btnRight.setText(mContext.getResources().getString(R.string.action_ok));
 
@@ -2846,7 +3052,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     case R.id.rippleLeft:
                         dialog.dismiss();
                         for (int i = 0; i < organizationArrayList.size(); i++) {
-                            ProfileDataOperationOrganization organization = organizationArrayList.get(i);
+                            ProfileDataOperationOrganization organization = organizationArrayList
+                                    .get(i);
                             if (organization.getIsVerify() == 1) {
                                 organizationArrayList.remove(organization);
                             }
@@ -2879,7 +3086,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
     @OnClick({R.id.button_name_cancel, R.id.button_phone_cancel, R.id.button_email_cancel, R.id
             .button_website_cancel, R.id.button_social_contact_cancel, R.id
-            .button_organization_cancel, R.id.button_gender_cancel, R.id.button_event_cancel, R
+            .button_organization_cancel, R.id
+            .button_education_cancel, R.id.button_gender_cancel, R.id.button_event_cancel, R
             .id.button_address_cancel, R.id.button_aadhar_cancel})
     public void onCancelClick(View view) {
 
@@ -2918,6 +3126,14 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             case R.id.button_email_cancel:
                 linearEmailDetails.removeAllViews();
                 emailDetails();
+                isUpdated = false;
+                break;
+            //</editor-fold>
+
+            // <editor-fold desc="button_education_cancel">
+            case R.id.button_education_cancel:
+                linearEducationDetails.removeAllViews();
+                educationDetails();
                 isUpdated = false;
                 break;
             //</editor-fold>
@@ -2966,6 +3182,59 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
     }
 
+    @OnClick({R.id.relativeName, R.id.relativePhone, R.id.relativeEmail, R.id
+            .relativeOrganization, R.id.relative_education, R.id.relativeWebsite, R.id
+            .relativeAddress, R.id.relativeSocialConnect, R.id.relativeAadharNumber, R.id
+            .relativeEvent, R.id.relativeGender})
+    public void onViewExpand(View view) {
+        switch (view.getId()) {
+            case R.id.relativeName:
+                expandSelectedArea(0);
+                break;
+
+            case R.id.relativePhone:
+                expandSelectedArea(1);
+                break;
+
+            case R.id.relativeEmail:
+                expandSelectedArea(2);
+                break;
+
+            case R.id.relativeOrganization:
+                expandSelectedArea(3);
+                break;
+
+            case R.id.relative_education:
+                expandSelectedArea(4);
+                break;
+
+            case R.id.relativeWebsite:
+                expandSelectedArea(5);
+                break;
+
+            case R.id.relativeAddress:
+                expandSelectedArea(6);
+                break;
+
+            case R.id.relativeSocialConnect:
+                expandSelectedArea(7);
+                break;
+
+            case R.id.relativeAadharNumber:
+                expandSelectedArea(8);
+                break;
+
+            case R.id.relativeEvent:
+                expandSelectedArea(9);
+                break;
+
+            case R.id.relativeGender:
+                expandSelectedArea(10);
+                break;
+        }
+    }
+
+
     @Override
     public void onComplete(RippleView rippleView) {
         switch (rippleView.getId()) {
@@ -3007,6 +3276,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         phoneNumberDetails();
         emailDetails();
         organizationDetails();
+        educationDetails();
         websiteDetails();
         if (showAddress) {
             addressDetails();
@@ -3015,8 +3285,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         eventDetails();
         genderDetails();
         clickEvents();
-        firstExpandableView();
-        expandCollapse();
+        expandSelectedArea(0);
 
         inputFirstName.addTextChangedListener(valueTextWatcher);
         inputLastName.addTextChangedListener(valueTextWatcher);
@@ -3091,507 +3360,34 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         textToolbarTitle.setText(getResources().getString(R.string.myprofile_toolbar_title));
     }
 
-    private void firstExpandableView() {
-        imageNameExpand.setImageResource(R.drawable.ic_arrow_up);
-        linearName.setVisibility(View.VISIBLE);
-        collapseAll();
-    }
+    private void expandSelectedArea(int position) {
 
-    private void expandCollapse() {
-       /* imageNameExpand.setImageResource(R.drawable.ic_arrow_up);
-        linearName.setVisibility(View.VISIBLE);*/
+        ImageView[] imageViews = {imageNameExpand, imagePhoneExpand, imageEmailExpand,
+                imageOrganizationExpand, imageEducationExpand, imageWebsiteExpand,
+                imageAddressExpand, imageSocialContactExpand, imageAadharExpand,
+                imageEventExpand, imageGenderExpand};
 
-        relativeName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        View[] detailLayouts = {relativeNameDetails, linearPhoneDetails, linearEmailDetails,
+                linearOrganizationDetails, linearEducationDetails, linearWebsiteDetails,
+                linearAddressDetails, linearSocialContactDetails, linearAadharDetails,
+                linearEventDetails, linearGenderDetails};
 
-                /*if(isExpanded){
-                    isExpanded = false;
-                    imageNameExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                    relativeNameDetails.setVisibility(View.GONE);
-                    linearNameBottom.setVisibility(View.GONE);
+        View[] buttonLayouts = {linearNameBottom, linearPhoneButtons, linearEmailButtons,
+                linearOrganizationButtons, linearEducationButtons, linearWebsiteButtons,
+                linearAddressButtons, linearSocialButtons, linearAadharButtons,
+                linearEventButtons, linearGenderButtons};
 
-                }else{*/
-                imageNameExpand.setImageResource(R.drawable.ic_arrow_up);
-                imageOrganizationExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imagePhoneExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageEmailExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageWebsiteExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageAddressExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageSocialContactExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageEventExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageGenderExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                linearName.setVisibility(View.VISIBLE);
-                relativeNameDetails.setVisibility(View.VISIBLE);
-                linearNameBottom.setVisibility(View.VISIBLE);
-                collapseAll();
-//                    isExpanded = true;
-//                }
-
+        for (int i = 0; i < imageViews.length; i++) {
+            if (i == position) {
+                imageViews[i].setImageResource(R.drawable.ic_arrow_up);
+                detailLayouts[i].setVisibility(View.VISIBLE);
+                buttonLayouts[i].setVisibility(View.VISIBLE);
+            } else {
+                imageViews[i].setImageResource(R.drawable.ic_arrow_bottom);
+                detailLayouts[i].setVisibility(View.GONE);
+                buttonLayouts[i].setVisibility(View.GONE);
             }
-        });
-
-        relativeOrganization.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                /*if(isExpanded){
-                    isExpanded = false;
-                    imageOrganizationExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                    linearOrganizationDetails.setVisibility(View.GONE);
-                    linearOrganizationButtons.setVisibility(View.GONE);
-
-                }else{*/
-                imageOrganizationExpand.setImageResource(R.drawable.ic_arrow_up);
-                imageNameExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imagePhoneExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageEmailExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageWebsiteExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageAddressExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageAadharExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageSocialContactExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageEventExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageGenderExpand.setImageResource(R.drawable.ic_arrow_bottom);
-//                linearName.setVisibility(View.GONE);
-                relativeNameDetails.setVisibility(View.GONE);
-                linearNameBottom.setVisibility(View.GONE);
-                linearOrganizationDetails.setVisibility(View.VISIBLE);
-                linearOrganizationButtons.setVisibility(View.VISIBLE);
-                linearPhoneDetails.setVisibility(View.GONE);
-                linearPhoneButtons.setVisibility(View.GONE);
-                linearEmailDetails.setVisibility(View.GONE);
-                linearEmailButtons.setVisibility(View.GONE);
-                linearWebsiteDetails.setVisibility(View.GONE);
-                linearWebsiteButtons.setVisibility(View.GONE);
-                linearAddressDetails.setVisibility(View.GONE);
-                linearAddressButtons.setVisibility(View.GONE);
-                linearAadharDetails.setVisibility(View.GONE);
-                linearAadharButtons.setVisibility(View.GONE);
-                linearSocialContactDetails.setVisibility(View.GONE);
-                linearSocialButtons.setVisibility(View.GONE);
-                linearEventDetails.setVisibility(View.GONE);
-                linearEventButtons.setVisibility(View.GONE);
-                linearGenderDetails.setVisibility(View.GONE);
-                linearGenderButtons.setVisibility(View.GONE);
-//                    isExpanded =true;
-//                }
-
-
-            }
-        });
-
-        relativePhone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                /*if(isExpanded){
-                    isExpanded = false;
-                    imagePhoneExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                    linearPhoneDetails.setVisibility(View.GONE);
-                    linearPhoneButtons.setVisibility(View.GONE);
-
-                }else{*/
-                imageOrganizationExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageNameExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageEmailExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageWebsiteExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageAddressExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageAadharExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageSocialContactExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageEventExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageGenderExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imagePhoneExpand.setImageResource(R.drawable.ic_arrow_up);
-//                linearName.setVisibility(View.GONE);
-                relativeNameDetails.setVisibility(View.GONE);
-                linearNameBottom.setVisibility(View.GONE);
-                linearOrganizationDetails.setVisibility(View.GONE);
-                linearOrganizationButtons.setVisibility(View.GONE);
-                linearPhoneDetails.setVisibility(View.VISIBLE);
-                linearPhoneButtons.setVisibility(View.VISIBLE);
-                linearEmailDetails.setVisibility(View.GONE);
-                linearEmailButtons.setVisibility(View.GONE);
-                linearWebsiteDetails.setVisibility(View.GONE);
-                linearWebsiteButtons.setVisibility(View.GONE);
-                linearAddressDetails.setVisibility(View.GONE);
-                linearAddressButtons.setVisibility(View.GONE);
-                linearAadharDetails.setVisibility(View.GONE);
-                linearAadharButtons.setVisibility(View.GONE);
-                linearSocialContactDetails.setVisibility(View.GONE);
-                linearSocialButtons.setVisibility(View.GONE);
-                linearEventDetails.setVisibility(View.GONE);
-                linearEventButtons.setVisibility(View.GONE);
-                linearGenderDetails.setVisibility(View.GONE);
-                linearGenderButtons.setVisibility(View.GONE);
-//                    isExpanded = true;
-//                }
-
-            }
-        });
-
-        relativeEmail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                /*if(isExpanded){
-                    isExpanded = false;
-                    imageEmailExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                    linearEmailDetails.setVisibility(View.GONE);
-                    linearEmailButtons.setVisibility(View.GONE);
-
-                }else {*/
-                imageOrganizationExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageNameExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imagePhoneExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageWebsiteExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageAddressExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageAadharExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageSocialContactExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageEventExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageGenderExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageEmailExpand.setImageResource(R.drawable.ic_arrow_up);
-//                linearName.setVisibility(View.GONE);
-                relativeNameDetails.setVisibility(View.GONE);
-                linearNameBottom.setVisibility(View.GONE);
-                linearOrganizationDetails.setVisibility(View.GONE);
-                linearOrganizationButtons.setVisibility(View.GONE);
-                linearPhoneDetails.setVisibility(View.GONE);
-                linearPhoneButtons.setVisibility(View.GONE);
-                linearEmailDetails.setVisibility(View.VISIBLE);
-                linearEmailButtons.setVisibility(View.VISIBLE);
-                linearWebsiteDetails.setVisibility(View.GONE);
-                linearWebsiteButtons.setVisibility(View.GONE);
-                linearAddressDetails.setVisibility(View.GONE);
-                linearAddressButtons.setVisibility(View.GONE);
-                linearAadharDetails.setVisibility(View.GONE);
-                linearAadharButtons.setVisibility(View.GONE);
-                linearSocialContactDetails.setVisibility(View.GONE);
-                linearSocialButtons.setVisibility(View.GONE);
-                linearEventDetails.setVisibility(View.GONE);
-                linearEventButtons.setVisibility(View.GONE);
-                linearGenderDetails.setVisibility(View.GONE);
-                linearGenderButtons.setVisibility(View.GONE);
-//                    isExpanded = true;
-//                }
-
-            }
-        });
-
-        relativeWebsite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                /*if(isExpanded){
-                    isExpanded = false;
-                    imageWebsiteExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                    linearWebsiteDetails.setVisibility(View.GONE);
-                    linearWebsiteButtons.setVisibility(View.GONE);
-                }else{*/
-                imageWebsiteExpand.setImageResource(R.drawable.ic_arrow_up);
-                imageOrganizationExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imagePhoneExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageEmailExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageAddressExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageAadharExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageSocialContactExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageEventExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageGenderExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageNameExpand.setImageResource(R.drawable.ic_arrow_bottom);
-//                linearName.setVisibility(View.GONE);
-                relativeNameDetails.setVisibility(View.GONE);
-                linearNameBottom.setVisibility(View.GONE);
-                linearOrganizationDetails.setVisibility(View.GONE);
-                linearOrganizationButtons.setVisibility(View.GONE);
-                linearPhoneDetails.setVisibility(View.GONE);
-                linearPhoneButtons.setVisibility(View.GONE);
-                linearEmailDetails.setVisibility(View.GONE);
-                linearEmailButtons.setVisibility(View.GONE);
-                linearWebsiteDetails.setVisibility(View.VISIBLE);
-                linearWebsiteButtons.setVisibility(View.VISIBLE);
-                linearAddressDetails.setVisibility(View.GONE);
-                linearAddressButtons.setVisibility(View.GONE);
-                linearAadharDetails.setVisibility(View.GONE);
-                linearAadharButtons.setVisibility(View.GONE);
-                linearSocialContactDetails.setVisibility(View.GONE);
-                linearSocialButtons.setVisibility(View.GONE);
-                linearEventDetails.setVisibility(View.GONE);
-                linearEventButtons.setVisibility(View.GONE);
-                linearGenderDetails.setVisibility(View.GONE);
-                linearGenderButtons.setVisibility(View.GONE);
-//                    isExpanded =  true;
-//                }
-
-            }
-        });
-
-        relativeAddress.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                /*if(isExpanded){
-                    isExpanded = false;
-                    imageAddressExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                    linearAddressDetails.setVisibility(View.GONE);
-                    linearAddressButtons.setVisibility(View.GONE);
-                }else{*/
-                imageOrganizationExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageNameExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imagePhoneExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageEmailExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageWebsiteExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageAadharExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageSocialContactExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageEventExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageGenderExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageAddressExpand.setImageResource(R.drawable.ic_arrow_up);
-//                linearName.setVisibility(View.GONE);
-                relativeNameDetails.setVisibility(View.GONE);
-                linearNameBottom.setVisibility(View.GONE);
-                linearOrganizationDetails.setVisibility(View.GONE);
-                linearOrganizationButtons.setVisibility(View.GONE);
-                linearPhoneDetails.setVisibility(View.GONE);
-                linearPhoneButtons.setVisibility(View.GONE);
-                linearEmailDetails.setVisibility(View.GONE);
-                linearEmailButtons.setVisibility(View.GONE);
-                linearWebsiteDetails.setVisibility(View.GONE);
-                linearWebsiteButtons.setVisibility(View.GONE);
-                linearAddressDetails.setVisibility(View.VISIBLE);
-                linearAddressButtons.setVisibility(View.VISIBLE);
-                linearAadharDetails.setVisibility(View.GONE);
-                linearAadharButtons.setVisibility(View.GONE);
-                linearSocialContactDetails.setVisibility(View.GONE);
-                linearSocialButtons.setVisibility(View.GONE);
-                linearEventDetails.setVisibility(View.GONE);
-                linearEventButtons.setVisibility(View.GONE);
-                linearGenderDetails.setVisibility(View.GONE);
-                linearGenderButtons.setVisibility(View.GONE);
-//                    isExpanded = true;
-//                }
-
-            }
-        });
-
-        relativeAadharNumber.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                /*if(isExpanded){
-                    isExpanded = false;
-                    imageAddressExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                    linearAddressDetails.setVisibility(View.GONE);
-                    linearAddressButtons.setVisibility(View.GONE);
-                }else{*/
-                imageOrganizationExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageNameExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imagePhoneExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageEmailExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageWebsiteExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageSocialContactExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageEventExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageGenderExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageAddressExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageAadharExpand.setImageResource(R.drawable.ic_arrow_up);
-//                linearName.setVisibility(View.GONE);
-                relativeNameDetails.setVisibility(View.GONE);
-                linearNameBottom.setVisibility(View.GONE);
-                linearOrganizationDetails.setVisibility(View.GONE);
-                linearOrganizationButtons.setVisibility(View.GONE);
-                linearPhoneDetails.setVisibility(View.GONE);
-                linearPhoneButtons.setVisibility(View.GONE);
-                linearEmailDetails.setVisibility(View.GONE);
-                linearEmailButtons.setVisibility(View.GONE);
-                linearWebsiteDetails.setVisibility(View.GONE);
-                linearWebsiteButtons.setVisibility(View.GONE);
-                linearAddressDetails.setVisibility(View.GONE);
-                linearAddressButtons.setVisibility(View.GONE);
-                linearAadharDetails.setVisibility(View.VISIBLE);
-                linearAadharButtons.setVisibility(View.VISIBLE);
-                linearSocialContactDetails.setVisibility(View.GONE);
-                linearSocialButtons.setVisibility(View.GONE);
-                linearEventDetails.setVisibility(View.GONE);
-                linearEventButtons.setVisibility(View.GONE);
-                linearGenderDetails.setVisibility(View.GONE);
-                linearGenderButtons.setVisibility(View.GONE);
-//                    isExpanded = true;
-//                }
-
-            }
-        });
-
-
-        relativeSocialConnect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                /*if(isExpanded){
-                    isExpanded = false;
-                    imageSocialContactExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                    linearSocialContactDetails.setVisibility(View.GONE);
-                    linearSocialButtons.setVisibility(View.GONE);
-                }else{*/
-                imageOrganizationExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageNameExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imagePhoneExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageEmailExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageWebsiteExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageAddressExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageAadharExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageEventExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageGenderExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageSocialContactExpand.setImageResource(R.drawable.ic_arrow_up);
-//                linearName.setVisibility(View.GONE);
-                relativeNameDetails.setVisibility(View.GONE);
-                linearNameBottom.setVisibility(View.GONE);
-                linearOrganizationDetails.setVisibility(View.GONE);
-                linearOrganizationButtons.setVisibility(View.GONE);
-                linearPhoneDetails.setVisibility(View.GONE);
-                linearPhoneButtons.setVisibility(View.GONE);
-                linearEmailDetails.setVisibility(View.GONE);
-                linearEmailButtons.setVisibility(View.GONE);
-                linearWebsiteDetails.setVisibility(View.GONE);
-                linearWebsiteButtons.setVisibility(View.GONE);
-                linearAddressDetails.setVisibility(View.GONE);
-                linearAddressButtons.setVisibility(View.GONE);
-                linearAadharDetails.setVisibility(View.GONE);
-                linearAadharButtons.setVisibility(View.GONE);
-                linearSocialContactDetails.setVisibility(View.VISIBLE);
-                linearSocialButtons.setVisibility(View.VISIBLE);
-                linearEventDetails.setVisibility(View.GONE);
-                linearEventButtons.setVisibility(View.GONE);
-                linearGenderDetails.setVisibility(View.GONE);
-                linearGenderButtons.setVisibility(View.GONE);
-//                    isExpanded = true;
-//                }
-
-            }
-        });
-
-        relativeEvent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                /*if(isExpanded){
-                    isExpanded = false;
-                    imageEventExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                    linearEventDetails.setVisibility(View.GONE);
-                    linearEventButtons.setVisibility(View.GONE);
-                }else{*/
-                imageOrganizationExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageNameExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imagePhoneExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageEmailExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageWebsiteExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageAddressExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageAadharExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageSocialContactExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageGenderExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageEventExpand.setImageResource(R.drawable.ic_arrow_up);
-//                linearName.setVisibility(View.GONE);
-                relativeNameDetails.setVisibility(View.GONE);
-                linearNameBottom.setVisibility(View.GONE);
-                linearOrganizationDetails.setVisibility(View.GONE);
-                linearOrganizationButtons.setVisibility(View.GONE);
-                linearPhoneDetails.setVisibility(View.GONE);
-                linearPhoneButtons.setVisibility(View.GONE);
-                linearEmailDetails.setVisibility(View.GONE);
-                linearEmailButtons.setVisibility(View.GONE);
-                linearWebsiteDetails.setVisibility(View.GONE);
-                linearWebsiteButtons.setVisibility(View.GONE);
-                linearAddressDetails.setVisibility(View.GONE);
-                linearAddressButtons.setVisibility(View.GONE);
-                linearAadharDetails.setVisibility(View.GONE);
-                linearAadharButtons.setVisibility(View.GONE);
-                linearSocialContactDetails.setVisibility(View.GONE);
-                linearSocialButtons.setVisibility(View.GONE);
-                linearEventDetails.setVisibility(View.VISIBLE);
-                linearEventButtons.setVisibility(View.VISIBLE);
-                linearGenderDetails.setVisibility(View.GONE);
-                linearGenderButtons.setVisibility(View.GONE);
-//                    isExpanded = true;
-//                }
-
-            }
-        });
-
-        relativeGender.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                /*if(isExpanded){
-                    isExpanded = false;
-                    imageGenderExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                    linearGenderDetails.setVisibility(View.GONE);
-                    linearGenderButtons.setVisibility(View.GONE);
-                }else{*/
-                imageOrganizationExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageNameExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imagePhoneExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageEmailExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageWebsiteExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageAddressExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageAadharExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageSocialContactExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageEventExpand.setImageResource(R.drawable.ic_arrow_bottom);
-                imageGenderExpand.setImageResource(R.drawable.ic_arrow_up);
-//                linearName.setVisibility(View.GONE);
-                relativeNameDetails.setVisibility(View.GONE);
-                linearNameBottom.setVisibility(View.GONE);
-                linearOrganizationDetails.setVisibility(View.GONE);
-                linearOrganizationButtons.setVisibility(View.GONE);
-                linearPhoneDetails.setVisibility(View.GONE);
-                linearPhoneButtons.setVisibility(View.GONE);
-                linearEmailDetails.setVisibility(View.GONE);
-                linearEmailButtons.setVisibility(View.GONE);
-                linearWebsiteDetails.setVisibility(View.GONE);
-                linearWebsiteButtons.setVisibility(View.GONE);
-                linearAddressDetails.setVisibility(View.GONE);
-                linearAddressButtons.setVisibility(View.GONE);
-                linearAadharDetails.setVisibility(View.GONE);
-                linearAadharButtons.setVisibility(View.GONE);
-                linearSocialContactDetails.setVisibility(View.GONE);
-                linearSocialButtons.setVisibility(View.GONE);
-                linearEventDetails.setVisibility(View.GONE);
-                linearEventButtons.setVisibility(View.GONE);
-                linearGenderDetails.setVisibility(View.VISIBLE);
-                linearGenderButtons.setVisibility(View.VISIBLE);
-//                    isExpanded = true;
-//                }
-
-            }
-
-        });
-
-    }
-
-    private void collapseAll() {
-//        linearName.setVisibility(View.GONE);
-        imageOrganizationExpand.setImageResource(R.drawable.ic_arrow_bottom);
-        imagePhoneExpand.setImageResource(R.drawable.ic_arrow_bottom);
-        imageEmailExpand.setImageResource(R.drawable.ic_arrow_bottom);
-        imageWebsiteExpand.setImageResource(R.drawable.ic_arrow_bottom);
-        imageAddressExpand.setImageResource(R.drawable.ic_arrow_bottom);
-        imageSocialContactExpand.setImageResource(R.drawable.ic_arrow_bottom);
-        imageEventExpand.setImageResource(R.drawable.ic_arrow_bottom);
-        imageGenderExpand.setImageResource(R.drawable.ic_arrow_bottom);
-        imageAadharExpand.setImageResource(R.drawable.ic_arrow_bottom);
-
-        linearOrganizationDetails.setVisibility(View.GONE);
-        linearOrganizationButtons.setVisibility(View.GONE);
-        linearPhoneDetails.setVisibility(View.GONE);
-        linearPhoneButtons.setVisibility(View.GONE);
-        linearEmailDetails.setVisibility(View.GONE);
-        linearEmailButtons.setVisibility(View.GONE);
-        linearWebsiteDetails.setVisibility(View.GONE);
-        linearWebsiteButtons.setVisibility(View.GONE);
-        linearAddressDetails.setVisibility(View.GONE);
-        linearAddressButtons.setVisibility(View.GONE);
-        linearSocialContactDetails.setVisibility(View.GONE);
-        linearSocialButtons.setVisibility(View.GONE);
-        linearEventDetails.setVisibility(View.GONE);
-        linearEventButtons.setVisibility(View.GONE);
-        linearGenderDetails.setVisibility(View.GONE);
-        linearGenderButtons.setVisibility(View.GONE);
-        linearAadharDetails.setVisibility(View.GONE);
-        linearAadharButtons.setVisibility(View.GONE);
+        }
     }
 
     private void clickEvents() {
@@ -3613,6 +3409,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     updateEditTextEvent(myCalendar, "event");
                 } else if (isOrganization) {
                     updateEditTextEvent(myCalendar, "organization");
+                } else if (isEducation) {
+                    updateEditTextEvent(myCalendar, "education");
                 } else {
                     updateAnniversaryEditText(myCalendar);
                 }
@@ -3695,6 +3493,14 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 //        updateEditTextEvent(myCalendar);
     }
 
+    private void updateEducationText(TextView textView) {
+        final Calendar myCalendar = Calendar.getInstance();
+        educationDateView = textView;
+        new DatePickerDialog(EditProfileActivity.this, dataPicker, myCalendar
+                .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+    }
+
     @SuppressLint("SimpleDateFormat")
     private void updateEditTextEvent(Calendar myCalendar, String type) {
 
@@ -3716,12 +3522,17 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             if (!TextUtils.isEmpty(yourDate))
                 editTextEvent.setText(yourDate);
             isEvent = false;
-        } else {
+        } else if (type.equalsIgnoreCase("organization")) {
             if (!TextUtils.isEmpty(yourDate))
                 organizationDateView.setText(yourDate);
             isOrganization = false;
+        } else if (type.equalsIgnoreCase("education")) {
+            if (!TextUtils.isEmpty(yourDate))
+                educationDateView.setText(yourDate);
+            isEducation = false;
         }
     }
+
 
     private void genderDetails() {
         textFemaleIcon.setTypeface(Utils.typefaceIcons(this));
@@ -4039,6 +3850,57 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         }
     }
 
+    private void educationDetails() {
+        TableEducationMaster tableEducationMaster = new TableEducationMaster(databaseHandler);
+
+        ArrayList<Education> arrayListEducation = tableEducationMaster
+                .getEducationsFromPmId(Integer.parseInt(getUserPmId()));
+        arrayListEducationObject = new ArrayList<>();
+        for (int i = 0; i < arrayListEducation.size(); i++) {
+
+            String formattedFromDate = "", formattedToDate = "";
+
+            ProfileDataOperationEducation education = new ProfileDataOperationEducation();
+            education.setEduName(arrayListEducation.get(i).getEdmSchoolCollegeName());
+
+            if (!StringUtils.isEmpty(arrayListEducation.get(i).getEdmEducationFromDate())) {
+                formattedFromDate = Utils.convertDateFormat(arrayListEducation.get(i)
+                                .getEdmEducationFromDate(),
+                        "yyyy-MM-dd", getEventDateFormat(arrayListEducation.get(i)
+                                .getEdmEducationFromDate()));
+            }
+            if (!StringUtils.isEmpty(arrayListEducation.get(i).getEdmEducationToDate())) {
+                formattedToDate = Utils.convertDateFormat(arrayListEducation.get(i)
+                                .getEdmEducationToDate(),
+                        "yyyy-MM-dd", getEventDateFormat(arrayListEducation.get(i)
+                                .getEdmEducationToDate()));
+            }
+
+            education.setEduFromDate(formattedFromDate);
+            education.setEduToDate(formattedToDate);
+            education.setEduCourse(arrayListEducation.get(i).getEdmCourse());
+            education.setEduId(arrayListEducation.get(i).getEdmRecordIndexId());
+            education.setIsCurrent(arrayListEducation.get(i).getEdmEducationIsCurrent());
+            education.setEduPublic(Integer.valueOf(arrayListEducation.get(i).getEdmEducationPrivacy()));
+
+            arrayListEducationObject.add(education);
+        }
+
+        if (arrayListEducationObject.size() > 0) {
+            for (int i = 0; i < arrayListEducationObject.size(); i++) {
+                addEducationView(i, arrayListEducationObject.get(i));
+            }
+            EditText inputSchoolName = linearEducationDetails.findViewById(R.id
+                    .input_school_name);
+            EditText inputFieldOfStudy = linearEducationDetails.findViewById(R.id
+                    .input_field_of_study);
+            inputSchoolName.addTextChangedListener(valueTextWatcher);
+            inputFieldOfStudy.addTextChangedListener(valueTextWatcher);
+        } else {
+            addEducationView((arrayListEducationObject.size()), null);
+        }
+    }
+
     private void addressDetails() {
         TableAddressMaster tableAddressMaster = new TableAddressMaster(databaseHandler);
 
@@ -4144,11 +4006,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
             if (StringUtils.length(StringUtils.trimToEmpty(inputCompanyName.getText()
                     .toString())) < 1 || StringUtils.length(StringUtils.trimToEmpty
-                    (inputDesignationName.getText()
-                            .toString())) < 1 || StringUtils.length(StringUtils.trimToEmpty
-                    (inputFromDate
-                            .getText()
-                            .toString())) < 1) {
+                    (inputDesignationName.getText().toString())) < 1 || StringUtils.length
+                    (StringUtils.trimToEmpty(inputFromDate.getText().toString())) < 1) {
                 if (isChecked && StringUtils.length(StringUtils.trimToEmpty(inputToDate.getText()
                         .toString())) < 1) {
                     toAdd = false;
@@ -4168,7 +4027,41 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         }
     }
 
-    // TODO : Hardik
+    private void checkBeforeEducationViewAdd() {
+        boolean toAdd = false, isChecked;
+        for (int i = 0; i < linearEducationDetails.getChildCount(); i++) {
+            View linearView = linearEducationDetails.getChildAt(i);
+            EditText inputSchoolName = linearView.findViewById(R.id.input_school_name);
+            EditText inputFieldOfStudy = linearView.findViewById(R.id.input_field_of_study);
+            CheckBox checkboxEducation = linearView.findViewById(R.id.checkbox_education);
+            EditText inputFromDate = linearView.findViewById(R.id.input_from_date);
+            EditText inputToDate = linearView.findViewById(R.id.input_to_date);
+
+            isChecked = checkboxEducation.isChecked();
+
+            if (StringUtils.length(StringUtils.trimToEmpty(inputSchoolName.getText()
+                    .toString())) < 1 || StringUtils.length(StringUtils.trimToEmpty
+                    (inputFieldOfStudy.getText().toString())) < 1 || StringUtils.length
+                    (StringUtils.trimToEmpty(inputFromDate.getText().toString())) < 1) {
+                if (isChecked && StringUtils.length(StringUtils.trimToEmpty(inputToDate.getText()
+                        .toString())) < 1) {
+                    toAdd = false;
+                    break;
+                } else {
+                    toAdd = false;
+                    break;
+                }
+            } else {
+                toAdd = true;
+            }
+        }
+        if (toAdd) {
+            isUpdated = true;
+//            addOrganizationDetailsToList();
+            addEducationView((arrayListOrganizationObject.size()), null);
+        }
+    }
+
     private void addOrganizationDetailsToList() {
 
         arrayListOrganizationObject.clear();
@@ -4965,6 +4858,142 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         });
 
         linearOrganizationDetails.addView(view);
+    }
+
+    private void addEducationView(int position, Object detailObject) {
+        View view = LayoutInflater.from(this).inflate(R.layout
+                .list_item_edit_profile_education, null);
+        ImageView deleteEducation = view.findViewById(R.id.delete_education);
+        final EditText inputSchoolName = view.findViewById(R.id.input_school_name);
+        final EditText inputFieldOfStudy = view.findViewById(R.id.input_field_of_study);
+        final CheckBox checkboxEducation = view.findViewById(R.id.checkbox_education);
+        final TextView textIsPublic = view.findViewById(R.id.text_is_public);
+
+        final EditText inputFromDate = view.findViewById(R.id.input_from_date);
+        final EditText inputToDate = view.findViewById(R.id.input_to_date);
+
+        inputFromDate.setHint(R.string.hint_choose_from_date);
+        inputFromDate.setFocusable(false);
+
+        inputToDate.setHint(R.string.hint_choose_to_date);
+        inputToDate.setFocusable(false);
+
+        final ImageView imageFromDate = view.findViewById(R.id.image_from_date);
+        final ImageView imageToDate = view.findViewById(R.id.image_to_date);
+
+        checkboxEducation.setTag(linearEducationDetails.getChildCount());
+
+        final RelativeLayout relativeRowEditProfile = view.findViewById(R.id
+                .relative_row_edit_profile);
+
+        inputSchoolName.setInputType(InputType.TYPE_CLASS_TEXT | InputType
+                .TYPE_TEXT_FLAG_CAP_WORDS);
+        inputFieldOfStudy.setInputType(InputType.TYPE_CLASS_TEXT | InputType
+                .TYPE_TEXT_FLAG_CAP_WORDS);
+
+        inputSchoolName.setTypeface(Utils.typefaceRegular(this));
+        inputFieldOfStudy.setTypeface(Utils.typefaceRegular(this));
+        inputFromDate.setTypeface(Utils.typefaceRegular(this));
+        inputToDate.setTypeface(Utils.typefaceRegular(this));
+
+        ProfileDataOperationEducation education = (ProfileDataOperationEducation) detailObject;
+
+        if (detailObject != null) {
+
+            relativeRowEditProfile.setTag(education.getEduId());
+            inputSchoolName.setText(education.getEduName());
+            inputFieldOfStudy.setText(education.getEduCourse());
+            textIsPublic.setText(String.valueOf(education.getEduPublic()));
+            checkboxEducation.setChecked(education.getIsCurrent() == 1);
+
+            if (education.getIsCurrent() == 1) {
+                inputToDate.setEnabled(false);
+                imageToDate.setEnabled(false);
+                inputFromDate.setText(education.getEduFromDate());
+            } else {
+                inputFromDate.setText(education.getEduFromDate());
+                inputToDate.setText(education.getEduToDate());
+            }
+
+        } else {
+            checkboxEducation.setChecked(true);
+            for (int i = 0; i < linearEducationDetails.getChildCount(); i++) {
+                CheckBox checkbox = linearEducationDetails.getChildAt(i).findViewById(R.id
+                        .checkbox_education);
+                if (checkbox.isChecked()) {
+                    checkboxEducation.setChecked(false);
+                    break;
+                }
+            }
+            inputToDate.setEnabled(false);
+            imageToDate.setEnabled(false);
+        }
+
+        checkboxEducation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    for (int i = 0; i < linearEducationDetails.getChildCount(); i++) {
+                        View view = linearEducationDetails.getChildAt(i);
+                        CheckBox checkbox = view.findViewById(R.id.checkbox_education);
+                        checkbox.setTag(i);
+                        if (checkbox != null) {
+
+                            inputToDate.setEnabled(false);
+                            imageToDate.setEnabled(false);
+
+                            inputToDate.setText("");
+                            inputToDate.setHint(R.string.hint_choose_to_date);
+
+                            if (!buttonView.getTag().toString().equalsIgnoreCase(checkbox.getTag()
+                                    .toString())) {
+                                checkbox.setChecked(false);
+                            }
+                        }
+                    }
+
+                } else {
+                    inputToDate.setEnabled(true);
+                    imageToDate.setEnabled(true);
+                }
+            }
+        });
+
+        deleteEducation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isUpdated = true;
+                if (linearEducationDetails.getChildCount() > 1) {
+                    linearEducationDetails.removeView(relativeRowEditProfile);
+//                    addOrganizationDetailsToList();
+                } else if (linearEducationDetails.getChildCount() == 1) {
+                    inputSchoolName.getText().clear();
+                    inputFieldOfStudy.getText().clear();
+                    inputFromDate.getText().clear();
+                    inputToDate.getText().clear();
+                    checkboxEducation.setChecked(true);
+//                    arrayListOrganizationObject.clear();
+                }
+            }
+        });
+
+        imageFromDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isEducation = true;
+                updateEducationText(inputFromDate);
+            }
+        });
+
+        imageToDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isEducation = true;
+                updateEducationText(inputToDate);
+            }
+        });
+
+        linearEducationDetails.addView(view);
     }
 
     @SuppressLint("InflateParams")
@@ -5956,7 +5985,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         organization.setOmOrganizationType(arrayListOrganization.get(i)
                                 .getOrgIndustryType());
                         organization.setOmOrganizationLogo(arrayListOrganization.get(i)
-                                .getEomLogoPath() + "/" + arrayListOrganization.get(i).getEomLogoName());
+                                .getEomLogoPath() + "/" + arrayListOrganization.get(i)
+                                .getEomLogoName());
                     } else {
                         organization.setOmOrganizationType("");
                         organization.setOmOrganizationLogo("");
@@ -5975,6 +6005,35 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             }
 
             tableOrganizationMaster.addArrayOrganization(organizationList);
+        }
+        //</editor-fold>
+
+        // <editor-fold desc="Education Master">
+
+        TableEducationMaster tableEducationMaster = new TableEducationMaster(databaseHandler);
+
+        // Remove Existing Number
+        tableEducationMaster.deleteEducation(getUserPmId());
+
+        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEducation())) {
+            ArrayList<ProfileDataOperationEducation> arrayListEducation = profileDetail
+                    .getPbEducation();
+            ArrayList<Education> educationList = new ArrayList<>();
+            for (int j = 0; j < arrayListEducation.size(); j++) {
+                Education education = new Education();
+                education.setEdmRecordIndexId(arrayListEducation.get(j).getEduId());
+                education.setEdmSchoolCollegeName(arrayListEducation.get(j).getEduName());
+                education.setEdmCourse(arrayListEducation.get(j).getEduCourse());
+                education.setEdmEducationFromDate(arrayListEducation.get(j).getEduFromDate());
+                education.setEdmEducationToDate(arrayListEducation.get(j).getEduToDate());
+                education.setEdmEducationIsCurrent(arrayListEducation.get(j).getIsCurrent());
+                education.setEdmEducationPrivacy(String.valueOf(arrayListEducation
+                        .get(j).getEduPublic()));
+                education.setRcProfileMasterPmId(getUserPmId());
+                educationList.add(education);
+            }
+
+            tableEducationMaster.addArrayEducation(educationList);
         }
         //</editor-fold>
 
@@ -6160,10 +6219,11 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     editProfileObject, null, WsResponseObject.class, WsConstants
-                    .REQ_PROFILE_UPDATE + ":" + type, getResources().getString(R.string
-                    .msg_please_wait), true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                    BuildConfig.WS_ROOT_V2 + WsConstants
-                            .REQ_PROFILE_UPDATE);
+                    .REQ_PROFILE_UPDATE + ":"
+                    + type, getResources().getString(R.string.msg_please_wait), true)
+                    .executeOnExecutor
+                            (AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT_V2 + WsConstants
+                                    .REQ_PROFILE_UPDATE);
         } else {
             Utils.showErrorSnackBar(this, relativeRootEditProfile, getResources()
                     .getString(R.string.msg_no_network));
@@ -6202,8 +6262,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
     }
 
-    private void getStateList(String countryId, String
-            position) {
+    private void getStateList(String countryId, String position) {
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), null, null,
                     WsResponseObject.class, WsConstants.REQ_STATE_DETAILS + ":" + position, null,

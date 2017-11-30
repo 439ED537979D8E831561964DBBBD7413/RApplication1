@@ -205,7 +205,7 @@
                                                     android:layout_marginBottom="@dimen/margin_tiny"
                                                     android:layout_marginTop="@dimen/margin_tiny"
                                                     android:contentDescription="@string/app_name"
-                                                    android:src="@drawable/ico_user_rating_svg" />
+                                                    app:srcCompat="@drawable/ico_user_rating_svg"/>
 
                                             </TableRow>
 
@@ -554,8 +554,8 @@
                                         android:layout_height="15dp"
                                         android:layout_margin="@dimen/margin_tiny"
                                         android:contentDescription="@string/str_content_description"
-                                        android:src="@drawable/ico_call_svg"
-                                        android:tint="@color/iconColor" />
+                                        android:tint="@color/iconColor"
+                                        app:srcCompat="@drawable/ico_call_svg"/>
 
                                     <LinearLayout
                                         android:layout_width="match_parent"
@@ -597,8 +597,8 @@
                                         android:layout_height="15dp"
                                         android:layout_margin="@dimen/margin_tiny"
                                         android:contentDescription="@string/str_content_description"
-                                        android:src="@drawable/ico_envelop_svg"
-                                        android:tint="@color/iconColor" />
+                                        android:tint="@color/iconColor"
+                                        app:srcCompat="@drawable/ico_envelop_svg"/>
 
                                     <LinearLayout
                                         android:layout_width="match_parent"
@@ -631,12 +631,55 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_below="@id/linear_email"
-                                    android:visibility="gone">
+                                    android:visibility="gone"
+                                    tools:visibility="visible">
+
+                                    <LinearLayout
+                                        android:id="@+id/linear_education"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <ImageView
+                                            android:id="@+id/image_education"
+                                            android:layout_width="15dp"
+                                            android:layout_height="15dp"
+                                            android:layout_margin="@dimen/margin_tiny"
+                                            android:contentDescription="@string/str_content_description"
+                                            android:tint="@color/iconColor"
+                                            app:srcCompat="@drawable/ico_education_svg"/>
+
+                                        <LinearLayout
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:orientation="vertical">
+
+                                            <TextView
+                                                android:id="@+id/text_label_education"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_marginStart="@dimen/margin_tiny"
+                                                android:layout_marginTop="@dimen/margin_small_tiny"
+                                                android:text="@string/str_edu"
+                                                android:textColor="@color/dialogButtonTextColor"/>
+
+                                            <android.support.v7.widget.RecyclerView
+                                                android:id="@+id/recycler_view_education"
+                                                android:layout_width="match_parent"
+                                                android:layout_height="wrap_content"
+                                                android:layout_marginStart="@dimen/margin_tiny"
+                                                android:layout_marginTop="@dimen/margin_tiny"
+                                                android:overScrollMode="never"/>
+
+                                        </LinearLayout>
+
+                                    </LinearLayout>
 
                                     <LinearLayout
                                         android:id="@+id/linear_website"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
+                                        android:layout_below="@id/linear_education"
                                         android:orientation="horizontal">
 
                                         <ImageView
@@ -645,8 +688,8 @@
                                             android:layout_height="15dp"
                                             android:layout_margin="@dimen/margin_tiny"
                                             android:contentDescription="@string/str_content_description"
-                                            android:src="@drawable/ico_website_svg"
-                                            android:tint="@color/iconColor" />
+                                            android:tint="@color/iconColor"
+                                            app:srcCompat="@drawable/ico_website_svg"/>
 
                                         <LinearLayout
                                             android:layout_width="match_parent"
@@ -687,8 +730,8 @@
                                             android:layout_height="15dp"
                                             android:layout_margin="@dimen/margin_tiny"
                                             android:contentDescription="@string/str_content_description"
-                                            android:src="@drawable/ico_address_svg"
-                                            android:tint="@color/iconColor" />
+                                            android:tint="@color/iconColor"
+                                            app:srcCompat="@drawable/ico_address_svg"/>
 
                                         <LinearLayout
                                             android:layout_width="match_parent"
@@ -729,8 +772,8 @@
                                             android:layout_height="15dp"
                                             android:layout_margin="@dimen/margin_tiny"
                                             android:contentDescription="@string/str_content_description"
-                                            android:src="@drawable/ic_aadhaar"
-                                            android:tint="@color/iconColor" />
+                                            android:tint="@color/iconColor"
+                                            app:srcCompat="@drawable/ic_aadhaar"/>
 
                                         <LinearLayout
                                             android:layout_width="match_parent"
@@ -744,7 +787,7 @@
                                                 android:layout_marginStart="@dimen/margin_tiny"
                                                 android:layout_marginTop="@dimen/margin_small_tiny"
                                                 android:text="@string/str_aadhar_number"
-                                                android:textColor="@color/dialogButtonTextColor" />
+                                                android:textColor="@color/dialogButtonTextColor"/>
 
                                             <RelativeLayout
                                                 android:id="@+id/relative_aadhar_number"
@@ -766,7 +809,7 @@
                                                     android:textSize="@dimen/text_size_12sp"
                                                     android:visibility="gone"
                                                     app:backgroundTint="@color/dialogUserNameTextColor"
-                                                    tools:visibility="gone" />
+                                                    tools:visibility="gone"/>
 
                                                 <ImageView
                                                     android:id="@+id/button_privacy"
@@ -776,7 +819,7 @@
                                                     android:layout_marginEnd="10dp"
                                                     android:layout_marginStart="2dp"
                                                     android:contentDescription="@string/str_content_description"
-                                                    android:src="@drawable/ico_privacy_public" />
+                                                    app:srcCompat="@drawable/ico_privacy_public"/>
 
                                                 <TextView
                                                     android:id="@+id/text_aadhar_number"
@@ -814,8 +857,8 @@
                                             android:layout_height="15dp"
                                             android:layout_margin="@dimen/margin_tiny"
                                             android:contentDescription="@string/str_content_description"
-                                            android:src="@drawable/ico_social_svg"
-                                            android:tint="@color/iconColor" />
+                                            android:tint="@color/iconColor"
+                                            app:srcCompat="@drawable/ico_social_svg"/>
 
                                         <LinearLayout
                                             android:layout_width="match_parent"
@@ -868,7 +911,7 @@
                                             android:layout_height="wrap_content"
                                             android:contentDescription="@string/str_content_description"
                                             android:padding="0dp"
-                                            android:src="@drawable/ico_arrow_down_svg" />
+                                            app:srcCompat="@drawable/ico_arrow_down_svg"/>
 
                                         <Button
                                             android:id="@+id/button_view_more"
@@ -922,8 +965,8 @@
                                         android:layout_height="15dp"
                                         android:layout_margin="@dimen/margin_tiny"
                                         android:contentDescription="@string/str_content_description"
-                                        android:src="@drawable/ico_events_svg"
-                                        android:tint="@color/iconColor" />
+                                        android:tint="@color/iconColor"
+                                        app:srcCompat="@drawable/ico_events_svg"/>
 
                                     <LinearLayout
                                         android:layout_width="match_parent"
@@ -964,8 +1007,8 @@
                                         android:layout_height="15dp"
                                         android:layout_margin="@dimen/margin_tiny"
                                         android:contentDescription="@string/str_content_description"
-                                        android:src="@drawable/ico_gender_svg"
-                                        android:tint="@color/iconColor" />
+                                        android:tint="@color/iconColor"
+                                        app:srcCompat="@drawable/ico_gender_svg"/>
 
                                     <LinearLayout
                                         android:layout_width="match_parent"
@@ -1068,8 +1111,8 @@
                     android:layout_height="wrap_content"
                     android:contentDescription="@string/str_content_description"
                     android:padding="@dimen/margin_small"
-                    android:src="@drawable/ic_action_edit"
-                    android:visibility="visible" />
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/ic_action_edit"/>
 
                 <ImageView
                     android:id="@+id/image_tutorial_more"
@@ -1077,8 +1120,8 @@
                     android:layout_height="wrap_content"
                     android:contentDescription="@string/str_content_description"
                     android:padding="@dimen/margin_small"
-                    android:src="@drawable/ic_add_new_contact"
-                    android:visibility="invisible" />
+                    android:visibility="invisible"
+                    app:srcCompat="@drawable/ic_add_new_contact"/>
 
             </LinearLayout>
 

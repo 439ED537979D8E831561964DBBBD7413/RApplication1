@@ -18,6 +18,7 @@ import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.BuildConfig;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
+import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
@@ -79,9 +80,14 @@ public class OrganizationListAdapter extends RecyclerView.Adapter<OrganizationLi
 
         if (MoreObjects.firstNonNull(organization.getIsVerify(), 0) == IntegerConstants.RCP_TYPE_PRIMARY) {
 
-            holder.textMain.setText(organization.getOrgName());
-            holder.textMain.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-                    R.drawable.ico_relation_single_tick_green_svg, 0);
+            holder.textMain.setText(Utils.setMultipleTypeface(context, organization.getOrgName()
+                    + " " + context.getString(R.string.im_icon_unverify), 0, (StringUtils.length(
+                    organization.getOrgName()) + 1), ((StringUtils.length(
+                    organization.getOrgName()) + 1) + 1)));
+
+//            holder.textMain.setText(organization.getOrgName());
+//            holder.textMain.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+//                    R.drawable.ico_relation_single_tick_green_svg, 0);
             holder.textType.setText(Html.fromHtml("<small> (" + organization.getOrgIndustryType() + ") </small>"));
 
         } else {
@@ -164,7 +170,7 @@ public class OrganizationListAdapter extends RecyclerView.Adapter<OrganizationLi
             super(itemView);
             ButterKnife.bind(this, itemView);
 
-            textMain.setTypeface(Utils.typefaceRegular(context));
+            textMain.setTypeface(Utils.typefaceIcons(context));
             textSub.setTypeface(Utils.typefaceRegular(context));
             textTime.setTypeface(Utils.typefaceRegular(context));
             textType.setTypeface(Utils.typefaceRegular(context));
