@@ -442,10 +442,107 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/linear_website"
+                    android:id="@+id/linear_education"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/linear_organization"
+                    android:layout_marginTop="@dimen/margin_tiny"
+                    android:orientation="vertical"
+                    android:padding="@dimen/margin_small"
+                    android:visibility="visible">
+
+                    <RelativeLayout
+                        android:id="@+id/relative_education"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/text_label_education"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:text="@string/str_education"
+                            android:textAppearance="?android:textAppearanceMedium"/>
+
+                        <ImageView
+                            android:id="@+id/image_education_expand"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:contentDescription="@string/str_content_description"
+                            android:src="@drawable/ic_arrow_bottom"/>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_below="@+id/image_education_expand"
+                            android:layout_marginTop="@dimen/margin_3dp"
+                            android:background="@color/colorDarkGray"/>
+
+                    </RelativeLayout>
+
+                    <LinearLayout
+                        android:id="@+id/linear_education_details"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/margin_tiny"
+                        android:orientation="vertical"
+                        android:visibility="visible">
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/linear_education_buttons"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:visibility="visible">
+
+                        <Button
+                            android:id="@+id/button_education_add_field"
+                            style="?android:attr/buttonBarStyle"
+                            android:layout_width="@dimen/margin_10dp"
+                            android:layout_height="@dimen/height_button"
+                            android:layout_marginEnd="@dimen/margin_tiny"
+                            android:layout_weight="1"
+                            android:background="@drawable/background_rounded_border_green"
+                            android:text="@string/add_field"
+                            android:textColor="@color/colorAccent"/>
+
+                        <Button
+                            android:id="@+id/button_education_update"
+                            style="?android:attr/buttonBarStyle"
+                            android:layout_width="@dimen/margin_10dp"
+                            android:layout_height="@dimen/height_button"
+                            android:layout_marginEnd="@dimen/margin_tiny"
+                            android:layout_marginStart="@dimen/margin_tiny"
+                            android:layout_weight="1"
+                            android:background="@drawable/rounded_cornor_green_background"
+                            android:text="@string/update"
+                            android:textColor="@color/colorWhite"/>
+
+                        <Button
+                            android:id="@+id/button_education_cancel"
+                            style="?android:attr/buttonBarStyle"
+                            android:layout_width="@dimen/margin_10dp"
+                            android:layout_height="@dimen/height_button"
+                            android:layout_marginStart="@dimen/margin_tiny"
+                            android:layout_weight="1"
+                            android:background="@drawable/rounded_corner_light_gray_background"
+                            android:text="@string/cancel"
+                            android:textColor="@color/colorWhite"/>
+
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linear_website"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/linear_education"
                     android:layout_marginTop="@dimen/margin_tiny"
                     android:orientation="vertical"
                     android:padding="@dimen/margin_small">
@@ -1065,7 +1162,8 @@
         android:layout_height="match_parent"
         android:background="@drawable/background_walk_through"
         android:clickable="true"
-        android:focusable="true">
+        android:focusable="true"
+        tools:visibility="gone">
 
         <TextView
             android:id="@+id/text_tap_continue"
