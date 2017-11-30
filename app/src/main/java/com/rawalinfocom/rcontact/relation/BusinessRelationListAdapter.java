@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.helper.Utils;
-import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
 import com.rawalinfocom.rcontact.model.Relation;
 
 import java.util.ArrayList;

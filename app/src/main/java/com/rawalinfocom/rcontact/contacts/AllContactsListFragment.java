@@ -925,6 +925,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             userProfile.setProfileRating(profileData.get(i).getProfileRating());
             userProfile.setPmProfileImage(profileData.get(i).getPbProfilePhoto());
             userProfile.setTotalProfileRateUser(profileData.get(i).getTotalProfileRateUser());
+            userProfile.setPmLastSeen(profileData.get(i).getPmLastSeen());
 
             if (mapLocalRcpId.containsKey(profileData.get(i).getRcpPmId())) {
                 userProfile.setPmRawId(mapLocalRcpId.get(profileData.get(i).getRcpPmId()));

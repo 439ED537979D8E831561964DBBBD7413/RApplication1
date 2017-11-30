@@ -44,19 +44,20 @@ public class TableProfileMaster {
 //    private static final String COLUMN_PM_SIGNUP_SOCIAL_MEDIA_TYPE =
 // "pm_signup_social_media_type";
 
-    public static final String COLUMN_PM_RCP_ID = "pm_rcp_id";
-    public static final String COLUMN_PM_RAW_ID = "pm_raw_id";
-    public static final String COLUMN_PM_FIRST_NAME = "pm_first_name";
-    public static final String COLUMN_PM_LAST_NAME = "pm_last_name";
-    public static final String COLUMN_PM_PROFILE_IMAGE = "pm_profile_image";
-    public static final String COLUMN_PM_GENDER = "pm_gender";
-    public static final String COLUMN_PM_GENDER_PRIVACY = "pm_gender_privacy";
-    public static final String COLUMN_PM_PROFILE_RATING = "pm_profile_rating";
-    public static final String COLUMN_PM_PROFILE_RATE_USER = "pm_total_user_rating";
-    public static final String COLUMN_PM_IS_FAVOURITE = "pm_is_favourite";
+    static final String COLUMN_PM_RCP_ID = "pm_rcp_id";
+    static final String COLUMN_PM_RAW_ID = "pm_raw_id";
+    static final String COLUMN_PM_FIRST_NAME = "pm_first_name";
+    static final String COLUMN_PM_LAST_NAME = "pm_last_name";
+    static final String COLUMN_PM_PROFILE_IMAGE = "pm_profile_image";
+    static final String COLUMN_PM_GENDER = "pm_gender";
+    static final String COLUMN_PM_GENDER_PRIVACY = "pm_gender_privacy";
+    static final String COLUMN_PM_PROFILE_RATING = "pm_profile_rating";
+    static final String COLUMN_PM_PROFILE_RATE_USER = "pm_total_user_rating";
+    static final String COLUMN_PM_IS_FAVOURITE = "pm_is_favourite";
     private static final String COLUMN_PM_NOSQL_MASTER_ID = "pm_nosql_master_id";
     static final String COLUMN_PM_BADGE = "pm_badge";
     private static final String COLUMN_PM_JOINING_DATE = "pm_joining_date";
+    static final String COLUMN_PM_LAST_SEEN = "pm_last_seen";
 
     // Table Create Statements
 //    static final String CREATE_TABLE_RC_PROFILE_MASTER = "CREATE TABLE IF NOT EXISTS " +
@@ -101,6 +102,7 @@ public class TableProfileMaster {
             " " + COLUMN_PM_IS_FAVOURITE + " integer," +
             " " + COLUMN_PM_NOSQL_MASTER_ID + " text," +
             " " + COLUMN_PM_BADGE + " text," +
+            " " + COLUMN_PM_LAST_SEEN + " text," +
             " " + COLUMN_PM_JOINING_DATE + " text" +
             ");";
 
@@ -124,6 +126,7 @@ public class TableProfileMaster {
         values.put(COLUMN_PM_NOSQL_MASTER_ID, userProfile.getPmNosqlMasterId());
         values.put(COLUMN_PM_BADGE, userProfile.getPmBadge());
         values.put(COLUMN_PM_JOINING_DATE, userProfile.getPmJoiningDate());
+        values.put(COLUMN_PM_LAST_SEEN, userProfile.getPmLastSeen());
 
         int count = 0;
         Cursor mCount = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_RC_PROFILE_MASTER + " " +
@@ -167,6 +170,7 @@ public class TableProfileMaster {
             values.put(COLUMN_PM_NOSQL_MASTER_ID, arrayListUserProfile.get(i).getPmNosqlMasterId());
             values.put(COLUMN_PM_BADGE, arrayListUserProfile.get(i).getPmBadge());
             values.put(COLUMN_PM_JOINING_DATE, arrayListUserProfile.get(i).getPmJoiningDate());
+            values.put(COLUMN_PM_LAST_SEEN, arrayListUserProfile.get(i).getPmLastSeen());
 
             int count = 0;
             Cursor mCount = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_RC_PROFILE_MASTER + " " +
@@ -238,7 +242,7 @@ public class TableProfileMaster {
 
             Cursor cursor = db.query(TABLE_RC_PROFILE_MASTER, new String[]{COLUMN_PM_RAW_ID,
                     COLUMN_PM_FIRST_NAME, COLUMN_PM_LAST_NAME, COLUMN_PM_PROFILE_IMAGE, COLUMN_PM_PROFILE_RATE_USER,
-                    COLUMN_PM_PROFILE_RATING, COLUMN_PM_RCP_ID,}, COLUMN_PM_RCP_ID
+                    COLUMN_PM_PROFILE_RATING, COLUMN_PM_LAST_SEEN, COLUMN_PM_RCP_ID,}, COLUMN_PM_RCP_ID
                     + "=?", new String[]{String.valueOf(cloudPmd)}, null, null, null, null);
             if (cursor != null)
                 cursor.moveToFirst();
@@ -255,6 +259,8 @@ public class TableProfileMaster {
                         (COLUMN_PM_PROFILE_RATING)));
                 userProfile.setTotalProfileRateUser(cursor.getString(cursor.getColumnIndex
                         (COLUMN_PM_PROFILE_RATE_USER)));
+                userProfile.setPmLastSeen(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_PM_LAST_SEEN)));
                 cursor.close();
             }
             db.close();
@@ -279,7 +285,7 @@ public class TableProfileMaster {
                     COLUMN_PM_RCP_ID, COLUMN_PM_GENDER, COLUMN_PM_GENDER_PRIVACY,
                     COLUMN_PM_PROFILE_RATING, COLUMN_PM_PROFILE_RATE_USER,
                     COLUMN_PM_IS_FAVOURITE, COLUMN_PM_NOSQL_MASTER_ID, COLUMN_PM_BADGE,
-                    COLUMN_PM_JOINING_DATE}, COLUMN_PM_RCP_ID + "=?", new String[]{String.valueOf
+                    COLUMN_PM_LAST_SEEN, COLUMN_PM_JOINING_DATE}, COLUMN_PM_RCP_ID + "=?", new String[]{String.valueOf
                     (cloudPmd)}, null, null, null, null);
             if (cursor != null)
                 cursor.moveToFirst();
@@ -309,6 +315,8 @@ public class TableProfileMaster {
                 userProfile.setPmBadge(cursor.getString(cursor.getColumnIndex(COLUMN_PM_BADGE)));
                 userProfile.setPmJoiningDate(cursor.getString(cursor.getColumnIndex
                         (COLUMN_PM_JOINING_DATE)));
+                userProfile.setPmLastSeen(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_PM_LAST_SEEN)));
 
                 cursor.close();
             }
@@ -403,6 +411,7 @@ public class TableProfileMaster {
         values.put(COLUMN_PM_NOSQL_MASTER_ID, userProfile.getPmNosqlMasterId());
         values.put(COLUMN_PM_BADGE, userProfile.getPmBadge());
         values.put(COLUMN_PM_JOINING_DATE, userProfile.getPmJoiningDate());
+        values.put(COLUMN_PM_LAST_SEEN, userProfile.getPmLastSeen());
 
         int isUpdated = db.update(TABLE_RC_PROFILE_MASTER, values, COLUMN_PM_RCP_ID + " = ?",
                 new String[]{String.valueOf(userProfile.getPmRcpId())});

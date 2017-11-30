@@ -104,7 +104,9 @@ public class NotificationsMainAdapter extends RecyclerView.Adapter<Notifications
     private void removeNotification() {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService
                 (Context.NOTIFICATION_SERVICE);
-        notificationManager.cancelAll();
+        if (notificationManager != null) {
+            notificationManager.cancelAll();
+        }
     }
 
     @Override

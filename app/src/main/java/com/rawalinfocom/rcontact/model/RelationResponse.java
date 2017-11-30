@@ -1,12 +1,8 @@
 package com.rawalinfocom.rcontact.model;
 
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import java.util.ArrayList;
 
 /**
  * Created by user on 29/11/16.
@@ -15,7 +11,7 @@ import java.util.ArrayList;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 //@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class RelationRequest {
+public class RelationResponse {
 
     private Integer id;
     private Integer rrmToPmId;
@@ -27,6 +23,8 @@ public class RelationRequest {
     private Integer rcOrgId;
     private String omName;
     private String createdAt;
+    private RelationMaster relationMaster;
+    private OrganizationMaster organization;
     private String rmParticular;
     private String orgName;
 
@@ -118,6 +116,24 @@ public class RelationRequest {
 
     public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
+    }
+
+    @JsonProperty("relation_master")
+    public RelationMaster getRelationMaster() {
+        return relationMaster;
+    }
+
+    public void setRelationMaster(RelationMaster relationMaster) {
+        this.relationMaster = relationMaster;
+    }
+
+    @JsonProperty("organization")
+    public OrganizationMaster getOrganization() {
+        return organization;
+    }
+
+    public void setOrganization(OrganizationMaster organization) {
+        this.organization = organization;
     }
 
     public String getRmParticular() {

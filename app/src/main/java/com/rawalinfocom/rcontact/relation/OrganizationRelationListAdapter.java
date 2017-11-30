@@ -13,6 +13,8 @@ import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.IndividualRelationType;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -27,6 +29,7 @@ public class OrganizationRelationListAdapter extends RecyclerView.Adapter<Organi
 
     private Context context;
     private ArrayList<ProfileDataOperationOrganization> arrayListOrganization;
+    private ArrayList<IndividualRelationType> arrayListRelation;
     private ArrayList<String> arrayListOrgName, arrayListOrgId;
     private String businessRelationName;
 
@@ -36,14 +39,23 @@ public class OrganizationRelationListAdapter extends RecyclerView.Adapter<Organi
         void onClick(String orgId, String orgName);
     }
 
-    public OrganizationRelationListAdapter(Context context, ArrayList<ProfileDataOperationOrganization>
+    OrganizationRelationListAdapter(Context context, ArrayList<ProfileDataOperationOrganization>
             arrayListOrganization, ArrayList<String> arrayListOrgName, ArrayList<String> arrayListOrgId,
-                                           OnClickListener clickListener, String businessRelationName) {
+                                    OnClickListener clickListener, String businessRelationName) {
         this.context = context;
         this.clickListener = clickListener;
         this.arrayListOrganization = arrayListOrganization;
         this.arrayListOrgId = arrayListOrgId;
         this.arrayListOrgName = arrayListOrgName;
+        this.businessRelationName = businessRelationName;
+    }
+
+    OrganizationRelationListAdapter(Context context, ArrayList<IndividualRelationType>
+            arrayListRelation, OnClickListener clickListener, String businessRelationName) {
+        this.context = context;
+        this.clickListener = clickListener;
+        this.arrayListRelation = arrayListRelation;
+        this.businessRelationName = businessRelationName;
     }
 
     @Override
@@ -56,39 +68,60 @@ public class OrganizationRelationListAdapter extends RecyclerView.Adapter<Organi
     @Override
     public void onBindViewHolder(OrganizationViewHolder holder, int position) {
 
-        ProfileDataOperationOrganization organization = arrayListOrganization.get(position);
 
-        holder.textMain.setText(organization.getOrgName());
-        holder.checkbox.setChecked(position == (AddNewRelationActivity.orgPosition));
+        if (businessRelationName.equalsIgnoreCase("existing")) {
 
-        if (arrayListOrgName.size() > 0) {
-            if (arrayListOrgName.contains(organization.getOrgName())
-                    && arrayListOrgId.contains(organization.getOrgEntId())) {
-                holder.textMain.setEnabled(false);
-                holder.checkbox.setVisibility(View.GONE);
-            } else {
-                holder.textMain.setEnabled(true);
-                holder.checkbox.setVisibility(View.VISIBLE);
+            IndividualRelationType individualRelationType = arrayListRelation.get(position);
+
+            if (!StringUtils.isEmpty(individualRelationType.getRelationName())) {
+                holder.textMain.setText(String.format("%s\n at %s", individualRelationType.getRelationName(),
+                        individualRelationType.getOrganizationName()));
             }
-        }
 
-//        if (organization.getIsInUse().equalsIgnoreCase("1")) {
-//            holder.textMain.setEnabled(false);
-//            holder.checkbox.setVisibility(View.GONE);
-//        }
+            if (!StringUtils.isEmpty(individualRelationType.getFamilyName())) {
+                holder.textMain.setText(individualRelationType.getFamilyName());
+            }
 
-        if (position == (AddNewRelationActivity.orgPosition)) {
-            if (clickListener != null) {
-                clickListener.onClick(arrayListOrganization.get(AddNewRelationActivity.orgPosition)
-                        .getOrgEntId(), arrayListOrganization.get(AddNewRelationActivity.orgPosition)
-                        .getOrgName());
+            if (individualRelationType.getIsFriendRelation()) {
+                holder.textMain.setText(context.getString(R.string.str_friend));
+            }
+
+            holder.checkbox.setChecked(individualRelationType.getIsSelected());
+
+        } else {
+
+            ProfileDataOperationOrganization organization = arrayListOrganization.get(position);
+
+            holder.textMain.setText(organization.getOrgName());
+            holder.checkbox.setChecked(position == (AddNewRelationActivity.orgPosition));
+
+            if (arrayListOrgName.size() > 0) {
+                if (arrayListOrgName.contains(organization.getOrgName())
+                        && arrayListOrgId.contains(organization.getOrgEntId())) {
+                    holder.textMain.setEnabled(false);
+                    holder.checkbox.setVisibility(View.GONE);
+                } else {
+                    holder.textMain.setEnabled(true);
+                    holder.checkbox.setVisibility(View.VISIBLE);
+                }
+            }
+
+            if (position == (AddNewRelationActivity.orgPosition)) {
+                if (clickListener != null) {
+                    clickListener.onClick(arrayListOrganization.get(AddNewRelationActivity.orgPosition)
+                            .getOrgEntId(), arrayListOrganization.get(AddNewRelationActivity.orgPosition)
+                            .getOrgName());
+                }
             }
         }
     }
 
     @Override
     public int getItemCount() {
-        return arrayListOrganization.size();
+        if (businessRelationName.equalsIgnoreCase("existing"))
+            return arrayListRelation.size();
+        else
+            return arrayListOrganization.size();
     }
 
     class OrganizationViewHolder extends RecyclerView.ViewHolder {
@@ -107,11 +140,74 @@ public class OrganizationRelationListAdapter extends RecyclerView.Adapter<Organi
             checkbox.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    AddNewRelationActivity.orgPosition = getAdapterPosition();
+                    if (businessRelationName.equalsIgnoreCase("existing")) {
+                        updateSelected(getAdapterPosition());
+                    } else {
+                        AddNewRelationActivity.orgPosition = getAdapterPosition();
+                    }
                     notifyDataSetChanged();
-
                 }
             });
         }
+    }
+
+    private void updateSelected(int position) {
+
+        IndividualRelationType relationType = arrayListRelation.get(position);
+        if (relationType.getIsSelected()) {
+            setData(relationType, position, false); // true
+        } else {
+            setData(relationType, position, true); // true
+        }
+    }
+
+    private void setData(IndividualRelationType relationType, int position, boolean b) {
+
+        IndividualRelationType individualRelationType = new IndividualRelationType();
+
+        if (relationType.getRelationType() == 1) {
+
+            individualRelationType.setId(String.valueOf(relationType.getId()));
+            individualRelationType.setRelationId(String.valueOf(relationType.getRelationId()));
+            individualRelationType.setRelationName("");
+            individualRelationType.setOrganizationName("");
+            individualRelationType.setFamilyName("");
+            individualRelationType.setOrganizationId("");
+            individualRelationType.setIsFriendRelation(true);
+            individualRelationType.setIsVerify("1");
+            individualRelationType.setRcStatus(relationType.getRcStatus());
+            individualRelationType.setRelationType(relationType.getRelationType());
+            individualRelationType.setIsSelected(b);
+
+        } else if (relationType.getRelationType() == 2) {
+
+            individualRelationType.setId(String.valueOf(relationType.getId()));
+            individualRelationType.setRelationId(String.valueOf(relationType.getRelationId()));
+            individualRelationType.setRelationName("");
+            individualRelationType.setOrganizationName("");
+            individualRelationType.setFamilyName(relationType.getFamilyName());
+            individualRelationType.setOrganizationId("");
+            individualRelationType.setIsFriendRelation(false);
+            individualRelationType.setIsVerify("1");
+            individualRelationType.setRcStatus(relationType.getRcStatus());
+            individualRelationType.setRelationType(relationType.getRelationType());
+            individualRelationType.setIsSelected(b);
+
+        } else {
+
+            individualRelationType.setId(String.valueOf(relationType.getId()));
+            individualRelationType.setRelationId(String.valueOf(relationType.getRelationId()));
+            individualRelationType.setRelationName(relationType.getRelationName());
+            individualRelationType.setOrganizationName(relationType.getOrganizationName());
+            individualRelationType.setFamilyName("");
+            individualRelationType.setOrganizationId(String.valueOf(relationType.getOrganizationId()));
+            individualRelationType.setIsFriendRelation(false);
+            individualRelationType.setIsVerify("1");
+            individualRelationType.setRcStatus(relationType.getRcStatus());
+            individualRelationType.setRelationType(relationType.getRelationType());
+            individualRelationType.setIsSelected(b);
+        }
+
+        arrayListRelation.set(position, individualRelationType); // true
     }
 }

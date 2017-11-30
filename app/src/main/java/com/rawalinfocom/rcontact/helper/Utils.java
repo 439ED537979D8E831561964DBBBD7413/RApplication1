@@ -171,13 +171,14 @@ public class Utils {
     }
 
     public static void hideKeyBoard(Activity activity) {
-
-        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context
-                .INPUT_METHOD_SERVICE);
-        if (imm != null) {
-            imm.toggleSoftInput(0, InputMethodManager.HIDE_IMPLICIT_ONLY);
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        if (imm.isActive()) {
+            imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0); // hide
         }
-    }
+//        else {
+//            imm.toggleSoftInput(0, InputMethodManager.HIDE_IMPLICIT_ONLY); // show
+//        }
+    }//end method
 
     //<editor-fold desc="SnackBar">
 
@@ -1108,6 +1109,7 @@ public class Utils {
         userProfile.setPmProfileImage(profileDetail.getPbProfilePhoto());
         userProfile.setPmGender(profileDetail.getPbGender());
         userProfile.setPmBadge(profileDetail.getPmBadge());
+        userProfile.setPmLastSeen(profileDetail.getPmLastSeen());
 
         tableProfileMaster.addProfile(userProfile);
         //</editor-fold>

@@ -6,8 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
@@ -31,6 +34,12 @@ class IndividualRelationRecommendationListAdapter extends RecyclerView.Adapter
     private ArrayList<IndividualRelationType> individualRelationRecommendationTypeList;
     private String from;
 
+    private OnClickListener clickListener;
+
+    public interface OnClickListener {
+        void onClick(int innerPosition);
+    }
+
     @Override
     public IndividualRelationRecommendationViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_individual_relation, parent, false);
@@ -38,60 +47,126 @@ class IndividualRelationRecommendationListAdapter extends RecyclerView.Adapter
     }
 
     IndividualRelationRecommendationListAdapter(Activity mActivity, ArrayList<IndividualRelationType>
-            individualRelationRecommendationTypeList, String from) {
+            individualRelationRecommendationTypeList, String from, OnClickListener clickListener) {
         this.mActivity = mActivity;
         this.from = from;
+        this.clickListener = clickListener;
         this.individualRelationRecommendationTypeList = individualRelationRecommendationTypeList;
     }
 
     @Override
-    public void onBindViewHolder(IndividualRelationRecommendationViewHolder holder, int position) {
+    public void onBindViewHolder(final IndividualRelationRecommendationViewHolder holder, int position) {
 
         IndividualRelationType type = individualRelationRecommendationTypeList.get(position);
 
         if (from.equalsIgnoreCase("rcp")) {
-            holder.checkboxRelationFriend.setVisibility(View.GONE);
-            holder.checkboxRelationFamily.setVisibility(View.GONE);
             holder.checkboxRelation.setVisibility(View.GONE);
         }
 
+        holder.llBusinessRelation.setVisibility(View.VISIBLE);
+
         if (!StringUtils.isEmpty(type.getRelationName())) {
 
-            holder.llBusinessRelation.setVisibility(View.VISIBLE);
             holder.llRelationOrganization.setVisibility(View.VISIBLE);
 
             holder.textRelationName.setText(type.getRelationName());
             holder.textOrganizationName.setText(type.getOrganizationName());
             holder.imageRelation.setImageResource(R.drawable.ico_relation_business_svg);
-            holder.textRelationName.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ico_relation_double_tick_svg, 0);
 
-        } else {
-            holder.llBusinessRelation.setVisibility(View.GONE);
+            if (type.getRcStatus() == 2)
+                holder.textRelationName.setCompoundDrawablesWithIntrinsicBounds
+                        (0, 0, R.drawable.ico_relation_double_tick_svg, 0);
+            else
+                holder.textRelationName.setCompoundDrawablesWithIntrinsicBounds
+                        (0, 0, R.drawable.ico_relation_single_tick_svg, 0);
+
+            if (!from.equalsIgnoreCase("rcp")) {
+
+                if (type.getRcStatus() == 2) {
+                    holder.checkboxRelation.setVisibility(View.GONE);
+                } else {
+                    holder.checkboxRelation.setVisibility(View.VISIBLE);
+                    if (type.getIsSelected()) {
+                        holder.checkboxRelation.setChecked(true);
+                    } else {
+                        holder.checkboxRelation.setChecked(false);
+                    }
+                }
+            }
         }
 
         if (!StringUtils.isEmpty(type.getFamilyName())) {
 
-            holder.llFamilyRelation.setVisibility(View.VISIBLE);
+            holder.llRelationOrganization.setVisibility(View.GONE);
 
-            holder.textRelationFamily.setText(type.getFamilyName());
-            holder.imageRelationFamily.setImageResource(R.drawable.ico_realtion_family_svg);
-            holder.textRelationFamily.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ico_relation_single_tick_svg, 0);
+            holder.textRelationName.setText(type.getFamilyName());
+            holder.imageRelation.setImageResource(R.drawable.ico_realtion_family_svg);
 
-        } else {
-            holder.llFamilyRelation.setVisibility(View.GONE);
+            if (type.getRcStatus() == 2)
+                holder.textRelationName.setCompoundDrawablesWithIntrinsicBounds
+                        (0, 0, R.drawable.ico_relation_double_tick_svg, 0);
+            else
+                holder.textRelationName.setCompoundDrawablesWithIntrinsicBounds
+                        (0, 0, R.drawable.ico_relation_single_tick_svg, 0);
+
+            if (!from.equalsIgnoreCase("rcp")) {
+
+                if (type.getRcStatus() == 2) {
+                    holder.checkboxRelation.setVisibility(View.GONE);
+                } else {
+                    holder.checkboxRelation.setVisibility(View.VISIBLE);
+                    if (type.getIsSelected()) {
+                        holder.checkboxRelation.setChecked(true);
+                    } else {
+                        holder.checkboxRelation.setChecked(false);
+                    }
+                }
+            }
         }
 
         if (type.getIsFriendRelation()) {
 
-            holder.llFriendRelation.setVisibility(View.VISIBLE);
+            holder.llRelationOrganization.setVisibility(View.GONE);
 
-            holder.textRelationFriend.setText(mActivity.getString(R.string.str_friend));
-            holder.imageRelationFriend.setImageResource(R.drawable.ico_relation_friend_svg);
-            holder.textRelationFriend.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ico_relation_single_tick_svg, 0);
+            holder.textRelationName.setText(mActivity.getString(R.string.str_friend));
+            holder.imageRelation.setImageResource(R.drawable.ico_relation_friend_svg);
 
-        } else {
-            holder.llFriendRelation.setVisibility(View.GONE);
+            if (type.getRcStatus() == 2)
+                holder.textRelationName.setCompoundDrawablesWithIntrinsicBounds
+                        (0, 0, R.drawable.ico_relation_double_tick_svg, 0);
+            else
+                holder.textRelationName.setCompoundDrawablesWithIntrinsicBounds
+                        (0, 0, R.drawable.ico_relation_single_tick_svg, 0);
+
+            if (!from.equalsIgnoreCase("rcp")) {
+
+                if (type.getRcStatus() == 2) {
+                    holder.checkboxRelation.setVisibility(View.GONE);
+                } else {
+                    holder.checkboxRelation.setVisibility(View.VISIBLE);
+                    if (type.getIsSelected()) {
+                        holder.checkboxRelation.setChecked(true);
+                    } else {
+                        holder.checkboxRelation.setChecked(false);
+                    }
+                }
+            }
         }
+//        else {
+//            holder.llBusinessRelation.setVisibility(View.GONE);
+//        }
+
+        holder.checkboxRelation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+
+                if (b) {
+                    if (clickListener != null)
+                        clickListener.onClick(holder.getAdapterPosition());
+                }
+            }
+        });
+
     }
 
     @Override
@@ -116,25 +191,11 @@ class IndividualRelationRecommendationListAdapter extends RecyclerView.Adapter
         @BindView(R.id.checkbox_relation)
         CheckBox checkboxRelation;
         @BindView(R.id.ll_business_relation)
-        LinearLayout llBusinessRelation;
-        @BindView(R.id.image_relation_family)
-        ImageView imageRelationFamily;
-        @BindView(R.id.text_relation_family)
-        TextView textRelationFamily;
-        @BindView(R.id.checkbox_relation_family)
-        CheckBox checkboxRelationFamily;
-        @BindView(R.id.ll_family_relation)
-        LinearLayout llFamilyRelation;
-        @BindView(R.id.image_relation_friend)
-        ImageView imageRelationFriend;
-        @BindView(R.id.text_relation_friend)
-        TextView textRelationFriend;
-        @BindView(R.id.checkbox_relation_friend)
-        CheckBox checkboxRelationFriend;
-        @BindView(R.id.ll_friend_relation)
-        LinearLayout llFriendRelation;
+        RelativeLayout llBusinessRelation;
+        @BindView(R.id.ll_relation)
+        LinearLayout llRelation;
         @BindView(R.id.rl_root_relation)
-        LinearLayout rlRootRelation;
+        FrameLayout rlRootRelation;
 
         IndividualRelationRecommendationViewHolder(View itemView) {
             super(itemView);
@@ -145,10 +206,21 @@ class IndividualRelationRecommendationListAdapter extends RecyclerView.Adapter
             llBusinessRelation.setVisibility(View.GONE);
 
             // family
-            llFamilyRelation.setVisibility(View.GONE);
+//            llFamilyRelation.setVisibility(View.GONE);
 
             // friend
-            llFriendRelation.setVisibility(View.GONE);
+//            llFriendRelation.setVisibility(View.GONE);
+
+            llRelation.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    checkboxRelation.performClick();
+
+//                    if (clickListener != null)
+//                        clickListener.onClick(getAdapterPosition());
+                }
+            });
         }
     }
 }

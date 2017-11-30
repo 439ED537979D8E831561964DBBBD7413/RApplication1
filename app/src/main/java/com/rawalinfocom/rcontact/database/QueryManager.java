@@ -53,10 +53,10 @@ public class QueryManager {
                 ",profile." + TableProfileMaster.COLUMN_PM_GENDER_PRIVACY + ",profile." +
                 TableProfileMaster.COLUMN_PM_IS_FAVOURITE +
                 ",profile." + TableProfileMaster.COLUMN_PM_PROFILE_RATING + ", profile." +
-                TableProfileMaster.COLUMN_PM_PROFILE_RATE_USER +
-                " from " + TableProfileMaster.TABLE_RC_PROFILE_MASTER + " profile WHERE profile."
-                + TableProfileMaster
-                .COLUMN_PM_RCP_ID + " IN (" + rcpId + ")";
+                TableProfileMaster.COLUMN_PM_PROFILE_RATE_USER + ", profile." +
+                TableProfileMaster.COLUMN_PM_LAST_SEEN + " from " +
+                TableProfileMaster.TABLE_RC_PROFILE_MASTER + " profile WHERE profile."
+                + TableProfileMaster.COLUMN_PM_RCP_ID + " IN (" + rcpId + ")";
 
         Cursor cursor = db.rawQuery(profileDetailQuery, null);
 
@@ -85,6 +85,8 @@ public class QueryManager {
                 profileDataOperation.setTotalProfileRateUser(StringUtils.defaultString(cursor
                         .getString(cursor.getColumnIndexOrThrow(TableProfileMaster
                                 .COLUMN_PM_PROFILE_RATE_USER)), "0"));
+                profileDataOperation.setPmLastSeen(StringUtils.defaultString(cursor.getString(cursor
+                        .getColumnIndexOrThrow(TableProfileMaster.COLUMN_PM_LAST_SEEN))));
 
                 cursor.close();
             }

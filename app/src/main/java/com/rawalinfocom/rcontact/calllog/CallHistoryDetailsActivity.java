@@ -410,10 +410,10 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                     }
 
                 } else {
-                    if(!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase
-                            ("[Unknown]")){
+                    if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase
+                            ("[Unknown]")) {
                         fetchAllCallLogHistory(contactName);
-                    }else{
+                    } else {
                         if (!StringUtils.isEmpty(historyNumber)) {
                             fetchAllCallLogHistory(historyNumber);
                         } else {
@@ -1819,21 +1819,12 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
             if (MoreObjects.firstNonNull(tempOrganization.get(0).getIsVerify(), 0) ==
                     IntegerConstants.RCP_TYPE_PRIMARY) {
 
-//                String s = Utils.setMultipleTypeface(CallHistoryDetailsActivity.this,
-//                        tempOrganization.get(0).getOrgName() + " <font color" + "='#00796B'>" +
-//                                getString(R.string.im_icon_verify) + "</font>", 0, (StringUtils
-//                                .length(tempOrganization.get(0).getOrgName()) + 1),
-//                        ((StringUtils.length(tempOrganization.get(0).getOrgName()) + 1) + 1))
-//                        .toString();
-
-                textOrganization.setText(tempOrganization.get(0).getOrgName());
-                textOrganization.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-                        R.drawable.ico_double_tick_green_svg, 0);
-
-            } else {
                 textOrganization.setText(tempOrganization.get(0).getOrgName());
                 textOrganization.setCompoundDrawablesWithIntrinsicBounds(0, 0,
                         R.drawable.ico_relation_single_tick_green_svg, 0);
+
+            } else {
+                textOrganization.setText(tempOrganization.get(0).getOrgName());
             }
 
             textDesignation.setText(tempOrganization.get(0).getOrgJobTitle());
@@ -2005,7 +1996,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
             tempEmail.addAll(arrayListEmail);
             tempEmail.addAll(arrayListPhoneBookEmail);
             ProfileDetailAdapter emailDetailAdapter = new ProfileDetailAdapter(this, tempEmail,
-                    AppConstants.EMAIL, displayOwnProfile, pmId);
+                    AppConstants.EMAIL, displayOwnProfile, pmId, null);
         } else {
         }
         //</editor-fold>
@@ -2220,7 +2211,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
             tempImAccount.addAll(arrayListImAccount);
             tempImAccount.addAll(arrayListPhoneBookImAccount);
             ProfileDetailAdapter imAccountDetailAdapter = new ProfileDetailAdapter(this,
-                    tempImAccount, AppConstants.IM_ACCOUNT, displayOwnProfile, pmId);
+                    tempImAccount, AppConstants.IM_ACCOUNT, displayOwnProfile, pmId, null);
         } else {
         }
         //</editor-fold>
@@ -2342,8 +2333,6 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 .recycler_view_dialog_list);
         recyclerViewDialogList.setLayoutManager(new LinearLayoutManager(this));
 
-        /*OrganizationListAdapter adapter = new OrganizationListAdapter(this, profileDetail
-                .getPbOrganization());*/
         OrganizationListAdapter adapter = new OrganizationListAdapter(this, arrayListOrganization);
         recyclerViewDialogList.setAdapter(adapter);
 

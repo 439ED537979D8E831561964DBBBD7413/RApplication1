@@ -5,11 +5,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.rawalinfocom.rcontact.model.IndividualRelationType;
-import com.rawalinfocom.rcontact.model.Relation;
 import com.rawalinfocom.rcontact.model.RelationRecommendationType;
 import com.rawalinfocom.rcontact.model.RelationRequestResponse;
-
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 
@@ -88,62 +85,6 @@ public class TableRelationMappingMaster {
         db.close(); // Closing database connection
     }
 
-    // Getting single Relation
-    public Relation getRelationMapping(int rmId) {
-        SQLiteDatabase db = databaseHandler.getReadableDatabase();
-
-        Cursor cursor = db.query(TABLE_RC_RCP_RELATION_MAPPING, new String[]{COLUMN_ID,
-                        COLUMN_RRM_PROFILE_DETAILS, COLUMN_RRM_TYPE},
-                COLUMN_ID + "=?", new String[]{String.valueOf(rmId)}, null, null, null, null);
-        if (cursor != null)
-            cursor.moveToFirst();
-
-        Relation relation = new Relation();
-        if (cursor != null) {
-            relation.setRmId(cursor.getInt(0));
-            relation.setRmRelationName(cursor.getString(1));
-            relation.setRmRelationType(cursor.getString(2));
-
-            cursor.close();
-        }
-
-        db.close();
-
-        // return relation
-        return relation;
-    }
-
-    // Getting All relations
-    public ArrayList<Relation> getAllRelationsMapping() {
-        ArrayList<Relation> arrayListRelation = new ArrayList<>();
-        // Select All Query
-        String selectQuery = "SELECT  * FROM " + TABLE_RC_RCP_RELATION_MAPPING;
-
-        SQLiteDatabase db = databaseHandler.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
-
-        // looping through all rows and adding to list
-        if (cursor.moveToFirst()) {
-            do {
-                Relation relation = new Relation();
-                relation.setRmId(cursor.getInt(0));
-                relation.setRmRelationName(cursor.getString(1));
-                relation.setRmRelationType(cursor.getString(2));
-
-                // Adding relation to list
-                arrayListRelation.add(relation);
-            } while (cursor.moveToNext());
-
-            cursor.close();
-
-        }
-
-        db.close();
-
-        // return Relation list
-        return arrayListRelation;
-    }
-
     // Getting Relation Count
     public int getRelationCount() {
         String countQuery = "SELECT  * FROM " + TABLE_RC_RCP_RELATION_MAPPING;
@@ -158,33 +99,26 @@ public class TableRelationMappingMaster {
         return count;
     }
 
-    // Updating single Relation
-    public int updateRelationMapping(Relation relation) {
+    // Deleting single relation
+    public void deleteRelationMapping(String pmId) {
+
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_ID, relation.getRmId());
-        values.put(COLUMN_RRM_PROFILE_DETAILS, relation.getRmRelationName());
-        values.put(COLUMN_RRM_TYPE, relation.getRmRelationType());
-
-        // updating row
-        int isUpdated = db.update(TABLE_RC_RCP_RELATION_MAPPING, values, COLUMN_ID + " = ?",
-                new String[]{String.valueOf(relation.getRmId())});
-
+        db.delete(TABLE_RC_RCP_RELATION_MAPPING, COLUMN_RC_PROFILE_MASTER_PM_ID +
+                " = ?", new String[]{String.valueOf(pmId)});
         db.close();
-
-        return isUpdated;
     }
 
     // Deleting single relation
-    public boolean deleteRelationMapping(String pmId) {
-        boolean isDelete = false;
-        SQLiteDatabase db = databaseHandler.getWritableDatabase();
-        isDelete = db.delete(TABLE_RC_RCP_RELATION_MAPPING, COLUMN_RC_PROFILE_MASTER_PM_ID +
-                " = ?", new String[]{String.valueOf(pmId)}) > 0;
-        db.close();
+    public void deleteRelationMapping(String pmId, ArrayList<String> relationIds) {
 
-        return isDelete;
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+        for (int i = 0; i < relationIds.size(); i++) {
+            db.delete(TABLE_RC_RCP_RELATION_MAPPING, COLUMN_RC_PROFILE_MASTER_PM_ID +
+                            " = ? and " + COLUMN_ID + " = ? ",
+                    new String[]{String.valueOf(pmId), relationIds.get(i)});
+        }
+        db.close();
     }
 
     public ArrayList<RelationRecommendationType> getExistingRelation(String pmId) {
@@ -197,8 +131,8 @@ public class TableRelationMappingMaster {
             SQLiteDatabase db = databaseHandler.getWritableDatabase();
 
             String selectQuery = "SELECT a.pm_first_name,a.pm_last_name,a.pm_profile_image,d.mnm_mobile_number," +
-                    "b.rc_profile_master_pm_id,b.rc_relations_master_id,b.created_at,b.rrm_type, c.rm_particular," +
-                    "e.om_organization_company,e.om_organization_ent_id FROM rc_rcp_relation_mapping b " +
+                    "b.rc_profile_master_pm_id,b.rc_relations_master_id,b.created_at,b.rrm_type,b.rrm_status," +
+                    "c.rm_particular,e.om_organization_company,e.om_organization_ent_id FROM rc_rcp_relation_mapping b " +
                     "left join rc_profile_master a on a.pm_rcp_id = b.rc_profile_master_pm_id " +
                     "left join rc_mobile_number_master d on d.rc_profile_master_pm_id = a.pm_rcp_id " +
                     "left join rc_relation_master c on c.id = b.rc_relations_master_id " +
@@ -244,6 +178,8 @@ public class TableRelationMappingMaster {
                         individualRelationTypeList.setOrganizationId(cursor.getString(cursor.getColumnIndexOrThrow
                                 (TableOrganizationMaster.COLUMN_OM_ORGANIZATION_ENT_ID)));
                         individualRelationTypeList.setIsFriendRelation(false);
+                        individualRelationTypeList.setRcStatus(cursor.getInt(cursor.getColumnIndexOrThrow
+                                (COLUMN_RRM_STATUS)));
                         individualRelationTypeList.setIsVerify("1");
 
                     } else if (type.equalsIgnoreCase("1")) {
@@ -255,6 +191,8 @@ public class TableRelationMappingMaster {
                         individualRelationTypeList.setFamilyName("");
                         individualRelationTypeList.setOrganizationId("");
                         individualRelationTypeList.setIsFriendRelation(true);
+                        individualRelationTypeList.setRcStatus(cursor.getInt(cursor.getColumnIndexOrThrow
+                                (COLUMN_RRM_STATUS)));
                         individualRelationTypeList.setIsVerify("1");
 
                     } else if (type.equalsIgnoreCase("2")) {
@@ -267,6 +205,8 @@ public class TableRelationMappingMaster {
                                 (TableRelationMaster.COLUMN_RM_PARTICULAR)));
                         individualRelationTypeList.setOrganizationId("");
                         individualRelationTypeList.setIsFriendRelation(false);
+                        individualRelationTypeList.setRcStatus(cursor.getInt(cursor.getColumnIndexOrThrow
+                                (COLUMN_RRM_STATUS)));
                         individualRelationTypeList.setIsVerify("1");
 
                     }
@@ -329,7 +269,7 @@ public class TableRelationMappingMaster {
             for (int i = 0; i < pmIdList.size(); i++) {
 
                 String selectQuery = "SELECT b.id,b.rc_profile_master_pm_id,b.rc_relations_master_id,b.rrm_type," +
-                        "c.rm_particular," + "e.om_organization_company," + "e.om_organization_ent_id FROM " +
+                        "b.rrm_status,c.rm_particular,e.om_organization_company,e.om_organization_ent_id FROM " +
                         "rc_rcp_relation_mapping b " +
                         "left Join rc_profile_master a on a.pm_rcp_id = b.rc_profile_master_pm_id " +
                         "left join rc_relation_master c on c.id = b.rc_relations_master_id " +
@@ -372,7 +312,10 @@ public class TableRelationMappingMaster {
                         individualRelationTypeList.setOrganizationId(cursor1.getString(cursor1.getColumnIndexOrThrow
                                 (TableOrganizationMaster.COLUMN_OM_ORGANIZATION_ENT_ID)));
                         individualRelationTypeList.setIsFriendRelation(false);
+                        individualRelationTypeList.setRcStatus(cursor1.getInt(cursor1.getColumnIndexOrThrow
+                                (COLUMN_RRM_STATUS)));
                         individualRelationTypeList.setIsVerify("1");
+                        individualRelationTypeList.setIsSelected(false);
 
                     } else if (type.equalsIgnoreCase("1")) {
 
@@ -383,7 +326,10 @@ public class TableRelationMappingMaster {
                         individualRelationTypeList.setFamilyName("");
                         individualRelationTypeList.setOrganizationId("");
                         individualRelationTypeList.setIsFriendRelation(true);
+                        individualRelationTypeList.setRcStatus(cursor1.getInt(cursor1.getColumnIndexOrThrow
+                                (COLUMN_RRM_STATUS)));
                         individualRelationTypeList.setIsVerify("1");
+                        individualRelationTypeList.setIsSelected(false);
 
                     } else if (type.equalsIgnoreCase("2")) {
 
@@ -395,8 +341,10 @@ public class TableRelationMappingMaster {
                                 (TableRelationMaster.COLUMN_RM_PARTICULAR)));
                         individualRelationTypeList.setOrganizationId("");
                         individualRelationTypeList.setIsFriendRelation(false);
+                        individualRelationTypeList.setRcStatus(cursor1.getInt(cursor1.getColumnIndexOrThrow
+                                (COLUMN_RRM_STATUS)));
                         individualRelationTypeList.setIsVerify("1");
-
+                        individualRelationTypeList.setIsSelected(false);
                     }
 
                     arrayList.add(individualRelationTypeList);
