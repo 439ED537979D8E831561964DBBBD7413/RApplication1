@@ -315,10 +315,12 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
                             .getRmParticular());
                     individualRelationType.setOrganizationName(businessRecommendation.get(j).getOrganization()
                             .getRmParticular());
+                    individualRelationType.setIsOrgVerified(businessRecommendation.get(j).getOrganization()
+                            .getOmIsVerified());
                     individualRelationType.setFamilyName("");
                     individualRelationType.setOrganizationId(String.valueOf(businessRecommendation.get(j).getRcOrgId()));
                     individualRelationType.setIsFriendRelation(false);
-                    individualRelationType.setIsVerify("1");
+//                    individualRelationType.setIsVerify("1");
                     individualRelationType.setRelationType(businessRecommendation.get(j).getRrmType());
                     individualRelationType.setRcStatus(businessRecommendation.get(j).getRcStatus());
                     individualRelationType.setIsSelected(false);
@@ -347,7 +349,7 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
                             .getRmParticular());
                     individualRelationType.setOrganizationId("");
                     individualRelationType.setIsFriendRelation(false);
-                    individualRelationType.setIsVerify("1");
+//                    individualRelationType.setIsVerify("1");
                     individualRelationType.setRelationType(familyRecommendation.get(j).getRrmType());
                     individualRelationType.setRcStatus(familyRecommendation.get(j).getRcStatus());
                     individualRelationType.setIsSelected(false);
@@ -375,7 +377,7 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
                     individualRelationType.setFamilyName("");
                     individualRelationType.setOrganizationId("");
                     individualRelationType.setIsFriendRelation(true);
-                    individualRelationType.setIsVerify("1");
+//                    individualRelationType.setIsVerify("1");
                     individualRelationType.setRelationType(friendRecommendation.get(j).getRrmType());
                     individualRelationType.setRcStatus(friendRecommendation.get(j).getRcStatus());
                     individualRelationType.setIsSelected(false);
@@ -394,17 +396,14 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
                         @Override
                         public void onClick(int position, String name, String pmId) {
                             type = "accept";
-//                            deletePmId = pmId;
-//                            deleteRelationPosition = position;
-                            dialogActionRelation(position, name);
+                            showAllRelations(position, name);
                         }
 
                         @Override
                         public void onDeleteClick(int position, String name, String pmId) {
                             type = "reject";
-//                            deletePmId = pmId;
-//                            deleteRelationPosition = position;
-                            dialogActionRelation(position, name);
+                            showAllRelations(position, name);
+//                            dialogActionRelation(position, name);
                         }
                     });
             recycleViewRelation.setAdapter(listAdapter);
@@ -413,7 +412,97 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
         }
     }
 
-    private void dialogActionRelation(final int position, String RcpUserName) {
+    private void showAllRelations(final int position, final String name) {
+
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_all_organization);
+        dialog.setCancelable(false);
+
+        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+        layoutParams.copyFrom(dialog.getWindow().getAttributes());
+        layoutParams.width = (int) (getResources().getDisplayMetrics().widthPixels * 0.90);
+        layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+        dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
+
+        TextView textDialogTitle = dialog.findViewById(R.id.text_dialog_title);
+        textDialogTitle.setText(String.format("Relation with %s", name));
+        textDialogTitle.setTypeface(Utils.typefaceSemiBold(this));
+
+        Button buttonRight = dialog.findViewById(R.id.button_right);
+        Button buttonLeft = dialog.findViewById(R.id.button_left);
+        RippleView rippleRight = dialog.findViewById(R.id.ripple_right);
+        RippleView rippleLeft = dialog.findViewById(R.id.ripple_left);
+
+        buttonRight.setTypeface(Utils.typefaceRegular(this));
+        if (type.equalsIgnoreCase("reject"))
+            buttonRight.setText(R.string.action_delete);
+        else
+            buttonRight.setText(R.string.action_accept);
+        buttonLeft.setTypeface(Utils.typefaceRegular(this));
+        buttonLeft.setText(R.string.str_back);
+
+        rippleRight.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
+            @Override
+            public void onComplete(RippleView rippleView) {
+
+                ArrayList<String> relationIds = new ArrayList<>();
+
+                ArrayList<IndividualRelationType> individualRelationTypes =
+                        recommendationRelationList.get(position).getIndividualRelationTypeList();
+
+                for (int i = 0; i < individualRelationTypes.size(); i++) {
+                    if (individualRelationTypes.get(i).getIsSelected())
+                        relationIds.add(individualRelationTypes.get(i).getId());
+                }
+
+                if (relationIds.size() > 0) {
+                    dialog.dismiss();
+
+                    if (type.equalsIgnoreCase("reject"))
+                        dialogActionRelation(name, relationIds);
+                    else
+                        acceptRelationRequest(relationIds);
+
+                } else {
+                    if (type.equalsIgnoreCase("reject")) {
+                        Utils.showErrorSnackBar(RelationRecommendationActivity.this, relativeRootRecommendationRelation,
+                                "Please select at least one relation to reject!!!");
+                    } else {
+                        Utils.showErrorSnackBar(RelationRecommendationActivity.this, relativeRootRecommendationRelation,
+                                "Please select at least one relation to accept!!!");
+                    }
+                }
+            }
+        });
+
+        rippleLeft.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
+            @Override
+            public void onComplete(RippleView rippleView) {
+                dialog.dismiss();
+            }
+        });
+
+        RecyclerView recyclerViewDialogList = dialog.findViewById(R.id
+                .recycler_view_dialog_list);
+        recyclerViewDialogList.setLayoutManager(new LinearLayoutManager(this));
+
+        OrganizationRelationListAdapter adapter = new OrganizationRelationListAdapter(this,
+                recommendationRelationList.get(position).getIndividualRelationTypeList(),
+                new OrganizationRelationListAdapter.OnClickListener() {
+                    @Override
+                    public void onClick(String orgId, String orgName,boolean isOrgVerified) {
+
+                    }
+                }, "existing");
+
+        recyclerViewDialogList.setAdapter(adapter);
+
+        dialog.show();
+    }
+
+    private void dialogActionRelation(String RcpUserName, final ArrayList<String> relationIds) {
 
         final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -434,15 +523,15 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
         textDeleteHint.setVisibility(View.VISIBLE);
         textDeleteHint.setTypeface(Utils.typefaceRegular(this));
 
-        if (type.equalsIgnoreCase("reject")) {
-            textDialogTitle.setText(getString(R.string.delete_relation));
-            textDeleteHint.setText(String.format("Are you sure you want to delete relationship with %s ?",
-                    RcpUserName));
-        } else {
-            textDialogTitle.setText(getString(R.string.accept_relation));
-            textDeleteHint.setText(String.format("Are you sure you want to accept relationship with %s ?",
-                    RcpUserName));
-        }
+//        if (type.equalsIgnoreCase("reject")) {
+        textDialogTitle.setText(getString(R.string.delete_relation));
+        textDeleteHint.setText(String.format("Are you sure you want to delete relationship with %s ?",
+                RcpUserName));
+//        } else {
+//            textDialogTitle.setText(getString(R.string.accept_relation));
+//            textDeleteHint.setText(String.format("Are you sure you want to accept relationship with %s ?",
+//                    RcpUserName));
+//        }
 
         Button buttonRight = dialog.findViewById(R.id.ok_button);
         Button buttonLeft = dialog.findViewById(R.id.cancel_button);
@@ -457,8 +546,6 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
         buttonLeft.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                deletePmId = "";
-//                deleteRelationPosition = -1;
                 dialog.dismiss();
             }
         });
@@ -468,20 +555,10 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
             public void onClick(View view) {
                 dialog.dismiss();
 
-                ArrayList<String> relationIds = new ArrayList<>();
-
-                ArrayList<IndividualRelationType> individualRelationTypes =
-                        recommendationRelationList.get(position).getIndividualRelationTypeList();
-
-                for (int i = 0; i < individualRelationTypes.size(); i++) {
-                    if (individualRelationTypes.get(i).getIsSelected())
-                        relationIds.add(individualRelationTypes.get(i).getId());
-                }
-
-                if (type.equalsIgnoreCase("reject"))
-                    rejectRelationRequest(relationIds);
-                else
-                    acceptRelationRequest(relationIds);
+//                if (type.equalsIgnoreCase("reject"))
+                rejectRelationRequest(relationIds);
+//                else
+//                    acceptRelationRequest(relationIds);
             }
         });
 

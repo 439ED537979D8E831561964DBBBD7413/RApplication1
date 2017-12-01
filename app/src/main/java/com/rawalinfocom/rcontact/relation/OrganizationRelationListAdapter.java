@@ -36,7 +36,7 @@ public class OrganizationRelationListAdapter extends RecyclerView.Adapter<Organi
     private OnClickListener clickListener;
 
     public interface OnClickListener {
-        void onClick(String orgId, String orgName);
+        void onClick(String orgId, String orgName, boolean isOrgVerified);
     }
 
     OrganizationRelationListAdapter(Context context, ArrayList<ProfileDataOperationOrganization>
@@ -68,7 +68,6 @@ public class OrganizationRelationListAdapter extends RecyclerView.Adapter<Organi
     @Override
     public void onBindViewHolder(OrganizationViewHolder holder, int position) {
 
-
         if (businessRelationName.equalsIgnoreCase("existing")) {
 
             IndividualRelationType individualRelationType = arrayListRelation.get(position);
@@ -93,6 +92,10 @@ public class OrganizationRelationListAdapter extends RecyclerView.Adapter<Organi
             ProfileDataOperationOrganization organization = arrayListOrganization.get(position);
 
             holder.textMain.setText(organization.getOrgName());
+
+            if (organization.getIsVerify() == 1)
+                holder.textMain.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ico_relation_single_tick_green_svg, 0);
+
             holder.checkbox.setChecked(position == (AddNewRelationActivity.orgPosition));
 
             if (arrayListOrgName.size() > 0) {
@@ -110,7 +113,8 @@ public class OrganizationRelationListAdapter extends RecyclerView.Adapter<Organi
                 if (clickListener != null) {
                     clickListener.onClick(arrayListOrganization.get(AddNewRelationActivity.orgPosition)
                             .getOrgEntId(), arrayListOrganization.get(AddNewRelationActivity.orgPosition)
-                            .getOrgName());
+                            .getOrgName(), arrayListOrganization.get(AddNewRelationActivity.orgPosition)
+                            .getIsVerify() == 1);
                 }
             }
         }
@@ -174,7 +178,8 @@ public class OrganizationRelationListAdapter extends RecyclerView.Adapter<Organi
             individualRelationType.setFamilyName("");
             individualRelationType.setOrganizationId("");
             individualRelationType.setIsFriendRelation(true);
-            individualRelationType.setIsVerify("1");
+//            individualRelationType.setIsVerify("1");
+            individualRelationType.setIsInUse(relationType.getIsInUse());
             individualRelationType.setRcStatus(relationType.getRcStatus());
             individualRelationType.setRelationType(relationType.getRelationType());
             individualRelationType.setIsSelected(b);
@@ -188,7 +193,8 @@ public class OrganizationRelationListAdapter extends RecyclerView.Adapter<Organi
             individualRelationType.setFamilyName(relationType.getFamilyName());
             individualRelationType.setOrganizationId("");
             individualRelationType.setIsFriendRelation(false);
-            individualRelationType.setIsVerify("1");
+//            individualRelationType.setIsVerify("1");
+            individualRelationType.setIsInUse(relationType.getIsInUse());
             individualRelationType.setRcStatus(relationType.getRcStatus());
             individualRelationType.setRelationType(relationType.getRelationType());
             individualRelationType.setIsSelected(b);
@@ -202,7 +208,8 @@ public class OrganizationRelationListAdapter extends RecyclerView.Adapter<Organi
             individualRelationType.setFamilyName("");
             individualRelationType.setOrganizationId(String.valueOf(relationType.getOrganizationId()));
             individualRelationType.setIsFriendRelation(false);
-            individualRelationType.setIsVerify("1");
+//            individualRelationType.setIsVerify("1");
+            individualRelationType.setIsInUse(relationType.getIsInUse());
             individualRelationType.setRcStatus(relationType.getRcStatus());
             individualRelationType.setRelationType(relationType.getRelationType());
             individualRelationType.setIsSelected(b);

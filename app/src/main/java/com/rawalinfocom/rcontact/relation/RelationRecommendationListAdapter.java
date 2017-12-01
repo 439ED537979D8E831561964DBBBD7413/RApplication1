@@ -43,7 +43,6 @@ class RelationRecommendationListAdapter extends RecyclerView.Adapter<
         void onDeleteClick(int position, String name, String pmId);
     }
 
-
     @Override
     public RelationRecommendationViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_relation, parent, false);
@@ -80,14 +79,10 @@ class RelationRecommendationListAdapter extends RecyclerView.Adapter<
         ArrayList<IndividualRelationType> list = relationRecommendationType.getIndividualRelationTypeList();
         if (list.size() > 0) {
 
-            IndividualRelationRecommendationListAdapter adapter = new IndividualRelationRecommendationListAdapter(
-                    activity, list, "recommendation",
-                    new IndividualRelationRecommendationListAdapter.OnClickListener() {
-                        @Override
-                        public void onClick(int innerPosition) {
-                            updateSelected(position, innerPosition);
-                        }
-                    });
+//            IndividualRelationRecommendationListAdapter adapter = new IndividualRelationRecommendationListAdapter(
+//                    activity, list, "recommendation");
+
+            IndividualExistingRelationListAdapter adapter = new IndividualExistingRelationListAdapter(activity, list, "recommendation");
 
             viewHolder.recycleIndividualRelationList.setLayoutManager(new LinearLayoutManager(activity));
             viewHolder.recycleIndividualRelationList.setAdapter(adapter);
@@ -124,71 +119,71 @@ class RelationRecommendationListAdapter extends RecyclerView.Adapter<
         });
     }
 
-    private void updateSelected(int position, int innerPosition) {
+//    private void updateSelected(int position, int innerPosition) {
+//
+//        IndividualRelationType relationType = arrayListRelationType.get(position)
+//                .getIndividualRelationTypeList().get(innerPosition);
+//        if (relationType.getIsSelected()) {
+//            setData(relationType, position, innerPosition, false); // true
+//        } else {
+//            setData(relationType, position, innerPosition, true); // true
+//        }
+//
+//        notifyItemChanged(position);
+//
+////        notifyDataSetChanged();
+//    }
 
-        IndividualRelationType relationType = arrayListRelationType.get(position)
-                .getIndividualRelationTypeList().get(innerPosition);
-        if (relationType.getIsSelected()) {
-            setData(relationType, position, innerPosition, false); // true
-        } else {
-            setData(relationType, position, innerPosition, true); // true
-        }
-
-        notifyItemChanged(position);
-
-//        notifyDataSetChanged();
-    }
-
-    private void setData(IndividualRelationType relationType, int position, int innerPosition, boolean b) {
-
-        IndividualRelationType individualRelationType = new IndividualRelationType();
-
-        if (relationType.getRelationType() == 1) {
-
-            individualRelationType.setId(String.valueOf(relationType.getId()));
-            individualRelationType.setRelationId(String.valueOf(relationType.getRelationId()));
-            individualRelationType.setRelationName("");
-            individualRelationType.setOrganizationName("");
-            individualRelationType.setFamilyName("");
-            individualRelationType.setOrganizationId("");
-            individualRelationType.setIsFriendRelation(true);
-            individualRelationType.setIsVerify("1");
-            individualRelationType.setRcStatus(relationType.getRcStatus());
-            individualRelationType.setRelationType(relationType.getRelationType());
-            individualRelationType.setIsSelected(b);
-
-        } else if (relationType.getRelationType() == 2) {
-
-            individualRelationType.setId(String.valueOf(relationType.getId()));
-            individualRelationType.setRelationId(String.valueOf(relationType.getRelationId()));
-            individualRelationType.setRelationName("");
-            individualRelationType.setOrganizationName("");
-            individualRelationType.setFamilyName(relationType.getFamilyName());
-            individualRelationType.setOrganizationId("");
-            individualRelationType.setIsFriendRelation(false);
-            individualRelationType.setIsVerify("1");
-            individualRelationType.setRcStatus(relationType.getRcStatus());
-            individualRelationType.setRelationType(relationType.getRelationType());
-            individualRelationType.setIsSelected(b);
-
-        } else {
-
-            individualRelationType.setId(String.valueOf(relationType.getId()));
-            individualRelationType.setRelationId(String.valueOf(relationType.getRelationId()));
-            individualRelationType.setRelationName(relationType.getRelationName());
-            individualRelationType.setOrganizationName(relationType.getOrganizationName());
-            individualRelationType.setFamilyName("");
-            individualRelationType.setOrganizationId(String.valueOf(relationType.getOrganizationId()));
-            individualRelationType.setIsFriendRelation(false);
-            individualRelationType.setIsVerify("1");
-            individualRelationType.setRcStatus(relationType.getRcStatus());
-            individualRelationType.setRelationType(relationType.getRelationType());
-            individualRelationType.setIsSelected(b);
-        }
-
-        arrayListRelationType.get(position).getIndividualRelationTypeList().set(innerPosition,
-                individualRelationType); // true
-    }
+//    private void setData(IndividualRelationType relationType, int position, int innerPosition, boolean b) {
+//
+//        IndividualRelationType individualRelationType = new IndividualRelationType();
+//
+//        if (relationType.getRelationType() == 1) {
+//
+//            individualRelationType.setId(String.valueOf(relationType.getId()));
+//            individualRelationType.setRelationId(String.valueOf(relationType.getRelationId()));
+//            individualRelationType.setRelationName("");
+//            individualRelationType.setOrganizationName("");
+//            individualRelationType.setFamilyName("");
+//            individualRelationType.setOrganizationId("");
+//            individualRelationType.setIsFriendRelation(true);
+//            individualRelationType.setIsVerify("1");
+//            individualRelationType.setRcStatus(relationType.getRcStatus());
+//            individualRelationType.setRelationType(relationType.getRelationType());
+//            individualRelationType.setIsSelected(b);
+//
+//        } else if (relationType.getRelationType() == 2) {
+//
+//            individualRelationType.setId(String.valueOf(relationType.getId()));
+//            individualRelationType.setRelationId(String.valueOf(relationType.getRelationId()));
+//            individualRelationType.setRelationName("");
+//            individualRelationType.setOrganizationName("");
+//            individualRelationType.setFamilyName(relationType.getFamilyName());
+//            individualRelationType.setOrganizationId("");
+//            individualRelationType.setIsFriendRelation(false);
+//            individualRelationType.setIsVerify("1");
+//            individualRelationType.setRcStatus(relationType.getRcStatus());
+//            individualRelationType.setRelationType(relationType.getRelationType());
+//            individualRelationType.setIsSelected(b);
+//
+//        } else {
+//
+//            individualRelationType.setId(String.valueOf(relationType.getId()));
+//            individualRelationType.setRelationId(String.valueOf(relationType.getRelationId()));
+//            individualRelationType.setRelationName(relationType.getRelationName());
+//            individualRelationType.setOrganizationName(relationType.getOrganizationName());
+//            individualRelationType.setFamilyName("");
+//            individualRelationType.setOrganizationId(String.valueOf(relationType.getOrganizationId()));
+//            individualRelationType.setIsFriendRelation(false);
+//            individualRelationType.setIsVerify("1");
+//            individualRelationType.setRcStatus(relationType.getRcStatus());
+//            individualRelationType.setRelationType(relationType.getRelationType());
+//            individualRelationType.setIsSelected(b);
+//        }
+//
+//        arrayListRelationType.get(position).getIndividualRelationTypeList().set(innerPosition,
+//                individualRelationType); // true
+//    }
 
     @Override
     public int getItemCount() {

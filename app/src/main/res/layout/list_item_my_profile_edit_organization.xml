@@ -64,7 +64,6 @@
                 android:layout_marginTop="@dimen/margin_5dp"
                 android:layout_toEndOf="@+id/image_org_profile"
                 android:layout_toStartOf="@+id/deleteOrganization"
-                android:drawableEnd="@drawable/ico_relation_single_tick_green_svg"
                 android:hint="@string/hint_organization_name"
                 android:inputType="textMultiLine"
                 android:textColor="@color/colorAccent"

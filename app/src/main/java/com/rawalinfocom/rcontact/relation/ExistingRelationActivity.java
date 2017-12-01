@@ -447,10 +447,12 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
                             .getRmParticular());
                     individualRelationType.setOrganizationName(businessRecommendation.get(j).getOrganization()
                             .getRmParticular());
+                    individualRelationType.setIsOrgVerified(businessRecommendation.get(j).getOrganization()
+                            .getOmIsVerified());
                     individualRelationType.setFamilyName("");
                     individualRelationType.setOrganizationId(String.valueOf(businessRecommendation.get(j).getRcOrgId()));
                     individualRelationType.setIsFriendRelation(false);
-                    individualRelationType.setIsVerify("1");
+//                    individualRelationType.setIsVerify("1");
                     individualRelationType.setRelationType(businessRecommendation.get(j).getRrmType());
                     individualRelationType.setRcStatus(businessRecommendation.get(j).getRcStatus());
                     individualRelationType.setIsSelected(false);
@@ -479,7 +481,7 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
                             .getRmParticular());
                     individualRelationType.setOrganizationId("");
                     individualRelationType.setIsFriendRelation(false);
-                    individualRelationType.setIsVerify("1");
+//                    individualRelationType.setIsVerify("1");
                     individualRelationType.setRelationType(familyRecommendation.get(j).getRrmType());
                     individualRelationType.setRcStatus(familyRecommendation.get(j).getRcStatus());
                     individualRelationType.setIsSelected(false);
@@ -507,7 +509,7 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
                     individualRelationType.setFamilyName("");
                     individualRelationType.setOrganizationId("");
                     individualRelationType.setIsFriendRelation(true);
-                    individualRelationType.setIsVerify("1");
+//                    individualRelationType.setIsVerify("1");
                     individualRelationType.setRelationType(friendRecommendation.get(j).getRrmType());
                     individualRelationType.setRcStatus(friendRecommendation.get(j).getRcStatus());
                     individualRelationType.setIsSelected(false);
@@ -583,7 +585,7 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
         RippleView rippleLeft = dialog.findViewById(R.id.ripple_left);
 
         buttonRight.setTypeface(Utils.typefaceRegular(this));
-        buttonRight.setText(R.string.str_done);
+        buttonRight.setText(R.string.action_delete);
         buttonLeft.setTypeface(Utils.typefaceRegular(this));
         buttonLeft.setText(R.string.str_back);
 
@@ -626,7 +628,7 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
                 existingRelationList.get(position).getIndividualRelationTypeList(),
                 new OrganizationRelationListAdapter.OnClickListener() {
                     @Override
-                    public void onClick(String orgId, String orgName) {
+                    public void onClick(String orgId, String orgName,boolean isOrgVerified) {
 
                     }
                 }, "existing");

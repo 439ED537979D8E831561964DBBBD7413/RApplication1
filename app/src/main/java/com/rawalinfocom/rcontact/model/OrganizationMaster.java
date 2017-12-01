@@ -10,6 +10,7 @@ public class OrganizationMaster {
 
     private Integer id;
     private String orgName;
+    private Integer omIsVerified;
 
     @JsonProperty("id")
     public Integer getId() {
@@ -29,4 +30,12 @@ public class OrganizationMaster {
         this.orgName = orgName;
     }
 
+    @JsonProperty("om_is_verified")
+    public Integer getOmIsVerified() {
+        return omIsVerified;
+    }
+
+    public void setOmIsVerified(Integer omIsVerified) {
+        this.omIsVerified = omIsVerified;
+    }
 }

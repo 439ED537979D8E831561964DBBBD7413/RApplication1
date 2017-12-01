@@ -23,6 +23,7 @@
     <string name="action_cancel">રદ કરો</string>
     <string name="action_call">કૉલ કરો</string>
     <string name="action_delete">કાઢી નાખો</string>
+    <string name="action_accept">સ્વીકારો</string>
     <string name="str_comment">ટિપ્પણી કરો</string>
     <string name="hint_comment">કંઈક કહેવા માગો છો?</string>
     <string name="str_choose_from_contacts">સંપર્કોમાંથી પસંદ કરો</string>

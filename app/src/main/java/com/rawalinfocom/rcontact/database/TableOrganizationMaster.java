@@ -380,7 +380,6 @@ public class TableOrganizationMaster {
                                 .COLUMN_OM_ORGANIZATION_IS_VERIFIED))));
                 organization.setOrgRcpType(String.valueOf(IntegerConstants
                         .RCP_TYPE_CLOUD_PHONE_BOOK));
-                organization.setIsInUse("0");
 
                 // Adding organization to list
                 arrayListOrganization.add(organization);

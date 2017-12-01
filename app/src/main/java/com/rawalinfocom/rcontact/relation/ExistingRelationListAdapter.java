@@ -78,7 +78,7 @@ class ExistingRelationListAdapter extends RecyclerView.Adapter
 
         ArrayList<IndividualRelationType> list = relationRecommendationType.getIndividualRelationTypeList();
         if (list.size() > 0) {
-            IndividualExistingRelationListAdapter adapter = new IndividualExistingRelationListAdapter(mActivity, list);
+            IndividualExistingRelationListAdapter adapter = new IndividualExistingRelationListAdapter(mActivity, list, "existing");
 
             holder.recycleIndividualRelationList.setLayoutManager(new LinearLayoutManager(mActivity));
             holder.recycleIndividualRelationList.setAdapter(adapter);
