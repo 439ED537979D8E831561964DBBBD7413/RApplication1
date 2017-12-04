@@ -430,9 +430,19 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
         UserProfile userProfile = profileDetail.getProfileFromPmId(Integer.parseInt(pmId));
 
         //<editor-fold desc="User Rating">
-        if (userProfile != null) {
+
+        if (profileDetail != null) {
+
+            linearBasicDetailRating.setEnabled(false);
             textUserRating.setText(userProfile.getTotalProfileRateUser());
-            ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
+
+            if (Integer.parseInt((String) MoreObjects.firstNonNull(userProfile.getProfileRatingPrivacy(), 0)) == IntegerConstants
+                    .PRIVACY_EVERYONE) {
+                ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
+            } else {
+                ratingUser.setRating(0);
+                ratingUser.setEnabled(false);
+            }
         } else {
             textUserRating.setText("0");
             ratingUser.setRating(0);

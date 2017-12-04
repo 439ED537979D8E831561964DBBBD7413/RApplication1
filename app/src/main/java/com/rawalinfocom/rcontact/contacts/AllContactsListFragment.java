@@ -974,7 +974,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(j).getPhoneType());
                     mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber.get(j)
                             .getPhonePublic()));
-                    mobileNumber.setMnmIsPrivate(arrayListPhoneNumber.get(j).getIsPrivate());
+                    mobileNumber.setMnmPhonePublic(arrayListPhoneNumber.get(j).getPhonePublic());
                     mobileNumber.setMnmIsPrimary(String.valueOf(arrayListPhoneNumber.get(j)
                             .getPbRcpType()));
                     mobileNumber.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
@@ -1020,7 +1020,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                 .getEmPublic()));
                         email.setEmIsVerified(String.valueOf(arrayListEmailId.get(j).getEmRcpType
                                 ()));
-                        email.setEmIsPrivate(arrayListEmailId.get(j).getEmIsPrivate());
 
                         email.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
 
@@ -1178,7 +1177,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         address.setAmStreet(arrayListAddress.get(j).getStreet());
                         address.setAmAddressType(arrayListAddress.get(j).getAddressType());
                         address.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
-                        address.setAmIsPrivate(arrayListAddress.get(j).getIsPrivate());
                         address.setAmAddressPrivacy(String.valueOf(arrayListAddress.get(j)
                                 .getAddPublic()));
                         addressList.add(address);
@@ -1203,8 +1201,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                 .getIMAccountProtocol());
                         imAccount.setImImDetail(arrayListImAccount.get(j)
                                 .getIMAccountDetails());
-                        imAccount.setImIsPrivate(arrayListImAccount.get(j)
-                                .getIMAccountIsPrivate());
+//                        imAccount.setImIsPrivate(arrayListImAccount.get(j)
+//                                .getIMAccountIsPrivate());
                         imAccount.setImImPrivacy(String.valueOf(arrayListImAccount.get(j)
                                 .getIMAccountPublic()));
                         imAccount.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
@@ -1226,7 +1224,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         event.setEvmRecordIndexId(arrayListEvent.get(j).getEventId());
                         event.setEvmStartDate(arrayListEvent.get(j).getEventDateTime());
                         event.setEvmEventType(arrayListEvent.get(j).getEventType());
-                        event.setEvmIsPrivate(arrayListEvent.get(j).getIsPrivate());
+//                        event.setEvmIsPrivate(arrayListEvent.get(j).getIsPrivate());
                         event.setEvmIsYearHidden(arrayListEvent.get(j).getIsYearHidden());
                         event.setEvmEventPrivacy(String.valueOf(arrayListEvent.get(j)
                                 .getEventPublic()));

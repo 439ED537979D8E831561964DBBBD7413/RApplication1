@@ -198,7 +198,7 @@ public class NotificationFCMService extends FirebaseMessagingService {
                         mobileNumber.setMnmMobileNumber(mobile_num);
                         mobileNumber.setMnmNumberType(getString(R.string.type_mobile));
                         mobileNumber.setMnmNumberPrivacy(String.valueOf(1));
-                        mobileNumber.setMnmIsPrivate(0);
+                        mobileNumber.setMnmPhonePublic(0);
                         mobileNumber.setRcProfileMasterPmId(rcp_pm_id);
                         mobileNumber.setMnmIsPrimary(String.valueOf(IntegerConstants
                                 .RCP_TYPE_PRIMARY));
@@ -335,7 +335,7 @@ public class NotificationFCMService extends FirebaseMessagingService {
                                 (databaseHandler);
                         if (m.get("car_pm_id_to").equals(Utils.getStringPreference(this,
                                 AppConstants
-                                .PREF_USER_PM_ID, "0"))
+                                        .PREF_USER_PM_ID, "0"))
                                 && m.get("car_access_permission_status").equals("0")) {
                             int requestId = tableRCContactRequest.addRequest(AppConstants
                                             .COMMENT_STATUS_RECEIVED,

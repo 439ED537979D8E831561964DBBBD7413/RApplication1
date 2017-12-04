@@ -13,7 +13,6 @@ public class Email {
     private String emRecordIndexId;
     private String emEmailPrivacy;
     private String emIsVerified;
-    private Integer emIsPrivate;
     private String rcProfileMasterPmId;
 
     //    private String emCloudId;
@@ -83,13 +82,5 @@ public class Email {
 
     public void setEmRecordIndexId(String emRecordIndexId) {
         this.emRecordIndexId = emRecordIndexId;
-    }
-
-    public Integer getEmIsPrivate() {
-        return emIsPrivate;
-    }
-
-    public void setEmIsPrivate(Integer emIsPrivate) {
-        this.emIsPrivate = emIsPrivate;
     }
 }

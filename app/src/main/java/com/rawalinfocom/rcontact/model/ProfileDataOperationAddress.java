@@ -28,7 +28,7 @@ public class ProfileDataOperationAddress implements Serializable {
     //    private String googleLatitude;
     private String formattedAddress;
     private Integer addPublic;
-    private Integer isPrivate;
+//    private Integer isPrivate;
 
     private Integer countryId;
     private Integer stateId;
@@ -161,14 +161,14 @@ public class ProfileDataOperationAddress implements Serializable {
         this.rcpType = rcpType;
     }
 
-    @JsonProperty("is_private")
-    public Integer getIsPrivate() {
-        return isPrivate;
-    }
-
-    public void setIsPrivate(Integer isPrivate) {
-        this.isPrivate = isPrivate;
-    }
+//    @JsonProperty("is_private")
+//    public Integer getIsPrivate() {
+//        return isPrivate;
+//    }
+//
+//    public void setIsPrivate(Integer isPrivate) {
+//        this.isPrivate = isPrivate;
+//    }
 
     @JsonProperty("country_id")
     public Integer getCountryId() {

@@ -235,8 +235,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 holder.llPrivacy.setVisibility(View.GONE);
             else {
                 holder.llPrivacy.setVisibility(View.GONE);
-                if ((MoreObjects.firstNonNull(phoneNumber.getIsPrivate(), 0)) == IntegerConstants
-                        .IS_PRIVATE) {
+                if ((MoreObjects.firstNonNull(phoneNumber.getPhonePublic(), 0)) == IntegerConstants
+                        .PRIVACY_PRIVATE) {
 //                    holder.imageView2.setVisibility(View.GONE);
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                     holder.imgActionType.setVisibility(View.GONE);
@@ -268,8 +268,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
             } else {
                 holder.llPrivacy.setVisibility(View.GONE);
-                if ((MoreObjects.firstNonNull(phoneNumber.getIsPrivate(), 0)) == IntegerConstants
-                        .IS_PRIVATE) {
+                if ((MoreObjects.firstNonNull(phoneNumber.getPhonePublic(), 0)) == IntegerConstants
+                        .PRIVACY_PRIVATE) {
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                     holder.imgActionType.setVisibility(View.GONE);
                     holder.imgActionWhatsapp.setVisibility(View.GONE);
@@ -384,8 +384,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 holder.llPrivacy.setVisibility(View.GONE);
             else {
                 holder.llPrivacy.setVisibility(View.GONE);
-                if ((MoreObjects.firstNonNull(email.getEmIsPrivate(), 0)) == IntegerConstants
-                        .IS_PRIVATE) {
+                if ((MoreObjects.firstNonNull(email.getEmPublic(), 0)) == IntegerConstants
+                        .PRIVACY_PRIVATE) {
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                     holder.imgActionType.setVisibility(View.GONE);
                     requestAllIdList.add(email.getEmId());
@@ -445,8 +445,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 holder.llPrivacy.setVisibility(View.VISIBLE);
             } else {
                 holder.llPrivacy.setVisibility(View.GONE);
-                if ((MoreObjects.firstNonNull(email.getEmIsPrivate(), 0)) == IntegerConstants
-                        .IS_PRIVATE) {
+                if ((MoreObjects.firstNonNull(email.getEmPublic(), 0)) == IntegerConstants
+                        .PRIVACY_PRIVATE) {
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                     holder.imgActionType.setVisibility(View.GONE);
                     requestAllIdList.add(email.getEmId());
@@ -509,7 +509,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         else {
             holder.llPrivacy.setVisibility(View.GONE);
             if ((MoreObjects.firstNonNull(education.getEduPublic(), 0)) == IntegerConstants
-                    .IS_PRIVATE) {
+                    .PRIVACY_PRIVATE) {
                 holder.buttonRequest.setVisibility(View.VISIBLE);
                 holder.imgActionType.setVisibility(View.GONE);
             }
@@ -580,7 +580,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             }
         });
 
-         holder.buttonRequest.setOnClickListener(new View.OnClickListener() {
+        holder.buttonRequest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //Toast.makeText(activity, "requesting profile", Toast.LENGTH_SHORT).show();
@@ -757,8 +757,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             } else {
                 holder.llPrivacy.setVisibility(View.GONE);
 //                holder.textActionType.setVisibility(View.VISIBLE);
-                if ((MoreObjects.firstNonNull(address.getIsPrivate(), 0)) == IntegerConstants
-                        .IS_PRIVATE) {
+                if ((MoreObjects.firstNonNull(address.getAddPublic(), 0)) == IntegerConstants
+                        .PRIVACY_PRIVATE) {
 //                    holder.imageView2.setVisibility(View.GONE);
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                     holder.imgActionType.setVisibility(View.GONE);
@@ -924,8 +924,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 holder.llPrivacy.setVisibility(View.VISIBLE);
             } else {
                 holder.llPrivacy.setVisibility(View.GONE);
-                if ((MoreObjects.firstNonNull(imAccount.getIMAccountIsPrivate(), 0)) ==
-                        IntegerConstants.IS_PRIVATE) {
+                if ((MoreObjects.firstNonNull(imAccount.getIMAccountPublic(), 0)) ==
+                        IntegerConstants.PRIVACY_PRIVATE) {
 //                    holder.imageView2.setVisibility(View.GONE);
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                     holder.imgActionType.setVisibility(View.GONE);
@@ -1003,7 +1003,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             }
         }
 
-        if (MoreObjects.firstNonNull(event.getIsPrivate(), 0) == IntegerConstants.IS_PRIVATE) {
+        if (MoreObjects.firstNonNull(event.getEventPublic(), 0) == IntegerConstants.PRIVACY_PRIVATE) {
             convertedDate = event.getEventDateTime();
         }
 
@@ -1046,8 +1046,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 holder.llPrivacy.setVisibility(View.VISIBLE);
             } else {
                 holder.llPrivacy.setVisibility(View.GONE);
-                if (event.getIsPrivate() != null) {
-                    if (event.getIsPrivate() == IntegerConstants.IS_PRIVATE) {
+                if (event.getEventPublic() != null) {
+                    if (event.getEventPublic() == IntegerConstants.PRIVACY_PRIVATE) {
 //                    holder.imageView2.setVisibility(View.GONE);
                         holder.buttonRequest.setVisibility(View.VISIBLE);
                         holder.imgActionType.setVisibility(View.GONE);
@@ -1147,7 +1147,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 privacyDataItem.setPbEmailId(privacyEntityItems);
                 break;
 
-                case AppConstants.EDUCATION:
+            case AppConstants.EDUCATION:
                 privacyDataItem.setPbEducation(privacyEntityItems);
                 break;
 

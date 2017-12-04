@@ -620,7 +620,7 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                 textUserRating.setText(profileDetail.getTotalProfileRateUser());
 
                 if ((MoreObjects.firstNonNull(profileDetail.getProfileRatingPrivacy(), 0)) == IntegerConstants
-                        .IS_PRIVATE) {
+                        .PRIVACY_EVERYONE) {
                     ratingUser.setRating(Float.parseFloat(profileDetail.getProfileRating()));
                 } else {
                     ratingUser.setRating(0);

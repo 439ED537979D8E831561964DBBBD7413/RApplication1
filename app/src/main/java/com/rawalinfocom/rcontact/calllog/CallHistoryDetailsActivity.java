@@ -1980,29 +1980,29 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 //                });
             } else {
 
-                linearBasicDetailRating.setEnabled(false);
-//                buttonPrivacyRating.setVisibility(View.GONE);
-
                 textUserRating.setText(profileDetail.getTotalProfileRateUser());
 
                 if ((MoreObjects.firstNonNull(profileDetail.getProfileRatingPrivacy(), 0)) == IntegerConstants
-                        .IS_PRIVATE) {
+                        .PRIVACY_EVERYONE) {
+
                     ratingUser.setRating(Float.parseFloat(profileDetail.getProfileRating()));
 //                    buttonRequestRating.setVisibility(View.GONE);
                 } else {
                     ratingUser.setRating(0);
                     ratingUser.setEnabled(false);
+                    linearBasicDetailRating.setEnabled(false);
 //                    buttonRequestRating.setVisibility(View.VISIBLE);
 
 //                    buttonRequestRating.setOnClickListener(new View.OnClickListener() {
 //                        @Override
 //                        public void onClick(View v) {
 //                            int pmTo = Integer.parseInt(pmId);
-//                             sendAccessRequest(int toPMId, String carFiledType, String
-//                             recordIndexId)
+//                            sendAccessRequest( int toPMId, String carFiledType, String
+//                            recordIndexId)
 //                            sendAccessRequest(pmTo, "pb_rating", "1");
-                }
+//                        }
 //                    });
+                }
             }
         } else {
             textUserRating.setText("0");

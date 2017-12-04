@@ -18,7 +18,7 @@ public class ProfileDataOperationPhoneNumber implements Serializable {
     private Integer phonePublic;
     private String phoneId;
     private Integer pbRcpType;
-    private Integer isPrivate;
+//    private Integer isPrivate;
     private String originalNumber;
 
     @JsonProperty("original")
@@ -77,12 +77,12 @@ public class ProfileDataOperationPhoneNumber implements Serializable {
         this.pbRcpType = pbRcpType;
     }
 
-    @JsonProperty("is_private")
-    public Integer getIsPrivate() {
-        return isPrivate;
-    }
+//    @JsonProperty("is_private")
+//    public Integer getIsPrivate() {
+//        return isPrivate;
+//    }
 
-    public void setIsPrivate(Integer isPrivate) {
-        this.isPrivate = isPrivate;
-    }
+//    public void setIsPrivate(Integer isPrivate) {
+//        this.isPrivate = isPrivate;
+//    }
 }

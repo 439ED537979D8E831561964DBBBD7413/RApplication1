@@ -261,7 +261,7 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
                 String numberToShow = "+" + phoneNumber.getOriginalNumber();
                 holder.textMain.setText(Utils.setMultipleTypeface(activity, numberToShow + " " +
                                 activity
-                                .getString(R.string.im_icon_verify), 0,
+                                        .getString(R.string.im_icon_verify), 0,
                         (StringUtils.length(numberToShow) + 1), ((StringUtils.length
                                 (numberToShow) + 1) + 1)));
 
@@ -357,7 +357,7 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
         } else {
             holder.buttonRequest.setVisibility(View.GONE);
             /*if ((MoreObjects.firstNonNull(email.getEmIsPrivate(), 0)) == IntegerConstants
-                    .IS_PRIVATE) {
+                    .PRIVACY_PRIVATE) {
 //                    holder.imageView2.setVisibility(View.GONE);
                 holder.buttonRequest.setVisibility(View.GONE);
             }*/
@@ -373,8 +373,8 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
             });*/
         }
 
-        if ((MoreObjects.firstNonNull(email.getEmIsPrivate(), 0)) == IntegerConstants
-                .IS_PRIVATE) {
+        if ((MoreObjects.firstNonNull(email.getEmPublic(), 0)) == IntegerConstants
+                .PRIVACY_PRIVATE) {
             holder.imgActionType.setVisibility(View.GONE);
         }
 //        else {
@@ -557,7 +557,7 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
             holder.buttonRequest.setVisibility(View.GONE);
 
            /* if ((MoreObjects.firstNonNull(address.getIsPrivate(), 0)) == IntegerConstants
-                    .IS_PRIVATE) {
+                    .PRIVACY_PRIVATE) {
                 holder.buttonRequest.setVisibility(View.VISIBLE);
             }*/
 
@@ -572,8 +572,12 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
             });*/
 
         }
-        if ((MoreObjects.firstNonNull(address.getIsPrivate(), 0)) == IntegerConstants
-                .IS_PRIVATE) {
+//        if ((MoreObjects.firstNonNull(address.getIsPrivate(), 0)) == IntegerConstants
+//                .PRIVACY_PRIVATE) {
+//            holder.imgActionType.setVisibility(View.GONE);
+//        }
+        if ((MoreObjects.firstNonNull(address.getAddPublic(), 0)) == IntegerConstants
+                .PRIVACY_PRIVATE) {
             holder.imgActionType.setVisibility(View.GONE);
         }
     }
@@ -704,7 +708,7 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
             holder.buttonRequest.setVisibility(View.GONE);
 
             /*if ((MoreObjects.firstNonNull(imAccount.getIMAccountIsPrivate(), 0)) ==
-                    IntegerConstants.IS_PRIVATE) {
+                    IntegerConstants.PRIVACY_PRIVATE) {
                 holder.buttonRequest.setVisibility(View.VISIBLE);
             }
 
@@ -719,8 +723,12 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
                 }
             });*/
         }
-        if ((MoreObjects.firstNonNull(imAccount.getIMAccountIsPrivate(), 0)) ==
-                IntegerConstants.IS_PRIVATE) {
+//        if ((MoreObjects.firstNonNull(imAccount.getIMAccountIsPrivate(), 0)) ==
+//                IntegerConstants.PRIVACY_PRIVATE) {
+//            holder.imgActionType.setVisibility(View.VISIBLE);
+//        }
+        if ((MoreObjects.firstNonNull(imAccount.getIMAccountPublic(), 0)) ==
+                IntegerConstants.PRIVACY_PRIVATE) {
             holder.imgActionType.setVisibility(View.VISIBLE);
         }
 
@@ -757,7 +765,7 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
         }
 
 
-        if (MoreObjects.firstNonNull(event.getIsPrivate(), 0) == IntegerConstants.IS_PRIVATE) {
+        if (MoreObjects.firstNonNull(event.getEventPublic(), 0) == IntegerConstants.PRIVACY_PRIVATE) {
             convertedDate = event.getEventDateTime();
         }
 
@@ -777,7 +785,7 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
             holder.buttonRequest.setVisibility(View.GONE);
 
             /*if (event.getIsPrivate() != null) {
-                if (event.getIsPrivate() == IntegerConstants.IS_PRIVATE) {
+                if (event.getIsPrivate() == IntegerConstants.PRIVACY_PRIVATE) {
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                 }
             }
@@ -794,8 +802,8 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
             });*/
         }
 
-        if (event.getIsPrivate() != null) {
-            if (event.getIsPrivate() == IntegerConstants.IS_PRIVATE) {
+        if (event.getEventPublic() != null) {
+            if (event.getEventPublic() == IntegerConstants.PRIVACY_PRIVATE) {
                 holder.imgActionType.setVisibility(View.VISIBLE);
             }
         }
