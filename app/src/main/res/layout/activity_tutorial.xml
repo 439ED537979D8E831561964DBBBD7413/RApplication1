@@ -47,6 +47,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="@dimen/activity_double_horizontal_margin"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent">
 
@@ -141,11 +142,38 @@
 
     </RelativeLayout>
 
+    <com.rawalinfocom.rcontact.helper.RippleView
+        android:id="@+id/ripple_lets_go"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/activity_double_horizontal_margin"
+        android:layout_marginEnd="@dimen/activity_vertical_margin"
+        android:layout_marginStart="@dimen/activity_vertical_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:rv_alpha="@integer/alpha_ripple"
+        app:rv_color="@color/colorWhite"
+        app:rv_rippleDuration="@integer/duration_ripple">
+
+        <Button
+            android:id="@+id/button_lets_go"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_rounded_corner"
+            android:text="@string/tutorial_lets_go"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/text_size_14sp"
+            tools:backgroundTint="@color/colorAccent"/>
+
+    </com.rawalinfocom.rcontact.helper.RippleView>
+
     <android.support.v4.view.ViewPager
         android:id="@+id/pager_tutorial"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/relative_indicator"
+        android:layout_above="@+id/ripple_lets_go"
         android:layout_below="@+id/switcher_tutorial_content"
         android:overScrollMode="never"/>
 
