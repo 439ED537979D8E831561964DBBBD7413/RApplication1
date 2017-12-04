@@ -51,6 +51,7 @@ public class ProfileDataOperation implements Serializable {
     private String joiningDate;
     private String pbRcpVerify;
     private String profileRating;
+    private Integer profileRatingPrivacy;
     private String totalProfileRateUser;
     private String pbGender;
     private ArrayList<ProfileDataOperationEducation> pbEducation;
@@ -357,6 +358,15 @@ public class ProfileDataOperation implements Serializable {
 
     public void setProfileRating(String profileRating) {
         this.profileRating = profileRating;
+    }
+
+    @JsonProperty("pb_rate_public")
+    public Integer getProfileRatingPrivacy() {
+        return profileRatingPrivacy;
+    }
+
+    public void setProfileRatingPrivacy(Integer profileRatingPrivacy) {
+        this.profileRatingPrivacy = profileRatingPrivacy;
     }
 
     @JsonProperty("total_profile_rate_user")

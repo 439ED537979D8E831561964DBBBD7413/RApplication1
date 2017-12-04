@@ -5898,6 +5898,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         userProfile.setPmBadge(profileDetail.getPmBadge());
         userProfile.setPmProfileImage(profileDetail.getPbProfilePhoto());
         userProfile.setPmLastSeen(profileDetail.getPmLastSeen());
+        userProfile.setProfileRatingPrivacy(String.valueOf(profileDetail.getProfileRatingPrivacy()));
 
         tableProfileMaster.updateUserProfile(userProfile);
         //</editor-fold>

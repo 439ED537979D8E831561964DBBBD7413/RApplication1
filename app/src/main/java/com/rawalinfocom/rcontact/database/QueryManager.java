@@ -55,6 +55,7 @@ public class QueryManager {
                 TableProfileMaster.COLUMN_PM_IS_FAVOURITE +
                 ",profile." + TableProfileMaster.COLUMN_PM_PROFILE_RATING + ", profile." +
                 TableProfileMaster.COLUMN_PM_PROFILE_RATE_USER + ", profile." +
+                TableProfileMaster.COLUMN_PM_RATING_PRIVACY + ", profile." +
                 TableProfileMaster.COLUMN_PM_LAST_SEEN + " from " +
                 TableProfileMaster.TABLE_RC_PROFILE_MASTER + " profile WHERE profile."
                 + TableProfileMaster.COLUMN_PM_RCP_ID + " IN (" + rcpId + ")";
@@ -92,6 +93,8 @@ public class QueryManager {
                                 .COLUMN_PM_PROFILE_RATE_USER)), "0"));
                 profileDataOperation.setPmLastSeen(StringUtils.defaultString(cursor.getString(cursor
                         .getColumnIndexOrThrow(TableProfileMaster.COLUMN_PM_LAST_SEEN))));
+                profileDataOperation.setProfileRatingPrivacy(cursor.getInt(cursor
+                        .getColumnIndexOrThrow(TableProfileMaster.COLUMN_PM_RATING_PRIVACY)));
 
                 cursor.close();
             }

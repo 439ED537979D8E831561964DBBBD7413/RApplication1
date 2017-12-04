@@ -1113,6 +1113,7 @@ public class Utils {
         userProfile.setPmGender(profileDetail.getPbGender());
         userProfile.setPmBadge(profileDetail.getPmBadge());
         userProfile.setPmLastSeen(profileDetail.getPmLastSeen());
+        userProfile.setProfileRatingPrivacy(String.valueOf(profileDetail.getProfileRatingPrivacy()));
 
         tableProfileMaster.addProfile(userProfile);
         //</editor-fold>
