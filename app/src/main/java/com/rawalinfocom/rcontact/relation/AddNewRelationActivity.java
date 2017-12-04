@@ -1339,7 +1339,7 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
             new AsyncGetWebServiceCall(this, WsResponseObject.class, WsConstants
                     .REQ_GET_RELATION_MASTER, getResources().getString(R.string.msg_please_wait))
                     .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT +
-                            WsConstants.REQ_GET_RELATION_MASTER + "?rm_type=2&grm_gender=" + rcpGender.toLowerCase());
+                            WsConstants.REQ_GET_RELATION_MASTER + "?rm_type=2&user_id=" + pmId + "&rm_gender=" + rcpGender.toLowerCase());
         } else {
             Utils.showErrorSnackBar(this, relativeRootNewRelation, getResources()
                     .getString(R.string.msg_no_network));

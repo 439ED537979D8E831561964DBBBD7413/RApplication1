@@ -2502,10 +2502,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 //                            profileDataOperation.setPbOrganization(arrayListNewOrganization);
 //                            editProfile(profileDataOperation, AppConstants.ORGANIZATION);
 //                        }
-                    }
-//                    else {
-//                        containsVerifiedOrgan = false;
-//                        if (arrayListOrganizationObject.size() > 0) {
+                    } else {
+                        containsVerifiedOrgan = false;
+                        if (arrayListOrganizationObject.size() > 0) {
 //                            for (int i = 0; i < arrayListOrganizationObject.size(); i++) {
 //                                ProfileDataOperationOrganization organization =
 //                                        (ProfileDataOperationOrganization)
@@ -2520,16 +2519,16 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 //                            }
 //
 //                            if (!containsVerifiedOrgan) {
-//                                profileDataOperation.setPbOrganization(arrayListNewOrganization);
-//                                editProfile(profileDataOperation, AppConstants.ORGANIZATION);
+                            profileDataOperation.setPbOrganization(arrayListNewOrganization);
+                            editProfile(profileDataOperation, AppConstants.ORGANIZATION);
 //                            }
-////                            profileDataOperation.setPbOrganization(arrayListNewOrganization);
-////                            editProfile(profileDataOperation, AppConstants.ORGANIZATION);
-//                        } else {
-//                            Utils.showErrorSnackBar(this, relativeRootEditProfile, getString(R
-//                                    .string.error_no_update));
-//                        }
-//                    }
+//                            profileDataOperation.setPbOrganization(arrayListNewOrganization);
+//                            editProfile(profileDataOperation, AppConstants.ORGANIZATION);
+                        } else {
+                            Utils.showErrorSnackBar(this, relativeRootEditProfile, getString(R
+                                    .string.error_no_update));
+                        }
+                    }
                 }
                 break;
             //</editor-fold>
