@@ -109,6 +109,7 @@ public class RContactsListAdapter extends RecyclerView.Adapter<RContactsListAdap
                 intent.putExtra("contactName", textName.getText().toString());
                 intent.putExtra("contactNumber", arrayListUserProfile.get(pos).getMobileNumber());
                 intent.putExtra("profileImage", arrayListUserProfile.get(pos).getPmProfileImage());
+                intent.putExtra("rcpGender", arrayListUserProfile.get(pos).getPmGender());
                 intent.putExtra("isBack", "0");
                 activity.setResult(Activity.RESULT_OK, intent);
                 activity.finish();//finishing activity

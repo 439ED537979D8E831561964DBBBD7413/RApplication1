@@ -2505,23 +2505,23 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     } else {
                         containsVerifiedOrgan = false;
                         if (arrayListOrganizationObject.size() > 0) {
-                            for (int i = 0; i < arrayListOrganizationObject.size(); i++) {
-                                ProfileDataOperationOrganization organization =
-                                        (ProfileDataOperationOrganization)
-                                                arrayListOrganizationObject
-                                                        .get(i);
-                                if (organization.getIsVerify() == 1) {
-                                    //Show popup
-                                    containsVerifiedOrgan = true;
-                                    showOrganizationPrivacyDialog(EditProfileActivity.this,
-                                            arrayListNewOrganization, profileDataOperation);
-                                }
-                            }
-
-                            if (!containsVerifiedOrgan) {
-                                profileDataOperation.setPbOrganization(arrayListNewOrganization);
-                                editProfile(profileDataOperation, AppConstants.ORGANIZATION);
-                            }
+//                            for (int i = 0; i < arrayListOrganizationObject.size(); i++) {
+//                                ProfileDataOperationOrganization organization =
+//                                        (ProfileDataOperationOrganization)
+//                                                arrayListOrganizationObject
+//                                                        .get(i);
+//                                if (organization.getIsVerify() == 1) {
+//                                    //Show popup
+//                                    containsVerifiedOrgan = true;
+//                                    showOrganizationPrivacyDialog(EditProfileActivity.this,
+//                                            arrayListNewOrganization, profileDataOperation);
+//                                }
+//                            }
+//
+//                            if (!containsVerifiedOrgan) {
+                            profileDataOperation.setPbOrganization(arrayListNewOrganization);
+                            editProfile(profileDataOperation, AppConstants.ORGANIZATION);
+//                            }
 //                            profileDataOperation.setPbOrganization(arrayListNewOrganization);
 //                            editProfile(profileDataOperation, AppConstants.ORGANIZATION);
                         } else {

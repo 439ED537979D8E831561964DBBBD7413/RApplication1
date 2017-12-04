@@ -11,6 +11,7 @@ public class IndividualRelationType implements Serializable {
 
     private Integer relationType;
     private Integer rcStatus;
+    private Integer isOrgVerified;
     private String relationId;
     private String id;
     private String relationName;
@@ -19,8 +20,9 @@ public class IndividualRelationType implements Serializable {
     private String FamilyName;
     private String relationDate;
     private boolean isFriendRelation;
-    private String isVerify;
+//    private String isVerify;
     private boolean isSelected;
+    private String isInUse;
 
     public String getOrganizationName() {
         return organizationName;
@@ -54,13 +56,13 @@ public class IndividualRelationType implements Serializable {
         this.relationId = relationId;
     }
 
-    public String getIsVerify() {
-        return isVerify;
-    }
-
-    public void setIsVerify(String isVerify) {
-        this.isVerify = isVerify;
-    }
+//    public String getIsVerify() {
+//        return isVerify;
+//    }
+//
+//    public void setIsVerify(String isVerify) {
+//        this.isVerify = isVerify;
+//    }
 
     public String getFamilyName() {
         return FamilyName;
@@ -125,5 +127,22 @@ public class IndividualRelationType implements Serializable {
 
     public void setRcStatus(Integer rcStatus) {
         this.rcStatus = rcStatus;
+    }
+
+    public Integer getIsOrgVerified() {
+        return isOrgVerified;
+    }
+
+    public void setIsOrgVerified(Integer isOrgVerified) {
+        this.isOrgVerified = isOrgVerified;
+    }
+
+
+    public String getIsInUse() {
+        return isInUse;
+    }
+
+    public void setIsInUse(String isInUse) {
+        this.isInUse = isInUse;
     }
 }

@@ -116,6 +116,18 @@ public class WsResponseObject {
         this.allExistingRelationList = allExistingRelationList;
     }
 
+    @JsonProperty("relationMaster")
+    private ArrayList<FamilyRelationMaster> familyRelationList;
+
+    public ArrayList<FamilyRelationMaster> getFamilyRelationList() {
+        return familyRelationList;
+    }
+
+    public void setFamilyRelationList(ArrayList<FamilyRelationMaster>
+                                              familyRelationList) {
+        this.familyRelationList = familyRelationList;
+    }
+
     @JsonProperty("recommendations")
     private ArrayList<ExistingRelationRequest> recommendationsRelationList;
 

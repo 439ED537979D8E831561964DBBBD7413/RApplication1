@@ -133,9 +133,9 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
     @BindView(R.id.frame_container)
     FrameLayout frameContainer;
 
-
     private Activity activity;
-    private IndividualRelationRecommendationListAdapter listAdapter;
+    //    private IndividualRelationRecommendationListAdapter listAdapter;
+    private IndividualExistingRelationListAdapter listAdapter;
 
     private String contactName = "", thumbnailUrl, contactNumber = "";
     private ArrayList<ProfileDataOperationOrganization> arrayListOrganization;
@@ -529,10 +529,12 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
                                 .getRmParticular());
                         individualRelationType.setOrganizationName(businessRecommendation.get(j).getOrganization()
                                 .getRmParticular());
+                        individualRelationType.setIsOrgVerified(businessRecommendation.get(j).getOrganization()
+                                .getOmIsVerified());
                         individualRelationType.setFamilyName("");
                         individualRelationType.setOrganizationId(String.valueOf(businessRecommendation.get(j).getRcOrgId()));
                         individualRelationType.setIsFriendRelation(false);
-                        individualRelationType.setIsVerify("1");
+//                        individualRelationType.setIsVerify("1");
                         individualRelationType.setRelationType(businessRecommendation.get(j).getRrmType());
                         individualRelationType.setRcStatus(businessRecommendation.get(j).getRcStatus());
                         individualRelationType.setIsSelected(false);
@@ -564,7 +566,7 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
                                 .getRmParticular());
                         individualRelationType.setOrganizationId("");
                         individualRelationType.setIsFriendRelation(false);
-                        individualRelationType.setIsVerify("1");
+//                        individualRelationType.setIsVerify("1");
                         individualRelationType.setRelationType(familyRecommendation.get(j).getRrmType());
                         individualRelationType.setRcStatus(familyRecommendation.get(j).getRcStatus());
                         individualRelationType.setIsSelected(false);
@@ -595,7 +597,7 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
                         individualRelationType.setFamilyName("");
                         individualRelationType.setOrganizationId("");
                         individualRelationType.setIsFriendRelation(true);
-                        individualRelationType.setIsVerify("1");
+//                        individualRelationType.setIsVerify("1");
                         individualRelationType.setRelationType(friendRecommendation.get(j).getRrmType());
                         individualRelationType.setRcStatus(friendRecommendation.get(j).getRcStatus());
                         individualRelationType.setIsSelected(false);
@@ -619,13 +621,7 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
             ArrayList<IndividualRelationType> individualRelationTypes = existingRelationList.get(0)
                     .getIndividualRelationTypeList();
 
-            listAdapter = new IndividualRelationRecommendationListAdapter(activity, individualRelationTypes, "rcp",
-                    new IndividualRelationRecommendationListAdapter.OnClickListener() {
-                        @Override
-                        public void onClick(int innerPosition) {
-
-                        }
-                    });
+            listAdapter = new IndividualExistingRelationListAdapter(activity, individualRelationTypes, "rcp");
             recycleViewRelation.setLayoutManager(new LinearLayoutManager(this));
             recycleViewRelation.setAdapter(listAdapter);
 

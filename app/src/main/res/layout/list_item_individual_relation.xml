@@ -1,86 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/rl_root_relation"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/margin_5dp"
     android:background="@color/colorWhite"
-    android:gravity="center"
     android:orientation="vertical">
 
-    <RelativeLayout
-        android:id="@+id/ll_business_relation"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:padding="@dimen/margin_5dp">
 
-        <ImageView
-            android:id="@+id/image_relation"
+        <TextView
+            android:id="@+id/text_business_relation_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:contentDescription="@string/app_name"
-            android:padding="@dimen/padding_5dp" />
+            android:drawablePadding="@dimen/margin_5dp"
+            android:gravity="center"
+            android:textColor="@color/grey_hex_ac"
+            android:textSize="@dimen/text_size_12sp" />
 
         <LinearLayout
-            android:id="@+id/ll_relation_name"
+            android:id="@+id/ll_relation_organization"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_marginStart="@dimen/margin_10dp"
-            android:layout_toEndOf="@+id/image_relation"
-            android:orientation="vertical">
+            android:layout_gravity="center"
+            android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/text_relation_name"
+                android:id="@+id/text_at"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:drawablePadding="@dimen/padding_10dp"
-                android:gravity="center|start"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_5dp"
+                android:text="at"
                 android:textColor="@color/grey_hex_ac"
                 android:textSize="@dimen/text_size_12sp" />
 
-            <LinearLayout
-                android:id="@+id/ll_relation_organization"
+            <TextView
+                android:id="@+id/text_organization_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:visibility="gone">
-
-                <TextView
-                    android:id="@+id/text_at"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="at"
-                    android:textColor="@color/grey_hex_ac" />
-
-                <TextView
-                    android:id="@+id/text_organization_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/margin_5dp"
-                    android:textColor="@color/grey_hex_75"
-                    android:textSize="@dimen/text_size_14sp"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
+                android:layout_marginStart="@dimen/margin_5dp"
+                android:drawablePadding="@dimen/margin_10dp"
+                android:textColor="@color/grey_hex_75"
+                android:textSize="@dimen/text_size_14sp"
+                android:textStyle="bold" />
 
         </LinearLayout>
 
-        <CheckBox
-            android:id="@+id/checkbox_relation"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:layout_alignParentEnd="true" />
+        <LinearLayout
+            android:id="@+id/ll_other_relation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_5dp"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
 
-    </RelativeLayout>
+            <LinearLayout
+                android:id="@+id/ll_family_relation"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/margin_5dp"
+                android:layout_weight="1"
+                android:gravity="center|start">
 
-    <LinearLayout
-        android:id="@+id/ll_relation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal" />
-</FrameLayout>
+                <TextView
+                    android:id="@+id/text_family_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:drawablePadding="@dimen/margin_5dp"
+                    android:gravity="center"
+                    android:textColor="@color/grey_hex_ac"
+                    android:textSize="@dimen/text_size_12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_friend_relation"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/margin_5dp"
+                android:layout_weight="1"
+                android:gravity="center|start">
+
+                <TextView
+                    android:id="@+id/text_friend_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:drawablePadding="@dimen/margin_5dp"
+                    android:gravity="center"
+                    android:textColor="@color/grey_hex_ac"
+                    android:textSize="@dimen/text_size_12sp" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

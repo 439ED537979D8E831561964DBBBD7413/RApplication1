@@ -24,6 +24,7 @@
     <string name="action_cancel">रद्द करें</string>
     <string name="action_call">कॉल करें</string>
     <string name="action_delete">मिटा दे</string>
+    <string name="action_accept">स्वीकार करें</string>
     <string name="str_comment">टिप्पणी करें</string>
     <string name="hint_comment">कुछ कहना चाहते हैं?</string>
     <string name="str_choose_from_contacts">संपर्कों में से चुनें</string>

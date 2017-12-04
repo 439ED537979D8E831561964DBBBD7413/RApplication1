@@ -180,7 +180,7 @@ public class TableRelationMappingMaster {
                         individualRelationTypeList.setIsFriendRelation(false);
                         individualRelationTypeList.setRcStatus(cursor.getInt(cursor.getColumnIndexOrThrow
                                 (COLUMN_RRM_STATUS)));
-                        individualRelationTypeList.setIsVerify("1");
+//                        individualRelationTypeList.setIsVerify("1");
 
                     } else if (type.equalsIgnoreCase("1")) {
 
@@ -193,7 +193,7 @@ public class TableRelationMappingMaster {
                         individualRelationTypeList.setIsFriendRelation(true);
                         individualRelationTypeList.setRcStatus(cursor.getInt(cursor.getColumnIndexOrThrow
                                 (COLUMN_RRM_STATUS)));
-                        individualRelationTypeList.setIsVerify("1");
+//                        individualRelationTypeList.setIsVerify("1");
 
                     } else if (type.equalsIgnoreCase("2")) {
 
@@ -207,7 +207,7 @@ public class TableRelationMappingMaster {
                         individualRelationTypeList.setIsFriendRelation(false);
                         individualRelationTypeList.setRcStatus(cursor.getInt(cursor.getColumnIndexOrThrow
                                 (COLUMN_RRM_STATUS)));
-                        individualRelationTypeList.setIsVerify("1");
+//                        individualRelationTypeList.setIsVerify("1");
 
                     }
 
@@ -314,7 +314,7 @@ public class TableRelationMappingMaster {
                         individualRelationTypeList.setIsFriendRelation(false);
                         individualRelationTypeList.setRcStatus(cursor1.getInt(cursor1.getColumnIndexOrThrow
                                 (COLUMN_RRM_STATUS)));
-                        individualRelationTypeList.setIsVerify("1");
+//                        individualRelationTypeList.setIsVerify("1");
                         individualRelationTypeList.setIsSelected(false);
 
                     } else if (type.equalsIgnoreCase("1")) {
@@ -328,7 +328,7 @@ public class TableRelationMappingMaster {
                         individualRelationTypeList.setIsFriendRelation(true);
                         individualRelationTypeList.setRcStatus(cursor1.getInt(cursor1.getColumnIndexOrThrow
                                 (COLUMN_RRM_STATUS)));
-                        individualRelationTypeList.setIsVerify("1");
+//                        individualRelationTypeList.setIsVerify("1");
                         individualRelationTypeList.setIsSelected(false);
 
                     } else if (type.equalsIgnoreCase("2")) {
@@ -343,7 +343,7 @@ public class TableRelationMappingMaster {
                         individualRelationTypeList.setIsFriendRelation(false);
                         individualRelationTypeList.setRcStatus(cursor1.getInt(cursor1.getColumnIndexOrThrow
                                 (COLUMN_RRM_STATUS)));
-                        individualRelationTypeList.setIsVerify("1");
+//                        individualRelationTypeList.setIsVerify("1");
                         individualRelationTypeList.setIsSelected(false);
                     }
 

@@ -27,15 +27,15 @@ public class ProfileDataOperationOrganization implements Serializable {
     private String eomLogoPath;
     private String eomLogoName;
 
-    public String getIsInUse() {
-        return isInUse;
-    }
-
-    public void setIsInUse(String isInUse) {
-        this.isInUse = isInUse;
-    }
-
-    private String isInUse;
+//    public String getIsInUse() {
+//        return isInUse;
+//    }
+//
+//    public void setIsInUse(String isInUse) {
+//        this.isInUse = isInUse;
+//    }
+//
+//    private String isInUse;
 
 //    private String orgType;
 //    private String orgJobDescription;
