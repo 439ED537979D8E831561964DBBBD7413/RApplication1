@@ -40,6 +40,7 @@ import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.common.base.MoreObjects;
@@ -55,6 +56,7 @@ import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
+import com.rawalinfocom.rcontact.contacts.PrivacySettingPopupDialog;
 import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.database.QueryManager;
@@ -71,6 +73,8 @@ import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.CallLogHistoryType;
 import com.rawalinfocom.rcontact.model.CallLogType;
 import com.rawalinfocom.rcontact.model.Comment;
+import com.rawalinfocom.rcontact.model.PrivacyDataItem;
+import com.rawalinfocom.rcontact.model.PrivacyEntityItem;
 import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
@@ -1878,14 +1882,134 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         //</editor-fold>
 
         //<editor-fold desc="User Rating">
+
         if (profileDetail != null) {
-            textUserRating.setText(profileDetail.getTotalProfileRateUser());
-            ratingUser.setRating(Float.parseFloat(profileDetail.getProfileRating()));
+
+            if (displayOwnProfile) {
+
+//                buttonRequestRating.setVisibility(View.GONE);
+//                buttonPrivacyRating.setVisibility(View.VISIBLE);
+                textUserRating.setText(profileDetail.getTotalProfileRateUser());
+                ratingUser.setRating(Float.parseFloat(profileDetail.getProfileRating()));
+
+//                switch (Integer.parseInt(profileDetail.getProfileRatingPrivacy())) {
+//                    case 1:
+//                        //everyone
+//                        buttonPrivacyRating.setImageResource(R.drawable.ico_privacy_public);
+//                        break;
+//                    case 2:
+//                        //my contacts
+//                        buttonPrivacyRating.setImageResource(R.drawable.ico_privacy_my_contact);
+//                        break;
+//                    case 3:
+//                        //only me
+//                        buttonPrivacyRating.setImageResource(R.drawable.ico_privacy_onlyme);
+//                        break;
+//                }
+
+//                buttonPrivacyRating.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//
+//                        PrivacySettingPopupDialog privacySettingPopupDialog = new
+//                                PrivacySettingPopupDialog(null, CallHistoryDetailsActivity.this,
+//                                new PrivacySettingPopupDialog.DialogCallback() {
+//                                    @Override
+//                                    public void onSettingSaved(ProfileDetailAdapter
+//                                                                       .ProfileDetailViewHolder view, int whichItem, int newPrivacy, int
+//                                                                       itemPosition, int
+//                                                                       oldPrivacy, String
+//                                                                       cloudId) {
+//
+//                                        if (oldPrivacy == newPrivacy + 1) {
+//                                            return;
+//                                        }
+//
+//                                        WsRequestObject wsRequestObject = new WsRequestObject();
+//
+//                                        PrivacyEntityItem privacyEntityItem = new
+//                                                PrivacyEntityItem();
+//                                        privacyEntityItem.setId(cloudId);
+//                                        privacyEntityItem.setValue(newPrivacy + 1);
+//                                        ArrayList<PrivacyEntityItem> privacyEntityItems = new
+//                                                ArrayList<>();
+//                                        privacyEntityItems.add(privacyEntityItem);
+//                                        ArrayList<PrivacyDataItem> privacyItems = new
+//                                                ArrayList<>();
+//                                        PrivacyDataItem privacyDataItem = new PrivacyDataItem();
+//                                        switch (whichItem) {
+//                                            case AppConstants.RATING:
+//                                                privacyDataItem.setPbRating(privacyEntityItems);
+//                                                break;
+//                                        }
+//                                        privacyItems.add(privacyDataItem);
+//                                        wsRequestObject.setPrivacyData(privacyItems);
+////        wsRequestObject.setPmId(pmId);
+//                                        if (Utils.isNetworkAvailable(CallHistoryDetailsActivity
+//                                                .this)) {
+//                                            new AsyncWebServiceCall(CallHistoryDetailsActivity.this,
+//                                                    WSRequestType.REQUEST_TYPE_JSON.getValue(),
+//                                                    wsRequestObject, null, WsResponseObject
+//                                                    .class,
+//                                                    WsConstants
+//                                                            .REQ_SET_PRIVACY_SETTING,
+//                                                    CallHistoryDetailsActivity
+//                                                            .this.getResources().getString(R
+//                                                            .string
+//                                                            .msg_please_wait), true)
+//                                                    .executeOnExecutor
+//                                                            (AsyncTask.THREAD_POOL_EXECUTOR,
+//                                                                    BuildConfig.WS_ROOT +
+//                                                                            WsConstants
+//                                                                                    .REQ_SET_PRIVACY_SETTING);
+//                                        } else {
+//                                            //show no toast
+//                                            Toast.makeText(CallHistoryDetailsActivity.this,
+//                                                    CallHistoryDetailsActivity.this.getResources()
+//                                                            .getString(R.string.msg_no_network),
+//                                                    Toast.LENGTH_SHORT).show();
+//                                        }
+//                                    }
+//                                }, AppConstants.RATING, 0, Integer.parseInt(profileDetail.getProfileRatingPrivacy()), "1");
+//                        privacySettingPopupDialog.setDialogTitle(CallHistoryDetailsActivity.this
+//                                .getResources().getString(R
+//                                        .string.privacy_dialog_title));
+//                        privacySettingPopupDialog.showDialog();
+//
+//                    }
+//                });
+            } else {
+
+                linearBasicDetailRating.setEnabled(false);
+//                buttonPrivacyRating.setVisibility(View.GONE);
+
+                textUserRating.setText(profileDetail.getTotalProfileRateUser());
+
+                if ((MoreObjects.firstNonNull(profileDetail.getProfileRatingPrivacy(), 0)) == IntegerConstants
+                        .IS_PRIVATE) {
+                    ratingUser.setRating(Float.parseFloat(profileDetail.getProfileRating()));
+//                    buttonRequestRating.setVisibility(View.GONE);
+                } else {
+                    ratingUser.setRating(0);
+                    ratingUser.setEnabled(false);
+//                    buttonRequestRating.setVisibility(View.VISIBLE);
+
+//                    buttonRequestRating.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//                            int pmTo = Integer.parseInt(pmId);
+//                             sendAccessRequest(int toPMId, String carFiledType, String
+//                             recordIndexId)
+//                            sendAccessRequest(pmTo, "pb_rating", "1");
+                }
+//                    });
+            }
         } else {
             textUserRating.setText("0");
             ratingUser.setRating(0);
             ratingUser.setEnabled(false);
         }
+
         //</editor-fold>
 
         //<editor-fold desc="Phone Number">

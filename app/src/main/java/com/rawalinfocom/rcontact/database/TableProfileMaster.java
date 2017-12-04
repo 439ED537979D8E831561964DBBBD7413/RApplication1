@@ -52,6 +52,7 @@ public class TableProfileMaster {
     static final String COLUMN_PM_GENDER = "pm_gender";
     static final String COLUMN_PM_GENDER_PRIVACY = "pm_gender_privacy";
     static final String COLUMN_PM_PROFILE_RATING = "pm_profile_rating";
+    static final String COLUMN_PM_RATING_PRIVACY = "pm_rating_privacy";
     static final String COLUMN_PM_PROFILE_RATE_USER = "pm_total_user_rating";
     static final String COLUMN_PM_IS_FAVOURITE = "pm_is_favourite";
     private static final String COLUMN_PM_NOSQL_MASTER_ID = "pm_nosql_master_id";
@@ -98,6 +99,7 @@ public class TableProfileMaster {
             " " + COLUMN_PM_GENDER + " varchar," +
             " " + COLUMN_PM_GENDER_PRIVACY + " integer DEFAULT 1," +
             " " + COLUMN_PM_PROFILE_RATING + " integer," +
+            " " + COLUMN_PM_RATING_PRIVACY + " integer," +
             " " + COLUMN_PM_PROFILE_RATE_USER + " integer," +
             " " + COLUMN_PM_IS_FAVOURITE + " integer," +
             " " + COLUMN_PM_NOSQL_MASTER_ID + " text," +
@@ -127,6 +129,7 @@ public class TableProfileMaster {
         values.put(COLUMN_PM_BADGE, userProfile.getPmBadge());
         values.put(COLUMN_PM_JOINING_DATE, userProfile.getPmJoiningDate());
         values.put(COLUMN_PM_LAST_SEEN, userProfile.getPmLastSeen());
+        values.put(COLUMN_PM_RATING_PRIVACY, userProfile.getProfileRatingPrivacy());
 
         int count = 0;
         Cursor mCount = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_RC_PROFILE_MASTER + " " +
@@ -150,6 +153,24 @@ public class TableProfileMaster {
         db.close(); // Closing database connection
     }
 
+    public void updateRatingPrivacy(String pmId, String ratingPrivacy) {
+
+        try {
+
+            SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_PM_RATING_PRIVACY, ratingPrivacy);
+
+            // Update if already exists
+            db.update(TABLE_RC_PROFILE_MASTER, values, COLUMN_PM_RCP_ID + " = ?",
+                    new String[]{String.valueOf(pmId)});
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     // Adding Array new Profile
     public void addArrayProfile(ArrayList<UserProfile> arrayListUserProfile) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
@@ -171,6 +192,7 @@ public class TableProfileMaster {
             values.put(COLUMN_PM_BADGE, arrayListUserProfile.get(i).getPmBadge());
             values.put(COLUMN_PM_JOINING_DATE, arrayListUserProfile.get(i).getPmJoiningDate());
             values.put(COLUMN_PM_LAST_SEEN, arrayListUserProfile.get(i).getPmLastSeen());
+            values.put(COLUMN_PM_RATING_PRIVACY, arrayListUserProfile.get(i).getProfileRatingPrivacy());
 
             int count = 0;
             Cursor mCount = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_RC_PROFILE_MASTER + " " +
@@ -241,9 +263,10 @@ public class TableProfileMaster {
             SQLiteDatabase db = databaseHandler.getReadableDatabase();
 
             Cursor cursor = db.query(TABLE_RC_PROFILE_MASTER, new String[]{COLUMN_PM_RAW_ID,
-                    COLUMN_PM_FIRST_NAME, COLUMN_PM_LAST_NAME, COLUMN_PM_PROFILE_IMAGE, COLUMN_PM_PROFILE_RATE_USER,
-                    COLUMN_PM_PROFILE_RATING, COLUMN_PM_LAST_SEEN, COLUMN_PM_RCP_ID,}, COLUMN_PM_RCP_ID
-                    + "=?", new String[]{String.valueOf(cloudPmd)}, null, null, null, null);
+                            COLUMN_PM_FIRST_NAME, COLUMN_PM_LAST_NAME, COLUMN_PM_PROFILE_IMAGE, COLUMN_PM_PROFILE_RATE_USER,
+                            COLUMN_PM_PROFILE_RATING, COLUMN_PM_LAST_SEEN, COLUMN_PM_RATING_PRIVACY, COLUMN_PM_RCP_ID,},
+                    COLUMN_PM_RCP_ID + "=?", new String[]{String.valueOf(cloudPmd)}, null,
+                    null, null, null);
             if (cursor != null)
                 cursor.moveToFirst();
 
@@ -261,6 +284,9 @@ public class TableProfileMaster {
                         (COLUMN_PM_PROFILE_RATE_USER)));
                 userProfile.setPmLastSeen(cursor.getString(cursor.getColumnIndex
                         (COLUMN_PM_LAST_SEEN)));
+                userProfile.setProfileRatingPrivacy(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_PM_RATING_PRIVACY)));
+
                 cursor.close();
             }
             db.close();
@@ -283,7 +309,7 @@ public class TableProfileMaster {
             Cursor cursor = db.query(TABLE_RC_PROFILE_MASTER, new String[]{COLUMN_PM_RAW_ID,
                     COLUMN_PM_FIRST_NAME, COLUMN_PM_LAST_NAME, COLUMN_PM_PROFILE_IMAGE,
                     COLUMN_PM_RCP_ID, COLUMN_PM_GENDER, COLUMN_PM_GENDER_PRIVACY,
-                    COLUMN_PM_PROFILE_RATING, COLUMN_PM_PROFILE_RATE_USER,
+                    COLUMN_PM_PROFILE_RATING, COLUMN_PM_PROFILE_RATE_USER, COLUMN_PM_RATING_PRIVACY,
                     COLUMN_PM_IS_FAVOURITE, COLUMN_PM_NOSQL_MASTER_ID, COLUMN_PM_BADGE,
                     COLUMN_PM_LAST_SEEN, COLUMN_PM_JOINING_DATE}, COLUMN_PM_RCP_ID + "=?", new String[]{String.valueOf
                     (cloudPmd)}, null, null, null, null);
@@ -317,6 +343,8 @@ public class TableProfileMaster {
                         (COLUMN_PM_JOINING_DATE)));
                 userProfile.setPmLastSeen(cursor.getString(cursor.getColumnIndex
                         (COLUMN_PM_LAST_SEEN)));
+                userProfile.setProfileRatingPrivacy(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_PM_RATING_PRIVACY)));
 
                 cursor.close();
             }
@@ -412,6 +440,7 @@ public class TableProfileMaster {
         values.put(COLUMN_PM_BADGE, userProfile.getPmBadge());
         values.put(COLUMN_PM_JOINING_DATE, userProfile.getPmJoiningDate());
         values.put(COLUMN_PM_LAST_SEEN, userProfile.getPmLastSeen());
+        values.put(COLUMN_PM_RATING_PRIVACY, userProfile.getProfileRatingPrivacy());
 
         int isUpdated = db.update(TABLE_RC_PROFILE_MASTER, values, COLUMN_PM_RCP_ID + " = ?",
                 new String[]{String.valueOf(userProfile.getPmRcpId())});

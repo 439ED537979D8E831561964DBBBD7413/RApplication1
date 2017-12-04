@@ -37,6 +37,7 @@ public class UserProfile implements Serializable {
     private String profileRating;
     private String totalProfileRateUser;
     private String pmJoiningDate;
+    private String profileRatingPrivacy;
 
 //    private String pmMiddleName;
 //    private String pmPrefix;
@@ -138,6 +139,14 @@ public class UserProfile implements Serializable {
 
     public void setTotalProfileRateUser(String totalProfileRateUser) {
         this.totalProfileRateUser = totalProfileRateUser;
+    }
+
+    public String getProfileRatingPrivacy() {
+        return StringUtils.defaultString(profileRatingPrivacy, "0");
+    }
+
+    public void setProfileRatingPrivacy(String profileRatingPrivacy) {
+        this.profileRatingPrivacy = profileRatingPrivacy;
     }
 
 //    public String getPmMiddleName() {

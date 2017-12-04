@@ -350,6 +350,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     @Nullable
     @BindView(R.id.image_tutorial_edit)
     ImageView imageTutorialEdit;
+    @Nullable
+    @BindView(R.id.button_request_rating)
+    Button buttonRequestRating;
+    @Nullable
+    @BindView(R.id.button_privacy_rating)
+    ImageView buttonPrivacyRating;
 
     String callLogCloudName;
     boolean isCallLogRcpUser, isRatingUpdate = false;
@@ -1272,7 +1278,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     }
 
     @Override
-    public void onDeliveryResponse(String serviceType, Object data, Exception error) {
+    public void
+    onDeliveryResponse(String serviceType, Object data, Exception error) {
         if (error == null) {
 
             Utils.hideProgressDialog();
@@ -2646,8 +2653,128 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             //<editor-fold desc="User Rating">
             if (profileDetail != null) {
-                textUserRating.setText(profileDetail.getTotalProfileRateUser());
-                ratingUser.setRating(Float.parseFloat(profileDetail.getProfileRating()));
+
+                if (displayOwnProfile) {
+
+                    buttonRequestRating.setVisibility(View.GONE);
+                    buttonPrivacyRating.setVisibility(View.VISIBLE);
+                    textUserRating.setText(profileDetail.getTotalProfileRateUser());
+                    ratingUser.setRating(Float.parseFloat(profileDetail.getProfileRating()));
+
+                    switch (profileDetail.getProfileRatingPrivacy()) {
+                        case 1:
+                            //everyone
+                            buttonPrivacyRating.setImageResource(R.drawable.ico_privacy_public);
+                            break;
+                        case 2:
+                            //my contacts
+                            buttonPrivacyRating.setImageResource(R.drawable.ico_privacy_my_contact);
+                            break;
+                        case 3:
+                            //only me
+                            buttonPrivacyRating.setImageResource(R.drawable.ico_privacy_onlyme);
+                            break;
+
+                    }
+
+                    buttonPrivacyRating.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            PrivacySettingPopupDialog privacySettingPopupDialog = new
+                                    PrivacySettingPopupDialog(null, ProfileDetailActivity.this,
+                                    new PrivacySettingPopupDialog.DialogCallback() {
+                                        @Override
+                                        public void onSettingSaved(ProfileDetailAdapter
+                                                                           .ProfileDetailViewHolder view, int whichItem, int newPrivacy, int
+                                                                           itemPosition, int
+                                                                           oldPrivacy, String
+                                                                           cloudId) {
+
+                                            if (oldPrivacy == newPrivacy + 1) {
+                                                return;
+                                            }
+
+                                            WsRequestObject wsRequestObject = new WsRequestObject();
+
+                                            PrivacyEntityItem privacyEntityItem = new
+                                                    PrivacyEntityItem();
+                                            privacyEntityItem.setId(cloudId);
+                                            privacyEntityItem.setValue(newPrivacy + 1);
+                                            ArrayList<PrivacyEntityItem> privacyEntityItems = new
+                                                    ArrayList<>();
+                                            privacyEntityItems.add(privacyEntityItem);
+                                            ArrayList<PrivacyDataItem> privacyItems = new
+                                                    ArrayList<>();
+                                            PrivacyDataItem privacyDataItem = new PrivacyDataItem();
+                                            switch (whichItem) {
+                                                case AppConstants.RATING:
+                                                    privacyDataItem.setPbRating(privacyEntityItems);
+                                                    break;
+                                            }
+                                            privacyItems.add(privacyDataItem);
+                                            wsRequestObject.setPrivacyData(privacyItems);
+//        wsRequestObject.setPmId(pmId);
+                                            if (Utils.isNetworkAvailable(ProfileDetailActivity
+                                                    .this)) {
+                                                new AsyncWebServiceCall(ProfileDetailActivity.this,
+                                                        WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                                                        wsRequestObject, null, WsResponseObject
+                                                        .class,
+                                                        WsConstants
+                                                                .REQ_SET_PRIVACY_SETTING,
+                                                        ProfileDetailActivity
+                                                                .this.getResources().getString(R
+                                                                .string
+                                                                .msg_please_wait), true)
+                                                        .executeOnExecutor
+                                                                (AsyncTask.THREAD_POOL_EXECUTOR,
+                                                                        BuildConfig.WS_ROOT +
+                                                                                WsConstants
+                                                                                        .REQ_SET_PRIVACY_SETTING);
+                                            } else {
+                                                //show no toast
+                                                Toast.makeText(ProfileDetailActivity.this,
+                                                        ProfileDetailActivity.this.getResources()
+                                                                .getString(R.string.msg_no_network),
+                                                        Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    }, AppConstants.RATING, 0, profileDetail.getProfileRatingPrivacy(), "1");
+                            privacySettingPopupDialog.setDialogTitle(ProfileDetailActivity.this
+                                    .getResources().getString(R
+                                            .string.privacy_dialog_title));
+                            privacySettingPopupDialog.showDialog();
+
+                        }
+                    });
+                } else {
+
+                    linearBasicDetailRating.setEnabled(false);
+                    buttonPrivacyRating.setVisibility(View.GONE);
+
+                    textUserRating.setText(profileDetail.getTotalProfileRateUser());
+
+                    if ((MoreObjects.firstNonNull(profileDetail.getProfileRatingPrivacy(), 0)) == IntegerConstants
+                            .IS_PRIVATE) {
+                        ratingUser.setRating(Float.parseFloat(profileDetail.getProfileRating()));
+                        buttonRequestRating.setVisibility(View.GONE);
+                    } else {
+                        ratingUser.setRating(0);
+                        ratingUser.setEnabled(false);
+                        buttonRequestRating.setVisibility(View.VISIBLE);
+
+                        buttonRequestRating.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                int pmTo = Integer.parseInt(pmId);
+                                // sendAccessRequest(int toPMId, String carFiledType, String
+                                // recordIndexId)
+                                sendAccessRequest(pmTo, "pb_rating", "1");
+                            }
+                        });
+                    }
+                }
             } else {
                 textUserRating.setText("0");
                 ratingUser.setRating(0);
@@ -4506,6 +4633,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     private void savePrivacySettingToDb(ProfileDataOperation profileDetail) {
 
+        //<editor-fold desc="Basic Details">
+        TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
+        tableProfileMaster.updateRatingPrivacy(profileDetail.getRcpPmId(), String.valueOf(profileDetail.getProfileRatingPrivacy()));
+        //</editor-fold>
+
         // <editor-fold desc="Aadhar card details">
         TableAadharMaster tableAadharMaster = new TableAadharMaster(databaseHandler);
         tableAadharMaster.deleteAadharDetails(getUserPmId());
@@ -4768,6 +4900,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         userProfile.setPmGender(profileDetail.getPbGender());
         userProfile.setPmBadge(profileDetail.getPmBadge());
         userProfile.setPmLastSeen(profileDetail.getPmLastSeen());
+        userProfile.setProfileRatingPrivacy(String.valueOf(profileDetail.getProfileRatingPrivacy()));
 
         tableProfileMaster.addProfile(userProfile);
         //</editor-fold>

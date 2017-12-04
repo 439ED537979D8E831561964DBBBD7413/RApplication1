@@ -613,9 +613,19 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
             //</editor-fold>
 
             //<editor-fold desc="User Rating">
+
             if (profileDetail != null) {
+
+                linearBasicDetailRating.setEnabled(false);
                 textUserRating.setText(profileDetail.getTotalProfileRateUser());
-                ratingUser.setRating(Float.parseFloat(profileDetail.getProfileRating()));
+
+                if ((MoreObjects.firstNonNull(profileDetail.getProfileRatingPrivacy(), 0)) == IntegerConstants
+                        .IS_PRIVATE) {
+                    ratingUser.setRating(Float.parseFloat(profileDetail.getProfileRating()));
+                } else {
+                    ratingUser.setRating(0);
+                    ratingUser.setEnabled(false);
+                }
             } else {
                 textUserRating.setText("0");
                 ratingUser.setRating(0);
