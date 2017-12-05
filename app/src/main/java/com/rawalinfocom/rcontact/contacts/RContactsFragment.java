@@ -686,6 +686,7 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
                         mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(j).getPhoneType());
                         mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber.get(j)
                                 .getPhonePublic()));
+                        mobileNumber.setMnmIsPrivate(arrayListPhoneNumber.get(j).getIsPrivate());
                         mobileNumber.setMnmPhonePublic(arrayListPhoneNumber.get(j).getPhonePublic());
                         mobileNumber.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
                         if (StringUtils.equalsIgnoreCase(profileData.get(i)
@@ -730,6 +731,7 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
                             email.setEmIsVerified(String.valueOf(arrayListEmailId.get(j)
                                     .getEmRcpType
                                             ()));
+                            email.setEmIsPrivate(arrayListEmailId.get(j).getEmIsPrivate());
 
                             email.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
 
@@ -885,6 +887,7 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
                             address.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
                             address.setAmAddressPrivacy(String.valueOf(arrayListAddress.get(j)
                                     .getAddPublic()));
+                            address.setAmIsPrivate(arrayListAddress.get(j).getIsPrivate());
                             addressList.add(address);
                         }
 
@@ -907,8 +910,8 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
                                     .getIMAccountProtocol());
                             imAccount.setImImDetail(arrayListImAccount.get(j)
                                     .getIMAccountDetails());
-//                            imAccount.setImIsPrivate(arrayListImAccount.get(j)
-//                                    .getIMAccountIsPrivate());
+                            imAccount.setImIsPrivate(arrayListImAccount.get(j)
+                                    .getIMAccountIsPrivate());
                             imAccount.setImImPrivacy(String.valueOf(arrayListImAccount.get(j)
                                     .getIMAccountPublic()));
                             imAccount.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
@@ -930,7 +933,7 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
                             event.setEvmRecordIndexId(arrayListEvent.get(j).getEventId());
                             event.setEvmStartDate(arrayListEvent.get(j).getEventDateTime());
                             event.setEvmEventType(arrayListEvent.get(j).getEventType());
-//                            event.setEvmIsPrivate(arrayListEvent.get(j).getIsPrivate());
+                            event.setEvmIsPrivate(arrayListEvent.get(j).getIsPrivate());
                             event.setEvmIsYearHidden(arrayListEvent.get(j).getIsYearHidden());
                             event.setEvmEventPrivacy(String.valueOf(arrayListEvent.get(j)
                                     .getEventPublic()));

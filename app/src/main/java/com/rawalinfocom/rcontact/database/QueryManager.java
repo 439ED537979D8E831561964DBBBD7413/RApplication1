@@ -142,7 +142,7 @@ public class QueryManager {
                     phoneNumber.setPhonePublic(Integer.parseInt(StringUtils.defaultString
                             (mobileNumberCursor.getString(mobileNumberCursor.getColumnIndexOrThrow
                                     (TableMobileMaster.COLUMN_MNM_NUMBER_PRIVACY)), "0")));
-                    phoneNumber.setPhonePublic(Integer.parseInt(StringUtils.defaultString
+                    phoneNumber.setIsPrivate(Integer.parseInt(StringUtils.defaultString
                             (mobileNumberCursor.getString(mobileNumberCursor.getColumnIndexOrThrow
                                     (TableMobileMaster.COLUMN_MNM_IS_PRIVATE)), "0")));
                     phoneNumber.setPhoneId(StringUtils.defaultString(mobileNumberCursor.getString
@@ -187,9 +187,9 @@ public class QueryManager {
                     email.setEmPublic(Integer.parseInt(StringUtils.defaultString(emailIdCursor
                             .getString(emailIdCursor.getColumnIndexOrThrow(TableEmailMaster
                                     .COLUMN_EM_EMAIL_PRIVACY)), "0")));
-//                    email.setEmIsPrivate(Integer.parseInt(StringUtils.defaultString(emailIdCursor
-//                            .getString(emailIdCursor.getColumnIndexOrThrow(TableEmailMaster
-//                                    .COLUMN_EM_IS_PRIVATE)), "0")));
+                    email.setEmIsPrivate(Integer.parseInt(StringUtils.defaultString(emailIdCursor
+                            .getString(emailIdCursor.getColumnIndexOrThrow(TableEmailMaster
+                                    .COLUMN_EM_IS_PRIVATE)), "0")));
                     email.setEmId(StringUtils.defaultString(emailIdCursor.getString(emailIdCursor
                             .getColumnIndexOrThrow(TableEmailMaster.COLUMN_EM_RECORD_INDEX_ID))));
                     email.setEmRcpType(Integer.parseInt(emailIdCursor.getString
@@ -356,9 +356,9 @@ public class QueryManager {
                     event.setEventPublic(Integer.parseInt(StringUtils.defaultString(eventCursor
                             .getString(eventCursor.getColumnIndexOrThrow(TableEventMaster
                                     .COLUMN_EVM_EVENT_PRIVACY)), "0")));
-//                    event.setIsPrivate(Integer.parseInt(StringUtils.defaultString(eventCursor
-//                            .getString(eventCursor.getColumnIndexOrThrow(TableEventMaster
-//                                    .COLUMN_EVM_IS_PRIVATE)), "0")));
+                    event.setIsPrivate(Integer.parseInt(StringUtils.defaultString(eventCursor
+                            .getString(eventCursor.getColumnIndexOrThrow(TableEventMaster
+                                    .COLUMN_EVM_IS_PRIVATE)), "0")));
                     event.setIsYearHidden(Integer.parseInt(StringUtils.defaultString(eventCursor
                             .getString(eventCursor.getColumnIndexOrThrow(TableEventMaster
                                     .COLUMN_EVM_IS_YEAR_HIDDEN)), "0")));
@@ -415,10 +415,10 @@ public class QueryManager {
                             (imAccountCursor
                                     .getString(imAccountCursor.getColumnIndex(TableImMaster
                                             .COLUMN_IM_PRIVACY)), "0")));
-//                    imAccount.setIMAccountIsPrivate(Integer.parseInt(StringUtils.defaultString
-//                            (imAccountCursor
-//                                    .getString(imAccountCursor.getColumnIndexOrThrow(TableImMaster
-//                                            .COLUMN_IM_IS_PRIVATE)), "0")));
+                    imAccount.setIMAccountIsPrivate(Integer.parseInt(StringUtils.defaultString
+                            (imAccountCursor
+                                    .getString(imAccountCursor.getColumnIndexOrThrow(TableImMaster
+                                            .COLUMN_IM_IS_PRIVATE)), "0")));
                     imAccount.setIMRcpType(String.valueOf(IntegerConstants
                             .RCP_TYPE_CLOUD_PHONE_BOOK));
                     arrayListImAccount.add(imAccount);
@@ -459,9 +459,9 @@ public class QueryManager {
                     address.setAddPublic(Integer.parseInt(StringUtils.defaultString(addressCursor
                             .getString(addressCursor.getColumnIndexOrThrow(TableAddressMaster
                                     .COLUMN_AM_ADDRESS_PRIVACY)), "0")));
-//                    address.setIsPrivate(Integer.parseInt(StringUtils.defaultString(addressCursor
-//                            .getString(addressCursor.getColumnIndexOrThrow(TableAddressMaster
-//                                    .COLUMN_AM_IS_PRIVATE)), "0")));
+                    address.setIsPrivate(Integer.parseInt(StringUtils.defaultString(addressCursor
+                            .getString(addressCursor.getColumnIndexOrThrow(TableAddressMaster
+                                    .COLUMN_AM_IS_PRIVATE)), "0")));
                     address.setAddId(StringUtils.defaultString(addressCursor.getString
                             (addressCursor.getColumnIndexOrThrow(TableAddressMaster
                                     .COLUMN_AM_RECORD_INDEX_ID))));

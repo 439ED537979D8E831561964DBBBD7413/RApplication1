@@ -198,7 +198,7 @@ public class NotificationFCMService extends FirebaseMessagingService {
                         mobileNumber.setMnmMobileNumber(mobile_num);
                         mobileNumber.setMnmNumberType(getString(R.string.type_mobile));
                         mobileNumber.setMnmNumberPrivacy(String.valueOf(1));
-                        mobileNumber.setMnmPhonePublic(0);
+                        mobileNumber.setMnmIsPrivate(0);
                         mobileNumber.setRcProfileMasterPmId(rcp_pm_id);
                         mobileNumber.setMnmIsPrimary(String.valueOf(IntegerConstants
                                 .RCP_TYPE_PRIMARY));

@@ -57,6 +57,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.BuildConfig;
@@ -109,6 +110,7 @@ import com.rawalinfocom.rcontact.model.MobileNumber;
 import com.rawalinfocom.rcontact.model.Organization;
 import com.rawalinfocom.rcontact.model.PrivacyDataItem;
 import com.rawalinfocom.rcontact.model.PrivacyEntityItem;
+import com.rawalinfocom.rcontact.model.PrivateData;
 import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAadharNumber;
@@ -360,6 +362,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     String callLogCloudName;
     boolean isCallLogRcpUser, isRatingUpdate = false;
     boolean isDialogCallLogInstance;
+    boolean isPrivacyRequestAll = false;
 
     RelativeLayout relativeRootRatingDialog;
 
@@ -464,6 +467,16 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     @Nullable
     @BindView(R.id.card_last_seen_details)
     CardView cardLastSeenDetails;
+
+    private PrivateData privateData;
+    private ArrayList<String> pbPhoneNumber;
+    private ArrayList<String> pbEvent;
+    private ArrayList<String> pbEmailId;
+    private ArrayList<String> pbIMAccounts;
+    private ArrayList<String> pbAddress;
+    private ArrayList<String> pbEducation;
+    private ArrayList<String> pbAadhaar;
+    private ArrayList<String> pbRating;
 
     //<editor-fold desc="Override Methods">
 
@@ -2249,6 +2262,44 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         initSwipe();
 
+        // TODO : Hardik
+        buttonRequestAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (isPrivacyRequestAll) {
+
+                    if (pbPhoneNumber.size() > 0)
+                        privateData.setPbPhoneNumber(pbPhoneNumber);
+
+                    if (pbEmailId.size() > 0)
+                        privateData.setPbEmailId(pbEmailId);
+
+                    if (pbEducation.size() > 0)
+                        privateData.setPbEducation(pbEducation);
+
+                    if (pbAddress.size() > 0)
+                        privateData.setPbAddress(pbAddress);
+
+                    if (pbAadhaar.size() > 0)
+                        privateData.setPbAadhaar(pbAadhaar);
+
+                    if (pbEvent.size() > 0)
+                        privateData.setPbEvent(pbEvent);
+
+                    if (pbIMAccounts.size() > 0)
+                        privateData.setPbIMAccounts(pbIMAccounts);
+
+                    if (pbRating.size() > 0)
+                        privateData.setPbRating(pbRating);
+
+                    sendAllAccessRequest(Integer.parseInt(pmId), privateData);
+
+                } else {
+                    Utils.showErrorSnackBar(ProfileDetailActivity.this, relativeRootProfileDetail, "No private data found!!");
+                }
+            }
+        });
     }
 
     private void getDataFromDB() {
@@ -2441,6 +2492,19 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     }
 
     private void setUpView(final ProfileDataOperation profileDetail) {
+
+        // phone,email,education,address,imAccount,event,aadhaar
+
+        privateData = new PrivateData();
+
+        pbPhoneNumber = new ArrayList<>();
+        pbEmailId = new ArrayList<>();
+        pbIMAccounts = new ArrayList<>();
+        pbAddress = new ArrayList<>();
+        pbEducation = new ArrayList<>();
+        pbAadhaar = new ArrayList<>();
+        pbEvent = new ArrayList<>();
+        pbRating = new ArrayList<>();
 
         try {
             Utils.hideProgressDialog();
@@ -2761,6 +2825,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                         linearBasicDetailRating.setEnabled(true);
 
+                        pbRating.add("1");
+
                         ratingUser.setRating(Float.parseFloat(profileDetail.getProfileRating()));
                         buttonRequestRating.setVisibility(View.GONE);
 
@@ -2803,6 +2869,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     String number = Utils.getFormattedNumber(this, arrayListPhoneNumber.get(i)
                             .getPhoneNumber());
                     arrayListCloudNumber.add(number);
+
+                    if ((MoreObjects.firstNonNull(arrayListPhoneNumber.get(i).getPhonePublic(), 0)) == IntegerConstants
+                            .PRIVACY_PRIVATE) {
+                        pbPhoneNumber.add(arrayListPhoneNumber.get(i).getPhoneId());
+                        isPrivacyRequestAll = true;
+                    }
 
                     if (arrayListPhoneNumber.get(i).getPbRcpType() == IntegerConstants
                             .RCP_TYPE_PRIMARY) {
@@ -2856,7 +2928,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                 linearPhone.setVisibility(View.VISIBLE);
                 phoneDetailAdapter = new ProfileDetailAdapter(this,
-                        tempPhoneNumber, AppConstants.PHONE_NUMBER, displayOwnProfile, pmId, buttonRequestAll);
+                        tempPhoneNumber, AppConstants.PHONE_NUMBER, displayOwnProfile, pmId);
                 recyclerViewContactNumber.setAdapter(phoneDetailAdapter);
             } else {
                 linearPhone.setVisibility(View.GONE);
@@ -2873,6 +2945,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 arrayListEmail.addAll(profileDetail.getPbEmailId());
                 for (int i = 0; i < arrayListEmail.size(); i++) {
                     arrayListCloudEmail.add(arrayListEmail.get(i).getEmEmailId());
+
+                    if ((MoreObjects.firstNonNull(arrayListEmail.get(i).getEmPublic(), 0)) == IntegerConstants
+                            .PRIVACY_PRIVATE) {
+                        pbEmailId.add(arrayListEmail.get(i).getEmId());
+                        isPrivacyRequestAll = true;
+                    }
                 }
             }
 
@@ -2925,7 +3003,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 tempEmail.addAll(arrayListPhoneBookEmail);
                 linearEmail.setVisibility(View.VISIBLE);
                 ProfileDetailAdapter emailDetailAdapter = new ProfileDetailAdapter(this, tempEmail,
-                        AppConstants.EMAIL, displayOwnProfile, pmId, buttonRequestAll);
+                        AppConstants.EMAIL, displayOwnProfile, pmId);
                 recyclerViewEmail.setAdapter(emailDetailAdapter);
             } else {
                 linearEmail.setVisibility(View.GONE);
@@ -2939,6 +3017,14 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             if (profileDetail != null && !Utils.isArraylistNullOrEmpty(profileDetail
                     .getPbEducation())) {
                 arrayListEducation.addAll(profileDetail.getPbEducation());
+
+                for (int i = 0; i < arrayListEducation.size(); i++) {
+                    if ((MoreObjects.firstNonNull(arrayListEducation.get(i).getEduPublic(), 0)) == IntegerConstants
+                            .PRIVACY_PRIVATE) {
+                        pbEducation.add(arrayListEducation.get(i).getEduId());
+                        isPrivacyRequestAll = true;
+                    }
+                }
             }
 
             tempEducation = new ArrayList<>();
@@ -2946,7 +3032,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 tempEducation.addAll(arrayListEducation);
                 linearEducation.setVisibility(View.VISIBLE);
                 ProfileDetailAdapter educationDetailAdapter = new ProfileDetailAdapter(this,
-                        tempEducation, AppConstants.EDUCATION, displayOwnProfile, pmId, buttonRequestAll);
+                        tempEducation, AppConstants.EDUCATION, displayOwnProfile, pmId);
                 recyclerViewEducation.setAdapter(educationDetailAdapter);
             } else {
                 linearEducation.setVisibility(View.GONE);
@@ -3015,7 +3101,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                 linearWebsite.setVisibility(View.VISIBLE);
                 ProfileDetailAdapter websiteDetailAdapter = new ProfileDetailAdapter(this,
-                        tempWebsite, AppConstants.WEBSITE, displayOwnProfile, pmId, buttonRequestAll);
+                        tempWebsite, AppConstants.WEBSITE, displayOwnProfile, pmId);
                 recyclerViewWebsite.setAdapter(websiteDetailAdapter);
             } else {
                 linearWebsite.setVisibility(View.GONE);
@@ -3033,6 +3119,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 for (int i = 0; i < arrayListAddress.size(); i++) {
                     String address = arrayListAddress.get(i).getFormattedAddress();
                     arrayListCloudAddress.add(address);
+
+                    if ((MoreObjects.firstNonNull(arrayListAddress.get(i).getAddPublic(), 0)) == IntegerConstants
+                            .PRIVACY_PRIVATE) {
+                        pbAddress.add(arrayListAddress.get(i).getAddId());
+                        isPrivacyRequestAll = true;
+                    }
                 }
             }
 
@@ -3137,7 +3229,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 tempAddress.addAll(arrayListPhoneBookAddress);
                 linearAddress.setVisibility(View.VISIBLE);
                 ProfileDetailAdapter addressDetailAdapter = new ProfileDetailAdapter(this,
-                        tempAddress, AppConstants.ADDRESS, displayOwnProfile, pmId, buttonRequestAll);
+                        tempAddress, AppConstants.ADDRESS, displayOwnProfile, pmId);
                 recyclerViewAddress.setAdapter(addressDetailAdapter);
             } else {
                 linearAddress.setVisibility(View.GONE);
@@ -3155,6 +3247,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 for (int i = 0; i < arrayListImAccount.size(); i++) {
                     String imAccount = arrayListImAccount.get(i).getIMAccountProtocol();
                     arrayListCloudImAccount.add(imAccount);
+
+                    if ((MoreObjects.firstNonNull(arrayListImAccount.get(i).getIMAccountPublic(), 0)) == IntegerConstants
+                            .PRIVACY_PRIVATE) {
+                        pbIMAccounts.add(arrayListImAccount.get(i).getIMId());
+                        isPrivacyRequestAll = true;
+                    }
+
                 }
             }
 
@@ -3206,7 +3305,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 tempImAccount.addAll(arrayListPhoneBookImAccount);
                 linearSocialContact.setVisibility(View.VISIBLE);
                 ProfileDetailAdapter imAccountDetailAdapter = new ProfileDetailAdapter(this,
-                        tempImAccount, AppConstants.IM_ACCOUNT, displayOwnProfile, pmId, buttonRequestAll);
+                        tempImAccount, AppConstants.IM_ACCOUNT, displayOwnProfile, pmId);
                 recyclerViewSocialContact.setAdapter(imAccountDetailAdapter);
             } else {
                 linearSocialContact.setVisibility(View.GONE);
@@ -3236,6 +3335,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 && aadharDetails.getAadharNumber().startsWith("XXXX")) {
                             buttonRequest.setVisibility(View.VISIBLE);
                             buttonPrivacy.setVisibility(View.GONE);
+
+                            pbAadhaar.add(String.valueOf(aadharDetails.getAadharId()));
+                            isPrivacyRequestAll = true;
                         }
 //                        else {
 //                            if ((MoreObjects.firstNonNull(aadharDetails.getAadharPublic(), 3)) !=
@@ -3454,6 +3556,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             if (profileDetail != null && !Utils.isArraylistNullOrEmpty(profileDetail.getPbEvent()
             )) {
                 arrayListEvent.addAll(profileDetail.getPbEvent());
+
+                for (int i = 0; i < arrayListEvent.size(); i++) {
+
+                    if ((MoreObjects.firstNonNull(arrayListEvent.get(i).getEventPublic(), 0)) == IntegerConstants
+                            .PRIVACY_PRIVATE) {
+                        pbEvent.add(String.valueOf(arrayListEvent.get(i).getEventId()));
+                        isPrivacyRequestAll = true;
+                    }
+                }
             }
 
             // From PhoneBook Event
@@ -3510,7 +3621,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 tempEvent.addAll(arrayListPhoneBookEvent);
                 linearEvent.setVisibility(View.VISIBLE);
                 ProfileDetailAdapter eventDetailAdapter = new ProfileDetailAdapter(this, tempEvent,
-                        AppConstants.EVENT, displayOwnProfile, pmId, buttonRequestAll);
+                        AppConstants.EVENT, displayOwnProfile, pmId);
                 recyclerViewEvent.setAdapter(eventDetailAdapter);
             } else {
                 linearEvent.setVisibility(View.GONE);
@@ -3564,6 +3675,24 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     .REQ_PROFILE_PRIVACY_REQUEST, this.getResources().getString(R.string
                     .msg_please_wait), true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
                     BuildConfig.WS_ROOT + WsConstants.REQ_PROFILE_PRIVACY_REQUEST);
+        } else {
+            //show no net
+            Toast.makeText(this, this.getResources().getString(R.string.msg_no_network),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void sendAllAccessRequest(int toPMId, PrivateData privateData) {
+
+        WsRequestObject requestObj = new WsRequestObject();
+        requestObj.setCarPmIdTo(toPMId);
+        requestObj.setPrivateData(privateData);
+        requestObj.setRequestAll("1");
+
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), requestObj, null, WsResponseObject.class,
+                    WsConstants.REQ_PROFILE_PRIVACY_REQUEST, this.getResources().getString(R.string.msg_please_wait), true)
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT + WsConstants.REQ_PROFILE_PRIVACY_REQUEST);
         } else {
             //show no net
             Toast.makeText(this, this.getResources().getString(R.string.msg_no_network),
@@ -4802,6 +4931,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 imAccount.setImImFirstName(arrayListImAccount.get(j).getIMAccountFirstName());
                 imAccount.setImImLastName(arrayListImAccount.get(j).getIMAccountLastName());
                 imAccount.setImImProfileImage(arrayListImAccount.get(j).getIMAccountProfileImage());
+                imAccount.setImIsPrivate(arrayListImAccount.get(j).getIMAccountIsPrivate());
                 imAccount.setRcProfileMasterPmId(profileDetail.getRcpPmId());
 
                 imAccountsList.add(imAccount);
@@ -4946,6 +5076,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         .getPhonePublic()));
                 mobileNumber.setMnmIsPrimary(String.valueOf(arrayListPhoneNumber.get(i)
                         .getPbRcpType()));
+                mobileNumber.setMnmIsPrivate(arrayListPhoneNumber.get(i).getIsPrivate());
                 mobileNumber.setMnmPhonePublic(arrayListPhoneNumber.get(i).getPhonePublic());
                 mobileNumber.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 arrayListMobileNumber.add(mobileNumber);
@@ -4980,6 +5111,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 email.setEmSocialType(arrayListEmailId.get(i).getEmSocialType());
                 email.setEmEmailType(arrayListEmailId.get(i).getEmType());
                 email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(i).getEmPublic()));
+                email.setEmIsPrivate(arrayListEmailId.get(i).getEmIsPrivate());
                 email.setEmIsVerified(String.valueOf(arrayListEmailId.get(i).getEmRcpType()));
                 email.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 arrayListEmail.add(email);
@@ -5100,6 +5232,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 }
                 address.setAmAddressPrivacy(String.valueOf(arrayListAddress.get(j).getAddPublic()));
                 address.setAmGoogleAddress(arrayListAddress.get(j).getGoogleAddress());
+                address.setAmIsPrivate(arrayListAddress.get(j).getIsPrivate());
                 address.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 addressList.add(address);
             }
@@ -5130,7 +5263,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 imAccount.setImImFirstName(arrayListImAccount.get(j).getIMAccountFirstName());
                 imAccount.setImImLastName(arrayListImAccount.get(j).getIMAccountLastName());
                 imAccount.setImImProfileImage(arrayListImAccount.get(j).getIMAccountProfileImage());
-//                imAccount.setImIsPrivate(arrayListImAccount.get(j).getIMAccountIsPrivate());
+                imAccount.setImIsPrivate(arrayListImAccount.get(j).getIMAccountIsPrivate());
                 imAccount.setRcProfileMasterPmId(profileDetail.getRcpPmId());
 
                 imAccountsList.add(imAccount);
@@ -5155,6 +5288,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 event.setEvmRecordIndexId(arrayListEvent.get(j).getEventId());
                 event.setEvmStartDate(arrayListEvent.get(j).getEventDateTime());
                 event.setEvmEventType(arrayListEvent.get(j).getEventType());
+                event.setEvmIsPrivate(arrayListEvent.get(j).getIsPrivate());
                 event.setEvmIsYearHidden(arrayListEvent.get(j).getIsYearHidden());
                 event.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 eventList.add(event);

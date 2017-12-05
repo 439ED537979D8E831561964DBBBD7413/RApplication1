@@ -93,6 +93,7 @@ public class TableAddressMaster {
         values.put(COLUMN_AM_FORMATTED_ADDRESS, address.getAmFormattedAddress());
         values.put(COLUMN_AM_NEIGHBORHOOD, address.getAmNeighborhood());
         values.put(COLUMN_AM_POST_CODE, address.getAmPostCode());
+        values.put(COLUMN_AM_IS_PRIVATE, MoreObjects.firstNonNull(address.getAmIsPrivate(), 0));
         values.put(COLUMN_AM_PO_BOX, address.getAmPoBox());
         values.put(COLUMN_AM_STATE, address.getAmState());
         values.put(COLUMN_AM_STATE_ID, address.getAmStateId());
@@ -131,6 +132,7 @@ public class TableAddressMaster {
             values.put(COLUMN_AM_STATE, arrayListAddress.get(i).getAmState());
             values.put(COLUMN_AM_STATE_ID, arrayListAddress.get(i).getAmStateId());
             values.put(COLUMN_AM_STREET, arrayListAddress.get(i).getAmStreet());
+            values.put(COLUMN_AM_IS_PRIVATE, MoreObjects.firstNonNull(arrayListAddress.get(i).getAmIsPrivate(), 0));
             values.put(COLUMN_AM_ADDRESS_TYPE, arrayListAddress.get(i).getAmAddressType());
             values.put(COLUMN_AM_GOOGLE_LATITUDE, arrayListAddress.get(i).getAmGoogleLatitude());
             values.put(COLUMN_AM_GOOGLE_LONGITUDE, arrayListAddress.get(i).getAmGoogleLongitude());
@@ -181,6 +183,7 @@ public class TableAddressMaster {
             values.put(COLUMN_AM_STATE, arrayListAddress.get(i).getAmState());
             values.put(COLUMN_AM_STATE_ID, arrayListAddress.get(i).getAmStateId());
             values.put(COLUMN_AM_STREET, arrayListAddress.get(i).getAmStreet());
+            values.put(COLUMN_AM_IS_PRIVATE, MoreObjects.firstNonNull(arrayListAddress.get(i).getAmIsPrivate(), 0));
             values.put(COLUMN_AM_ADDRESS_TYPE, arrayListAddress.get(i).getAmAddressType());
             values.put(COLUMN_AM_GOOGLE_LATITUDE, arrayListAddress.get(i).getAmGoogleLatitude());
             values.put(COLUMN_AM_GOOGLE_LONGITUDE, arrayListAddress.get(i).getAmGoogleLongitude());
@@ -248,6 +251,7 @@ public class TableAddressMaster {
             address.setAmPostCode(cursor.getString(cursor.getColumnIndex(COLUMN_AM_POST_CODE)));
             address.setAmPoBox(cursor.getString(cursor.getColumnIndex(COLUMN_AM_PO_BOX)));
             address.setAmState(cursor.getString(cursor.getColumnIndex(COLUMN_AM_STATE)));
+            address.setAmIsPrivate(cursor.getInt(cursor.getColumnIndex(COLUMN_AM_IS_PRIVATE)));
             address.setAmStateId(cursor.getInt(cursor.getColumnIndex(COLUMN_AM_STATE_ID)));
             address.setAmStreet(cursor.getString(cursor.getColumnIndex(COLUMN_AM_STREET)));
             address.setAmAddressType(cursor.getString(cursor.getColumnIndex
@@ -320,6 +324,8 @@ public class TableAddressMaster {
                         (COLUMN_AM_CITY_ID)));
                 address.setAmStreet(cursor.getString(cursor.getColumnIndex
                         (COLUMN_AM_STREET)));
+                address.setAmIsPrivate(cursor.getInt(cursor.getColumnIndex
+                        (COLUMN_AM_IS_PRIVATE)));
                 address.setAmNeighborhood(cursor.getString(cursor.getColumnIndex
                         (COLUMN_AM_NEIGHBORHOOD)));
                 address.setAmFormattedAddress(cursor.getString(cursor.getColumnIndex
@@ -381,6 +387,7 @@ public class TableAddressMaster {
                 address.setAmState(cursor.getString(cursor.getColumnIndex(COLUMN_AM_STATE)));
                 address.setAmStateId(cursor.getInt(cursor.getColumnIndex(COLUMN_AM_STATE_ID)));
                 address.setAmStreet(cursor.getString(cursor.getColumnIndex(COLUMN_AM_STREET)));
+                address.setAmIsPrivate(cursor.getInt(cursor.getColumnIndex(COLUMN_AM_IS_PRIVATE)));
                 address.setAmAddressType(cursor.getString(cursor.getColumnIndex
                         (COLUMN_AM_ADDRESS_TYPE)));
                 address.setAmGoogleLatitude(cursor.getString(cursor.getColumnIndex
@@ -436,6 +443,7 @@ public class TableAddressMaster {
         values.put(COLUMN_AM_PO_BOX, address.getAmPoBox());
         values.put(COLUMN_AM_STATE, address.getAmState());
         values.put(COLUMN_AM_STATE_ID, address.getAmStateId());
+        values.put(COLUMN_AM_IS_PRIVATE, MoreObjects.firstNonNull(address.getAmIsPrivate(), 0));
         values.put(COLUMN_AM_STREET, address.getAmStreet());
         values.put(COLUMN_AM_ADDRESS_TYPE, address.getAmAddressType());
         values.put(COLUMN_AM_GOOGLE_LATITUDE, address.getAmGoogleLatitude());

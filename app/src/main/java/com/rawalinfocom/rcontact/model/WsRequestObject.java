@@ -763,6 +763,28 @@ public class WsRequestObject {
         this.privacyData = privacyData;
     }
 
+    @JsonProperty("requestAll")
+    public String requestAll;
+
+    public String getRequestAll() {
+        return requestAll;
+    }
+
+    public void setRequestAll(String requestAll) {
+        this.requestAll = requestAll;
+    }
+
+    @JsonProperty("private_data")
+    public PrivateData privateData;
+
+    public PrivateData getPrivateData() {
+        return privateData;
+    }
+
+    public void setPrivateData(PrivateData privateData) {
+        this.privateData = privateData;
+    }
+
     public Integer getCarPmIdTo() {
         return carPmIdTo;
     }

@@ -357,7 +357,7 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
         } else {
             holder.buttonRequest.setVisibility(View.GONE);
             /*if ((MoreObjects.firstNonNull(email.getEmIsPrivate(), 0)) == IntegerConstants
-                    .PRIVACY_PRIVATE) {
+                    .IS_PRIVATE) {
 //                    holder.imageView2.setVisibility(View.GONE);
                 holder.buttonRequest.setVisibility(View.GONE);
             }*/
@@ -373,8 +373,8 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
             });*/
         }
 
-        if ((MoreObjects.firstNonNull(email.getEmPublic(), 0)) == IntegerConstants
-                .PRIVACY_PRIVATE) {
+        if ((MoreObjects.firstNonNull(email.getEmIsPrivate(), 0)) == IntegerConstants
+                .IS_PRIVATE) {
             holder.imgActionType.setVisibility(View.GONE);
         }
 //        else {
@@ -557,7 +557,7 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
             holder.buttonRequest.setVisibility(View.GONE);
 
            /* if ((MoreObjects.firstNonNull(address.getIsPrivate(), 0)) == IntegerConstants
-                    .PRIVACY_PRIVATE) {
+                    .IS_PRIVATE) {
                 holder.buttonRequest.setVisibility(View.VISIBLE);
             }*/
 
@@ -573,11 +573,11 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
 
         }
 //        if ((MoreObjects.firstNonNull(address.getIsPrivate(), 0)) == IntegerConstants
-//                .PRIVACY_PRIVATE) {
+//                .IS_PRIVATE) {
 //            holder.imgActionType.setVisibility(View.GONE);
 //        }
-        if ((MoreObjects.firstNonNull(address.getAddPublic(), 0)) == IntegerConstants
-                .PRIVACY_PRIVATE) {
+        if ((MoreObjects.firstNonNull(address.getIsPrivate(), 0)) == IntegerConstants
+                .IS_PRIVATE) {
             holder.imgActionType.setVisibility(View.GONE);
         }
     }
@@ -708,7 +708,7 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
             holder.buttonRequest.setVisibility(View.GONE);
 
             /*if ((MoreObjects.firstNonNull(imAccount.getIMAccountIsPrivate(), 0)) ==
-                    IntegerConstants.PRIVACY_PRIVATE) {
+                    IntegerConstants.IS_PRIVATE) {
                 holder.buttonRequest.setVisibility(View.VISIBLE);
             }
 
@@ -724,11 +724,11 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
             });*/
         }
 //        if ((MoreObjects.firstNonNull(imAccount.getIMAccountIsPrivate(), 0)) ==
-//                IntegerConstants.PRIVACY_PRIVATE) {
+//                IntegerConstants.IS_PRIVATE) {
 //            holder.imgActionType.setVisibility(View.VISIBLE);
 //        }
-        if ((MoreObjects.firstNonNull(imAccount.getIMAccountPublic(), 0)) ==
-                IntegerConstants.PRIVACY_PRIVATE) {
+        if ((MoreObjects.firstNonNull(imAccount.getIMAccountIsPrivate(), 0)) ==
+                IntegerConstants.IS_PRIVATE) {
             holder.imgActionType.setVisibility(View.VISIBLE);
         }
 
@@ -765,7 +765,7 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
         }
 
 
-        if (MoreObjects.firstNonNull(event.getEventPublic(), 0) == IntegerConstants.PRIVACY_PRIVATE) {
+        if (MoreObjects.firstNonNull(event.getIsPrivate(), 0) == IntegerConstants.IS_PRIVATE) {
             convertedDate = event.getEventDateTime();
         }
 
@@ -785,7 +785,7 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
             holder.buttonRequest.setVisibility(View.GONE);
 
             /*if (event.getIsPrivate() != null) {
-                if (event.getIsPrivate() == IntegerConstants.PRIVACY_PRIVATE) {
+                if (event.getIsPrivate() == IntegerConstants.IS_PRIVATE) {
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                 }
             }
@@ -802,8 +802,8 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
             });*/
         }
 
-        if (event.getEventPublic() != null) {
-            if (event.getEventPublic() == IntegerConstants.PRIVACY_PRIVATE) {
+        if (event.getIsPrivate() != null) {
+            if (event.getIsPrivate() == IntegerConstants.IS_PRIVATE) {
                 holder.imgActionType.setVisibility(View.VISIBLE);
             }
         }

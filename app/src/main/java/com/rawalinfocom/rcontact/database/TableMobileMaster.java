@@ -92,7 +92,7 @@ public class TableMobileMaster {
         values.put(COLUMN_MNM_NUMBER_TYPE, mobileNumber.getMnmNumberType());
         values.put(COLUMN_MNM_IS_PRIMARY, mobileNumber.getMnmIsPrimary());
         values.put(COLUMN_MNM_NUMBER_PRIVACY, mobileNumber.getMnmNumberPrivacy());
-        values.put(COLUMN_MNM_IS_PRIVATE, mobileNumber.getMnmPhonePublic());
+        values.put(COLUMN_MNM_IS_PRIVATE, mobileNumber.getMnmIsPrivate());
         values.put(COLUMN_MNM_MOBILE_SERVICE_PROVIDER, mobileNumber.getMnmMobileServiceProvider());
         values.put(COLUMN_MNM_CIRCLE_OF_SERVICE, mobileNumber.getMnmCircleOfService());
         values.put(COLUMN_MNM_SPAM_COUNT, mobileNumber.getMnmSpamCount());
@@ -117,7 +117,7 @@ public class TableMobileMaster {
             values.put(COLUMN_MNM_MOBILE_NUMBER, arrayListMobileNumber.get(i).getMnmMobileNumber());
             values.put(COLUMN_MNM_NUMBER_TYPE, arrayListMobileNumber.get(i).getMnmNumberType());
             values.put(COLUMN_MNM_IS_PRIMARY, arrayListMobileNumber.get(i).getMnmIsPrimary());
-            values.put(COLUMN_MNM_IS_PRIVATE, arrayListMobileNumber.get(i).getMnmPhonePublic());
+            values.put(COLUMN_MNM_IS_PRIVATE, arrayListMobileNumber.get(i).getMnmIsPrivate());
             values.put(COLUMN_MNM_NUMBER_PRIVACY, arrayListMobileNumber.get(i).getMnmNumberPrivacy());
             values.put(COLUMN_MNM_MOBILE_SERVICE_PROVIDER, arrayListMobileNumber.get(i).getMnmMobileServiceProvider());
             values.put(COLUMN_MNM_CIRCLE_OF_SERVICE, arrayListMobileNumber.get(i).getMnmCircleOfService());
@@ -158,7 +158,7 @@ public class TableMobileMaster {
             values.put(COLUMN_MNM_MOBILE_NUMBER, arrayListMobileNumber.get(i).getMnmMobileNumber());
             values.put(COLUMN_MNM_NUMBER_TYPE, arrayListMobileNumber.get(i).getMnmNumberType());
             values.put(COLUMN_MNM_IS_PRIMARY, arrayListMobileNumber.get(i).getMnmIsPrimary());
-            values.put(COLUMN_MNM_IS_PRIVATE, arrayListMobileNumber.get(i).getMnmPhonePublic());
+            values.put(COLUMN_MNM_IS_PRIVATE, arrayListMobileNumber.get(i).getMnmIsPrivate());
             values.put(COLUMN_MNM_NUMBER_PRIVACY, arrayListMobileNumber.get(i).getMnmNumberPrivacy());
             values.put(COLUMN_MNM_MOBILE_SERVICE_PROVIDER, arrayListMobileNumber.get(i).getMnmMobileServiceProvider());
             values.put(COLUMN_MNM_CIRCLE_OF_SERVICE, arrayListMobileNumber.get(i).getMnmCircleOfService());
@@ -229,7 +229,7 @@ public class TableMobileMaster {
                     (COLUMN_MNM_NUMBER_TYPE)));
             mobileNumber.setMnmIsPrimary(cursor.getString(cursor.getColumnIndex
                     (COLUMN_MNM_IS_PRIMARY)));
-            mobileNumber.setMnmPhonePublic(cursor.getInt(cursor.getColumnIndex
+            mobileNumber.setMnmIsPrivate(cursor.getInt(cursor.getColumnIndex
                     (COLUMN_MNM_IS_PRIVATE)));
             mobileNumber.setMnmNumberPrivacy(cursor.getString(cursor.getColumnIndex
                     (COLUMN_MNM_NUMBER_PRIVACY)));
@@ -271,7 +271,7 @@ public class TableMobileMaster {
                         (COLUMN_MNM_NUMBER_TYPE)));
                 mobileNumber.setMnmIsPrimary(cursor.getString(cursor.getColumnIndex
                         (COLUMN_MNM_IS_PRIMARY)));
-                mobileNumber.setMnmPhonePublic(cursor.getInt(cursor.getColumnIndex
+                mobileNumber.setMnmIsPrivate(cursor.getInt(cursor.getColumnIndex
                         (COLUMN_MNM_IS_PRIVATE)));
                 mobileNumber.setMnmNumberPrivacy(cursor.getString(cursor.getColumnIndex
                         (COLUMN_MNM_NUMBER_PRIVACY)));
@@ -328,7 +328,7 @@ public class TableMobileMaster {
                         (COLUMN_MNM_NUMBER_TYPE)));
                 mobileNumber.setMnmIsPrimary(cursor.getString(cursor.getColumnIndex
                         (COLUMN_MNM_IS_PRIMARY)));
-                mobileNumber.setMnmPhonePublic(cursor.getInt(cursor.getColumnIndex
+                mobileNumber.setMnmIsPrivate(cursor.getInt(cursor.getColumnIndex
                         (COLUMN_MNM_IS_PRIVATE)));
                 mobileNumber.setMnmNumberPrivacy(cursor.getString(cursor.getColumnIndex
                         (COLUMN_MNM_NUMBER_PRIVACY)));
@@ -424,7 +424,7 @@ public class TableMobileMaster {
         values.put(COLUMN_MNM_MOBILE_NUMBER, mobileNumber.getMnmMobileNumber());
         values.put(COLUMN_MNM_NUMBER_TYPE, mobileNumber.getMnmNumberType());
         values.put(COLUMN_MNM_IS_PRIMARY, mobileNumber.getMnmIsPrimary());
-        values.put(COLUMN_MNM_IS_PRIVATE, mobileNumber.getMnmPhonePublic());
+        values.put(COLUMN_MNM_IS_PRIVATE, mobileNumber.getMnmIsPrivate());
         values.put(COLUMN_MNM_NUMBER_PRIVACY, mobileNumber.getMnmNumberPrivacy());
         values.put(COLUMN_MNM_MOBILE_SERVICE_PROVIDER, mobileNumber.getMnmMobileServiceProvider());
         values.put(COLUMN_MNM_CIRCLE_OF_SERVICE, mobileNumber.getMnmCircleOfService());

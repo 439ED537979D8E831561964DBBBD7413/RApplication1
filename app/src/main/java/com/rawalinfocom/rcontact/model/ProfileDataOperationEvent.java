@@ -19,7 +19,7 @@ public class ProfileDataOperationEvent implements Serializable {
     private Integer eventPublic;
     private String eventRcType;
     private Integer isYearHidden;
-//    private Integer isPrivate;
+    private Integer isPrivate;
 
     @JsonProperty("event_id")
     public String getEventId() {
@@ -92,12 +92,12 @@ public class ProfileDataOperationEvent implements Serializable {
         this.isYearHidden = isYearHidden;
     }
 
-//    @JsonProperty("is_private")
-//    public Integer getIsPrivate() {
-//        return isPrivate;
-//    }
+    @JsonProperty("is_private")
+    public Integer getIsPrivate() {
+        return isPrivate;
+    }
 
-//    public void setIsPrivate(Integer isPrivate) {
-//        this.isPrivate = isPrivate;
-//    }
+    public void setIsPrivate(Integer isPrivate) {
+        this.isPrivate = isPrivate;
+    }
 }

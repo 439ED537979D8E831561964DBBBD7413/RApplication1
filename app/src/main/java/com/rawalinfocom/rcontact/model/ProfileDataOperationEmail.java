@@ -20,7 +20,7 @@ public class ProfileDataOperationEmail implements Serializable {
     private Integer emRcpType;
     private Integer emIsSocial;
     private String emIsVerified;
-    //    private Integer emIsPrivate;
+    private Integer emIsPrivate;
     private String originalEmail;
 
     @JsonProperty("original")
@@ -105,12 +105,12 @@ public class ProfileDataOperationEmail implements Serializable {
         this.emIsVerified = emIsVerified;
     }*/
 
-//    @JsonProperty("is_private")
-//    public Integer getEmIsPrivate() {
-//        return emIsPrivate;
-//    }
-//
-//    public void setEmIsPrivate(Integer emIsPrivate) {
-//        this.emIsPrivate = emIsPrivate;
-//    }
+    @JsonProperty("is_private")
+    public Integer getEmIsPrivate() {
+        return emIsPrivate;
+    }
+
+    public void setEmIsPrivate(Integer emIsPrivate) {
+        this.emIsPrivate = emIsPrivate;
+    }
 }
