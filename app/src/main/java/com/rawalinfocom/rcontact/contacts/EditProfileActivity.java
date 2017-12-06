@@ -4945,10 +4945,11 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             inputToDate.setText("");
                             inputToDate.setHint(R.string.hint_choose_to_date);
 
-                            if (!buttonView.getTag().toString().equalsIgnoreCase(checkbox.getTag()
+                            // Condition for selecting single education at a time
+                           /* if (!buttonView.getTag().toString().equalsIgnoreCase(checkbox.getTag()
                                     .toString())) {
                                 checkbox.setChecked(false);
-                            }
+                            }*/
                         }
                     }
 
