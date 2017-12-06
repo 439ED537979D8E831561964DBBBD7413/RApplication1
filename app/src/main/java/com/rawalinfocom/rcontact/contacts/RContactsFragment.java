@@ -526,6 +526,10 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
                     rContactListAdapter.notifyDataSetChanged();
 
                 } else {
+
+                    if (swipeRefreshLayout != null)
+                        swipeRefreshLayout.setRefreshing(false);
+
                     Utils.hideProgressDialog();
                     if (getRCPContactUpdateResponse != null) {
                         System.out.println("RContact error --> " + getRCPContactUpdateResponse

@@ -512,7 +512,7 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
             RelationRecommendationType recommendationType = new RelationRecommendationType();
             recommendationType.setFirstName(relationUserProfile.getPmFirstName());
             recommendationType.setLastName(relationUserProfile.getPmLastName());
-            recommendationType.setNumber(relationUserProfile.getMobileNumber());
+            recommendationType.setNumber("+" +relationUserProfile.getMobileNumber());
             recommendationType.setPmId(String.valueOf(allExistingRelationList.get(i).getRrmToPmId()));
             recommendationType.setDateAndTime("");
             recommendationType.setProfileImage(relationUserProfile.getProfilePhoto());

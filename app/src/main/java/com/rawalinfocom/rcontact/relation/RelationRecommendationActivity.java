@@ -290,7 +290,7 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
             RelationRecommendationType recommendationType = new RelationRecommendationType();
             recommendationType.setFirstName(relationUserProfile.getPmFirstName());
             recommendationType.setLastName(relationUserProfile.getPmLastName());
-            recommendationType.setNumber(relationUserProfile.getMobileNumber());
+            recommendationType.setNumber("+" + relationUserProfile.getMobileNumber());
             recommendationType.setPmId(String.valueOf(allExistingRelationList.get(i).getRrmToPmId()));
             recommendationType.setDateAndTime("");
             recommendationType.setProfileImage(relationUserProfile.getProfilePhoto());
@@ -468,10 +468,10 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
                 } else {
                     if (type.equalsIgnoreCase("reject")) {
                         Utils.showErrorSnackBar(RelationRecommendationActivity.this, relativeRootRecommendationRelation,
-                                "Please select at least one relation to reject!!!");
+                                "Please select at least one relation to reject!");
                     } else {
                         Utils.showErrorSnackBar(RelationRecommendationActivity.this, relativeRootRecommendationRelation,
-                                "Please select at least one relation to accept!!!");
+                                "Please select at least one relation to accept!");
                     }
                 }
             }
@@ -492,7 +492,7 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
                 recommendationRelationList.get(position).getIndividualRelationTypeList(),
                 new OrganizationRelationListAdapter.OnClickListener() {
                     @Override
-                    public void onClick(String orgId, String orgName,boolean isOrgVerified) {
+                    public void onClick(String orgId, String orgName, boolean isOrgVerified) {
 
                     }
                 }, "existing");

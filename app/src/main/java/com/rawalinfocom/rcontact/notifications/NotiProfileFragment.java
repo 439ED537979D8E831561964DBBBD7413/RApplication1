@@ -618,11 +618,13 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
             // <editor-fold desc="REQ_GET_CONTACT_REQUEST">
             if (serviceType.contains(WsConstants.REQ_GET_CONTACT_REQUEST)) {
                 WsResponseObject getContactUpdateResponse = (WsResponseObject) data;
+
+                // cancel the Visual indication of a refresh
+                if (swipeRefreshLayout != null)
+                    swipeRefreshLayout.setRefreshing(false);
+
                 if (getContactUpdateResponse != null && StringUtils.equalsIgnoreCase
                         (getContactUpdateResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
-
-                    // cancel the Visual indication of a refresh
-                    swipeRefreshLayout.setRefreshing(false);
 
                     storeContactRequestResponseToDB(getContactUpdateResponse, getContactUpdateResponse.getRequestData(),
                             getContactUpdateResponse.getResponseData());

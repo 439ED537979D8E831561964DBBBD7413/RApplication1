@@ -3692,7 +3692,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), requestObj, null, WsResponseObject.class,
                     WsConstants.REQ_PROFILE_PRIVACY_REQUEST, this.getResources().getString(R.string.msg_please_wait), true)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT + WsConstants.REQ_PROFILE_PRIVACY_REQUEST);
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT_V2 + WsConstants.REQ_PROFILE_PRIVACY_REQUEST);
         } else {
             //show no net
             Toast.makeText(this, this.getResources().getString(R.string.msg_no_network),
