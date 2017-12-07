@@ -8,6 +8,7 @@ import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.model.PrivacyRequestDataItem;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Created by maulik on 07/04/17.
@@ -64,12 +65,19 @@ public class TableRCContactRequest {
 
         ContentValues values = new ContentValues();
         values.put(COLUMN_CAR_STATUS, status);
-        values.put(COLUMN_CAR_CLOUD_REQUEST_ID, carId);
-        values.put(COLUMN_CAR_RECORD_INDEX_ID, carMongodbRecordIndex);
+        if (requestType.equalsIgnoreCase("request all")) {
+            values.put(COLUMN_CAR_CLOUD_REQUEST_ID, new Random().nextInt(1234567890));
+            values.put(COLUMN_CAR_RECORD_INDEX_ID, 0);
+            values.put(COLUMN_CAR_CREATED_AT, "2017-12-07 18:29:27");
+            values.put(COLUMN_CAR_UPDATED_AT, "2017-12-07 18:29:27");
+        } else {
+            values.put(COLUMN_CAR_CLOUD_REQUEST_ID, carId);
+            values.put(COLUMN_CAR_RECORD_INDEX_ID, carMongodbRecordIndex);
+            values.put(COLUMN_CAR_CREATED_AT, createdAt);
+            values.put(COLUMN_CAR_UPDATED_AT, updatedAt);
+        }
         values.put(COLUMN_CRM_RC_PROFILE_MASTER_PM_ID, carPmIdFrom);
         values.put(COLUMN_CARTYPE, requestType);
-        values.put(COLUMN_CAR_CREATED_AT, createdAt);
-        values.put(COLUMN_CAR_UPDATED_AT, updatedAt);
         values.put(COLUMN_CAR_PROFILE_DETAILS, name);
         values.put(COLUMN_CAR_IMG, profilePhoto);
         try {
@@ -134,8 +142,17 @@ public class TableRCContactRequest {
         return arrayList;
     }
 
-    public boolean removeRequest(int carId) {
+    public boolean removeRequest(String ppmTag, int carId, int rcpID) {
+        boolean isDelete;
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
-        return db.delete(TABLE_RC_CONTACT_ACCESS_REQUEST, COLUMN_CAR_CLOUD_REQUEST_ID + "=" + carId, null) > 0;
+
+        if (ppmTag.equalsIgnoreCase("request all")) {
+            String[] whereArgs = new String[]{String.valueOf(carId), String.valueOf(rcpID), ppmTag};
+            isDelete = db.delete(TABLE_RC_CONTACT_ACCESS_REQUEST, COLUMN_CAR_CLOUD_REQUEST_ID + " = ? and " +
+                    COLUMN_CRM_RC_PROFILE_MASTER_PM_ID + " = ? and " + COLUMN_CARTYPE + " =? ", whereArgs) > 0;
+        } else {
+            isDelete = db.delete(TABLE_RC_CONTACT_ACCESS_REQUEST, COLUMN_CAR_CLOUD_REQUEST_ID + "=" + carId, null) > 0;
+        }
+        return isDelete;
     }
 }

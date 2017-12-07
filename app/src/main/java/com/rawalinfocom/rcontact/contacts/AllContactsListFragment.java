@@ -928,6 +928,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             userProfile.setTotalProfileRateUser(profileData.get(i).getTotalProfileRateUser());
             userProfile.setPmLastSeen(profileData.get(i).getPmLastSeen());
             userProfile.setProfileRatingPrivacy(String.valueOf(profileData.get(i).getProfileRatingPrivacy()));
+            userProfile.setRatingPrivate(String.valueOf(profileData.get(i).getRatingPrivate()));
 
             if (mapLocalRcpId.containsKey(profileData.get(i).getRcpPmId())) {
                 userProfile.setPmRawId(mapLocalRcpId.get(profileData.get(i).getRcpPmId()));
@@ -1066,7 +1067,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         education.setEdmEducationToDate(arrayListEducation.get(j).getEduToDate());
                         education.setEdmEducationIsCurrent(arrayListEducation.get(j).getIsCurrent
                                 ());
-//                        education.setEdmEducationIsPrivate(arrayListEducation.get(j).geti());
+                        education.setEdmEducationIsPrivate(arrayListEducation.get(j).getIsPrivate());
                         education.setEdmEducationPrivacy(String.valueOf(arrayListEducation.get(j)
                                 .getEduPublic()));
 

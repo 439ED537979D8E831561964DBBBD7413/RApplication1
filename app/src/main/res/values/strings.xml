@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">RContacts</string>
 
@@ -598,7 +599,7 @@
     <string name="tutorial_skip">Skip>></string>
     <string name="tutorial_lets_go">Let\'s Go!</string>
     <string name="get_started">Get Started</string>
-    <string name="str_welcomesch">WELCOME</string>
+    <string name="str_welcome">WELCOME</string>
     <string name="terms_conditions_content">Get all your Contacts, SMS and Call at one Place</string>
     <string name="str_terms_conditions">By continuing you accept terms and conditions</string>
     <string name="accept_terms_conditions">Accept terms and conditions before proceeding!</string> <!-- English Only -->
@@ -654,6 +655,10 @@
     <string name="error_required_edu_name">School /  College name is required!</string>
     <string name="error_required_edu_from_date">From date is required!</string>
     <string name="error_required_edu_to_date">To date is required!</string>
+    <string name="school_college_name">School / College name</string>
+    <string name="field_of_study">Field of study</string>
+    <string name="i_currently_study_here">I currently study here</string>
+    <string name="str_education">Education Details</string>
 
     <!--Account-->
     <string name="action_bar_title">Account</string>
@@ -774,8 +779,4 @@
     <string name="youAreNotUpdatedTitle">Update Available</string>
     <string name="youAreNotUpdatedMessage">A new version of RContacts Application is available. Please update to latest version\s</string>
     <string name="search_above_to_get_organization_list">Search above to get Organization list</string>
-    <string name="school_college_name">School / College name</string>
-    <string name="field_of_study">Field of study</string>
-    <string name="i_currently_study_here">I currently study here</string>
-    <string name="str_education">Education Details</string>
 </resources>

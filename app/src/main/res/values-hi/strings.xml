@@ -651,6 +651,15 @@
     <string name="str_request_all">सबसे निवेदन करो</string>
     <string name="error_aadhar_validation">कृपया 12 अंक का आधार नम्बर दर्ज करें</string>
 
+    <string name="error_required_edu_course">अध्ययन के क्षेत्र की आवश्यकता है!</string>
+    <string name="error_required_edu_name">स्कूल / कॉलेज का नाम आवश्यक है!</string>
+    <string name="error_required_edu_from_date">From date is required!</string>
+    <string name="error_required_edu_to_date">To date is required!</string>
+    <string name="school_college_name">स्कूल / कॉलेज का नाम</string>
+    <string name="field_of_study">अध्ययन क्षेत्र</string>
+    <string name="i_currently_study_here">यह मेरा वर्तमान अध्ययन स्थल है</string>
+    <string name="str_education">शिक्षा विवरण</string>
+
     <!--Account-->
     <string name="action_bar_title">खाता</string>
     <string name="view_account">अपना खाता देखें</string>

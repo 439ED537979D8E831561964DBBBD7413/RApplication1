@@ -46,13 +46,18 @@ public class NotiProfileAdapter extends RecyclerView.Adapter<NotiProfileAdapter.
 
     private Fragment activity;
     private List<NotiProfileItem> list;
-//    private int recyclerPosition;
+    //    private int recyclerPosition;
+    private OnClickListener onClickListener;
 
-    public NotiProfileAdapter(Fragment activity, List<NotiProfileItem> list/*, int
-    recyclerPosition*/) {
+    public interface OnClickListener {
+        void onClick(String type, int carId, int rcpId);
+    }
+
+
+    public NotiProfileAdapter(Fragment activity, List<NotiProfileItem> list, OnClickListener onClickListener) {
         this.activity = activity;
         this.list = list;
-//        this.recyclerPosition = recyclerPosition;
+        this.onClickListener = onClickListener;
     }
 
     public void updateList(List<NotiProfileItem> list) {
@@ -142,7 +147,7 @@ public class NotiProfileAdapter extends RecyclerView.Adapter<NotiProfileAdapter.
                             .getPersonImage(), ((NotificationsDetailActivity) (activity
                             .getActivity())).frameImageEnlarge, (((NotificationsDetailActivity)
                             (activity.getActivity())).imageEnlarge), ((
-                                    (NotificationsDetailActivity) (activity.getActivity()))
+                            (NotificationsDetailActivity) (activity.getActivity()))
                             .frameContainer));
                 }
             }
@@ -154,7 +159,11 @@ public class NotiProfileAdapter extends RecyclerView.Adapter<NotiProfileAdapter.
 
                 if (item.getProfileNotiType() == 0) {
                     // confirming the request
-                    sendRespondToServer(1, item.getCardCloudId());
+
+                    if (onClickListener != null)
+                        onClickListener.onClick(item.getPpmTag(), item.getCardCloudId(), Integer.parseInt(item.getRcpUserPmId()));
+
+                    sendRespondToServer(1, item.getCardCloudId(), item.getPpmTag(), Integer.parseInt(item.getRcpUserPmId()));
                 } else {
                     Bundle bundle = new Bundle();
                     bundle.putString(AppConstants.EXTRA_PM_ID, item.getRcpUserPmId());
@@ -174,16 +183,23 @@ public class NotiProfileAdapter extends RecyclerView.Adapter<NotiProfileAdapter.
             @Override
             public void onClick(View v) {
                 // rejecting the request
-                sendRespondToServer(2, item.getCardCloudId());
+                if (onClickListener != null)
+                    onClickListener.onClick(item.getPpmTag(), item.getCardCloudId(), Integer.parseInt(item.getRcpUserPmId()));
+                sendRespondToServer(2, item.getCardCloudId(), item.getPpmTag(), Integer.parseInt(item.getRcpUserPmId()));
 
             }
         });
     }
 
-    private void sendRespondToServer(int status, int cardCloudId) {
+    private void sendRespondToServer(int status, int cardCloudId, String type, int carPmIdFrom) {
         WsRequestObject requestObj = new WsRequestObject();
+
+        if (type.equalsIgnoreCase("request all")) {
+            requestObj.setCarPmIdFrom(carPmIdFrom);
+        } else {
+            requestObj.setCarId(cardCloudId);
+        }
         requestObj.setCarStatus(status);
-        requestObj.setCarId(cardCloudId);
         if (Utils.isNetworkAvailable(activity.getActivity())) {
             new AsyncWebServiceCall(activity, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     requestObj, null, WsResponseObject.class, WsConstants

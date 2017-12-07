@@ -548,7 +548,7 @@
                                     android:text="@string/str_request_all"
                                     android:textColor="@color/colorWhite"
                                     android:textSize="@dimen/text_size_12sp"
-                                    android:visibility="visible"
+                                    android:visibility="gone"
                                     app:backgroundTint="@color/dialogUserNameTextColor" />
                             </RelativeLayout>
 

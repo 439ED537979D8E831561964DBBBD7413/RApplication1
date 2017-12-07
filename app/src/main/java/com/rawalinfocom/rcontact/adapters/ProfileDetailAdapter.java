@@ -496,7 +496,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
 //        if (emRcpType == IntegerConstants.RCP_TYPE_PRIMARY) {
 
-        holder.textMain.setText(education.getEduName() + "\n" + education.getEduCourse());
+        holder.textMain.setText(String.format("%s\n%s", education.getEduName(), education.getEduCourse()));
         holder.textMain.setTextColor(colorPineGreen);
 
 /*        if (isOwnProfile)
@@ -529,8 +529,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             holder.llPrivacy.setVisibility(View.VISIBLE);
         } else {
             holder.llPrivacy.setVisibility(View.GONE);
-            if ((MoreObjects.firstNonNull(education.getEduPublic(), 0)) == IntegerConstants
-                    .PRIVACY_PRIVATE) {
+            if ((MoreObjects.firstNonNull(education.getEduPublic(), 3)) == IntegerConstants
+                    .PRIVACY_PRIVATE && education.getEduName().startsWith("XXXX")) {
                 holder.buttonRequest.setVisibility(View.VISIBLE);
                 holder.imgActionType.setVisibility(View.GONE);
                 holder.textSub.setVisibility(View.GONE);

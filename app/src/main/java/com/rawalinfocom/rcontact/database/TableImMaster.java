@@ -101,66 +101,55 @@ public class TableImMaster {
         db.close(); // Closing database connection
     }
 
-    public void deleteData(String RcpPmId) {
-        SQLiteDatabase db = databaseHandler.getWritableDatabase();
-
-        int count = db.delete(TABLE_RC_IM_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
-                RcpPmId, null);
-        if (count > 0) System.out.println("RContact data delete ");
-
-        db.close(); // Closing database connection
-    }
-
     // Adding or Updating array Im Account
-    public void addUpdateArrayImAccount(ArrayList<ImAccount> arrayListImAccount, String RcpPmId) {
-        SQLiteDatabase db = databaseHandler.getWritableDatabase();
-
-        int count = db.delete(TABLE_RC_IM_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " + RcpPmId, null);
-        if (count > 0) System.out.println("RContact data delete ");
-
-//        ContentValues values = new ContentValues();
-        for (int i = 0; i < arrayListImAccount.size(); i++) {
-            ContentValues values = new ContentValues();
-
-            values.put(COLUMN_IM_ID, arrayListImAccount.get(i).getImId());
-            values.put(COLUMN_IM_RECORD_INDEX_ID, arrayListImAccount.get(i).getImRecordIndexId());
-            values.put(COLUMN_IM_DETAIL, arrayListImAccount.get(i).getImImDetail());
-            values.put(COLUMN_IM_FIRST_NAME, arrayListImAccount.get(i).getImImFirstName());
-            values.put(COLUMN_IM_LAST_NAME, arrayListImAccount.get(i).getImImLastName());
-            values.put(COLUMN_IM_PROFILE_IMAGE, arrayListImAccount.get(i).getImImProfileImage());
-            values.put(COLUMN_IM_PROTOCOL, arrayListImAccount.get(i).getImImProtocol());
-            values.put(COLUMN_IM_PRIVACY, MoreObjects.firstNonNull(
-                    Integer.parseInt(arrayListImAccount.get(i).getImImPrivacy()), 0));
-            values.put(COLUMN_IM_IS_PRIVATE,
-                    MoreObjects.firstNonNull(arrayListImAccount.get(i).getImIsPrivate(), 0));
-            values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListImAccount.get(i).getRcProfileMasterPmId());
-
-            // Inserting Row
-            db.insert(TABLE_RC_IM_MASTER, null, values);
-
-//            int count = 0;
-//            Cursor mCount = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_RC_IM_MASTER + " " +
-//                    "WHERE " + COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
-//                    arrayListImAccount.get(i).getRcProfileMasterPmId(), null);
-//            if (mCount != null) {
-//                mCount.moveToFirst();
-//                count = mCount.getInt(0);
-//                mCount.close();
-//            }
+//    public void addUpdateArrayImAccount(ArrayList<ImAccount> arrayListImAccount, String RcpPmId) {
+//        SQLiteDatabase db = databaseHandler.getWritableDatabase();
 //
-//            if (count > 0) {
-//                // Update if already exists
-//                db.update(TABLE_RC_IM_MASTER, values, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
-//                        arrayListImAccount.get(i).getRcProfileMasterPmId(), null);
-//            } else {
-//                // Inserting Row
-//                values.put(COLUMN_IM_ID, arrayListImAccount.get(i).getImId());
-//                db.insert(TABLE_RC_IM_MASTER, null, values);
-//            }
-        }
-        db.close(); // Closing database connection
-    }
-
+//        int count = db.delete(TABLE_RC_IM_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " + RcpPmId, null);
+//        if (count > 0) System.out.println("RContact data delete ");
+//
+////        ContentValues values = new ContentValues();
+//        for (int i = 0; i < arrayListImAccount.size(); i++) {
+//            ContentValues values = new ContentValues();
+//
+//            values.put(COLUMN_IM_ID, arrayListImAccount.get(i).getImId());
+//            values.put(COLUMN_IM_RECORD_INDEX_ID, arrayListImAccount.get(i).getImRecordIndexId());
+//            values.put(COLUMN_IM_DETAIL, arrayListImAccount.get(i).getImImDetail());
+//            values.put(COLUMN_IM_FIRST_NAME, arrayListImAccount.get(i).getImImFirstName());
+//            values.put(COLUMN_IM_LAST_NAME, arrayListImAccount.get(i).getImImLastName());
+//            values.put(COLUMN_IM_PROFILE_IMAGE, arrayListImAccount.get(i).getImImProfileImage());
+//            values.put(COLUMN_IM_PROTOCOL, arrayListImAccount.get(i).getImImProtocol());
+//            values.put(COLUMN_IM_PRIVACY, MoreObjects.firstNonNull(
+//                    Integer.parseInt(arrayListImAccount.get(i).getImImPrivacy()), 0));
+//            values.put(COLUMN_IM_IS_PRIVATE,
+//                    MoreObjects.firstNonNull(arrayListImAccount.get(i).getImIsPrivate(), 0));
+//            values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListImAccount.get(i).getRcProfileMasterPmId());
+//
+//            // Inserting Row
+//            db.insert(TABLE_RC_IM_MASTER, null, values);
+//
+////            int count = 0;
+////            Cursor mCount = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_RC_IM_MASTER + " " +
+////                    "WHERE " + COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
+////                    arrayListImAccount.get(i).getRcProfileMasterPmId(), null);
+////            if (mCount != null) {
+////                mCount.moveToFirst();
+////                count = mCount.getInt(0);
+////                mCount.close();
+////            }
+////
+////            if (count > 0) {
+////                // Update if already exists
+////                db.update(TABLE_RC_IM_MASTER, values, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
+////                        arrayListImAccount.get(i).getRcProfileMasterPmId(), null);
+////            } else {
+////                // Inserting Row
+////                values.put(COLUMN_IM_ID, arrayListImAccount.get(i).getImId());
+////                db.insert(TABLE_RC_IM_MASTER, null, values);
+////            }
+//        }
+//        db.close(); // Closing database connection
+//    }
 
     // Getting All Im Accounts from Profile Master Id
     public ArrayList<ImAccount> getImAccountFromPmId(int pmId) {
@@ -322,20 +311,16 @@ public class TableImMaster {
         return isUpdated;
     }
 
-    // Deleting single Im Account
-    public void deleteImAccount(ImAccount imAccount) {
-        SQLiteDatabase db = databaseHandler.getWritableDatabase();
-        db.delete(TABLE_RC_IM_MASTER, COLUMN_IM_ID + " = ?",
-                new String[]{String.valueOf(imAccount.getImId())});
-        db.close();
-    }
-
     // Deleting single ImAccount From RcpId
-    public void deleteImAccount(String rcpId) {
+    public void deleteImAccountData(String rcpId) {
+
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
-        db.delete(TABLE_RC_IM_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = ?",
-                new String[]{String.valueOf(rcpId)});
-        db.close();
+
+        int count = db.delete(TABLE_RC_IM_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
+                rcpId, null);
+        if (count > 0) System.out.println("RContact data delete ");
+
+        db.close(); // Closing database connection
     }
 
     public int updatePrivacySetting(ContactRequestData obj, String cloudMongoId) {

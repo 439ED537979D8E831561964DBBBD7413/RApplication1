@@ -1114,6 +1114,7 @@ public class Utils {
         userProfile.setPmBadge(profileDetail.getPmBadge());
         userProfile.setPmLastSeen(profileDetail.getPmLastSeen());
         userProfile.setProfileRatingPrivacy(String.valueOf(profileDetail.getProfileRatingPrivacy()));
+        userProfile.setRatingPrivate(String.valueOf(profileDetail.getRatingPrivate()));
 
         tableProfileMaster.addProfile(userProfile);
         //</editor-fold>
@@ -1344,7 +1345,7 @@ public class Utils {
                 education.setEdmEducationToDate(arrayListEducation.get(j).getEduToDate());
                 education.setEdmEducationIsCurrent(arrayListEducation.get(j).getIsCurrent
                         ());
-//                        education.setEdmEducationIsPrivate(arrayListEducation.get(j).geti());
+                education.setEdmEducationIsPrivate(arrayListEducation.get(j).getIsPrivate());
                 education.setEdmEducationPrivacy(String.valueOf(arrayListEducation.get(j)
                         .getEduPublic()));
 

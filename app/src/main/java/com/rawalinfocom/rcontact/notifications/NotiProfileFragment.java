@@ -102,6 +102,9 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout swipeRefreshLayout;
 
+    private String ppmTag;
+    private int carID, rcpID;
+
     @Override
     public void getFragmentArguments() {
 
@@ -452,7 +455,15 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
 //        listTodayResponse = createRatingList(responseReceivedToday, 1);
 //        listPastResponse = createRatingList(responseReceivedPastDays, 1);
 
-        notiProfileAdapter = new NotiProfileAdapter(this, listAllRequest);
+        notiProfileAdapter = new NotiProfileAdapter(this, listAllRequest,
+                new NotiProfileAdapter.OnClickListener() {
+                    @Override
+                    public void onClick(String type, int carId, int rcpId) {
+                        ppmTag = type;
+                        carID = carId;
+                        rcpID = rcpId;
+                    }
+                });
 //        todayProfileAdapter = new NotiProfileAdapter(this, listTodayRequest, 0);
 //        pastProfileAdapter = new NotiProfileAdapter(this, listPastRequest, 1);
         recyclerViewProfileList.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -507,6 +518,7 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
                 item.setNotiInfo(String.format(item.getPersonName() + " " + getActivity().getString(R.string
                         .str_confirmed_your_request_for) + " ", request.getPpmTag()));
             }
+            item.setPpmTag(request.getPpmTag());
             item.setRcpUserPmId(pmId + "");
             item.setCardCloudId(request.getCarId());
             item.setNotiRequestTime(request.getUpdatedAt());
@@ -598,21 +610,27 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
                         if (MoreObjects.firstNonNull(item.getCarAccessPermissionStatus(), 0) == 1 ||
                                 MoreObjects.firstNonNull(item.getCarAccessPermissionStatus(), 0)
                                         == 2) {
-                            boolean deleted = tableRCContactRequest.removeRequest(item.getCarId());
+//                            boolean deleted = tableRCContactRequest.removeRequest(item.getCarId());
+                            boolean deleted = tableRCContactRequest.removeRequest(ppmTag, carID, rcpID);
                             if (deleted) {
                                 refreshAllList();
                             }
-                            Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+                            Utils.showErrorSnackBar(activity, layoutRoot, msg);
 //                            Utils.showSuccessSnackBar(getActivity(),);
                         } else {
-                            Toast.makeText(getActivity(), getResources().getString(R.string
-                                    .msg_try_later), Toast.LENGTH_SHORT).show();
+                            Utils.showErrorSnackBar(activity, layoutRoot, getResources().getString(R.string.msg_try_later));
                         }
                     } catch (Exception e) {
-                        Toast.makeText(getActivity(), getResources().getString(R.string
-                                .msg_try_later), Toast.LENGTH_SHORT).show();
+                        Utils.showErrorSnackBar(activity, layoutRoot, getResources().getString(R.string.msg_try_later));
                     }
-
+                } else {
+                    if (privacyResponse != null) {
+                        Utils.showErrorSnackBar(activity, layoutRoot, privacyResponse.getMessage());
+                        System.out.println("RContact error --> " + privacyResponse.getMessage());
+                    } else {
+                        Utils.showErrorSnackBar(activity, layoutRoot, getResources().getString(R.string.msg_try_later));
+                        System.out.println("RContact error --> privacyResponse null");
+                    }
                 }
             }
             // <editor-fold desc="REQ_GET_CONTACT_REQUEST">

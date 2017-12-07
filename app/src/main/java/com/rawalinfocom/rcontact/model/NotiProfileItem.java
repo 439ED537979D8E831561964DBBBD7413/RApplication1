@@ -14,6 +14,7 @@ public class NotiProfileItem {
     private String notiRequestTime;
     private Integer profileNotiType;
     private String pmRawId;
+    private String ppmTag;
 
     public String getRcpUserPmId() {
         return rcpUserPmId;
@@ -82,5 +83,13 @@ public class NotiProfileItem {
 
     public void setPmRawId(String pmRawId) {
         this.pmRawId = pmRawId;
+    }
+
+    public String getPpmTag() {
+        return ppmTag;
+    }
+
+    public void setPpmTag(String ppmTag) {
+        this.ppmTag = ppmTag;
     }
 }

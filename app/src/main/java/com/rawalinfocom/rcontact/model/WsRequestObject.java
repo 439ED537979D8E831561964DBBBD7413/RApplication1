@@ -20,6 +20,9 @@ public class WsRequestObject {
     @JsonProperty("car_id")
     private Integer carId;
 
+    @JsonProperty("car_pm_id_from")
+    private Integer carPmIdFrom;
+
     @JsonProperty("car_pm_id_to")
     private Integer carPmIdTo;
 
@@ -815,6 +818,14 @@ public class WsRequestObject {
 
     public void setCarId(Integer carId) {
         this.carId = carId;
+    }
+
+    public Integer getCarPmIdFrom() {
+        return carPmIdFrom;
+    }
+
+    public void setCarPmIdFrom(Integer carPmIdFrom) {
+        this.carPmIdFrom = carPmIdFrom;
     }
 
     public Integer getCarStatus() {
