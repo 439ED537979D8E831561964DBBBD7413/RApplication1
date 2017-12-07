@@ -3881,7 +3881,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             education.setEduCourse(arrayListEducation.get(i).getEdmCourse());
             education.setEduId(arrayListEducation.get(i).getEdmRecordIndexId());
             education.setIsCurrent(arrayListEducation.get(i).getEdmEducationIsCurrent());
-            education.setEduPublic(Integer.valueOf(arrayListEducation.get(i).getEdmEducationPrivacy()));
+            education.setEduPublic(Integer.valueOf(arrayListEducation.get(i)
+                    .getEdmEducationPrivacy()));
 
             arrayListEducationObject.add(education);
         }
@@ -4676,10 +4677,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     @SuppressLint("InflateParams")
     private void addOrganizationView(int position, Object detailObject) {
         View view = LayoutInflater.from(this).inflate(R.layout
-                .list_item_my_profile_edit_organization, null);
+                .list_item_edit_organization, null);
         ImageView deleteOrganization = view.findViewById(R.id.deleteOrganization);
         final EditText inputCompanyName = view.findViewById(R.id.input_company_name);
-        final EditText inputDesignationName = view.findViewById(R.id.input_designation_name);
         final CheckBox checkboxOrganization = view.findViewById(R.id
                 .checkbox_organization);
 
@@ -4689,18 +4689,15 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         TextView textIsVerified = view.findViewById(R.id.text_is_verified);
         final TextView textOrgName = view.findViewById(R.id.text_org_name);
         TextView textOrgType = view.findViewById(R.id.text_org_type);
+        LinearLayout linearDesignation = view.findViewById(R.id.linear_designation);
 
-        final EditText inputFromDate = view.findViewById(R.id.input_from_date);
-        final EditText inputToDate = view.findViewById(R.id.input_to_date);
+        addOrganizationDesignationView(linearDesignation);
 
-        inputFromDate.setHint(R.string.hint_choose_from_date);
+        /*inputFromDate.setHint(R.string.hint_choose_from_date);
         inputFromDate.setFocusable(false);
 
         inputToDate.setHint(R.string.hint_choose_to_date);
-        inputToDate.setFocusable(false);
-
-        final ImageView imageFromDate = view.findViewById(R.id.image_from_date);
-        final ImageView imageToDate = view.findViewById(R.id.image_to_date);
+        inputToDate.setFocusable(false);*/
 
         checkboxOrganization.setTag(linearOrganizationDetails.getChildCount());
 
@@ -4709,11 +4706,11 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
         inputCompanyName.setInputType(InputType.TYPE_CLASS_TEXT | InputType
                 .TYPE_TEXT_FLAG_CAP_WORDS);
-        inputDesignationName.setInputType(InputType.TYPE_CLASS_TEXT | InputType
-                .TYPE_TEXT_FLAG_CAP_WORDS);
+//        inputDesignationName.setInputType(InputType.TYPE_CLASS_TEXT | InputType
+//                .TYPE_TEXT_FLAG_CAP_WORDS);
 
         inputCompanyName.setTypeface(Utils.typefaceRegular(this));
-        inputDesignationName.setTypeface(Utils.typefaceRegular(this));
+//        inputDesignationName.setTypeface(Utils.typefaceRegular(this));
         inputCompanyName.setFocusable(false);
 
         inputCompanyName.setTag(position);
@@ -4738,7 +4735,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             relativeRowEditProfile.setTag(organization.getOrgId());
             textOrgName.setText(organization.getOrgName());
             textOrgType.setText(organization.getOrgIndustryType());
-            inputDesignationName.setText(organization.getOrgJobTitle());
+//            inputDesignationName.setText(organization.getOrgJobTitle());
             checkboxOrganization.setChecked(organization.getIsCurrent() == 1);
             textOrgLogo.setText(organization.getOrgLogo());
             textEnterpriseOrgId.setText(organization.getOrgEntId());
@@ -4751,7 +4748,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 //                                "='#00796B'>" + getString(R.string.im_icon_verify) +
 //                                "</font><br>", 0,
 //                        (StringUtils.length
-//                                (organization.getOrgName()) + 1), ((StringUtils.length(organization
+//                                (organization.getOrgName()) + 1), ((StringUtils.length
+// (organization
 //                                .getOrgName()) + 1) + 1)).toString();
 
                 inputCompanyName.setText(organization.getOrgName());
@@ -4776,18 +4774,18 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     .into(imageOrgProfile);
 
             if (organization.getIsCurrent() == 1) {
-                inputToDate.setEnabled(false);
-                imageToDate.setEnabled(false);
-                inputFromDate.setText(organization.getOrgFromDate());
+//                inputToDate.setEnabled(false);
+//                imageToDate.setEnabled(false);
+//                inputFromDate.setText(organization.getOrgFromDate());
             } else {
-                inputFromDate.setText(organization.getOrgFromDate());
-                inputToDate.setText(organization.getOrgToDate());
+//                inputFromDate.setText(organization.getOrgFromDate());
+//                inputToDate.setText(organization.getOrgToDate());
             }
 
         } else {
             checkboxOrganization.setChecked(true);
-            inputToDate.setEnabled(false);
-            imageToDate.setEnabled(false);
+//            inputToDate.setEnabled(false);
+//            imageToDate.setEnabled(false);
 
             Glide.with(EditProfileActivity.this)
                     .load(R.drawable.default_org)
@@ -4807,17 +4805,17 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                 .checkbox_organization);
                         if (checkbox != null) {
 
-                            inputToDate.setEnabled(false);
+                            /*inputToDate.setEnabled(false);
                             imageToDate.setEnabled(false);
 
                             inputToDate.setText("");
-                            inputToDate.setHint(R.string.hint_choose_to_date);
+                            inputToDate.setHint(R.string.hint_choose_to_date);*/
                         }
                     }
                 } else {
 
-                    inputToDate.setEnabled(true);
-                    imageToDate.setEnabled(true);
+//                    inputToDate.setEnabled(true);
+//                    imageToDate.setEnabled(true);
                 }
             }
         });
@@ -4831,12 +4829,74 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     addOrganizationDetailsToList();
                 } else if (linearOrganizationDetails.getChildCount() == 1) {
                     inputCompanyName.getText().clear();
-                    inputDesignationName.getText().clear();
+                   /* inputDesignationName.getText().clear();
                     inputFromDate.getText().clear();
-                    inputToDate.getText().clear();
+                    inputToDate.getText().clear();*/
                     textOrgName.setText("");
                     checkboxOrganization.setChecked(true);
 //                    arrayListOrganizationObject.clear();
+                }
+            }
+        });
+
+        /*imageFromDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isOrganization = true;
+                updateOrganizationText(inputFromDate);
+            }
+        });
+
+        imageToDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isOrganization = true;
+                updateOrganizationText(inputToDate);
+            }
+        });*/
+
+        linearOrganizationDetails.addView(view);
+    }
+
+    private void addOrganizationDesignationView(final LinearLayout linearDesignation) {
+        final View viewDesignation = LayoutInflater.from(this).inflate(R.layout
+                .list_item_edit_organization_designation, null);
+        final EditText inputDesignationName = viewDesignation.findViewById(R.id
+                .input_designation_name);
+        final EditText inputFromDate = viewDesignation.findViewById(R.id.input_from_date);
+        final EditText inputToDate = viewDesignation.findViewById(R.id.input_to_date);
+        final ImageView imageFromDate = viewDesignation.findViewById(R.id.image_from_date);
+        final ImageView imageToDate = viewDesignation.findViewById(R.id.image_to_date);
+        final ImageView imageAddDesignation = viewDesignation.findViewById(R.id
+                .image_add_designation);
+        final LinearLayout linearOrganizationDesignation = viewDesignation.findViewById(R.id
+                .linear_organization_designation);
+
+        if (linearDesignation.getChildCount() < 1) {
+            imageAddDesignation.setImageResource(R.drawable.ico_add_svg);
+        } else {
+            imageAddDesignation.setImageResource(R.drawable.ic_delete);
+        }
+
+        inputFromDate.setHint(R.string.hint_choose_from_date);
+        inputFromDate.setFocusable(false);
+
+        inputToDate.setHint(R.string.hint_choose_to_date);
+        inputToDate.setFocusable(false);
+
+        imageAddDesignation.setTag(linearDesignation.getChildCount());
+
+        imageAddDesignation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                Toast.makeText(EditProfileActivity.this, "Position: " + imageAddDesignation
+//                        .getTag().toString(), Toast.LENGTH_SHORT).show();
+                if (Integer.parseInt(imageAddDesignation.getTag().toString()) == 0) {
+                    addOrganizationDesignationView(linearDesignation);
+                } else {
+                    /*Toast.makeText(EditProfileActivity.this, "Position: " + imageAddDesignation
+                            .getTag().toString(), Toast.LENGTH_SHORT).show();*/
+                    linearDesignation.removeView(linearOrganizationDesignation);
                 }
             }
         });
@@ -4857,7 +4917,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             }
         });
 
-        linearOrganizationDetails.addView(view);
+        linearDesignation.addView(viewDesignation);
     }
 
     private void addEducationView(int position, Object detailObject) {
