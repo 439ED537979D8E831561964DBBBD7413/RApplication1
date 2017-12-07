@@ -85,10 +85,10 @@ public class MaterialListDialog {
             recycleViewDialog.setAdapter(materialListAdapter);
             setRecyclerViewLayoutManager(recycleViewDialog);
         }else {
-            CallLogDialogListAdapter materialListAdapter = new CallLogDialogListAdapter(context, stringArrayList, "",
-                    0, "", "", "");
-            recycleViewDialog.setAdapter(materialListAdapter);
-            setRecyclerViewLayoutManager(recycleViewDialog);
+//            CallLogDialogListAdapter materialListAdapter = new CallLogDialogListAdapter(context, stringArrayList, "",
+//                    0, "", "", "");
+//            recycleViewDialog.setAdapter(materialListAdapter);
+//            setRecyclerViewLayoutManager(recycleViewDialog);
         }
     }
 

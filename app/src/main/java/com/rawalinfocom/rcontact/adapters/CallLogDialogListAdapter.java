@@ -1,7 +1,9 @@
 package com.rawalinfocom.rcontact.adapters;
 
 import android.annotation.TargetApi;
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -26,12 +28,20 @@ import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
+import com.rawalinfocom.rcontact.database.DatabaseHandler;
+import com.rawalinfocom.rcontact.database.TableCallReminder;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.MaterialDialogClipboard;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.helper.instagram.util.StringUtil;
 import com.rawalinfocom.rcontact.model.CallLogType;
+import com.rawalinfocom.rcontact.receivers.CallReminderReceiver;
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -61,6 +71,7 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
     String uniqueRowId;
     boolean isblocked = false;
     String key;
+    DatabaseHandler databaseHandler;
 
     public CallLogDialogListAdapter(Context context, ArrayList<String> arrayList, String number,
                                     long date, String name,
@@ -72,6 +83,7 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
         this.dialogName = name;
         this.uniqueRowId = uniqueRowId;
         this.key = key;
+        databaseHandler = new DatabaseHandler(context);
     }
 
     @Override
@@ -93,7 +105,8 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
                 if (position == 0) {
                     if (!TextUtils.isEmpty(numberToCall)) {
                         numberToCall = Utils.getFormattedNumber(context, numberToCall);
-                        Utils.callIntent(context, numberToCall);
+                        if (!value.equalsIgnoreCase(context.getString(R.string.min15)))
+                            Utils.callIntent(context, numberToCall);
 //                        showCallConfirmationDialog(numberToCall);
                     }
                 }
@@ -224,40 +237,6 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
                     myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
 
                 } else if (value.equalsIgnoreCase(context.getString(R.string.call_reminder))) {
-                    long timeToSet =  0;
-                    if(value.equalsIgnoreCase(context.getString(R.string.min15))){
-                        timeToSet =  System.currentTimeMillis() + (15*60*1000);
-                        Utils.setLongPreference(context,AppConstants.PREF_CALL_REMINDER,timeToSet);
-                    }else if(value.equalsIgnoreCase(context.getString(R.string.hour1))){
-                        timeToSet = 0;
-                        timeToSet =  System.currentTimeMillis() + (60*60*1000);
-                        Utils.setLongPreference(context,AppConstants.PREF_CALL_REMINDER,timeToSet);
-
-                    }else if(value.equalsIgnoreCase(context.getString(R.string.hour2))){
-                        timeToSet = 0;
-                        timeToSet =  System.currentTimeMillis() + (2*60*60*1000);
-                        Utils.setLongPreference(context,AppConstants.PREF_CALL_REMINDER,timeToSet);
-                    }else if(value.equalsIgnoreCase(context.getString(R.string.hour6))){
-                        timeToSet = 0;
-                        timeToSet =  System.currentTimeMillis() + (6*60*60*1000);
-                        Utils.setLongPreference(context,AppConstants.PREF_CALL_REMINDER,timeToSet);
-
-                    }else if(value.equalsIgnoreCase(context.getString(R.string.setDateAndTime))){
-                        long datePickerTime = 0;
-                        //Open time picker
-                        showDateTimePicker();
-                        Utils.setLongPreference(context,AppConstants.PREF_CALL_REMINDER,datePickerTime);
-
-                    }else {
-                        long datePickerTimeEdit =  Utils.getLongPreference(context,AppConstants.PREF_CALL_REMINDER,0);
-                        if(datePickerTimeEdit>0){
-                            datePickerTimeEdit = 0;
-                            Utils.setLongPreference(context,AppConstants.PREF_CALL_REMINDER,0);
-                            // open time picker
-                            Utils.setLongPreference(context,AppConstants.PREF_CALL_REMINDER,datePickerTimeEdit);
-                        }
-
-                    }
 
                 } else {
 
@@ -265,6 +244,70 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
 // .show();
                 }
 
+                long timeToSet = 0;
+                TableCallReminder tableCallReminder = new TableCallReminder(databaseHandler);
+                if (value.equalsIgnoreCase(context.getString(R.string.min15))) {
+                    timeToSet = System.currentTimeMillis() + (15 * 60 * 1000);
+                    Utils.setLongPreference(context, AppConstants.PREF_CALL_REMINDER, timeToSet);
+                    String number = tableCallReminder.getNumberFromTable(numberToCall);
+                    if (StringUtils.isEmpty(number)) {
+                        tableCallReminder.addReminderToDB(numberToCall, String.valueOf(timeToSet));
+                    } else {
+                        tableCallReminder.updateReminderTime(numberToCall, String.valueOf(timeToSet));
+                    }
+                    setAlarm();
+
+                } else if (value.equalsIgnoreCase(context.getString(R.string.hour1))) {
+                    timeToSet = 0;
+                    timeToSet = System.currentTimeMillis() + (60 * 60 * 1000);
+                    Utils.setLongPreference(context, AppConstants.PREF_CALL_REMINDER, timeToSet);
+                    String number = tableCallReminder.getNumberFromTable(numberToCall);
+                    if (StringUtils.isEmpty(number)) {
+                        tableCallReminder.addReminderToDB(numberToCall, String.valueOf(timeToSet));
+                    } else {
+                        tableCallReminder.updateReminderTime(numberToCall, String.valueOf(timeToSet));
+                    }
+                    setAlarm();
+
+                } else if (value.equalsIgnoreCase(context.getString(R.string.hour2))) {
+                    timeToSet = 0;
+                    timeToSet = System.currentTimeMillis() + (2 * 60 * 60 * 1000);
+                    Utils.setLongPreference(context, AppConstants.PREF_CALL_REMINDER, timeToSet);
+                    String number = tableCallReminder.getNumberFromTable(numberToCall);
+                    if (StringUtils.isEmpty(number)) {
+                        tableCallReminder.addReminderToDB(numberToCall, String.valueOf(timeToSet));
+                    } else {
+                        tableCallReminder.updateReminderTime(numberToCall, String.valueOf(timeToSet));
+                    }
+                    setAlarm();
+
+                } else if (value.equalsIgnoreCase(context.getString(R.string.hour6))) {
+                    timeToSet = 0;
+                    timeToSet = System.currentTimeMillis() + (6 * 60 * 60 * 1000);
+                    Utils.setLongPreference(context, AppConstants.PREF_CALL_REMINDER, timeToSet);
+                    String number = tableCallReminder.getNumberFromTable(numberToCall);
+                    if (StringUtils.isEmpty(number)) {
+                        tableCallReminder.addReminderToDB(numberToCall, String.valueOf(timeToSet));
+                    } else {
+                        tableCallReminder.updateReminderTime(numberToCall, String.valueOf(timeToSet));
+                    }
+                    setAlarm();
+
+                } else if (value.equalsIgnoreCase(context.getString(R.string.setDateAndTime))) {
+                    long datePickerTime = 0;
+                    //Open time picker
+                    showDateTimePicker();
+                } else {
+                    long datePickerTimeEdit = Utils.getLongPreference(context, AppConstants.PREF_CALL_REMINDER, 0);
+                    if (datePickerTimeEdit > 0) {
+                        datePickerTimeEdit = 0;
+                        Utils.setLongPreference(context, AppConstants.PREF_CALL_REMINDER, 0);
+                        // open time picker
+                        showDateTimePicker();
+                    }
+                }
+
+//                setAlarm();
                 Intent localBroadcastIntent = new Intent(AppConstants
                         .ACTION_LOCAL_BROADCAST_DIALOG);
                 localBroadcastIntent.putExtra(AppConstants.EXTRA_CALL_LOG_DELETED_KEY,
@@ -279,9 +322,12 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
     }
 
     Calendar date;
+    long selectedDateAndTime;
+
     public void showDateTimePicker() {
         final Calendar currentDate = Calendar.getInstance();
         date = Calendar.getInstance();
+        final TableCallReminder tableCallReminder = new TableCallReminder(databaseHandler);
         new DatePickerDialog(context, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
@@ -292,12 +338,63 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
                         date.set(Calendar.HOUR_OF_DAY, hourOfDay);
                         date.set(Calendar.MINUTE, minute);
                         Log.v("call_reminder", "The choosen one " + date.getTime());
+                        String actualTime = date.getTime().toString();
+                        SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
+                        try {
+                            Date mDate = sdf.parse(actualTime);
+                            long timeInMilliseconds = mDate.getTime();
+                            System.out.println("Date in milli :: " + timeInMilliseconds);
+                            selectedDateAndTime = timeInMilliseconds;
+                            Utils.setLongPreference(context, AppConstants.PREF_CALL_REMINDER, selectedDateAndTime);
+                            String number = tableCallReminder.getNumberFromTable(numberToCall);
+                            if (StringUtils.isEmpty(number)) {
+                                tableCallReminder.addReminderToDB(numberToCall, String.valueOf(selectedDateAndTime));
+                            } else {
+                                tableCallReminder.updateReminderTime(numberToCall, String.valueOf(selectedDateAndTime));
+                            }
+                            setAlarm();
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }, currentDate.get(Calendar.HOUR_OF_DAY), currentDate.get(Calendar.MINUTE), false).show();
             }
         }, currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH), currentDate.get(Calendar.DATE)).show();
     }
 
+    private void setAlarm() {
+        TableCallReminder tableCallReminder = new TableCallReminder(databaseHandler);
+        ArrayList<String> listOfAllCallReminderTime = tableCallReminder.getAllTimeforCallReminder();
+        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(context, CallReminderReceiver.class);
+        if (listOfAllCallReminderTime.size() > 0) {
+            for (int i = 0; i < listOfAllCallReminderTime.size(); i++) {
+                String time = listOfAllCallReminderTime.get(i);
+                Long timeToTrigger = Long.parseLong(time);
+                if (timeToTrigger >= System.currentTimeMillis()) {
+                    intent.putExtra(AppConstants.EXTRA_CALL_REMINDER_NUMBER, tableCallReminder.getNumberFromTime(time));
+                    intent.putExtra(AppConstants.EXTRA_CALL_REMINDER_TIME, timeToTrigger);
+                    PendingIntent pi = PendingIntent.getBroadcast(context, i, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    if (am != null) {
+                        am.setExact(AlarmManager.RTC_WAKEUP, timeToTrigger, pi);
+                    }
+                } else {
+                    listOfAllCallReminderTime.remove(time);
+                    tableCallReminder.deleteReminderDetailsbyTime(time);
+                    cancelAlarm(context);
+                }
+            }
+        }
+    }
+
+    public void cancelAlarm(Context context) {
+        Intent intent = new Intent(context, CallReminderReceiver.class);
+        PendingIntent sender = PendingIntent.getBroadcast(context, 0, intent, 0);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        if (alarmManager != null) {
+            alarmManager.cancel(sender);
+        }
+    }
 
     private void deleteCallLogByNumber(String number) {
         try {

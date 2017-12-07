@@ -21,13 +21,16 @@ import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.OptionMenuAdapter;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.database.DatabaseHandler;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.database.QueryManager;
+import com.rawalinfocom.rcontact.database.TableCallReminder;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.MaterialListDialog;
 import com.rawalinfocom.rcontact.helper.RecyclerItemClickListener;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.helper.instagram.util.StringUtil;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -515,22 +518,40 @@ class OptionMenuDialog {
 
     private void showCallReminderPopUp() {
         ArrayList<String> arrayListCallReminderOption;
-        Long callReminderTime = Utils.getLongPreference(context, AppConstants.PREF_CALL_REMINDER, 0);
+        TableCallReminder tableCallReminder = new TableCallReminder(new DatabaseHandler(context));
+//        Long callReminderTime = Utils.getLongPreference(context, AppConstants.PREF_CALL_REMINDER, 0);
+        String number =  ((ProfileDetailActivity) context).historyNumber;
+        if(number.contains("("))
+            number = number.replace("(","");
+        if(number.contains(")"))
+            number = number.replace(")","");
+        if(number.contains("-"))
+            number =  number.replace("-","");
+        if(number.contains(" "))
+            number =  number.replace(" ","");
+
+        number = number.trim();
+        String formattedNumber =  Utils.getFormattedNumber(context,number);
+        String time =  tableCallReminder.getReminderTimeFromNumber(formattedNumber);
+        Long callReminderTime = 0L;
+        if(!StringUtils.isEmpty(time))
+            callReminderTime =  Long.parseLong(time);
+
         if (callReminderTime > 0) {
             Date date1 = new Date(callReminderTime);
-            String setTime = new SimpleDateFormat("dd/MM/yy, HH:MM a", Locale.getDefault()).format(date1);
+            String setTime = new SimpleDateFormat("dd/MM/yy, hh:mm a", Locale.getDefault()).format(date1);
             arrayListCallReminderOption = new ArrayList<>(Arrays.asList(context.getString(R.string.min15),
-                    context.getString(R.string.hour1), context.getString(R.string.hour2), setTime + "     Edit"));
+                    context.getString(R.string.hour1), context.getString(R.string.hour2), context.getString(R.string.hour6),setTime + "     Edit"));
             MaterialListDialog materialListDialog = new MaterialListDialog(context, arrayListCallReminderOption,
-                    "", 0, "", "", "");
+                    formattedNumber, 0, "", "", "");
             materialListDialog.setDialogTitle(context.getString(R.string.call_reminder));
             materialListDialog.showDialog();
         } else {
             arrayListCallReminderOption = new ArrayList<>(Arrays.asList(context.getString(R.string.min15),
-                    context.getString(R.string.hour1), context.getString(R.string.hour2),
+                    context.getString(R.string.hour1), context.getString(R.string.hour2), context.getString(R.string.hour6),
                     context.getString(R.string.setDateAndTime)));
             MaterialListDialog materialListDialog = new MaterialListDialog(context, arrayListCallReminderOption,
-                    "", 0, "", "", "");
+                    formattedNumber, 0, "", "", "");
             materialListDialog.setDialogTitle(context.getString(R.string.call_reminder).toUpperCase());
             materialListDialog.showDialog();
         }

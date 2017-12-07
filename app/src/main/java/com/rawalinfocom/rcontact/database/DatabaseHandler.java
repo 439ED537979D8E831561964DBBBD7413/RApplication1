@@ -14,7 +14,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     // All Static variables
     // Database Version
-    private static final int DATABASE_VERSION = 6;  //update to 6 for production/staging/QA
+    private static final int DATABASE_VERSION = 7;  //update to 7 for production/staging/QA
+                                                    // previous 6
 
     // Database Name
     public static final String DATABASE_NAME = "RContact.db";
@@ -53,6 +54,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL(TableNotificationStateMaster.CREATE_TABLE_NOTIFICATION_STATE_MASTER);
         db.execSQL(TableSpamDetailMaster.CREATE_TABLE_SPAM_DETAIL_MASTER);
         db.execSQL(TableAadharMaster.CREATE_TABLE_AADHAR_MASTER);
+        db.execSQL(TableCallReminder.CREATE_TABLE_CALL_REMINDER);
 
         db.execSQL("ALTER TABLE " + TableEmailMaster.TABLE_RC_EMAIL_MASTER_TEMP
                 + " RENAME TO " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + ";");
@@ -152,6 +154,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 db.execSQL("DROP TABLE IF EXISTS '" + TableRelationMaster.TABLE_RC_RELATION_MASTER + "'");
                 db.execSQL(TableRelationMaster.CREATE_TABLE_RC_RELATION_MASTER);
                 db.execSQL(TableRelationMappingMaster.CREATE_TABLE_RC_RCP_RELATION_MAPPING);
+
+
+            case 6:
+                // For version 7
+                db.execSQL(TableCallReminder.CREATE_TABLE_CALL_REMINDER);
         }
 
         // create new tables
@@ -185,6 +192,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                     .TABLE_NOTIFICATION_STATE_MASTER);
             db.execSQL("delete from " + TableSpamDetailMaster.TABLE_SPAM_DETAIL_MASTER);
             db.execSQL("delete from " + TableAadharMaster.TABLE_AADHAR_MASTER);
+            db.execSQL("delete from " + TableCallReminder.TABLE_CALL_REMINDER);
         } catch (Exception e) {
             System.out.println("RContacts table clear error");
         }

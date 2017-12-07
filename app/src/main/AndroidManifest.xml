@@ -253,6 +253,8 @@
             </intent-filter>
         </receiver>
 
+        <receiver android:process=":remote" android:name=".receivers.CallReminderReceiver"></receiver>
+
         <!--
         <receiver android:name=".receivers.SmsReceiver">
             <intent-filter>
