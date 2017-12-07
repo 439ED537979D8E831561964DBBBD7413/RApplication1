@@ -158,11 +158,11 @@ public class NotiProfileAdapter extends RecyclerView.Adapter<NotiProfileAdapter.
             public void onClick(View v) {
 
                 if (item.getProfileNotiType() == 0) {
-                    // confirming the request
 
                     if (onClickListener != null)
                         onClickListener.onClick(item.getPpmTag(), item.getCardCloudId(), Integer.parseInt(item.getRcpUserPmId()));
 
+                    // confirming the request
                     sendRespondToServer(1, item.getCardCloudId(), item.getPpmTag(), Integer.parseInt(item.getRcpUserPmId()));
                 } else {
                     Bundle bundle = new Bundle();
@@ -182,9 +182,9 @@ public class NotiProfileAdapter extends RecyclerView.Adapter<NotiProfileAdapter.
         holder.buttonRequestReject.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // rejecting the request
                 if (onClickListener != null)
                     onClickListener.onClick(item.getPpmTag(), item.getCardCloudId(), Integer.parseInt(item.getRcpUserPmId()));
+                // rejecting the request
                 sendRespondToServer(2, item.getCardCloudId(), item.getPpmTag(), Integer.parseInt(item.getRcpUserPmId()));
 
             }
