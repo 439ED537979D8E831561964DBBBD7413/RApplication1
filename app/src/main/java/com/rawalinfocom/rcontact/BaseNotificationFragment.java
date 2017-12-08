@@ -18,7 +18,7 @@ import com.rawalinfocom.rcontact.notifications.NotificationsDetailActivity;
 public abstract class BaseNotificationFragment extends Fragment {
 
     DatabaseHandler databaseHandler;
-    NotificationsDetailActivity activity;
+    public NotificationsDetailActivity activity;
 
     public BaseNotificationFragment() {
         // Required empty public constructor

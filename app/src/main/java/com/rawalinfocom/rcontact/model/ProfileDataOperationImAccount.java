@@ -23,7 +23,6 @@ public class ProfileDataOperationImAccount implements Serializable {
     private Integer IMAccountPublic;
     private Integer IMAccountIsPrivate;
 
-    //    private Integer IMRcpType;
     private String IMRcpType;
 
     @JsonProperty("im_id")

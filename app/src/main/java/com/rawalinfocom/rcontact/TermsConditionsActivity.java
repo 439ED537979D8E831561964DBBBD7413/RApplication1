@@ -98,7 +98,7 @@ public class TermsConditionsActivity extends BaseActivity implements RippleView
 
     private void init() {
 
-        textTermsConditionsHeader.setText(R.string.str_welcomesch);
+        textTermsConditionsHeader.setText(R.string.str_welcome);
         textTermsConditionsContent.setText(R.string.str_welcom_message);
 
         textTermsConditionsHeader.setTypeface(Utils.typefaceSemiBold(TermsConditionsActivity.this));

@@ -97,7 +97,7 @@ public class NotificationFCMService extends FirebaseMessagingService {
                                 notificationStateData.setUpdatedAt(obj.getUpdatedAt());
                                 notificationStateData.setNotificationType(AppConstants
                                         .NOTIFICATION_TYPE_RUPDATE);
-                                notificationStateData.setNotificationMasterId(obj.getId());
+//                                notificationStateData.setNotificationMasterId(obj.getId());
                                 notificationStateMaster.addNotificationState(notificationStateData);
                                 if (!Utils.getBooleanPreference(this, AppConstants
                                         .PREF_DISABLE_PUSH, false))
@@ -247,7 +247,7 @@ public class NotificationFCMService extends FirebaseMessagingService {
                                 .NOTIFICATION_TYPE_TIMELINE);
                         int id = tableCommentMaster.addComment(comment);
                         if (id != -1) {
-                            notificationStateData.setNotificationMasterId(m.get("pr_id"));
+//                            notificationStateData.setNotificationMasterId(m.get("pr_id"));
                             notificationStateMaster.addNotificationState(notificationStateData);
                             if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_PUSH,
                                     false))
@@ -267,7 +267,7 @@ public class NotificationFCMService extends FirebaseMessagingService {
                         notificationStateData.setNotificationType(AppConstants
                                 .NOTIFICATION_TYPE_RATE);
                         if (isUpdated > 0) {
-                            notificationStateData.setNotificationMasterId(m.get("pr_id"));
+//                            notificationStateData.setNotificationMasterId(m.get("pr_id"));
                             notificationStateMaster.addNotificationState(notificationStateData);
                             if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_PUSH,
                                     false))
@@ -294,7 +294,7 @@ public class NotificationFCMService extends FirebaseMessagingService {
                             notificationStateData.setUpdatedAt(m.get("updated_at"));
                             notificationStateData.setNotificationType(AppConstants
                                     .NOTIFICATION_TYPE_TIMELINE);
-                            notificationStateData.setNotificationMasterId(m.get("id"));
+//                            notificationStateData.setNotificationMasterId(m.get("id"));
                             notificationStateMaster.addNotificationState(notificationStateData);
                             if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_PUSH,
                                     false)) {
@@ -317,7 +317,7 @@ public class NotificationFCMService extends FirebaseMessagingService {
                             notificationStateData.setUpdatedAt(m.get("reply_date"));
                             notificationStateData.setNotificationType(AppConstants
                                     .NOTIFICATION_TYPE_COMMENTS);
-                            notificationStateData.setNotificationMasterId(m.get("id"));
+//                            notificationStateData.setNotificationMasterId(m.get("id"));
                             notificationStateMaster.addNotificationState(notificationStateData);
                             if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_PUSH,
                                     false)) {
@@ -335,7 +335,7 @@ public class NotificationFCMService extends FirebaseMessagingService {
                                 (databaseHandler);
                         if (m.get("car_pm_id_to").equals(Utils.getStringPreference(this,
                                 AppConstants
-                                .PREF_USER_PM_ID, "0"))
+                                        .PREF_USER_PM_ID, "0"))
                                 && m.get("car_access_permission_status").equals("0")) {
                             int requestId = tableRCContactRequest.addRequest(AppConstants
                                             .COMMENT_STATUS_RECEIVED,
@@ -351,7 +351,7 @@ public class NotificationFCMService extends FirebaseMessagingService {
                                 notificationStateData.setUpdatedAt(m.get("updated_at"));
                                 notificationStateData.setNotificationType(AppConstants
                                         .NOTIFICATION_TYPE_PROFILE_REQUEST);
-                                notificationStateData.setNotificationMasterId(m.get("car_id"));
+//                                notificationStateData.setNotificationMasterId(m.get("car_id"));
                                 notificationStateMaster.addNotificationState(notificationStateData);
                                 if (!Utils.getBooleanPreference(this, AppConstants
                                         .PREF_DISABLE_PUSH, false))
@@ -382,7 +382,7 @@ public class NotificationFCMService extends FirebaseMessagingService {
                                 notificationStateData.setUpdatedAt(m.get("updated_at"));
                                 notificationStateData.setNotificationType(AppConstants
                                         .NOTIFICATION_TYPE_PROFILE_RESPONSE);
-                                notificationStateData.setNotificationMasterId(m.get("car_id"));
+//                                notificationStateData.setNotificationMasterId(m.get("car_id"));
                                 notificationStateMaster.addNotificationState(notificationStateData);
                                 ObjectMapper mapper = new ObjectMapper();
                                 String data = m.get("car_contact");

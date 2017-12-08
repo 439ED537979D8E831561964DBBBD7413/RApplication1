@@ -19,6 +19,7 @@ public class ProfileDataOperationEducation implements Serializable {
     private String eduFromDate;
     private String eduToDate;
     private Integer eduPublic;
+    private Integer isPrivate;
 
     @JsonProperty("edu_id")
     public String getEduId() {
@@ -81,5 +82,14 @@ public class ProfileDataOperationEducation implements Serializable {
 
     public void setEduPublic(Integer eduPublic) {
         this.eduPublic = eduPublic;
+    }
+
+    @JsonProperty("is_private")
+    public Integer getIsPrivate() {
+        return isPrivate;
+    }
+
+    public void setIsPrivate(Integer isPrivate) {
+        this.isPrivate = isPrivate;
     }
 }

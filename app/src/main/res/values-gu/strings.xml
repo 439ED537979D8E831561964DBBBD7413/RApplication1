@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">RContacts</string>
 
@@ -650,6 +651,15 @@
     <string name="str_request_all">બધાને વિનંતી કરો</string>
     <string name="error_aadhar_validation">કૃપા કરીને 12 અંક નો આધાર નંબર દાખલ કરો</string>
 
+    <string name="error_required_edu_course">અભ્યાસ ક્ષેત્ર જરૂરી છે!</string>
+    <string name="error_required_edu_name">શાળા / કૉલેજનું નામ આવશ્યક છે!</string>
+    <string name="error_required_edu_from_date">From date is required!</string>
+    <string name="error_required_edu_to_date">To date is required!</string>
+    <string name="school_college_name">શાળા / કૉલેજનું નામ</string>
+    <string name="field_of_study">ભણવાનો વિષય</string>
+    <string name="i_currently_study_here">હાલમાં હું અહીં અભ્યાસ કરું છું</string>
+    <string name="str_education">શિક્ષણ વિગતો</string>
+
     <!--Account-->
     <string name="action_bar_title">ખાતું</string>
     <string name="view_account">ખાતું જુઓ</string>
@@ -747,7 +757,7 @@
     <string name="toolbar_title">સંબંધ ભલામણ</string>
     <string name="search_here">Search...</string>
     <string name="str_no_relation_found">કોઈ રિલેશન મળ્યું નથી</string>
-    <string name="str_no_relation_recommendation_found">No Relation Recommendation Found</string>
+    <string name="str_no_relation_recommendation_found">કોઈ ભલામણ મળી નથી</string>
     <string name="relation_toolbar_title">હાલના સંબંધ</string>
     <string name="add_relation_toolbar_title">સંબંધ ઉમેરો</string>
     <string name="str_add_name">નામ ઉમેરો</string>

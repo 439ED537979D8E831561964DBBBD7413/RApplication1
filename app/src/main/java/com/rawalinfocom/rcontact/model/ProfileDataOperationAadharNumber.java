@@ -14,11 +14,11 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProfileDataOperationAadharNumber implements Serializable {
 
-    Integer aadharId;
-    String aadharNumber;
-    Integer aadharIsVerified;
-    Integer aadharPublic;
-    String rcProfileMasterPmId;
+    private Integer aadharId;
+    private String aadharNumber;
+    private Integer aadharIsVerified;
+    private Integer aadharPublic;
+    private String rcProfileMasterPmId;
 
     @JsonProperty("aadhaar_id")
     public Integer getAadharId() {

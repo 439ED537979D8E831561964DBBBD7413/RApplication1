@@ -27,9 +27,10 @@ public class PrivacyDataItem {
     private Integer isHide;
 
     @JsonProperty("pb_aadhaar")
-    private ArrayList<PrivacyEntityItem>  pbAadhaar;
+    private ArrayList<PrivacyEntityItem> pbAadhaar;
 
-
+    @JsonProperty("profile_rating")
+    private ArrayList<PrivacyEntityItem> pbRating;
 
     public ArrayList<PrivacyEntityItem> getPbPhoneNumber() {
         return pbPhoneNumber;
@@ -85,6 +86,14 @@ public class PrivacyDataItem {
 
     public void setPbAadhaar(ArrayList<PrivacyEntityItem> pbAadhaar) {
         this.pbAadhaar = pbAadhaar;
+    }
+
+    public ArrayList<PrivacyEntityItem> getPbRating() {
+        return pbRating;
+    }
+
+    public void setPbRating(ArrayList<PrivacyEntityItem> pbRating) {
+        this.pbRating = pbRating;
     }
 
     public ArrayList<PrivacyEntityItem> getPbEducation() {
