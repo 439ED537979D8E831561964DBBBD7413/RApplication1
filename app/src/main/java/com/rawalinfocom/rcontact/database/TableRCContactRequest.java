@@ -66,16 +66,15 @@ public class TableRCContactRequest {
         ContentValues values = new ContentValues();
         values.put(COLUMN_CAR_STATUS, status);
         if (requestType.equalsIgnoreCase("request all")) {
-            values.put(COLUMN_CAR_CLOUD_REQUEST_ID, new Random().nextInt(1234567890));
+            values.put(COLUMN_CAR_CLOUD_REQUEST_ID, System.currentTimeMillis() + "" + new Random().nextInt(1234));
             values.put(COLUMN_CAR_RECORD_INDEX_ID, 0);
-            values.put(COLUMN_CAR_CREATED_AT, "2017-12-07 18:29:27");
-            values.put(COLUMN_CAR_UPDATED_AT, "2017-12-07 18:29:27");
         } else {
             values.put(COLUMN_CAR_CLOUD_REQUEST_ID, carId);
             values.put(COLUMN_CAR_RECORD_INDEX_ID, carMongodbRecordIndex);
-            values.put(COLUMN_CAR_CREATED_AT, createdAt);
-            values.put(COLUMN_CAR_UPDATED_AT, updatedAt);
         }
+
+        values.put(COLUMN_CAR_CREATED_AT, createdAt);
+        values.put(COLUMN_CAR_UPDATED_AT, updatedAt);
         values.put(COLUMN_CRM_RC_PROFILE_MASTER_PM_ID, carPmIdFrom);
         values.put(COLUMN_CARTYPE, requestType);
         values.put(COLUMN_CAR_PROFILE_DETAILS, name);
@@ -105,7 +104,9 @@ public class TableRCContactRequest {
                 request.setPpmTag(cursor.getString(cursor.getColumnIndex(COLUMN_CARTYPE)));
                 request.setCarMongodbRecordIndex(cursor.getString(cursor.getColumnIndex(COLUMN_CAR_RECORD_INDEX_ID)));
                 request.setUpdatedAt(cursor.getString(cursor.getColumnIndex(COLUMN_CAR_UPDATED_AT)));
-                request.setCarId(cursor.getInt(cursor.getColumnIndex(COLUMN_CAR_CLOUD_REQUEST_ID)));
+                System.out.println("RContacts id --> " + cursor.getString(cursor.getColumnIndex(COLUMN_CAR_CLOUD_REQUEST_ID)));
+                request.setCarId((int) Long.parseLong(cursor.getString(cursor.getColumnIndex(COLUMN_CAR_CLOUD_REQUEST_ID))));
+                request.setCarRequestId(cursor.getString(cursor.getColumnIndex(COLUMN_CAR_CLOUD_REQUEST_ID)));
                 request.setName(cursor.getString(cursor.getColumnIndex(COLUMN_CAR_PROFILE_DETAILS)));
                 request.setPmProfilePhoto(cursor.getString(cursor.getColumnIndex(COLUMN_CAR_IMG)));
                 arrayList.add(request);
@@ -132,6 +133,7 @@ public class TableRCContactRequest {
                 request.setCarMongodbRecordIndex(cursor.getString(cursor.getColumnIndex(COLUMN_CAR_RECORD_INDEX_ID)));
                 request.setUpdatedAt(cursor.getString(cursor.getColumnIndex(COLUMN_CAR_UPDATED_AT)));
                 request.setCarId(cursor.getInt(cursor.getColumnIndex(COLUMN_CAR_CLOUD_REQUEST_ID)));
+                request.setCarRequestId(cursor.getString(cursor.getColumnIndex(COLUMN_CAR_CLOUD_REQUEST_ID)));
                 request.setName(cursor.getString(cursor.getColumnIndex(COLUMN_CAR_PROFILE_DETAILS)));
                 request.setPmProfilePhoto(cursor.getString(cursor.getColumnIndex(COLUMN_CAR_IMG)));
                 arrayList.add(request);
@@ -142,14 +144,24 @@ public class TableRCContactRequest {
         return arrayList;
     }
 
-    public boolean removeRequest(String ppmTag, int carId, int rcpID) {
+    public boolean deleteAll() {
+
+        boolean isDelete;
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+        isDelete = db.delete(TABLE_RC_CONTACT_ACCESS_REQUEST, null, null) > 0;
+
+        return isDelete;
+    }
+
+    public boolean removeRequest(String ppmTag, String carId, int rcpID) {
         boolean isDelete;
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
 
         if (ppmTag.equalsIgnoreCase("request all")) {
-            String[] whereArgs = new String[]{String.valueOf(carId), String.valueOf(rcpID), ppmTag};
-            isDelete = db.delete(TABLE_RC_CONTACT_ACCESS_REQUEST, COLUMN_CAR_CLOUD_REQUEST_ID + " = ? and " +
-                    COLUMN_CRM_RC_PROFILE_MASTER_PM_ID + " = ? and " + COLUMN_CARTYPE + " =? ", whereArgs) > 0;
+//            String[] whereArgs = new String[]{String.valueOf(carId), String.valueOf(rcpID), ppmTag};
+            isDelete = db.delete(TABLE_RC_CONTACT_ACCESS_REQUEST, COLUMN_CAR_CLOUD_REQUEST_ID + " = '" + carId + "' and " +
+                    COLUMN_CARTYPE + " = '" + ppmTag + "' and " + COLUMN_CRM_RC_PROFILE_MASTER_PM_ID + " = '" + rcpID + "'", null) > 0;
         } else {
             isDelete = db.delete(TABLE_RC_CONTACT_ACCESS_REQUEST, COLUMN_CAR_CLOUD_REQUEST_ID + "=" + carId, null) > 0;
         }

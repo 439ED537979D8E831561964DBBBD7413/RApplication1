@@ -27,15 +27,15 @@ public class NotiProfileItem {
     private String rcpUserPmId;
 
 
-    public Integer getCardCloudId() {
+    public String getCardCloudId() {
         return cardCloudId;
     }
 
-    public void setCardCloudId(Integer cardCloudId) {
+    public void setCardCloudId(String cardCloudId) {
         this.cardCloudId = cardCloudId;
     }
 
-    private Integer cardCloudId;
+    private String cardCloudId;
 
     public Integer getProfileNotiType() {
         return profileNotiType;

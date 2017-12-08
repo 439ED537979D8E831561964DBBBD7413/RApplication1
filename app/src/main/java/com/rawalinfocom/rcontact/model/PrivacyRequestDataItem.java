@@ -42,6 +42,8 @@ public class PrivacyRequestDataItem {
     @JsonProperty("car_id")
     private Integer carId;
 
+    private String carRequestId;
+
     @JsonProperty("car_ppm_id")
     private Integer carPpmId;
 
@@ -158,6 +160,14 @@ public class PrivacyRequestDataItem {
 
     public void setCarId(Integer carId) {
         this.carId = carId;
+    }
+
+    public String getCarRequestId() {
+        return carRequestId;
+    }
+
+    public void setCarRequestId(String carRequestId) {
+        this.carRequestId = carRequestId;
     }
 
     public Integer getCarPpmId() {

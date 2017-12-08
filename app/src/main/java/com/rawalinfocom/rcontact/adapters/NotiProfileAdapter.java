@@ -50,9 +50,8 @@ public class NotiProfileAdapter extends RecyclerView.Adapter<NotiProfileAdapter.
     private OnClickListener onClickListener;
 
     public interface OnClickListener {
-        void onClick(String type, int carId, int rcpId);
+        void onClick(String type, String carId, int rcpId);
     }
-
 
     public NotiProfileAdapter(Fragment activity, List<NotiProfileItem> list, OnClickListener onClickListener) {
         this.activity = activity;
@@ -153,60 +152,74 @@ public class NotiProfileAdapter extends RecyclerView.Adapter<NotiProfileAdapter.
             }
         });
 
+        holder.buttonRequestConfirm.setTag(position);
         holder.buttonRequestConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if (item.getProfileNotiType() == 0) {
+                int pos = (int) v.getTag();
+                NotiProfileItem notiProfileItem = list.get(pos);
+
+                if (notiProfileItem.getProfileNotiType() == 0) {
 
                     if (onClickListener != null)
-                        onClickListener.onClick(item.getPpmTag(), item.getCardCloudId(), Integer.parseInt(item.getRcpUserPmId()));
+                        onClickListener.onClick(notiProfileItem.getPpmTag(), notiProfileItem.getCardCloudId(), Integer.parseInt(notiProfileItem.getRcpUserPmId()));
 
+                    System.out.println("RContacts data accept --> " + notiProfileItem.getCardCloudId() + " -- " + Integer.parseInt(notiProfileItem.getRcpUserPmId()));
                     // confirming the request
-                    sendRespondToServer(1, item.getCardCloudId(), item.getPpmTag(), Integer.parseInt(item.getRcpUserPmId()));
+                    sendRespondToServer(1, notiProfileItem.getCardCloudId(), notiProfileItem.getPpmTag(), Integer.parseInt(notiProfileItem.getRcpUserPmId()));
                 } else {
                     Bundle bundle = new Bundle();
-                    bundle.putString(AppConstants.EXTRA_PM_ID, item.getRcpUserPmId());
-                    bundle.putString(AppConstants.EXTRA_CHECK_NUMBER_FAVOURITE, item.getPmRawId());
+                    bundle.putString(AppConstants.EXTRA_PM_ID, notiProfileItem.getRcpUserPmId());
+                    bundle.putString(AppConstants.EXTRA_CHECK_NUMBER_FAVOURITE, notiProfileItem.getPmRawId());
                     bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, "-1");
-                    bundle.putString(AppConstants.EXTRA_CONTACT_NAME, item.getPersonName());
+                    bundle.putString(AppConstants.EXTRA_CONTACT_NAME, notiProfileItem.getPersonName());
                     bundle.putBoolean(AppConstants.EXTRA_FROM_NOTI_PROFILE, true);
                     bundle.putBoolean(AppConstants.EXTRA_IS_RCP_USER, true);
-                    bundle.putString(AppConstants.EXTRA_PROFILE_IMAGE_URL, item.getPersonImage());
+                    bundle.putString(AppConstants.EXTRA_PROFILE_IMAGE_URL, notiProfileItem.getPersonImage());
                     ((BaseActivity) (activity.getActivity())).startActivityIntent(activity
                             .getActivity(), ProfileDetailActivity
                             .class, bundle);
                 }
             }
         });
+
+        holder.buttonRequestReject.setTag(position);
         holder.buttonRequestReject.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                int pos = (int) v.getTag();
+                NotiProfileItem notiProfileItem = list.get(pos);
+
                 if (onClickListener != null)
-                    onClickListener.onClick(item.getPpmTag(), item.getCardCloudId(), Integer.parseInt(item.getRcpUserPmId()));
+                    onClickListener.onClick(notiProfileItem.getPpmTag(), notiProfileItem.getCardCloudId(), Integer.parseInt(notiProfileItem.getRcpUserPmId()));
                 // rejecting the request
-                sendRespondToServer(2, item.getCardCloudId(), item.getPpmTag(), Integer.parseInt(item.getRcpUserPmId()));
+
+                System.out.println("RContacts data reject --> " + notiProfileItem.getCardCloudId() + " -- " + Integer.parseInt(notiProfileItem.getRcpUserPmId()));
+                sendRespondToServer(2, notiProfileItem.getCardCloudId(), notiProfileItem.getPpmTag(), Integer.parseInt(notiProfileItem.getRcpUserPmId()));
 
             }
         });
     }
 
-    private void sendRespondToServer(int status, int cardCloudId, String type, int carPmIdFrom) {
+    private void sendRespondToServer(int status, String cardCloudId, String type, int carPmIdFrom) {
         WsRequestObject requestObj = new WsRequestObject();
 
         if (type.equalsIgnoreCase("request all")) {
             requestObj.setCarPmIdFrom(carPmIdFrom);
+            requestObj.setRequestAll("1");
         } else {
-            requestObj.setCarId(cardCloudId);
+            requestObj.setCarId(Integer.parseInt(cardCloudId));
         }
         requestObj.setCarStatus(status);
         if (Utils.isNetworkAvailable(activity.getActivity())) {
             new AsyncWebServiceCall(activity, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     requestObj, null, WsResponseObject.class, WsConstants
-                    .REQ_PROFILE_PRIVACY_REQUEST, activity.getResources().getString(R.string
+                    .REQ_PROFILE_PRIVACY_RESPOND, activity.getResources().getString(R.string
                     .msg_please_wait), true)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT +
-                            WsConstants.REQ_PROFILE_PRIVACY_REQUEST);
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT_V2 +
+                            WsConstants.REQ_PROFILE_PRIVACY_RESPOND);
         } else {
             //show no net
             Toast.makeText(activity.getActivity(), activity.getResources().getString(R.string

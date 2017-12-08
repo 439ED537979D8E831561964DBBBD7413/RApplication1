@@ -102,8 +102,8 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout swipeRefreshLayout;
 
-    private String ppmTag;
-    private int carID, rcpID;
+    private String ppmTag, carID;
+    private int rcpID;
 
     @Override
     public void getFragmentArguments() {
@@ -265,6 +265,7 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
 
     private void init() {
         tableRCContactRequest = new TableRCContactRequest(getDatabaseHandler());
+//        tableRCContactRequest.deleteAll();
         InputMethodManager im = (InputMethodManager) getActivity().getSystemService(Service
                 .INPUT_METHOD_SERVICE);
         softKeyboard = new SoftKeyboard(layoutRoot, im);
@@ -458,7 +459,7 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
         notiProfileAdapter = new NotiProfileAdapter(this, listAllRequest,
                 new NotiProfileAdapter.OnClickListener() {
                     @Override
-                    public void onClick(String type, int carId, int rcpId) {
+                    public void onClick(String type, String carId, int rcpId) {
                         ppmTag = type;
                         carID = carId;
                         rcpID = rcpId;
@@ -520,7 +521,7 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
             }
             item.setPpmTag(request.getPpmTag());
             item.setRcpUserPmId(pmId + "");
-            item.setCardCloudId(request.getCarId());
+            item.setCardCloudId(request.getCarRequestId());
             item.setNotiRequestTime(request.getUpdatedAt());
             list.add(item);
 
@@ -598,7 +599,7 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
                 saveDataToDB(profileData);
             }
 
-            if (serviceType.equalsIgnoreCase(WsConstants.REQ_PROFILE_PRIVACY_REQUEST)) {
+            if (serviceType.equalsIgnoreCase(WsConstants.REQ_PROFILE_PRIVACY_RESPOND)) {
                 WsResponseObject privacyResponse = (WsResponseObject) data;
                 if (privacyResponse != null && StringUtils.equalsIgnoreCase
                         (privacyResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
@@ -607,19 +608,20 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
 
                     try {
 
-                        if (MoreObjects.firstNonNull(item.getCarAccessPermissionStatus(), 0) == 1 ||
-                                MoreObjects.firstNonNull(item.getCarAccessPermissionStatus(), 0)
-                                        == 2) {
+//                        if (MoreObjects.firstNonNull(item.getCarAccessPermissionStatus(), 0) == 1 ||
+//                                MoreObjects.firstNonNull(item.getCarAccessPermissionStatus(), 0)
+//                                        == 2) {
 //                            boolean deleted = tableRCContactRequest.removeRequest(item.getCarId());
-                            boolean deleted = tableRCContactRequest.removeRequest(ppmTag, carID, rcpID);
-                            if (deleted) {
-                                refreshAllList();
-                            }
-                            Utils.showErrorSnackBar(activity, layoutRoot, msg);
-//                            Utils.showSuccessSnackBar(getActivity(),);
-                        } else {
-                            Utils.showErrorSnackBar(activity, layoutRoot, getResources().getString(R.string.msg_try_later));
+                        System.out.println("RContacts data response --> " + ppmTag + " -- " + carID + " -- " + rcpID);
+                        boolean deleted = tableRCContactRequest.removeRequest(ppmTag, carID, rcpID);
+                        if (deleted) {
+                            refreshAllList();
                         }
+                        Utils.showSuccessSnackBar(activity, layoutRoot, msg);
+//                            Utils.showSuccessSnackBar(getActivity(),);
+//                        } else {
+//                            Utils.showErrorSnackBar(activity, layoutRoot, getResources().getString(R.string.msg_try_later));
+//                        }
                     } catch (Exception e) {
                         Utils.showErrorSnackBar(activity, layoutRoot, getResources().getString(R.string.msg_try_later));
                     }
