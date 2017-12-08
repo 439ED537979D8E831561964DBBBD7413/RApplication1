@@ -53,8 +53,10 @@ public class ProfileDataOperation implements Serializable {
     private String profileRating;
     private String totalProfileRateUser;
     private String pbGender;
+    private ArrayList<ProfileDataOperationEducation> pbEducation;
     private String pbProfilePhoto;
     private String pmBadge;
+    private String pmLastSeen;
 
     private String lookupKey;
     private long id;
@@ -420,6 +422,15 @@ public class ProfileDataOperation implements Serializable {
         this.pmBadge = pmBadge;
     }
 
+    @JsonProperty("pm_last_seen")
+    public String getPmLastSeen() {
+        return pmLastSeen;
+    }
+
+    public void setPmLastSeen(String pmLastSeen) {
+        this.pmLastSeen = pmLastSeen;
+    }
+
     @JsonIgnore
     public String getLookupKey() {
         return lookupKey;
@@ -502,5 +513,14 @@ public class ProfileDataOperation implements Serializable {
 
     public void setPbAadhar(ProfileDataOperationAadharNumber pbAadhar) {
         this.pbAadhar = pbAadhar;
+    }
+
+    @JsonProperty("pb_education")
+    public ArrayList<ProfileDataOperationEducation> getPbEducation() {
+        return pbEducation;
+    }
+
+    public void setPbEducation(ArrayList<ProfileDataOperationEducation> pbEducation) {
+        this.pbEducation = pbEducation;
     }
 }

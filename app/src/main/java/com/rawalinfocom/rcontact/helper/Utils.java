@@ -75,6 +75,7 @@ import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.DatabaseHandler;
 import com.rawalinfocom.rcontact.database.TableAadharMaster;
 import com.rawalinfocom.rcontact.database.TableAddressMaster;
+import com.rawalinfocom.rcontact.database.TableEducationMaster;
 import com.rawalinfocom.rcontact.database.TableEmailMaster;
 import com.rawalinfocom.rcontact.database.TableEventMaster;
 import com.rawalinfocom.rcontact.database.TableImMaster;
@@ -85,6 +86,7 @@ import com.rawalinfocom.rcontact.database.TableWebsiteMaster;
 import com.rawalinfocom.rcontact.model.Address;
 import com.rawalinfocom.rcontact.model.CallLogType;
 import com.rawalinfocom.rcontact.model.Country;
+import com.rawalinfocom.rcontact.model.Education;
 import com.rawalinfocom.rcontact.model.Email;
 import com.rawalinfocom.rcontact.model.Event;
 import com.rawalinfocom.rcontact.model.ImAccount;
@@ -93,6 +95,7 @@ import com.rawalinfocom.rcontact.model.Organization;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAadharNumber;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
+import com.rawalinfocom.rcontact.model.ProfileDataOperationEducation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEvent;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationImAccount;
@@ -171,13 +174,14 @@ public class Utils {
     }
 
     public static void hideKeyBoard(Activity activity) {
-
-        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context
-                .INPUT_METHOD_SERVICE);
-        if (imm != null) {
-            imm.toggleSoftInput(0, InputMethodManager.HIDE_IMPLICIT_ONLY);
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        if (imm.isActive()) {
+            imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0); // hide
         }
-    }
+//        else {
+//            imm.toggleSoftInput(0, InputMethodManager.HIDE_IMPLICIT_ONLY); // show
+//        }
+    }//end method
 
     //<editor-fold desc="SnackBar">
 
@@ -1108,6 +1112,7 @@ public class Utils {
         userProfile.setPmProfileImage(profileDetail.getPbProfilePhoto());
         userProfile.setPmGender(profileDetail.getPbGender());
         userProfile.setPmBadge(profileDetail.getPmBadge());
+        userProfile.setPmLastSeen(profileDetail.getPmLastSeen());
 
         tableProfileMaster.addProfile(userProfile);
         //</editor-fold>
@@ -1317,6 +1322,39 @@ public class Utils {
             ProfileDataOperationAadharNumber profileDataOperationAadharNumber = profileDetail.getPbAadhar();
             profileDataOperationAadharNumber.setRcProfileMasterPmId(profileDetail.getRcpPmId());
             tableAadharMaster.addAadharDetail(profileDataOperationAadharNumber);
+        }
+        //</editor-fold>
+
+        // <editor-fold desc="Education Master">
+        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEducation())) {
+            ArrayList<ProfileDataOperationEducation> arrayListEducation = profileDetail.getPbEducation();
+            ArrayList<Education> arrayListEdu = new ArrayList<>();
+            for (int j = 0; j < arrayListEducation.size(); j++) {
+
+                Education education = new Education();
+
+
+                education.setEdmRecordIndexId(arrayListEducation.get(j).getEduId());
+
+                education.setEdmSchoolCollegeName(arrayListEducation.get(j).getEduName());
+                education.setEdmCourse(arrayListEducation.get(j).getEduCourse());
+                education.setEdmEducationFromDate(arrayListEducation.get(j)
+                        .getEduFromDate());
+                education.setEdmEducationToDate(arrayListEducation.get(j).getEduToDate());
+                education.setEdmEducationIsCurrent(arrayListEducation.get(j).getIsCurrent
+                        ());
+//                        education.setEdmEducationIsPrivate(arrayListEducation.get(j).geti());
+                education.setEdmEducationPrivacy(String.valueOf(arrayListEducation.get(j)
+                        .getEduPublic()));
+
+                education.setRcProfileMasterPmId(profileDetail.getRcpPmId());
+
+                arrayListEdu.add(education);
+            }
+
+            TableEducationMaster tableEducationMaster = new TableEducationMaster
+                    (databaseHandler);
+            tableEducationMaster.addArrayEducation(arrayListEdu);
         }
         //</editor-fold>
     }

@@ -43,6 +43,8 @@ import com.rawalinfocom.rcontact.model.ProfileMobileMapping;
 import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.notifications.NotificationsDetailActivity;
 import com.rawalinfocom.rcontact.notifications.TimelineActivity;
+import com.rawalinfocom.rcontact.relation.ExistingRelationActivity;
+import com.rawalinfocom.rcontact.relation.RelationRecommendationActivity;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -79,14 +81,16 @@ public class NotificationFCMService extends FirebaseMessagingService {
                     if (m.get("API").equalsIgnoreCase("rcontactUpdate")) {
                         try {
                             ObjectMapper mapper = new ObjectMapper();
-                            NotificationData obj = mapper.readValue(notiData, NotificationData.class);
+                            NotificationData obj = mapper.readValue(notiData, NotificationData
+                                    .class);
                             TableRCNotificationUpdates tableRCNotificationUpdates = new
                                     TableRCNotificationUpdates(databaseHandler);
                             int id = tableRCNotificationUpdates.addUpdate(obj);
                             if (id != -1) {
                                 TableNotificationStateMaster notificationStateMaster = new
                                         TableNotificationStateMaster(databaseHandler);
-                                NotificationStateData notificationStateData = new NotificationStateData();
+                                NotificationStateData notificationStateData = new
+                                        NotificationStateData();
                                 notificationStateData.setNotificationState(1);
                                 notificationStateData.setCloudNotificationId(obj.getId());
                                 notificationStateData.setCreatedAt(obj.getCreatedAt());
@@ -95,8 +99,10 @@ public class NotificationFCMService extends FirebaseMessagingService {
                                         .NOTIFICATION_TYPE_RUPDATE);
                                 notificationStateData.setNotificationMasterId(obj.getId());
                                 notificationStateMaster.addNotificationState(notificationStateData);
-                                if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_PUSH, false))
-                                    sendNotification(obj.getDetails(), AppConstants.NOTIFICATION_TYPE_RUPDATE);
+                                if (!Utils.getBooleanPreference(this, AppConstants
+                                        .PREF_DISABLE_PUSH, false))
+                                    sendNotification(obj.getDetails(), AppConstants
+                                            .NOTIFICATION_TYPE_RUPDATE);
                                 else
                                     sendBroadcastForCountupdate();
 
@@ -114,6 +120,14 @@ public class NotificationFCMService extends FirebaseMessagingService {
                     return;
                 }
                 String msg = m.get("msg");
+                if (api.equalsIgnoreCase("relationshipRequest")) {
+                    sendNotification(msg, AppConstants.NOTIFICATION_TYPE_RELATION_REQUEST);
+                    return;
+                }
+                if (api.equalsIgnoreCase("relationshipAccept")) {
+                    sendNotification(msg, AppConstants.NOTIFICATION_TYPE_RELATION_ACCEPT);
+                    return;
+                }
                 if (api.equalsIgnoreCase("newUserRegistration")) {
                     String first_name = m.get("first_name");
                     String last_name = m.get("last_name");
@@ -176,7 +190,8 @@ public class NotificationFCMService extends FirebaseMessagingService {
                         tableProfileMobileMapping.addArrayProfileMobileMapping
                                 (arrayListProfileMobileMapping);
 
-                        TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
+                        TableMobileMaster tableMobileMaster = new TableMobileMaster
+                                (databaseHandler);
                         ArrayList<MobileNumber> arrayListMobileNumber = new ArrayList<>();
                         MobileNumber mobileNumber = new MobileNumber();
                         mobileNumber.setMnmRecordIndexId(mnm_id);
@@ -185,11 +200,12 @@ public class NotificationFCMService extends FirebaseMessagingService {
                         mobileNumber.setMnmNumberPrivacy(String.valueOf(1));
                         mobileNumber.setMnmIsPrivate(0);
                         mobileNumber.setRcProfileMasterPmId(rcp_pm_id);
-                        mobileNumber.setMnmIsPrimary(String.valueOf(IntegerConstants.RCP_TYPE_PRIMARY));
+                        mobileNumber.setMnmIsPrimary(String.valueOf(IntegerConstants
+                                .RCP_TYPE_PRIMARY));
                         arrayListMobileNumber.add(mobileNumber);
                         tableMobileMaster.addArrayMobileNumber(arrayListMobileNumber);
-                        Log.i(TAG, "Name:" + first_name + " " + last_name + " Number: " + mobile_num
-                                + "become RCP");
+                        Log.i(TAG, "Name:" + first_name + " " + last_name + " Number: " +
+                                mobile_num + "become RCP");
                     }
                     return;
                 }
@@ -217,9 +233,12 @@ public class NotificationFCMService extends FirebaseMessagingService {
                         String totalUniqueRater = m.get("total_profile_rate_user");
                         String toPmId = m.get("pr_to_pm_id");
 
-                        TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
-                        tableProfileMaster.updateUserProfileRating(toPmId, avgRating, totalUniqueRater);
-                        Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING, totalUniqueRater);
+                        TableProfileMaster tableProfileMaster = new TableProfileMaster
+                                (databaseHandler);
+                        tableProfileMaster.updateUserProfileRating(toPmId, avgRating,
+                                totalUniqueRater);
+                        Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING,
+                                totalUniqueRater);
                         Utils.setStringPreference(this, AppConstants.PREF_USER_RATING, avgRating);
 
                         notificationStateData.setCreatedAt(comment.getCrmCreatedAt());
@@ -230,24 +249,28 @@ public class NotificationFCMService extends FirebaseMessagingService {
                         if (id != -1) {
                             notificationStateData.setNotificationMasterId(m.get("pr_id"));
                             notificationStateMaster.addNotificationState(notificationStateData);
-                            if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_PUSH, false))
+                            if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_PUSH,
+                                    false))
                                 sendNotification(msg, AppConstants.NOTIFICATION_TYPE_TIMELINE);
                             else
                                 sendBroadcastForCountupdate();
                         }
                         break;
                     case "profileRatingReply":
-                        int isUpdated = tableCommentMaster.addReply(m.get("pr_id"), m.get("pr_reply"),
+                        int isUpdated = tableCommentMaster.addReply(m.get("pr_id"), m.get
+                                        ("pr_reply"),
                                 Utils.getLocalTimeFromUTCTime(m.get("reply_at")), Utils
                                         .getLocalTimeFromUTCTime(m.get("reply_at")));
 
                         notificationStateData.setCreatedAt(m.get("reply_at"));
                         notificationStateData.setUpdatedAt(m.get("reply_at"));
-                        notificationStateData.setNotificationType(AppConstants.NOTIFICATION_TYPE_RATE);
+                        notificationStateData.setNotificationType(AppConstants
+                                .NOTIFICATION_TYPE_RATE);
                         if (isUpdated > 0) {
                             notificationStateData.setNotificationMasterId(m.get("pr_id"));
                             notificationStateMaster.addNotificationState(notificationStateData);
-                            if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_PUSH, false))
+                            if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_PUSH,
+                                    false))
                                 sendNotification(msg, AppConstants.NOTIFICATION_TYPE_RATE);
                             else
                                 sendBroadcastForCountupdate();
@@ -261,7 +284,8 @@ public class NotificationFCMService extends FirebaseMessagingService {
                         comment.setCrmImage(m.get("pm_profile_photo"));
                         comment.setRcProfileMasterPmId(Integer.parseInt(m.get("from_pm_id")));
                         comment.setCrmComment(m.get("comment"));
-                        comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(m.get("created_date")));
+                        comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(m.get
+                                ("created_date")));
                         comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(m.get("updated_at")));
                         comment.setEvmRecordIndexId(m.get("event_record_index_id"));
                         int eventId = tableCommentMaster.addComment(comment);
@@ -272,8 +296,10 @@ public class NotificationFCMService extends FirebaseMessagingService {
                                     .NOTIFICATION_TYPE_TIMELINE);
                             notificationStateData.setNotificationMasterId(m.get("id"));
                             notificationStateMaster.addNotificationState(notificationStateData);
-                            if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_PUSH, false)) {
-                                if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_EVENT_PUSH, false))
+                            if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_PUSH,
+                                    false)) {
+                                if (!Utils.getBooleanPreference(this, AppConstants
+                                        .PREF_DISABLE_EVENT_PUSH, false))
                                     sendNotification(msg, AppConstants.NOTIFICATION_TYPE_TIMELINE);
                                 else
                                     sendBroadcastForCountupdate();
@@ -293,8 +319,10 @@ public class NotificationFCMService extends FirebaseMessagingService {
                                     .NOTIFICATION_TYPE_COMMENTS);
                             notificationStateData.setNotificationMasterId(m.get("id"));
                             notificationStateMaster.addNotificationState(notificationStateData);
-                            if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_PUSH, false)) {
-                                if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_EVENT_PUSH, false))
+                            if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_PUSH,
+                                    false)) {
+                                if (!Utils.getBooleanPreference(this, AppConstants
+                                        .PREF_DISABLE_EVENT_PUSH, false))
                                     sendNotification(msg, AppConstants.NOTIFICATION_TYPE_COMMENTS);
                                 else
                                     sendBroadcastForCountupdate();
@@ -305,7 +333,8 @@ public class NotificationFCMService extends FirebaseMessagingService {
                     case "sendContactRequest":
                         TableRCContactRequest tableRCContactRequest = new TableRCContactRequest
                                 (databaseHandler);
-                        if (m.get("car_pm_id_to").equals(Utils.getStringPreference(this, AppConstants
+                        if (m.get("car_pm_id_to").equals(Utils.getStringPreference(this,
+                                AppConstants
                                 .PREF_USER_PM_ID, "0"))
                                 && m.get("car_access_permission_status").equals("0")) {
                             int requestId = tableRCContactRequest.addRequest(AppConstants
@@ -324,8 +353,10 @@ public class NotificationFCMService extends FirebaseMessagingService {
                                         .NOTIFICATION_TYPE_PROFILE_REQUEST);
                                 notificationStateData.setNotificationMasterId(m.get("car_id"));
                                 notificationStateMaster.addNotificationState(notificationStateData);
-                                if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_PUSH, false))
-                                    sendNotification(msg, AppConstants.NOTIFICATION_TYPE_PROFILE_REQUEST);
+                                if (!Utils.getBooleanPreference(this, AppConstants
+                                        .PREF_DISABLE_PUSH, false))
+                                    sendNotification(msg, AppConstants
+                                            .NOTIFICATION_TYPE_PROFILE_REQUEST);
                                 else
                                     sendBroadcastForCountupdate();
                             }
@@ -356,7 +387,7 @@ public class NotificationFCMService extends FirebaseMessagingService {
                                 ObjectMapper mapper = new ObjectMapper();
                                 String data = m.get("car_contact");
                                 try {
-                                    if(data != null){
+                                    if (data != null) {
                                         ContactRequestData obj = mapper.readValue(data,
                                                 ContactRequestData.class);
                                         updatePrivacySetting(m.get("car_ppm_particular"), m.get
@@ -492,6 +523,12 @@ public class NotificationFCMService extends FirebaseMessagingService {
             case AppConstants.NOTIFICATION_TYPE_RUPDATE:
                 aClass = NotificationsDetailActivity.class;
                 tabIndex = NotificationsDetailActivity.TAB_RCONTACTS;
+                break;
+            case AppConstants.NOTIFICATION_TYPE_RELATION_REQUEST:
+                aClass = RelationRecommendationActivity.class;
+                break;
+            case AppConstants.NOTIFICATION_TYPE_RELATION_ACCEPT:
+                aClass = ExistingRelationActivity.class;
                 break;
 
         }

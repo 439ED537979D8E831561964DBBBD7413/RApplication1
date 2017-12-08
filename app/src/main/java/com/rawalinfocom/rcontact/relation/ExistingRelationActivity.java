@@ -2,9 +2,12 @@ package com.rawalinfocom.rcontact.relation;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -27,14 +30,15 @@ import com.rawalinfocom.rcontact.asynctasks.AsyncGetWebServiceCall;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
-import com.rawalinfocom.rcontact.database.TableRelationMappingMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
+import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
+import com.rawalinfocom.rcontact.model.ExistingRelationRequest;
 import com.rawalinfocom.rcontact.model.IndividualRelationType;
 import com.rawalinfocom.rcontact.model.RelationRecommendationType;
-import com.rawalinfocom.rcontact.model.RelationRequest;
-import com.rawalinfocom.rcontact.model.RelationRequestResponse;
+import com.rawalinfocom.rcontact.model.RelationResponse;
+import com.rawalinfocom.rcontact.model.RelationUserProfile;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 
@@ -71,12 +75,15 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
     ImageView imgFilter;
     @BindView(R.id.img_clear)
     ImageView imgClear;
+    @BindView(R.id.swipe_refresh_layout)
+    SwipeRefreshLayout swipeRefreshLayout;
 
     private Activity activity;
     private ExistingRelationListAdapter listAdapter;
-    private TableRelationMappingMaster tableRelationMappingMaster;
+    //    private TableRelationMappingMaster tableRelationMappingMaster;
     //    private Integer pmId;
     private ArrayList<RelationRecommendationType> existingRelationList;
+    private ArrayList<String> relationIds;
     private String deletePmId = "";
     private int deleteRelationPosition = -1;
 
@@ -90,12 +97,12 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_existing_relation);
 
+        activity = ExistingRelationActivity.this;
+
         ButterKnife.bind(this);
+        removeNotification();
         initToolbar();
 
-        tableRelationMappingMaster = new TableRelationMappingMaster(databaseHandler);
-
-        activity = ExistingRelationActivity.this;
         textNoRelation.setTypeface(Utils.typefaceRegular(this));
         inputSearch.setTypeface(Utils.typefaceRegular(this));
     }
@@ -120,16 +127,12 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
 
         textNoRelation.setVisibility(View.GONE);
         recycleViewRelation.setVisibility(View.VISIBLE);
+        swipeRefreshLayout.setVisibility(View.VISIBLE);
 
         if (Utils.isNetworkAvailable(this)) {
-            if (Utils.getBooleanPreference(ExistingRelationActivity.this,
-                    AppConstants.PREF_GET_RELATION, true)) {
-                getAllExistingRelation();
-            } else {
-                getExistingRelationData();
-            }
+            getAllExistingRelation();
         } else {
-            getExistingRelationData();
+            setVisibility(getString(R.string.msg_no_network), View.VISIBLE, View.GONE);
         }
 
         inputSearch.addTextChangedListener(new TextWatcher() {
@@ -140,8 +143,10 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                listAdapter.getFilter().filter(charSequence.toString());
 
+                if (listAdapter != null) {
+                    listAdapter.getFilter().filter(charSequence.toString());
+                }
                 if (charSequence.toString().trim().length() == 0) {
                     imgClear.setVisibility(View.GONE);
                 } else {
@@ -158,12 +163,39 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
         imgClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Utils.hideSoftKeyboard(activity, inputSearch);
                 imgClear.setVisibility(View.GONE);
-                listAdapter.getFilter().filter("");
                 inputSearch.getText().clear();
+
+                if (listAdapter != null)
+                    listAdapter.getFilter().filter("");
+            }
+        });
+
+        // implement setOnRefreshListener event on SwipeRefreshLayout
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+                swipeRefreshLayout.setRefreshing(true);
+                if (Utils.isNetworkAvailable(ExistingRelationActivity.this)) {
+                    getAllExistingRelation();
+                } else {
+                    swipeRefreshLayout.setRefreshing(false);
+                    setVisibility(getString(R.string.msg_no_network), View.VISIBLE, View.GONE);
+                }
             }
         });
     }
+
+    private void setVisibility(String text, int textVisibility, int viewVisibility) {
+
+        textNoRelation.setVisibility(textVisibility);
+        textNoRelation.setText(text);
+        recycleViewRelation.setVisibility(viewVisibility);
+        swipeRefreshLayout.setVisibility(viewVisibility);
+    }
+
 
     @Override
     public void onDeliveryResponse(String serviceType, Object data, Exception error) {
@@ -177,22 +209,18 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
                 if (sendRelationRequestObject != null && StringUtils.equalsIgnoreCase
                         (sendRelationRequestObject.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                    ArrayList<RelationRequest> allExistingRelationList = sendRelationRequestObject.
+                    ArrayList<ExistingRelationRequest> allExistingRelationList = sendRelationRequestObject.
                             getAllExistingRelationList();
 
-//                    Utils.showSuccessSnackBar(activity, relativeRootExistingRelation,
-//                            "New Relation Added Successfully!!!");
-                    storeProfileDataToDb(allExistingRelationList);
-                    getExistingRelationData();
+                    swipeRefreshLayout.setRefreshing(false);
 
-                    Utils.setBooleanPreference(ExistingRelationActivity.this,
-                            AppConstants.PREF_GET_RELATION, false);
+                    setExistingRelationData(allExistingRelationList);
 
                 } else {
                     if (sendRelationRequestObject != null) {
                         Log.e("error response", sendRelationRequestObject.getMessage());
-                        Utils.showErrorSnackBar(this, relativeRootExistingRelation,
-                                sendRelationRequestObject.getMessage());
+//                        Utils.showErrorSnackBar(this, relativeRootExistingRelation,
+//                                sendRelationRequestObject.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "sendRelationRequestResponse null");
                         Utils.showErrorSnackBar(this, relativeRootExistingRelation, getString(R
@@ -212,13 +240,7 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
                     Utils.showSuccessSnackBar(activity, relativeRootExistingRelation,
                             deleteRelationObject.getMessage());
 
-                    tableRelationMappingMaster.deleteRelationMapping(deletePmId);
-                    deletePmId = "";
-
-                    existingRelationList.remove(deleteRelationPosition);
-                    listAdapter.notifyDataSetChanged();
-
-                    deleteRelationPosition = -1;
+                    getAllExistingRelation();
 
                 } else {
                     if (deleteRelationObject != null) {
@@ -249,137 +271,374 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
                 finish();
                 break;
             case R.id.image_add_new:
-                Intent intent = new Intent(activity, AddNewRelationActivity.class);
-                intent.putExtra(AppConstants.EXTRA_IS_FROM, "own");
-                startActivity(intent);
+
+                if (Utils.isNetworkAvailable(activity)) {
+                    Intent intent = new Intent(activity, AddNewRelationActivity.class);
+                    intent.putExtra(AppConstants.EXTRA_IS_FROM, "own");
+                    startActivity(intent);
+                } else {
+                    Utils.showErrorSnackBar(activity, relativeRootExistingRelation, getResources()
+                            .getString(R.string.msg_no_network));
+                }
+
                 break;
         }
     }
 
-    private void storeProfileDataToDb(ArrayList<RelationRequest> relationRequestResponse) {
+//    private void storeProfileDataToDb(ArrayList<ExistingRelationRequest> relationRequestResponse) {
+//
+//        //<editor-fold desc="Relation Mapping Master">
+//        TableRelationMappingMaster tableRelationMappingMaster = new
+//                TableRelationMappingMaster(databaseHandler);
+//
+//        if (!Utils.isArraylistNullOrEmpty(relationRequestResponse)) {
+//
+//            for (int i = 0; i < relationRequestResponse.size(); i++) {
+//
+//                ArrayList<RelationRequestResponse> relationResponseList = new ArrayList<>();
+//                ExistingRelationRequest relationRequest = relationRequestResponse.get(i);
+//
+//                //<editor-fold desc="Family Relation">
+//                ArrayList<RelationResponse> familyRelation = relationRequest.getFamilyRelationList();
+//                if (!Utils.isArraylistNullOrEmpty(familyRelation)) {
+//
+//                    for (int j = 0; j < familyRelation.size(); j++) {
+//
+//                        RelationRequestResponse relationResponse = new RelationRequestResponse();
+//
+//                        relationResponse.setId(familyRelation.get(j).getId());
+//                        relationResponse.setRcRelationMasterId(familyRelation.get(j).getRcRelationMasterId());
+//                        relationResponse.setRrmToPmId(familyRelation.get(j).getRrmToPmId());
+//                        relationResponse.setRrmType(familyRelation.get(j).getRrmType());
+//                        relationResponse.setRrmFromPmId(familyRelation.get(j).getRrmFromPmId());
+//                        relationResponse.setRcStatus(familyRelation.get(j).getRcStatus());
+//                        relationResponse.setRcOrgId(familyRelation.get(j).getRcOrgId());
+//                        relationResponse.setCreatedAt(familyRelation.get(j).getCreatedAt());
+//
+//                        relationResponseList.add(relationResponse);
+//                    }
+//                }
+//                //</editor-fold>
+//
+//                //<editor-fold desc="Friend Relation">
+//                ArrayList<RelationResponse> friendRelation = relationRequest.getFriendRelationList();
+//                if (!Utils.isArraylistNullOrEmpty(friendRelation)) {
+//
+//                    for (int j = 0; j < friendRelation.size(); j++) {
+//
+//                        RelationRequestResponse relationResponse = new RelationRequestResponse();
+//
+//                        relationResponse.setId(friendRelation.get(j).getId());
+//                        relationResponse.setRcRelationMasterId(friendRelation.get(j).getRcRelationMasterId());
+//                        relationResponse.setRrmToPmId(friendRelation.get(j).getRrmToPmId());
+//                        relationResponse.setRrmType(friendRelation.get(j).getRrmType());
+//                        relationResponse.setRrmFromPmId(friendRelation.get(j).getRrmFromPmId());
+//                        relationResponse.setRcStatus(friendRelation.get(j).getRcStatus());
+//                        relationResponse.setRcOrgId(friendRelation.get(j).getRcOrgId());
+//                        relationResponse.setCreatedAt(friendRelation.get(j).getCreatedAt());
+//
+//                        relationResponseList.add(relationResponse);
+//                    }
+//                }
+//                //</editor-fold>
+//
+//                //<editor-fold desc="Business Relation">
+//                ArrayList<RelationResponse> businessRelation = relationRequest.getBusinessRelationList();
+//                if (!Utils.isArraylistNullOrEmpty(businessRelation)) {
+//
+//                    for (int j = 0; j < businessRelation.size(); j++) {
+//
+//                        RelationRequestResponse relationResponse = new RelationRequestResponse();
+//
+//                        relationResponse.setId(businessRelation.get(j).getId());
+//                        relationResponse.setRcRelationMasterId(businessRelation.get(j).getRcRelationMasterId());
+//                        relationResponse.setRrmToPmId(businessRelation.get(j).getRrmToPmId());
+//                        relationResponse.setRrmType(businessRelation.get(j).getRrmType());
+//                        relationResponse.setRrmFromPmId(businessRelation.get(j).getRrmFromPmId());
+//                        relationResponse.setRcStatus(businessRelation.get(j).getRcStatus());
+//                        relationResponse.setRcOrgId(businessRelation.get(j).getRcOrgId());
+//                        relationResponse.setCreatedAt(businessRelation.get(j).getCreatedAt());
+//
+//                        relationResponseList.add(relationResponse);
+//                    }
+//                }
+//
+//                tableRelationMappingMaster.deleteRelationMapping(String.valueOf(relationRequest.getRrmToPmId()));
+//                tableRelationMappingMaster.addRelationMapping(relationResponseList);
+//            }
+//        }
+//    }
 
-        //<editor-fold desc="Relation Mapping Master">
-        TableRelationMappingMaster tableRelationMappingMaster = new
-                TableRelationMappingMaster(databaseHandler);
+//    private void getExistingRelationData() {
+//
+//        existingRelationList = new ArrayList<>();
+//
+////        existingRelationList = tableRelationMappingMaster
+////                .getAllExistingRelation();
+//
+//        if (existingRelationList.size() > 0) {
+//            listAdapter = new ExistingRelationListAdapter(activity, existingRelationList,
+//                    new ExistingRelationListAdapter.OnClickListener() {
+//                        @Override
+//                        public void onClick(int position) {
+//
+//                            Intent intent = new Intent(activity, AddNewRelationActivity.class);
+//                            intent.putExtra(AppConstants.EXTRA_EXISTING_RELATION_DETAILS,
+//                                    existingRelationList.get(position));
+//                            intent.putExtra(AppConstants.EXTRA_PM_ID,
+//                                    existingRelationList.get(position).getPmId());
+//                            intent.putExtra(AppConstants.EXTRA_IS_FROM, "existing");
+//                            startActivity(intent);
+//
+//                        }
+//
+//                        @Override
+//                        public void onDeleteClick(int position, String name, String pmId) {
+//                            deletePmId = pmId;
+//                            deleteRelationPosition = position;
+//                            showAllRelations(position, name);
+//                        }
+//                    });
+//            recycleViewRelation.setLayoutManager(new LinearLayoutManager(this));
+//            recycleViewRelation.setAdapter(listAdapter);
+//
+//        } else {
+//
+//            textNoRelation.setVisibility(View.VISIBLE);
+//            recycleViewRelation.setVisibility(View.GONE);
+//        }
+//    }
 
-        if (!Utils.isArraylistNullOrEmpty(relationRequestResponse)) {
+    private void setExistingRelationData(ArrayList<ExistingRelationRequest> allExistingRelationList) {
 
-            for (int i = 0; i < relationRequestResponse.size(); i++) {
+        existingRelationList = new ArrayList<>();
 
-                ArrayList<RelationRequestResponse> relationResponseList = new ArrayList<>();
-                RelationRequest relationRequest = relationRequestResponse.get(i);
+        for (int i = 0; i < allExistingRelationList.size(); i++) {
 
-                //<editor-fold desc="Family Relation">
-                ArrayList<RelationRequest> familyRelation = relationRequest.getFamilyRelationList();
-                if (!Utils.isArraylistNullOrEmpty(familyRelation)) {
+            ExistingRelationRequest existingRelationRequest = allExistingRelationList.get(i);
 
-                    for (int j = 0; j < familyRelation.size(); j++) {
+            RelationUserProfile relationUserProfile = existingRelationRequest.getRelationUserProfile();
 
-                        RelationRequestResponse relationResponse = new RelationRequestResponse();
+            RelationRecommendationType recommendationType = new RelationRecommendationType();
+            recommendationType.setFirstName(relationUserProfile.getPmFirstName());
+            recommendationType.setLastName(relationUserProfile.getPmLastName());
+            recommendationType.setNumber(relationUserProfile.getMobileNumber());
+            recommendationType.setPmId(String.valueOf(allExistingRelationList.get(i).getRrmToPmId()));
+            recommendationType.setDateAndTime("");
+            recommendationType.setProfileImage(relationUserProfile.getProfilePhoto());
 
-                        relationResponse.setId(familyRelation.get(j).getId());
-                        relationResponse.setRcRelationMasterId(familyRelation.get(j).getRcRelationMasterId());
-                        relationResponse.setRrmToPmId(familyRelation.get(j).getRrmToPmId());
-                        relationResponse.setRrmType(familyRelation.get(j).getRrmType());
-                        relationResponse.setRrmFromPmId(familyRelation.get(j).getRrmFromPmId());
-                        relationResponse.setRcStatus(familyRelation.get(j).getRcStatus());
-                        relationResponse.setRcOrgId(familyRelation.get(j).getRcOrgId());
-                        relationResponse.setCreatedAt(familyRelation.get(j).getCreatedAt());
+            ArrayList<IndividualRelationType> relationRecommendations = new ArrayList<>();
 
-                        relationResponseList.add(relationResponse);
-                    }
+            // businessRelation
+            ArrayList<RelationResponse> businessRecommendation = existingRelationRequest
+                    .getBusinessRelationList();
+
+            if (!Utils.isArraylistNullOrEmpty(businessRecommendation)) {
+
+                for (int j = 0; j < businessRecommendation.size(); j++) {
+
+                    IndividualRelationType individualRelationType = new IndividualRelationType();
+
+                    individualRelationType.setId(String.valueOf(businessRecommendation.get(j).
+                            getId()));
+                    individualRelationType.setRelationId(String.valueOf(businessRecommendation.get(j).
+                            getRcRelationMasterId()));
+                    individualRelationType.setRelationName(businessRecommendation.get(j).getRelationMaster()
+                            .getRmParticular());
+                    individualRelationType.setOrganizationName(businessRecommendation.get(j).getOrganization()
+                            .getRmParticular());
+                    individualRelationType.setIsOrgVerified(businessRecommendation.get(j).getOrganization()
+                            .getOmIsVerified());
+                    individualRelationType.setFamilyName("");
+                    individualRelationType.setOrganizationId(String.valueOf(businessRecommendation.get(j).getRcOrgId()));
+                    individualRelationType.setIsFriendRelation(false);
+//                    individualRelationType.setIsVerify("1");
+                    individualRelationType.setRelationType(businessRecommendation.get(j).getRrmType());
+                    individualRelationType.setRcStatus(businessRecommendation.get(j).getRcStatus());
+                    individualRelationType.setIsSelected(false);
+
+                    relationRecommendations.add(individualRelationType);
                 }
-                //</editor-fold>
-
-                //<editor-fold desc="Friend Relation">
-                ArrayList<RelationRequest> friendRelation = relationRequest.getFriendRelationList();
-                if (!Utils.isArraylistNullOrEmpty(friendRelation)) {
-
-                    for (int j = 0; j < friendRelation.size(); j++) {
-
-                        RelationRequestResponse relationResponse = new RelationRequestResponse();
-
-                        relationResponse.setId(friendRelation.get(j).getId());
-                        relationResponse.setRcRelationMasterId(friendRelation.get(j).getRcRelationMasterId());
-                        relationResponse.setRrmToPmId(friendRelation.get(j).getRrmToPmId());
-                        relationResponse.setRrmType(friendRelation.get(j).getRrmType());
-                        relationResponse.setRrmFromPmId(friendRelation.get(j).getRrmFromPmId());
-                        relationResponse.setRcStatus(friendRelation.get(j).getRcStatus());
-                        relationResponse.setRcOrgId(friendRelation.get(j).getRcOrgId());
-                        relationResponse.setCreatedAt(friendRelation.get(j).getCreatedAt());
-
-                        relationResponseList.add(relationResponse);
-                    }
-                }
-                //</editor-fold>
-
-                //<editor-fold desc="Business Relation">
-                ArrayList<RelationRequest> businessRelation = relationRequest.getBusinessRelationList();
-                if (!Utils.isArraylistNullOrEmpty(businessRelation)) {
-
-                    for (int j = 0; j < businessRelation.size(); j++) {
-
-                        RelationRequestResponse relationResponse = new RelationRequestResponse();
-
-                        relationResponse.setId(businessRelation.get(j).getId());
-                        relationResponse.setRcRelationMasterId(businessRelation.get(j).getRcRelationMasterId());
-                        relationResponse.setRrmToPmId(businessRelation.get(j).getRrmToPmId());
-                        relationResponse.setRrmType(businessRelation.get(j).getRrmType());
-                        relationResponse.setRrmFromPmId(businessRelation.get(j).getRrmFromPmId());
-                        relationResponse.setRcStatus(businessRelation.get(j).getRcStatus());
-                        relationResponse.setRcOrgId(businessRelation.get(j).getRcOrgId());
-                        relationResponse.setCreatedAt(businessRelation.get(j).getCreatedAt());
-
-                        relationResponseList.add(relationResponse);
-                    }
-                }
-
-                tableRelationMappingMaster.deleteRelationMapping(String.valueOf(relationRequest.
-                        getRrmToPmId()));
-                tableRelationMappingMaster.addRelationMapping(relationResponseList);
             }
+
+            // familyRelation
+            ArrayList<RelationResponse> familyRecommendation = existingRelationRequest
+                    .getFamilyRelationList();
+
+            if (!Utils.isArraylistNullOrEmpty(familyRecommendation)) {
+
+                for (int j = 0; j < familyRecommendation.size(); j++) {
+
+                    IndividualRelationType individualRelationType = new IndividualRelationType();
+
+                    individualRelationType.setId(String.valueOf(familyRecommendation.get(j).
+                            getId()));
+                    individualRelationType.setRelationId(String.valueOf(familyRecommendation.get(j).
+                            getRcRelationMasterId()));
+                    individualRelationType.setRelationName("");
+                    individualRelationType.setOrganizationName("");
+                    individualRelationType.setFamilyName(familyRecommendation.get(j).getRelationMaster()
+                            .getRmParticular());
+                    individualRelationType.setOrganizationId("");
+                    individualRelationType.setIsFriendRelation(false);
+//                    individualRelationType.setIsVerify("1");
+                    individualRelationType.setRelationType(familyRecommendation.get(j).getRrmType());
+                    individualRelationType.setRcStatus(familyRecommendation.get(j).getRcStatus());
+                    individualRelationType.setIsSelected(false);
+
+                    relationRecommendations.add(individualRelationType);
+                }
+            }
+
+            // friendRelation
+            ArrayList<RelationResponse> friendRecommendation = existingRelationRequest
+                    .getFriendRelationList();
+
+            if (!Utils.isArraylistNullOrEmpty(friendRecommendation)) {
+
+                for (int j = 0; j < friendRecommendation.size(); j++) {
+
+                    IndividualRelationType individualRelationType = new IndividualRelationType();
+
+                    individualRelationType.setId(String.valueOf(friendRecommendation.get(j).
+                            getId()));
+                    individualRelationType.setRelationId(String.valueOf(friendRecommendation.get(j).
+                            getRcRelationMasterId()));
+                    individualRelationType.setRelationName("");
+                    individualRelationType.setOrganizationName("");
+                    individualRelationType.setFamilyName("");
+                    individualRelationType.setOrganizationId("");
+                    individualRelationType.setIsFriendRelation(true);
+//                    individualRelationType.setIsVerify("1");
+                    individualRelationType.setRelationType(friendRecommendation.get(j).getRrmType());
+                    individualRelationType.setRcStatus(friendRecommendation.get(j).getRcStatus());
+                    individualRelationType.setIsSelected(false);
+
+                    relationRecommendations.add(individualRelationType);
+                }
+            }
+
+            recommendationType.setIndividualRelationTypeList(relationRecommendations);
+            existingRelationList.add(recommendationType);
         }
-    }
-
-    private void getExistingRelationData() {
-
-        existingRelationList = tableRelationMappingMaster
-                .getAllExistingRelation();
 
         if (existingRelationList.size() > 0) {
+
             listAdapter = new ExistingRelationListAdapter(activity, existingRelationList,
                     new ExistingRelationListAdapter.OnClickListener() {
                         @Override
                         public void onClick(int position) {
 
-                            Intent intent = new Intent(activity, AddNewRelationActivity.class);
-                            intent.putExtra(AppConstants.EXTRA_EXISTING_RELATION_DETAILS,
-                                    existingRelationList.get(position));
-                            intent.putExtra(AppConstants.EXTRA_PM_ID,
-                                    existingRelationList.get(position).getPmId());
-                            intent.putExtra(AppConstants.EXTRA_IS_FROM, "existing");
-                            startActivity(intent);
-
+                            if (Utils.isNetworkAvailable(activity)) {
+                                Intent intent = new Intent(activity, AddNewRelationActivity.class);
+                                intent.putExtra(AppConstants.EXTRA_EXISTING_RELATION_DETAILS,
+                                        existingRelationList.get(position));
+                                intent.putExtra(AppConstants.EXTRA_CONTACT_NAME,
+                                        existingRelationList.get(position).getFirstName() + " " + existingRelationList.get(position).getLastName());
+                                intent.putExtra(AppConstants.EXTRA_PROFILE_IMAGE_URL, existingRelationList.get(position).getProfileImage());
+                                intent.putExtra(AppConstants.EXTRA_CONTACT_NUMBER, existingRelationList.get(position).getNumber());
+                                intent.putExtra(AppConstants.EXTRA_PM_ID, existingRelationList.get(position).getPmId());
+                                intent.putExtra(AppConstants.EXTRA_IS_FROM, "existing");
+                                startActivity(intent);
+                            } else {
+                                Utils.showErrorSnackBar(activity, relativeRootExistingRelation, getResources()
+                                        .getString(R.string.msg_no_network));
+                            }
                         }
 
                         @Override
                         public void onDeleteClick(int position, String name, String pmId) {
                             deletePmId = pmId;
                             deleteRelationPosition = position;
-                            dialogDeleteRelation(position, name);
+                            showAllRelations(position, name);
                         }
                     });
             recycleViewRelation.setLayoutManager(new LinearLayoutManager(this));
             recycleViewRelation.setAdapter(listAdapter);
 
         } else {
-
-            textNoRelation.setVisibility(View.VISIBLE);
-            recycleViewRelation.setVisibility(View.GONE);
+            setVisibility(getString(R.string.str_no_relation_found), View.VISIBLE, View.GONE);
         }
     }
 
-    private void dialogDeleteRelation(final int position, String RcpUserName) {
+    private void showAllRelations(final int position, final String name) {
+
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_all_organization);
+        dialog.setCancelable(false);
+
+        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+        layoutParams.copyFrom(dialog.getWindow().getAttributes());
+        layoutParams.width = (int) (getResources().getDisplayMetrics().widthPixels * 0.90);
+        layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+        dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
+
+        TextView textDialogTitle = dialog.findViewById(R.id.text_dialog_title);
+        textDialogTitle.setText(String.format("Relation with %s", name));
+        textDialogTitle.setTypeface(Utils.typefaceSemiBold(this));
+
+        Button buttonRight = dialog.findViewById(R.id.button_right);
+        Button buttonLeft = dialog.findViewById(R.id.button_left);
+        RippleView rippleRight = dialog.findViewById(R.id.ripple_right);
+        RippleView rippleLeft = dialog.findViewById(R.id.ripple_left);
+
+        buttonRight.setTypeface(Utils.typefaceRegular(this));
+        buttonRight.setText(R.string.action_delete);
+        buttonLeft.setTypeface(Utils.typefaceRegular(this));
+        buttonLeft.setText(R.string.str_back);
+
+        rippleRight.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
+            @Override
+            public void onComplete(RippleView rippleView) {
+
+                relationIds = new ArrayList<>();
+
+                ArrayList<IndividualRelationType> individualRelationTypes =
+                        existingRelationList.get(position).getIndividualRelationTypeList();
+
+                for (int i = 0; i < individualRelationTypes.size(); i++) {
+                    if (individualRelationTypes.get(i).getIsSelected())
+                        relationIds.add(individualRelationTypes.get(i).getId());
+                }
+
+                if (relationIds.size() > 0) {
+                    dialog.dismiss();
+                    dialogDeleteRelation(name, relationIds);
+                } else {
+                    Utils.showErrorSnackBar(ExistingRelationActivity.this, relativeRootExistingRelation,
+                            "Please select at least one relation to delete!!!");
+                }
+            }
+        });
+
+        rippleLeft.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
+            @Override
+            public void onComplete(RippleView rippleView) {
+                dialog.dismiss();
+            }
+        });
+
+        RecyclerView recyclerViewDialogList = dialog.findViewById(R.id
+                .recycler_view_dialog_list);
+        recyclerViewDialogList.setLayoutManager(new LinearLayoutManager(this));
+
+        OrganizationRelationListAdapter adapter = new OrganizationRelationListAdapter(this,
+                existingRelationList.get(position).getIndividualRelationTypeList(),
+                new OrganizationRelationListAdapter.OnClickListener() {
+                    @Override
+                    public void onClick(String orgId, String orgName,boolean isOrgVerified) {
+
+                    }
+                }, "existing");
+
+        recyclerViewDialogList.setAdapter(adapter);
+
+        dialog.show();
+    }
+
+    private void dialogDeleteRelation(String RcpUserName, final ArrayList<String> relationIds) {
 
         final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -426,16 +685,6 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
-
-                ArrayList<String> relationIds = new ArrayList<>();
-
-                ArrayList<IndividualRelationType> individualRelationTypes =
-                        existingRelationList.get(position).getIndividualRelationTypeList();
-
-                for (int i = 0; i < individualRelationTypes.size(); i++) {
-                    relationIds.add(individualRelationTypes.get(i).getId());
-                }
-
                 deleteRelation(relationIds);
             }
         });
@@ -458,18 +707,30 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
 
     private void deleteRelation(ArrayList<String> relationIds) {
 
-        WsRequestObject deleteRelationObject = new WsRequestObject();
-        deleteRelationObject.setRelationIds(relationIds);
+        if (relationIds.size() > 0) {
+            WsRequestObject deleteRelationObject = new WsRequestObject();
+            deleteRelationObject.setRelationIds(relationIds);
 
-        if (Utils.isNetworkAvailable(this)) {
-            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), deleteRelationObject,
-                    null, WsResponseObject.class, WsConstants.REQ_DELETE_RELATION, getString(R.string
-                    .msg_please_wait), true)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT +
-                            WsConstants.REQ_DELETE_RELATION);
+            if (Utils.isNetworkAvailable(this)) {
+                new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), deleteRelationObject,
+                        null, WsResponseObject.class, WsConstants.REQ_DELETE_RELATION, getString(R.string
+                        .msg_please_wait), true)
+                        .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT +
+                                WsConstants.REQ_DELETE_RELATION);
+            } else {
+                Utils.showErrorSnackBar(this, relativeRootExistingRelation, getResources()
+                        .getString(R.string.msg_no_network));
+            }
         } else {
-            Utils.showErrorSnackBar(this, relativeRootExistingRelation, getResources()
-                    .getString(R.string.msg_no_network));
+            Utils.showErrorSnackBar(this, relativeRootExistingRelation, "Please select " +
+                    "any relation to delete");
+        }
+    }
+
+    private void removeNotification() {
+        NotificationManager notificationManager = (NotificationManager) activity.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (notificationManager != null) {
+            notificationManager.cancelAll();
         }
     }
 }

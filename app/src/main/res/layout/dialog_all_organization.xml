@@ -16,7 +16,7 @@
         android:layout_marginLeft="@dimen/padding_around_content_area"
         android:layout_marginRight="@dimen/padding_around_content_area"
         android:layout_marginTop="@dimen/padding_around_content_area"
-        android:textAppearance="?android:textAppearanceLarge"
+        android:textAppearance="?android:textAppearanceMedium"
         tools:text="Title" />
 
     <android.support.v7.widget.RecyclerView

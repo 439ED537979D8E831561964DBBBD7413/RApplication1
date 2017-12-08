@@ -33,6 +33,7 @@ public class AppConstants {
     public static final int NAME = 9;
     public static final int AADHAR_NUMBER = 10;
     public static final int RELATION = 11;
+    public static final int EDUCATION = 12;
     public static boolean isRecentCallFromSMSTab = false;
     //</editor-fold>
 
@@ -280,7 +281,7 @@ public class AppConstants {
     public static String PREF_IS_LOGIN = "pref_is_login";
 
     public static String PREF_TEMP_LOGOUT = "pref_temp_logout";
-    public static String PREF_GET_RELATION = "pref_get_relation";
+    //    public static String PREF_GET_RELATION = "pref_get_relation";
     public static String PREF_SELECTED_COUNTRY_OBJECT = "pref_selected_country_object";
     public static String PREF_DEVICE_TOKEN_ID = "pref_device_token_id";
     public static String PREF_LAUNCH_SCREEN_INT = "pref_launch_screen_int";
@@ -423,6 +424,9 @@ public class AppConstants {
     public static final int NOTIFICATION_TYPE_PROFILE_REQUEST = 4;
     public static final int NOTIFICATION_TYPE_PROFILE_RESPONSE = 5;
     public static final int NOTIFICATION_TYPE_RUPDATE = 6;
+    public static final int NOTIFICATION_TYPE_RELATION_REQUEST = 7;
+    public static final int NOTIFICATION_TYPE_RELATION_ACCEPT = 8;
+
 
     //</editor-fold>
 }

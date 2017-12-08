@@ -141,6 +141,9 @@ class WebServicePost {
                     inputStream = new BufferedInputStream(urlConnection.getInputStream());
                     String responseString = convertInputStreamToString(inputStream);
                     response = getMapper().readValue(responseString, responseType);
+
+//                    System.out.println("RContact response --> " + response);
+
                 } else if (statusCode == HttpsURLConnection.HTTP_BAD_REQUEST) {
 //                    Log.e("Status Code: ", HttpsURLConnection.HTTP_BAD_REQUEST + " : Bad Request " +
 //                            ": Due to user error");

@@ -18,6 +18,7 @@ import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.BuildConfig;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
+import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
@@ -79,22 +80,22 @@ public class OrganizationListAdapter extends RecyclerView.Adapter<OrganizationLi
 
         if (MoreObjects.firstNonNull(organization.getIsVerify(), 0) == IntegerConstants.RCP_TYPE_PRIMARY) {
 
-//            String s = Utils.setMultipleTypeface(context, organization.getOrgName() + " <font color" + "='#00796B'>" + context.getString(R.string.im_icon_verify)
-//                    + "</font>", 0, (StringUtils.length(organization.getOrgName()) + 1), ((StringUtils.length(organization.getOrgName()) + 1) + 1)).toString();
+            holder.textMain.setText(Utils.setMultipleTypeface(context, organization.getOrgName()
+                    + " " + context.getString(R.string.im_icon_unverify), 0, (StringUtils.length(
+                    organization.getOrgName()) + 1), ((StringUtils.length(
+                    organization.getOrgName()) + 1) + 1)));
 
-            holder.textMain.setText(organization.getOrgName());
-            holder.textMain.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-                    R.drawable.ico_double_tick_green_svg, 0);
+//            holder.textMain.setText(organization.getOrgName());
+//            holder.textMain.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+//                    R.drawable.ico_relation_single_tick_green_svg, 0);
             holder.textType.setText(Html.fromHtml("<small> (" + organization.getOrgIndustryType() + ") </small>"));
-//            holder.imgTic.setImageResource(R.drawable.ico_double_tick_svg);
 
         } else {
 
             holder.textMain.setText(organization.getOrgName());
-            holder.textMain.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-                    R.drawable.ico_relation_single_tick_green_svg, 0);
+//            holder.textMain.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+//                    R.drawable.ico_relation_single_tick_green_svg, 0);
             holder.textType.setVisibility(View.GONE);
-//            holder.imgTic.setImageResource(R.drawable.ico_relation_single_tick_svg);
         }
 
         Glide.with(context)
@@ -130,8 +131,8 @@ public class OrganizationListAdapter extends RecyclerView.Adapter<OrganizationLi
             @Override
             public void onClick(View view) {
                 int pos = (int) view.getTag();
-                if(arrayListOrganization.get(pos).getIsVerify() == 1){
-                    String orgPublicLink =  BuildConfig.ORANISATION_PUBLIC_LINK + arrayListOrganization.get(pos).getOrgEntId();
+                if (arrayListOrganization.get(pos).getIsVerify() == 1) {
+                    String orgPublicLink = BuildConfig.ORANISATION_PUBLIC_LINK + arrayListOrganization.get(pos).getOrgEntId();
                     if (!StringUtils.isEmpty(orgPublicLink)) {
                         String url = orgPublicLink;
                         Intent i = new Intent(Intent.ACTION_VIEW);
@@ -169,7 +170,7 @@ public class OrganizationListAdapter extends RecyclerView.Adapter<OrganizationLi
             super(itemView);
             ButterKnife.bind(this, itemView);
 
-            textMain.setTypeface(Utils.typefaceRegular(context));
+            textMain.setTypeface(Utils.typefaceIcons(context));
             textSub.setTypeface(Utils.typefaceRegular(context));
             textTime.setTypeface(Utils.typefaceRegular(context));
             textType.setTypeface(Utils.typefaceRegular(context));

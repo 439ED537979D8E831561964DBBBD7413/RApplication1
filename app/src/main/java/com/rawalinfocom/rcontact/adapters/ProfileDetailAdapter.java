@@ -11,10 +11,10 @@ import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -28,7 +28,6 @@ import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
-import com.rawalinfocom.rcontact.contacts.EditProfileActivity;
 import com.rawalinfocom.rcontact.contacts.PrivacySettingPopupDialog;
 import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
@@ -36,6 +35,7 @@ import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.PrivacyDataItem;
 import com.rawalinfocom.rcontact.model.PrivacyEntityItem;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
+import com.rawalinfocom.rcontact.model.ProfileDataOperationEducation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEvent;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationImAccount;
@@ -62,13 +62,16 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
     private ArrayList<Object> arrayList;
     private int profileDetailType;
 
+    private ArrayList<String> requestAllIdList = new ArrayList<>();
+
     private int colorBlack, colorPineGreen;
     private PrivacySettingPopupDialog.DialogCallback listner;
     private boolean isOwnProfile = false;
     private String pmId;
+    private Button buttonRequestAll;
 
     public ProfileDetailAdapter(Activity activity, ArrayList<Object> arrayList, int
-            profileDetailType, boolean isOwnProfile, String pmId) {
+            profileDetailType, boolean isOwnProfile, String pmId, Button buttonRequestAll) {
         this.activity = activity;
         this.profileDetailType = profileDetailType;
         this.arrayList = arrayList;
@@ -76,8 +79,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         colorBlack = ContextCompat.getColor(activity, R.color.colorBlack);
         colorPineGreen = ContextCompat.getColor(activity, R.color.colorAccent);
         this.pmId = pmId;
+        this.buttonRequestAll = buttonRequestAll;
         listner = this;
-
     }
 
     @Override
@@ -104,6 +107,10 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
             case AppConstants.EMAIL:
                 displayEmail(holder, position);
+                break;
+
+            case AppConstants.EDUCATION:
+                displayEducation(holder, position);
                 break;
 
             case AppConstants.WEBSITE:
@@ -234,6 +241,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                     holder.imgActionType.setVisibility(View.GONE);
                     holder.imgActionWhatsapp.setVisibility(View.GONE);
+
+                    requestAllIdList.add(phoneNumber.getPhoneId());
                 }
             }
         } else if (pbRcpType == IntegerConstants.RCP_TYPE_SECONDARY) {
@@ -264,6 +273,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                     holder.imgActionType.setVisibility(View.GONE);
                     holder.imgActionWhatsapp.setVisibility(View.GONE);
+
+                    requestAllIdList.add(phoneNumber.getPhoneId());
                 }
             }
             holder.llPrivacy.setOnClickListener(new View.OnClickListener() {
@@ -377,6 +388,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                         .IS_PRIVATE) {
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                     holder.imgActionType.setVisibility(View.GONE);
+                    requestAllIdList.add(email.getEmId());
                 }
             }
         } else {
@@ -385,13 +397,19 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 if (!email.getEmSocialType().equalsIgnoreCase("")) {
 
 //                    holder.textMain.setTypeface(Utils.typefaceIcons(activity));
-//                    String s = Utils.setMultipleTypeface(activity, email.getEmEmailId() + " <font color" +
-//                            "='#00bfff'>" + activity.getString(R.string.im_icon_verify) + "</font>", 0, (StringUtils.length
-//                            (email.getEmEmailId()) + 1), ((StringUtils.length(email.getEmEmailId()) + 1) + 1)).toString();
+//                    String s = Utils.setMultipleTypeface(activity, email.getEmEmailId() + "
+// <font color" +
+//                            "='#00bfff'>" + activity.getString(R.string.im_icon_verify) +
+// "</font>", 0, (StringUtils.length
+//                            (email.getEmEmailId()) + 1), ((StringUtils.length(email
+// .getEmEmailId()) + 1) + 1)).toString();
 
-//                    String s = Utils.setMultipleTypeface(activity, email.getEmEmailId() + " <font color" +
-//                            "='#00bfff'>" + activity.getString(R.string.im_icon_verify) + "</font>", 0, (StringUtils.length
-//                            (email.getEmEmailId()) + 1), ((StringUtils.length(email.getEmEmailId()) + 1) + 1)).toString();
+//                    String s = Utils.setMultipleTypeface(activity, email.getEmEmailId() + "
+// <font color" +
+//                            "='#00bfff'>" + activity.getString(R.string.im_icon_verify) +
+// "</font>", 0, (StringUtils.length
+//                            (email.getEmEmailId()) + 1), ((StringUtils.length(email
+// .getEmEmailId()) + 1) + 1)).toString();
 
                     holder.imageViewTic.setVisibility(View.VISIBLE);
 //                    holder.textMain.setText(Html.fromHtml(s));
@@ -431,6 +449,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                         .IS_PRIVATE) {
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                     holder.imgActionType.setVisibility(View.GONE);
+                    requestAllIdList.add(email.getEmId());
                 }
             }
             holder.llPrivacy.setOnClickListener(new View.OnClickListener() {
@@ -455,6 +474,122 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 }
             });
         }
+    }
+
+    private void displayEducation(final ProfileDetailViewHolder holder, final int position) {
+        final ProfileDataOperationEducation education = (ProfileDataOperationEducation) arrayList
+                .get(position);
+//        String emailId = email.getEmEmailId();
+        holder.textSub.setVisibility(View.VISIBLE);
+
+        holder.imgActionType.setImageResource(R.drawable.ico_education_svg);
+//        holder.imgActionType.setVisibility(View.GONE);
+
+        holder.textMain.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                Utils.copyToClipboard(activity, activity.getString(R.string.str_copy_education),
+                        ((TextView) view).getText().toString());
+                if (activity instanceof ProfileDetailActivity) {
+                    Utils.showSuccessSnackBar(activity, ((ProfileDetailActivity) activity)
+                            .getRelativeRootProfileDetail(), activity.getString(R.string
+                            .str_copy_education_clip_board));
+                }
+                return true;
+            }
+        });
+
+//        if (emRcpType == IntegerConstants.RCP_TYPE_PRIMARY) {
+
+        holder.textMain.setText(education.getEduName() + "\n" + education.getEduCourse());
+        holder.textMain.setTextColor(colorPineGreen);
+
+/*        if (isOwnProfile)
+            holder.llPrivacy.setVisibility(View.VISIBLE);
+        else {
+            holder.llPrivacy.setVisibility(View.GONE);
+            if ((MoreObjects.firstNonNull(education.getEduPublic(), 0)) == IntegerConstants
+                    .IS_PRIVATE) {
+                holder.buttonRequest.setVisibility(View.VISIBLE);
+                holder.imgActionType.setVisibility(View.GONE);
+            }
+        }*/
+
+        if (isOwnProfile) {
+            switch ((MoreObjects.firstNonNull(education.getEduPublic(), 2))) {
+                case 1:
+                    //everyone
+                    holder.buttonPrivacy.setImageResource(R.drawable.ico_privacy_public);
+                    break;
+                case 2:
+                    //my contacts
+                    holder.buttonPrivacy.setImageResource(R.drawable.ico_privacy_my_contact);
+                    break;
+                case 3:
+                    //only me
+                    holder.buttonPrivacy.setImageResource(R.drawable.ico_privacy_onlyme);
+                    break;
+
+            }
+            holder.llPrivacy.setVisibility(View.VISIBLE);
+        } else {
+            holder.llPrivacy.setVisibility(View.GONE);
+            if ((MoreObjects.firstNonNull(education.getEduPublic(), 0)) == IntegerConstants
+                    .PRIVACY_PRIVATE) {
+                holder.buttonRequest.setVisibility(View.VISIBLE);
+                holder.imgActionType.setVisibility(View.GONE);
+                holder.textSub.setVisibility(View.GONE);
+            }
+        }
+
+        if (StringUtils.equalsIgnoreCase(education.getEduToDate(), "")) {
+            if (!StringUtils.isEmpty(education.getEduFromDate())) {
+                String formattedFromDate = Utils.convertDateFormat(education.getEduFromDate(),
+                        "yyyy-MM-dd", "MMMM-yyyy");
+
+//                holder.textMain.setText(education.getEduName() + "\n" + education.getEduCourse());
+                holder.textSub.setText(String.format("%s to Present ", formattedFromDate));
+            } else {
+                holder.textSub.setVisibility(View.GONE);
+            }
+        } else {
+            if (!StringUtils.isEmpty(education.getEduFromDate()) && !StringUtils.isEmpty
+                    (education.getEduToDate())) {
+                String formattedFromDate = Utils.convertDateFormat(education.getEduFromDate(),
+                        "yyyy-MM-dd", "MMMM-yyyy");
+                String formattedToDate = Utils.convertDateFormat(education.getEduToDate(),
+                        "yyyy-MM-dd", "MMMM-yyyy");
+
+                /*holder.textTime.setText(String.format("%s to %s ", formattedFromDate,
+                        formattedToDate));*/
+                holder.textSub.setText(String.format("%s to %s ", formattedFromDate,
+                        formattedToDate));
+            }
+        }
+
+        holder.llPrivacy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PrivacySettingPopupDialog privacySettingPopupDialog = new
+                        PrivacySettingPopupDialog(holder, activity, listner, AppConstants.EDUCATION,
+                        position, education.getEduPublic(), education.getEduId());
+                privacySettingPopupDialog.setDialogTitle(activity.getResources().getString(R
+                        .string.privacy_dialog_title));
+                privacySettingPopupDialog.showDialog();
+//                Toast.makeText(activity, "clicked", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+         holder.buttonRequest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Toast.makeText(activity, "requesting profile", Toast.LENGTH_SHORT).show();
+                int pmTo = Integer.parseInt(pmId);
+                // sendAccessRequest(int toPMId, String carFiledType, String recordIndexId)
+                sendAccessRequest(pmTo, "pb_education", education.getEduId());
+            }
+        });
+//        }
     }
 
     private void displayWebsite(final ProfileDetailViewHolder holder, final int position) {
@@ -627,6 +762,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 //                    holder.imageView2.setVisibility(View.GONE);
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                     holder.imgActionType.setVisibility(View.GONE);
+                    requestAllIdList.add(address.getAddId());
                 }
             }
             holder.llPrivacy.setOnClickListener(new View.OnClickListener() {
@@ -700,7 +836,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                         } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("twitter")) {
                             url = "https://twitter.com/" + imAccount.getIMAccountDetails();
                         } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("linkedin")) {
-                            if (!imAccount.getIMAccountDetails().startsWith("https://www.linkedin.com"))
+                            if (!imAccount.getIMAccountDetails().startsWith("https://www.linkedin" +
+                                    ".com"))
                                 url = "https://www.linkedin.com/" + imAccount.getIMAccountDetails();
                             else
                                 url = imAccount.getIMAccountDetails();
@@ -721,9 +858,12 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                         } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
                                 ("pinterest")) {
                             url = imAccount.getIMAccountDetails();
-                        } else if (StringUtils.lowerCase(imAccount.getIMAccountDetails()).startsWith("https://")
-                                || StringUtils.lowerCase(imAccount.getIMAccountDetails()).startsWith("http://")
-                                || StringUtils.lowerCase(imAccount.getIMAccountDetails()).startsWith("www.")) {
+                        } else if (StringUtils.lowerCase(imAccount.getIMAccountDetails())
+                                .startsWith("https://")
+                                || StringUtils.lowerCase(imAccount.getIMAccountDetails())
+                                .startsWith("http://")
+                                || StringUtils.lowerCase(imAccount.getIMAccountDetails())
+                                .startsWith("www.")) {
                             url = imAccount.getIMAccountDetails();
                         }
 
@@ -789,6 +929,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 //                    holder.imageView2.setVisibility(View.GONE);
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                     holder.imgActionType.setVisibility(View.GONE);
+                    requestAllIdList.add(imAccount.getIMId());
                 }
             }
             holder.llPrivacy.setOnClickListener(new View.OnClickListener() {
@@ -910,6 +1051,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 //                    holder.imageView2.setVisibility(View.GONE);
                         holder.buttonRequest.setVisibility(View.VISIBLE);
                         holder.imgActionType.setVisibility(View.GONE);
+                        requestAllIdList.add(event.getEventId());
                     }
                 }
 
@@ -1003,6 +1145,10 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
             case AppConstants.EMAIL:
                 privacyDataItem.setPbEmailId(privacyEntityItems);
+                break;
+
+                case AppConstants.EDUCATION:
+                privacyDataItem.setPbEducation(privacyEntityItems);
                 break;
 
             case AppConstants.ADDRESS:

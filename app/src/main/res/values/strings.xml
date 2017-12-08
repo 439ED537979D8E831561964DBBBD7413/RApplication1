@@ -23,6 +23,7 @@
     <string name="action_cancel">Cancel</string>
     <string name="action_call">Call</string>
     <string name="action_delete">Delete</string>
+    <string name="action_accept">Accept</string>
     <string name="str_comment">Comment</string>
     <string name="hint_comment">Wanna say something?</string>
     <string name="str_choose_from_contacts">Choose from Contacts</string>
@@ -38,6 +39,7 @@
     <string name="str_done">Done</string>
     <string name="str_vcf_done">VCF file generated successfully!!</string>
     <string name="verify_now">Verify now</string>
+    <string name="str_search_name">Name or Number</string>
 
     <!-- Other -->
     <string name="error_facebook_login_cancelled">Facebook Login Cancelled!!</string>
@@ -92,7 +94,6 @@
     <string name="type_here_hint">Type here...</string>
     <string name="search_no_organisation">Organisation is not verified</string>
     <string name="str_org">Organizations</string>
-    <string name="str_search_name">Name or Number</string>
     <string name="str_rate_app">RATE APP</string>
     <string name="str_later">ASK ME LATER</string>
     <string name="str_like_this_application">LIKE THIS APPLICATION</string>
@@ -451,11 +452,13 @@
     <string name="str_copy_aadhar_number">Copied Aadhar Number</string>
     <string name="str_copy_number">Copied Number</string>
     <string name="str_copy_email">Copied Email</string>
+    <string name="str_copy_education">Copied Education</string>
     <string name="str_copy_website">Copied Website</string>
     <string name="str_copy_address">Copied Address</string>
     <string name="str_copy_im_account">Copied</string>
     <string name="str_copy_number_clip_board">Number copied to Clipboard</string>
     <string name="str_copy_email_clip_board">Email copied to Clipboard</string>
+    <string name="str_copy_education_clip_board">Education copied to Clipboard</string>
     <string name="str_copy_website_clip_board">Website copied to Clipboard</string>
     <string name="str_copy_address_clip_board">Address copied to Clipboard</string>
     <string name="str_copy_im_account_clip_board">Copied to Clipboard</string>
@@ -487,6 +490,7 @@
     <string name="str_email">Email</string>
     <string name="str_small_cap_email">email</string>
     <string name="str_website">Website</string>
+    <string name="str_edu">Education</string>
     <string name="str_address">Postal Address</string>
     <string name="str_aadhar_card">Aadhar Card</string>
     <string name="str_aadhar_number">Aadhar Number</string>
@@ -594,7 +598,7 @@
     <string name="tutorial_skip">Skip>></string>
     <string name="tutorial_lets_go">Let\'s Go!</string>
     <string name="get_started">Get Started</string>
-    <string name="str_welcome">WELCOME</string>
+    <string name="str_welcomesch">WELCOME</string>
     <string name="terms_conditions_content">Get all your Contacts, SMS and Call at one Place</string>
     <string name="str_terms_conditions">By continuing you accept terms and conditions</string>
     <string name="accept_terms_conditions">Accept terms and conditions before proceeding!</string> <!-- English Only -->
@@ -643,7 +647,13 @@
     <string name="str_call_log">Call Log</string>
     <string name="str_duration">Duration :</string>
     <string name="str_request">Request</string>
+    <string name="str_request_all">Request All</string>
     <string name="error_aadhar_validation">Please enter 12 digit aadhar number</string>
+
+    <string name="error_required_edu_course">Field of  study is required!</string>
+    <string name="error_required_edu_name">School /  College name is required!</string>
+    <string name="error_required_edu_from_date">From date is required!</string>
+    <string name="error_required_edu_to_date">To date is required!</string>
 
     <!--Account-->
     <string name="action_bar_title">Account</string>
@@ -738,16 +748,18 @@
     <string name="str_complete_profile">COMPLETE YOUR PROFILE</string>
     <string name="str_complete_profile_description">Fill in your %1$s to\nachieve 360° completion of your digital details.</string>
 
-    <!-- Relation -->
+    <!-- Relation & Relation Recommendation -->
     <string name="toolbar_title">Relation Recommendation</string>
     <string name="search_here">Search...</string>
     <string name="str_no_relation_found">No Relation Found</string>
+    <string name="str_no_relation_recommendation_found">No Relation Recommendation Found</string>
     <string name="relation_toolbar_title">Existing Relation</string>
     <string name="add_relation_toolbar_title">Add Relation</string>
     <string name="str_add_name">Add Name</string>
     <string name="choose_relation">Choose Relation</string>
     <string name="choose_name">Choose Name</string>
     <string name="business_relation">Business Relation</string>
+    <string name="accept_relation">Accept Relationship</string>
     <string name="delete_relation">Delete Relationship</string>
     <string name="family_relation">Family Relation</string>
     <string name="friend_relation">Friend Relation</string>
@@ -756,12 +768,16 @@
     <string name="str_next">Next</string>
     <string name="str_hint_add_organization">Please add organization to add Business Relation</string>
     <string name="str_hint_add_family">Please set your gender to add Family Relation</string>
-    <string name="str_establish_relation">Established Relation</string>
+    <string name="str_establish_relation">Established Relations</string>
 
     <!-- Force update -->
     <string name="youAreNotUpdatedTitle">Update Available</string>
     <string name="youAreNotUpdatedMessage">A new version of RContacts Application is available. Please update to latest version\s</string>
     <string name="search_above_to_get_organization_list">Search above to get Organization list</string>
+    <string name="school_college_name">School / College name</string>
+    <string name="field_of_study">Field of study</string>
+    <string name="i_currently_study_here">I currently study here</string>
+    <string name="str_education">Education Details</string>
 
     <!--Call Reminder-->
     <string name="min15">15 min</string>

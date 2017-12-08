@@ -1,6 +1,7 @@
 package com.rawalinfocom.rcontact.model;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -26,15 +27,8 @@ public class RelationRequest {
     private Integer rcOrgId;
     private String omName;
     private String createdAt;
-
-    @JsonProperty("friend")
-    private ArrayList<RelationRequest> friendRelationList = new ArrayList<>();
-
-    @JsonProperty("family")
-    private ArrayList<RelationRequest> familyRelationList = new ArrayList<>();
-
-    @JsonProperty("business")
-    private ArrayList<RelationRequest> businessRelationList = new ArrayList<>();
+    private String rmParticular;
+    private String orgName;
 
     @JsonProperty("rrm_to_pm_id")
     public Integer getRrmToPmId() {
@@ -126,28 +120,19 @@ public class RelationRequest {
         this.createdAt = createdAt;
     }
 
-
-    public ArrayList<RelationRequest> getFriendRelationList() {
-        return friendRelationList;
+    public String getRmParticular() {
+        return rmParticular;
     }
 
-    public void setFriendRelationList(ArrayList<RelationRequest> friendRelationList) {
-        this.friendRelationList = friendRelationList;
+    public void setRmParticular(String rmParticular) {
+        this.rmParticular = rmParticular;
     }
 
-    public ArrayList<RelationRequest> getFamilyRelationList() {
-        return familyRelationList;
+    public String getOrgName() {
+        return orgName;
     }
 
-    public void setFamilyRelationList(ArrayList<RelationRequest> familyRelationList) {
-        this.familyRelationList = familyRelationList;
-    }
-
-    public ArrayList<RelationRequest> getBusinessRelationList() {
-        return businessRelationList;
-    }
-
-    public void setBusinessRelationList(ArrayList<RelationRequest> businessRelationList) {
-        this.businessRelationList = businessRelationList;
+    public void setOrgName(String orgName) {
+        this.orgName = orgName;
     }
 }

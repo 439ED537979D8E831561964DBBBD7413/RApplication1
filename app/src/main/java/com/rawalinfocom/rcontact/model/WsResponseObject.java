@@ -44,6 +44,7 @@ public class WsResponseObject {
 
     private String status;
     private String message;
+    private Integer count;
     private Integer flag;
     private Integer reSync;
     private String callDateAndTime;
@@ -104,15 +105,39 @@ public class WsResponseObject {
     }
 
     @JsonProperty("relationList")
-    private ArrayList<RelationRequest> allExistingRelationList;
+    private ArrayList<ExistingRelationRequest> allExistingRelationList;
 
-    public ArrayList<RelationRequest> getAllExistingRelationList() {
+    public ArrayList<ExistingRelationRequest> getAllExistingRelationList() {
         return allExistingRelationList;
     }
 
-    public void setAllExistingRelationList(ArrayList<RelationRequest>
+    public void setAllExistingRelationList(ArrayList<ExistingRelationRequest>
                                                    allExistingRelationList) {
         this.allExistingRelationList = allExistingRelationList;
+    }
+
+    @JsonProperty("relationMaster")
+    private ArrayList<FamilyRelationMaster> familyRelationList;
+
+    public ArrayList<FamilyRelationMaster> getFamilyRelationList() {
+        return familyRelationList;
+    }
+
+    public void setFamilyRelationList(ArrayList<FamilyRelationMaster>
+                                              familyRelationList) {
+        this.familyRelationList = familyRelationList;
+    }
+
+    @JsonProperty("recommendations")
+    private ArrayList<ExistingRelationRequest> recommendationsRelationList;
+
+    public ArrayList<ExistingRelationRequest> getRecommendationsRelationList() {
+        return recommendationsRelationList;
+    }
+
+    public void setRecommendationsRelationList(ArrayList<ExistingRelationRequest>
+                                                       recommendationsRelationList) {
+        this.recommendationsRelationList = recommendationsRelationList;
     }
 
     @JsonProperty("response_data")
@@ -265,6 +290,15 @@ public class WsResponseObject {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    @JsonProperty("count")
+    public Integer getCount() {
+        return count;
+    }
+
+    public void setCount(Integer count) {
+        this.count = count;
     }
 
     @JsonProperty("resync")

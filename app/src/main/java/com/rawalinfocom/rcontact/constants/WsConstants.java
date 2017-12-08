@@ -60,7 +60,7 @@ public class WsConstants {
      */
     //<editor-fold desc="QA">
 
-    // API ROOT
+    /*// API ROOT
     public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
     public static final String WS_ROOT_V2 = "http://apiqa.rcontacts.in/api/v2/";
     // TERMS-CONDITIONS URL
@@ -75,7 +75,7 @@ public class WsConstants {
     // AVERAGE RATING SHARE
     public static final String WS_AVG_RATING_SHARE_BADGE_ROOT = "http://qa.rcrc.ac/r/";
     //PLAY STORE LINK
-    public static String PLAY_STORE_LINK = "http://qa.rcrc.ac/a/";
+    public static String PLAY_STORE_LINK = "http://qa.rcrc.ac/a/";*/
     //</editor-fold>
 
     /**
@@ -186,5 +186,8 @@ public class WsConstants {
     public static final String REQ_GET_ORGANIZATIONS = "get-organizations";
     public static final String REQ_SEND_RELATION_REQUEST = "send-relation-request";
     public static final String REQ_GET_RELATION = "get-relation";
+    public static final String REQ_GET_RELATION_MASTER = "get-relation-master";
+    public static final String REQ_GET_RECOMMENDATION = "get-recommendation";
     public static final String REQ_DELETE_RELATION = "delete-relation";
+    public static final String REQ_RELATION_ACTION = "relation-action";
 }

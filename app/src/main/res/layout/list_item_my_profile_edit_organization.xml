@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/relative_row_edit_profile"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -58,7 +59,7 @@
 
             <EditText
                 android:id="@+id/input_company_name"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin_5dp"
                 android:layout_toEndOf="@+id/image_org_profile"
@@ -75,8 +76,8 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:contentDescription="@string/app_name"
-                android:src="@drawable/ic_delete"
-                android:visibility="visible" />
+                android:visibility="visible"
+                app:srcCompat="@drawable/ic_delete" />
         </RelativeLayout>
 
         <EditText
@@ -114,8 +115,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_5dp"
                 android:contentDescription="@string/str_content_description"
-                android:src="@drawable/ic_date_picker"
-                android:visibility="visible" />
+                android:visibility="visible"
+                app:srcCompat="@drawable/ic_date_picker" />
 
             <EditText
                 android:id="@+id/input_to_date"
@@ -135,8 +136,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_5dp"
                 android:contentDescription="@string/str_content_description"
-                android:src="@drawable/ic_date_picker"
-                android:visibility="visible" />
+                android:visibility="visible"
+                app:srcCompat="@drawable/ic_date_picker" />
 
         </LinearLayout>
 

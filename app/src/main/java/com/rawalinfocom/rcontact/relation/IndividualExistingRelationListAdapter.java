@@ -1,11 +1,15 @@
 package com.rawalinfocom.rcontact.relation;
 
 import android.app.Activity;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
@@ -27,17 +31,25 @@ class IndividualExistingRelationListAdapter extends RecyclerView.Adapter
 
     private Activity activity;
     private ArrayList<IndividualRelationType> individualRelationRecommendationTypeList;
+    private String from;
 
     @Override
     public IndividualExistingRelationViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout
-                .list_item_existing_relation, parent, false);
+        View v;
+        if (from.equals("rcp")) {
+            v = LayoutInflater.from(parent.getContext()).inflate(R.layout
+                    .list_item_individual_relation, parent, false);
+        } else {
+            v = LayoutInflater.from(parent.getContext()).inflate(R.layout
+                    .list_item_existing_relation, parent, false);
+        }
         return new IndividualExistingRelationViewHolder(v);
     }
 
     IndividualExistingRelationListAdapter(Activity activity, ArrayList<IndividualRelationType>
-            individualRelationRecommendationTypeList) {
+            individualRelationRecommendationTypeList, String from) {
         this.activity = activity;
+        this.from = from;
         this.individualRelationRecommendationTypeList = individualRelationRecommendationTypeList;
     }
 
@@ -50,29 +62,43 @@ class IndividualExistingRelationListAdapter extends RecyclerView.Adapter
 
             holder.llRelationOrganization.setVisibility(View.VISIBLE);
             holder.textBusinessRelationName.setVisibility(View.VISIBLE);
-
             holder.textBusinessRelationName.setText(type.getRelationName());
-            holder.textBusinessRelationName.setCompoundDrawablesWithIntrinsicBounds
-                    (R.drawable.ico_relation_business_svg, 0, R.drawable.ico_relation_double_tick_svg, 0);
-            holder.textOrganizationName.setText(type.getOrganizationName());
+
+            if (type.getRcStatus() == 2)
+                holder.textBusinessRelationName.setCompoundDrawablesWithIntrinsicBounds
+                        (R.drawable.ico_relation_business_svg, 0, R.drawable.ico_relation_double_tick_svg, 0);
+            else
+                holder.textBusinessRelationName.setCompoundDrawablesWithIntrinsicBounds
+                        (R.drawable.ico_relation_business_svg, 0, R.drawable.ico_relation_single_tick_svg, 0);
+
+            if (type.getIsOrgVerified() == 1) {
+
+                holder.textOrganizationName.setText(type.getOrganizationName());
+                holder.textOrganizationName.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ico_relation_single_tick_green_svg, 0);
+//                holder.textOrganizationName.setText(Utils.setMultipleTypeface(activity, type.getOrganizationName() + " " +
+//                                activity.getString(R.string.im_icon_unverify), 0, (StringUtils.length(type.getOrganizationName()) + 1),
+//                        ((StringUtils.length(type.getOrganizationName()) + 1) + 1)));
+            } else
+                holder.textOrganizationName.setText(type.getOrganizationName());
 
         } else {
 
             holder.llRelationOrganization.setVisibility(View.GONE);
             holder.textBusinessRelationName.setVisibility(View.GONE);
-
-//            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) holder.llOtherRelation.getLayoutParams();
-//            layoutParams.setMargins(0, 0, 0, 0);
-//            holder.llOtherRelation.setLayoutParams(layoutParams);
         }
 
         if (!StringUtils.isEmpty(type.getFamilyName())) {
 
             holder.llFamilyRelation.setVisibility(View.VISIBLE);
-
             holder.textFamilyName.setText(type.getFamilyName());
-            holder.textFamilyName.setCompoundDrawablesWithIntrinsicBounds
-                    (R.drawable.ico_realtion_family_svg, 0, R.drawable.ico_relation_single_tick_svg, 0);
+
+            if (type.getRcStatus() == 2)
+                holder.textFamilyName.setCompoundDrawablesWithIntrinsicBounds
+                        (R.drawable.ico_realtion_family_svg, 0, R.drawable.ico_relation_double_tick_svg, 0);
+            else
+                holder.textFamilyName.setCompoundDrawablesWithIntrinsicBounds
+                        (R.drawable.ico_realtion_family_svg, 0, R.drawable.ico_relation_single_tick_svg, 0);
+
         } else {
             holder.llFamilyRelation.setVisibility(View.GONE);
         }
@@ -80,10 +106,15 @@ class IndividualExistingRelationListAdapter extends RecyclerView.Adapter
         if (type.getIsFriendRelation()) {
 
             holder.llFriendRelation.setVisibility(View.VISIBLE);
-
             holder.textFriendName.setText(activity.getString(R.string.str_friend));
-            holder.textFriendName.setCompoundDrawablesWithIntrinsicBounds
-                    (R.drawable.ico_relation_friend_svg, 0, R.drawable.ico_relation_single_tick_svg, 0);
+
+            if (type.getRcStatus() == 2)
+                holder.textFriendName.setCompoundDrawablesWithIntrinsicBounds
+                        (R.drawable.ico_relation_friend_svg, 0, R.drawable.ico_relation_double_tick_svg, 0);
+            else
+                holder.textFriendName.setCompoundDrawablesWithIntrinsicBounds
+                        (R.drawable.ico_relation_friend_svg, 0, R.drawable.ico_relation_single_tick_svg, 0);
+
         } else {
             holder.llFriendRelation.setVisibility(View.GONE);
         }

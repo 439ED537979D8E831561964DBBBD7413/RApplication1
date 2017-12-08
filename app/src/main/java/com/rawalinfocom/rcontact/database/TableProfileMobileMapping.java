@@ -17,6 +17,7 @@ import static com.rawalinfocom.rcontact.database.TableProfileEmailMapping.COLUMN
 import static com.rawalinfocom.rcontact.database.TableProfileEmailMapping
         .TABLE_PB_PROFILE_EMAIL_MAPPING;
 import static com.rawalinfocom.rcontact.database.TableProfileMaster.COLUMN_PM_FIRST_NAME;
+import static com.rawalinfocom.rcontact.database.TableProfileMaster.COLUMN_PM_GENDER;
 import static com.rawalinfocom.rcontact.database.TableProfileMaster.COLUMN_PM_LAST_NAME;
 import static com.rawalinfocom.rcontact.database.TableProfileMaster.COLUMN_PM_PROFILE_IMAGE;
 import static com.rawalinfocom.rcontact.database.TableProfileMaster.COLUMN_PM_PROFILE_RATE_USER;
@@ -397,6 +398,7 @@ public class TableProfileMobileMapping {
                     TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_PROFILE_RATING + "," +
                     TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_PROFILE_RATE_USER + "," +
                     TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_PROFILE_IMAGE + "," +
+                    TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_GENDER + "," +
                     TABLE_PB_PROFILE_MOBILE_MAPPING + "." + COLUMN_MPM_MOBILE_NUMBER + " FROM " +
                     TABLE_RC_PROFILE_MASTER + " LEFT JOIN " + TABLE_PB_PROFILE_MOBILE_MAPPING + "" +
                     " ON " +
@@ -430,8 +432,8 @@ public class TableProfileMobileMapping {
                             (TableProfileMaster.COLUMN_PM_PROFILE_RATE_USER)));
                     userProfile.setPmProfileImage(cursor.getString(cursor.getColumnIndex
                             (TableProfileMaster.COLUMN_PM_PROFILE_IMAGE)));
-               /* userProfile.setEmailId(cursor.getString(cursor.getColumnIndex
-                        (TableProfileEmailMapping.COLUMN_EPM_EMAIL_ID)));*/
+                    userProfile.setPmGender(cursor.getString(cursor.getColumnIndex
+                            (TableProfileMaster.COLUMN_PM_GENDER)));
                     userProfile.setMobileNumber(cursor.getString(cursor.getColumnIndex
                             (TableProfileMobileMapping.COLUMN_MPM_MOBILE_NUMBER)));
                     // Adding profileMobileMapping to list

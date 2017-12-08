@@ -17,6 +17,7 @@ public class RelationRecommendationType implements Serializable {
     private String profileImage;
 
     private ArrayList<IndividualRelationType> individualRelationTypeList;
+    private ArrayList<RelationRequest> relationRecommendations;
 
     public ArrayList<IndividualRelationType> getIndividualRelationTypeList() {
         return individualRelationTypeList;
@@ -24,6 +25,14 @@ public class RelationRecommendationType implements Serializable {
 
     public void setIndividualRelationTypeList(ArrayList<IndividualRelationType> individualRelationTypeList) {
         this.individualRelationTypeList = individualRelationTypeList;
+    }
+
+    public ArrayList<RelationRequest> getRelationRecommendations() {
+        return relationRecommendations;
+    }
+
+    public void setRelationRecommendations(ArrayList<RelationRequest> relationRecommendations) {
+        this.relationRecommendations = relationRecommendations;
     }
 
     public String getFirstName() {

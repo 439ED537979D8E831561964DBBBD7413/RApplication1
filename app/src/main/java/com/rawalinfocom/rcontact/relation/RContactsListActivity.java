@@ -15,6 +15,7 @@ import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
 import com.rawalinfocom.rcontact.helper.RippleView;
+import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.alphabetsIndexFastScrollRecycler.IndexFastScrollRecyclerView;
 import com.rawalinfocom.rcontact.model.UserProfile;
 
@@ -27,8 +28,7 @@ import butterknife.ButterKnife;
  * Created by admin on 25/09/17.
  */
 
-public class RContactsListActivity extends BaseActivity implements RippleView
-        .OnRippleCompleteListener {
+public class RContactsListActivity extends BaseActivity implements View.OnClickListener {
     @BindView(R.id.image_action_back)
     ImageView imageActionBack;
     @BindView(R.id.input_search)
@@ -61,6 +61,8 @@ public class RContactsListActivity extends BaseActivity implements RippleView
 
     private void init() {
 
+        imageActionBack.setOnClickListener(this);
+
         recyclerViewContactList.setLayoutManager(new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false));
 
         getRContactFromDB();
@@ -78,7 +80,8 @@ public class RContactsListActivity extends BaseActivity implements RippleView
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                rContactListAdapter.getFilter().filter(charSequence.toString());
+                if (rContactListAdapter != null)
+                    rContactListAdapter.getFilter().filter(charSequence.toString());
             }
 
             @Override
@@ -91,25 +94,25 @@ public class RContactsListActivity extends BaseActivity implements RippleView
             @Override
             public void onClick(View view) {
 
-                if (inputSearch.getText().toString().trim().length() > 0) {
+                Utils.hideSoftKeyboard(activity, inputSearch);
+                if (rContactListAdapter != null)
                     rContactListAdapter.getFilter().filter("");
-                } else {
-                    finish();
-                }
+                inputSearch.getText().clear();
             }
         });
     }
 
     @Override
-    public void onComplete(RippleView rippleView) {
-        switch (rippleView.getId()) {
+    public void onClick(View view) {
 
-            //<editor-fold desc="Back">
-            case R.id.ripple_action_back:
-                onBackPressed();
+        switch (view.getId()) {
+
+            case R.id.image_action_back:
+                finish();
+                Utils.hideSoftKeyboard(activity, inputSearch);
                 break;
-            //</editor-fold>
         }
+
     }
 
     private void getRContactFromDB() {

@@ -28,6 +28,7 @@ public class UserProfile implements Serializable {
     private String pmGenderPrivacy;
     private String pmIsFavourite;
     private String pmBadge;
+    private String pmLastSeen;
     private String pmNosqlMasterId;
 
     private String emailId;
@@ -297,5 +298,14 @@ public class UserProfile implements Serializable {
 
     public void setPmBadge(String pmBadge) {
         this.pmBadge = pmBadge;
+    }
+
+
+    public String getPmLastSeen() {
+        return pmLastSeen;
+    }
+
+    public void setPmLastSeen(String pmLastSeen) {
+        this.pmLastSeen = pmLastSeen;
     }
 }

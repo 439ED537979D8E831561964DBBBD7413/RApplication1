@@ -18,6 +18,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -28,12 +29,13 @@ import android.widget.ViewSwitcher;
 import com.rawalinfocom.rcontact.adapters.TutorialPagerAdapter;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
+import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class TutorialActivity extends BaseActivity {
+public class TutorialActivity extends BaseActivity implements RippleView.OnRippleCompleteListener {
 
     private final int TUTORIAL_SCREENS = 6;
 
@@ -65,11 +67,15 @@ public class TutorialActivity extends BaseActivity {
     ImageView imageTutorial6;
     @BindView(R.id.switcher_tutorial_content)
     TextSwitcher switcherTutorialContent;
+    @BindView(R.id.ripple_lets_go)
+    RippleView rippleLetsGo;
+    @BindView(R.id.button_lets_go)
+    Button buttonLetsGo;
 
-    Integer[] tutorialContents = {R.string.tutorial_content_1, R.string.tutorial_content_2, R
+    /*Integer[] tutorialContents = {R.string.tutorial_content_1, R.string.tutorial_content_2, R
             .string.tutorial_content_3, R.string.tutorial_content_4, R.string.tutorial_content_5,
-            R.string.tutorial_content_6};
-
+            R.string.tutorial_content_6};*/
+    Integer[] tutorialContents = {R.string.tutorial_content_1};
 
     TutorialPagerAdapter tutorialPagerAdapter;
 
@@ -114,12 +120,32 @@ public class TutorialActivity extends BaseActivity {
                         finish();
                     }
 
+                } else {
+                    // Permission Granted
+                    Utils.setIntegerPreference(TutorialActivity.this, AppConstants
+                            .PREF_LAUNCH_SCREEN_INT, IntegerConstants
+                            .LAUNCH_TERMS_CONDITIONS_ACTIVITY);
+                    startActivityIntent(TutorialActivity.this, TermsConditionsActivity.class, null);
+                    finish();
                 }
-//                else {
-//                    // Permission Granted
-//                }
             }
             break;
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    @Override
+    public void onComplete(RippleView rippleView) {
+        switch (rippleView.getId()) {
+            case R.id.ripple_lets_go:
+                if (ContextCompat.checkSelfPermission(TutorialActivity.this,
+                        Manifest.permission.READ_CONTACTS) != PackageManager
+                        .PERMISSION_GRANTED) {
+                    requestPermissions(new String[]{Manifest.permission
+                            .READ_CONTACTS}, AppConstants
+                            .MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+                }
+                break;
         }
     }
 
@@ -131,6 +157,13 @@ public class TutorialActivity extends BaseActivity {
         tutorialPagerAdapter = new TutorialPagerAdapter(TutorialActivity.this);
         pagerTutorial.setAdapter(tutorialPagerAdapter);
         setIndicatorSelection(0);
+
+        buttonLetsGo.setTypeface(Utils.typefaceRegular(TutorialActivity.this));
+        rippleLetsGo.setOnRippleCompleteListener(this);
+
+        Utils.setRoundedCornerBackground(buttonLetsGo, ContextCompat.getColor
+                (TutorialActivity.this, R.color.colorAccent), 5, 0, ContextCompat.getColor
+                (TutorialActivity.this, R.color.colorAccent));
 
         // Set the ViewFactory of the TextSwitcher that will create TextView object when asked
         switcherTutorialContent.setFactory(new ViewSwitcher.ViewFactory() {
@@ -277,6 +310,7 @@ public class TutorialActivity extends BaseActivity {
             }
         }
     }
+
 
     //</editor-fold>
 }

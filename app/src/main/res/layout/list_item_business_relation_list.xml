@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/linear_row_business_relation_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -26,7 +27,13 @@
         android:visibility="gone" />
 
     <TextView
-        android:id="@+id/text_verify"
+        android:id="@+id/text_org_verify"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/text_in_use"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone" />
@@ -43,6 +50,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_8dp"
         android:layout_weight="1"
+        android:drawablePadding="@dimen/margin_10dp"
         android:hint="@string/choose_relation"
         android:scrollbars="vertical"
         android:textColor="@color/colorAccent"
@@ -53,7 +61,7 @@
         android:layout_width="18dp"
         android:layout_height="18dp"
         android:contentDescription="@string/app_name"
-        android:src="@drawable/close_vector"
-        android:visibility="visible" />
+        android:visibility="visible"
+        app:srcCompat="@drawable/close_vector" />
 
 </LinearLayout>

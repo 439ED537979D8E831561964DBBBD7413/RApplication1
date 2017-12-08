@@ -32,6 +32,7 @@
             <TextView
                 android:id="@+id/text_at"
                 android:layout_width="wrap_content"
+                android:layout_marginStart="@dimen/margin_5dp"
                 android:layout_height="wrap_content"
                 android:text="at"
                 android:textColor="@color/grey_hex_ac"
@@ -42,6 +43,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_5dp"
+                android:drawablePadding="@dimen/margin_10dp"
                 android:textColor="@color/grey_hex_75"
                 android:textSize="@dimen/text_size_14sp"
                 android:textStyle="bold" />

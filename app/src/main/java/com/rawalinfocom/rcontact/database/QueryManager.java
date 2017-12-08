@@ -10,6 +10,7 @@ import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAadharNumber;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
+import com.rawalinfocom.rcontact.model.ProfileDataOperationEducation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEvent;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationImAccount;
@@ -53,10 +54,10 @@ public class QueryManager {
                 ",profile." + TableProfileMaster.COLUMN_PM_GENDER_PRIVACY + ",profile." +
                 TableProfileMaster.COLUMN_PM_IS_FAVOURITE +
                 ",profile." + TableProfileMaster.COLUMN_PM_PROFILE_RATING + ", profile." +
-                TableProfileMaster.COLUMN_PM_PROFILE_RATE_USER +
-                " from " + TableProfileMaster.TABLE_RC_PROFILE_MASTER + " profile WHERE profile."
-                + TableProfileMaster
-                .COLUMN_PM_RCP_ID + " IN (" + rcpId + ")";
+                TableProfileMaster.COLUMN_PM_PROFILE_RATE_USER + ", profile." +
+                TableProfileMaster.COLUMN_PM_LAST_SEEN + " from " +
+                TableProfileMaster.TABLE_RC_PROFILE_MASTER + " profile WHERE profile."
+                + TableProfileMaster.COLUMN_PM_RCP_ID + " IN (" + rcpId + ")";
 
         Cursor cursor = db.rawQuery(profileDetailQuery, null);
 
@@ -67,8 +68,9 @@ public class QueryManager {
                 profileDataOperation.setRcpPmId(rcpId);
 //            profileDataOperation.setPbNamePrefix(StringUtils.defaultString(cursor.getString
 //                    (cursor.getColumnIndex(TableProfileMaster.COLUMN_PM_PREFIX))));
-                profileDataOperation.setPbNameFirst(StringUtils.defaultString(cursor.getString(cursor
-                        .getColumnIndexOrThrow(TableProfileMaster.COLUMN_PM_FIRST_NAME))));
+                profileDataOperation.setPbNameFirst(StringUtils.defaultString(cursor.getString
+                        (cursor
+                                .getColumnIndexOrThrow(TableProfileMaster.COLUMN_PM_FIRST_NAME))));
 //            profileDataOperation.setPbNameMiddle(StringUtils.defaultString(cursor.getString
 //                    (cursor.getColumnIndex(TableProfileMaster.COLUMN_PM_MIDDLE_NAME))));
                 profileDataOperation.setPbNameLast(StringUtils.defaultString(cursor.getString(cursor
@@ -78,13 +80,18 @@ public class QueryManager {
                 profileDataOperation.setPbProfilePhoto(StringUtils.defaultString(cursor.getString
                         (cursor.getColumnIndexOrThrow(TableProfileMaster.COLUMN_PM_PROFILE_IMAGE)
                         )));
-                profileDataOperation.setIsFavourite(StringUtils.defaultString(cursor.getString(cursor
-                        .getColumnIndexOrThrow(TableProfileMaster.COLUMN_PM_IS_FAVOURITE))));
+                profileDataOperation.setIsFavourite(StringUtils.defaultString(cursor.getString
+                        (cursor
+                                .getColumnIndexOrThrow(TableProfileMaster.COLUMN_PM_IS_FAVOURITE)
+                        )));
                 profileDataOperation.setProfileRating(StringUtils.defaultString(cursor.getString
-                        (cursor.getColumnIndexOrThrow(TableProfileMaster.COLUMN_PM_PROFILE_RATING)), "0"));
+                        (cursor.getColumnIndexOrThrow(TableProfileMaster
+                                .COLUMN_PM_PROFILE_RATING)), "0"));
                 profileDataOperation.setTotalProfileRateUser(StringUtils.defaultString(cursor
                         .getString(cursor.getColumnIndexOrThrow(TableProfileMaster
                                 .COLUMN_PM_PROFILE_RATE_USER)), "0"));
+                profileDataOperation.setPmLastSeen(StringUtils.defaultString(cursor.getString(cursor
+                        .getColumnIndexOrThrow(TableProfileMaster.COLUMN_PM_LAST_SEEN))));
 
                 cursor.close();
             }
@@ -190,6 +197,55 @@ public class QueryManager {
                 emailIdCursor.close();
             }
             profileDataOperation.setPbEmailId(arrayListEmail);
+        }
+
+        //</editor-fold>
+
+        // <editor-fold desc="Education">
+        String educationQuery = "SELECT edu." + TableEducationMaster
+                .COLUMN_EDM_SCHOOL_COLLEGE_NAME + ",edu." + TableEducationMaster
+                .COLUMN_EDM_COURSE + ",edu." + TableEducationMaster
+                .COLUMN_EDM_EDUCATION_FROM_DATE + ",edu." + TableEducationMaster
+                .COLUMN_EDM_EDUCATION_TO_DATE + ",edu." + TableEducationMaster
+                .COLUMN_EDM_EDUCATION_PRIVACY + ",edu." + TableEducationMaster
+                .COLUMN_EDM_RECORD_INDEX_ID + ",edu." + TableEducationMaster
+                .COLUMN_EDM_EDUCATION_IS_PRIVATE + ",edu." + TableEducationMaster
+                .COLUMN_EDM_EDUCATION_IS_CURRENT + " FROM " + TableEducationMaster
+                .TABLE_RC_EDUCATION_MASTER + " edu where edu." + TableEducationMaster
+                .COLUMN_RC_PROFILE_MASTER_PM_ID + " IN (" + rcpId + ")";
+
+        Cursor educationCursor = db.rawQuery(educationQuery, null);
+
+        ArrayList<ProfileDataOperationEducation> arrayListEducation = new ArrayList<>();
+
+        // looping through all rows and adding to list
+        if (educationCursor != null && educationCursor.getCount() > 0) {
+            if (educationCursor.moveToFirst()) {
+                do {
+                    ProfileDataOperationEducation education = new ProfileDataOperationEducation();
+                    education.setEduName(StringUtils.defaultString(educationCursor.getString
+                            (educationCursor.getColumnIndexOrThrow(TableEducationMaster
+                                    .COLUMN_EDM_SCHOOL_COLLEGE_NAME))));
+                    education.setEduCourse(StringUtils.defaultString(educationCursor.getString
+                            (educationCursor.getColumnIndexOrThrow(TableEducationMaster
+                                    .COLUMN_EDM_COURSE))));
+                    education.setEduFromDate(StringUtils.defaultString(educationCursor.getString
+                            (educationCursor.getColumnIndexOrThrow(TableEducationMaster
+                                    .COLUMN_EDM_EDUCATION_FROM_DATE))));
+                    education.setEduToDate(StringUtils.defaultString(educationCursor
+                            .getString(educationCursor.getColumnIndexOrThrow(TableEducationMaster
+                                    .COLUMN_EDM_EDUCATION_TO_DATE))));
+                    education.setEduPublic(Integer.parseInt(StringUtils.defaultString
+                            (educationCursor.getString(educationCursor.getColumnIndexOrThrow
+                                    (TableEducationMaster.COLUMN_EDM_EDUCATION_PRIVACY)), "2")));
+                    education.setEduId(StringUtils.defaultString(educationCursor.getString
+                            (educationCursor.getColumnIndexOrThrow(TableEducationMaster
+                                    .COLUMN_EDM_RECORD_INDEX_ID))));
+                    arrayListEducation.add(education);
+                } while (educationCursor.moveToNext());
+                educationCursor.close();
+            }
+            profileDataOperation.setPbEducation(arrayListEducation);
         }
 
         //</editor-fold>

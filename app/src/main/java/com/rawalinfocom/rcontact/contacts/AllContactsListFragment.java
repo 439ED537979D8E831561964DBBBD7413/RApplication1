@@ -49,7 +49,6 @@ import android.widget.TextView;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.BuildConfig;
-import com.rawalinfocom.rcontact.MobileNumberRegistrationActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.AllContactAdapter;
@@ -61,6 +60,7 @@ import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.database.QueryManager;
 import com.rawalinfocom.rcontact.database.TableAddressMaster;
+import com.rawalinfocom.rcontact.database.TableEducationMaster;
 import com.rawalinfocom.rcontact.database.TableEmailMaster;
 import com.rawalinfocom.rcontact.database.TableEventMaster;
 import com.rawalinfocom.rcontact.database.TableImMaster;
@@ -79,6 +79,7 @@ import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.circleprogressview.CircleProgressView;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.Address;
+import com.rawalinfocom.rcontact.model.Education;
 import com.rawalinfocom.rcontact.model.Email;
 import com.rawalinfocom.rcontact.model.Event;
 import com.rawalinfocom.rcontact.model.ImAccount;
@@ -87,6 +88,7 @@ import com.rawalinfocom.rcontact.model.Organization;
 import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
+import com.rawalinfocom.rcontact.model.ProfileDataOperationEducation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEvent;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationImAccount;
@@ -104,7 +106,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -925,6 +926,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             userProfile.setProfileRating(profileData.get(i).getProfileRating());
             userProfile.setPmProfileImage(profileData.get(i).getPbProfilePhoto());
             userProfile.setTotalProfileRateUser(profileData.get(i).getTotalProfileRateUser());
+            userProfile.setPmLastSeen(profileData.get(i).getPmLastSeen());
 
             if (mapLocalRcpId.containsKey(profileData.get(i).getRcpPmId())) {
                 userProfile.setPmRawId(mapLocalRcpId.get(profileData.get(i).getRcpPmId()));
@@ -949,17 +951,23 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
                     mobileNumber.setMnmRecordIndexId(arrayListPhoneNumber.get(j).getPhoneId());
 
-                    if (String.valueOf(arrayListPhoneNumber.get(j).getPhonePublic()).equalsIgnoreCase("3")) {
-                        mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j).getPhoneNumber());
+                    if (String.valueOf(arrayListPhoneNumber.get(j).getPhonePublic())
+                            .equalsIgnoreCase("3")) {
+                        mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j)
+                                .getPhoneNumber());
                     } else {
                         if (arrayListPBPhoneNumber.size() > 0)
-                            if (arrayListPBPhoneNumber.contains("+" + arrayListPhoneNumber.get(j).getOriginalNumber())) {
-                                mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j).getOriginalNumber());
+                            if (arrayListPBPhoneNumber.contains("+" + arrayListPhoneNumber.get(j)
+                                    .getOriginalNumber())) {
+                                mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j)
+                                        .getOriginalNumber());
                             } else {
-                                mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j).getPhoneNumber());
+                                mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j)
+                                        .getPhoneNumber());
                             }
                         else
-                            mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j).getPhoneNumber());
+                            mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j)
+                                    .getPhoneNumber());
                     }
 
                     mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(j).getPhoneType());
@@ -995,7 +1003,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         Email email = new Email();
 
                         if (arrayListPBEmailAddress.size() > 0)
-                            if (arrayListPBEmailAddress.contains(arrayListEmailId.get(j).getOriginalEmail())) {
+                            if (arrayListPBEmailAddress.contains(arrayListEmailId.get(j)
+                                    .getOriginalEmail())) {
                                 email.setEmEmailAddress(arrayListEmailId.get(j).getOriginalEmail());
                             } else {
                                 email.setEmEmailAddress(arrayListEmailId.get(j).getEmEmailId());
@@ -1036,6 +1045,40 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 }
                 //</editor-fold>
 
+                // <editor-fold desc="Education Master">
+                if (!Utils.isArraylistNullOrEmpty(profileData.get(i).getPbEducation())) {
+                    ArrayList<ProfileDataOperationEducation> arrayListEducation = profileData.get
+                            (i).getPbEducation();
+                    ArrayList<Education> arrayListEdu = new ArrayList<>();
+                    for (int j = 0; j < arrayListEducation.size(); j++) {
+
+                        Education education = new Education();
+
+
+                        education.setEdmRecordIndexId(arrayListEducation.get(j).getEduId());
+
+                        education.setEdmSchoolCollegeName(arrayListEducation.get(j).getEduName());
+                        education.setEdmCourse(arrayListEducation.get(j).getEduCourse());
+                        education.setEdmEducationFromDate(arrayListEducation.get(j)
+                                .getEduFromDate());
+                        education.setEdmEducationToDate(arrayListEducation.get(j).getEduToDate());
+                        education.setEdmEducationIsCurrent(arrayListEducation.get(j).getIsCurrent
+                                ());
+//                        education.setEdmEducationIsPrivate(arrayListEducation.get(j).geti());
+                        education.setEdmEducationPrivacy(String.valueOf(arrayListEducation.get(j)
+                                .getEduPublic()));
+
+                        education.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
+
+                        arrayListEdu.add(education);
+                    }
+
+                    TableEducationMaster tableEducationMaster = new TableEducationMaster
+                            (getDatabaseHandler());
+                    tableEducationMaster.addArrayEducation(arrayListEdu);
+                }
+                //</editor-fold>
+
                 //<editor-fold desc="Organization Master">
                 if (!Utils.isArraylistNullOrEmpty(profileData.get(i).getPbOrganization())) {
                     ArrayList<ProfileDataOperationOrganization> arrayListOrganization =
@@ -1058,11 +1101,15 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                 .getIsCurrent()));
 
                         if (arrayListOrganization.get(j).getIsVerify() != null)
-                            if (arrayListOrganization.get(j).getIsVerify() == IntegerConstants.RCP_TYPE_PRIMARY) {
-                                organization.setOmOrganizationType(arrayListOrganization.get(j).getOrgIndustryType());
-                                organization.setOmEnterpriseOrgId(arrayListOrganization.get(j).getOrgEntId());
+                            if (arrayListOrganization.get(j).getIsVerify() == IntegerConstants
+                                    .RCP_TYPE_PRIMARY) {
+                                organization.setOmOrganizationType(arrayListOrganization.get(j)
+                                        .getOrgIndustryType());
+                                organization.setOmEnterpriseOrgId(arrayListOrganization.get(j)
+                                        .getOrgEntId());
                                 organization.setOmOrganizationLogo(arrayListOrganization.get(j)
-                                        .getEomLogoPath() + "/" + arrayListOrganization.get(j).getEomLogoName());
+                                        .getEomLogoPath() + "/" + arrayListOrganization.get(j)
+                                        .getEomLogoName());
                             } else {
                                 organization.setOmOrganizationType("");
                                 organization.setOmEnterpriseOrgId("");
@@ -1074,7 +1121,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                             organization.setOmOrganizationLogo("");
                         }
 
-                        organization.setOmIsVerified(String.valueOf(arrayListOrganization.get(j).getIsVerify()));
+                        organization.setOmIsVerified(String.valueOf(arrayListOrganization.get(j)
+                                .getIsVerify()));
                         organization.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
                         organizationList.add(organization);
                     }
@@ -1497,9 +1545,11 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         percentage += 15;
                         hasVerifiedEmail = true;
                         break;
-                    } else if (profileDetail.getPbEmailId().get(i).getEmRcpType() == IntegerConstants
-                            .RCP_TYPE_SECONDARY) {
-                        if (!profileDetail.getPbEmailId().get(i).getEmSocialType().equalsIgnoreCase("")) {
+                    } else if (profileDetail.getPbEmailId().get(i).getEmRcpType() ==
+                            IntegerConstants
+                                    .RCP_TYPE_SECONDARY) {
+                        if (!profileDetail.getPbEmailId().get(i).getEmSocialType()
+                                .equalsIgnoreCase("")) {
                             percentage += 15;
                             hasVerifiedEmail = true;
                             break;
@@ -2221,12 +2271,15 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         checkVersionObject.setAppPlatform("android");
 
         if (Utils.isNetworkAvailable(getActivity())) {
-            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), checkVersionObject, null,
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    checkVersionObject, null,
                     WsResponseObject.class, WsConstants.REQ_GET_CHECK_VERSION, null, true)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT + WsConstants
-                            .REQ_GET_CHECK_VERSION);
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT +
+                            WsConstants
+                                    .REQ_GET_CHECK_VERSION);
         } else {
-            Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, getResources().getString(R.string.msg_no_network));
+            Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, getResources()
+                    .getString(R.string.msg_no_network));
         }
     }
 
@@ -2236,9 +2289,11 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
         ContextThemeWrapper themedContext;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            themedContext = new ContextThemeWrapper(getActivity(), android.R.style.Theme_Holo_Light_Dialog_NoActionBar);
+            themedContext = new ContextThemeWrapper(getActivity(), android.R.style
+                    .Theme_Holo_Light_Dialog_NoActionBar);
         } else {
-            themedContext = new ContextThemeWrapper(getActivity(), android.R.style.Theme_Light_NoTitleBar);
+            themedContext = new ContextThemeWrapper(getActivity(), android.R.style
+                    .Theme_Light_NoTitleBar);
         }
 
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(themedContext);
@@ -2246,15 +2301,18 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         alertDialogBuilder.setTitle(getActivity().getString(R.string.youAreNotUpdatedTitle));
         alertDialogBuilder.setMessage(getActivity().getString(R.string.youAreNotUpdatedMessage));
         alertDialogBuilder.setCancelable(false);
-        alertDialogBuilder.setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
+        alertDialogBuilder.setPositiveButton(R.string.update, new DialogInterface.OnClickListener
+                () {
             public void onClick(DialogInterface dialog, int id) {
                 dialog.cancel();
                 startSync();
 //                finish();
-//                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getPackageName())));
+//                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" +
+// getPackageName())));
             }
         });
-        alertDialogBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+        alertDialogBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener
+                () {
             @Override
             public void onClick(DialogInterface dialog, int i) {
                 getActivity().finish();

@@ -14,8 +14,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     // All Static variables
     // Database Version
-    private static final int DATABASE_VERSION = 7;  //update to 7 for production/staging/QA
-                                                    // previous 6
+    private static final int DATABASE_VERSION = 7;  //update to 6 for production/staging/QA
 
     // Database Name
     public static final String DATABASE_NAME = "RContact.db";
@@ -54,6 +53,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL(TableNotificationStateMaster.CREATE_TABLE_NOTIFICATION_STATE_MASTER);
         db.execSQL(TableSpamDetailMaster.CREATE_TABLE_SPAM_DETAIL_MASTER);
         db.execSQL(TableAadharMaster.CREATE_TABLE_AADHAR_MASTER);
+        db.execSQL(TableEducationMaster.CREATE_TABLE_RC_EDUCATION_MASTER);
         db.execSQL(TableCallReminder.CREATE_TABLE_CALL_REMINDER);
 
         db.execSQL("ALTER TABLE " + TableEmailMaster.TABLE_RC_EMAIL_MASTER_TEMP
@@ -137,21 +137,26 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                         + "COLUMN " + TableAddressMaster.COLUMN_AM_COUNTRY_ID + " text ");
 
                 // For Organization
-                db.execSQL("ALTER TABLE " + TableOrganizationMaster.TABLE_RC_ORGANIZATION_MASTER + " ADD "
-                        + "COLUMN " + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_IS_VERIFIED + " text ");
-                db.execSQL("ALTER TABLE " + TableOrganizationMaster.TABLE_RC_ORGANIZATION_MASTER + " ADD "
-                        + "COLUMN " + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_TYPE + " text ");
-                db.execSQL("ALTER TABLE " + TableOrganizationMaster.TABLE_RC_ORGANIZATION_MASTER + " ADD "
-                        + "COLUMN " + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_ENT_ID + " text ");
-                db.execSQL("ALTER TABLE " + TableOrganizationMaster.TABLE_RC_ORGANIZATION_MASTER + " ADD "
-                        + "COLUMN " + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_IMAGE + " text ");
+                db.execSQL("ALTER TABLE " + TableOrganizationMaster.TABLE_RC_ORGANIZATION_MASTER
+                        + " ADD COLUMN " + TableOrganizationMaster
+                        .COLUMN_OM_ORGANIZATION_IS_VERIFIED + " text ");
+                db.execSQL("ALTER TABLE " + TableOrganizationMaster.TABLE_RC_ORGANIZATION_MASTER
+                        + " ADD COLUMN " + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_TYPE +
+                        " text ");
+                db.execSQL("ALTER TABLE " + TableOrganizationMaster.TABLE_RC_ORGANIZATION_MASTER
+                        + " ADD COLUMN " + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_ENT_ID
+                        + " text ");
+                db.execSQL("ALTER TABLE " + TableOrganizationMaster.TABLE_RC_ORGANIZATION_MASTER
+                        + " ADD COLUMN " + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_IMAGE +
+                        " text ");
 
             case 5:
                 // For version 6
                 db.execSQL(TableAadharMaster.CREATE_TABLE_AADHAR_MASTER);
 
                 System.out.println("RContact db upgrade case 5 relation --> ");
-                db.execSQL("DROP TABLE IF EXISTS '" + TableRelationMaster.TABLE_RC_RELATION_MASTER + "'");
+                db.execSQL("DROP TABLE IF EXISTS '" + TableRelationMaster
+                        .TABLE_RC_RELATION_MASTER + "'");
                 db.execSQL(TableRelationMaster.CREATE_TABLE_RC_RELATION_MASTER);
                 db.execSQL(TableRelationMappingMaster.CREATE_TABLE_RC_RCP_RELATION_MAPPING);
 
@@ -159,6 +164,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             case 6:
                 // For version 7
                 db.execSQL(TableCallReminder.CREATE_TABLE_CALL_REMINDER);
+                db.execSQL(TableEducationMaster.CREATE_TABLE_RC_EDUCATION_MASTER);
+
+                db.execSQL("ALTER TABLE " + TableProfileMaster.TABLE_RC_PROFILE_MASTER + " ADD "
+                        + "COLUMN " + TableProfileMaster.COLUMN_PM_LAST_SEEN + " text ");
+
         }
 
         // create new tables
@@ -192,6 +202,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                     .TABLE_NOTIFICATION_STATE_MASTER);
             db.execSQL("delete from " + TableSpamDetailMaster.TABLE_SPAM_DETAIL_MASTER);
             db.execSQL("delete from " + TableAadharMaster.TABLE_AADHAR_MASTER);
+            db.execSQL("delete from " + TableEducationMaster.TABLE_RC_EDUCATION_MASTER);
             db.execSQL("delete from " + TableCallReminder.TABLE_CALL_REMINDER);
         } catch (Exception e) {
             System.out.println("RContacts table clear error");
