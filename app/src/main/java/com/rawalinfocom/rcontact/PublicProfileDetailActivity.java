@@ -69,6 +69,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -213,8 +214,8 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
     @BindView(R.id.card_last_seen_details)
     CardView cardLastSeenDetails;
 
-    private Animator mCurrentAnimator;
-    private int mShortAnimationDuration;
+//    private Animator mCurrentAnimator;
+//    private int mShortAnimationDuration;
 
     String pmId = "", contactName = "";
 
@@ -469,7 +470,7 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
 
         Utils.setRatingColor(PublicProfileDetailActivity.this, ratingUser);
 
-        mShortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
+//        mShortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
         //call service
         cardContactDetails.setVisibility(GONE);
@@ -906,23 +907,28 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
 
             // <editor-fold desc="Last seen details">
 
+            cardLastSeenDetails.setVisibility(View.VISIBLE);
+            buttonRequestAll.setVisibility(GONE);
+
             if (!StringUtils.isBlank(profileDetail.getPmLastSeen())) {
 
-                cardLastSeenDetails.setVisibility(View.VISIBLE);
-                buttonRequestAll.setVisibility(GONE);
-
                 long elapsedDays = 0;
-
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd " +
-                        "hh:mm:ss", Locale.getDefault());
+                        "HH:mm:ss", Locale.getDefault());
 
-//                        String startDate = simpleDateFormat.format(profileDetail.getPmLastSeen());
+                final Date d = simpleDateFormat.parse(profileDetail.getPmLastSeen());
+                final Calendar calendar = Calendar.getInstance();
+
+                calendar.setTime(d);
+                calendar.add(Calendar.HOUR, 5);
+                calendar.add(Calendar.MINUTE, 30);
+
+                String startDate = simpleDateFormat.format(calendar.getTime());
                 String endDate = simpleDateFormat.format(new Date(System.currentTimeMillis()));
 
                 try {
 
-                    long difference = simpleDateFormat.parse(endDate).getTime() -
-                            simpleDateFormat.parse(profileDetail.getPmLastSeen()).getTime();
+                    long difference = simpleDateFormat.parse(endDate).getTime() - simpleDateFormat.parse(startDate).getTime();
 
                     long secondsInMilli = 1000;
                     long minutesInMilli = secondsInMilli * 60;
@@ -943,14 +949,13 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                             String.valueOf(elapsedDays)));
                 } else {
 
-                    String date = Utils.convertDateFormat(profileDetail.getPmLastSeen(),
-                            "yyyy-MM-dd hh:mm:ss", "HH:mm a");
-
+                    String date = Utils.convertDateFormat(startDate, "yyyy-MM-dd HH:mm:ss", "hh:mm a");
                     textLabelLastSeen.setText(String.format("Last seen today at %s", date));
                 }
 
             } else {
-                cardLastSeenDetails.setVisibility(GONE);
+                textLabelLastSeen.setText("Last seen N/A");
+                textLabelLastSeen.setVisibility(View.VISIBLE);
             }
 
             // </editor-fold>

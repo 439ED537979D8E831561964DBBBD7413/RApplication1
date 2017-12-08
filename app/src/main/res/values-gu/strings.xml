@@ -757,7 +757,7 @@
     <string name="toolbar_title">સંબંધ ભલામણ</string>
     <string name="search_here">Search...</string>
     <string name="str_no_relation_found">કોઈ રિલેશન મળ્યું નથી</string>
-    <string name="str_no_relation_recommendation_found">No Relation Recommendation Found</string>
+    <string name="str_no_relation_recommendation_found">કોઈ ભલામણ મળી નથી</string>
     <string name="relation_toolbar_title">હાલના સંબંધ</string>
     <string name="add_relation_toolbar_title">સંબંધ ઉમેરો</string>
     <string name="str_add_name">નામ ઉમેરો</string>

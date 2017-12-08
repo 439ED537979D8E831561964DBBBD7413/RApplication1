@@ -3511,15 +3511,21 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             long elapsedDays = 0;
 
                             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd " +
-                                    "hh:mm:ss", Locale.getDefault());
+                                    "HH:mm:ss", Locale.getDefault());
 
-//                        String startDate = simpleDateFormat.format(profileDetail.getPmLastSeen());
+                            final Date d = simpleDateFormat.parse(profileDetail.getPmLastSeen());
+                            final Calendar calendar = Calendar.getInstance();
+
+                            calendar.setTime(d);
+                            calendar.add(Calendar.HOUR, 5);
+                            calendar.add(Calendar.MINUTE, 30);
+
+                            String startDate = simpleDateFormat.format(calendar.getTime());
                             String endDate = simpleDateFormat.format(new Date(System.currentTimeMillis()));
 
                             try {
 
-                                long difference = simpleDateFormat.parse(endDate).getTime() -
-                                        simpleDateFormat.parse(profileDetail.getPmLastSeen()).getTime();
+                                long difference = simpleDateFormat.parse(endDate).getTime() - simpleDateFormat.parse(startDate).getTime();
 
                                 long secondsInMilli = 1000;
                                 long minutesInMilli = secondsInMilli * 60;
@@ -3540,9 +3546,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                         String.valueOf(elapsedDays)));
                             } else {
 
-                                String date = Utils.convertDateFormat(profileDetail.getPmLastSeen(),
-                                        "yyyy-MM-dd hh:mm:ss", "HH:mm a");
-
+                                String date = Utils.convertDateFormat(startDate, "yyyy-MM-dd HH:mm:ss", "hh:mm a");
                                 textLabelLastSeen.setText(String.format("Last seen today at %s", date));
                             }
 
