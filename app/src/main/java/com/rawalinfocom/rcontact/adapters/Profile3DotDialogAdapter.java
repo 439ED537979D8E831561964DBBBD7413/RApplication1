@@ -2,6 +2,11 @@ package com.rawalinfocom.rcontact.adapters;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.PendingIntent;
+import android.app.TimePickerDialog;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
@@ -15,29 +20,41 @@ import android.provider.ContactsContract;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.calllog.CallLogDeleteActivity;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
+import com.rawalinfocom.rcontact.database.DatabaseHandler;
+import com.rawalinfocom.rcontact.database.TableCallReminder;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.MaterialDialogClipboard;
+import com.rawalinfocom.rcontact.helper.MaterialListDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.CallLogType;
+import com.rawalinfocom.rcontact.receivers.CallReminderReceiver;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -267,6 +284,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                         myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
                     }
                 } else if (value.equalsIgnoreCase(context.getString(R.string.call_reminder))) {
+                    showCallReminderPopUp();
 
                 } else if (value.equalsIgnoreCase(context.getString(R.string.clear_call_log))) {
 
@@ -341,6 +359,48 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
 
     }
 
+
+
+    private void showCallReminderPopUp() {
+        ArrayList<String> arrayListCallReminderOption;
+        TableCallReminder tableCallReminder = new TableCallReminder(new DatabaseHandler(context));
+//        Long callReminderTime = Utils.getLongPreference(context, AppConstants.PREF_CALL_REMINDER, 0);
+        String number =  numberToCall;
+        if(number.contains("("))
+            number = number.replace("(","");
+        if(number.contains(")"))
+            number = number.replace(")","");
+        if(number.contains("-"))
+            number =  number.replace("-","");
+        if(number.contains(" "))
+            number =  number.replace(" ","");
+
+        number = number.trim();
+        String formattedNumber =  Utils.getFormattedNumber(context,number);
+        String time =  tableCallReminder.getReminderTimeFromNumber(formattedNumber);
+        Long callReminderTime = 0L;
+        if(!StringUtils.isEmpty(time))
+            callReminderTime =  Long.parseLong(time);
+
+        if (callReminderTime > 0) {
+            Date date1 = new Date(callReminderTime);
+            String setTime = new SimpleDateFormat("dd/MM/yy, hh:mm a", Locale.getDefault()).format(date1);
+            arrayListCallReminderOption = new ArrayList<>(Arrays.asList(context.getString(R.string.min15),
+                    context.getString(R.string.hour1), context.getString(R.string.hour2), context.getString(R.string.hour6),setTime + "     Edit"));
+            MaterialListDialog materialListDialog = new MaterialListDialog(context, arrayListCallReminderOption,
+                    formattedNumber, 0, "", "", "");
+            materialListDialog.setDialogTitle(context.getString(R.string.call_reminder));
+            materialListDialog.showDialog();
+        } else {
+            arrayListCallReminderOption = new ArrayList<>(Arrays.asList(context.getString(R.string.min15),
+                    context.getString(R.string.hour1), context.getString(R.string.hour2), context.getString(R.string.hour6),
+                    context.getString(R.string.setDateAndTime)));
+            MaterialListDialog materialListDialog = new MaterialListDialog(context, arrayListCallReminderOption,
+                    formattedNumber, 0, "", "", "");
+            materialListDialog.setDialogTitle(context.getString(R.string.call_reminder).toUpperCase());
+            materialListDialog.showDialog();
+        }
+    }
 
     //    @TargetApi(Build.VERSION_CODES.M)
     private ArrayList<CallLogType> getNumbersFromName(String number) {

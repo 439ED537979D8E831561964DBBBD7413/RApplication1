@@ -2,6 +2,7 @@ package com.rawalinfocom.rcontact.adapters;
 
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
@@ -9,6 +10,8 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.CallLog;
@@ -20,6 +23,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -33,6 +37,7 @@ import com.rawalinfocom.rcontact.database.DatabaseHandler;
 import com.rawalinfocom.rcontact.database.TableCallReminder;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.MaterialDialogClipboard;
+import com.rawalinfocom.rcontact.helper.MaterialListDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.instagram.util.StringUtil;
@@ -44,6 +49,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -237,7 +243,7 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
                     myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
 
                 } else if (value.equalsIgnoreCase(context.getString(R.string.call_reminder))) {
-
+                    showCallReminderPopUp();
                 } else {
 
 //                    Toast.makeText(context, "Please select any one option", Toast.LENGTH_SHORT)
@@ -321,6 +327,47 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
 
     }
 
+    private void showCallReminderPopUp() {
+        ArrayList<String> arrayListCallReminderOption;
+        TableCallReminder tableCallReminder = new TableCallReminder(new DatabaseHandler(context));
+//        Long callReminderTime = Utils.getLongPreference(context, AppConstants.PREF_CALL_REMINDER, 0);
+        String number =  numberToCall;
+        if(number.contains("("))
+            number = number.replace("(","");
+        if(number.contains(")"))
+            number = number.replace(")","");
+        if(number.contains("-"))
+            number =  number.replace("-","");
+        if(number.contains(" "))
+            number =  number.replace(" ","");
+
+        number = number.trim();
+        String formattedNumber =  Utils.getFormattedNumber(context,number);
+        String time =  tableCallReminder.getReminderTimeFromNumber(formattedNumber);
+        Long callReminderTime = 0L;
+        if(!StringUtils.isEmpty(time))
+            callReminderTime =  Long.parseLong(time);
+
+        if (callReminderTime > 0) {
+            Date date1 = new Date(callReminderTime);
+            String setTime = new SimpleDateFormat("dd/MM/yy, hh:mm a", Locale.getDefault()).format(date1);
+            arrayListCallReminderOption = new ArrayList<>(Arrays.asList(context.getString(R.string.min15),
+                    context.getString(R.string.hour1), context.getString(R.string.hour2), context.getString(R.string.hour6),setTime + "     Edit"));
+            MaterialListDialog materialListDialog = new MaterialListDialog(context, arrayListCallReminderOption,
+                    formattedNumber, 0, "", "", "");
+            materialListDialog.setDialogTitle(context.getString(R.string.call_reminder));
+            materialListDialog.showDialog();
+        } else {
+            arrayListCallReminderOption = new ArrayList<>(Arrays.asList(context.getString(R.string.min15),
+                    context.getString(R.string.hour1), context.getString(R.string.hour2), context.getString(R.string.hour6),
+                    context.getString(R.string.setDateAndTime)));
+            MaterialListDialog materialListDialog = new MaterialListDialog(context, arrayListCallReminderOption,
+                    formattedNumber, 0, "", "", "");
+            materialListDialog.setDialogTitle(context.getString(R.string.call_reminder).toUpperCase());
+            materialListDialog.showDialog();
+        }
+    }
+
     Calendar date;
     long selectedDateAndTime;
 
@@ -328,11 +375,11 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
         final Calendar currentDate = Calendar.getInstance();
         date = Calendar.getInstance();
         final TableCallReminder tableCallReminder = new TableCallReminder(databaseHandler);
-        new DatePickerDialog(context, new DatePickerDialog.OnDateSetListener() {
+        DatePickerDialog datePickerDialog = new DatePickerDialog(context, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT , new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 date.set(year, monthOfYear, dayOfMonth);
-                new TimePickerDialog(context, new TimePickerDialog.OnTimeSetListener() {
+                TimePickerDialog timePickerDialog = new TimePickerDialog(context,AlertDialog.THEME_DEVICE_DEFAULT_LIGHT, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                         date.set(Calendar.HOUR_OF_DAY, hourOfDay);
@@ -357,9 +404,24 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
                             e.printStackTrace();
                         }
                     }
-                }, currentDate.get(Calendar.HOUR_OF_DAY), currentDate.get(Calendar.MINUTE), false).show();
+                }, currentDate.get(Calendar.HOUR_OF_DAY), currentDate.get(Calendar.MINUTE), false);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    timePickerDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_TOAST);
+                } else {
+                    timePickerDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+                }
+
+                timePickerDialog.show();
             }
-        }, currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH), currentDate.get(Calendar.DATE)).show();
+        }, currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH), currentDate.get(Calendar.DATE));
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            datePickerDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_TOAST);
+        } else {
+            datePickerDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        }
+
+        datePickerDialog.show();
     }
 
     private void setAlarm() {
