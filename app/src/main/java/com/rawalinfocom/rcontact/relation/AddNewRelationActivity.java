@@ -647,7 +647,7 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
                 RelationRecommendationType recommendationType = new RelationRecommendationType();
                 recommendationType.setFirstName(relationUserProfile.getPmFirstName());
                 recommendationType.setLastName(relationUserProfile.getPmLastName());
-                recommendationType.setNumber(relationUserProfile.getMobileNumber());
+                recommendationType.setNumber("+" + relationUserProfile.getMobileNumber());
                 recommendationType.setPmId(String.valueOf(allExistingRelationList.get(0).getRrmToPmId()));
                 recommendationType.setDateAndTime("");
                 recommendationType.setProfileImage(relationUserProfile.getProfilePhoto());

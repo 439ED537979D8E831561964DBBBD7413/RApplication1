@@ -5959,6 +5959,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         userProfile.setPmBadge(profileDetail.getPmBadge());
         userProfile.setPmProfileImage(profileDetail.getPbProfilePhoto());
         userProfile.setPmLastSeen(profileDetail.getPmLastSeen());
+        userProfile.setProfileRatingPrivacy(String.valueOf(profileDetail.getProfileRatingPrivacy()));
+        userProfile.setRatingPrivate(String.valueOf(profileDetail.getRatingPrivate()));
 
         tableProfileMaster.updateUserProfile(userProfile);
         //</editor-fold>
@@ -5967,7 +5969,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
 
         // Remove Existing Number
-        tableMobileMaster.deleteMobileNumber(getUserPmId());
+        tableMobileMaster.deleteMobileNumberData(getUserPmId());
 
         ArrayList<MobileNumber> arrayListMobileNumber = new ArrayList<>();
         ArrayList<ProfileDataOperationPhoneNumber> arrayListPhoneNumber =
@@ -5995,8 +5997,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
         TableEmailMaster tableEmailMaster = new TableEmailMaster(databaseHandler);
 
-        // Remove Existing Number
-        tableEmailMaster.deleteEmail(getUserPmId());
+        // Remove Existing Data
+        tableEmailMaster.deleteEmailData(getUserPmId());
 
         if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEmailId())) {
             ArrayList<ProfileDataOperationEmail> arrayListEmailId = profileDetail.getPbEmailId();
@@ -6022,8 +6024,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         TableOrganizationMaster tableOrganizationMaster = new TableOrganizationMaster
                 (databaseHandler);
 
-        // Remove Existing Number
-        tableOrganizationMaster.deleteOrganization(getUserPmId());
+        // Remove Existing Data
+        tableOrganizationMaster.deleteOrganizationData(getUserPmId());
 
         if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbOrganization())) {
             ArrayList<ProfileDataOperationOrganization> arrayListOrganization = profileDetail
@@ -6073,8 +6075,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
         TableEducationMaster tableEducationMaster = new TableEducationMaster(databaseHandler);
 
-        // Remove Existing Number
-        tableEducationMaster.deleteEducation(getUserPmId());
+        // Remove Existing Data
+        tableEducationMaster.deleteEducationData(getUserPmId());
 
         if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEducation())) {
             ArrayList<ProfileDataOperationEducation> arrayListEducation = profileDetail
@@ -6090,6 +6092,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 education.setEdmEducationIsCurrent(arrayListEducation.get(j).getIsCurrent());
                 education.setEdmEducationPrivacy(String.valueOf(arrayListEducation
                         .get(j).getEduPublic()));
+                education.setEdmEducationIsPrivate(arrayListEducation.get(j).getIsPrivate());
                 education.setRcProfileMasterPmId(getUserPmId());
                 educationList.add(education);
             }
@@ -6102,8 +6105,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
         TableWebsiteMaster tableWebsiteMaster = new TableWebsiteMaster(databaseHandler);
 
-        // Remove Existing Number
-        tableWebsiteMaster.deleteWebsite(getUserPmId());
+        // Remove Existing Data
+        tableWebsiteMaster.deleteWebsiteData(getUserPmId());
 
         if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbWebAddress())) {
             ArrayList<ProfileDataOperationWebAddress> arrayListWebsite = profileDetail
@@ -6126,8 +6129,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
         TableAddressMaster tableAddressMaster = new TableAddressMaster(databaseHandler);
 
-        // Remove Existing Number
-        tableAddressMaster.deleteAddress(getUserPmId());
+        // Remove Existing Data
+        tableAddressMaster.deleteAddressData(getUserPmId());
 
         if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbAddress())) {
             ArrayList<ProfileDataOperationAddress> arrayListAddress = profileDetail.getPbAddress();
@@ -6162,8 +6165,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         // <editor-fold desc="Im Account Master">
         TableImMaster tableImMaster = new TableImMaster(databaseHandler);
 
-        // Remove Existing Number
-        tableImMaster.deleteImAccount(getUserPmId());
+        // Remove Existing Data
+        tableImMaster.deleteImAccountData(getUserPmId());
 
         if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbIMAccounts())) {
             ArrayList<ProfileDataOperationImAccount> arrayListImAccount = profileDetail
@@ -6191,8 +6194,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
         TableEventMaster tableEventMaster = new TableEventMaster(databaseHandler);
 
-        // Remove Existing Number
-        tableEventMaster.deleteEvent(getUserPmId());
+        // Remove Existing Data
+        tableEventMaster.deleteEventData(getUserPmId());
 
         if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEvent())) {
             ArrayList<ProfileDataOperationEvent> arrayListEvent = profileDetail
@@ -6215,7 +6218,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
         // <editor-fold desc="Aadhar Details">
         TableAadharMaster tableAadharMaster = new TableAadharMaster(databaseHandler);
-        // Remove Existing Number
+        // Remove Existing Data
         tableAadharMaster.deleteAadharDetails(getUserPmId());
 
         if (profileDetail.getPbAadhar() != null) {

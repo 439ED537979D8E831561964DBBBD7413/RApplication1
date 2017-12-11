@@ -12,6 +12,7 @@ public class MobileNumber {
     private String mnmNumberType;
     private String mnmIsPrimary;
     private Integer mnmIsPrivate;
+    private Integer mnmPhonePublic;
     private String mnmNumberPrivacy;
     private String mnmMobileServiceProvider;
     private String mnmCircleOfService;
@@ -109,5 +110,13 @@ public class MobileNumber {
 
     public void setMnmIsPrivate(Integer mnmIsPrivate) {
         this.mnmIsPrivate = mnmIsPrivate;
+    }
+
+    public Integer getMnmPhonePublic() {
+        return mnmPhonePublic;
+    }
+
+    public void setMnmPhonePublic(Integer mnmPhonePublic) {
+        this.mnmPhonePublic = mnmPhonePublic;
     }
 }

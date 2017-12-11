@@ -58,10 +58,14 @@ public class TableNotificationStateMaster {
         values.put(COLUMN_NS_CLOUD_NOTIFICATION_ID, notification.getCloudNotificationId());
         values.put(COLUMN_NS_CREATED_AT, notification.getCreatedAt());
         values.put(COLUMN_NS_UPDATED_AT, notification.getUpdatedAt());
-        values.put(COLUMN_NS_MASTER_ID, notification.getNotificationMasterId());
+        values.put(COLUMN_NS_MASTER_ID, notification.getCloudNotificationId());
 
-        db.insert(TABLE_NOTIFICATION_STATE_MASTER, null, values);
-        db.close(); // Closing database connection
+        try {
+            int id = (int) db.insert(TABLE_NOTIFICATION_STATE_MASTER, null, values);
+            db.close(); // Closing database connection
+        } catch (Exception e) {
+            db.close(); // Closing database connection
+        }
     }
 
     public int getTotalUnreadCount() {
@@ -69,6 +73,7 @@ public class TableNotificationStateMaster {
             String countQuery = "SELECT  * FROM " + TABLE_NOTIFICATION_STATE_MASTER + " WHERE " + COLUMN_NS_STATE + " =1";
             SQLiteDatabase db = databaseHandler.getReadableDatabase();
             Cursor cursor = db.rawQuery(countQuery, null);
+            cursor.moveToFirst();
             int count = cursor.getCount();
             cursor.close();
             db.close();

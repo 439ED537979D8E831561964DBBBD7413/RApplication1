@@ -482,12 +482,14 @@ public class NotiCommentsFragment extends BaseNotificationFragment implements Ws
 
             // <editor-fold desc="REQ_GET_COMMENT_DETAILS">
             if (serviceType.contains(WsConstants.REQ_GET_COMMENT_DETAILS)) {
+
+                // cancel the Visual indication of a refresh
+                if (swipeRefreshLayout != null)
+                    swipeRefreshLayout.setRefreshing(false);
+
                 WsResponseObject getCommentUpdateResponse = (WsResponseObject) data;
                 if (getCommentUpdateResponse != null && StringUtils.equalsIgnoreCase
                         (getCommentUpdateResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
-
-                    // cancel the Visual indication of a refresh
-                    swipeRefreshLayout.setRefreshing(false);
 
                     storeCommentRequestResponseToDB(getCommentUpdateResponse,
                             getCommentUpdateResponse.getCommentReceive(), getCommentUpdateResponse.getCommentDone());

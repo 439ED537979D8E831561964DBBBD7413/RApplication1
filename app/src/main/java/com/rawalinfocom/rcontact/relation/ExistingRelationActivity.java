@@ -422,7 +422,7 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
             RelationRecommendationType recommendationType = new RelationRecommendationType();
             recommendationType.setFirstName(relationUserProfile.getPmFirstName());
             recommendationType.setLastName(relationUserProfile.getPmLastName());
-            recommendationType.setNumber(relationUserProfile.getMobileNumber());
+            recommendationType.setNumber("+" + relationUserProfile.getMobileNumber());
             recommendationType.setPmId(String.valueOf(allExistingRelationList.get(i).getRrmToPmId()));
             recommendationType.setDateAndTime("");
             recommendationType.setProfileImage(relationUserProfile.getProfilePhoto());
@@ -628,7 +628,7 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
                 existingRelationList.get(position).getIndividualRelationTypeList(),
                 new OrganizationRelationListAdapter.OnClickListener() {
                     @Override
-                    public void onClick(String orgId, String orgName,boolean isOrgVerified) {
+                    public void onClick(String orgId, String orgName, boolean isOrgVerified) {
 
                     }
                 }, "existing");

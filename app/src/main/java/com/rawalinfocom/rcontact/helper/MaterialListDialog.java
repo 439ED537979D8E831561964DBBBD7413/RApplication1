@@ -5,6 +5,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -48,9 +51,17 @@ public class MaterialListDialog {
         dialog.setContentView(R.layout.dialog_list_material);
 
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_TOAST);
+        } else {
+            dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        }
         layoutParams.copyFrom(dialog.getWindow().getAttributes());
         layoutParams.width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.90);
         layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));
+
 
         dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
         tvDialogTitle = (TextView) dialog.findViewById(R.id.tvDialogTitle);
@@ -84,6 +95,11 @@ public class MaterialListDialog {
                     callLogDateToDelete, contactName, uniqueRowId, key);
             recycleViewDialog.setAdapter(materialListAdapter);
             setRecyclerViewLayoutManager(recycleViewDialog);
+        }else {
+//            CallLogDialogListAdapter materialListAdapter = new CallLogDialogListAdapter(context, stringArrayList, "",
+//                    0, "", "", "");
+//            recycleViewDialog.setAdapter(materialListAdapter);
+//            setRecyclerViewLayoutManager(recycleViewDialog);
         }
     }
 

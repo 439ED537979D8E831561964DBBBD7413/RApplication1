@@ -155,7 +155,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
     public CallLogFragment() {
         // Required empty public constructor
-
     }
 
     public static CallLogFragment newInstance() {

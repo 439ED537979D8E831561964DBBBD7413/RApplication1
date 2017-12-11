@@ -15,6 +15,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     // All Static variables
     // Database Version
     private static final int DATABASE_VERSION = 7;  //update to 6 for production/staging/QA
+                                                    // previous version 6
 
     // Database Name
     public static final String DATABASE_NAME = "RContact.db";
@@ -54,6 +55,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL(TableSpamDetailMaster.CREATE_TABLE_SPAM_DETAIL_MASTER);
         db.execSQL(TableAadharMaster.CREATE_TABLE_AADHAR_MASTER);
         db.execSQL(TableEducationMaster.CREATE_TABLE_RC_EDUCATION_MASTER);
+        db.execSQL(TableCallReminder.CREATE_TABLE_CALL_REMINDER);
 
         db.execSQL("ALTER TABLE " + TableEmailMaster.TABLE_RC_EMAIL_MASTER_TEMP
                 + " RENAME TO " + TableEmailMaster.TABLE_RC_EMAIL_MASTER + ";");
@@ -159,12 +161,18 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 db.execSQL(TableRelationMaster.CREATE_TABLE_RC_RELATION_MASTER);
                 db.execSQL(TableRelationMappingMaster.CREATE_TABLE_RC_RCP_RELATION_MAPPING);
 
+
             case 6:
                 // For version 7
+                db.execSQL(TableCallReminder.CREATE_TABLE_CALL_REMINDER);
                 db.execSQL(TableEducationMaster.CREATE_TABLE_RC_EDUCATION_MASTER);
 
                 db.execSQL("ALTER TABLE " + TableProfileMaster.TABLE_RC_PROFILE_MASTER + " ADD "
                         + "COLUMN " + TableProfileMaster.COLUMN_PM_LAST_SEEN + " text ");
+                db.execSQL("ALTER TABLE " + TableProfileMaster.TABLE_RC_PROFILE_MASTER + " ADD "
+                        + "COLUMN " + TableProfileMaster.COLUMN_PM_RATING_PRIVACY + " text ");
+                db.execSQL("ALTER TABLE " + TableProfileMaster.TABLE_RC_PROFILE_MASTER + " ADD "
+                        + "COLUMN " + TableProfileMaster.COLUMN_PM_RATING_PRIVATE + " text ");
 
         }
 
@@ -200,6 +208,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             db.execSQL("delete from " + TableSpamDetailMaster.TABLE_SPAM_DETAIL_MASTER);
             db.execSQL("delete from " + TableAadharMaster.TABLE_AADHAR_MASTER);
             db.execSQL("delete from " + TableEducationMaster.TABLE_RC_EDUCATION_MASTER);
+            db.execSQL("delete from " + TableCallReminder.TABLE_CALL_REMINDER);
         } catch (Exception e) {
             System.out.println("RContacts table clear error");
         }
