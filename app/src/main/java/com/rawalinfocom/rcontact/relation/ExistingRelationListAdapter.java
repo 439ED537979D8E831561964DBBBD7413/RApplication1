@@ -144,10 +144,10 @@ class ExistingRelationListAdapter extends RecyclerView.Adapter
                     if (splitString.length == 2) {
 
                         for (final RelationRecommendationType recommendationType : filteredList) {
-                            if ((recommendationType.getFirstName().toLowerCase().startsWith(splitString[0])
-                                    || recommendationType.getLastName().toLowerCase().startsWith(splitString[0]))
-                                    && (recommendationType.getFirstName().toLowerCase().startsWith(splitString[1])
-                                    || recommendationType.getLastName().toLowerCase().startsWith(splitString[1]))) {
+                            if ((recommendationType.getFirstName().toLowerCase().contains(splitString[0])
+                                    || recommendationType.getLastName().toLowerCase().contains(splitString[0]))
+                                    && (recommendationType.getFirstName().toLowerCase().contains(splitString[1])
+                                    || recommendationType.getLastName().toLowerCase().contains(splitString[1]))) {
                                 arrayListRelationType.add(recommendationType);
                             }
                         }

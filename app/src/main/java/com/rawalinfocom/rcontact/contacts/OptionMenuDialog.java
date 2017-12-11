@@ -56,17 +56,19 @@ class OptionMenuDialog {
 
     private PhoneBookContacts phoneBookContacts;
     private RContactApplication rContactApplication;
+    private ArrayList<String> pbRating;
 
     MaterialDialog deleteConfirmationDialog;
 
     //<editor-fold desc="Constructor">
     OptionMenuDialog(final Context context, String rawId, final int menuType, boolean
-            isFavourite, boolean isFromFavourite, boolean isCallLogRcpUser) {
+            isFavourite, boolean isFromFavourite, boolean isCallLogRcpUser, ArrayList<String> pbRating) {
         this.context = context;
         this.rawId = rawId;
         this.isFavourite = isFavourite;
         this.isFromFavourite = isFromFavourite;
         this.isCallLogRcpUser = isCallLogRcpUser;
+        this.pbRating = pbRating;
 
         rContactApplication = (RContactApplication) context.getApplicationContext();
         phoneBookContacts = new PhoneBookContacts(context);
@@ -98,17 +100,30 @@ class OptionMenuDialog {
                 break;
 
             case ALL_CONTACT_RCP:
-                menus = new String[]{context.getString(R.string.edit), context.getString(R.string
-                        .str_view_in_phone_book),
-                        context.getString(R.string.str_rate_profile), context.getString(R.string
-                        .delete)};
+
+                if (pbRating.size() > 0) {
+                    menus = new String[]{context.getString(R.string.edit), context.getString(R.string
+                            .str_view_in_phone_book), context.getString(R.string.delete)};
+                } else {
+                    menus = new String[]{context.getString(R.string.edit), context.getString(R.string
+                            .str_view_in_phone_book),
+                            context.getString(R.string.str_rate_profile), context.getString(R.string
+                            .delete)};
+                }
+
                 break;
 
             case R_CONTACT_RCP:
-                menus = new String[]{context.getString(R.string.edit), context.getString(R.string
-                        .view_in_ac),
-                        context.getString(R.string.str_rate_profile), context.getString(R.string
-                        .delete)};
+                if (pbRating.size() > 0) {
+                    menus = new String[]{context.getString(R.string.edit), context.getString(R.string
+                            .view_in_ac), context.getString(R.string
+                            .delete)};
+                } else {
+                    menus = new String[]{context.getString(R.string.edit), context.getString(R.string
+                            .view_in_ac),
+                            context.getString(R.string.str_rate_profile), context.getString(R.string
+                            .delete)};
+                }
                 break;
         }
 

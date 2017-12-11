@@ -95,6 +95,8 @@ public class OrganizationRelationListAdapter extends RecyclerView.Adapter<Organi
 
             if (organization.getIsVerify() == 1)
                 holder.textMain.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ico_relation_single_tick_green_svg, 0);
+            else
+                holder.textMain.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
 
             holder.checkbox.setChecked(position == (AddNewRelationActivity.orgPosition));
 

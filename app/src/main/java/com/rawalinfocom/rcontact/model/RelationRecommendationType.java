@@ -15,6 +15,7 @@ public class RelationRecommendationType implements Serializable {
     private String pmId;
     private String dateAndTime;
     private String profileImage;
+    private String gender;
 
     private ArrayList<IndividualRelationType> individualRelationTypeList;
     private ArrayList<RelationRequest> relationRecommendations;
@@ -81,5 +82,13 @@ public class RelationRecommendationType implements Serializable {
 
     public void setProfileImage(String profileImage) {
         this.profileImage = profileImage;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 }

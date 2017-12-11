@@ -21,12 +21,12 @@ public class RelationResponse {
     private Integer rcRelationMasterId;
     private Integer gender;
     private Integer rcOrgId;
-    private String omName;
     private String createdAt;
-    private RelationMaster relationMaster;
-    private OrganizationMaster organization;
+    //    private RelationMaster relationMaster;
+//    private OrganizationMaster organization;
     private String rmParticular;
     private String orgName;
+    private Integer omIsVerified;
 
     @JsonProperty("rrm_to_pm_id")
     public Integer getRrmToPmId() {
@@ -73,15 +73,6 @@ public class RelationResponse {
         this.rcOrgId = rcOrgId;
     }
 
-    @JsonProperty("om_name")
-    public String getOmName() {
-        return omName;
-    }
-
-    public void setOmName(String omName) {
-        this.omName = omName;
-    }
-
     @JsonProperty("id")
     public Integer getId() {
         return id;
@@ -118,24 +109,25 @@ public class RelationResponse {
         this.createdAt = createdAt;
     }
 
-    @JsonProperty("relation_master")
-    public RelationMaster getRelationMaster() {
-        return relationMaster;
-    }
+//    @JsonProperty("relation_master")
+//    public RelationMaster getRelationMaster() {
+//        return relationMaster;
+//    }
+//
+//    public void setRelationMaster(RelationMaster relationMaster) {
+//        this.relationMaster = relationMaster;
+//    }
 
-    public void setRelationMaster(RelationMaster relationMaster) {
-        this.relationMaster = relationMaster;
-    }
+//    @JsonProperty("organization")
+//    public OrganizationMaster getOrganization() {
+//        return organization;
+//    }
+//
+//    public void setOrganization(OrganizationMaster organization) {
+//        this.organization = organization;
+//    }
 
-    @JsonProperty("organization")
-    public OrganizationMaster getOrganization() {
-        return organization;
-    }
-
-    public void setOrganization(OrganizationMaster organization) {
-        this.organization = organization;
-    }
-
+    @JsonProperty("rm_particular")
     public String getRmParticular() {
         return rmParticular;
     }
@@ -144,11 +136,21 @@ public class RelationResponse {
         this.rmParticular = rmParticular;
     }
 
+    @JsonProperty("om_name")
     public String getOrgName() {
         return orgName;
     }
 
     public void setOrgName(String orgName) {
         this.orgName = orgName;
+    }
+
+    @JsonProperty("om_is_verified")
+    public Integer getOmIsVerified() {
+        return omIsVerified;
+    }
+
+    public void setOmIsVerified(Integer omIsVerified) {
+        this.omIsVerified = omIsVerified;
     }
 }

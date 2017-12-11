@@ -138,6 +138,7 @@ public class AppConstants {
     public static String EXTRA_EXISTING_RELATION_DETAILS = "existing_relation_details";
     public static String EXTRA_CONTACT_NAME = "contact_name";
     public static String EXTRA_CONTACT_NUMBER = "contact_number";
+    public static String EXTRA_GENDER = "gender";
     public static String EXTRA_FAMILY_RELATION = "family_relation";
     public static String EXTRA_FRIEND_RELATION = "friend_relation";
     public static String EXTRA_PROFILE_IMAGE_URL = "profile_image_url";
