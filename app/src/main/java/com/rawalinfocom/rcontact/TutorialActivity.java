@@ -138,15 +138,15 @@ public class TutorialActivity extends BaseActivity implements RippleView.OnRippl
     public void onComplete(RippleView rippleView) {
         switch (rippleView.getId()) {
             case R.id.ripple_lets_go:
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                    if (ContextCompat.checkSelfPermission(TutorialActivity.this,
-                            Manifest.permission.READ_CONTACTS) != PackageManager
-                            .PERMISSION_GRANTED) {
-                        requestPermissions(new String[]{Manifest.permission
-                                .READ_CONTACTS}, AppConstants
-                                .MY_PERMISSIONS_REQUEST_READ_CONTACTS);
-                    }
-                }else{
+//                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                if (ContextCompat.checkSelfPermission(TutorialActivity.this,
+                        Manifest.permission.READ_CONTACTS) != PackageManager
+                        .PERMISSION_GRANTED) {
+                    requestPermissions(new String[]{Manifest.permission
+                            .READ_CONTACTS}, AppConstants
+                            .MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+//                    }
+                } else {
                     Utils.setIntegerPreference(TutorialActivity.this, AppConstants
                             .PREF_LAUNCH_SCREEN_INT, IntegerConstants
                             .LAUNCH_TERMS_CONDITIONS_ACTIVITY);
