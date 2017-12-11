@@ -4916,7 +4916,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             }
 
         } else {
-            checkboxEducation.setChecked(true);
+//            checkboxEducation.setChecked(true);
             for (int i = 0; i < linearEducationDetails.getChildCount(); i++) {
                 CheckBox checkbox = linearEducationDetails.getChildAt(i).findViewById(R.id
                         .checkbox_education);
@@ -4925,8 +4925,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     break;
                 }
             }
-            inputToDate.setEnabled(false);
-            imageToDate.setEnabled(false);
+//            inputToDate.setEnabled(false);
+//            imageToDate.setEnabled(false);
         }
 
         checkboxEducation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
