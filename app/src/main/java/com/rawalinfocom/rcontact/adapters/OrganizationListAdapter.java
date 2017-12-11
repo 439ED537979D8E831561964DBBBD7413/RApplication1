@@ -131,7 +131,8 @@ public class OrganizationListAdapter extends RecyclerView.Adapter<OrganizationLi
             @Override
             public void onClick(View view) {
                 int pos = (int) view.getTag();
-                if (arrayListOrganization.get(pos).getIsVerify() == 1) {
+
+                if (MoreObjects.firstNonNull(arrayListOrganization.get(pos).getIsVerify(), 0) == IntegerConstants.RCP_TYPE_PRIMARY) {
                     String orgPublicLink = BuildConfig.ORANISATION_PUBLIC_LINK + arrayListOrganization.get(pos).getOrgEntId();
                     if (!StringUtils.isEmpty(orgPublicLink)) {
                         String url = orgPublicLink;
