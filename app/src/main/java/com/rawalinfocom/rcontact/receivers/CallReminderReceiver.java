@@ -60,7 +60,6 @@ public class CallReminderReceiver extends BroadcastReceiver {
         wl.acquire();
         mContext = context;
 
-        // Put here YOUR code.
         String number = intent.getStringExtra(AppConstants.EXTRA_CALL_REMINDER_NUMBER);
         Long time = intent.getLongExtra(AppConstants.EXTRA_CALL_REMINDER_TIME, 0);
         numberToCall =  number;
