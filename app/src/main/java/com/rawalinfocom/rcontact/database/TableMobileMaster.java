@@ -131,46 +131,34 @@ public class TableMobileMaster {
         db.close(); // Closing database connection
     }
 
-    public void deleteData(String RcpPmId) {
-        SQLiteDatabase db = databaseHandler.getWritableDatabase();
-
-        int count = db.delete(TABLE_RC_MOBILE_NUMBER_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
-                RcpPmId, null);
-        if (count > 0) System.out.println("RContact data delete ");
-
-        db.close(); // Closing database connection
-    }
-
-    // Add or update RCP user mobile data
-    public void addUpdateArrayMobileNumber(ArrayList<MobileNumber> arrayListMobileNumber, String RcpPmId) {
-        SQLiteDatabase db = databaseHandler.getWritableDatabase();
-
-        int count = db.delete(TABLE_RC_MOBILE_NUMBER_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
-                RcpPmId, null);
-        if (count > 0) System.out.println("RContact data delete ");
-
-
-        for (int i = 0; i < arrayListMobileNumber.size(); i++) {
-            ContentValues values = new ContentValues();
-            values.put(COLUMN_MNM_ID, arrayListMobileNumber.get(i).getMnmId());
-            values.put(COLUMN_MNM_RECORD_INDEX_ID, arrayListMobileNumber.get(i)
-                    .getMnmRecordIndexId());
-            values.put(COLUMN_MNM_MOBILE_NUMBER, arrayListMobileNumber.get(i).getMnmMobileNumber());
-            values.put(COLUMN_MNM_NUMBER_TYPE, arrayListMobileNumber.get(i).getMnmNumberType());
-            values.put(COLUMN_MNM_IS_PRIMARY, arrayListMobileNumber.get(i).getMnmIsPrimary());
-            values.put(COLUMN_MNM_IS_PRIVATE, arrayListMobileNumber.get(i).getMnmIsPrivate());
-            values.put(COLUMN_MNM_NUMBER_PRIVACY, arrayListMobileNumber.get(i).getMnmNumberPrivacy());
-            values.put(COLUMN_MNM_MOBILE_SERVICE_PROVIDER, arrayListMobileNumber.get(i).getMnmMobileServiceProvider());
-            values.put(COLUMN_MNM_CIRCLE_OF_SERVICE, arrayListMobileNumber.get(i).getMnmCircleOfService());
-            values.put(COLUMN_MNM_SPAM_COUNT, arrayListMobileNumber.get(i).getMnmSpamCount());
-            values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListMobileNumber.get(i).getRcProfileMasterPmId());
-
-            values.put(COLUMN_MNM_ID, arrayListMobileNumber.get(i).getMnmId());
-            // Inserting Row
-            db.insert(TABLE_RC_MOBILE_NUMBER_MASTER, null, values);
-        }
-        db.close(); // Closing database connection
-    }
+//    // Add or update RCP user mobile data
+//    public void addUpdateArrayMobileNumber(ArrayList<MobileNumber> arrayListMobileNumber, String RcpPmId) {
+//        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+//
+//        int count = db.delete(TABLE_RC_MOBILE_NUMBER_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
+//                RcpPmId, null);
+//        if (count > 0) System.out.println("RContact data delete ");
+//
+//        for (int i = 0; i < arrayListMobileNumber.size(); i++) {
+//            ContentValues values = new ContentValues();
+//            values.put(COLUMN_MNM_ID, arrayListMobileNumber.get(i).getMnmId());
+//            values.put(COLUMN_MNM_RECORD_INDEX_ID, arrayListMobileNumber.get(i)
+//                    .getMnmRecordIndexId());
+//            values.put(COLUMN_MNM_MOBILE_NUMBER, arrayListMobileNumber.get(i).getMnmMobileNumber());
+//            values.put(COLUMN_MNM_NUMBER_TYPE, arrayListMobileNumber.get(i).getMnmNumberType());
+//            values.put(COLUMN_MNM_IS_PRIMARY, arrayListMobileNumber.get(i).getMnmIsPrimary());
+//            values.put(COLUMN_MNM_IS_PRIVATE, arrayListMobileNumber.get(i).getMnmIsPrivate());
+//            values.put(COLUMN_MNM_NUMBER_PRIVACY, arrayListMobileNumber.get(i).getMnmNumberPrivacy());
+//            values.put(COLUMN_MNM_MOBILE_SERVICE_PROVIDER, arrayListMobileNumber.get(i).getMnmMobileServiceProvider());
+//            values.put(COLUMN_MNM_CIRCLE_OF_SERVICE, arrayListMobileNumber.get(i).getMnmCircleOfService());
+//            values.put(COLUMN_MNM_SPAM_COUNT, arrayListMobileNumber.get(i).getMnmSpamCount());
+//            values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListMobileNumber.get(i).getRcProfileMasterPmId());
+//
+//            // Inserting Row
+//            db.insert(TABLE_RC_MOBILE_NUMBER_MASTER, null, values);
+//        }
+//        db.close(); // Closing database connection
+//    }
 
     public String getUserMobileNumber(String pm_id) {
 
@@ -275,7 +263,7 @@ public class TableMobileMaster {
                         (COLUMN_MNM_IS_PRIVATE)));
                 mobileNumber.setMnmNumberPrivacy(cursor.getString(cursor.getColumnIndex
                         (COLUMN_MNM_NUMBER_PRIVACY)));
-                mobileNumber.setMnmIsPrivate(cursor.getInt(cursor.getColumnIndex
+                mobileNumber.setMnmPhonePublic(cursor.getInt(cursor.getColumnIndex
                         (COLUMN_MNM_IS_PRIVATE)));
                 mobileNumber.setMnmCircleOfService(cursor.getString(cursor.getColumnIndex
                         (COLUMN_MNM_CIRCLE_OF_SERVICE)));
@@ -377,7 +365,7 @@ public class TableMobileMaster {
                         (COLUMN_MNM_NUMBER_TYPE)));
                 mobileNumber.setMnmIsPrimary(cursor.getString(cursor.getColumnIndex
                         (COLUMN_MNM_IS_PRIMARY)));
-                mobileNumber.setMnmIsPrivate(cursor.getInt(cursor.getColumnIndex
+                mobileNumber.setMnmPhonePublic(cursor.getInt(cursor.getColumnIndex
                         (COLUMN_MNM_IS_PRIVATE)));
                 mobileNumber.setMnmNumberPrivacy(cursor.getString(cursor.getColumnIndex
                         (COLUMN_MNM_NUMBER_PRIVACY)));
@@ -440,16 +428,8 @@ public class TableMobileMaster {
         return isUpdated;
     }
 
-    // Deleting single Mobile Number
-    public void deleteMobileNumber(MobileNumber mobileNumber) {
-        SQLiteDatabase db = databaseHandler.getWritableDatabase();
-        db.delete(TABLE_RC_MOBILE_NUMBER_MASTER, COLUMN_MNM_ID + " = ?",
-                new String[]{String.valueOf(mobileNumber.getMnmId())});
-        db.close();
-    }
-
     // Deleting single Mobile Number From RcpId
-    public void deleteMobileNumber(String rcpId) {
+    public void deleteMobileNumberData(String rcpId) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
         db.delete(TABLE_RC_MOBILE_NUMBER_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = ?",
                 new String[]{String.valueOf(rcpId)});

@@ -102,6 +102,9 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout swipeRefreshLayout;
 
+    private String ppmTag, carID;
+    private int rcpID;
+
     @Override
     public void getFragmentArguments() {
 
@@ -262,6 +265,7 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
 
     private void init() {
         tableRCContactRequest = new TableRCContactRequest(getDatabaseHandler());
+//        tableRCContactRequest.deleteAll();
         InputMethodManager im = (InputMethodManager) getActivity().getSystemService(Service
                 .INPUT_METHOD_SERVICE);
         softKeyboard = new SoftKeyboard(layoutRoot, im);
@@ -452,7 +456,15 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
 //        listTodayResponse = createRatingList(responseReceivedToday, 1);
 //        listPastResponse = createRatingList(responseReceivedPastDays, 1);
 
-        notiProfileAdapter = new NotiProfileAdapter(this, listAllRequest);
+        notiProfileAdapter = new NotiProfileAdapter(this, listAllRequest,
+                new NotiProfileAdapter.OnClickListener() {
+                    @Override
+                    public void onClick(String type, String carId, int rcpId) {
+                        ppmTag = type;
+                        carID = carId;
+                        rcpID = rcpId;
+                    }
+                });
 //        todayProfileAdapter = new NotiProfileAdapter(this, listTodayRequest, 0);
 //        pastProfileAdapter = new NotiProfileAdapter(this, listPastRequest, 1);
         recyclerViewProfileList.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -507,8 +519,9 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
                 item.setNotiInfo(String.format(item.getPersonName() + " " + getActivity().getString(R.string
                         .str_confirmed_your_request_for) + " ", request.getPpmTag()));
             }
+            item.setPpmTag(request.getPpmTag());
             item.setRcpUserPmId(pmId + "");
-            item.setCardCloudId(request.getCarId());
+            item.setCardCloudId(request.getCarRequestId());
             item.setNotiRequestTime(request.getUpdatedAt());
             list.add(item);
 
@@ -586,7 +599,7 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
                 saveDataToDB(profileData);
             }
 
-            if (serviceType.equalsIgnoreCase(WsConstants.REQ_PROFILE_PRIVACY_REQUEST)) {
+            if (serviceType.equalsIgnoreCase(WsConstants.REQ_PROFILE_PRIVACY_RESPOND)) {
                 WsResponseObject privacyResponse = (WsResponseObject) data;
                 if (privacyResponse != null && StringUtils.equalsIgnoreCase
                         (privacyResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
@@ -595,34 +608,43 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
 
                     try {
 
-                        if (MoreObjects.firstNonNull(item.getCarAccessPermissionStatus(), 0) == 1 ||
-                                MoreObjects.firstNonNull(item.getCarAccessPermissionStatus(), 0)
-                                        == 2) {
-                            boolean deleted = tableRCContactRequest.removeRequest(item.getCarId());
-                            if (deleted) {
-                                refreshAllList();
-                            }
-                            Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
-//                            Utils.showSuccessSnackBar(getActivity(),);
-                        } else {
-                            Toast.makeText(getActivity(), getResources().getString(R.string
-                                    .msg_try_later), Toast.LENGTH_SHORT).show();
+//                        if (MoreObjects.firstNonNull(item.getCarAccessPermissionStatus(), 0) == 1 ||
+//                                MoreObjects.firstNonNull(item.getCarAccessPermissionStatus(), 0)
+//                                        == 2) {
+//                            boolean deleted = tableRCContactRequest.removeRequest(item.getCarId());
+                        System.out.println("RContacts data response --> " + ppmTag + " -- " + carID + " -- " + rcpID);
+                        boolean deleted = tableRCContactRequest.removeRequest(ppmTag, carID, rcpID);
+                        if (deleted) {
+                            refreshAllList();
                         }
+                        Utils.showSuccessSnackBar(activity, layoutRoot, msg);
+//                            Utils.showSuccessSnackBar(getActivity(),);
+//                        } else {
+//                            Utils.showErrorSnackBar(activity, layoutRoot, getResources().getString(R.string.msg_try_later));
+//                        }
                     } catch (Exception e) {
-                        Toast.makeText(getActivity(), getResources().getString(R.string
-                                .msg_try_later), Toast.LENGTH_SHORT).show();
+                        Utils.showErrorSnackBar(activity, layoutRoot, getResources().getString(R.string.msg_try_later));
                     }
-
+                } else {
+                    if (privacyResponse != null) {
+                        Utils.showErrorSnackBar(activity, layoutRoot, privacyResponse.getMessage());
+                        System.out.println("RContact error --> " + privacyResponse.getMessage());
+                    } else {
+                        Utils.showErrorSnackBar(activity, layoutRoot, getResources().getString(R.string.msg_try_later));
+                        System.out.println("RContact error --> privacyResponse null");
+                    }
                 }
             }
             // <editor-fold desc="REQ_GET_CONTACT_REQUEST">
             if (serviceType.contains(WsConstants.REQ_GET_CONTACT_REQUEST)) {
                 WsResponseObject getContactUpdateResponse = (WsResponseObject) data;
+
+                // cancel the Visual indication of a refresh
+                if (swipeRefreshLayout != null)
+                    swipeRefreshLayout.setRefreshing(false);
+
                 if (getContactUpdateResponse != null && StringUtils.equalsIgnoreCase
                         (getContactUpdateResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
-
-                    // cancel the Visual indication of a refresh
-                    swipeRefreshLayout.setRefreshing(false);
 
                     storeContactRequestResponseToDB(getContactUpdateResponse, getContactUpdateResponse.getRequestData(),
                             getContactUpdateResponse.getResponseData());

@@ -261,7 +261,7 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
                 String numberToShow = "+" + phoneNumber.getOriginalNumber();
                 holder.textMain.setText(Utils.setMultipleTypeface(activity, numberToShow + " " +
                                 activity
-                                .getString(R.string.im_icon_verify), 0,
+                                        .getString(R.string.im_icon_verify), 0,
                         (StringUtils.length(numberToShow) + 1), ((StringUtils.length
                                 (numberToShow) + 1) + 1)));
 
@@ -572,6 +572,10 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
             });*/
 
         }
+//        if ((MoreObjects.firstNonNull(address.getIsPrivate(), 0)) == IntegerConstants
+//                .IS_PRIVATE) {
+//            holder.imgActionType.setVisibility(View.GONE);
+//        }
         if ((MoreObjects.firstNonNull(address.getIsPrivate(), 0)) == IntegerConstants
                 .IS_PRIVATE) {
             holder.imgActionType.setVisibility(View.GONE);
@@ -719,6 +723,10 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
                 }
             });*/
         }
+//        if ((MoreObjects.firstNonNull(imAccount.getIMAccountIsPrivate(), 0)) ==
+//                IntegerConstants.IS_PRIVATE) {
+//            holder.imgActionType.setVisibility(View.VISIBLE);
+//        }
         if ((MoreObjects.firstNonNull(imAccount.getIMAccountIsPrivate(), 0)) ==
                 IntegerConstants.IS_PRIVATE) {
             holder.imgActionType.setVisibility(View.VISIBLE);

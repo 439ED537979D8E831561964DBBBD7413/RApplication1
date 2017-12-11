@@ -169,6 +169,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
                 db.execSQL("ALTER TABLE " + TableProfileMaster.TABLE_RC_PROFILE_MASTER + " ADD "
                         + "COLUMN " + TableProfileMaster.COLUMN_PM_LAST_SEEN + " text ");
+                db.execSQL("ALTER TABLE " + TableProfileMaster.TABLE_RC_PROFILE_MASTER + " ADD "
+                        + "COLUMN " + TableProfileMaster.COLUMN_PM_RATING_PRIVACY + " text ");
+                db.execSQL("ALTER TABLE " + TableProfileMaster.TABLE_RC_PROFILE_MASTER + " ADD "
+                        + "COLUMN " + TableProfileMaster.COLUMN_PM_RATING_PRIVATE + " text ");
 
         }
 

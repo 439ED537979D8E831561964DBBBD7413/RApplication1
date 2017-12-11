@@ -96,7 +96,7 @@ public class EventsActivity extends BaseActivity implements RippleView
     public ImageView imageEnlarge;
 
     private EventAdapter eventAdapter;
-//    private EventAdapter todayEventAdapter;
+    //    private EventAdapter todayEventAdapter;
 //    private EventAdapter recentEventAdapter;
 //    private EventAdapter upcomingEventAdapter;
     public static String evmRecordId = "";
@@ -254,7 +254,7 @@ public class EventsActivity extends BaseActivity implements RippleView
         String yesterDay = getEventDate(-1);
         String tomorrow = getEventDate(1);
         String day7th = getEventDate(7);
-        String newDate =  getEventDate(-2);
+        String newDate = getEventDate(-2);
         String currentUserPmId = Utils.getStringPreference(this, AppConstants.PREF_USER_PM_ID, "0");
         int currentPmID = Integer.parseInt(currentUserPmId);
 
@@ -262,7 +262,7 @@ public class EventsActivity extends BaseActivity implements RippleView
         ArrayList<Event> eventsToday = tableEventMaster.getAllEventsBetWeenExceptCurrentUser(today, today, currentPmID);
         ArrayList<Event> eventsRecent = tableEventMaster.getAllEventsBetWeenExceptCurrentUser(yesterDay, yesterDay, currentPmID);
         ArrayList<Event> eventsUpcoming7 = tableEventMaster.getAllEventsBetWeenExceptCurrentUser(tomorrow, day7th, currentPmID);
-        ArrayList<Event> newEventList =  new ArrayList<>();
+        ArrayList<Event> newEventList = new ArrayList<>();
 
         newEventList.addAll(eventsToday);
         newEventList.addAll(eventsRecent);
@@ -341,7 +341,7 @@ public class EventsActivity extends BaseActivity implements RippleView
             String eventName = e.getEvmEventType();
             int eventType = -1;
             TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
-            if (MoreObjects.firstNonNull(e.getEvmIsPrivate(), 0) != IntegerConstants.IS_PRIVATE && e.getRcProfileMasterPmId() != null && e.getRcProfileMasterPmId().length() > 0) {
+            if (Integer.parseInt(e.getEvmEventPrivacy()) != IntegerConstants.IS_PRIVATE && e.getRcProfileMasterPmId() != null && e.getRcProfileMasterPmId().length() > 0) {
                 int pmId = Integer.parseInt(e.getRcProfileMasterPmId());
 
                 UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(pmId);

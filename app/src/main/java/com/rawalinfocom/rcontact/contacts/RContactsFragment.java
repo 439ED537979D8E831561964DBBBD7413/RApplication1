@@ -526,6 +526,10 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
                     rContactListAdapter.notifyDataSetChanged();
 
                 } else {
+
+                    if (swipeRefreshLayout != null)
+                        swipeRefreshLayout.setRefreshing(false);
+
                     Utils.hideProgressDialog();
                     if (getRCPContactUpdateResponse != null) {
                         System.out.println("RContact error --> " + getRCPContactUpdateResponse
@@ -649,6 +653,8 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
                 userProfile.setPmProfileImage(profileData.get(i).getPbProfilePhoto());
                 userProfile.setTotalProfileRateUser(profileData.get(i).getTotalProfileRateUser());
                 userProfile.setPmLastSeen(profileData.get(i).getPmLastSeen());
+                userProfile.setProfileRatingPrivacy(String.valueOf(profileData.get(i).getProfileRatingPrivacy()));
+                userProfile.setRatingPrivate(String.valueOf(profileData.get(i).getRatingPrivate()));
 
                 if (mapLocalRcpId.containsKey(profileData.get(i).getRcpPmId())) {
                     userProfile.setPmRawId(mapLocalRcpId.get(profileData.get(i).getRcpPmId()));
@@ -686,6 +692,7 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
                         mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber.get(j)
                                 .getPhonePublic()));
                         mobileNumber.setMnmIsPrivate(arrayListPhoneNumber.get(j).getIsPrivate());
+                        mobileNumber.setMnmPhonePublic(arrayListPhoneNumber.get(j).getPhonePublic());
                         mobileNumber.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
                         if (StringUtils.equalsIgnoreCase(profileData.get(i)
                                         .getVerifiedMobileNumber()
@@ -774,7 +781,7 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
                             education.setEdmEducationToDate(arrayListEducation.get(j).getEduToDate());
                             education.setEdmEducationIsCurrent(arrayListEducation.get(j).getIsCurrent
                                     ());
-//                        education.setEdmEducationIsPrivate(arrayListEducation.get(j).geti());
+                            education.setEdmEducationIsPrivate(arrayListEducation.get(j).getIsPrivate());
                             education.setEdmEducationPrivacy(String.valueOf(arrayListEducation.get(j)
                                     .getEduPublic()));
 
@@ -883,9 +890,9 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
                             address.setAmStreet(arrayListAddress.get(j).getStreet());
                             address.setAmAddressType(arrayListAddress.get(j).getAddressType());
                             address.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
-                            address.setAmIsPrivate(arrayListAddress.get(j).getIsPrivate());
                             address.setAmAddressPrivacy(String.valueOf(arrayListAddress.get(j)
                                     .getAddPublic()));
+                            address.setAmIsPrivate(arrayListAddress.get(j).getIsPrivate());
                             addressList.add(address);
                         }
 

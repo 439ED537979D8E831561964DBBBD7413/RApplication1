@@ -1524,6 +1524,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 userProfile.setPmProfileImage(profileData.get(i).getPbProfilePhoto());
                 userProfile.setTotalProfileRateUser(profileData.get(i).getTotalProfileRateUser());
                 userProfile.setPmLastSeen(profileData.get(i).getPmLastSeen());
+                userProfile.setProfileRatingPrivacy(String.valueOf(profileData.get(i).getProfileRatingPrivacy()));
+                userProfile.setRatingPrivate(String.valueOf(profileData.get(i).getRatingPrivate()));
 
                 if (mapLocalRcpId.containsKey(profileData.get(i).getRcpPmId())) {
                     userProfile.setPmRawId(mapLocalRcpId.get(profileData.get(i).getRcpPmId()));
@@ -1568,9 +1570,10 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                         }
 
                         mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(j).getPhoneType());
+                        mobileNumber.setMnmIsPrivate(arrayListPhoneNumber.get(j).getIsPrivate());
                         mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber.get(j)
                                 .getPhonePublic()));
-                        mobileNumber.setMnmIsPrivate(arrayListPhoneNumber.get(j).getIsPrivate());
+                        mobileNumber.setMnmPhonePublic(arrayListPhoneNumber.get(j).getPhonePublic());
                         mobileNumber.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
                         if (StringUtils.equalsIgnoreCase(profileData.get(i)
                                         .getVerifiedMobileNumber()
@@ -1611,12 +1614,12 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                             email.setEmSocialType(arrayListEmailId.get(j).getEmSocialType());
                             email.setEmRecordIndexId(arrayListEmailId.get(j).getEmId());
                             email.setEmEmailType(arrayListEmailId.get(j).getEmType());
+                            email.setEmIsPrivate(arrayListEmailId.get(j).getEmIsPrivate());
                             email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(j)
                                     .getEmPublic()));
                             email.setEmIsVerified(String.valueOf(arrayListEmailId.get(j)
                                     .getEmRcpType
                                             ()));
-                            email.setEmIsPrivate(arrayListEmailId.get(j).getEmIsPrivate());
 
                             email.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
 
@@ -1661,7 +1664,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                             education.setEdmEducationToDate(arrayListEducation.get(j).getEduToDate());
                             education.setEdmEducationIsCurrent(arrayListEducation.get(j).getIsCurrent
                                     ());
-//                        education.setEdmEducationIsPrivate(arrayListEducation.get(j).geti());
+                            education.setEdmEducationIsPrivate(arrayListEducation.get(j).getIsPrivate());
                             education.setEdmEducationPrivacy(String.valueOf(arrayListEducation.get(j)
                                     .getEduPublic()));
 
@@ -2252,9 +2255,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         }
     }
 
-    private void
-
-    fetchCallLogsFromIds(ArrayList<String> listOfRowIds) {
+    private void fetchCallLogsFromIds(ArrayList<String> listOfRowIds) {
 
         ArrayList<CallLogType> tempCallLogTypeArrayList = new ArrayList<>();
 

@@ -113,7 +113,7 @@ public class TableEducationMaster {
         db.close(); // Closing database connection
     }
 
-    public void deleteData(String RcpPmId) {
+    public void deleteEducationData(String RcpPmId) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
 
         int count = db.delete(TABLE_RC_EDUCATION_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
@@ -124,61 +124,60 @@ public class TableEducationMaster {
     }
 
     // Adding or Updating array Org
-    public void addUpdateArrayEducation(ArrayList<Education> arrayListEducation, String RcpPmId) {
-        SQLiteDatabase db = databaseHandler.getWritableDatabase();
-
-        int count = db.delete(TABLE_RC_EDUCATION_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
-                RcpPmId, null);
-        if (count > 0) System.out.println("RContact data delete ");
-
-
-//        ContentValues values = new ContentValues();
-        for (int i = 0; i < arrayListEducation.size(); i++) {
-            ContentValues values = new ContentValues();
-            values.put(COLUMN_EDM_ID, arrayListEducation.get(i).getEdmId());
-            values.put(COLUMN_EDM_RECORD_INDEX_ID, arrayListEducation.get(i).getEdmRecordIndexId());
-            values.put(COLUMN_EDM_SCHOOL_COLLEGE_NAME, arrayListEducation.get(i)
-                    .getEdmSchoolCollegeName());
-            values.put(COLUMN_EDM_EDUCATION_FROM_DATE, arrayListEducation.get(i)
-                    .getEdmEducationFromDate());
-            values.put(COLUMN_EDM_EDUCATION_TO_DATE, arrayListEducation.get(i)
-                    .getEdmEducationToDate());
-            values.put(COLUMN_EDM_COURSE, arrayListEducation.get(i)
-                    .getEdmCourse());
-            values.put(COLUMN_EDM_EDUCATION_IS_PRIVATE, MoreObjects.firstNonNull
-                    (arrayListEducation.get(i).getEdmEducationIsPrivate(), 0));
-            values.put(COLUMN_EDM_EDUCATION_IS_CURRENT, arrayListEducation.get(i)
-                    .getEdmEducationIsCurrent());
-            values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListEducation.get(i)
-                    .getRcProfileMasterPmId());
-
-            // Inserting Row
-            db.insert(TABLE_RC_EDUCATION_MASTER, null, values);
-
-//            int count = 0;
-//            Cursor mCount = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_RC_EDUCATION_MASTER
-// + " " +
-//                    "WHERE " + COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
-//                    arrayListEducation.get(i).getRcProfileMasterPmId(), null);
-//            if (mCount != null) {
-//                mCount.moveToFirst();
-//                count = mCount.getInt(0);
-//                mCount.close();
-//            }
+//    public void addUpdateArrayEducation(ArrayList<Education> arrayListEducation, String RcpPmId) {
+//        SQLiteDatabase db = databaseHandler.getWritableDatabase();
 //
-//            if (count > 0) {
-//                // Update if already exists
-//                db.update(TABLE_RC_EDUCATION_MASTER, values, COLUMN_RC_PROFILE_MASTER_PM_ID
-// + " = " +
-//                        arrayListEducation.get(i).getRcProfileMasterPmId(), null);
-//            } else {
-//                // Inserting Row
-//                db.insert(TABLE_RC_EDUCATION_MASTER, null, values);
-//            }
-        }
-
-        db.close(); // Closing database connection
-    }
+//        int count = db.delete(TABLE_RC_EDUCATION_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
+//                RcpPmId, null);
+//        if (count > 0) System.out.println("RContact data delete ");
+//
+////        ContentValues values = new ContentValues();
+//        for (int i = 0; i < arrayListEducation.size(); i++) {
+//            ContentValues values = new ContentValues();
+//            values.put(COLUMN_EDM_ID, arrayListEducation.get(i).getEdmId());
+//            values.put(COLUMN_EDM_RECORD_INDEX_ID, arrayListEducation.get(i).getEdmRecordIndexId());
+//            values.put(COLUMN_EDM_SCHOOL_COLLEGE_NAME, arrayListEducation.get(i)
+//                    .getEdmSchoolCollegeName());
+//            values.put(COLUMN_EDM_EDUCATION_FROM_DATE, arrayListEducation.get(i)
+//                    .getEdmEducationFromDate());
+//            values.put(COLUMN_EDM_EDUCATION_TO_DATE, arrayListEducation.get(i)
+//                    .getEdmEducationToDate());
+//            values.put(COLUMN_EDM_COURSE, arrayListEducation.get(i)
+//                    .getEdmCourse());
+//            values.put(COLUMN_EDM_EDUCATION_IS_PRIVATE, MoreObjects.firstNonNull
+//                    (arrayListEducation.get(i).getEdmEducationIsPrivate(), 0));
+//            values.put(COLUMN_EDM_EDUCATION_IS_CURRENT, arrayListEducation.get(i)
+//                    .getEdmEducationIsCurrent());
+//            values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListEducation.get(i)
+//                    .getRcProfileMasterPmId());
+//
+//            // Inserting Row
+//            db.insert(TABLE_RC_EDUCATION_MASTER, null, values);
+//
+////            int count = 0;
+////            Cursor mCount = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_RC_EDUCATION_MASTER
+//// + " " +
+////                    "WHERE " + COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
+////                    arrayListEducation.get(i).getRcProfileMasterPmId(), null);
+////            if (mCount != null) {
+////                mCount.moveToFirst();
+////                count = mCount.getInt(0);
+////                mCount.close();
+////            }
+////
+////            if (count > 0) {
+////                // Update if already exists
+////                db.update(TABLE_RC_EDUCATION_MASTER, values, COLUMN_RC_PROFILE_MASTER_PM_ID
+//// + " = " +
+////                        arrayListEducation.get(i).getRcProfileMasterPmId(), null);
+////            } else {
+////                // Inserting Row
+////                db.insert(TABLE_RC_EDUCATION_MASTER, null, values);
+////            }
+//        }
+//
+//        db.close(); // Closing database connection
+//    }
 
     // Getting single org
     public Education getEducation(int edmId) {

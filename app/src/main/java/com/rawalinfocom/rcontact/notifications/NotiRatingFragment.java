@@ -456,12 +456,14 @@ public class NotiRatingFragment extends BaseNotificationFragment implements WsRe
 
             // <editor-fold desc="REQ_GET_RATING_DETAILS">
             if (serviceType.contains(WsConstants.REQ_GET_RATING_DETAILS)) {
+
+                // cancel the Visual indication of a refresh
+                if (swipeRefreshLayout != null)
+                    swipeRefreshLayout.setRefreshing(false);
+
                 WsResponseObject getRatingUpdateResponse = (WsResponseObject) data;
                 if (getRatingUpdateResponse != null && StringUtils.equalsIgnoreCase
                         (getRatingUpdateResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
-
-                    // cancel the Visual indication of a refresh
-                    swipeRefreshLayout.setRefreshing(false);
 
                     storeRatingRequestResponseToDB(getRatingUpdateResponse, getRatingUpdateResponse.getRatingReceive(),
                             getRatingUpdateResponse.getRatingDone(), getRatingUpdateResponse.getRatingDetails());

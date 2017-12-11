@@ -302,10 +302,8 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
             @Override
             public void onClick(View view) {
                 if (StringUtils.length(thumbnailUrl) > 0) {
-                    Utils.zoomImageFromThumb(activity, imageProfile, userProfile.getPmProfileImage(),
-                            frameImageEnlarge, imageEnlarge, frameContainer);
+                    Utils.zoomImageFromThumb(activity, imageProfile, thumbnailUrl, frameImageEnlarge, imageEnlarge, frameContainer);
                 }
-
             }
         });
 
@@ -430,9 +428,19 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
         UserProfile userProfile = profileDetail.getProfileFromPmId(Integer.parseInt(pmId));
 
         //<editor-fold desc="User Rating">
-        if (userProfile != null) {
+
+        if (profileDetail != null) {
+
+            linearBasicDetailRating.setEnabled(false);
             textUserRating.setText(userProfile.getTotalProfileRateUser());
-            ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
+
+            if (Integer.parseInt((String) MoreObjects.firstNonNull(userProfile.getProfileRatingPrivacy(), 0)) == IntegerConstants
+                    .PRIVACY_EVERYONE) {
+                ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
+            } else {
+                ratingUser.setRating(0);
+                ratingUser.setEnabled(false);
+            }
         } else {
             textUserRating.setText("0");
             ratingUser.setRating(0);
@@ -502,7 +510,7 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
             RelationRecommendationType recommendationType = new RelationRecommendationType();
             recommendationType.setFirstName(relationUserProfile.getPmFirstName());
             recommendationType.setLastName(relationUserProfile.getPmLastName());
-            recommendationType.setNumber(relationUserProfile.getMobileNumber());
+            recommendationType.setNumber("+" + relationUserProfile.getMobileNumber());
             recommendationType.setPmId(String.valueOf(allExistingRelationList.get(i).getRrmToPmId()));
             recommendationType.setDateAndTime("");
             recommendationType.setProfileImage(relationUserProfile.getProfilePhoto());

@@ -62,8 +62,6 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
     private ArrayList<Object> arrayList;
     private int profileDetailType;
 
-    private ArrayList<String> requestAllIdList = new ArrayList<>();
-
     private int colorBlack, colorPineGreen;
     private PrivacySettingPopupDialog.DialogCallback listner;
     private boolean isOwnProfile = false;
@@ -71,7 +69,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
     private Button buttonRequestAll;
 
     public ProfileDetailAdapter(Activity activity, ArrayList<Object> arrayList, int
-            profileDetailType, boolean isOwnProfile, String pmId, Button buttonRequestAll) {
+            profileDetailType, boolean isOwnProfile, String pmId) {
         this.activity = activity;
         this.profileDetailType = profileDetailType;
         this.arrayList = arrayList;
@@ -79,7 +77,6 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         colorBlack = ContextCompat.getColor(activity, R.color.colorBlack);
         colorPineGreen = ContextCompat.getColor(activity, R.color.colorAccent);
         this.pmId = pmId;
-        this.buttonRequestAll = buttonRequestAll;
         listner = this;
     }
 
@@ -241,8 +238,6 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                     holder.imgActionType.setVisibility(View.GONE);
                     holder.imgActionWhatsapp.setVisibility(View.GONE);
-
-                    requestAllIdList.add(phoneNumber.getPhoneId());
                 }
             }
         } else if (pbRcpType == IntegerConstants.RCP_TYPE_SECONDARY) {
@@ -268,13 +263,13 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
             } else {
                 holder.llPrivacy.setVisibility(View.GONE);
-                if ((MoreObjects.firstNonNull(phoneNumber.getIsPrivate(), 0)) == IntegerConstants
-                        .IS_PRIVATE) {
+//                if ((MoreObjects.firstNonNull(phoneNumber.getPhonePublic(), 0)) == IntegerConstants
+//                        .PRIVACY_PRIVATE) {
+                if ((MoreObjects.firstNonNull(phoneNumber.getIsPrivate(), 0)) == IntegerConstants.
+                        IS_PRIVATE) {
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                     holder.imgActionType.setVisibility(View.GONE);
                     holder.imgActionWhatsapp.setVisibility(View.GONE);
-
-                    requestAllIdList.add(phoneNumber.getPhoneId());
                 }
             }
             holder.llPrivacy.setOnClickListener(new View.OnClickListener() {
@@ -384,11 +379,11 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 holder.llPrivacy.setVisibility(View.GONE);
             else {
                 holder.llPrivacy.setVisibility(View.GONE);
-                if ((MoreObjects.firstNonNull(email.getEmIsPrivate(), 0)) == IntegerConstants
-                        .IS_PRIVATE) {
+//                if ((MoreObjects.firstNonNull(email.getEmPublic(), 0)) == IntegerConstants
+//                        .PRIVACY_PRIVATE) {
+                if ((MoreObjects.firstNonNull(email.getEmIsPrivate(), 0)) == IntegerConstants.IS_PRIVATE) {
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                     holder.imgActionType.setVisibility(View.GONE);
-                    requestAllIdList.add(email.getEmId());
                 }
             }
         } else {
@@ -445,11 +440,11 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 holder.llPrivacy.setVisibility(View.VISIBLE);
             } else {
                 holder.llPrivacy.setVisibility(View.GONE);
-                if ((MoreObjects.firstNonNull(email.getEmIsPrivate(), 0)) == IntegerConstants
-                        .IS_PRIVATE) {
+//                if ((MoreObjects.firstNonNull(email.getEmPublic(), 0)) == IntegerConstants
+//                        .PRIVACY_PRIVATE) {
+                if ((MoreObjects.firstNonNull(email.getEmIsPrivate(), 0)) == IntegerConstants.IS_PRIVATE) {
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                     holder.imgActionType.setVisibility(View.GONE);
-                    requestAllIdList.add(email.getEmId());
                 }
             }
             holder.llPrivacy.setOnClickListener(new View.OnClickListener() {
@@ -501,7 +496,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
 //        if (emRcpType == IntegerConstants.RCP_TYPE_PRIMARY) {
 
-        holder.textMain.setText(education.getEduName() + "\n" + education.getEduCourse());
+        holder.textMain.setText(String.format("%s\n%s", education.getEduName(), education.getEduCourse()));
         holder.textMain.setTextColor(colorPineGreen);
 
 /*        if (isOwnProfile)
@@ -509,7 +504,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         else {
             holder.llPrivacy.setVisibility(View.GONE);
             if ((MoreObjects.firstNonNull(education.getEduPublic(), 0)) == IntegerConstants
-                    .IS_PRIVATE) {
+                    .PRIVACY_PRIVATE) {
                 holder.buttonRequest.setVisibility(View.VISIBLE);
                 holder.imgActionType.setVisibility(View.GONE);
             }
@@ -534,8 +529,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             holder.llPrivacy.setVisibility(View.VISIBLE);
         } else {
             holder.llPrivacy.setVisibility(View.GONE);
-            if ((MoreObjects.firstNonNull(education.getEduPublic(), 0)) == IntegerConstants
-                    .PRIVACY_PRIVATE) {
+            if ((MoreObjects.firstNonNull(education.getEduPublic(), 3)) == IntegerConstants
+                    .PRIVACY_PRIVATE && education.getEduName().startsWith("XXXX")) {
                 holder.buttonRequest.setVisibility(View.VISIBLE);
                 holder.imgActionType.setVisibility(View.GONE);
                 holder.textSub.setVisibility(View.GONE);
@@ -580,7 +575,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             }
         });
 
-         holder.buttonRequest.setOnClickListener(new View.OnClickListener() {
+        holder.buttonRequest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //Toast.makeText(activity, "requesting profile", Toast.LENGTH_SHORT).show();
@@ -757,14 +752,16 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             } else {
                 holder.llPrivacy.setVisibility(View.GONE);
 //                holder.textActionType.setVisibility(View.VISIBLE);
+//                if ((MoreObjects.firstNonNull(address.getAddPublic(), 0)) == IntegerConstants
+//                        .PRIVACY_PRIVATE) {
                 if ((MoreObjects.firstNonNull(address.getIsPrivate(), 0)) == IntegerConstants
                         .IS_PRIVATE) {
 //                    holder.imageView2.setVisibility(View.GONE);
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                     holder.imgActionType.setVisibility(View.GONE);
-                    requestAllIdList.add(address.getAddId());
                 }
             }
+
             holder.llPrivacy.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -924,12 +921,14 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 holder.llPrivacy.setVisibility(View.VISIBLE);
             } else {
                 holder.llPrivacy.setVisibility(View.GONE);
-                if ((MoreObjects.firstNonNull(imAccount.getIMAccountIsPrivate(), 0)) ==
-                        IntegerConstants.IS_PRIVATE) {
+
+                if ((MoreObjects.firstNonNull(imAccount.getIMAccountIsPrivate(), 0)) == IntegerConstants
+                        .IS_PRIVATE) {
+//                if ((MoreObjects.firstNonNull(imAccount.getIMAccountPublic(), 0)) ==
+//                        IntegerConstants.PRIVACY_PRIVATE) {
 //                    holder.imageView2.setVisibility(View.GONE);
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                     holder.imgActionType.setVisibility(View.GONE);
-                    requestAllIdList.add(imAccount.getIMId());
                 }
             }
             holder.llPrivacy.setOnClickListener(new View.OnClickListener() {
@@ -1051,7 +1050,6 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 //                    holder.imageView2.setVisibility(View.GONE);
                         holder.buttonRequest.setVisibility(View.VISIBLE);
                         holder.imgActionType.setVisibility(View.GONE);
-                        requestAllIdList.add(event.getEventId());
                     }
                 }
 
@@ -1147,7 +1145,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 privacyDataItem.setPbEmailId(privacyEntityItems);
                 break;
 
-                case AppConstants.EDUCATION:
+            case AppConstants.EDUCATION:
                 privacyDataItem.setPbEducation(privacyEntityItems);
                 break;
 
@@ -1232,3 +1230,4 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         }
     }
 }
+
