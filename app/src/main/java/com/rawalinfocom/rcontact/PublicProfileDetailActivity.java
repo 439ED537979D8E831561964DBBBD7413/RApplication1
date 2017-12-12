@@ -608,6 +608,20 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                     }
                 });
 
+                textOrganization.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (tempOrganization.get(0).getIsVerify() == 1) {
+                            String orgPublicLink = BuildConfig.ORANISATION_PUBLIC_LINK + tempOrganization.get(0).getOrgEntId();
+                            if (!StringUtils.isEmpty(orgPublicLink)) {
+                                Intent i = new Intent(Intent.ACTION_VIEW);
+                                i.setData(Uri.parse(orgPublicLink));
+                                startActivity(i);
+                            }
+                        }
+                    }
+                });
+
             } else {
                 linearOrganizationDetail.setVisibility(View.INVISIBLE);
             }

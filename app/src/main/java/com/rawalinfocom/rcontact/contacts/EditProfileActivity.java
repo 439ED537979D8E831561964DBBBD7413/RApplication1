@@ -3881,7 +3881,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             education.setEduCourse(arrayListEducation.get(i).getEdmCourse());
             education.setEduId(arrayListEducation.get(i).getEdmRecordIndexId());
             education.setIsCurrent(arrayListEducation.get(i).getEdmEducationIsCurrent());
-            education.setEduPublic(Integer.valueOf(arrayListEducation.get(i).getEdmEducationPrivacy()));
+            education.setEduPublic(Integer.valueOf(arrayListEducation.get(i)
+                    .getEdmEducationPrivacy()));
 
             arrayListEducationObject.add(education);
         }
@@ -4751,7 +4752,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 //                                "='#00796B'>" + getString(R.string.im_icon_verify) +
 //                                "</font><br>", 0,
 //                        (StringUtils.length
-//                                (organization.getOrgName()) + 1), ((StringUtils.length(organization
+//                                (organization.getOrgName()) + 1), ((StringUtils.length
+// (organization
 //                                .getOrgName()) + 1) + 1)).toString();
 
                 inputCompanyName.setText(organization.getOrgName());
@@ -5431,7 +5433,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     private void startCropImageActivity(Uri imageUri) {
         CropImage.activity(imageUri)
                 .setGuidelines(CropImageView.Guidelines.ON)
-                .setMultiTouchEnabled(true)
+//                .setMultiTouchEnabled(true)
+                .setCropShape(CropImageView.CropShape.RECTANGLE)
+                .setAspectRatio(1, 1)
                 .start(EditProfileActivity.this);
     }
 
@@ -5899,7 +5903,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         userProfile.setPmBadge(profileDetail.getPmBadge());
         userProfile.setPmProfileImage(profileDetail.getPbProfilePhoto());
         userProfile.setPmLastSeen(profileDetail.getPmLastSeen());
-        userProfile.setProfileRatingPrivacy(String.valueOf(profileDetail.getProfileRatingPrivacy()));
+        userProfile.setProfileRatingPrivacy(String.valueOf(profileDetail.getProfileRatingPrivacy
+                ()));
         userProfile.setRatingPrivate(String.valueOf(profileDetail.getRatingPrivate()));
 
         tableProfileMaster.updateUserProfile(userProfile);
