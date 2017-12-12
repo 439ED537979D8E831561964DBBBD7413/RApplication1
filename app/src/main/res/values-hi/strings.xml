@@ -779,4 +779,11 @@
     <string name="youAreNotUpdatedTitle">अपडेट उपलब्ध</string>
     <string name="youAreNotUpdatedMessage">RContacts एप्लिकेशन का नया संस्करण उपलब्ध है। कृपया नवीनतम संस्करण में अपडेट करें</string>
     <string name="search_above_to_get_organization_list">संगठन सूची प्राप्त करने के लिए ऊपर खोजें</string>
+
+    <!--Call Reminder-->
+    <string name="min15">15 min</string>
+    <string name="hour1">1 hour</string>
+    <string name="hour2">2 hours</string>
+    <string name="hour6">6 hours</string>
+    <string name="setDateAndTime">Set Date &amp; Time</string>
 </resources>
