@@ -204,6 +204,10 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
 
             //<editor-fold desc="REQ_GET_RELATION">
             if (serviceType.contains(WsConstants.REQ_GET_RELATION)) {
+
+                if (swipeRefreshLayout != null)
+                    swipeRefreshLayout.setRefreshing(false);
+
                 WsResponseObject sendRelationRequestObject = (WsResponseObject) data;
                 Utils.hideProgressDialog();
                 if (sendRelationRequestObject != null && StringUtils.equalsIgnoreCase
@@ -211,8 +215,6 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
 
                     ArrayList<ExistingRelationRequest> allExistingRelationList = sendRelationRequestObject.
                             getAllExistingRelationList();
-
-                    swipeRefreshLayout.setRefreshing(false);
 
                     setExistingRelationData(allExistingRelationList);
 

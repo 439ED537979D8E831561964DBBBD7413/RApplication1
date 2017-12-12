@@ -103,6 +103,10 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
 
             //<editor-fold desc="REQ_GET_RECOMMENDATION">
             if (serviceType.contains(WsConstants.REQ_GET_RECOMMENDATION)) {
+
+                if (swipeRefreshLayout != null)
+                    swipeRefreshLayout.setRefreshing(false);
+
                 WsResponseObject sendRelationRequestObject = (WsResponseObject) data;
                 Utils.hideProgressDialog();
                 if (sendRelationRequestObject != null && StringUtils.equalsIgnoreCase
@@ -110,8 +114,6 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
 
                     ArrayList<ExistingRelationRequest> allExistingRelationList =
                             sendRelationRequestObject.getRecommendationsRelationList();
-
-                    swipeRefreshLayout.setRefreshing(false);
 
                     if (allExistingRelationList.size() > 0) {
                         getRelationRecommendationData(allExistingRelationList);

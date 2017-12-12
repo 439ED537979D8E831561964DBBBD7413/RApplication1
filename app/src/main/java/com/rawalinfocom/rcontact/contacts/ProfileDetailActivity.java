@@ -1093,7 +1093,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                     /*this.getString(R.string.view_in_ac), this.getString(R
                                     .string.view_in_rc),
                                     this.getString(R.string.call_reminder),
-                                    this.getString(R.string.unblock),*/ this.getString(R.string.call_reminder),this.getString(R.string
+                                    this.getString(R.string.unblock),*/ this.getString(R.string.call_reminder), this.getString(R.string
                                             .delete),
                                     this.getString(R.string.clear_call_log)));
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
@@ -2823,7 +2823,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             .PRIVACY_EVERYONE) {
 
                         linearBasicDetailRating.setEnabled(true);
-
 
                         ratingUser.setRating(Float.parseFloat(profileDetail.getProfileRating()));
                         buttonRequestRating.setVisibility(View.GONE);
