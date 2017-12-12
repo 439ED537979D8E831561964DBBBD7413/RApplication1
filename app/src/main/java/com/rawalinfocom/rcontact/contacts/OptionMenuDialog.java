@@ -63,17 +63,19 @@ class OptionMenuDialog {
 
     private PhoneBookContacts phoneBookContacts;
     private RContactApplication rContactApplication;
+//    private ArrayList<String> pbRating;
 
     MaterialDialog deleteConfirmationDialog;
 
     //<editor-fold desc="Constructor">
     OptionMenuDialog(final Context context, String rawId, final int menuType, boolean
-            isFavourite, boolean isFromFavourite, boolean isCallLogRcpUser) {
+            isFavourite, boolean isFromFavourite, boolean isCallLogRcpUser, ArrayList<String> pbRating) {
         this.context = context;
         this.rawId = rawId;
         this.isFavourite = isFavourite;
         this.isFromFavourite = isFromFavourite;
         this.isCallLogRcpUser = isCallLogRcpUser;
+//        this.pbRating = pbRating;
 
         rContactApplication = (RContactApplication) context.getApplicationContext();
         phoneBookContacts = new PhoneBookContacts(context);
@@ -105,17 +107,32 @@ class OptionMenuDialog {
                 break;
 
             case ALL_CONTACT_RCP:
-                menus = new String[]{context.getString(R.string.edit), context.getString(R.string
-                        .str_view_in_phone_book),
-                        context.getString(R.string.str_rate_profile), context.getString(R.string
-                        .delete), context.getString(R.string.call_reminder)};
+
+                if (pbRating.size() > 0) {
+                    menus = new String[]{context.getString(R.string.edit), context.getString(R.string
+                            .str_view_in_phone_book), context.getString(R.string.delete),
+                            context.getString(R.string.call_reminder)};
+                } else {
+                    menus = new String[]{context.getString(R.string.edit), context.getString(R.string
+                            .str_view_in_phone_book),
+                            context.getString(R.string.str_rate_profile), context.getString(R.string
+                            .delete), context.getString(R.string.call_reminder)};
+                }
+
                 break;
 
             case R_CONTACT_RCP:
-                menus = new String[]{context.getString(R.string.edit), context.getString(R.string
-                        .view_in_ac),
-                        context.getString(R.string.str_rate_profile), context.getString(R.string
-                        .delete), context.getString(R.string.call_reminder)};
+                if (pbRating.size() > 0) {
+                    menus = new String[]{context.getString(R.string.edit), context.getString(R.string
+                            .view_in_ac), context.getString(R.string
+                            .delete)
+                            , context.getString(R.string.call_reminder)};
+                } else {
+                    menus = new String[]{context.getString(R.string.edit), context.getString(R.string
+                            .view_in_ac),
+                            context.getString(R.string.str_rate_profile), context.getString(R.string
+                            .delete), context.getString(R.string.call_reminder)};
+                }
                 break;
         }
 
@@ -519,17 +536,16 @@ class OptionMenuDialog {
     private void showCallReminderPopUp() {
         ArrayList<String> arrayListCallReminderOption;
         TableCallReminder tableCallReminder = new TableCallReminder(new DatabaseHandler(context));
-//        Long callReminderTime = Utils.getLongPreference(context, AppConstants
-// .PREF_CALL_REMINDER, 0);
-        String number = ((ProfileDetailActivity) context).historyNumber;
-        if (number.contains("("))
-            number = number.replace("(", "");
-        if (number.contains(")"))
-            number = number.replace(")", "");
-        if (number.contains("-"))
-            number = number.replace("-", "");
-        if (number.contains(" "))
-            number = number.replace(" ", "");
+//        Long callReminderTime = Utils.getLongPreference(context, AppConstants.PREF_CALL_REMINDER, 0);
+        String number =  ((ProfileDetailActivity) context).historyNumber;
+        if(number.contains("("))
+            number = number.replace("(","");
+        if(number.contains(")"))
+            number = number.replace(")","");
+        if(number.contains("-"))
+            number =  number.replace("-","");
+        if(number.contains(" "))
+            number =  number.replace(" ","");
 
         number = number.trim();
         String formattedNumber = Utils.getFormattedNumber(context, number);
@@ -540,14 +556,10 @@ class OptionMenuDialog {
 
         if (callReminderTime > 0) {
             Date date1 = new Date(callReminderTime);
-            String setTime = new SimpleDateFormat("dd/MM/yy, hh:mm a", Locale.getDefault())
-                    .format(date1);
-            arrayListCallReminderOption = new ArrayList<>(Arrays.asList(context.getString(R
-                            .string.min15),
-                    context.getString(R.string.hour1), context.getString(R.string.hour2), context
-                            .getString(R.string.hour6), setTime + "     Edit"));
-            MaterialListDialog materialListDialog = new MaterialListDialog(context,
-                    arrayListCallReminderOption,
+            String setTime = new SimpleDateFormat("dd/MM/yy, hh:mm a", Locale.getDefault()).format(date1);
+            arrayListCallReminderOption = new ArrayList<>(Arrays.asList(context.getString(R.string.min15),
+                    context.getString(R.string.hour1), context.getString(R.string.hour2), context.getString(R.string.hour6), setTime + "     Edit"));
+            MaterialListDialog materialListDialog = new MaterialListDialog(context, arrayListCallReminderOption,
                     formattedNumber, 0, "", "", "");
             materialListDialog.setDialogTitle(context.getString(R.string.call_reminder));
             materialListDialog.showDialog();

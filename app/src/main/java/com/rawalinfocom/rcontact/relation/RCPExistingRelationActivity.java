@@ -265,6 +265,7 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
                     intent.putExtra(AppConstants.EXTRA_PROFILE_IMAGE_URL, thumbnailUrl);
                     intent.putExtra(AppConstants.EXTRA_CONTACT_NUMBER, contactNumber);
                     intent.putExtra(AppConstants.EXTRA_IS_FROM, "existing");
+                    intent.putExtra(AppConstants.EXTRA_GENDER, existingRelationList.get(0).getGender());
                     startActivity(intent);
                 } else {
                     Utils.showErrorSnackBar(activity, relativeRootExistingRelation, getResources()
@@ -514,6 +515,7 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
             recommendationType.setPmId(String.valueOf(allExistingRelationList.get(i).getRrmToPmId()));
             recommendationType.setDateAndTime("");
             recommendationType.setProfileImage(relationUserProfile.getProfilePhoto());
+            recommendationType.setGender(relationUserProfile.getPbGender());
 
             ArrayList<IndividualRelationType> relationRecommendations = new ArrayList<>();
 
@@ -533,12 +535,9 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
                                 getId()));
                         individualRelationType.setRelationId(String.valueOf(businessRecommendation.get(j).
                                 getRcRelationMasterId()));
-                        individualRelationType.setRelationName(businessRecommendation.get(j).getRelationMaster()
-                                .getRmParticular());
-                        individualRelationType.setOrganizationName(businessRecommendation.get(j).getOrganization()
-                                .getRmParticular());
-                        individualRelationType.setIsOrgVerified(businessRecommendation.get(j).getOrganization()
-                                .getOmIsVerified());
+                        individualRelationType.setRelationName(businessRecommendation.get(j).getRmParticular());
+                        individualRelationType.setOrganizationName(businessRecommendation.get(j).getOrgName());
+                        individualRelationType.setIsOrgVerified(businessRecommendation.get(j).getOmIsVerified());
                         individualRelationType.setFamilyName("");
                         individualRelationType.setOrganizationId(String.valueOf(businessRecommendation.get(j).getRcOrgId()));
                         individualRelationType.setIsFriendRelation(false);
@@ -570,8 +569,7 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
                                 getRcRelationMasterId()));
                         individualRelationType.setRelationName("");
                         individualRelationType.setOrganizationName("");
-                        individualRelationType.setFamilyName(familyRecommendation.get(j).getRelationMaster()
-                                .getRmParticular());
+                        individualRelationType.setFamilyName(familyRecommendation.get(j).getRmParticular());
                         individualRelationType.setOrganizationId("");
                         individualRelationType.setIsFriendRelation(false);
 //                        individualRelationType.setIsVerify("1");

@@ -103,6 +103,10 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
 
             //<editor-fold desc="REQ_GET_RECOMMENDATION">
             if (serviceType.contains(WsConstants.REQ_GET_RECOMMENDATION)) {
+
+                if (swipeRefreshLayout != null)
+                    swipeRefreshLayout.setRefreshing(false);
+
                 WsResponseObject sendRelationRequestObject = (WsResponseObject) data;
                 Utils.hideProgressDialog();
                 if (sendRelationRequestObject != null && StringUtils.equalsIgnoreCase
@@ -110,8 +114,6 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
 
                     ArrayList<ExistingRelationRequest> allExistingRelationList =
                             sendRelationRequestObject.getRecommendationsRelationList();
-
-                    swipeRefreshLayout.setRefreshing(false);
 
                     if (allExistingRelationList.size() > 0) {
                         getRelationRecommendationData(allExistingRelationList);
@@ -294,6 +296,7 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
             recommendationType.setPmId(String.valueOf(allExistingRelationList.get(i).getRrmToPmId()));
             recommendationType.setDateAndTime("");
             recommendationType.setProfileImage(relationUserProfile.getProfilePhoto());
+            recommendationType.setGender(relationUserProfile.getPbGender());
 
             ArrayList<IndividualRelationType> relationRecommendations = new ArrayList<>();
 
@@ -311,12 +314,9 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
                             getId()));
                     individualRelationType.setRelationId(String.valueOf(businessRecommendation.get(j).
                             getRcRelationMasterId()));
-                    individualRelationType.setRelationName(businessRecommendation.get(j).getRelationMaster()
-                            .getRmParticular());
-                    individualRelationType.setOrganizationName(businessRecommendation.get(j).getOrganization()
-                            .getRmParticular());
-                    individualRelationType.setIsOrgVerified(businessRecommendation.get(j).getOrganization()
-                            .getOmIsVerified());
+                    individualRelationType.setRelationName(businessRecommendation.get(j).getRmParticular());
+                    individualRelationType.setOrganizationName(businessRecommendation.get(j).getOrgName());
+                    individualRelationType.setIsOrgVerified(businessRecommendation.get(j).getOmIsVerified());
                     individualRelationType.setFamilyName("");
                     individualRelationType.setOrganizationId(String.valueOf(businessRecommendation.get(j).getRcOrgId()));
                     individualRelationType.setIsFriendRelation(false);
@@ -345,8 +345,7 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
                             getRcRelationMasterId()));
                     individualRelationType.setRelationName("");
                     individualRelationType.setOrganizationName("");
-                    individualRelationType.setFamilyName(familyRecommendation.get(j).getRelationMaster()
-                            .getRmParticular());
+                    individualRelationType.setFamilyName(familyRecommendation.get(j).getRmParticular());
                     individualRelationType.setOrganizationId("");
                     individualRelationType.setIsFriendRelation(false);
 //                    individualRelationType.setIsVerify("1");

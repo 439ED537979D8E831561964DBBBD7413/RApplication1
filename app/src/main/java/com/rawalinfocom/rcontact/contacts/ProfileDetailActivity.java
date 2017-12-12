@@ -1089,8 +1089,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                     /*this.getString(R.string.view_in_ac), this.getString(R
                                     .string.view_in_rc),
                                     this.getString(R.string.call_reminder),
-                                    this.getString(R.string.unblock),*/ this.getString(R.string
-                                            .call_reminder), this.getString(R.string
+                                    this.getString(R.string.unblock),*/ this.getString(R.string.call_reminder), this.getString(R.string
                                             .delete),
                                     this.getString(R.string.clear_call_log)));
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
@@ -1208,7 +1207,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                             (ProfileDetailActivity
                                                     .this, rawId, menuType, isFavourite == 1,
                                                     isFromFavourite,
-                                                    isCallLogRcpUser);
+                                                    isCallLogRcpUser, pbRating);
 
                                     optionMenu.showDialog();
                                 }
@@ -1217,7 +1216,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         } else {
                             OptionMenuDialog optionMenu = new OptionMenuDialog(ProfileDetailActivity
                                     .this, rawId, menuType, isFavourite == 1, isFromFavourite,
-                                    isCallLogRcpUser);
+                                    isCallLogRcpUser, pbRating);
 
                             optionMenu.showDialog();
                         }
@@ -1289,8 +1288,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     }
 
     @Override
-    public void
-    onDeliveryResponse(String serviceType, Object data, Exception error) {
+    public void onDeliveryResponse(String serviceType, Object data, Exception error) {
         if (error == null) {
 
             Utils.hideProgressDialog();
@@ -2832,8 +2830,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                         linearBasicDetailRating.setEnabled(true);
 
-                        pbRating.add("1");
-
                         ratingUser.setRating(Float.parseFloat(profileDetail.getProfileRating()));
                         buttonRequestRating.setVisibility(View.GONE);
 
@@ -2848,6 +2844,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                             ratingUser.setRating(0);
                             buttonRequestRating.setVisibility(View.VISIBLE);
+                            pbRating.add("1");
 
                             buttonRequestRating.setOnClickListener(new View.OnClickListener() {
                                 @Override
@@ -2857,12 +2854,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 }
                             });
                         } else {
+
                             linearBasicDetailRating.setEnabled(true);
 
-                            pbRating.add("1");
-
-                            ratingUser.setRating(Float.parseFloat(profileDetail.getProfileRating
-                                    ()));
+                            ratingUser.setRating(Float.parseFloat(profileDetail.getProfileRating()));
                             buttonRequestRating.setVisibility(View.GONE);
                         }
 
