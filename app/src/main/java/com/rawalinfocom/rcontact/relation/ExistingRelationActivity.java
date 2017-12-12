@@ -204,6 +204,10 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
 
             //<editor-fold desc="REQ_GET_RELATION">
             if (serviceType.contains(WsConstants.REQ_GET_RELATION)) {
+
+                if (swipeRefreshLayout != null)
+                    swipeRefreshLayout.setRefreshing(false);
+
                 WsResponseObject sendRelationRequestObject = (WsResponseObject) data;
                 Utils.hideProgressDialog();
                 if (sendRelationRequestObject != null && StringUtils.equalsIgnoreCase
@@ -211,8 +215,6 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
 
                     ArrayList<ExistingRelationRequest> allExistingRelationList = sendRelationRequestObject.
                             getAllExistingRelationList();
-
-                    swipeRefreshLayout.setRefreshing(false);
 
                     setExistingRelationData(allExistingRelationList);
 
@@ -426,6 +428,7 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
             recommendationType.setPmId(String.valueOf(allExistingRelationList.get(i).getRrmToPmId()));
             recommendationType.setDateAndTime("");
             recommendationType.setProfileImage(relationUserProfile.getProfilePhoto());
+            recommendationType.setGender(relationUserProfile.getPbGender());
 
             ArrayList<IndividualRelationType> relationRecommendations = new ArrayList<>();
 
@@ -443,12 +446,9 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
                             getId()));
                     individualRelationType.setRelationId(String.valueOf(businessRecommendation.get(j).
                             getRcRelationMasterId()));
-                    individualRelationType.setRelationName(businessRecommendation.get(j).getRelationMaster()
-                            .getRmParticular());
-                    individualRelationType.setOrganizationName(businessRecommendation.get(j).getOrganization()
-                            .getRmParticular());
-                    individualRelationType.setIsOrgVerified(businessRecommendation.get(j).getOrganization()
-                            .getOmIsVerified());
+                    individualRelationType.setRelationName(businessRecommendation.get(j).getRmParticular());
+                    individualRelationType.setOrganizationName(businessRecommendation.get(j).getOrgName());
+                    individualRelationType.setIsOrgVerified(businessRecommendation.get(j).getOmIsVerified());
                     individualRelationType.setFamilyName("");
                     individualRelationType.setOrganizationId(String.valueOf(businessRecommendation.get(j).getRcOrgId()));
                     individualRelationType.setIsFriendRelation(false);
@@ -477,8 +477,7 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
                             getRcRelationMasterId()));
                     individualRelationType.setRelationName("");
                     individualRelationType.setOrganizationName("");
-                    individualRelationType.setFamilyName(familyRecommendation.get(j).getRelationMaster()
-                            .getRmParticular());
+                    individualRelationType.setFamilyName(familyRecommendation.get(j).getRmParticular());
                     individualRelationType.setOrganizationId("");
                     individualRelationType.setIsFriendRelation(false);
 //                    individualRelationType.setIsVerify("1");
@@ -538,6 +537,7 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
                                 intent.putExtra(AppConstants.EXTRA_PROFILE_IMAGE_URL, existingRelationList.get(position).getProfileImage());
                                 intent.putExtra(AppConstants.EXTRA_CONTACT_NUMBER, existingRelationList.get(position).getNumber());
                                 intent.putExtra(AppConstants.EXTRA_PM_ID, existingRelationList.get(position).getPmId());
+                                intent.putExtra(AppConstants.EXTRA_GENDER, existingRelationList.get(position).getGender());
                                 intent.putExtra(AppConstants.EXTRA_IS_FROM, "existing");
                                 startActivity(intent);
                             } else {

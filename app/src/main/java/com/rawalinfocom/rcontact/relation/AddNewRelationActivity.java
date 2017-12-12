@@ -553,7 +553,6 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
     private void clearFamilyData() {
 
         // clear family relation
-        rcpGender = "";
         isFamilyAlreadyAdded = false;
 
         familyRelation = "";
@@ -620,6 +619,10 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
             if (intent.hasExtra(AppConstants.EXTRA_CONTACT_NUMBER)) {
                 contactNumber = intent.getStringExtra(AppConstants.EXTRA_CONTACT_NUMBER);
             }
+
+            if (intent.hasExtra(AppConstants.EXTRA_GENDER)) {
+                rcpGender = intent.getStringExtra(AppConstants.EXTRA_GENDER);
+            }
         }
     }
 
@@ -651,6 +654,7 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
                 recommendationType.setPmId(String.valueOf(allExistingRelationList.get(0).getRrmToPmId()));
                 recommendationType.setDateAndTime("");
                 recommendationType.setProfileImage(relationUserProfile.getProfilePhoto());
+                recommendationType.setGender(relationUserProfile.getPbGender());
 
                 // familyRelation
                 ArrayList<RelationResponse> familyRecommendation = existingRelation.getFamilyRelationList();
@@ -659,8 +663,8 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
 
                     isFamilyAlreadyAdded = true;
 
-                    familyRelationId = familyRecommendation.get(0).getRelationMaster().getId();
-                    familyRelation = familyRecommendation.get(0).getRelationMaster().getRmParticular();
+                    familyRelationId = familyRecommendation.get(0).getRcRelationMasterId();
+                    familyRelation = familyRecommendation.get(0).getRmParticular();
                     inputValueFamily.setText(familyRelation);
 
                     imgFamilyClear.setVisibility(View.VISIBLE);
@@ -697,15 +701,15 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
 
                         IndividualRelationType relationType = new IndividualRelationType();
                         relationType.setRelationId(String.valueOf(businessRelation.get(j).getRcRelationMasterId()));
-                        relationType.setRelationName(businessRelation.get(j).getRelationMaster().getRmParticular());
-                        relationType.setOrganizationName(businessRelation.get(j).getOrganization().getRmParticular());
-                        relationType.setIsOrgVerified(businessRelation.get(j).getOrganization().getOmIsVerified());
+                        relationType.setRelationName(businessRelation.get(j).getRmParticular());
+                        relationType.setOrganizationName(businessRelation.get(j).getOrgName());
+                        relationType.setIsOrgVerified(businessRelation.get(j).getOmIsVerified());
                         relationType.setOrganizationId(String.valueOf(businessRelation.get(j).getRcOrgId()));
 //                        relationType.setIsVerify("1");
                         relationType.setIsInUse("1");
                         arrayList.add(relationType);
 
-                        arrayListOrgName.add(businessRelation.get(j).getOrganization().getRmParticular());
+                        arrayListOrgName.add(businessRelation.get(j).getOrgName());
                         arrayListOrgId.add(String.valueOf(businessRelation.get(j).getRcOrgId()));
                     }
                 }
@@ -726,15 +730,15 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
 
                         IndividualRelationType relationType = new IndividualRelationType();
                         relationType.setRelationId(String.valueOf(businessRecommendationsRelation.get(j).getRcRelationMasterId()));
-                        relationType.setRelationName(businessRecommendationsRelation.get(j).getRelationMaster().getRmParticular());
-                        relationType.setOrganizationName(businessRecommendationsRelation.get(j).getOrganization().getRmParticular());
-                        relationType.setIsOrgVerified(businessRecommendationsRelation.get(j).getOrganization().getOmIsVerified());
+                        relationType.setRelationName(businessRecommendationsRelation.get(j).getRmParticular());
+                        relationType.setOrganizationName(businessRecommendationsRelation.get(j).getOrgName());
+                        relationType.setIsOrgVerified(businessRecommendationsRelation.get(j).getOmIsVerified());
                         relationType.setOrganizationId(String.valueOf(businessRecommendationsRelation.get(j).getRcOrgId()));
 //                        relationType.setIsVerify("1");
                         relationType.setIsInUse("1");
                         arrayList.add(relationType);
 
-                        arrayListOrgName.add(businessRecommendationsRelation.get(j).getOrganization().getRmParticular());
+                        arrayListOrgName.add(businessRecommendationsRelation.get(j).getOrgName());
                         arrayListOrgId.add(String.valueOf(businessRecommendationsRelation.get(j).getRcOrgId()));
                     }
                 }
@@ -746,8 +750,8 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
 
                     isFamilyAlreadyAdded = true;
 
-                    familyRelationId = familyRecommendation.get(0).getRelationMaster().getId();
-                    familyRelation = familyRecommendation.get(0).getRelationMaster().getRmParticular();
+                    familyRelationId = familyRecommendation.get(0).getRcRelationMasterId();
+                    familyRelation = familyRecommendation.get(0).getRmParticular();
                     inputValueFamily.setText(familyRelation);
 
                     imgFamilyClear.setVisibility(View.VISIBLE);
