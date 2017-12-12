@@ -40,7 +40,7 @@ public class TableAadharMaster {
             " " + COLUMN_RC_PROFILE_MASTER_PM_ID + " integer" +
             ");";
 
-    // Adding new Mobile Number
+    // Adding new Aadhar Number
     public void addAadharDetail(ProfileDataOperationAadharNumber profileDataOperationAadharNumber) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
 

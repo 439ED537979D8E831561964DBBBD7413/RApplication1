@@ -187,6 +187,8 @@ public class AppConstants {
     public static String EXTRA_FROM_NOTI_PROFILE = "extra_from_noti_profile";
     public static String EXTRA_DIALOG_CALL_LOG_INSTANCE = "extra_dialog_call_log_instance";
     public static String EXTRA_DIALER_SIM_PREFERENCE = "extra_dialer_sim_preference";
+    public static String EXTRA_CALL_REMINDER_NUMBER = "extra_call_reminder_number";
+    public static String EXTRA_CALL_REMINDER_TIME = "extra_call_reminder_time";
 
     //</editor-fold>
 
@@ -309,6 +311,8 @@ public class AppConstants {
     public static String PREF_BLOCK_CONTACT_LIST = "pref_block_contact_list";
     public static String PREF_BLOCK_PROFILE = "pref_block_profile";
     public static String PREF_CALL_LOG_LIST = "pref_call_log_list";
+    public static String PREF_CALL_REMINDER = "pref_call_reminder";
+    public static String PREF_CALL_REMINDER_HASHMAP = "pref_call_reminder_hashmap";
     public static String PREF_CONTACT_LAST_SYNC_TIME = "pref_contact_last_sync_time";
     public static String PREF_CALL_LOGS_ID_SET = "pref_call_logs_id_set";
     public static String PREF_CALL_LOG_SYNCED_COUNT = "pref_call_log_synced_count";

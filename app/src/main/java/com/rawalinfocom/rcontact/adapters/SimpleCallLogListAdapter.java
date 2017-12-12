@@ -562,12 +562,12 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
                                             + " " + name, mActivity.getString(R.string.add_to_contact),
                                     mActivity.getString(R.string.add_to_existing_contact)
                                     , mActivity.getString(R.string.send_sms), mActivity.getString(R.string.remove_from_call_log),
-                                    mActivity.getString(R.string.copy_phone_number)/*,mActivity.getString(R.string.call_reminder),*/ /*mActivity.getString(R.string.unblock)*/));
+                                    mActivity.getString(R.string.copy_phone_number),mActivity.getString(R.string.call_reminder) /*mActivity.getString(R.string.unblock)*/));
                         } else {
                             arrayListForKnownContact = new ArrayList<>(Arrays.asList(mActivity.getString(R.string.action_call)
                                             + " " + name, mActivity.getString(R.string.send_sms),
-                                    mActivity.getString(R.string.remove_from_call_log), mActivity.getString(R.string.copy_phone_number)/*,
-                                    mActivity.getString(R.string.call_reminder), mActivity.getString(R.string.unblock)*/));
+                                    mActivity.getString(R.string.remove_from_call_log), mActivity.getString(R.string.copy_phone_number),
+                                    mActivity.getString(R.string.call_reminder)/* mActivity.getString(R.string.unblock)*/));
                         }
 
                         materialListDialog = new MaterialListDialog(mActivity, arrayListForKnownContact, number, date, name, uniqueRowID,
@@ -582,7 +582,7 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
                                             + " " + formatedNumber, mActivity.getString(R.string.add_to_contact),
                                     mActivity.getString(R.string.add_to_existing_contact)
                                     , mActivity.getString(R.string.send_sms), mActivity.getString(R.string.remove_from_call_log),
-                                    mActivity.getString(R.string.copy_phone_number)/*,mActivity.getString(R.string.call_reminder),
+                                    mActivity.getString(R.string.copy_phone_number),mActivity.getString(R.string.call_reminder)/*,
                                     mActivity.getString(R.string.unblock)*/));
 
                             materialListDialog = new MaterialListDialog(mActivity, arrayListForUnknownContact, number, date, "", uniqueRowID,
@@ -606,7 +606,7 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
                         if(selectedItems != null && selectedItems.size()<=0){
                             arrayListForKnownContact = new ArrayList<>(Arrays.asList(mActivity.getString(R.string.action_call) +
                                             (!TextUtils.isEmpty(name) ? (" " + name) : (" " + number)), mActivity.getString(R.string.send_sms),
-                                    mActivity.getString(R.string.remove_from_call_log), mActivity.getString(R.string.copy_phone_number)));
+                                    mActivity.getString(R.string.remove_from_call_log), mActivity.getString(R.string.copy_phone_number),mActivity.getString(R.string.call_reminder)));
 
                             materialListDialog = new MaterialListDialog(mActivity, arrayListForKnownContact, number, date, name, uniqueRowID, "");
                             materialListDialog.setDialogTitle((!TextUtils.isEmpty(name) ? (" " + name) : (" " + number)));
