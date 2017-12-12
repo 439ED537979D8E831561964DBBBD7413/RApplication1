@@ -30,7 +30,6 @@ import com.rawalinfocom.rcontact.helper.MaterialListDialog;
 import com.rawalinfocom.rcontact.helper.RecyclerItemClickListener;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
-import com.rawalinfocom.rcontact.helper.instagram.util.StringUtil;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -328,11 +327,11 @@ class OptionMenuDialog {
                 if (isFromFavourite) {
                     AllContactsListFragment.arrayListPhoneBookContacts = null;
 //                    rContactApplication.setArrayListAllPhoneBookContacts(new ArrayList<>());
-                }
-                break;*/
-                //</editor-fold>
+                }*/
+                break;
+            //</editor-fold>
 
-                // <editor-fold desc="Call Reminder">
+            // <editor-fold desc="Call Reminder">
             case 4:
                 showCallReminderPopUp();
                 break;
@@ -446,7 +445,8 @@ class OptionMenuDialog {
 
     //<editor-fold desc="Private Methods">
 
-    private void showDeleteConfirmationDialog(final QueryManager queryManager, final int deleteFrom) {
+    private void showDeleteConfirmationDialog(final QueryManager queryManager, final int
+            deleteFrom) {
 
         RippleView.OnRippleCompleteListener cancelListener = new RippleView
                 .OnRippleCompleteListener() {
@@ -537,15 +537,15 @@ class OptionMenuDialog {
         ArrayList<String> arrayListCallReminderOption;
         TableCallReminder tableCallReminder = new TableCallReminder(new DatabaseHandler(context));
 //        Long callReminderTime = Utils.getLongPreference(context, AppConstants.PREF_CALL_REMINDER, 0);
-        String number = ((ProfileDetailActivity) context).historyNumber;
-        if (number.contains("("))
-            number = number.replace("(", "");
-        if (number.contains(")"))
-            number = number.replace(")", "");
-        if (number.contains("-"))
-            number = number.replace("-", "");
-        if (number.contains(" "))
-            number = number.replace(" ", "");
+        String number =  ((ProfileDetailActivity) context).historyNumber;
+        if(number.contains("("))
+            number = number.replace("(","");
+        if(number.contains(")"))
+            number = number.replace(")","");
+        if(number.contains("-"))
+            number =  number.replace("-","");
+        if(number.contains(" "))
+            number =  number.replace(" ","");
 
         number = number.trim();
         String formattedNumber = Utils.getFormattedNumber(context, number);
@@ -564,12 +564,16 @@ class OptionMenuDialog {
             materialListDialog.setDialogTitle(context.getString(R.string.call_reminder));
             materialListDialog.showDialog();
         } else {
-            arrayListCallReminderOption = new ArrayList<>(Arrays.asList(context.getString(R.string.min15),
-                    context.getString(R.string.hour1), context.getString(R.string.hour2), context.getString(R.string.hour6),
+            arrayListCallReminderOption = new ArrayList<>(Arrays.asList(context.getString(R
+                            .string.min15),
+                    context.getString(R.string.hour1), context.getString(R.string.hour2), context
+                            .getString(R.string.hour6),
                     context.getString(R.string.setDateAndTime)));
-            MaterialListDialog materialListDialog = new MaterialListDialog(context, arrayListCallReminderOption,
+            MaterialListDialog materialListDialog = new MaterialListDialog(context,
+                    arrayListCallReminderOption,
                     formattedNumber, 0, "", "", "");
-            materialListDialog.setDialogTitle(context.getString(R.string.call_reminder).toUpperCase());
+            materialListDialog.setDialogTitle(context.getString(R.string.call_reminder)
+                    .toUpperCase());
             materialListDialog.showDialog();
         }
     }

@@ -496,7 +496,14 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
 //        if (emRcpType == IntegerConstants.RCP_TYPE_PRIMARY) {
 
-        holder.textMain.setText(String.format("%s\n%s", education.getEduName(), education.getEduCourse()));
+        if (education.getEduName().startsWith("XXXX")) {
+            holder.textMain.setText(education.getEduName());
+        } else {
+            holder.textMain.setText(String.format("%s\n%s", education.getEduName(), education
+                    .getEduCourse()));
+        }
+
+//        holder.textMain.setText(String.format("%s\n%s", education.getEduName(), education.getEduCourse()));
         holder.textMain.setTextColor(colorPineGreen);
 
 /*        if (isOwnProfile)
