@@ -32,6 +32,7 @@ import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
+import com.rawalinfocom.rcontact.model.ProfileDataOperationEducation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEvent;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationImAccount;
@@ -95,6 +96,10 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
 
             case AppConstants.EMAIL:
                 displayEmail(holder, position);
+                break;
+
+            case AppConstants.EDUCATION:
+                displayEducation(holder, position);
                 break;
 
             case AppConstants.WEBSITE:
@@ -401,6 +406,89 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
 //                    privacySettingPopupDialog.showDialog();
 //                }
 //            });
+//        }
+    }
+
+    private void displayEducation(final ProfileDetailViewHolder holder, final int position) {
+        final ProfileDataOperationEducation education = (ProfileDataOperationEducation) arrayList
+                .get(position);
+//        String emailId = email.getEmEmailId();
+        holder.textSub.setVisibility(View.VISIBLE);
+
+        holder.imgActionType.setImageResource(R.drawable.ico_education_svg);
+//        holder.imgActionType.setVisibility(View.GONE);
+
+        holder.textMain.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                Utils.copyToClipboard(activity, activity.getString(R.string.str_copy_education),
+                        ((TextView) view).getText().toString());
+                if (activity instanceof ProfileDetailActivity) {
+                    Utils.showSuccessSnackBar(activity, ((ProfileDetailActivity) activity)
+                            .getRelativeRootProfileDetail(), activity.getString(R.string
+                            .str_copy_education_clip_board));
+                }
+                return true;
+            }
+        });
+
+//        if (emRcpType == IntegerConstants.RCP_TYPE_PRIMARY) {
+
+        if (education.getEduName().startsWith("XXXX")) {
+            holder.textMain.setText(education.getEduName());
+        } else {
+            holder.textMain.setText(String.format("%s\n%s", education.getEduName(), education
+                    .getEduCourse()));
+        }
+
+        holder.textMain.setTextColor(colorPineGreen);
+
+/*        if (isOwnProfile)
+            holder.llPrivacy.setVisibility(View.VISIBLE);
+        else {
+            holder.llPrivacy.setVisibility(View.GONE);
+            if ((MoreObjects.firstNonNull(education.getEduPublic(), 0)) == IntegerConstants
+                    .PRIVACY_PRIVATE) {
+                holder.buttonRequest.setVisibility(View.VISIBLE);
+                holder.imgActionType.setVisibility(View.GONE);
+            }
+        }*/
+
+
+        holder.llPrivacy.setVisibility(View.GONE);
+        if ((MoreObjects.firstNonNull(education.getEduPublic(), 3)) == IntegerConstants
+                .PRIVACY_PRIVATE && education.getEduName().startsWith("XXXX")) {
+            holder.buttonRequest.setVisibility(View.GONE);
+            holder.imgActionType.setVisibility(View.GONE);
+            holder.textSub.setVisibility(View.GONE);
+        }
+
+
+        if (StringUtils.equalsIgnoreCase(education.getEduToDate(), "")) {
+            if (!StringUtils.isEmpty(education.getEduFromDate())) {
+                String formattedFromDate = Utils.convertDateFormat(education.getEduFromDate(),
+                        "yyyy-MM-dd", "MMMM-yyyy");
+
+//                holder.textMain.setText(education.getEduName() + "\n" + education.getEduCourse());
+                holder.textSub.setText(String.format("%s to Present ", formattedFromDate));
+            } else {
+                holder.textSub.setVisibility(View.GONE);
+            }
+        } else {
+            if (!StringUtils.isEmpty(education.getEduFromDate()) && !StringUtils.isEmpty
+                    (education.getEduToDate())) {
+                String formattedFromDate = Utils.convertDateFormat(education.getEduFromDate(),
+                        "yyyy-MM-dd", "MMMM-yyyy");
+                String formattedToDate = Utils.convertDateFormat(education.getEduToDate(),
+                        "yyyy-MM-dd", "MMMM-yyyy");
+
+                /*holder.textTime.setText(String.format("%s to %s ", formattedFromDate,
+                        formattedToDate));*/
+                holder.textSub.setText(String.format("%s to %s ", formattedFromDate,
+                        formattedToDate));
+            }
+        }
+
 //        }
     }
 

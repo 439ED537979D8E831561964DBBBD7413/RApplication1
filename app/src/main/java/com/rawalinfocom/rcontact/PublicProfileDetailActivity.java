@@ -1,7 +1,6 @@
 package com.rawalinfocom.rcontact;
 
 import android.Manifest;
-import android.animation.Animator;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -45,7 +44,6 @@ import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.contacts.PrivacySettingPopupDialog;
-import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
@@ -56,6 +54,7 @@ import com.rawalinfocom.rcontact.model.PrivacyEntityItem;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAadharNumber;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
+import com.rawalinfocom.rcontact.model.ProfileDataOperationEducation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEvent;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationImAccount;
@@ -130,6 +129,11 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
     RecyclerView recyclerViewAddress;
     @BindView(R.id.linear_address)
     LinearLayout linearAddress;
+
+    @BindView(R.id.recycler_view_education)
+    RecyclerView recyclerViewEducation;
+    @BindView(R.id.linear_education)
+    LinearLayout linearEducation;
 
     @BindView(R.id.recycler_view_social_contact)
     RecyclerView recyclerViewSocialContact;
@@ -227,6 +231,7 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
 
     ArrayList<Object> tempPhoneNumber;
     ArrayList<Object> tempEmail;
+    ArrayList<Object> tempEducation;
 
     public String callNumber = "";
 
@@ -334,17 +339,23 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
 
                 if (editProfileResponse != null && StringUtils.equalsIgnoreCase
                         (editProfileResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
-//                    Utils.showSuccessSnackBar(this, relativeRootProfileDetail, editProfileResponse.getMessage());
-                    Toast.makeText(this, editProfileResponse.getMessage(), Toast.LENGTH_SHORT).show();
+//                    Utils.showSuccessSnackBar(this, relativeRootProfileDetail,
+// editProfileResponse.getMessage());
+                    Toast.makeText(this, editProfileResponse.getMessage(), Toast.LENGTH_SHORT)
+                            .show();
                 } else {
                     if (editProfileResponse != null)
-                        Toast.makeText(this, editProfileResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, editProfileResponse.getMessage(), Toast
+                                .LENGTH_SHORT).show();
 
-//                        Utils.showErrorSnackBar(this, relativeRootProfileDetail, editProfileResponse.getMessage());
+//                        Utils.showErrorSnackBar(this, relativeRootProfileDetail,
+// editProfileResponse.getMessage());
                     else
-                        Toast.makeText(this, getString(R.string.str_request_sending_fail), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, getString(R.string.str_request_sending_fail), Toast
+                                .LENGTH_SHORT).show();
 
-//                        Utils.showErrorSnackBar(this, relativeRootProfileDetail, getString(R.string.str_request_sending_fail));
+//                        Utils.showErrorSnackBar(this, relativeRootProfileDetail, getString(R
+// .string.str_request_sending_fail));
                 }
             }
             //</editor-fold>
@@ -436,6 +447,7 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
         recyclerViewContactNumber.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewEmail.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewWebsite.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewEducation.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewAddress.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewEvent.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewSocialContact.setLayoutManager(new LinearLayoutManager(this));
@@ -443,6 +455,7 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
         recyclerViewContactNumber.setNestedScrollingEnabled(false);
         recyclerViewEmail.setNestedScrollingEnabled(false);
         recyclerViewWebsite.setNestedScrollingEnabled(false);
+        recyclerViewEducation.setNestedScrollingEnabled(false);
         recyclerViewAddress.setNestedScrollingEnabled(false);
         recyclerViewEvent.setNestedScrollingEnabled(false);
         recyclerViewSocialContact.setNestedScrollingEnabled(false);
@@ -470,7 +483,8 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
 
         Utils.setRatingColor(PublicProfileDetailActivity.this, ratingUser);
 
-//        mShortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
+//        mShortAnimationDuration = getResources().getInteger(android.R.integer
+// .config_shortAnimTime);
 
         //call service
         cardContactDetails.setVisibility(GONE);
@@ -513,7 +527,8 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                 @Override
                 public void onClick(View view) {
                     if (StringUtils.length(profileDetail.getPbProfilePhoto()) > 0) {
-                        Utils.zoomImageFromThumb(PublicProfileDetailActivity.this, imageProfile, profileDetail.getPbProfilePhoto(),
+                        Utils.zoomImageFromThumb(PublicProfileDetailActivity.this, imageProfile,
+                                profileDetail.getPbProfilePhoto(),
                                 frameImageEnlarge, imageEnlarge, frameContainer);
                     }
                 }
@@ -583,21 +598,29 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
 
                 if (StringUtils.equalsIgnoreCase(tempOrganization.get(0).getOrgToDate(), "")) {
                     if (!StringUtils.isEmpty(tempOrganization.get(0).getOrgFromDate())) {
-                        String formattedFromDate = Utils.convertDateFormat(tempOrganization.get(0).getOrgFromDate(),
-                                "yyyy-MM-dd", Utils.getEventDateFormat(tempOrganization.get(0).getOrgFromDate()));
+                        String formattedFromDate = Utils.convertDateFormat(tempOrganization.get
+                                        (0).getOrgFromDate(),
+                                "yyyy-MM-dd", Utils.getEventDateFormat(tempOrganization.get(0)
+                                        .getOrgFromDate()));
 
                         textTime.setText(String.format("%s to Present ", formattedFromDate));
                     } else {
                         textTime.setVisibility(GONE);
                     }
                 } else {
-                    if (!StringUtils.isEmpty(tempOrganization.get(0).getOrgFromDate()) && !StringUtils.isEmpty(tempOrganization.get(0).getOrgToDate())) {
-                        String formattedFromDate = Utils.convertDateFormat(tempOrganization.get(0).getOrgFromDate(),
-                                "yyyy-MM-dd", Utils.getEventDateFormat(tempOrganization.get(0).getOrgFromDate()));
-                        String formattedToDate = Utils.convertDateFormat(tempOrganization.get(0).getOrgToDate(),
-                                "yyyy-MM-dd", Utils.getEventDateFormat(tempOrganization.get(0).getOrgToDate()));
+                    if (!StringUtils.isEmpty(tempOrganization.get(0).getOrgFromDate()) &&
+                            !StringUtils.isEmpty(tempOrganization.get(0).getOrgToDate())) {
+                        String formattedFromDate = Utils.convertDateFormat(tempOrganization.get
+                                        (0).getOrgFromDate(),
+                                "yyyy-MM-dd", Utils.getEventDateFormat(tempOrganization.get(0)
+                                        .getOrgFromDate()));
+                        String formattedToDate = Utils.convertDateFormat(tempOrganization.get(0)
+                                        .getOrgToDate(),
+                                "yyyy-MM-dd", Utils.getEventDateFormat(tempOrganization.get(0)
+                                        .getOrgToDate()));
 
-                        textTime.setText(String.format("%s to %s ", formattedFromDate, formattedToDate));
+                        textTime.setText(String.format("%s to %s ", formattedFromDate,
+                                formattedToDate));
                     }
                 }
 
@@ -612,7 +635,8 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                     @Override
                     public void onClick(View view) {
                         if (tempOrganization.get(0).getIsVerify() == 1) {
-                            String orgPublicLink = BuildConfig.ORANISATION_PUBLIC_LINK + tempOrganization.get(0).getOrgEntId();
+                            String orgPublicLink = BuildConfig.ORANISATION_PUBLIC_LINK +
+                                    tempOrganization.get(0).getOrgEntId();
                             if (!StringUtils.isEmpty(orgPublicLink)) {
                                 Intent i = new Intent(Intent.ACTION_VIEW);
                                 i.setData(Uri.parse(orgPublicLink));
@@ -634,8 +658,9 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                 linearBasicDetailRating.setEnabled(false);
                 textUserRating.setText(profileDetail.getTotalProfileRateUser());
 
-                if ((MoreObjects.firstNonNull(profileDetail.getProfileRatingPrivacy(), 0)) == IntegerConstants
-                        .PRIVACY_EVERYONE) {
+                if ((MoreObjects.firstNonNull(profileDetail.getProfileRatingPrivacy(), 0)) ==
+                        IntegerConstants
+                                .PRIVACY_EVERYONE) {
                     ratingUser.setRating(Float.parseFloat(profileDetail.getProfileRating()));
                 } else {
                     ratingUser.setRating(0);
@@ -694,11 +719,43 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                 tempEmail.addAll(arrayListEmail);
 //                tempEmail.addAll(arrayListCloudEmail);
                 linearEmail.setVisibility(View.VISIBLE);
-                PublicProfileDetailAdapter emailDetailAdapter = new PublicProfileDetailAdapter(this, tempEmail,
-                        AppConstants.EMAIL, pmId);
+                PublicProfileDetailAdapter emailDetailAdapter = new PublicProfileDetailAdapter
+                        (this, tempEmail,
+                                AppConstants.EMAIL, pmId);
                 recyclerViewEmail.setAdapter(emailDetailAdapter);
             } else {
                 linearEmail.setVisibility(GONE);
+            }
+            //</editor-fold>
+
+            // <editor-fold desc="Education">
+
+            // From Cloud
+            ArrayList<ProfileDataOperationEducation> arrayListEducation = new ArrayList<>();
+            if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEducation())) {
+                arrayListEducation.addAll(profileDetail.getPbEducation());
+
+                /*for (int i = 0; i < arrayListEducation.size(); i++) {
+                    if ((MoreObjects.firstNonNull(arrayListEducation.get(i).getEduPublic(), 0))
+                            == IntegerConstants
+                            .PRIVACY_PRIVATE) {
+                        pbEducation.add(arrayListEducation.get(i).getEduId());
+                    }
+                }*/
+            }
+
+            tempEducation = new ArrayList<>();
+            if (!Utils.isArraylistNullOrEmpty(arrayListEducation)) {
+                tempEducation.addAll(arrayListEducation);
+                linearEducation.setVisibility(View.VISIBLE);
+                /*ProfileDetailAdapter educationDetailAdapter = new ProfileDetailAdapter(this,
+                        tempEducation, AppConstants.EDUCATION, false, pmId);*/
+                PublicProfileDetailAdapter educationDetailAdapter = new
+                        PublicProfileDetailAdapter(this, tempEducation, AppConstants.EDUCATION,
+                        pmId);
+                recyclerViewEducation.setAdapter(educationDetailAdapter);
+            } else {
+                linearEducation.setVisibility(View.GONE);
             }
             //</editor-fold>
 
@@ -716,8 +773,9 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                 tempWebsite.addAll(arrayListWebsite);
 
                 linearWebsite.setVisibility(View.VISIBLE);
-                PublicProfileDetailAdapter websiteDetailAdapter = new PublicProfileDetailAdapter(this,
-                        tempWebsite, AppConstants.WEBSITE, pmId);
+                PublicProfileDetailAdapter websiteDetailAdapter = new PublicProfileDetailAdapter
+                        (this,
+                                tempWebsite, AppConstants.WEBSITE, pmId);
                 recyclerViewWebsite.setAdapter(websiteDetailAdapter);
             } else {
                 linearWebsite.setVisibility(GONE);
@@ -736,8 +794,9 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                 ArrayList<Object> tempAddress = new ArrayList<>();
                 tempAddress.addAll(arrayListAddress);
                 linearAddress.setVisibility(View.VISIBLE);
-                PublicProfileDetailAdapter addressDetailAdapter = new PublicProfileDetailAdapter(this,
-                        tempAddress, AppConstants.ADDRESS, pmId);
+                PublicProfileDetailAdapter addressDetailAdapter = new PublicProfileDetailAdapter
+                        (this,
+                                tempAddress, AppConstants.ADDRESS, pmId);
                 recyclerViewAddress.setAdapter(addressDetailAdapter);
             } else {
                 linearAddress.setVisibility(GONE);
@@ -757,21 +816,14 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                 ArrayList<Object> tempImAccount = new ArrayList<>();
                 tempImAccount.addAll(arrayListImAccount);
                 linearSocialContact.setVisibility(View.VISIBLE);
-                PublicProfileDetailAdapter imAccountDetailAdapter = new PublicProfileDetailAdapter(this,
+                PublicProfileDetailAdapter imAccountDetailAdapter = new
+                        PublicProfileDetailAdapter(this,
                         tempImAccount, AppConstants.IM_ACCOUNT, pmId);
                 recyclerViewSocialContact.setAdapter(imAccountDetailAdapter);
             } else {
                 linearSocialContact.setVisibility(GONE);
             }
             //</editor-fold>
-
-            if ((!Utils.isArraylistNullOrEmpty(arrayListWebsite)) || (!Utils
-                    .isArraylistNullOrEmpty(arrayListAddress)) || (!Utils.isArraylistNullOrEmpty
-                    (arrayListImAccount))) {
-                rippleViewMore.setVisibility(View.VISIBLE);
-            } else {
-                rippleViewMore.setVisibility(GONE);
-            }
 
             // <editor-fold desc="Aadhar card details">
             if (profileDetail != null) {
@@ -782,7 +834,8 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
 
                     if ((MoreObjects.firstNonNull(aadharDetails.getAadharPublic(), 3)) ==
                             IntegerConstants
-                                    .PRIVACY_PRIVATE && aadharDetails.getAadharNumber().equalsIgnoreCase("0")) {
+                                    .PRIVACY_PRIVATE && aadharDetails.getAadharNumber()
+                            .equalsIgnoreCase("0")) {
                         if (hasNumber)
                             buttonRequest.setVisibility(GONE);
                         else
@@ -824,7 +877,8 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                         @Override
                         public void onClick(View view) {
                             PrivacySettingPopupDialog privacySettingPopupDialog = new
-                                    PrivacySettingPopupDialog(null, PublicProfileDetailActivity.this,
+                                    PrivacySettingPopupDialog(null, PublicProfileDetailActivity
+                                    .this,
                                     new PrivacySettingPopupDialog.DialogCallback() {
                                         @Override
                                         public void onSettingSaved(ProfileDetailAdapter
@@ -860,16 +914,21 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
 //        wsRequestObject.setPmId(pmId);
                                             if (Utils.isNetworkAvailable(PublicProfileDetailActivity
                                                     .this)) {
-                                                new AsyncWebServiceCall(PublicProfileDetailActivity.this,
-                                                        WSRequestType.REQUEST_TYPE_JSON.getValue(),
-                                                        wsRequestObject, null, WsResponseObject
-                                                        .class,
-                                                        WsConstants
-                                                                .REQ_SET_PRIVACY_SETTING,
-                                                        PublicProfileDetailActivity
-                                                                .this.getResources().getString(R
-                                                                .string
-                                                                .msg_please_wait), true)
+                                                new AsyncWebServiceCall
+                                                        (PublicProfileDetailActivity.this,
+                                                                WSRequestType.REQUEST_TYPE_JSON
+                                                                        .getValue(),
+                                                                wsRequestObject, null,
+                                                                WsResponseObject
+                                                                        .class,
+                                                                WsConstants
+                                                                        .REQ_SET_PRIVACY_SETTING,
+                                                                PublicProfileDetailActivity
+                                                                        .this.getResources()
+                                                                        .getString(R
+                                                                                .string
+                                                                                .msg_please_wait)
+                                                                , true)
                                                         .executeOnExecutor
                                                                 (AsyncTask.THREAD_POOL_EXECUTOR,
                                                                         BuildConfig.WS_ROOT +
@@ -878,7 +937,8 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                                             } else {
                                                 //show no toast
                                                 Toast.makeText(PublicProfileDetailActivity.this,
-                                                        PublicProfileDetailActivity.this.getResources()
+                                                        PublicProfileDetailActivity.this
+                                                                .getResources()
                                                                 .getString(R.string.msg_no_network),
                                                         Toast.LENGTH_SHORT).show();
                                             }
@@ -887,7 +947,8 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                                     .AADHAR_NUMBER,
                                     0, aadharDetails.getAadharPublic(), aadharDetails.getAadharId
                                     () + "");
-                            privacySettingPopupDialog.setDialogTitle(PublicProfileDetailActivity.this
+                            privacySettingPopupDialog.setDialogTitle(PublicProfileDetailActivity
+                                    .this
                                     .getResources().getString(R
                                             .string.privacy_dialog_title));
                             privacySettingPopupDialog.showDialog();
@@ -909,7 +970,8 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                         Utils.copyToClipboard(PublicProfileDetailActivity.this,
                                 getResources().getString(R.string.str_copy_aadhar_number),
                                 textAadharNumber.getText().toString());
-                        Toast.makeText(rContactApplication, "Aadhar number copied.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(rContactApplication, "Aadhar number copied.", Toast
+                                .LENGTH_SHORT).show();
                         String url = "https://resident.uidai.gov.in/aadhaarverification";
                         Intent i = new Intent(Intent.ACTION_VIEW);
                         i.setData(Uri.parse(url));
@@ -918,6 +980,16 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                 }
             });
             //</editor-fold>
+
+            if ((!Utils.isArraylistNullOrEmpty(arrayListWebsite)) || (!Utils
+                    .isArraylistNullOrEmpty(arrayListAddress)) || (!Utils.isArraylistNullOrEmpty
+                    (arrayListImAccount))
+                    || (profileDetail.getPbAadhar() != null)
+                    || (profileDetail.getPbEducation() != null)) {
+                rippleViewMore.setVisibility(View.VISIBLE);
+            } else {
+                rippleViewMore.setVisibility(GONE);
+            }
 
             // <editor-fold desc="Last seen details">
 
@@ -942,7 +1014,8 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
 
                 try {
 
-                    long difference = simpleDateFormat.parse(endDate).getTime() - simpleDateFormat.parse(startDate).getTime();
+                    long difference = simpleDateFormat.parse(endDate).getTime() -
+                            simpleDateFormat.parse(startDate).getTime();
 
                     long secondsInMilli = 1000;
                     long minutesInMilli = secondsInMilli * 60;
@@ -963,7 +1036,8 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                             String.valueOf(elapsedDays)));
                 } else {
 
-                    String date = Utils.convertDateFormat(startDate, "yyyy-MM-dd HH:mm:ss", "hh:mm a");
+                    String date = Utils.convertDateFormat(startDate, "yyyy-MM-dd HH:mm:ss",
+                            "hh:mm a");
                     textLabelLastSeen.setText(String.format("Last seen today at %s", date));
                 }
 
@@ -987,8 +1061,9 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                 ArrayList<Object> tempEvent = new ArrayList<>();
                 tempEvent.addAll(arrayListEvent);
                 linearEvent.setVisibility(View.VISIBLE);
-                PublicProfileDetailAdapter eventDetailAdapter = new PublicProfileDetailAdapter(this, tempEvent,
-                        AppConstants.EVENT, pmId);
+                PublicProfileDetailAdapter eventDetailAdapter = new PublicProfileDetailAdapter
+                        (this, tempEvent,
+                                AppConstants.EVENT, pmId);
                 recyclerViewEvent.setAdapter(eventDetailAdapter);
             } else {
                 linearEvent.setVisibility(GONE);
@@ -999,8 +1074,7 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
             linearGender.setVisibility(GONE);
 
             if (Utils.isArraylistNullOrEmpty(arrayListEvent) && StringUtils.length(StringUtils
-                    .defaultString(profileDetail != null ? profileDetail.getPbGender() : null))
-                    <= 0) {
+                    .defaultString(profileDetail.getPbGender())) <= 0) {
                 cardOtherDetails.setVisibility(GONE);
             } else {
                 cardOtherDetails.setVisibility(View.VISIBLE);
@@ -1210,181 +1284,6 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.scrollToPosition(scrollPosition);
     }
-
-//    private void zoomImageFromThumb(final View thumbView, String imageUrl) {
-//        // If there's an animation in progress, cancel it
-//        // immediately and proceed with this one.
-//        if (mCurrentAnimator != null) {
-//            mCurrentAnimator.cancel();
-//        }
-//
-//        // Load the high-resolution "zoomed-in" image.
-////        imageEnlarge.setImageResource(imageResId);
-//        Glide.with(this)
-//                .load(imageUrl)
-//                .placeholder(R.drawable.home_screen_profile)
-//                .bitmapTransform(new CropCircleTransformation(this))
-//                .error(R.drawable.home_screen_profile)
-//                .into(imageEnlarge);
-//
-//        // Calculate the starting and ending bounds for the zoomed-in image.
-//        // This step involves lots of math. Yay, math.
-//        final Rect startBounds = new Rect();
-//        final Rect finalBounds = new Rect();
-//        final Point globalOffset = new Point();
-//
-//        // The start bounds are the global visible rectangle of the thumbnail,
-//        // and the final bounds are the global visible rectangle of the container
-//        // view. Also set the container view's offset as the origin for the
-//        // bounds, since that's the origin for the positioning animation
-//        // properties (X, Y).
-//        thumbView.getGlobalVisibleRect(startBounds);
-//        frameContainer.getGlobalVisibleRect(finalBounds, globalOffset);
-//        startBounds.offset(-globalOffset.x, -globalOffset.y);
-//        finalBounds.offset(-globalOffset.x, -globalOffset.y);
-//
-//        // Adjust the start bounds to be the same aspect ratio as the final
-//        // bounds using the "center crop" technique. This prevents undesirable
-//        // stretching during the animation. Also calculate the start scaling
-//        // factor (the end scaling factor is always 1.0).
-//        float startScale;
-//        if ((float) finalBounds.width() / finalBounds.height()
-//                > (float) startBounds.width() / startBounds.height()) {
-//            // Extend start bounds horizontally
-//            startScale = (float) startBounds.height() / finalBounds.height();
-//            float startWidth = startScale * finalBounds.width();
-//            float deltaWidth = (startWidth - startBounds.width()) / 2;
-//            startBounds.left -= deltaWidth;
-//            startBounds.right += deltaWidth;
-//        } else {
-//            // Extend start bounds vertically
-//            startScale = (float) startBounds.width() / finalBounds.width();
-//            float startHeight = startScale * finalBounds.height();
-//            float deltaHeight = (startHeight - startBounds.height()) / 2;
-//            startBounds.top -= deltaHeight;
-//            startBounds.bottom += deltaHeight;
-//        }
-//
-//        // Hide the thumbnail and show the zoomed-in view. When the animation
-//        // begins, it will position the zoomed-in view in the place of the
-//        // thumbnail.
-//        thumbView.setAlpha(0f);
-////        imageEnlarge.setVisibility(View.VISIBLE);
-//        frameImageEnlarge.setVisibility(View.VISIBLE);
-//        frameImageEnlarge.animate()
-//                .alpha(1.0f)
-//                .setDuration(300)
-//                .setListener(new AnimatorListenerAdapter() {
-//                    @Override
-//                    public void onAnimationEnd(Animator animation) {
-//                        super.onAnimationEnd(animation);
-//                        frameImageEnlarge.setVisibility(View.VISIBLE);
-//                    }
-//                });
-//
-//
-//        // Set the pivot point for SCALE_X and SCALE_Y transformations
-//        // to the top-left corner of the zoomed-in view (the default
-//        // is the center of the view).
-//        imageEnlarge.setPivotX(0f);
-//        imageEnlarge.setPivotY(0f);
-//
-//        // Construct and run the parallel animation of the four translation and
-//        // scale properties (X, Y, SCALE_X, and SCALE_Y).
-//        AnimatorSet set = new AnimatorSet();
-//        set.play(ObjectAnimator.ofFloat(imageEnlarge, View.X,
-//                startBounds.left, finalBounds.left))
-//                .with(ObjectAnimator.ofFloat(imageEnlarge, View.Y,
-//                        startBounds.top, finalBounds.top))
-//                .with(ObjectAnimator.ofFloat(imageEnlarge, View.SCALE_X,
-//                        startScale, 1f)).with(ObjectAnimator.ofFloat(imageEnlarge,
-//                View.SCALE_Y, startScale, 1f));
-//        set.setDuration(mShortAnimationDuration);
-//        set.setInterpolator(new DecelerateInterpolator());
-//        set.addListener(new AnimatorListenerAdapter() {
-//            @Override
-//            public void onAnimationEnd(Animator animation) {
-//                mCurrentAnimator = null;
-//            }
-//
-//            @Override
-//            public void onAnimationCancel(Animator animation) {
-//                mCurrentAnimator = null;
-//            }
-//        });
-//        set.start();
-//        mCurrentAnimator = set;
-//
-//        // Upon clicking the zoomed-in image, it should zoom back down
-//        // to the original bounds and show the thumbnail instead of
-//        // the expanded image.
-//        final float startScaleFinal = startScale;
-//        imageEnlarge.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if (mCurrentAnimator != null) {
-//                    mCurrentAnimator.cancel();
-//                }
-//
-//                // Animate the four positioning/sizing properties in parallel,
-//                // back to their original values.
-//                AnimatorSet set = new AnimatorSet();
-//                set.play(ObjectAnimator
-//                        .ofFloat(imageEnlarge, View.X, startBounds.left))
-//                        .with(ObjectAnimator
-//                                .ofFloat(imageEnlarge,
-//                                        View.Y, startBounds.top))
-//                        .with(ObjectAnimator
-//                                .ofFloat(imageEnlarge,
-//                                        View.SCALE_X, startScaleFinal))
-//                        .with(ObjectAnimator
-//                                .ofFloat(imageEnlarge,
-//                                        View.SCALE_Y, startScaleFinal));
-//                set.setDuration(mShortAnimationDuration);
-//                set.setInterpolator(new DecelerateInterpolator());
-//                set.addListener(new AnimatorListenerAdapter() {
-//                    @Override
-//                    public void onAnimationEnd(Animator animation) {
-//                        thumbView.setAlpha(1f);
-////                        imageEnlarge.setVisibility(View.GONE);
-//                        frameImageEnlarge.setVisibility(View.GONE);
-//                       /* frameImageEnlarge.animate()
-//                                .alpha(0.0f)
-//                                .setDuration(70)
-//                                .setListener(new AnimatorListenerAdapter() {
-//                                    @Override
-//                                    public void onAnimationEnd(Animator animation) {
-//                                        super.onAnimationEnd(animation);
-//                                        frameImageEnlarge.setVisibility(View.GONE);
-//                                    }
-//                                });*/
-//                        mCurrentAnimator = null;
-//                    }
-//
-//                    @Override
-//                    public void onAnimationCancel(Animator animation) {
-//                        thumbView.setAlpha(1f);
-////                        imageEnlarge.setVisibility(View.GONE);
-//                        frameImageEnlarge.setVisibility(View.GONE);
-//                      /*  frameImageEnlarge.animate()
-//                                .alpha(0.0f)
-//                                .setDuration(70)
-//                                .setListener(new AnimatorListenerAdapter() {
-//                                    @Override
-//                                    public void onAnimationEnd(Animator animation) {
-//                                        super.onAnimationEnd(animation);
-//                                        frameImageEnlarge.setVisibility(View.GONE);
-//                                    }
-//                                });*/
-//
-//                        mCurrentAnimator = null;
-//                    }
-//                });
-//                set.start();
-//                mCurrentAnimator = set;
-//            }
-//        });
-//    }
 
     //</editor-fold>
 
