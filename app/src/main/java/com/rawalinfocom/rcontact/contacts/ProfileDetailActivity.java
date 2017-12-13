@@ -1089,7 +1089,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                     /*this.getString(R.string.view_in_ac), this.getString(R
                                     .string.view_in_rc),
                                     this.getString(R.string.call_reminder),
-                                    this.getString(R.string.unblock),*/ this.getString(R.string.call_reminder), this.getString(R.string
+                                    this.getString(R.string.unblock),*/ /*this.getString(R.string
+                                    .call_reminder), */this.getString(R.string
                                             .delete),
                                     this.getString(R.string.clear_call_log)));
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
@@ -1107,7 +1108,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                                         .getString(R.string.view_profile),
                                                 this.getString(R.string.copy_phone_number),
                                         /*this.getString(R.string.call_reminder), this.getString
-                                        (R.string.unblock),*/this.getString(R.string.call_reminder),
+                                        (R.string.unblock),*//*this.getString(R.string
+                                        .call_reminder),*/
                                                 this.getString(R.string.delete), this.getString(R
                                                         .string
                                                         .clear_call_log)));
@@ -1128,8 +1130,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                     /*this.getString(R.string.view_in_ac), this.getString(R
                                     .string.view_in_rc),
                                     this.getString(R.string.call_reminder),
-                                    this.getString(R.string.block),*/this.getString(R.string
-                                            .call_reminder), this.getString(R.string
+                                    this.getString(R.string.block),*//*this.getString(R.string
+                                            .call_reminder),*/ this.getString(R.string
                                             .delete),
                                     this.getString(R.string.clear_call_log)));
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
@@ -1148,7 +1150,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                                 /*this.getString(R.string.view_profile),*/
                                                 this.getString(R.string.copy_phone_number),
                                         /*this.getString(R.string.call_reminder), this.getString
-                                        (R.string.block),*/this.getString(R.string.call_reminder),
+                                        (R.string.block),*//*this.getString(R.string
+                                        .call_reminder),*/
                                                 this.getString(R.string.delete), this.getString(R
                                                         .string
                                                         .clear_call_log)));
@@ -2262,44 +2265,46 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         initSwipe();
 
         // TODO : Hardik
-        buttonRequestAll.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        if (buttonRequestAll != null) {
+            buttonRequestAll.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
 
-                if (isPrivacyRequestAll) {
+                    if (isPrivacyRequestAll) {
 
-                    if (pbPhoneNumber.size() > 0)
-                        privateData.setPbPhoneNumber(pbPhoneNumber);
+                        if (pbPhoneNumber.size() > 0)
+                            privateData.setPbPhoneNumber(pbPhoneNumber);
 
-                    if (pbEmailId.size() > 0)
-                        privateData.setPbEmailId(pbEmailId);
+                        if (pbEmailId.size() > 0)
+                            privateData.setPbEmailId(pbEmailId);
 
-                    if (pbEducation.size() > 0)
-                        privateData.setPbEducation(pbEducation);
+                        if (pbEducation.size() > 0)
+                            privateData.setPbEducation(pbEducation);
 
-                    if (pbAddress.size() > 0)
-                        privateData.setPbAddress(pbAddress);
+                        if (pbAddress.size() > 0)
+                            privateData.setPbAddress(pbAddress);
 
-                    if (pbAadhaar.size() > 0)
-                        privateData.setPbAadhaar(pbAadhaar);
+                        if (pbAadhaar.size() > 0)
+                            privateData.setPbAadhaar(pbAadhaar);
 
-                    if (pbEvent.size() > 0)
-                        privateData.setPbEvent(pbEvent);
+                        if (pbEvent.size() > 0)
+                            privateData.setPbEvent(pbEvent);
 
-                    if (pbIMAccounts.size() > 0)
-                        privateData.setPbIMAccounts(pbIMAccounts);
+                        if (pbIMAccounts.size() > 0)
+                            privateData.setPbIMAccounts(pbIMAccounts);
 
-                    if (pbRating.size() > 0)
-                        privateData.setPbRating(pbRating);
+                        if (pbRating.size() > 0)
+                            privateData.setPbRating(pbRating);
 
-                    sendAllAccessRequest(Integer.parseInt(pmId), privateData);
+                        sendAllAccessRequest(Integer.parseInt(pmId), privateData);
 
-                } else {
-                    Utils.showErrorSnackBar(ProfileDetailActivity.this,
-                            relativeRootProfileDetail, "No private data found!!");
+                    } else {
+                        Utils.showErrorSnackBar(ProfileDetailActivity.this,
+                                relativeRootProfileDetail, "No private data found!!");
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     private void getDataFromDB() {
@@ -2857,7 +2862,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                             linearBasicDetailRating.setEnabled(true);
 
-                            ratingUser.setRating(Float.parseFloat(profileDetail.getProfileRating()));
+                            ratingUser.setRating(Float.parseFloat(profileDetail.getProfileRating
+                                    ()));
                             buttonRequestRating.setVisibility(View.GONE);
                         }
 
