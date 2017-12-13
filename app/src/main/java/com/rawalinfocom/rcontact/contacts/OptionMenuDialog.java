@@ -64,7 +64,7 @@ class OptionMenuDialog {
 
     private PhoneBookContacts phoneBookContacts;
     private RContactApplication rContactApplication;
-//    private ArrayList<String> pbRating;
+    private ArrayList<String> pbRating;
 
     MaterialDialog deleteConfirmationDialog;
 
@@ -77,7 +77,7 @@ class OptionMenuDialog {
         this.isFavourite = isFavourite;
         this.isFromFavourite = isFromFavourite;
         this.isCallLogRcpUser = isCallLogRcpUser;
-//        this.pbRating = pbRating;
+        this.pbRating = pbRating;
 
         rContactApplication = (RContactApplication) context.getApplicationContext();
         phoneBookContacts = new PhoneBookContacts(context);
@@ -363,6 +363,7 @@ class OptionMenuDialog {
         QueryManager queryManager = new QueryManager(((BaseActivity) context).databaseHandler);
         Intent intent;
         Uri lookupUri, res;
+        TextView textView = view.findViewById(R.id.text_option_menu);
 //        String rcpRawId = ((ProfileDetailActivity) context).checkNumberFavourite;
 //        if (StringUtils.contains(rcpRawId, ",")) {
 //            rcpRawId = rcpRawId.split(",")[0];
@@ -407,9 +408,25 @@ class OptionMenuDialog {
 
             // <editor-fold desc="Rate Profile">
             case 2:
-                if (context instanceof ProfileDetailActivity) {
-                    ((ProfileDetailActivity) context).onRatingClick();
+
+
+                if (StringUtils.equalsAnyIgnoreCase(textView.getText().toString(), context
+                        .getString(R.string.delete))) {
+                    showDeleteConfirmationDialog(queryManager, ALL_CONTACT_RCP);
+                } else {
+                    if (context instanceof ProfileDetailActivity) {
+                        ((ProfileDetailActivity) context).onRatingClick();
+                    }
                 }
+
+//                if (pbRating.size() > 0) {
+//                    showDeleteConfirmationDialog(queryManager, R_CONTACT_RCP);
+//                } else {
+//                    if (context instanceof ProfileDetailActivity) {
+//                        ((ProfileDetailActivity) context).onRatingClick();
+//                    }
+//                }
+
                 break;
             //</editor-fold>
 
