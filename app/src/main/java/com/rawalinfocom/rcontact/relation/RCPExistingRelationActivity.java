@@ -139,7 +139,7 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
 
     private String contactName = "", thumbnailUrl, contactNumber = "";
     private ArrayList<ProfileDataOperationOrganization> arrayListOrganization;
-    private String pmId;
+    private String pmId, rcpGender = "";
     //    private TableRelationMappingMaster tableRelationMappingMaster;
     private ArrayList<RelationRecommendationType> existingRelationList;
 
@@ -265,7 +265,7 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
                     intent.putExtra(AppConstants.EXTRA_PROFILE_IMAGE_URL, thumbnailUrl);
                     intent.putExtra(AppConstants.EXTRA_CONTACT_NUMBER, contactNumber);
                     intent.putExtra(AppConstants.EXTRA_IS_FROM, "existing");
-                    intent.putExtra(AppConstants.EXTRA_GENDER, existingRelationList.get(0).getGender());
+                    intent.putExtra(AppConstants.EXTRA_GENDER, rcpGender);
                     startActivity(intent);
                 } else {
                     Utils.showErrorSnackBar(activity, relativeRootExistingRelation, getResources()
@@ -338,6 +338,12 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
                 pmId = intent.getStringExtra(AppConstants.EXTRA_PM_ID);
             } else {
                 pmId = "-1";
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_GENDER)) {
+                rcpGender = intent.getStringExtra(AppConstants.EXTRA_GENDER);
+            } else {
+                rcpGender = "";
             }
         }
     }
@@ -516,6 +522,7 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
             recommendationType.setDateAndTime("");
             recommendationType.setProfileImage(relationUserProfile.getProfilePhoto());
             recommendationType.setGender(relationUserProfile.getPbGender());
+            rcpGender = relationUserProfile.getPbGender();
 
             ArrayList<IndividualRelationType> relationRecommendations = new ArrayList<>();
 

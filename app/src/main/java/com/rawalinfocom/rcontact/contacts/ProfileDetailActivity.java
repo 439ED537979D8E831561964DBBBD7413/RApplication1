@@ -473,6 +473,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     private ArrayList<String> pbEducation;
     private ArrayList<String> pbAadhaar;
     private ArrayList<String> pbRating;
+    private String rcpGender;
 
     //<editor-fold desc="Override Methods">
 
@@ -995,6 +996,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     intent.putExtra(AppConstants.EXTRA_CONTACT_NAME, contactName);
                     intent.putExtra(AppConstants.EXTRA_CONTACT_NUMBER, contactNumber);
                     intent.putExtra(AppConstants.EXTRA_PROFILE_IMAGE_URL, thumbnailUrl);
+                    intent.putExtra(AppConstants.EXTRA_GENDER, rcpGender);
                     intent.putExtra(AppConstants.EXTRA_PM_ID, pmId);
                     startActivity(intent);
                 }
@@ -3694,6 +3696,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             } else {
                 linearGender.setVisibility(View.GONE);
             }
+
+            rcpGender = profileDetail != null ? profileDetail.getPbGender() : "";
 
             if (Utils.isArraylistNullOrEmpty(arrayListEvent) && Utils.isArraylistNullOrEmpty
                     (arrayListPhoneBookEvent)
