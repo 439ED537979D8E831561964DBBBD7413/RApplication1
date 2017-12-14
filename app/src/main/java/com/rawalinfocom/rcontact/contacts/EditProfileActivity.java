@@ -933,11 +933,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         arrayListTempOrganization.add(organization);
                     }
 
-                    linearOrganizationDetails.removeAllViews();
-
-                    for (int i = 0; i < arrayListOrganizationObject.size(); i++) {
-                        addOrganizationView(i, arrayListOrganizationObject.get(i));
-                    }
+                    removeAndAddOrganizationView();
 
                 } else {
                     Utils.showErrorSnackBar(this, relativeRootEditProfile, "You didn't select any" +
@@ -2494,17 +2490,15 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                 showOrganizationPrivacyDialog(EditProfileActivity.this,
                                         arrayListNewOrganization, profileDataOperation);
                             } else {
-                                System.out.println("RContacts data");
                                 arrayListTempOrganization.clear();
-//                            profileDataOperation.setPbOrganization(arrayListNewOrganization);
-//                            editProfile(profileDataOperation, AppConstants.ORGANIZATION);
+                                profileDataOperation.setPbOrganization(arrayListNewOrganization);
+                                editProfile(profileDataOperation, AppConstants.ORGANIZATION);
                             }
 
                         } else {
-                            System.out.println("RContacts data");
                             arrayListTempOrganization.clear();
-//                        profileDataOperation.setPbOrganization(arrayListNewOrganization);
-//                        editProfile(profileDataOperation, AppConstants.ORGANIZATION);
+                            profileDataOperation.setPbOrganization(arrayListNewOrganization);
+                            editProfile(profileDataOperation, AppConstants.ORGANIZATION);
                         }
                     } else {
 
@@ -3094,12 +3088,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 switch (rippleView.getId()) {
                     case R.id.rippleLeft:
                         dialog.dismiss();
-//                        for (int i = 0; i < organizationArrayList.size(); i++) {
-//                            ProfileDataOperationOrganization organization = organizationArrayList.get(i);
-//                            if (arrayListTempOrganization.contains(organization)) {
-//                                organizationArrayList.remove(i);
-//                            }
-//                        }
 
                         // Loop arrayList2 items
                         for (ProfileDataOperationOrganization dataOperationOrganization : organizationArrayList) {
@@ -3122,13 +3110,14 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                         arrayListTempOrganization.clear();
                         profileDataOperation.setPbOrganization(organizationArrayList);
-//                        editProfile(profileDataOperation, AppConstants.ORGANIZATION);
+                        editProfile(profileDataOperation, AppConstants.ORGANIZATION);
                         break;
 
                     case R.id.rippleRight:
                         dialog.dismiss();
+                        arrayListTempOrganization.clear();
                         profileDataOperation.setPbOrganization(organizationArrayList);
-//                        editProfile(profileDataOperation, AppConstants.ORGANIZATION);
+                        editProfile(profileDataOperation, AppConstants.ORGANIZATION);
                         break;
                 }
             }
@@ -4287,6 +4276,14 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         }
     }
 
+    private void removeAndAddOrganizationView() {
+
+        linearOrganizationDetails.removeAllViews();
+        for (int i = 0; i < arrayListOrganizationObject.size(); i++) {
+            addOrganizationView(i, arrayListOrganizationObject.get(i));
+        }
+    }
+
     @SuppressLint("InflateParams")
     private void addView(int viewType, final LinearLayout linearLayout, Object detailObject, int
             position) {
@@ -4800,8 +4797,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     }
 
     @SuppressLint("InflateParams")
-    private void addOrganizationView(int position, Object detailObject) {
-        View view = LayoutInflater.from(this).inflate(R.layout
+    private void addOrganizationView(final int position, Object detailObject) {
+        final View view = LayoutInflater.from(this).inflate(R.layout
                 .list_item_my_profile_edit_organization, null);
         ImageView deleteOrganization = view.findViewById(R.id.deleteOrganization);
         final EditText inputCompanyName = view.findViewById(R.id.input_company_name);
@@ -4958,13 +4955,28 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             }
         });
 
+        deleteOrganization.setTag(position);
         deleteOrganization.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                if (arrayListTempOrganization.size() > 0) {
+                    int pos = (int) v.getTag();
+
+                    ProfileDataOperationOrganization dataOperationOrganization = (ProfileDataOperationOrganization) arrayListOrganizationObject.get(pos);
+
+                    for (ProfileDataOperationOrganization organization : arrayListTempOrganization) {
+                        if (dataOperationOrganization.getOrgName().equalsIgnoreCase(organization.getOrgName())) {
+                            arrayListTempOrganization.remove(organization);
+                        }
+                    }
+                }
+
                 isUpdated = true;
                 if (linearOrganizationDetails.getChildCount() > 1) {
                     linearOrganizationDetails.removeView(relativeRowEditProfile);
                     addOrganizationDetailsToList();
+                    removeAndAddOrganizationView();
                 } else if (linearOrganizationDetails.getChildCount() == 1) {
                     inputCompanyName.getText().clear();
                     inputDesignationName.getText().clear();
