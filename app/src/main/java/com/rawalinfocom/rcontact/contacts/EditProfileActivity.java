@@ -2373,9 +2373,15 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     organization.setIsCurrent(checkboxOrganization.isChecked() ? 1 : 0);
                     organization.setOrgPublic(IntegerConstants.PRIVACY_EVERYONE);
                     organization.setOrgEntId(textEnterpriseOrgId.getText().toString().trim());
-                    organization.setIsVerify(Integer.parseInt(textIsVerified.getText().toString()
-                            .trim()));
+
                     // organization.setOrgLogo(textOrgLogo.getText().toString().trim());
+
+                    if (StringUtils.length(textEnterpriseOrgId.getText().toString().trim()) > 0) {
+                        organization.setIsVerify(Integer.parseInt(textIsVerified.getText().toString()
+                                .trim()));
+                    } else {
+                        organization.setIsVerify(0);
+                    }
 
                     ColorStateList colorStateList = ColorStateList.valueOf(ContextCompat.getColor
                             (EditProfileActivity
@@ -3048,6 +3054,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                               final ArrayList<ProfileDataOperationOrganization>
                                                       organizationArrayList,
                                               final ProfileDataOperation profileDataOperation) {
+
+        final ArrayList<ProfileDataOperationOrganization> finalOrganizationArrayList = organizationArrayList;
+
         final Dialog dialog = new Dialog(mContext);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_rate_app);
@@ -3090,12 +3099,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         dialog.dismiss();
 
                         // Loop arrayList2 items
-                        for (ProfileDataOperationOrganization dataOperationOrganization : organizationArrayList) {
+                        for (ProfileDataOperationOrganization dataOperationOrganization :
+                                new ArrayList<ProfileDataOperationOrganization>(organizationArrayList)) {
                             // Loop arrayList1 items
-                            boolean found = false;
                             for (ProfileDataOperationOrganization organization : arrayListTempOrganization) {
                                 if (dataOperationOrganization.getOrgName().equalsIgnoreCase(organization.getOrgName())) {
-                                    organizationArrayList.remove(dataOperationOrganization);
+                                    finalOrganizationArrayList.remove(dataOperationOrganization);
                                 }
                             }
                         }
@@ -3109,14 +3118,14 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 //                        }
 
                         arrayListTempOrganization.clear();
-                        profileDataOperation.setPbOrganization(organizationArrayList);
+                        profileDataOperation.setPbOrganization(finalOrganizationArrayList);
                         editProfile(profileDataOperation, AppConstants.ORGANIZATION);
                         break;
 
                     case R.id.rippleRight:
                         dialog.dismiss();
                         arrayListTempOrganization.clear();
-                        profileDataOperation.setPbOrganization(organizationArrayList);
+                        profileDataOperation.setPbOrganization(finalOrganizationArrayList);
                         editProfile(profileDataOperation, AppConstants.ORGANIZATION);
                         break;
                 }
@@ -4984,7 +4993,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     inputToDate.getText().clear();
                     textOrgName.setText("");
                     checkboxOrganization.setChecked(true);
-//                    arrayListOrganizationObject.clear();
+                    inputCompanyName.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+
+                    Glide.with(EditProfileActivity.this)
+                            .load(R.drawable.default_org)
+                            .bitmapTransform(new CropCircleTransformation(EditProfileActivity.this))
+                            .override(120, 120)
+                            .into(imageOrgProfile);
                 }
             }
         });

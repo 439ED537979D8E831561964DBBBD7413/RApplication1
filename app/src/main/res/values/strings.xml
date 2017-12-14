@@ -100,7 +100,7 @@
     <string name="str_like_this_application">LIKE THIS APPLICATION</string>
     <string name="str_rate_app_body">If you like our app, please take a moment to rate us!</string>
     <string name="str_profile_details_privacy">PROFILE DETAILS PRIVACY</string>
-    <string name="str_organisation_privacy_body">Your profile details will be visible to the selected organisation from the organisation
+    <string name="str_organisation_privacy_body">Your profile details including Aadhaar Number will be visible to the selected organisation from the organisation
         list against privacy setting.</string>
 
     <!--<string name="str_designation">Designation</string>-->
