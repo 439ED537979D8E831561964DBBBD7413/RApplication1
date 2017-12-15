@@ -33,16 +33,17 @@ android {
         applicationId "com.rawalinfocom.rcontact"
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 12
+        versionCode 11
         vectorDrawables.useSupportLibrary = true
-        versionName "1.2.0"
+        versionName "1.1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
 
     signingConfigs {
         release {
-            storeFile file('/Users/user/Desktop/apk/rcontacts.jks')
+            //storeFile file('/home/rajesh/Downloads/rcontacts.jks')
+            storeFile file("${System.env.certfilepath}/rcontacts.jks")
             storePassword "rcontacts"
             keyAlias "rcontacts"
             keyPassword "rcontacts"
