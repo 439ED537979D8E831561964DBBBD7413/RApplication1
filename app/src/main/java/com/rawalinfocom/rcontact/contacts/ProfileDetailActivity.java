@@ -3531,19 +3531,19 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
-                            Calendar calendar = Calendar.getInstance();
-                            calendar.setTime(simpleDateFormat.parse(profileDetail.getPmLastSeen()));
-                            calendar.add(Calendar.HOUR, 5);
-                            calendar.add(Calendar.MINUTE, 30);
+//                            Calendar calendar = Calendar.getInstance();
+//                            calendar.setTime(simpleDateFormat.parse(profileDetail.getPmLastSeen()));
+//                            calendar.add(Calendar.HOUR, 5);
+//                            calendar.add(Calendar.MINUTE, 30);
 
-                            String compareDate = simpleDateFormat.format(calendar.getTime());
+//                            String compareDate = simpleDateFormat.format(calendar.getTime());
                             String endDate = simpleDateFormat.format(new Date(System
                                     .currentTimeMillis()));
 
                             try {
 
                                 long difference = simpleDateFormat.parse(endDate).getTime() -
-                                        simpleDateFormat.parse(compareDate).getTime();
+                                        simpleDateFormat.parse(profileDetail.getPmLastSeen()).getTime();
 
                                 long secondsInMilli = 1000;
                                 long minutesInMilli = secondsInMilli * 60;
@@ -3556,8 +3556,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 e.printStackTrace();
                             }
 
-                            calendar.clear();
-
+                            Calendar calendar = Calendar.getInstance();
                             calendar.setTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
                                     .parse(profileDetail.getPmLastSeen()));
                             calendar.add(Calendar.HOUR, 5);
