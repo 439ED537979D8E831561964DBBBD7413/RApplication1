@@ -2376,7 +2376,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                     // organization.setOrgLogo(textOrgLogo.getText().toString().trim());
 
-                    if (StringUtils.length(textEnterpriseOrgId.getText().toString().trim()) > 0) {
+                    if (StringUtils.length(textIsVerified.getText().toString().trim()) > 0) {
                         organization.setIsVerify(Integer.parseInt(textIsVerified.getText().toString()
                                 .trim()));
                     } else {
@@ -2481,18 +2481,16 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     if (arrayListNewOrganization.size() > 0) {
                         if (arrayListTempOrganization.size() > 0) {
 
-                            boolean containsVerifiedOrgan = false;
                             for (int i = 0; i < arrayListTempOrganization.size(); i++) {
                                 ProfileDataOperationOrganization organization =
                                         arrayListTempOrganization.get(i);
                                 if (!(organization.getIsVerify() == 1)) {
-                                    //Show popup
-                                    containsVerifiedOrgan = true;
                                     arrayListTempOrganization.remove(i);
                                 }
                             }
 
                             if (arrayListTempOrganization.size() > 0) {
+                                //Show popup
                                 showOrganizationPrivacyDialog(EditProfileActivity.this,
                                         arrayListNewOrganization, profileDataOperation);
                             } else {
@@ -2516,62 +2514,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                     .string.error_no_update));
                         }
                     }
-
-//                    boolean containsVerifiedOrgan = false;
-//                    if (arrayListNewOrganization.size() > 0) {
-//                        for (int i = 0; i < arrayListNewOrganization.size(); i++) {
-//                            ProfileDataOperationOrganization organization =
-//                                    arrayListNewOrganization.get(i);
-//                            if (organization.getIsVerify() == 1) {
-//                                //Show popup
-//                                containsVerifiedOrgan = true;
-//                                showOrganizationPrivacyDialog(EditProfileActivity.this,
-//                                        arrayListNewOrganization, profileDataOperation);
-//                                break;
-//                            }
-//                        }
-//
-//                        if (!containsVerifiedOrgan) {
-//
-//                            profileDataOperation.setPbOrganization(arrayListNewOrganization);
-//                            editProfile(profileDataOperation, AppConstants.ORGANIZATION);
-//
-//                        }
-//
-//                        //if (!isCurrentSelected) {
-////                            Utils.showErrorSnackBar(this, relativeRootEditProfile, getString(R
-////                                    .string.error_current_organization));
-////                        } else {
-////                            profileDataOperation.setPbOrganization(arrayListNewOrganization);
-////                            editProfile(profileDataOperation, AppConstants.ORGANIZATION);
-////                        }
-//                    } else {
-//                        containsVerifiedOrgan = false;
-//                        if (arrayListOrganizationObject.size() > 0) {
-////                            for (int i = 0; i < arrayListOrganizationObject.size(); i++) {
-////                                ProfileDataOperationOrganization organization =
-////                                        (ProfileDataOperationOrganization)
-////                                                arrayListOrganizationObject
-////                                                        .get(i);
-////                                if (organization.getIsVerify() == 1) {
-////                                    //Show popup
-////                                    containsVerifiedOrgan = true;
-////                                    showOrganizationPrivacyDialog(EditProfileActivity.this,
-////                                            arrayListNewOrganization, profileDataOperation);
-////                                }
-////                            }
-////
-////                            if (!containsVerifiedOrgan) {
-//                            profileDataOperation.setPbOrganization(arrayListNewOrganization);
-//                            editProfile(profileDataOperation, AppConstants.ORGANIZATION);
-////                            }
-////                            profileDataOperation.setPbOrganization(arrayListNewOrganization);
-////                            editProfile(profileDataOperation, AppConstants.ORGANIZATION);
-//                        } else {
-//                            Utils.showErrorSnackBar(this, relativeRootEditProfile, getString(R
-//                                    .string.error_no_update));
-//                        }
-//                    }
                 }
                 break;
             //</editor-fold>
@@ -2689,58 +2631,15 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         break;
                     }
                 }
-                boolean isEduCurrentSelected = false;
-                for (int i = 0; i < arrayListNewEducation.size(); i++) {
-                    if ((MoreObjects.firstNonNull(arrayListNewEducation.get(i).getIsCurrent(), 0)
-                    ) == 1) {
-                        isEduCurrentSelected = true;
-                        break;
-                    }
-                }
+
                 if (isValid) {
-                     /*   profileDataOperation.setPbOrganization(arrayListNewOrganization);
-                        editProfile(profileDataOperation, AppConstants.ORGANIZATION);*/
-//                    boolean containsVerifiedOrgan = false;
                     if (arrayListNewEducation.size() > 0) {
-                        /*for (int i = 0; i < arrayListNewEducation.size(); i++) {
-                            ProfileDataOperationEducation education = arrayListNewEducation.get(i);
-                            if (organization.getIsVerify() == 1) {
-                                //Show popup
-                                containsVerifiedOrgan = true;
-                                showOrganizationPrivacyDialog(EditProfileActivity.this,
-                                        arrayListNewOrganization, profileDataOperation);
-                                break;
-                            }
-                        }*/
-
-//                        if (!containsVerifiedOrgan) {
-
                         profileDataOperation.setPbEducation(arrayListNewEducation);
                         editProfile(profileDataOperation, AppConstants.EDUCATION);
-
-//                        }
-
                     } else {
-//                        containsVerifiedOrgan = false;
                         if (arrayListEducationObject.size() > 0) {
-                            /*for (int i = 0; i < arrayListEducationObject.size(); i++) {
-                                ProfileDataOperationEducation education =
-                                        (ProfileDataOperationEducation)
-                                                arrayListEducationObject.get(i);
-                                if (organization.getIsVerify() == 1) {
-                                    //Show popup
-                                    containsVerifiedOrgan = true;
-                                    showOrganizationPrivacyDialog(EditProfileActivity.this,
-                                            arrayListNewOrganization, profileDataOperation);
-                                }
-                            }*/
-
-//                            if (!containsVerifiedOrgan) {
                             profileDataOperation.setPbEducation(arrayListNewEducation);
                             editProfile(profileDataOperation, AppConstants.EDUCATION);
-//                            }
-//                            profileDataOperation.setPbOrganization(arrayListNewOrganization);
-//                            editProfile(profileDataOperation, AppConstants.ORGANIZATION);
                         } else {
                             Utils.showErrorSnackBar(this, relativeRootEditProfile, getString(R
                                     .string.error_no_update));
