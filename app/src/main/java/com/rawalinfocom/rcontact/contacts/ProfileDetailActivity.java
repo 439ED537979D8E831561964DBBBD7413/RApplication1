@@ -473,6 +473,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     private ArrayList<String> pbEducation;
     private ArrayList<String> pbAadhaar;
     private ArrayList<String> pbRating;
+    private String rcpGender;
 
     //<editor-fold desc="Override Methods">
 
@@ -995,6 +996,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     intent.putExtra(AppConstants.EXTRA_CONTACT_NAME, contactName);
                     intent.putExtra(AppConstants.EXTRA_CONTACT_NUMBER, contactNumber);
                     intent.putExtra(AppConstants.EXTRA_PROFILE_IMAGE_URL, thumbnailUrl);
+                    intent.putExtra(AppConstants.EXTRA_GENDER, rcpGender);
                     intent.putExtra(AppConstants.EXTRA_PM_ID, pmId);
                     startActivity(intent);
                 }
@@ -3527,24 +3529,21 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                             long elapsedDays = 0;
 
-                            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd " +
-                                    "HH:mm:ss", Locale.getDefault());
+                            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
-                            final Date d = simpleDateFormat.parse(profileDetail.getPmLastSeen());
-                            final Calendar calendar = Calendar.getInstance();
-
-                            calendar.setTime(d);
+                            Calendar calendar = Calendar.getInstance();
+                            calendar.setTime(simpleDateFormat.parse(profileDetail.getPmLastSeen()));
                             calendar.add(Calendar.HOUR, 5);
                             calendar.add(Calendar.MINUTE, 30);
 
-                            String startDate = simpleDateFormat.format(calendar.getTime());
+                            String compareDate = simpleDateFormat.format(calendar.getTime());
                             String endDate = simpleDateFormat.format(new Date(System
                                     .currentTimeMillis()));
 
                             try {
 
                                 long difference = simpleDateFormat.parse(endDate).getTime() -
-                                        simpleDateFormat.parse(startDate).getTime();
+                                        simpleDateFormat.parse(compareDate).getTime();
 
                                 long secondsInMilli = 1000;
                                 long minutesInMilli = secondsInMilli * 60;
@@ -3557,18 +3556,21 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 e.printStackTrace();
                             }
 
-                            if (elapsedDays > 1) {
-                                textLabelLastSeen.setText(String.format("Last seen on %s days ago ",
-                                        String.valueOf(elapsedDays)));
-                            } else if (elapsedDays > 0) {
-                                textLabelLastSeen.setText(String.format("Last seen on %s day ago ",
-                                        String.valueOf(elapsedDays)));
-                            } else {
+                            calendar.clear();
 
-                                String date = Utils.convertDateFormat(startDate, "yyyy-MM-dd " +
-                                        "HH:mm:ss", "hh:mm a");
-                                textLabelLastSeen.setText(String.format("Last seen today at %s",
-                                        date));
+                            calendar.setTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+                                    .parse(profileDetail.getPmLastSeen()));
+                            calendar.add(Calendar.HOUR, 5);
+                            calendar.add(Calendar.MINUTE, 30);
+
+                            String startDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(calendar.getTime());
+                            String time = Utils.convertDateFormat(startDate, "yyyy-MM-dd HH:mm:ss", "hh:mm a");
+                            if (elapsedDays > 1) {
+                                textLabelLastSeen.setText(String.format("Last seen on %s days ago ", String.valueOf(elapsedDays)));
+                            } else if (elapsedDays > 0) {
+                                textLabelLastSeen.setText(String.format("Last seen on yesterday at %s", time));
+                            } else {
+                                textLabelLastSeen.setText(String.format("Last seen today at %s", time));
                             }
 
                         } else {
@@ -3694,6 +3696,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             } else {
                 linearGender.setVisibility(View.GONE);
             }
+
+            rcpGender = profileDetail != null ? profileDetail.getPbGender() : "";
 
             if (Utils.isArraylistNullOrEmpty(arrayListEvent) && Utils.isArraylistNullOrEmpty
                     (arrayListPhoneBookEvent)

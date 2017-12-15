@@ -454,15 +454,12 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
             }
         }*/
 
-
         holder.llPrivacy.setVisibility(View.GONE);
-        if ((MoreObjects.firstNonNull(education.getEduPublic(), 3)) == IntegerConstants
-                .PRIVACY_PRIVATE && education.getEduName().startsWith("XXXX")) {
+        if (education.getEduName().startsWith("XXXX")) {
             holder.buttonRequest.setVisibility(View.GONE);
             holder.imgActionType.setVisibility(View.GONE);
             holder.textSub.setVisibility(View.GONE);
         }
-
 
         if (StringUtils.equalsIgnoreCase(education.getEduToDate(), "")) {
             if (!StringUtils.isEmpty(education.getEduFromDate())) {
@@ -488,8 +485,6 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
                         formattedToDate));
             }
         }
-
-//        }
     }
 
     private void displayWebsite(final ProfileDetailViewHolder holder, final int position) {
@@ -551,7 +546,6 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
                 return true;
             }
         });
-
 
         int rcpType = Integer.parseInt(StringUtils.defaultIfEmpty(webAddress.getWebRcpType(),
                 String.valueOf(IntegerConstants.RCP_TYPE_SECONDARY)));
