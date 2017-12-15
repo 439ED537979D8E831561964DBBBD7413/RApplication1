@@ -172,6 +172,9 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder contactViewHolder, final int position) {
+        if(mActivity == null)
+            return;
+        
         CallLogViewHolder holder = (CallLogViewHolder) contactViewHolder;
         final CallLogType callLogType = arrayListCallLogs.get(position);
         final String name = callLogType.getName();
@@ -505,6 +508,8 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
 
         final String thumbnailUrl = callLogType.getProfileImage();
         if (!TextUtils.isEmpty(thumbnailUrl)) {
+            if(mActivity == null)
+                return;
             Glide.with(mActivity)
                     .load(thumbnailUrl)
                     .placeholder(R.drawable.home_screen_profile)
