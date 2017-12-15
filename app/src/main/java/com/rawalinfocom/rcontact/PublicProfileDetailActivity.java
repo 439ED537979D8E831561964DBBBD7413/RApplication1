@@ -856,16 +856,8 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                         }
                     }
 
-                    buttonRequest.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            int pmTo = Integer.parseInt(pmId);
-                            // sendAccessRequest(int toPMId, String carFiledType, String
-                            // recordIndexId)
-                            sendAccessRequest(pmTo, "pb_aadhaar", String.valueOf(aadharDetails
-                                    .getAadharId()));
-                        }
-                    });
+                    buttonRequest.setVisibility(GONE);
+                    buttonPrivacy.setVisibility(GONE);
 
                     textAadharNumber.setTypeface(Utils.typefaceRegular(this));
                     if (aadharDetails.getAadharNumber().equalsIgnoreCase("0")) {
@@ -873,95 +865,12 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                     } else
                         textAadharNumber.setText(aadharDetails.getAadharNumber() + "");
 
-                    buttonPrivacy.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            PrivacySettingPopupDialog privacySettingPopupDialog = new
-                                    PrivacySettingPopupDialog(null, PublicProfileDetailActivity
-                                    .this,
-                                    new PrivacySettingPopupDialog.DialogCallback() {
-                                        @Override
-                                        public void onSettingSaved(ProfileDetailAdapter
-                                                                           .ProfileDetailViewHolder view, int whichItem, int newPrivacy, int
-                                                                           itemPosition, int
-                                                                           oldPrivacy, String
-                                                                           cloudId) {
-
-                                            if (oldPrivacy == newPrivacy + 1) {
-                                                return;
-                                            }
-
-                                            WsRequestObject wsRequestObject = new WsRequestObject();
-
-                                            PrivacyEntityItem privacyEntityItem = new
-                                                    PrivacyEntityItem();
-                                            privacyEntityItem.setId(cloudId);
-                                            privacyEntityItem.setValue(newPrivacy + 1);
-                                            ArrayList<PrivacyEntityItem> privacyEntityItems = new
-                                                    ArrayList<>();
-                                            privacyEntityItems.add(privacyEntityItem);
-                                            ArrayList<PrivacyDataItem> privacyItems = new
-                                                    ArrayList<>();
-                                            PrivacyDataItem privacyDataItem = new PrivacyDataItem();
-                                            switch (whichItem) {
-                                                case AppConstants.AADHAR_NUMBER:
-                                                    privacyDataItem.setPbAadhaar
-                                                            (privacyEntityItems);
-                                                    break;
-                                            }
-                                            privacyItems.add(privacyDataItem);
-                                            wsRequestObject.setPrivacyData(privacyItems);
-//        wsRequestObject.setPmId(pmId);
-                                            if (Utils.isNetworkAvailable(PublicProfileDetailActivity
-                                                    .this)) {
-                                                new AsyncWebServiceCall
-                                                        (PublicProfileDetailActivity.this,
-                                                                WSRequestType.REQUEST_TYPE_JSON
-                                                                        .getValue(),
-                                                                wsRequestObject, null,
-                                                                WsResponseObject
-                                                                        .class,
-                                                                WsConstants
-                                                                        .REQ_SET_PRIVACY_SETTING,
-                                                                PublicProfileDetailActivity
-                                                                        .this.getResources()
-                                                                        .getString(R
-                                                                                .string
-                                                                                .msg_please_wait)
-                                                                , true)
-                                                        .executeOnExecutor
-                                                                (AsyncTask.THREAD_POOL_EXECUTOR,
-                                                                        BuildConfig.WS_ROOT +
-                                                                                WsConstants
-                                                                                        .REQ_SET_PRIVACY_SETTING);
-                                            } else {
-                                                //show no toast
-                                                Toast.makeText(PublicProfileDetailActivity.this,
-                                                        PublicProfileDetailActivity.this
-                                                                .getResources()
-                                                                .getString(R.string.msg_no_network),
-                                                        Toast.LENGTH_SHORT).show();
-                                            }
-                                        }
-                                    }, AppConstants
-                                    .AADHAR_NUMBER,
-                                    0, aadharDetails.getAadharPublic(), aadharDetails.getAadharId
-                                    () + "");
-                            privacySettingPopupDialog.setDialogTitle(PublicProfileDetailActivity
-                                    .this
-                                    .getResources().getString(R
-                                            .string.privacy_dialog_title));
-                            privacySettingPopupDialog.showDialog();
-                        }
-                    });
-
                 } else {
                     linearAadharCard.setVisibility(GONE);
                 }
             } else {
                 linearAadharCard.setVisibility(GONE);
             }
-
 
             textAadharNumber.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -999,23 +908,21 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
             if (!StringUtils.isBlank(profileDetail.getPmLastSeen())) {
 
                 long elapsedDays = 0;
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd " +
-                        "HH:mm:ss", Locale.getDefault());
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
-                final Date d = simpleDateFormat.parse(profileDetail.getPmLastSeen());
-                final Calendar calendar = Calendar.getInstance();
-
-                calendar.setTime(d);
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(simpleDateFormat.parse(profileDetail.getPmLastSeen()));
                 calendar.add(Calendar.HOUR, 5);
                 calendar.add(Calendar.MINUTE, 30);
 
-                String startDate = simpleDateFormat.format(calendar.getTime());
-                String endDate = simpleDateFormat.format(new Date(System.currentTimeMillis()));
+                String compareDate = simpleDateFormat.format(calendar.getTime());
+                String endDate = simpleDateFormat.format(new Date(System
+                        .currentTimeMillis()));
 
                 try {
 
                     long difference = simpleDateFormat.parse(endDate).getTime() -
-                            simpleDateFormat.parse(startDate).getTime();
+                            simpleDateFormat.parse(compareDate).getTime();
 
                     long secondsInMilli = 1000;
                     long minutesInMilli = secondsInMilli * 60;
@@ -1028,17 +935,21 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                     e.printStackTrace();
                 }
 
-                if (elapsedDays > 1) {
-                    textLabelLastSeen.setText(String.format("Last seen on %s days ago ",
-                            String.valueOf(elapsedDays)));
-                } else if (elapsedDays > 0) {
-                    textLabelLastSeen.setText(String.format("Last seen on %s day ago ",
-                            String.valueOf(elapsedDays)));
-                } else {
+                calendar.clear();
 
-                    String date = Utils.convertDateFormat(startDate, "yyyy-MM-dd HH:mm:ss",
-                            "hh:mm a");
-                    textLabelLastSeen.setText(String.format("Last seen today at %s", date));
+                calendar.setTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+                        .parse(profileDetail.getPmLastSeen()));
+                calendar.add(Calendar.HOUR, 5);
+                calendar.add(Calendar.MINUTE, 30);
+
+                String startDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(calendar.getTime());
+                String time = Utils.convertDateFormat(startDate, "yyyy-MM-dd HH:mm:ss", "hh:mm a");
+                if (elapsedDays > 1) {
+                    textLabelLastSeen.setText(String.format("Last seen on %s days ago ", String.valueOf(elapsedDays)));
+                } else if (elapsedDays > 0) {
+                    textLabelLastSeen.setText(String.format("Last seen on yesterday at %s", time));
+                } else {
+                    textLabelLastSeen.setText(String.format("Last seen today at %s", time));
                 }
 
             } else {
