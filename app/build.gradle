@@ -42,8 +42,10 @@ android {
 
     signingConfigs {
         release {
+            println System.env.certfilepath
+            //certfilepath = "$System.env.certfilepath"
             //storeFile file('/home/rajesh/Downloads/rcontacts.jks')
-            storeFile file("${System.env.certfilepath}/rcontacts.jks")
+            storeFile file(System.env.certfilepath+"/rcontacts.jks")
             storePassword "rcontacts"
             keyAlias "rcontacts"
             keyPassword "rcontacts"
