@@ -941,8 +941,14 @@ public class Utils {
                 }
 
                 /* remove special characters from number */
-                return "+" + StringUtils.replaceAll(StringUtils.substring(phoneNumber, 1),
-                        "[\\D]", "");
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+                    return "+" + StringUtils.replaceAll(StringUtils.substring(phoneNumber, 1),
+                            "[\\D]", "");
+                }else{
+                    return  "+" + StringUtils.substring(phoneNumber, 1).
+                            replaceAll("[\\D]", "");
+                }
+
             }
         } else {
             return "";

@@ -2374,8 +2374,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     organization.setIsCurrent(checkboxOrganization.isChecked() ? 1 : 0);
                     organization.setOrgPublic(IntegerConstants.PRIVACY_EVERYONE);
                     organization.setOrgEntId(textEnterpriseOrgId.getText().toString().trim());
-                    organization.setIsVerify(Integer.parseInt(textIsVerified.getText().toString()
-                            .trim()));
+                    if (!StringUtils.isEmpty(textIsVerified.getText().toString())) {
+                        organization.setIsVerify(Integer.parseInt(textIsVerified.getText().toString()
+                                .trim()));
+                    }
                     // organization.setOrgLogo(textOrgLogo.getText().toString().trim());
 
                     ColorStateList colorStateList = ColorStateList.valueOf(ContextCompat.getColor
@@ -3826,8 +3828,11 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             organization.setOrgIndustryType(arrayListOrganization.get(i).getOmOrganizationType());
 
             if (StringUtils.length(arrayListOrganization.get(i).getOmIsVerified()) > 0) {
-                organization.setIsVerify(Integer.parseInt(arrayListOrganization.get(i)
-                        .getOmIsVerified()));
+                if(!StringUtils.isEmpty(arrayListOrganization.get(i)
+                        .getOmIsVerified())){
+                    organization.setIsVerify(Integer.parseInt(arrayListOrganization.get(i)
+                            .getOmIsVerified()));
+                }
             } else {
                 organization.setIsVerify(0);
             }
