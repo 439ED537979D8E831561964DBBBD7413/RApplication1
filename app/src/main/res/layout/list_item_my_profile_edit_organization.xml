@@ -25,6 +25,12 @@
         android:visibility="gone" />
 
     <TextView
+        android:id="@+id/text_org_url"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
+    <TextView
         android:id="@+id/text_enterprise_org_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

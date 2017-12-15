@@ -1124,6 +1124,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                             organization.setOmOrganizationLogo("");
                         }
 
+                        organization.setOrgUrlSlug(arrayListOrganization.get(j).getOrgUrlSlug());
                         organization.setOmIsVerified(String.valueOf(arrayListOrganization.get(j)
                                 .getIsVerify()));
                         organization.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
