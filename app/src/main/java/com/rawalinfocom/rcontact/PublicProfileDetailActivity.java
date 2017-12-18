@@ -37,20 +37,16 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.adapters.OrganizationListAdapter;
-import com.rawalinfocom.rcontact.adapters.ProfileDetailAdapter;
 import com.rawalinfocom.rcontact.adapters.PublicProfileDetailAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
-import com.rawalinfocom.rcontact.contacts.PrivacySettingPopupDialog;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
-import com.rawalinfocom.rcontact.model.PrivacyDataItem;
-import com.rawalinfocom.rcontact.model.PrivacyEntityItem;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAadharNumber;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
@@ -236,6 +232,10 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
     public String callNumber = "";
 
     AsyncWebServiceCall asyncGetProfileDetails;
+    @BindView(R.id.image_relation)
+    ImageView imageRelation;
+    @BindView(R.id.ripple_action_relation)
+    RippleView rippleActionRelation;
     private boolean hasNumber;
 
     //<editor-fold desc="Override Methods">
@@ -438,6 +438,7 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
         rippleActionRightRight = ButterKnife.findById(includeToolbar, R.id
                 .ripple_action_right_right);
 
+        rippleActionRelation.setVisibility(GONE);
         rippleActionRightLeft.setVisibility(GONE);
         rippleActionRightCenter.setVisibility(GONE);
         rippleActionRightRight.setVisibility(GONE);

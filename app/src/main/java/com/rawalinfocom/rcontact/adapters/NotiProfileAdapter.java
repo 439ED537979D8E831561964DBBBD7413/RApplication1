@@ -50,7 +50,7 @@ public class NotiProfileAdapter extends RecyclerView.Adapter<NotiProfileAdapter.
     private OnClickListener onClickListener;
 
     public interface OnClickListener {
-        void onClick(String type, String carId, int rcpId);
+        void onClick(String type, String carId, int rcpId, String actionType);
     }
 
     public NotiProfileAdapter(Fragment activity, List<NotiProfileItem> list, OnClickListener onClickListener) {
@@ -163,7 +163,8 @@ public class NotiProfileAdapter extends RecyclerView.Adapter<NotiProfileAdapter.
                 if (notiProfileItem.getProfileNotiType() == 0) {
 
                     if (onClickListener != null)
-                        onClickListener.onClick(notiProfileItem.getPpmTag(), notiProfileItem.getCardCloudId(), Integer.parseInt(notiProfileItem.getRcpUserPmId()));
+                        onClickListener.onClick(notiProfileItem.getPpmTag(), notiProfileItem.getCardCloudId(),
+                                Integer.parseInt(notiProfileItem.getRcpUserPmId()), "accept");
 
                     System.out.println("RContacts data accept --> " + notiProfileItem.getCardCloudId() + " -- " + Integer.parseInt(notiProfileItem.getRcpUserPmId()));
                     // confirming the request
@@ -193,7 +194,8 @@ public class NotiProfileAdapter extends RecyclerView.Adapter<NotiProfileAdapter.
                 NotiProfileItem notiProfileItem = list.get(pos);
 
                 if (onClickListener != null)
-                    onClickListener.onClick(notiProfileItem.getPpmTag(), notiProfileItem.getCardCloudId(), Integer.parseInt(notiProfileItem.getRcpUserPmId()));
+                    onClickListener.onClick(notiProfileItem.getPpmTag(), notiProfileItem.getCardCloudId(),
+                            Integer.parseInt(notiProfileItem.getRcpUserPmId()), "reject");
                 // rejecting the request
 
                 System.out.println("RContacts data reject --> " + notiProfileItem.getCardCloudId() + " -- " + Integer.parseInt(notiProfileItem.getRcpUserPmId()));
