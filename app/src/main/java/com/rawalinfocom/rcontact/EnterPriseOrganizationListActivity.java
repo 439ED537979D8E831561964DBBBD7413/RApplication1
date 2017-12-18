@@ -121,6 +121,7 @@ public class EnterPriseOrganizationListActivity extends BaseActivity implements 
                     intent.putExtra("organizationName", searchBox.getText().toString().trim());
                     intent.putExtra("organizationType", "");
                     intent.putExtra("logo", "");
+                    intent.putExtra("urlSlug", "");
                     intent.putExtra("isVerify", 0);
                     intent.putExtra("isBack", "0");
                     setResult(Activity.RESULT_OK, intent);
@@ -169,6 +170,7 @@ public class EnterPriseOrganizationListActivity extends BaseActivity implements 
 
                             verifiedOrganizationData.setOmOrgId(organizationData.get(i).getOmOrgId());
                             verifiedOrganizationData.setOmOrgName(organizationData.get(i).getOmOrgName());
+                            verifiedOrganizationData.setOmUrlSlug(organizationData.get(i).getOmUrlSlug());
                             verifiedOrganizationData.setOmOrgIsVerify(organizationData.get(i)
                                     .getOmOrgIsVerify());
 
@@ -248,13 +250,14 @@ public class EnterPriseOrganizationListActivity extends BaseActivity implements 
 
                 new EnterpriseOrganizationsAdapter.OnClickListener() {
                     @Override
-                    public void onClick(String orgId, String organizationName, String organizationType, String logo) {
+                    public void onClick(String orgId, String organizationName, String organizationType, String logo, String urlSlug) {
 
                         Intent intent = new Intent();
                         intent.putExtra("orgId", orgId);
                         intent.putExtra("organizationName", organizationName);
                         intent.putExtra("organizationType", organizationType);
                         intent.putExtra("logo", logo);
+                        intent.putExtra("urlSlug", urlSlug);
                         intent.putExtra("isVerify", 1);
                         intent.putExtra("isBack", "0");
                         setResult(Activity.RESULT_OK, intent);

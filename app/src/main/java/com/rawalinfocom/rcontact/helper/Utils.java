@@ -941,8 +941,14 @@ public class Utils {
                 }
 
                 /* remove special characters from number */
-                return "+" + StringUtils.replaceAll(StringUtils.substring(phoneNumber, 1),
-                        "[\\D]", "");
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+                    return "+" + StringUtils.replaceAll(StringUtils.substring(phoneNumber, 1),
+                            "[\\D]", "");
+                }else{
+                    return  "+" + StringUtils.substring(phoneNumber, 1).
+                            replaceAll("[\\D]", "");
+                }
+
             }
         } else {
             return "";
@@ -1206,6 +1212,7 @@ public class Utils {
                 }
 
                 organization.setOmEnterpriseOrgId(arrayListOrganization.get(i).getOrgEntId());
+                organization.setOrgUrlSlug(arrayListOrganization.get(i).getOrgUrlSlug());
                 organization.setOmIsVerified(String.valueOf(arrayListOrganization.get(i).getIsVerify()));
                 organization.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 organizationList.add(organization);
