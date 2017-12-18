@@ -32,6 +32,9 @@ public class GlobalSearchType implements Serializable {
     private String publicProfileUrl;
     @JsonProperty("rcp_pm_id")
     private String rcpPmId;
+    @JsonProperty("rating_private")
+    private Integer ratingPrivate;
+
 
     public Integer getIsRcpVerified() {
         return isRcpVerified;
@@ -104,4 +107,13 @@ public class GlobalSearchType implements Serializable {
     public void setRcpPmId(String rcpPmId) {
         this.rcpPmId = rcpPmId;
     }
+
+    public Integer getRatingPrivate() {
+        return ratingPrivate;
+    }
+
+    public void setRatingPrivate(Integer ratingPrivate) {
+        this.ratingPrivate = ratingPrivate;
+    }
+
 }
