@@ -62,7 +62,12 @@ public class TableRCContactRequest {
     public int addRequest(int status, String carId, String carMongodbRecordIndex, int carPmIdFrom, String requestType, String createdAt, String updatedAt
             , String name, String profilePhoto) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        boolean isDelete;
 
+        if (requestType.equalsIgnoreCase("request all")) {
+            isDelete = deleteRequestAllRequest(String.valueOf(carPmIdFrom), requestType);
+            System.out.println("RContacts delete request all --> " + isDelete);
+        }
         ContentValues values = new ContentValues();
         values.put(COLUMN_CAR_STATUS, status);
         if (requestType.equalsIgnoreCase("request all")) {
@@ -87,6 +92,17 @@ public class TableRCContactRequest {
             db.close();
             return -1;
         }
+    }
+
+    private boolean deleteRequestAllRequest(String rcpID, String ppmTag) {
+
+        boolean isDelete;
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+        isDelete = db.delete(TABLE_RC_CONTACT_ACCESS_REQUEST, COLUMN_CARTYPE + " = '" + ppmTag + "' and " +
+                COLUMN_CRM_RC_PROFILE_MASTER_PM_ID + " = '" + rcpID + "'", null) > 0;
+
+        return isDelete;
     }
 
     public ArrayList<PrivacyRequestDataItem> getAllPendingRequest(String from, String to) {

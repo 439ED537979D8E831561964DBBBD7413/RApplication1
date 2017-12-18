@@ -1212,6 +1212,7 @@ public class Utils {
                 }
 
                 organization.setOmEnterpriseOrgId(arrayListOrganization.get(i).getOrgEntId());
+                organization.setOrgUrlSlug(arrayListOrganization.get(i).getOrgUrlSlug());
                 organization.setOmIsVerified(String.valueOf(arrayListOrganization.get(i).getIsVerify()));
                 organization.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 organizationList.add(organization);

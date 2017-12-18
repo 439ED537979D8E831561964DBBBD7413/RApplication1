@@ -69,7 +69,7 @@ public class ProfileDataOperationEmail implements Serializable {
     }
 
     @JsonProperty("is_social")
-    public Integer getEmIsSocail() {
+    public Integer getEmIsSocial() {
         return this.emIsSocial;
     }
 

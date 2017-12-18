@@ -1721,6 +1721,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                                 organization.setOmOrganizationLogo("");
                             }
 
+                            organization.setOrgUrlSlug(arrayListOrganization.get(j).getOrgUrlSlug());
                             organization.setOmIsVerified(String.valueOf(arrayListOrganization.get
                                     (j).getIsVerify()));
                             organization.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());

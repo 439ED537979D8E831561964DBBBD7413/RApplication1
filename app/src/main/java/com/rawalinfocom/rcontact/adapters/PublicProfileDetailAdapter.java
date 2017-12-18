@@ -250,7 +250,7 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
             holder.textMain.setText("+" + holder.textMain.getText());
         }
 
-        if (showNumber == false) {
+        if (!showNumber) {
             if (pbRcpType == IntegerConstants.RCP_TYPE_PRIMARY) {
                 holder.textMain.setText(StringUtils.replacePattern(holder.textMain.getText()
                         .toString(), "[0-9]", "X"));
@@ -454,15 +454,12 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
             }
         }*/
 
-
         holder.llPrivacy.setVisibility(View.GONE);
-        if ((MoreObjects.firstNonNull(education.getEduPublic(), 3)) == IntegerConstants
-                .PRIVACY_PRIVATE && education.getEduName().startsWith("XXXX")) {
+        if (education.getEduName().startsWith("XXXX")) {
             holder.buttonRequest.setVisibility(View.GONE);
             holder.imgActionType.setVisibility(View.GONE);
             holder.textSub.setVisibility(View.GONE);
         }
-
 
         if (StringUtils.equalsIgnoreCase(education.getEduToDate(), "")) {
             if (!StringUtils.isEmpty(education.getEduFromDate())) {
@@ -488,8 +485,6 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
                         formattedToDate));
             }
         }
-
-//        }
     }
 
     private void displayWebsite(final ProfileDetailViewHolder holder, final int position) {
@@ -551,7 +546,6 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
                 return true;
             }
         });
-
 
         int rcpType = Integer.parseInt(StringUtils.defaultIfEmpty(webAddress.getWebRcpType(),
                 String.valueOf(IntegerConstants.RCP_TYPE_SECONDARY)));
@@ -792,7 +786,7 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
             holder.textMain.setTextColor(colorBlack);
         } else {
             holder.textMain.setTextColor(colorPineGreen);
-            final ProfileDetailViewHolder viewHodler = holder;
+//            final ProfileDetailViewHolder viewHodler = holder;
             holder.buttonRequest.setVisibility(View.GONE);
 
             /*if ((MoreObjects.firstNonNull(imAccount.getIMAccountIsPrivate(), 0)) ==
@@ -834,14 +828,12 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
             if (MoreObjects.firstNonNull(event.getIsYearHidden(), 0) == IntegerConstants
                     .IS_YEAR_HIDDEN) {
 
-
                 convertedDate = Utils.convertDateFormat(event.getEventDateTime(), "dd-MM",
                         getEventDateFormat(event.getEventDateTime()));
 
             } else {
                 convertedDate = Utils.convertDateFormat(event.getEventDateTime(), "yyyy-MM-dd",
                         getEventDateFormat(event.getEventDateTime()));
-
             }
         }
 
@@ -849,9 +841,7 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
                 .IS_YEAR_HIDDEN) {
             convertedDate = Utils.convertDateFormat(event.getEventDateTime(), "dd-MM",
                     getEventDateFormat(event.getEventDateTime()));
-
         }
-
 
         if (MoreObjects.firstNonNull(event.getIsPrivate(), 0) == IntegerConstants.IS_PRIVATE) {
             convertedDate = event.getEventDateTime();
@@ -878,7 +868,6 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
                 }
             }
 
-
             final ProfileDetailViewHolder viewHodler = holder;
 
             holder.buttonRequest.setOnClickListener(new View.OnClickListener() {
@@ -895,7 +884,6 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
                 holder.imgActionType.setVisibility(View.VISIBLE);
             }
         }
-
     }
 
     private void displayGender(ProfileDetailViewHolder holder, final int position) {
@@ -903,8 +891,6 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
         holder.textMain.setText(gender);
         holder.textSub.setVisibility(View.GONE);
         holder.textMain.setTextColor(colorBlack);
-
-
     }
 
     private String getEventDateFormat(String date) {

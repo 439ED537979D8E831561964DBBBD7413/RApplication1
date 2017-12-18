@@ -48,7 +48,7 @@ public class EnterpriseOrganizationsAdapter extends RecyclerView
     }
 
     public interface OnClickListener {
-        void onClick(String orgId, String organizationName, String organizationType, String logo);
+        void onClick(String orgId, String organizationName, String organizationType, String logo, String urlSlug);
     }
 
     public EnterpriseOrganizationsAdapter(Context context, ArrayList<VerifiedOrganizationData>
@@ -95,7 +95,8 @@ public class EnterpriseOrganizationsAdapter extends RecyclerView
                     clickListener.onClick(arrayListOrganization.get(pos).getOmOrgId(),
                             arrayListOrganization.get(pos).getOmOrgName(), arrayListOrganization
                                     .get(pos).getEitType(), arrayListOrganization.get(pos)
-                                    .getEomLogoPath());
+                                    .getEomLogoPath(), arrayListOrganization.get(pos)
+                                    .getOmUrlSlug());
             }
         });
 
@@ -104,7 +105,7 @@ public class EnterpriseOrganizationsAdapter extends RecyclerView
             @Override
             public void onClick(View view) {
                 int pos = (int) view.getTag();
-                String orgPublicLink =  BuildConfig.ORANISATION_PUBLIC_LINK + arrayListOrganization.get(pos).getOmOrgId();
+                String orgPublicLink = BuildConfig.ORANISATION_PUBLIC_LINK + arrayListOrganization.get(pos).getOmUrlSlug();
                 if (!StringUtils.isEmpty(orgPublicLink)) {
                     String url = orgPublicLink;
                     Intent i = new Intent(Intent.ACTION_VIEW);

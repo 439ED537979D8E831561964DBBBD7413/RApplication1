@@ -137,6 +137,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -473,6 +474,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     private ArrayList<String> pbEducation;
     private ArrayList<String> pbAadhaar;
     private ArrayList<String> pbRating;
+    private String rcpGender, myRatingPrivacy;
 
     //<editor-fold desc="Override Methods">
 
@@ -899,10 +901,20 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         showChooseShareOption(null, null);
                     }*/
 
+                    // TODO : Hardik
                     if (displayOwnProfile) {
-                        ArrayList arrayList = new ArrayList(Arrays.asList(getString(R.string
-                                        .my_profile_share),
-                                getString(R.string.average_rate_sharing)));
+
+                        ArrayList<String> arrayList;
+
+                        if (myRatingPrivacy.equalsIgnoreCase("3")) {
+                            arrayList = new ArrayList<String>(Collections.singletonList(getString(R.string
+                                    .my_profile_share)));
+                        } else {
+                            arrayList = new ArrayList<String>(Arrays.asList(getString(R.string
+                                            .my_profile_share),
+                                    getString(R.string.average_rate_sharing)));
+                        }
+
                         MyProfileShareDialog myProfileShareDialog = new
                                 MyProfileShareDialog(this, arrayList, pmId,
                                 profileDataOperationVcard, contactName,
@@ -995,6 +1007,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     intent.putExtra(AppConstants.EXTRA_CONTACT_NAME, contactName);
                     intent.putExtra(AppConstants.EXTRA_CONTACT_NUMBER, contactNumber);
                     intent.putExtra(AppConstants.EXTRA_PROFILE_IMAGE_URL, thumbnailUrl);
+                    intent.putExtra(AppConstants.EXTRA_GENDER, rcpGender);
                     intent.putExtra(AppConstants.EXTRA_PM_ID, pmId);
                     startActivity(intent);
                 }
@@ -2735,6 +2748,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     textUserRating.setText(profileDetail.getTotalProfileRateUser());
                     ratingUser.setRating(Float.parseFloat(profileDetail.getProfileRating()));
 
+                    myRatingPrivacy = String.valueOf(profileDetail.getProfileRatingPrivacy());
+
                     switch (profileDetail.getProfileRatingPrivacy()) {
                         case 1:
                             //everyone
@@ -2874,6 +2889,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         ratingUser.setRating(0);
 //                        ratingUser.setEnabled(false);
                         buttonRequestRating.setVisibility(View.VISIBLE);
+                        pbRating.add("1");
 
                         buttonRequestRating.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -3527,24 +3543,21 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                             long elapsedDays = 0;
 
-                            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd " +
-                                    "HH:mm:ss", Locale.getDefault());
+                            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
-                            final Date d = simpleDateFormat.parse(profileDetail.getPmLastSeen());
-                            final Calendar calendar = Calendar.getInstance();
+//                            Calendar calendar = Calendar.getInstance();
+//                            calendar.setTime(simpleDateFormat.parse(profileDetail.getPmLastSeen()));
+//                            calendar.add(Calendar.HOUR, 5);
+//                            calendar.add(Calendar.MINUTE, 30);
 
-                            calendar.setTime(d);
-                            calendar.add(Calendar.HOUR, 5);
-                            calendar.add(Calendar.MINUTE, 30);
-
-                            String startDate = simpleDateFormat.format(calendar.getTime());
+//                            String compareDate = simpleDateFormat.format(calendar.getTime());
                             String endDate = simpleDateFormat.format(new Date(System
                                     .currentTimeMillis()));
 
                             try {
 
                                 long difference = simpleDateFormat.parse(endDate).getTime() -
-                                        simpleDateFormat.parse(startDate).getTime();
+                                        simpleDateFormat.parse(profileDetail.getPmLastSeen()).getTime();
 
                                 long secondsInMilli = 1000;
                                 long minutesInMilli = secondsInMilli * 60;
@@ -3557,18 +3570,20 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 e.printStackTrace();
                             }
 
-                            if (elapsedDays > 1) {
-                                textLabelLastSeen.setText(String.format("Last seen on %s days ago ",
-                                        String.valueOf(elapsedDays)));
-                            } else if (elapsedDays > 0) {
-                                textLabelLastSeen.setText(String.format("Last seen on %s day ago ",
-                                        String.valueOf(elapsedDays)));
-                            } else {
+                            Calendar calendar = Calendar.getInstance();
+                            calendar.setTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+                                    .parse(profileDetail.getPmLastSeen()));
+                            calendar.add(Calendar.HOUR, 5);
+                            calendar.add(Calendar.MINUTE, 30);
 
-                                String date = Utils.convertDateFormat(startDate, "yyyy-MM-dd " +
-                                        "HH:mm:ss", "hh:mm a");
-                                textLabelLastSeen.setText(String.format("Last seen today at %s",
-                                        date));
+                            String startDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(calendar.getTime());
+                            String time = Utils.convertDateFormat(startDate, "yyyy-MM-dd HH:mm:ss", "hh:mm a");
+                            if (elapsedDays > 1) {
+                                textLabelLastSeen.setText(String.format("Last seen on %s days ago ", String.valueOf(elapsedDays)));
+                            } else if (elapsedDays > 0) {
+                                textLabelLastSeen.setText(String.format("Last seen on yesterday at %s", time));
+                            } else {
+                                textLabelLastSeen.setText(String.format("Last seen today at %s", time));
                             }
 
                         } else {
@@ -3694,6 +3709,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             } else {
                 linearGender.setVisibility(View.GONE);
             }
+
+            rcpGender = profileDetail != null ? profileDetail.getPbGender() : "";
 
             if (Utils.isArraylistNullOrEmpty(arrayListEvent) && Utils.isArraylistNullOrEmpty
                     (arrayListPhoneBookEvent)
@@ -5225,6 +5242,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                 organization.setOmEnterpriseOrgId(arrayListOrganization.get(i)
                         .getOrgEntId());
+                organization.setOrgUrlSlug(arrayListOrganization.get(i)
+                        .getOrgUrlSlug());
                 organization.setOmIsVerified(String.valueOf(arrayListOrganization.get(i)
                         .getIsVerify()));
                 organization.setRcProfileMasterPmId(profileDetail.getRcpPmId());

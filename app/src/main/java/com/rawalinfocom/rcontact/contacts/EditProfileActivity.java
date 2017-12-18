@@ -418,6 +418,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     private ArrayList<Object> arrayListAddressObject;
     private ArrayList<Object> arrayListEventObject;
     private ArrayList<Object> arrayListOrganizationObject;
+    private ArrayList<ProfileDataOperationOrganization> arrayListTempOrganization;
     private ArrayList<Object> arrayListEducationObject;
     DatePickerDialog.OnDateSetListener dataPicker;
     EditText editTextEvent;
@@ -831,7 +832,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             email.setEmEmailId(StringUtils.trim(data.getStringExtra("email")));
                             email.setEmType("Work");
                             email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
-                            email.setEmIsSocial(2);
+                            email.setEmIsSocial(3);
                             if (!operationEmail.getEmSocialType().equalsIgnoreCase("")) {
                                 email.setEmSocialType(operationEmail.getEmSocialType() + "," +
                                         "linkedin");
@@ -854,7 +855,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         email.setEmEmailId(StringUtils.trim(data.getStringExtra("email")));
                         email.setEmType("Work");
                         email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
-                        email.setEmIsSocial(2);
+                        email.setEmIsSocial(3);
                         email.setEmSocialType("linkedin");
 
                         arrayListSocialEmail.add(email);
@@ -900,6 +901,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         organization.setOrgName(data.getStringExtra("organizationName"));
                         organization.setOrgIndustryType(data.getStringExtra("organizationType"));
                         organization.setOrgLogo(data.getStringExtra("logo"));
+                        organization.setOrgUrlSlug(data.getStringExtra("urlSlug"));
                         organization.setOrgFromDate("");
                         organization.setOrgToDate("");
                         organization.setOrgJobTitle("");
@@ -909,6 +911,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         organization.setIsCurrent(1);
 
                         arrayListOrganizationObject.add(organization);
+                        arrayListTempOrganization.add(organization);
 
                     } else {
 
@@ -919,6 +922,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         organization.setOrgName(data.getStringExtra("organizationName"));
                         organization.setOrgIndustryType(data.getStringExtra("organizationType"));
                         organization.setOrgLogo(data.getStringExtra("logo"));
+                        organization.setOrgUrlSlug(data.getStringExtra("urlSlug"));
                         organization.setOrgFromDate(operationOrganization.getOrgFromDate());
                         organization.setOrgToDate(operationOrganization.getOrgToDate());
                         organization.setOrgJobTitle(operationOrganization.getOrgJobTitle());
@@ -928,13 +932,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         organization.setIsCurrent(operationOrganization.getIsCurrent());
 
                         arrayListOrganizationObject.set(organisationPosition, organization);
+                        arrayListTempOrganization.add(organization);
                     }
 
-                    linearOrganizationDetails.removeAllViews();
-
-                    for (int i = 0; i < arrayListOrganizationObject.size(); i++) {
-                        addOrganizationView(i, arrayListOrganizationObject.get(i));
-                    }
+                    removeAndAddOrganizationView();
 
                 } else {
                     Utils.showErrorSnackBar(this, relativeRootEditProfile, "You didn't select any" +
@@ -1055,7 +1056,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                                 email.setEmType("Work");
                                                 email.setEmPublic(IntegerConstants
                                                         .PRIVACY_MY_CONTACT);
-                                                email.setEmIsSocial(2);
+                                                email.setEmIsSocial(3);
                                                 if (!operationEmail.getEmSocialType()
                                                         .equalsIgnoreCase("")) {
                                                     email.setEmSocialType(operationEmail
@@ -1081,7 +1082,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                                     .getString("email")));
                                             email.setEmType("Work");
                                             email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
-                                            email.setEmIsSocial(2);
+                                            email.setEmIsSocial(3);
                                             email.setEmSocialType("facebook");
 
                                             arrayListSocialEmail.add(email);
@@ -1162,7 +1163,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         email.setEmEmailId(StringUtils.trim(acct.getEmail()));
                         email.setEmType("Work");
                         email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
-                        email.setEmIsSocial(2);
+                        email.setEmIsSocial(3);
                         if (!operationEmail.getEmSocialType().equalsIgnoreCase("")) {
                             email.setEmSocialType(operationEmail.getEmSocialType() + ",google");
                             email.setEmId(operationEmail.getEmId());
@@ -1184,7 +1185,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     email.setEmEmailId(StringUtils.trim(acct.getEmail()));
                     email.setEmType("Work");
                     email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
-                    email.setEmIsSocial(2);
+                    email.setEmIsSocial(3);
                     email.setEmSocialType("google");
 
                     arrayListSocialEmail.add(email);
@@ -2374,11 +2375,15 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     organization.setIsCurrent(checkboxOrganization.isChecked() ? 1 : 0);
                     organization.setOrgPublic(IntegerConstants.PRIVACY_EVERYONE);
                     organization.setOrgEntId(textEnterpriseOrgId.getText().toString().trim());
-                    if (!StringUtils.isEmpty(textIsVerified.getText().toString())) {
+
+                    // organization.setOrgLogo(textOrgLogo.getText().toString().trim());
+
+                    if (StringUtils.length(textIsVerified.getText().toString().trim()) > 0) {
                         organization.setIsVerify(Integer.parseInt(textIsVerified.getText().toString()
                                 .trim()));
+                    } else {
+                        organization.setIsVerify(0);
                     }
-                    // organization.setOrgLogo(textOrgLogo.getText().toString().trim());
 
                     ColorStateList colorStateList = ColorStateList.valueOf(ContextCompat.getColor
                             (EditProfileActivity
@@ -2474,58 +2479,38 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     }
                 }
                 if (isValid) {
-                     /*   profileDataOperation.setPbOrganization(arrayListNewOrganization);
-                        editProfile(profileDataOperation, AppConstants.ORGANIZATION);*/
-                    boolean containsVerifiedOrgan = false;
+
                     if (arrayListNewOrganization.size() > 0) {
-                        for (int i = 0; i < arrayListNewOrganization.size(); i++) {
-                            ProfileDataOperationOrganization organization =
-                                    arrayListNewOrganization.get(i);
-                            if (organization.getIsVerify() == 1) {
+                        if (arrayListTempOrganization.size() > 0) {
+
+                            for (int i = 0; i < arrayListTempOrganization.size(); i++) {
+                                ProfileDataOperationOrganization organization =
+                                        arrayListTempOrganization.get(i);
+                                if (!(organization.getIsVerify() == 1)) {
+                                    arrayListTempOrganization.remove(i);
+                                }
+                            }
+
+                            if (arrayListTempOrganization.size() > 0) {
                                 //Show popup
-                                containsVerifiedOrgan = true;
                                 showOrganizationPrivacyDialog(EditProfileActivity.this,
                                         arrayListNewOrganization, profileDataOperation);
-                                break;
+                            } else {
+                                arrayListTempOrganization.clear();
+                                profileDataOperation.setPbOrganization(arrayListNewOrganization);
+                                editProfile(profileDataOperation, AppConstants.ORGANIZATION);
                             }
-                        }
 
-                        if (!containsVerifiedOrgan) {
-
+                        } else {
+                            arrayListTempOrganization.clear();
                             profileDataOperation.setPbOrganization(arrayListNewOrganization);
                             editProfile(profileDataOperation, AppConstants.ORGANIZATION);
-
                         }
-
-                        //if (!isCurrentSelected) {
-//                            Utils.showErrorSnackBar(this, relativeRootEditProfile, getString(R
-//                                    .string.error_current_organization));
-//                        } else {
-//                            profileDataOperation.setPbOrganization(arrayListNewOrganization);
-//                            editProfile(profileDataOperation, AppConstants.ORGANIZATION);
-//                        }
                     } else {
-                        containsVerifiedOrgan = false;
+
                         if (arrayListOrganizationObject.size() > 0) {
-//                            for (int i = 0; i < arrayListOrganizationObject.size(); i++) {
-//                                ProfileDataOperationOrganization organization =
-//                                        (ProfileDataOperationOrganization)
-//                                                arrayListOrganizationObject
-//                                                        .get(i);
-//                                if (organization.getIsVerify() == 1) {
-//                                    //Show popup
-//                                    containsVerifiedOrgan = true;
-//                                    showOrganizationPrivacyDialog(EditProfileActivity.this,
-//                                            arrayListNewOrganization, profileDataOperation);
-//                                }
-//                            }
-//
-//                            if (!containsVerifiedOrgan) {
                             profileDataOperation.setPbOrganization(arrayListNewOrganization);
                             editProfile(profileDataOperation, AppConstants.ORGANIZATION);
-//                            }
-//                            profileDataOperation.setPbOrganization(arrayListNewOrganization);
-//                            editProfile(profileDataOperation, AppConstants.ORGANIZATION);
                         } else {
                             Utils.showErrorSnackBar(this, relativeRootEditProfile, getString(R
                                     .string.error_no_update));
@@ -2648,58 +2633,15 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         break;
                     }
                 }
-                boolean isEduCurrentSelected = false;
-                for (int i = 0; i < arrayListNewEducation.size(); i++) {
-                    if ((MoreObjects.firstNonNull(arrayListNewEducation.get(i).getIsCurrent(), 0)
-                    ) == 1) {
-                        isEduCurrentSelected = true;
-                        break;
-                    }
-                }
+
                 if (isValid) {
-                     /*   profileDataOperation.setPbOrganization(arrayListNewOrganization);
-                        editProfile(profileDataOperation, AppConstants.ORGANIZATION);*/
-//                    boolean containsVerifiedOrgan = false;
                     if (arrayListNewEducation.size() > 0) {
-                        /*for (int i = 0; i < arrayListNewEducation.size(); i++) {
-                            ProfileDataOperationEducation education = arrayListNewEducation.get(i);
-                            if (organization.getIsVerify() == 1) {
-                                //Show popup
-                                containsVerifiedOrgan = true;
-                                showOrganizationPrivacyDialog(EditProfileActivity.this,
-                                        arrayListNewOrganization, profileDataOperation);
-                                break;
-                            }
-                        }*/
-
-//                        if (!containsVerifiedOrgan) {
-
                         profileDataOperation.setPbEducation(arrayListNewEducation);
                         editProfile(profileDataOperation, AppConstants.EDUCATION);
-
-//                        }
-
                     } else {
-//                        containsVerifiedOrgan = false;
                         if (arrayListEducationObject.size() > 0) {
-                            /*for (int i = 0; i < arrayListEducationObject.size(); i++) {
-                                ProfileDataOperationEducation education =
-                                        (ProfileDataOperationEducation)
-                                                arrayListEducationObject.get(i);
-                                if (organization.getIsVerify() == 1) {
-                                    //Show popup
-                                    containsVerifiedOrgan = true;
-                                    showOrganizationPrivacyDialog(EditProfileActivity.this,
-                                            arrayListNewOrganization, profileDataOperation);
-                                }
-                            }*/
-
-//                            if (!containsVerifiedOrgan) {
                             profileDataOperation.setPbEducation(arrayListNewEducation);
                             editProfile(profileDataOperation, AppConstants.EDUCATION);
-//                            }
-//                            profileDataOperation.setPbOrganization(arrayListNewOrganization);
-//                            editProfile(profileDataOperation, AppConstants.ORGANIZATION);
                         } else {
                             Utils.showErrorSnackBar(this, relativeRootEditProfile, getString(R
                                     .string.error_no_update));
@@ -3013,6 +2955,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                               final ArrayList<ProfileDataOperationOrganization>
                                                       organizationArrayList,
                                               final ProfileDataOperation profileDataOperation) {
+
+        final ArrayList<ProfileDataOperationOrganization> finalOrganizationArrayList = organizationArrayList;
+
         final Dialog dialog = new Dialog(mContext);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_rate_app);
@@ -3053,28 +2998,35 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 switch (rippleView.getId()) {
                     case R.id.rippleLeft:
                         dialog.dismiss();
-                        for (int i = 0; i < organizationArrayList.size(); i++) {
-                            ProfileDataOperationOrganization organization = organizationArrayList
-                                    .get(i);
-                            if (organization.getIsVerify() == 1) {
-                                organizationArrayList.remove(organization);
+
+                        // Loop arrayList2 items
+                        for (ProfileDataOperationOrganization dataOperationOrganization :
+                                new ArrayList<ProfileDataOperationOrganization>(organizationArrayList)) {
+                            // Loop arrayList1 items
+                            for (ProfileDataOperationOrganization organization : arrayListTempOrganization) {
+                                if (dataOperationOrganization.getOrgName().equalsIgnoreCase(organization.getOrgName())) {
+                                    finalOrganizationArrayList.remove(dataOperationOrganization);
+                                }
                             }
                         }
-                        arrayListOrganizationObject.clear();
-                        arrayListOrganizationObject.addAll(organizationArrayList);
-                        linearOrganizationDetails.removeAllViews();
 
-                        for (int i = 0; i < arrayListOrganizationObject.size(); i++) {
-                            addOrganizationView(i, arrayListOrganizationObject.get(i));
-                        }
+//                        arrayListOrganizationObject.clear();
+//                        arrayListOrganizationObject.addAll(organizationArrayList);
+//                        linearOrganizationDetails.removeAllViews();
+//
+//                        for (int i = 0; i < arrayListOrganizationObject.size(); i++) {
+//                            addOrganizationView(i, arrayListOrganizationObject.get(i));
+//                        }
 
-                        profileDataOperation.setPbOrganization(organizationArrayList);
+                        arrayListTempOrganization.clear();
+                        profileDataOperation.setPbOrganization(finalOrganizationArrayList);
                         editProfile(profileDataOperation, AppConstants.ORGANIZATION);
                         break;
 
                     case R.id.rippleRight:
                         dialog.dismiss();
-                        profileDataOperation.setPbOrganization(organizationArrayList);
+                        arrayListTempOrganization.clear();
+                        profileDataOperation.setPbOrganization(finalOrganizationArrayList);
                         editProfile(profileDataOperation, AppConstants.ORGANIZATION);
                         break;
                 }
@@ -3311,6 +3263,50 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             isUpdated = true;
         }
     };
+
+    private void setOrganisationTextWatcher(EditText applyWatcher) {
+
+        final int pos = (int) applyWatcher.getTag();
+
+        TextWatcher addressTextWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+                isUpdated = true;
+
+                ProfileDataOperationOrganization organization = new
+                        ProfileDataOperationOrganization();
+
+                ProfileDataOperationOrganization operationOrganization = (ProfileDataOperationOrganization)
+                        arrayListOrganizationObject.get(pos);
+
+                organization.setOrgName(operationOrganization.getOrgName());
+                organization.setOrgIndustryType(operationOrganization.getOrgIndustryType());
+                organization.setOrgLogo(operationOrganization.getOrgLogo());
+                organization.setOrgFromDate(operationOrganization.getOrgFromDate());
+                organization.setOrgToDate(operationOrganization.getOrgToDate());
+                organization.setOrgJobTitle(editable.toString());
+                organization.setOrgId(operationOrganization.getOrgId());
+                organization.setOrgEntId(operationOrganization.getOrgEntId());
+                organization.setOrgUrlSlug(operationOrganization.getOrgUrlSlug());
+                organization.setIsVerify(operationOrganization.getIsVerify());
+                organization.setIsCurrent(operationOrganization.getIsCurrent());
+
+                arrayListTempOrganization.add(organization);
+            }
+        };
+
+        applyWatcher.addTextChangedListener(addressTextWatcher);
+    }
 
     private void setAddressTextWatcher(EditText applyWatcher, final TextView textImageMapMarker,
                                        final TextView inputIsAddressModified) {
@@ -3795,6 +3791,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         ArrayList<Organization> arrayListOrganization = tableOrganizationMaster
                 .getOrganizationsFromPmId(Integer.parseInt(getUserPmId()));
         arrayListOrganizationObject = new ArrayList<>();
+        arrayListTempOrganization = new ArrayList<>();
         for (int i = 0; i < arrayListOrganization.size(); i++) {
 
             String formattedFromDate = "", formattedToDate = "";
@@ -3821,6 +3818,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     ());
             organization.setOrgId(arrayListOrganization.get(i).getOmRecordIndexId());
             organization.setOrgEntId(arrayListOrganization.get(i).getOmEnterpriseOrgId());
+            organization.setOrgUrlSlug(arrayListOrganization.get(i).getOrgUrlSlug());
             organization.setOrgLogo(arrayListOrganization.get(i).getOmOrganizationLogo());
 //            organization.setOrgRcpType(arrayListOrganization.get(i).getOmOrganizationLogo());
             organization.setIsCurrent(Integer.parseInt(arrayListOrganization.get(i)
@@ -3844,12 +3842,25 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             for (int i = 0; i < arrayListOrganizationObject.size(); i++) {
                 addOrganizationView(i, arrayListOrganizationObject.get(i));
             }
-            EditText inputCompanyName = linearOrganizationDetails.findViewById(R.id
-                    .input_company_name);
-            EditText inputDesignationName = linearOrganizationDetails.findViewById(R.id
-                    .input_designation_name);
-            inputCompanyName.addTextChangedListener(valueTextWatcher);
-            inputDesignationName.addTextChangedListener(valueTextWatcher);
+
+            for (int i = 0; i < linearOrganizationDetails.getChildCount(); i++) {
+                View linearOrganization = linearOrganizationDetails.getChildAt(i);
+                EditText inputCompanyName = linearOrganization.findViewById(R.id
+                        .input_company_name);
+                EditText inputDesignationName = linearOrganization.findViewById(R.id
+                        .input_designation_name);
+
+                inputCompanyName.addTextChangedListener(valueTextWatcher);
+                inputDesignationName.setTag(i);
+                setOrganisationTextWatcher(inputDesignationName);
+            }
+//            EditText inputCompanyName = linearOrganizationDetails.findViewById(R.id
+//                    .input_company_name);
+//            EditText inputDesignationName = linearOrganizationDetails.findViewById(R.id
+//                    .input_designation_name);
+//            inputCompanyName.addTextChangedListener(valueTextWatcher);
+//            setOrganisationTextWatcher(inputDesignationName);
+//            inputDesignationName.addTextChangedListener(valueTextWatcher);
         } else {
             addOrganizationView((arrayListOrganizationObject.size()), null);
         }
@@ -3896,12 +3907,23 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             for (int i = 0; i < arrayListEducationObject.size(); i++) {
                 addEducationView(i, arrayListEducationObject.get(i));
             }
-            EditText inputSchoolName = linearEducationDetails.findViewById(R.id
-                    .input_school_name);
-            EditText inputFieldOfStudy = linearEducationDetails.findViewById(R.id
-                    .input_field_of_study);
-            inputSchoolName.addTextChangedListener(valueTextWatcher);
-            inputFieldOfStudy.addTextChangedListener(valueTextWatcher);
+
+            for (int i = 0; i < linearEducationDetails.getChildCount(); i++) {
+                View linearEducation = linearEducationDetails.getChildAt(i);
+                EditText inputSchoolName = linearEducation.findViewById(R.id
+                        .input_school_name);
+                EditText inputFieldOfStudy = linearEducation.findViewById(R.id
+                        .input_field_of_study);
+                inputSchoolName.addTextChangedListener(valueTextWatcher);
+                inputFieldOfStudy.addTextChangedListener(valueTextWatcher);
+            }
+
+//            EditText inputSchoolName = linearEducationDetails.findViewById(R.id
+//                    .input_school_name);
+//            EditText inputFieldOfStudy = linearEducationDetails.findViewById(R.id
+//                    .input_field_of_study);
+//            inputSchoolName.addTextChangedListener(valueTextWatcher);
+//            inputFieldOfStudy.addTextChangedListener(valueTextWatcher);
         } else {
             addEducationView((arrayListEducationObject.size()), null);
         }
@@ -4028,7 +4050,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         }
         if (toAdd) {
             isUpdated = true;
-            addOrganizationDetailsToList();
+//            addOrganizationDetailsToList();
             addOrganizationView((arrayListOrganizationObject.size()), null);
         }
     }
@@ -4063,7 +4085,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         }
         if (toAdd) {
             isUpdated = true;
-//            addOrganizationDetailsToList();
             addEducationView((arrayListOrganizationObject.size()), null);
         }
     }
@@ -4087,6 +4108,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             TextView textIsVerified = linearOrganization.findViewById(R.id.text_is_verified);
             TextView textOrgName = linearOrganization.findViewById(R.id.text_org_name);
             TextView textOrgType = linearOrganization.findViewById(R.id.text_org_type);
+            TextView textOrgUrlSlug = linearOrganization.findViewById(R.id.text_org_url);
 
             EditText inputFromDate = linearOrganization.findViewById(R.id.input_from_date);
             EditText inputToDate = linearOrganization.findViewById(R.id.input_to_date);
@@ -4096,37 +4118,41 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             CheckBox checkboxOrganization = linearOrganization.findViewById(R
                     .id.checkbox_organization);
 
-            organization.setOrgIndustryType(textOrgType.getText().toString().trim());
-            organization.setOrgName(textOrgName.getText().toString().trim());
-            organization.setOrgJobTitle(inputDesignationName.getText().toString().trim());
-            organization.setOrgEntId(textEnterpriseOrgId.getText().toString().trim());
-            organization.setOrgLogo(textOrgLogo.getText().toString().trim());
+            if (textOrgName.getText().toString().trim().length() > 0) {
 
-            if (StringUtils.length(textIsVerified.getText().toString()) > 0) {
-                organization.setIsVerify(Integer.parseInt(textIsVerified.getText()
-                        .toString().trim()));
-            } else {
-                organization.setIsVerify(0);
+                organization.setOrgIndustryType(textOrgType.getText().toString().trim());
+                organization.setOrgName(textOrgName.getText().toString().trim());
+                organization.setOrgJobTitle(inputDesignationName.getText().toString().trim());
+                organization.setOrgEntId(textEnterpriseOrgId.getText().toString().trim());
+                organization.setOrgUrlSlug(textOrgUrlSlug.getText().toString().trim());
+                organization.setOrgLogo(textOrgLogo.getText().toString().trim());
+
+                if (StringUtils.length(textIsVerified.getText().toString()) > 0) {
+                    organization.setIsVerify(Integer.parseInt(textIsVerified.getText()
+                            .toString().trim()));
+                } else {
+                    organization.setIsVerify(0);
+                }
+
+                organization.setOrgId((String) relativeRowEditProfile.getTag());
+                organization.setIsCurrent(checkboxOrganization.isChecked() ? 1 : 0);
+                organization.setOrgPublic(IntegerConstants.PRIVACY_EVERYONE);
+
+                if (!StringUtils.isBlank(inputToDate.getText().toString().trim())) {
+                    organization.setOrgToDate(inputToDate.getText().toString().trim());
+
+                } else {
+                    organization.setOrgToDate("");
+                }
+
+                if (!StringUtils.isBlank(inputFromDate.getText().toString().trim())) {
+                    organization.setOrgFromDate(inputFromDate.getText().toString().trim());
+                } else {
+                    organization.setOrgFromDate("");
+                }
+
+                arrayListOrganizationObject.add(organization);
             }
-
-            organization.setOrgId((String) relativeRowEditProfile.getTag());
-            organization.setIsCurrent(checkboxOrganization.isChecked() ? 1 : 0);
-            organization.setOrgPublic(IntegerConstants.PRIVACY_EVERYONE);
-
-            if (!StringUtils.isBlank(inputToDate.getText().toString().trim())) {
-                organization.setOrgToDate(inputToDate.getText().toString().trim());
-
-            } else {
-                organization.setOrgToDate("");
-            }
-
-            if (!StringUtils.isBlank(inputFromDate.getText().toString().trim())) {
-                organization.setOrgFromDate(inputFromDate.getText().toString().trim());
-            } else {
-                organization.setOrgFromDate("");
-            }
-
-            arrayListOrganizationObject.add(organization);
         }
     }
 
@@ -4164,6 +4190,14 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         if (toAdd) {
             isUpdated = true;
             addView(viewType, linearLayout, null, -1);
+        }
+    }
+
+    private void removeAndAddOrganizationView() {
+
+        linearOrganizationDetails.removeAllViews();
+        for (int i = 0; i < arrayListOrganizationObject.size(); i++) {
+            addOrganizationView(i, arrayListOrganizationObject.get(i));
         }
     }
 
@@ -4680,8 +4714,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     }
 
     @SuppressLint("InflateParams")
-    private void addOrganizationView(int position, Object detailObject) {
-        View view = LayoutInflater.from(this).inflate(R.layout
+    private void addOrganizationView(final int position, Object detailObject) {
+        final View view = LayoutInflater.from(this).inflate(R.layout
                 .list_item_my_profile_edit_organization, null);
         ImageView deleteOrganization = view.findViewById(R.id.deleteOrganization);
         final EditText inputCompanyName = view.findViewById(R.id.input_company_name);
@@ -4695,6 +4729,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         TextView textIsVerified = view.findViewById(R.id.text_is_verified);
         final TextView textOrgName = view.findViewById(R.id.text_org_name);
         TextView textOrgType = view.findViewById(R.id.text_org_type);
+        TextView textOrgUrlSlug = view.findViewById(R.id.text_org_url);
 
         final EditText inputFromDate = view.findViewById(R.id.input_from_date);
         final EditText inputToDate = view.findViewById(R.id.input_to_date);
@@ -4722,6 +4757,15 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         inputDesignationName.setTypeface(Utils.typefaceRegular(this));
         inputCompanyName.setFocusable(false);
 
+        inputDesignationName.setTag(position);
+//        setOrganisationTextWatcher(inputDesignationName);
+        inputDesignationName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                organisationPosition = (int) view.getTag();
+            }
+        });
+
         inputCompanyName.setTag(position);
         inputCompanyName.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -4744,6 +4788,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             relativeRowEditProfile.setTag(organization.getOrgId());
             textOrgName.setText(organization.getOrgName());
             textOrgType.setText(organization.getOrgIndustryType());
+            textOrgUrlSlug.setText(organization.getOrgUrlSlug());
             inputDesignationName.setText(organization.getOrgJobTitle());
             checkboxOrganization.setChecked(organization.getIsCurrent() == 1);
             textOrgLogo.setText(organization.getOrgLogo());
@@ -4829,13 +4874,28 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             }
         });
 
+        deleteOrganization.setTag(position);
         deleteOrganization.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                if (arrayListTempOrganization.size() > 0) {
+                    int pos = (int) v.getTag();
+
+                    ProfileDataOperationOrganization dataOperationOrganization = (ProfileDataOperationOrganization) arrayListOrganizationObject.get(pos);
+
+                    for (ProfileDataOperationOrganization organization : arrayListTempOrganization) {
+                        if (dataOperationOrganization.getOrgName().equalsIgnoreCase(organization.getOrgName())) {
+                            arrayListTempOrganization.remove(organization);
+                        }
+                    }
+                }
+
                 isUpdated = true;
                 if (linearOrganizationDetails.getChildCount() > 1) {
                     linearOrganizationDetails.removeView(relativeRowEditProfile);
                     addOrganizationDetailsToList();
+                    removeAndAddOrganizationView();
                 } else if (linearOrganizationDetails.getChildCount() == 1) {
                     inputCompanyName.getText().clear();
                     inputDesignationName.getText().clear();
@@ -4843,7 +4903,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     inputToDate.getText().clear();
                     textOrgName.setText("");
                     checkboxOrganization.setChecked(true);
-//                    arrayListOrganizationObject.clear();
+                    inputCompanyName.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+
+                    Glide.with(EditProfileActivity.this)
+                            .load(R.drawable.default_org)
+                            .bitmapTransform(new CropCircleTransformation(EditProfileActivity.this))
+                            .override(120, 120)
+                            .into(imageOrgProfile);
                 }
             }
         });
@@ -4973,7 +5039,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 isUpdated = true;
                 if (linearEducationDetails.getChildCount() > 1) {
                     linearEducationDetails.removeView(relativeRowEditProfile);
-//                    addOrganizationDetailsToList();
                 } else if (linearEducationDetails.getChildCount() == 1) {
                     inputSchoolName.getText().clear();
                     inputFieldOfStudy.getText().clear();
@@ -6011,6 +6076,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                 organization.setOmEnterpriseOrgId(arrayListOrganization.get(i)
                         .getOrgEntId());
+                organization.setOrgUrlSlug(arrayListOrganization.get(i)
+                        .getOrgUrlSlug());
                 organization.setOmIsVerified(String.valueOf(arrayListOrganization.get(i)
                         .getIsVerify()));
                 organization.setRcProfileMasterPmId(profileDetail.getRcpPmId());
