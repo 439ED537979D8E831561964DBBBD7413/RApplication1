@@ -261,6 +261,7 @@ public class QueryManager {
                 .COLUMN_OM_ORGANIZATION_COMPANY + ",org." + TableOrganizationMaster
                 .COLUMN_OM_ORGANIZATION_TYPE + ",org." + TableOrganizationMaster
                 .COLUMN_OM_ORGANIZATION_ENT_ID + ",org." + TableOrganizationMaster
+                .COLUMN_OM_ORGANIZATION_URL_SLUG + ",org." + TableOrganizationMaster
                 .COLUMN_OM_ORGANIZATION_IMAGE + ",org." + TableOrganizationMaster
                 .COLUMN_OM_ORGANIZATION_FROM_DATE + ",org." + TableOrganizationMaster
                 .COLUMN_OM_ORGANIZATION_TO_DATE + ",org." + TableOrganizationMaster
@@ -291,6 +292,9 @@ public class QueryManager {
                     organization.setOrgEntId(StringUtils.defaultString(organizationCursor.getString
                             (organizationCursor.getColumnIndexOrThrow(TableOrganizationMaster
                                     .COLUMN_OM_ORGANIZATION_ENT_ID))));
+                    organization.setOrgUrlSlug(StringUtils.defaultString(organizationCursor.getString
+                            (organizationCursor.getColumnIndexOrThrow(TableOrganizationMaster
+                                    .COLUMN_OM_ORGANIZATION_URL_SLUG))));
                     organization.setOrgLogo(StringUtils.defaultString(organizationCursor.getString
                             (organizationCursor.getColumnIndexOrThrow(TableOrganizationMaster
                                     .COLUMN_OM_ORGANIZATION_IMAGE))));

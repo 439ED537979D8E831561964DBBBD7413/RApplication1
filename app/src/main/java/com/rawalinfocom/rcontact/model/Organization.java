@@ -20,6 +20,7 @@ public class Organization {
     private String omOrganizationType;
     private String omOrganizationLogo;
     private String omIsVerified;
+    private String orgUrlSlug;
 
     /*private String omCustomType;
     private String omOrganizationTitle;
@@ -40,6 +41,14 @@ public class Organization {
 
     public void setOmEnterpriseOrgId(String omEnterpriseOrgId) {
         this.omEnterpriseOrgId = omEnterpriseOrgId;
+    }
+
+    public String getOrgUrlSlug() {
+        return orgUrlSlug;
+    }
+
+    public void setOrgUrlSlug(String orgUrlSlug) {
+        this.orgUrlSlug = orgUrlSlug;
     }
 
     public String getOmOrganizationCompany() {

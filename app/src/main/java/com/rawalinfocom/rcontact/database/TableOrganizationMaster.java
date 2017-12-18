@@ -36,6 +36,7 @@ public class TableOrganizationMaster {
     private static final String COLUMN_OM_RECORD_INDEX_ID = "om_record_index_id";
     static final String COLUMN_OM_ORGANIZATION_COMPANY = "om_organization_company";
     static final String COLUMN_OM_ORGANIZATION_ENT_ID = "om_organization_ent_id";
+    static final String COLUMN_OM_ORGANIZATION_URL_SLUG = "om_organization_url_slug";
     static final String COLUMN_OM_ORGANIZATION_IMAGE = "om_organization_image";
     static final String COLUMN_OM_ORGANIZATION_DESIGNATION = "om_organization_designation";
     static final String COLUMN_OM_ORGANIZATION_TYPE = "column_om_organization_type";
@@ -58,6 +59,7 @@ public class TableOrganizationMaster {
             " " + COLUMN_OM_ORGANIZATION_DESIGNATION + " text," +
             " " + COLUMN_OM_ORGANIZATION_TYPE + " text," +
             " " + COLUMN_OM_ORGANIZATION_ENT_ID + " text," +
+            " " + COLUMN_OM_ORGANIZATION_URL_SLUG + " text," +
             " " + COLUMN_OM_ORGANIZATION_IMAGE + " text," +
             " " + COLUMN_OM_ORGANIZATION_FROM_DATE + " text," +
             " " + COLUMN_OM_ORGANIZATION_TO_DATE + " text," +
@@ -107,6 +109,8 @@ public class TableOrganizationMaster {
                     .getOmOrganizationType());
             values.put(COLUMN_OM_ORGANIZATION_ENT_ID, arrayListOrganization.get(i)
                     .getOmEnterpriseOrgId());
+            values.put(COLUMN_OM_ORGANIZATION_URL_SLUG, arrayListOrganization.get(i)
+                    .getOrgUrlSlug());
             values.put(COLUMN_OM_ORGANIZATION_IMAGE, arrayListOrganization.get(i)
                     .getOmOrganizationLogo());
             values.put(COLUMN_OM_ORGANIZATION_FROM_DATE, arrayListOrganization.get(i)
@@ -252,6 +256,7 @@ public class TableOrganizationMaster {
                 COLUMN_OM_ORGANIZATION_DESIGNATION + ", " +
                 COLUMN_OM_ORGANIZATION_TYPE + ", " +
                 COLUMN_OM_ORGANIZATION_ENT_ID + ", " +
+                COLUMN_OM_ORGANIZATION_URL_SLUG + ", " +
                 COLUMN_OM_ORGANIZATION_IMAGE + ", " +
                 COLUMN_OM_ORGANIZATION_FROM_DATE + ", " +
                 COLUMN_OM_ORGANIZATION_TO_DATE + ", " +
@@ -280,6 +285,8 @@ public class TableOrganizationMaster {
                         (COLUMN_OM_ORGANIZATION_TYPE)));
                 organization.setOmEnterpriseOrgId(cursor.getString(cursor.getColumnIndex
                         (COLUMN_OM_ORGANIZATION_ENT_ID)));
+                organization.setOrgUrlSlug(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_OM_ORGANIZATION_URL_SLUG)));
                 organization.setOmOrganizationLogo(cursor.getString(cursor.getColumnIndex
                         (COLUMN_OM_ORGANIZATION_IMAGE)));
                 organization.setOmOrganizationFromDate(cursor.getString(cursor.getColumnIndex
@@ -320,6 +327,7 @@ public class TableOrganizationMaster {
                 COLUMN_OM_ORGANIZATION_DESIGNATION + ", " +
                 COLUMN_OM_ORGANIZATION_TYPE + ", " +
                 COLUMN_OM_ORGANIZATION_ENT_ID + ", " +
+                COLUMN_OM_ORGANIZATION_URL_SLUG + ", " +
                 COLUMN_OM_ORGANIZATION_IMAGE + ", " +
                 COLUMN_OM_ORGANIZATION_FROM_DATE + ", " +
                 COLUMN_OM_ORGANIZATION_TO_DATE + ", " +
@@ -356,6 +364,9 @@ public class TableOrganizationMaster {
                 organization.setOrgEntId(StringUtils.defaultString(cursor
                         .getString(cursor.getColumnIndexOrThrow(TableOrganizationMaster
                                 .COLUMN_OM_ORGANIZATION_ENT_ID))));
+                organization.setOrgUrlSlug(StringUtils.defaultString(cursor
+                        .getString(cursor.getColumnIndexOrThrow(TableOrganizationMaster
+                                .COLUMN_OM_ORGANIZATION_URL_SLUG))));
                 organization.setOrgLogo(StringUtils.defaultString(cursor
                         .getString(cursor.getColumnIndexOrThrow(TableOrganizationMaster
                                 .COLUMN_OM_ORGANIZATION_IMAGE))));

@@ -835,6 +835,7 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
                                 organization.setOmOrganizationLogo("");
                             }
 
+                            organization.setOrgUrlSlug(arrayListOrganization.get(j).getOrgUrlSlug());
                             organization.setOmIsVerified(String.valueOf(arrayListOrganization.get(j).getIsVerify()));
                             organization.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
                             organizationList.add(organization);

@@ -26,6 +26,7 @@ public class ProfileDataOperationOrganization implements Serializable {
     private String orgLogo;
     private String eomLogoPath;
     private String eomLogoName;
+    private String orgUrlSlug;
 
 //    public String getIsInUse() {
 //        return isInUse;
@@ -60,6 +61,15 @@ public class ProfileDataOperationOrganization implements Serializable {
 
     public void setOrgEntId(String orgEntId) {
         this.orgEntId = orgEntId;
+    }
+
+    @JsonProperty("om_urlslug")
+    public String getOrgUrlSlug() {
+        return orgUrlSlug;
+    }
+
+    public void setOrgUrlSlug(String orgUrlSlug) {
+        this.orgUrlSlug = orgUrlSlug;
     }
 
     @JsonProperty("org_job_title")
