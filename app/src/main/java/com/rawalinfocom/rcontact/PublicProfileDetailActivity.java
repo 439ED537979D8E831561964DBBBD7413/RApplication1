@@ -235,6 +235,10 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
 
     public String callNumber = "";
 
+    @BindView(R.id.image_relation)
+    ImageView imageRelation;
+    @BindView(R.id.ripple_action_relation)
+    RippleView rippleActionRelation;
     AsyncWebServiceCall asyncGetProfileDetails;
     private boolean hasNumber;
 
@@ -438,6 +442,7 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
         rippleActionRightRight = ButterKnife.findById(includeToolbar, R.id
                 .ripple_action_right_right);
 
+        rippleActionRelation.setVisibility(GONE);
         rippleActionRightLeft.setVisibility(GONE);
         rippleActionRightCenter.setVisibility(GONE);
         rippleActionRightRight.setVisibility(GONE);

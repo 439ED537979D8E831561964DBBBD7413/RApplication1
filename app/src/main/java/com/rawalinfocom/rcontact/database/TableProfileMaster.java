@@ -837,6 +837,9 @@ public class TableProfileMaster {
                 COLUMN_PM_RAW_ID + " LIKE '%" + rawId + "%'";
 
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        if (!db.isOpen()) {
+            db.isOpen();
+        }
         Cursor cursor = db.rawQuery(selectQuery, null);
 
         if (cursor != null) {
@@ -847,6 +850,9 @@ public class TableProfileMaster {
                 } while (cursor.moveToNext());
             }
             cursor.close();
+
+            if (db.isOpen())
+                db.close();
         }
 
         return rcpID;

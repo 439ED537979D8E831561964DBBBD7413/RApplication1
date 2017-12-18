@@ -366,7 +366,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                     .PREF_FAVOURITE_CONTACT_NUMBER_EMAIL));
         }
 
-        if (TextUtils.isEmpty(contactName) && contactName.equalsIgnoreCase("[Unknown]")) {
+        if (TextUtils.isEmpty(contactName) &&
+                StringUtils.equalsIgnoreCase(contactName,"[Unknown]")) {
             rippleInvite.setVisibility(View.GONE);
             linearBasicDetailRating.setVisibility(View.GONE);
         }
@@ -404,8 +405,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                     }
 
                 if (isCallLogInstance) {
-                    if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase
-                            ("[Unknown]")) {
+                    if (!TextUtils.isEmpty(contactName)
+                            && !StringUtils.equalsIgnoreCase(contactName,"[Unknown]")) {
                         fetchAllCallLogHistory(contactName);
                     } else if (!TextUtils.isEmpty(profileContactNumber)) {
                         fetchAllCallLogHistory(profileContactNumber);
@@ -416,15 +417,15 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                     }
 
                 } else {
-                    if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase
-                            ("[Unknown]")) {
+                    if (!TextUtils.isEmpty(contactName)
+                            && !StringUtils.equalsIgnoreCase(contactName,"[Unknown]")) {
                         fetchAllCallLogHistory(contactName);
                     } else {
                         if (!StringUtils.isEmpty(historyNumber)) {
                             fetchAllCallLogHistory(historyNumber);
                         } else {
-                            if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase
-                                    ("[Unknown]")) {
+                            if (!TextUtils.isEmpty(contactName)
+                                    && !StringUtils.equalsIgnoreCase(contactName,"[Unknown]")) {
                                 fetchAllCallLogHistory(contactName);
                             } else {
                                 if (!TextUtils.isEmpty(profileContactNumber)) {

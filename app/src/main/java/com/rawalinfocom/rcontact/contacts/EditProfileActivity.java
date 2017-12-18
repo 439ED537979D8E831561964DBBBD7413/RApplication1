@@ -3826,8 +3826,11 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             organization.setOrgIndustryType(arrayListOrganization.get(i).getOmOrganizationType());
 
             if (StringUtils.length(arrayListOrganization.get(i).getOmIsVerified()) > 0) {
-                organization.setIsVerify(Integer.parseInt(arrayListOrganization.get(i)
-                        .getOmIsVerified()));
+                if(!StringUtils.isEmpty(arrayListOrganization.get(i)
+                        .getOmIsVerified())){
+                    organization.setIsVerify(Integer.parseInt(arrayListOrganization.get(i)
+                            .getOmIsVerified()));
+                }
             } else {
                 organization.setIsVerify(0);
             }
