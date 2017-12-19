@@ -556,6 +556,91 @@ public class QueryManager {
     }
 
 
+    public ArrayList<ProfileDataOperationOrganization> getOrganisationDetails(Context context, String rcpId){
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+        // <editor-fold desc="Organization">
+        String organizationQuery = "SELECT org." + TableOrganizationMaster
+                .COLUMN_OM_ORGANIZATION_COMPANY + ",org." + TableOrganizationMaster
+                .COLUMN_OM_ORGANIZATION_TYPE + ",org." + TableOrganizationMaster
+                .COLUMN_OM_ORGANIZATION_ENT_ID + ",org." + TableOrganizationMaster
+                .COLUMN_OM_ORGANIZATION_URL_SLUG + ",org." + TableOrganizationMaster
+                .COLUMN_OM_ORGANIZATION_IMAGE + ",org." + TableOrganizationMaster
+                .COLUMN_OM_ORGANIZATION_FROM_DATE + ",org." + TableOrganizationMaster
+                .COLUMN_OM_ORGANIZATION_TO_DATE + ",org." + TableOrganizationMaster
+                .COLUMN_OM_ORGANIZATION_IS_VERIFIED + ",org." + TableOrganizationMaster
+                .COLUMN_OM_ORGANIZATION_IS_CURRENT + ",org." + TableOrganizationMaster
+                .COLUMN_OM_ORGANIZATION_DESIGNATION + " from " + TableOrganizationMaster
+                .TABLE_RC_ORGANIZATION_MASTER + " org WHERE org." + TableOrganizationMaster
+                .COLUMN_RC_PROFILE_MASTER_PM_ID + " = " + rcpId + " ORDER BY org." +
+                TableOrganizationMaster.COLUMN_OM_ORGANIZATION_IS_CURRENT + " DESC, date(org." +
+                TableOrganizationMaster.COLUMN_OM_ORGANIZATION_FROM_DATE + ") DESC";
+
+        Cursor organizationCursor = db.rawQuery(organizationQuery, null);
+
+        ArrayList<ProfileDataOperationOrganization> arrayListOrganization = new ArrayList<>();
+
+        // looping through all rows and adding to list
+        if (organizationCursor != null && organizationCursor.getCount() > 0) {
+            if (organizationCursor.moveToFirst()) {
+                do {
+                    ProfileDataOperationOrganization organization = new
+                            ProfileDataOperationOrganization();
+                    organization.setOrgName(StringUtils.defaultString(organizationCursor.getString
+                            (organizationCursor.getColumnIndexOrThrow(TableOrganizationMaster
+                                    .COLUMN_OM_ORGANIZATION_COMPANY))));
+                    organization.setOrgIndustryType(StringUtils.defaultString(organizationCursor
+                            .getString(organizationCursor.getColumnIndexOrThrow
+                                    (TableOrganizationMaster.COLUMN_OM_ORGANIZATION_TYPE))));
+                    organization.setOrgEntId(StringUtils.defaultString(organizationCursor.getString
+                            (organizationCursor.getColumnIndexOrThrow(TableOrganizationMaster
+                                    .COLUMN_OM_ORGANIZATION_ENT_ID))));
+                    organization.setOrgUrlSlug(StringUtils.defaultString(organizationCursor.getString
+                            (organizationCursor.getColumnIndexOrThrow(TableOrganizationMaster
+                                    .COLUMN_OM_ORGANIZATION_URL_SLUG))));
+                    organization.setOrgLogo(StringUtils.defaultString(organizationCursor.getString
+                            (organizationCursor.getColumnIndexOrThrow(TableOrganizationMaster
+                                    .COLUMN_OM_ORGANIZATION_IMAGE))));
+                    organization.setOrgJobTitle(StringUtils.defaultString(organizationCursor
+                            .getString(organizationCursor.getColumnIndexOrThrow
+                                    (TableOrganizationMaster
+                                            .COLUMN_OM_ORGANIZATION_DESIGNATION))));
+                    organization.setOrgFromDate(StringUtils.defaultString(organizationCursor
+                            .getString
+                                    (organizationCursor.getColumnIndexOrThrow
+                                            (TableOrganizationMaster
+                                                    .COLUMN_OM_ORGANIZATION_FROM_DATE))));
+                    organization.setOrgToDate(StringUtils.defaultString(organizationCursor.getString
+                            (organizationCursor.getColumnIndexOrThrow(TableOrganizationMaster
+                                    .COLUMN_OM_ORGANIZATION_TO_DATE))));
+                    organization.setIsCurrent(organizationCursor.getInt((organizationCursor
+                            .getColumnIndexOrThrow(TableOrganizationMaster
+                                    .COLUMN_OM_ORGANIZATION_IS_CURRENT))));
+                    if (!StringUtils.isBlank(organizationCursor.getString
+                            (organizationCursor.getColumnIndexOrThrow(TableOrganizationMaster
+                                    .COLUMN_OM_ORGANIZATION_IS_VERIFIED)))) {
+                        organization.setIsVerify(Integer.parseInt(organizationCursor.getString
+                                (organizationCursor.getColumnIndexOrThrow(TableOrganizationMaster
+                                        .COLUMN_OM_ORGANIZATION_IS_VERIFIED))));
+                    } else {
+                        organization.setIsVerify(0);
+                    }
+
+                    organization.setOrgRcpType(String.valueOf(IntegerConstants
+                            .RCP_TYPE_CLOUD_PHONE_BOOK));
+                    arrayListOrganization.add(organization);
+                } while (organizationCursor.moveToNext());
+                organizationCursor.close();
+            }
+//            profileDataOperation.setPbOrganization(arrayListOrganization);
+        }
+
+        //</editor-fold>
+
+        db.close();
+        return arrayListOrganization;
+    }
+
     /*public ArrayList<ProfileDataOperation> getAllRcpProfileDetails(Context context) {
 
         SQLiteDatabase db = databaseHandler.getWritableDatabase();

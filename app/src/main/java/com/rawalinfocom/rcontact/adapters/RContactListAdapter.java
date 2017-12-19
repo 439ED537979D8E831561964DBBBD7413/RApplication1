@@ -33,6 +33,7 @@ import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
+import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
 import com.rawalinfocom.rcontact.model.UserProfile;
 
 import org.apache.commons.lang3.StringUtils;
@@ -154,7 +155,7 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public int getItemCount() {
         if (!(activity instanceof SearchActivity) && !(activity instanceof DialerActivity)) {
             return (arrayListUserProfile.size() + 1);
-        }else{
+        } else {
             return arrayListUserProfile.size();
         }
     }
@@ -237,11 +238,11 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
 
 
-        if(!StringUtils.isBlank(searchChar)){
+        if (!StringUtils.isBlank(searchChar)) {
             Pattern numberPat = Pattern.compile("\\d+");
             Matcher matcher1 = numberPat.matcher(searchChar);
             if (matcher1.find() || searchChar.matches("[+][0-9]+")) {
-                int startPos =  holder.textContactNumber.getText().toString().toLowerCase(Locale.US).indexOf(searchChar
+                int startPos = holder.textContactNumber.getText().toString().toLowerCase(Locale.US).indexOf(searchChar
                         .toLowerCase(Locale.US));
                 int endPos = startPos + searchChar.length();
                 if (startPos != -1) {
@@ -253,7 +254,7 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 } else {
                     holder.textContactNumber.setText(holder.textContactNumber.getText().toString());
                 }
-            }else{
+            } else {
                 if (searchChar.contains(" ")) {
                     String originalString = holder.textContactName.getText().toString();
                     String[] separated = searchChar.split(" ");
@@ -281,17 +282,17 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                             builder.setSpan(highlightSpan, startPos2, endPos2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                         }
                     }
-                    holder.textContactName.setText(builder,TextView.BufferType.SPANNABLE);
+                    holder.textContactName.setText(builder, TextView.BufferType.SPANNABLE);
 
-                }else{
+                } else {
 
-                    int startPos =  holder.textContactName.getText().toString().toLowerCase(Locale.US).indexOf(searchChar
+                    int startPos = holder.textContactName.getText().toString().toLowerCase(Locale.US).indexOf(searchChar
                             .toLowerCase(Locale.US));
                     int endPos = startPos + searchChar.length();
 
                     if (startPos != -1) {
                         Spannable spannable = new SpannableString(holder.textContactName.getText().toString());
-                        ColorStateList blueColor =  new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.RED}) ;
+                        ColorStateList blueColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.RED});
                         TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, blueColor, null);
                         spannable.setSpan(highlightSpan, startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                         holder.textContactName.setText(spannable);
@@ -355,14 +356,14 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                 bundle.putString(AppConstants.EXTRA_CALL_HISTORY_NUMBER, userProfile
                         .getMobileNumber());
-                if(fragment!=null){
+                if (fragment != null) {
                     Intent intent = new Intent(activity, ProfileDetailActivity.class);
                     intent.putExtras(bundle);
                     fragment.startActivityForResult(intent, AppConstants
                             .REQUEST_CODE_PROFILE_DETAIL);
                     ((BaseActivity) activity).overridePendingTransition(R.anim.enter, R
                             .anim.exit);
-                }else{
+                } else {
                     Intent intent = new Intent(activity, ProfileDetailActivity.class);
                     intent.putExtras(bundle);
                     activity.startActivityForResult(intent, AppConstants
@@ -377,7 +378,7 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private void configureFooterViewHolder(ContactFooterViewHolder holder, int position) {
 //        String letter = (String) arrayListUserContact.get(position);
-        if (!(activity instanceof SearchActivity) && !(activity instanceof DialerActivity)){
+        if (!(activity instanceof SearchActivity) && !(activity instanceof DialerActivity)) {
             holder.textTotalContacts.setText(arrayListUserProfile.size() - arrayListContactHeader
                     .size() + " " + activity.getString(R.string.str_count_contacts));
         }
@@ -485,7 +486,7 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     }*/
                     if (arraylist.get(i) instanceof UserProfile) {
                         UserProfile profileData = (UserProfile) arraylist.get(i);
-                        String name =  profileData.getMobileNumber();
+                        String name = profileData.getMobileNumber();
                         if (!StringUtils.isEmpty(name)) {
                             name = name.replace(" ", "").replace("-", "");
                             if (name.toLowerCase(Locale.getDefault()).contains
@@ -506,18 +507,40 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 for (int i = 0; i < arraylist.size(); i++) {
                     if (arraylist.get(i) instanceof UserProfile) {
                         UserProfile profileData = (UserProfile) arraylist.get(i);
-                        String name =  profileData.getPmFirstName() + " " + profileData.getPmFirstName() ;
+                        String name = profileData.getPmFirstName() + " " + profileData.getPmFirstName();
+                        ArrayList<ProfileDataOperationOrganization> organizationArrayList =
+                                profileData.getPbOrganization();
+                        String orgName = "";
+                        String orgDesign = "";
                         if (!StringUtils.isEmpty(name)) {
                             if (name.toLowerCase(Locale.getDefault()).contains
                                     (charText)) {
                                 arrayListUserProfile.add(profileData);
-                            }else {
+                            } else {
                                 if (!StringUtils.isBlank(profileData.getPmFirstName())
                                         && !StringUtils.isBlank(profileData.getPmLastName())) {
                                     nameFilter(charText, profileData);
                                 }
                             }
                         }
+
+                        if (arrayListUserProfile.size() <= 0) {
+                            if (organizationArrayList.size() > 0) {
+                                for (int j = 0; j < organizationArrayList.size(); j++) {
+                                    orgName = organizationArrayList.get(j).getOrgName();
+                                    orgDesign = organizationArrayList.get(j).getOrgJobTitle();
+                                    if (!StringUtils.isEmpty(orgName) || !StringUtils.isEmpty(orgDesign)) {
+                                        if (orgName.toLowerCase(Locale.getDefault()).contains
+                                                (charText) || orgDesign.toLowerCase(Locale.getDefault()).contains
+                                                (charText)) {
+                                            if (!arrayListUserProfile.contains(profileData))
+                                                arrayListUserProfile.add(profileData);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
                     }
                 }
             }
