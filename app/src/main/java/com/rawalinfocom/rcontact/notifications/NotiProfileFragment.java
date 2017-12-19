@@ -102,7 +102,7 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout swipeRefreshLayout;
 
-    private String ppmTag, carID;
+    private String ppmTag, carID,actionType;
     private int rcpID;
 
     @Override
@@ -459,10 +459,11 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
         notiProfileAdapter = new NotiProfileAdapter(this, listAllRequest,
                 new NotiProfileAdapter.OnClickListener() {
                     @Override
-                    public void onClick(String type, String carId, int rcpId) {
+                    public void onClick(String type, String carId, int rcpId,String action) {
                         ppmTag = type;
                         carID = carId;
                         rcpID = rcpId;
+                        actionType = action;
                     }
                 });
 //        todayProfileAdapter = new NotiProfileAdapter(this, listTodayRequest, 0);
@@ -612,8 +613,7 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
 //                                MoreObjects.firstNonNull(item.getCarAccessPermissionStatus(), 0)
 //                                        == 2) {
 //                            boolean deleted = tableRCContactRequest.removeRequest(item.getCarId());
-                        System.out.println("RContacts data response --> " + ppmTag + " -- " + carID + " -- " + rcpID);
-                        boolean deleted = tableRCContactRequest.removeRequest(ppmTag, carID, rcpID);
+                        boolean deleted = tableRCContactRequest.removeRequest(ppmTag, carID, rcpID,actionType);
                         if (deleted) {
                             refreshAllList();
                         }

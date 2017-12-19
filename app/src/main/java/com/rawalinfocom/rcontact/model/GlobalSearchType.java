@@ -35,7 +35,6 @@ public class GlobalSearchType implements Serializable {
     @JsonProperty("rating_private")
     private Integer ratingPrivate;
 
-
     public Integer getIsRcpVerified() {
         return isRcpVerified;
     }

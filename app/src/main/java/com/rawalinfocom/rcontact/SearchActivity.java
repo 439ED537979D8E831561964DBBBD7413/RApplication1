@@ -715,6 +715,8 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
 
         if (arrayListRContact != null && arrayListRContact.size() > 0) {
             rContactListAdapter = new RContactListAdapter(SearchActivity.this, arrayListRContact);
+            // TODO : Hardik : Global Search Organisation
+//            rContactListAdapter.getData();
         }
         /*if (smsDataTypeArrayList != null && smsDataTypeArrayList.size() > 0) {
             smsListAdapter = new SmsListAdapter(SearchActivity.this, smsDataTypeArrayList,
@@ -758,6 +760,8 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                                     rContactListAdapter = new RContactListAdapter(SearchActivity
                                             .this,
                                             arrayListRContact);
+                                    // TODO : Hardik : Global Search Organisation
+//                                    rContactListAdapter.getData();
                                     rContactListAdapter.filter(text);
                                     if (rContactListAdapter.getSearchCount() > 0) {
                                         rlTitle.setVisibility(View.VISIBLE);
@@ -835,6 +839,8 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                                     rContactListAdapter = new RContactListAdapter(SearchActivity
                                             .this,
                                             arrayListRContact);
+                                    // TODO : Hardik : Global Search Organisation
+//                                    rContactListAdapter.getData();
                                     rContactListAdapter.filter(text);
                                     if (rContactListAdapter.getSearchCount() > 0) {
                                         rlTitle.setVisibility(View.VISIBLE);
