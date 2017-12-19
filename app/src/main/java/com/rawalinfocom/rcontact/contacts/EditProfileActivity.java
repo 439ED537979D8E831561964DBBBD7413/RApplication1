@@ -1233,8 +1233,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                 String[] temp = user.fullName.split("\\ ");
                 if (temp.length > 1) {
-                    imAccount.setIMAccountFirstName(temp[1]);
-                    imAccount.setIMAccountLastName(temp[0]);
+                    imAccount.setIMAccountFirstName(temp[0]);
+                    imAccount.setIMAccountLastName(temp[1]);
                 } else {
                     imAccount.setIMAccountFirstName(user.fullName);
                     imAccount.setIMAccountLastName("");
@@ -1378,8 +1378,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                     String[] temp = user.getName().split("\\ ");
                     if (temp.length > 1) {
-                        imAccount.setIMAccountFirstName(temp[1]);
-                        imAccount.setIMAccountLastName(temp[0]);
+                        imAccount.setIMAccountFirstName(temp[0]);
+                        imAccount.setIMAccountLastName(temp[1]);
                     } else {
                         imAccount.setIMAccountFirstName(user.getName());
                         imAccount.setIMAccountLastName("");
