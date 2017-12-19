@@ -16,6 +16,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     // Database Version
     private static final int DATABASE_VERSION = 7;  //update to 7 for production/staging/QA
                                                     // previous version 6
+
     // Database Name
     public static final String DATABASE_NAME = "RContact.db";
 

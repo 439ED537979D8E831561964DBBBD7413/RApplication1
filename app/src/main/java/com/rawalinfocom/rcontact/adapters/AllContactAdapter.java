@@ -1116,15 +1116,24 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     if (arraylist.get(i) instanceof ProfileData) {
                         ProfileData profileData = (ProfileData) arraylist.get(i);
 //                        String firstName =  profileData.getTempFirstName() + " ";
+//                        String orgName =  profileData.getOperation().get(i).getPbOrganization().get(i).getOrgName();
+//                        String orgDesign =  profileData.getOperation().get(i).getPbOrganization().get(i).getOrgJobTitle();
+
                         if (!StringUtils.isEmpty(profileData.getName())) {
                             if (profileData.getName().toLowerCase(Locale.getDefault()).contains
                                     (charText)) {
                                 arrayListUserContact.add(profileData);
                             } else {
-
                                 if (!StringUtils.isBlank(profileData.getTempFirstName())
                                         && !StringUtils.isBlank(profileData.getTempLastName())) {
                                     nameFilter(charText, profileData);
+                                }else{
+                                    /*if(!StringUtils.isBlank(profileData.getOperation().get(i).getPbOrganization().get(i).getOrgName())){
+                                        if(profileData.getOperation().get(i).getPbOrganization().get(i).getOrgName().
+                                                toLowerCase(Locale.getDefault()).contains(charText)){
+                                            arrayListUserContact.add(profileData);
+                                        }
+                                    }*/
                                 }
 //                                if(firstName.toLowerCase(Locale.getDefault()).equalsIgnoreCase
 // (charText)
