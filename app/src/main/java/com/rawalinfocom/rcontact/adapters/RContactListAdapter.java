@@ -479,7 +479,6 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 }.getType());
     }
 
-    // TODO : Hardik : Global Search Organisation
     // Filter Class
     public void filter(String charText) {
         Pattern numberPat = Pattern.compile("\\d+");
@@ -547,6 +546,7 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         notifyDataSetChanged();
     }
 
+    // TODO : Hardik : Global Search Organisation
     // Filter Class
 //    public void filter(String charText) {
 //

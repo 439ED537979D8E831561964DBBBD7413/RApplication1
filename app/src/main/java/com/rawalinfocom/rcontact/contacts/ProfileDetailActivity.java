@@ -5102,13 +5102,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     private void storeProfileDataToDb(ProfileDataOperation profileDetail) {
 
         // TODO : Hardik : Global Search Organisation
-        ArrayList<ProfileDataOperation> profileData = new ArrayList<>();
-        profileData.add(profileDetail);
-
-        Gson gson = new Gson();
-
-        String jsonString = gson.toJson(profileData);
-        Utils.setStringPreference(ProfileDetailActivity.this, "search_data", jsonString);
+//        ArrayList<ProfileDataOperation> profileData = new ArrayList<>();
+//        profileData.add(profileDetail);
+//
+//        Gson gson = new Gson();
+//
+//        String jsonString = gson.toJson(profileData);
+//        Utils.setStringPreference(ProfileDetailActivity.this, "search_data", jsonString);
 
         //<editor-fold desc="Basic Details">
         TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);

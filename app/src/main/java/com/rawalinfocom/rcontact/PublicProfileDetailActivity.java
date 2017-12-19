@@ -231,10 +231,6 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
 
     public String callNumber = "";
 
-    @BindView(R.id.image_relation)
-    ImageView imageRelation;
-    @BindView(R.id.ripple_action_relation)
-    RippleView rippleActionRelation;
     AsyncWebServiceCall asyncGetProfileDetails;
     @BindView(R.id.image_relation)
     ImageView imageRelation;
