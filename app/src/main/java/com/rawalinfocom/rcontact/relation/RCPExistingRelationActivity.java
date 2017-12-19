@@ -459,13 +459,30 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
             linearBasicDetailRating.setEnabled(false);
             textUserRating.setText(userProfile.getTotalProfileRateUser());
 
-            if (Integer.parseInt((String) MoreObjects.firstNonNull(userProfile.getProfileRatingPrivacy(), 0)) == IntegerConstants
-                    .PRIVACY_EVERYONE) {
+//            if (Integer.parseInt((String) MoreObjects.firstNonNull(userProfile.getProfileRatingPrivacy(), 0)) == IntegerConstants
+//                    .PRIVACY_EVERYONE) {
+//                ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
+//            } else {
+//                ratingUser.setRating(0);
+//                ratingUser.setEnabled(false);
+//            }
+
+            if (Integer.parseInt((String) MoreObjects.firstNonNull(userProfile.getProfileRatingPrivacy(), 0))
+                    == IntegerConstants.PRIVACY_EVERYONE) {
                 ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
+            } else if (Integer.parseInt((String) MoreObjects.firstNonNull(userProfile.getProfileRatingPrivacy(),
+                    0)) == IntegerConstants.PRIVACY_MY_CONTACT) {
+                if (Integer.parseInt((String) MoreObjects.firstNonNull(userProfile.getRatingPrivate(), 0))
+                        == IntegerConstants.IS_PRIVATE) {
+                    ratingUser.setRating(0);
+                } else {
+                    ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
+                }
+
             } else {
                 ratingUser.setRating(0);
-                ratingUser.setEnabled(false);
             }
+
         } else {
             textUserRating.setText("0");
             ratingUser.setRating(0);

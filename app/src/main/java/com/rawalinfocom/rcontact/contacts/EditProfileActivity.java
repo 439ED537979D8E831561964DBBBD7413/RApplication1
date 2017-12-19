@@ -3861,6 +3861,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 //            inputCompanyName.addTextChangedListener(valueTextWatcher);
 //            setOrganisationTextWatcher(inputDesignationName);
 //            inputDesignationName.addTextChangedListener(valueTextWatcher);} else {
+        } else {
             addOrganizationView((arrayListOrganizationObject.size()), null);
         }
     }
