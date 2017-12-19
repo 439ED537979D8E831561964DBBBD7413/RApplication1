@@ -2723,7 +2723,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     public void onClick(View view) {
                         if (tempOrganization.get(0).getIsVerify() == 1) {
                             String orgPublicLink = BuildConfig.ORANISATION_PUBLIC_LINK +
-                                    tempOrganization.get(0).getOrgEntId();
+                                    tempOrganization.get(0).getOrgUrlSlug();
                             if (!StringUtils.isEmpty(orgPublicLink)) {
                                 String url = orgPublicLink;
                                 Intent i = new Intent(Intent.ACTION_VIEW);

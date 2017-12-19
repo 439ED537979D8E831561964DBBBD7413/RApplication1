@@ -637,7 +637,7 @@ public class PublicProfileDetailActivity extends BaseActivity implements RippleV
                     public void onClick(View view) {
                         if (tempOrganization.get(0).getIsVerify() == 1) {
                             String orgPublicLink = BuildConfig.ORANISATION_PUBLIC_LINK +
-                                    tempOrganization.get(0).getOrgEntId();
+                                    tempOrganization.get(0).getOrgUrlSlug();
                             if (!StringUtils.isEmpty(orgPublicLink)) {
                                 Intent i = new Intent(Intent.ACTION_VIEW);
                                 i.setData(Uri.parse(orgPublicLink));
