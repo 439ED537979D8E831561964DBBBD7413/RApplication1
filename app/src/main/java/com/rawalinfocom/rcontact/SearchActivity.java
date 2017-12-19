@@ -50,6 +50,7 @@ import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookCallLogs;
 import com.rawalinfocom.rcontact.database.PhoneBookSMSLogs;
+import com.rawalinfocom.rcontact.database.QueryManager;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
@@ -62,6 +63,7 @@ import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.CallLogType;
 import com.rawalinfocom.rcontact.model.GlobalSearchType;
 import com.rawalinfocom.rcontact.model.ProfileData;
+import com.rawalinfocom.rcontact.model.ProfileDataOperation;
 import com.rawalinfocom.rcontact.model.ProfileMobileMapping;
 import com.rawalinfocom.rcontact.model.SmsDataType;
 import com.rawalinfocom.rcontact.model.UserProfile;
@@ -584,6 +586,8 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                 (getDatabaseHandler());
 
         arrayListDisplayProfile = tableProfileMobileMapping.getRContactList(getUserPmId());
+//        QueryManager queryManager = new QueryManager (getDatabaseHandler());
+//        ArrayList<ProfileDataOperation> allRcpProfileDetails = queryManager.getAllRcpProfileDetails(SearchActivity.this);
 
         arrayListRContact = new ArrayList<>();
         if (arrayListDisplayProfile.size() > 0) {
