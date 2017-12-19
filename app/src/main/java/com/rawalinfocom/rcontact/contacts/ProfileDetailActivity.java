@@ -2723,7 +2723,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     public void onClick(View view) {
                         if (tempOrganization.get(0).getIsVerify() == 1) {
                             String orgPublicLink = BuildConfig.ORANISATION_PUBLIC_LINK +
-                                    tempOrganization.get(0).getOrgEntId();
+                                    tempOrganization.get(0).getOrgUrlSlug();
                             if (!StringUtils.isEmpty(orgPublicLink)) {
                                 String url = orgPublicLink;
                                 Intent i = new Intent(Intent.ACTION_VIEW);
@@ -2974,7 +2974,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     profileDataOperationVcard.setPbPhoneNumber(arrayListPhoneBookNumberOperation);
                 }
             }
-
             tempPhoneNumber = new ArrayList<>();
             if (!Utils.isArraylistNullOrEmpty(arrayListPhoneNumber) || !Utils.isArraylistNullOrEmpty
                     (arrayListPhoneBookNumber)) {
@@ -2983,7 +2982,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                 linearPhone.setVisibility(View.VISIBLE);
                 phoneDetailAdapter = new ProfileDetailAdapter(this,
-                        tempPhoneNumber, AppConstants.PHONE_NUMBER, displayOwnProfile, pmId);
+                        tempPhoneNumber, AppConstants.PHONE_NUMBER, displayOwnProfile, pmId,
+                        new ProfileDetailAdapter.OnClickListener() {
+                            @Override
+                            public void onClick(String NumberEmail) {
+                                Toast.makeText(rContactApplication, "Verify Number " + NumberEmail, Toast.LENGTH_SHORT).show();
+                            }
+                        });
                 recyclerViewContactNumber.setAdapter(phoneDetailAdapter);
             } else {
                 linearPhone.setVisibility(View.GONE);
@@ -3059,7 +3064,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 tempEmail.addAll(arrayListPhoneBookEmail);
                 linearEmail.setVisibility(View.VISIBLE);
                 ProfileDetailAdapter emailDetailAdapter = new ProfileDetailAdapter(this, tempEmail,
-                        AppConstants.EMAIL, displayOwnProfile, pmId);
+                        AppConstants.EMAIL, displayOwnProfile, pmId,
+                        new ProfileDetailAdapter.OnClickListener() {
+                            @Override
+                            public void onClick(String NumberEmail) {
+                                Toast.makeText(rContactApplication, "Verify Email " + NumberEmail, Toast.LENGTH_SHORT).show();
+                            }
+                        });
                 recyclerViewEmail.setAdapter(emailDetailAdapter);
             } else {
                 linearEmail.setVisibility(View.GONE);
@@ -3088,7 +3099,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 tempEducation.addAll(arrayListEducation);
                 linearEducation.setVisibility(View.VISIBLE);
                 ProfileDetailAdapter educationDetailAdapter = new ProfileDetailAdapter(this,
-                        tempEducation, AppConstants.EDUCATION, displayOwnProfile, pmId);
+                        tempEducation, AppConstants.EDUCATION, displayOwnProfile, pmId,
+                        new ProfileDetailAdapter.OnClickListener() {
+                            @Override
+                            public void onClick(String number) {
+
+                            }
+                        });
                 recyclerViewEducation.setAdapter(educationDetailAdapter);
             } else {
                 linearEducation.setVisibility(View.GONE);
@@ -3157,7 +3174,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                 linearWebsite.setVisibility(View.VISIBLE);
                 ProfileDetailAdapter websiteDetailAdapter = new ProfileDetailAdapter(this,
-                        tempWebsite, AppConstants.WEBSITE, displayOwnProfile, pmId);
+                        tempWebsite, AppConstants.WEBSITE, displayOwnProfile, pmId,
+                        new ProfileDetailAdapter.OnClickListener() {
+                            @Override
+                            public void onClick(String number) {
+
+                            }
+                        });
                 recyclerViewWebsite.setAdapter(websiteDetailAdapter);
             } else {
                 linearWebsite.setVisibility(View.GONE);
@@ -3286,7 +3309,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 tempAddress.addAll(arrayListPhoneBookAddress);
                 linearAddress.setVisibility(View.VISIBLE);
                 ProfileDetailAdapter addressDetailAdapter = new ProfileDetailAdapter(this,
-                        tempAddress, AppConstants.ADDRESS, displayOwnProfile, pmId);
+                        tempAddress, AppConstants.ADDRESS, displayOwnProfile, pmId,
+                        new ProfileDetailAdapter.OnClickListener() {
+                            @Override
+                            public void onClick(String number) {
+
+                            }
+                        });
                 recyclerViewAddress.setAdapter(addressDetailAdapter);
             } else {
                 linearAddress.setVisibility(View.GONE);
@@ -3363,7 +3392,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 tempImAccount.addAll(arrayListPhoneBookImAccount);
                 linearSocialContact.setVisibility(View.VISIBLE);
                 ProfileDetailAdapter imAccountDetailAdapter = new ProfileDetailAdapter(this,
-                        tempImAccount, AppConstants.IM_ACCOUNT, displayOwnProfile, pmId);
+                        tempImAccount, AppConstants.IM_ACCOUNT, displayOwnProfile, pmId,
+                        new ProfileDetailAdapter.OnClickListener() {
+                            @Override
+                            public void onClick(String number) {
+
+                            }
+                        });
                 recyclerViewSocialContact.setAdapter(imAccountDetailAdapter);
             } else {
                 linearSocialContact.setVisibility(View.GONE);
@@ -3687,7 +3722,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 tempEvent.addAll(arrayListPhoneBookEvent);
                 linearEvent.setVisibility(View.VISIBLE);
                 ProfileDetailAdapter eventDetailAdapter = new ProfileDetailAdapter(this, tempEvent,
-                        AppConstants.EVENT, displayOwnProfile, pmId);
+                        AppConstants.EVENT, displayOwnProfile, pmId,
+                        new ProfileDetailAdapter.OnClickListener() {
+                            @Override
+                            public void onClick(String number) {
+
+                            }
+                        });
                 recyclerViewEvent.setAdapter(eventDetailAdapter);
             } else {
                 linearEvent.setVisibility(View.GONE);

@@ -3,6 +3,7 @@ package com.rawalinfocom.rcontact.relation;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -368,6 +369,7 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
         if (arrayListOrganization.size() > 0) {
             textDesignation.setTextColor(ContextCompat.getColor(activity, R.color.colorAccent));
             textOrganization.setTextColor(ContextCompat.getColor(activity, R.color.colorAccent));
+            textTime.setTextColor(ContextCompat.getColor(activity, R.color.colorAccent));
 
             if (MoreObjects.firstNonNull(arrayListOrganization.get(0).getIsVerify(), 0) ==
                     IntegerConstants.RCP_TYPE_PRIMARY) {
@@ -415,6 +417,22 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
                             formattedToDate));
                 }
             }
+
+            textOrganization.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (arrayListOrganization.get(0).getIsVerify() == 1) {
+                        String orgPublicLink = BuildConfig.ORANISATION_PUBLIC_LINK +
+                                arrayListOrganization.get(0).getOrgUrlSlug();
+                        if (!StringUtils.isEmpty(orgPublicLink)) {
+                            String url = orgPublicLink;
+                            Intent i = new Intent(Intent.ACTION_VIEW);
+                            i.setData(Uri.parse(url));
+                            startActivity(i);
+                        }
+                    }
+                }
+            });
 
         } else {
             linearOrganizationDetail.setVisibility(View.INVISIBLE);

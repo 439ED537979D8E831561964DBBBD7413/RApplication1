@@ -542,6 +542,10 @@
     <string name="str_s_profile">\'s Profile</string>
     <string name="str_share_contact_via">Share Contact Via</string>
     <string name="str_change_profile_picture">Change Profile Picture</string>
+    <string name="str_verify_number">Verify Number</string>
+    <string name="str_call_number">Call Number</string>
+    <string name="str_verify_email">Verify Email</string>
+    <string name="str_open_email">Open Mail Bo</string>
 
     <!-- SMS -->
     <string name="str_message_deleted">message deleted.</string>
