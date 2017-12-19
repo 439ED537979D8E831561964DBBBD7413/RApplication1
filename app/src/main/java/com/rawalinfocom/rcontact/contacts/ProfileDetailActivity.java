@@ -58,6 +58,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.common.base.MoreObjects;
+import com.google.gson.Gson;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.BuildConfig;
 import com.rawalinfocom.rcontact.ContactListingActivity;
@@ -2923,9 +2924,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             .getPhoneNumber());
                     arrayListCloudNumber.add(number);
 
-                    if ((MoreObjects.firstNonNull(arrayListPhoneNumber.get(i).getPhonePublic(),
+                    if ((MoreObjects.firstNonNull(arrayListPhoneNumber.get(i).getIsPrivate(),
                             0)) == IntegerConstants
-                            .PRIVACY_PRIVATE) {
+                            .IS_PRIVATE) {
                         pbPhoneNumber.add(arrayListPhoneNumber.get(i).getPhoneId());
                         isPrivacyRequestAll = true;
                     }
@@ -3000,9 +3001,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 for (int i = 0; i < arrayListEmail.size(); i++) {
                     arrayListCloudEmail.add(arrayListEmail.get(i).getEmEmailId());
 
-                    if ((MoreObjects.firstNonNull(arrayListEmail.get(i).getEmPublic(), 0)) ==
+                    if ((MoreObjects.firstNonNull(arrayListEmail.get(i).getEmIsPrivate(), 0)) ==
                             IntegerConstants
-                                    .PRIVACY_PRIVATE) {
+                                    .IS_PRIVATE) {
                         pbEmailId.add(arrayListEmail.get(i).getEmId());
                         isPrivacyRequestAll = true;
                     }
@@ -3074,9 +3075,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 arrayListEducation.addAll(profileDetail.getPbEducation());
 
                 for (int i = 0; i < arrayListEducation.size(); i++) {
-                    if ((MoreObjects.firstNonNull(arrayListEducation.get(i).getEduPublic(), 0))
-                            == IntegerConstants
-                            .PRIVACY_PRIVATE) {
+                    if ((arrayListEducation.get(i).getEduName().startsWith("XXXX") ||
+                            arrayListEducation.get(i).getEduName().startsWith("xxxx"))) {
                         pbEducation.add(arrayListEducation.get(i).getEduId());
                         isPrivacyRequestAll = true;
                     }
@@ -3176,9 +3176,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     String address = arrayListAddress.get(i).getFormattedAddress();
                     arrayListCloudAddress.add(address);
 
-                    if ((MoreObjects.firstNonNull(arrayListAddress.get(i).getAddPublic(), 0)) ==
+                    if ((MoreObjects.firstNonNull(arrayListAddress.get(i).getIsPrivate(), 0)) ==
                             IntegerConstants
-                                    .PRIVACY_PRIVATE) {
+                                    .IS_PRIVATE) {
                         pbAddress.add(arrayListAddress.get(i).getAddId());
                         isPrivacyRequestAll = true;
                     }
@@ -3305,9 +3305,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     String imAccount = arrayListImAccount.get(i).getIMAccountProtocol();
                     arrayListCloudImAccount.add(imAccount);
 
-                    if ((MoreObjects.firstNonNull(arrayListImAccount.get(i).getIMAccountPublic(),
+                    if ((MoreObjects.firstNonNull(arrayListImAccount.get(i).getIMAccountIsPrivate(),
                             0)) == IntegerConstants
-                            .PRIVACY_PRIVATE) {
+                            .IS_PRIVATE) {
                         pbIMAccounts.add(arrayListImAccount.get(i).getIMId());
                         isPrivacyRequestAll = true;
                     }
@@ -3529,8 +3529,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             if (!displayOwnProfile) {
 
-                buttonRequestAll.setVisibility(View.VISIBLE);
-
                 if (pmId.equalsIgnoreCase("-1")) {
                     cardLastSeenDetails.setVisibility(View.GONE);
                 } else {
@@ -3626,9 +3624,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                 for (int i = 0; i < arrayListEvent.size(); i++) {
 
-                    if ((MoreObjects.firstNonNull(arrayListEvent.get(i).getEventPublic(), 0)) ==
+                    if ((MoreObjects.firstNonNull(arrayListEvent.get(i).getIsPrivate(), 0)) ==
                             IntegerConstants
-                                    .PRIVACY_PRIVATE) {
+                                    .IS_PRIVATE) {
                         pbEvent.add(String.valueOf(arrayListEvent.get(i).getEventId()));
                         isPrivacyRequestAll = true;
                     }
@@ -3725,6 +3723,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             if (displayOwnProfile && profileDetail != null) {
                 showProfilePercentage(profileDetail);
             }
+
+            if (pbPhoneNumber.size() > 0 || pbEmailId.size() > 0 || pbIMAccounts.size() > 0 || pbAddress.size() > 0 ||
+                    pbEducation.size() > 0 || pbAadhaar.size() > 0 || pbEvent.size() > 0 || pbRating.size() > 0)
+                buttonRequestAll.setVisibility(View.VISIBLE);
+            else
+                buttonRequestAll.setVisibility(View.GONE);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -5096,6 +5100,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     }
 
     private void storeProfileDataToDb(ProfileDataOperation profileDetail) {
+
+        // TODO : Hardik : Global Search Organisation
+//        ArrayList<ProfileDataOperation> profileData = new ArrayList<>();
+//        profileData.add(profileDetail);
+//
+//        Gson gson = new Gson();
+//
+//        String jsonString = gson.toJson(profileData);
+//        Utils.setStringPreference(ProfileDetailActivity.this, "search_data", jsonString);
 
         //<editor-fold desc="Basic Details">
         TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);

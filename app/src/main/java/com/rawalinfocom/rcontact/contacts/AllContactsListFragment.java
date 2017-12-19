@@ -46,6 +46,7 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.BuildConfig;
@@ -908,6 +909,12 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 mapLocalRcpId.put(mapping.get(i).getRcpPmId().get(j), phonebookRawId);
             }
         }
+
+        // TODO : Hardik : Global Search Organisation
+        Gson gson = new Gson();
+
+        String jsonString = gson.toJson(profileData);
+        Utils.setStringPreference(getActivity(),"search_data",jsonString);
 
         // Basic Profile Data
         TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
