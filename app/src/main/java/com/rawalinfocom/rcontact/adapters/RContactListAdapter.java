@@ -40,6 +40,7 @@ import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransforma
 import com.rawalinfocom.rcontact.model.Organization;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
+import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
 import com.rawalinfocom.rcontact.model.UserProfile;
 
 import org.apache.commons.lang3.StringUtils;
@@ -543,6 +544,10 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     if (arraylist.get(i) instanceof UserProfile) {
                         UserProfile profileData = (UserProfile) arraylist.get(i);
                         String name = profileData.getPmFirstName() + " " + profileData.getPmFirstName();
+                        ArrayList<ProfileDataOperationOrganization> organizationArrayList =
+                                profileData.getPbOrganization();
+                        String orgName = "";
+                        String orgDesign = "";
                         if (!StringUtils.isEmpty(name)) {
                             if (name.toLowerCase(Locale.getDefault()).contains
                                     (charText)) {
@@ -551,6 +556,20 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                                 if (!StringUtils.isBlank(profileData.getPmFirstName())
                                         && !StringUtils.isBlank(profileData.getPmLastName())) {
                                     nameFilter(charText, profileData);
+                                }
+                            }
+                        }
+                        if (organizationArrayList.size() > 0) {
+                            for (int j = 0; j < organizationArrayList.size(); j++) {
+                                orgName = organizationArrayList.get(j).getOrgName();
+                                orgDesign = organizationArrayList.get(j).getOrgJobTitle();
+                                if (!StringUtils.isEmpty(orgName) || !StringUtils.isEmpty(orgDesign)) {
+                                    if (orgName.toLowerCase(Locale.getDefault()).contains
+                                            (charText) || orgDesign.toLowerCase(Locale.getDefault()).contains
+                                            (charText)) {
+                                        if (!arrayListUserProfile.contains(profileData))
+                                            arrayListUserProfile.add(profileData);
+                                    }
                                 }
                             }
                         }
