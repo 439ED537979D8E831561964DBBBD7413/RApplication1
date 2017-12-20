@@ -1132,13 +1132,6 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                             && !StringUtils.isBlank(profileData.getTempLastName())) {
                                         nameFilter(charText, profileData);
                                     }
-//                                if(firstName.toLowerCase(Locale.getDefault()).equalsIgnoreCase
-// (charText)
-//                                        || !StringUtils.isEmpty(profileData.getTempLastName())
-//                                        && StringUtils.equalsIgnoreCase(profileData
-// .getTempLastName().toLowerCase(Locale.getDefault()),charText)){
-//                                    arrayListUserContact.add(profileData);
-//                                }
                                 }
                             }
                         }
