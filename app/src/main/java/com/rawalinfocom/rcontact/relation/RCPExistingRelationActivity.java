@@ -3,6 +3,7 @@ package com.rawalinfocom.rcontact.relation;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -368,6 +369,7 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
         if (arrayListOrganization.size() > 0) {
             textDesignation.setTextColor(ContextCompat.getColor(activity, R.color.colorAccent));
             textOrganization.setTextColor(ContextCompat.getColor(activity, R.color.colorAccent));
+            textTime.setTextColor(ContextCompat.getColor(activity, R.color.colorAccent));
 
             if (MoreObjects.firstNonNull(arrayListOrganization.get(0).getIsVerify(), 0) ==
                     IntegerConstants.RCP_TYPE_PRIMARY) {
@@ -416,6 +418,22 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
                 }
             }
 
+            textOrganization.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (arrayListOrganization.get(0).getIsVerify() == 1) {
+                        String orgPublicLink = BuildConfig.ORANISATION_PUBLIC_LINK +
+                                arrayListOrganization.get(0).getOrgUrlSlug();
+                        if (!StringUtils.isEmpty(orgPublicLink)) {
+                            String url = orgPublicLink;
+                            Intent i = new Intent(Intent.ACTION_VIEW);
+                            i.setData(Uri.parse(url));
+                            startActivity(i);
+                        }
+                    }
+                }
+            });
+
         } else {
             linearOrganizationDetail.setVisibility(View.INVISIBLE);
         }
@@ -441,13 +459,30 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
             linearBasicDetailRating.setEnabled(false);
             textUserRating.setText(userProfile.getTotalProfileRateUser());
 
-            if (Integer.parseInt((String) MoreObjects.firstNonNull(userProfile.getProfileRatingPrivacy(), 0)) == IntegerConstants
-                    .PRIVACY_EVERYONE) {
+//            if (Integer.parseInt((String) MoreObjects.firstNonNull(userProfile.getProfileRatingPrivacy(), 0)) == IntegerConstants
+//                    .PRIVACY_EVERYONE) {
+//                ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
+//            } else {
+//                ratingUser.setRating(0);
+//                ratingUser.setEnabled(false);
+//            }
+
+            if (Integer.parseInt((String) MoreObjects.firstNonNull(userProfile.getProfileRatingPrivacy(), 0))
+                    == IntegerConstants.PRIVACY_EVERYONE) {
                 ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
+            } else if (Integer.parseInt((String) MoreObjects.firstNonNull(userProfile.getProfileRatingPrivacy(),
+                    0)) == IntegerConstants.PRIVACY_MY_CONTACT) {
+                if (Integer.parseInt((String) MoreObjects.firstNonNull(userProfile.getRatingPrivate(), 0))
+                        == IntegerConstants.IS_PRIVATE) {
+                    ratingUser.setRating(0);
+                } else {
+                    ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
+                }
+
             } else {
                 ratingUser.setRating(0);
-                ratingUser.setEnabled(false);
             }
+
         } else {
             textUserRating.setText("0");
             ratingUser.setRating(0);

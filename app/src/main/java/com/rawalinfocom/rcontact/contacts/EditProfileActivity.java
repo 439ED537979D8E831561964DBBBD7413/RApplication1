@@ -1233,8 +1233,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                 String[] temp = user.fullName.split("\\ ");
                 if (temp.length > 1) {
-                    imAccount.setIMAccountFirstName(temp[1]);
-                    imAccount.setIMAccountLastName(temp[0]);
+                    imAccount.setIMAccountFirstName(temp[0]);
+                    imAccount.setIMAccountLastName(temp[1]);
                 } else {
                     imAccount.setIMAccountFirstName(user.fullName);
                     imAccount.setIMAccountLastName("");
@@ -1378,8 +1378,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                     String[] temp = user.getName().split("\\ ");
                     if (temp.length > 1) {
-                        imAccount.setIMAccountFirstName(temp[1]);
-                        imAccount.setIMAccountLastName(temp[0]);
+                        imAccount.setIMAccountFirstName(temp[0]);
+                        imAccount.setIMAccountLastName(temp[1]);
                     } else {
                         imAccount.setIMAccountFirstName(user.getName());
                         imAccount.setIMAccountLastName("");
@@ -3826,8 +3826,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             organization.setOrgIndustryType(arrayListOrganization.get(i).getOmOrganizationType());
 
             if (StringUtils.length(arrayListOrganization.get(i).getOmIsVerified()) > 0) {
-                if(!StringUtils.isEmpty(arrayListOrganization.get(i)
-                        .getOmIsVerified())){
+                if (!StringUtils.isEmpty(arrayListOrganization.get(i)
+                        .getOmIsVerified())) {
                     organization.setIsVerify(Integer.parseInt(arrayListOrganization.get(i)
                             .getOmIsVerified()));
                 }
@@ -3860,7 +3860,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 //                    .input_designation_name);
 //            inputCompanyName.addTextChangedListener(valueTextWatcher);
 //            setOrganisationTextWatcher(inputDesignationName);
-//            inputDesignationName.addTextChangedListener(valueTextWatcher);
+//            inputDesignationName.addTextChangedListener(valueTextWatcher);} else {
         } else {
             addOrganizationView((arrayListOrganizationObject.size()), null);
         }
@@ -6226,6 +6226,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 event.setEvmIsYearHidden(arrayListEvent.get(j).getIsYearHidden());
                 event.setEvmEventPrivacy(String.valueOf(arrayListEvent.get(j).getEventPublic()));
                 event.setRcProfileMasterPmId(getUserPmId());
+                event.setEvmIsPrivate(arrayListEvent.get(j).getIsPrivate());
                 eventList.add(event);
             }
 

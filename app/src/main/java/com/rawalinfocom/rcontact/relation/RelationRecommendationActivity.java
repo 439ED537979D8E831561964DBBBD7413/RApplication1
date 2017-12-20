@@ -245,7 +245,6 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
 
         textNoRelation.setVisibility(View.GONE);
         recycleViewRelation.setVisibility(View.VISIBLE);
-        swipeRefreshLayout.setVisibility(View.VISIBLE);
 
         recommendationRelationList = new ArrayList<>();
 
@@ -276,7 +275,7 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
         textNoRelation.setVisibility(textVisibility);
         textNoRelation.setText(text);
         recycleViewRelation.setVisibility(viewVisibility);
-        swipeRefreshLayout.setVisibility(viewVisibility);
+//        swipeRefreshLayout.setVisibility(viewVisibility);
     }
 
     private void getRelationRecommendationData(ArrayList<ExistingRelationRequest> allExistingRelationList) {

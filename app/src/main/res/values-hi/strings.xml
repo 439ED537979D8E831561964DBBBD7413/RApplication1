@@ -542,6 +542,10 @@
     <string name="str_s_profile">की प्रोफ़ाइल</string>
     <string name="str_share_contact_via">शेयर करने का माध्यम</string>
     <string name="str_change_profile_picture">प्रोफ़ाइल फोटो बदलें</string>
+    <string name="str_verify_number">नंबर वेरीफाई कीजिये </string>
+    <string name="str_call_number">नंबर डायल कीजिये </string>
+    <string name="str_verify_email">ईमेल वेरीफाई कीजिये</string>
+    <string name="str_open_email">ईमेल ओपन कीजिये</string>
 
     <!--  SMS  -->
     <string name="str_message_deleted">सन्देश मिटा दिया</string>

@@ -22,6 +22,8 @@ import static com.rawalinfocom.rcontact.database.TableProfileMaster.COLUMN_PM_LA
 import static com.rawalinfocom.rcontact.database.TableProfileMaster.COLUMN_PM_PROFILE_IMAGE;
 import static com.rawalinfocom.rcontact.database.TableProfileMaster.COLUMN_PM_PROFILE_RATE_USER;
 import static com.rawalinfocom.rcontact.database.TableProfileMaster.COLUMN_PM_PROFILE_RATING;
+import static com.rawalinfocom.rcontact.database.TableProfileMaster.COLUMN_PM_RATING_PRIVACY;
+import static com.rawalinfocom.rcontact.database.TableProfileMaster.COLUMN_PM_RATING_PRIVATE;
 import static com.rawalinfocom.rcontact.database.TableProfileMaster.COLUMN_PM_RAW_ID;
 import static com.rawalinfocom.rcontact.database.TableProfileMaster.COLUMN_PM_RCP_ID;
 import static com.rawalinfocom.rcontact.database.TableProfileMaster.TABLE_RC_PROFILE_MASTER;
@@ -396,6 +398,8 @@ public class TableProfileMobileMapping {
                     TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_RCP_ID + "," +
                     TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_RAW_ID + "," +
                     TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_PROFILE_RATING + "," +
+                    TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_RATING_PRIVACY + "," +
+                    TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_RATING_PRIVATE + "," +
                     TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_PROFILE_RATE_USER + "," +
                     TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_PROFILE_IMAGE + "," +
                     TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_GENDER + "," +
@@ -428,6 +432,10 @@ public class TableProfileMobileMapping {
                             (TableProfileMaster.COLUMN_PM_RAW_ID)));
                     userProfile.setProfileRating(cursor.getString(cursor.getColumnIndex
                             (TableProfileMaster.COLUMN_PM_PROFILE_RATING)));
+                    userProfile.setRatingPrivate(cursor.getString(cursor.getColumnIndex
+                            (TableProfileMaster.COLUMN_PM_RATING_PRIVATE)));
+                    userProfile.setProfileRatingPrivacy(cursor.getString(cursor.getColumnIndex
+                            (TableProfileMaster.COLUMN_PM_RATING_PRIVACY)));
                     userProfile.setTotalProfileRateUser(cursor.getString(cursor.getColumnIndex
                             (TableProfileMaster.COLUMN_PM_PROFILE_RATE_USER)));
                     userProfile.setPmProfileImage(cursor.getString(cursor.getColumnIndex
