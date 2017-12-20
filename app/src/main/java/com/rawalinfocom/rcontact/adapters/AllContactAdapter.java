@@ -400,8 +400,8 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                             } else if (activity instanceof SearchActivity) {
                                 Utils.zoomImageFromThumb(activity, holder.imageProfile, imageUrl, (
                                         (SearchActivity) activity).frameImageEnlarge, (
-                                                (SearchActivity)
-                                        activity).imageEnlarge, ((SearchActivity) activity)
+                                        (SearchActivity)
+                                                activity).imageEnlarge, ((SearchActivity) activity)
                                         .frameContainer);
                             }
                         }
@@ -447,8 +447,8 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                                     rcpImageUrl, ((SearchActivity) activity)
                                                             .frameImageEnlarge, ((SearchActivity)
                                                             activity).imageEnlarge, (
-                                                                    (SearchActivity)
-                                                            activity).frameContainer);
+                                                            (SearchActivity)
+                                                                    activity).frameContainer);
                                         }
                                     }
                                 }
@@ -1085,6 +1085,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     // Filter Class
     public void filter(String charText) {
         Pattern numberPat = Pattern.compile("\\d+");
+//        Pattern charPat = Pattern.compile("^[^<>{}\\\"/|;:.,~!?@#$%^=&*\\\\]\\\\\\\\()\\\\[¿§«»ω⊙¤°℃℉€¥£¢¡®©0-9_+]*$");
         Matcher matcher1 = numberPat.matcher(charText);
         if (matcher1.find()) {
             arrayListUserContact.clear();
@@ -1108,6 +1109,8 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         } else {
             charText = charText.toLowerCase(Locale.getDefault());
             charText = charText.trim();
+//            Matcher matcher =  charPat.matcher(charText);
+//            System.out.println("RContacts :" + matcher.find());
             arrayListUserContact.clear();
             if (charText.length() == 0) {
                 arrayListUserContact.addAll(arraylist);
@@ -1116,16 +1119,19 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     if (arraylist.get(i) instanceof ProfileData) {
                         ProfileData profileData = (ProfileData) arraylist.get(i);
 //                        String firstName =  profileData.getTempFirstName() + " ";
-                        if (!StringUtils.isEmpty(profileData.getName())) {
-                            if (profileData.getName().toLowerCase(Locale.getDefault()).contains
-                                    (charText)) {
-                                arrayListUserContact.add(profileData);
-                            } else {
+                        if (StringUtils.contains(profileData.getTempNumber(), charText)) {
+                            arrayListUserContact.add(profileData);
+                        } else {
+                            if (!StringUtils.isEmpty(profileData.getName())) {
+                                if (profileData.getName().toLowerCase(Locale.getDefault()).contains
+                                        (charText)) {
+                                    arrayListUserContact.add(profileData);
+                                } else {
 
-                                if (!StringUtils.isBlank(profileData.getTempFirstName())
-                                        && !StringUtils.isBlank(profileData.getTempLastName())) {
-                                    nameFilter(charText, profileData);
-                                }
+                                    if (!StringUtils.isBlank(profileData.getTempFirstName())
+                                            && !StringUtils.isBlank(profileData.getTempLastName())) {
+                                        nameFilter(charText, profileData);
+                                    }
 //                                if(firstName.toLowerCase(Locale.getDefault()).equalsIgnoreCase
 // (charText)
 //                                        || !StringUtils.isEmpty(profileData.getTempLastName())
@@ -1133,8 +1139,10 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 // .getTempLastName().toLowerCase(Locale.getDefault()),charText)){
 //                                    arrayListUserContact.add(profileData);
 //                                }
+                                }
                             }
                         }
+
                     }
                 }
             }
