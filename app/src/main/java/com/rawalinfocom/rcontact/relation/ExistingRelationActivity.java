@@ -127,7 +127,6 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
 
         textNoRelation.setVisibility(View.GONE);
         recycleViewRelation.setVisibility(View.VISIBLE);
-        swipeRefreshLayout.setVisibility(View.VISIBLE);
 
         if (Utils.isNetworkAvailable(this)) {
             getAllExistingRelation();
@@ -193,9 +192,8 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
         textNoRelation.setVisibility(textVisibility);
         textNoRelation.setText(text);
         recycleViewRelation.setVisibility(viewVisibility);
-        swipeRefreshLayout.setVisibility(viewVisibility);
+//        swipeRefreshLayout.setVisibility(viewVisibility);
     }
-
 
     @Override
     public void onDeliveryResponse(String serviceType, Object data, Exception error) {

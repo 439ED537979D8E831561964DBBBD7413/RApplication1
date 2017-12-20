@@ -669,8 +669,8 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
                 .get(position);
 
         if (!imAccount.getIMAccountFirstName().equalsIgnoreCase(""))
-            holder.textMain.setText(imAccount.getIMAccountFirstName() + " " + imAccount
-                    .getIMAccountLastName());
+            holder.textMain.setText(String.format("%s %s", imAccount.getIMAccountFirstName(), imAccount
+                    .getIMAccountLastName()));
         else
             holder.textMain.setText(imAccount.getIMAccountDetails());
 

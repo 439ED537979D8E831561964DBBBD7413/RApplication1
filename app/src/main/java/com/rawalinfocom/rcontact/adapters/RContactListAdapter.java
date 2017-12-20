@@ -24,15 +24,22 @@ import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.common.base.MoreObjects;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.MainActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.SearchActivity;
 import com.rawalinfocom.rcontact.calldialer.DialerActivity;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
+import com.rawalinfocom.rcontact.model.Organization;
+import com.rawalinfocom.rcontact.model.ProfileDataOperation;
+import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
 import com.rawalinfocom.rcontact.model.UserProfile;
 
@@ -59,6 +66,7 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private ArrayList<Object> arrayListUserProfile;
     private ArrayList<String> arrayListContactHeader;
     private ArrayList<Object> arraylist;
+    private ArrayList<ProfileDataOperation> searchArrayList;
 
     private final int HEADER = 0, CONTACT = 1, FOOTER = 2;
 
@@ -329,7 +337,22 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         });
 
         holder.textRatingUserCount.setText(userProfile.getTotalProfileRateUser());
-        holder.ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
+
+        if (Integer.parseInt((String) MoreObjects.firstNonNull(userProfile.getProfileRatingPrivacy()
+                , 0)) == IntegerConstants.PRIVACY_EVERYONE) {
+            holder.ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
+        } else if (Integer.parseInt((String) MoreObjects.firstNonNull(userProfile.getProfileRatingPrivacy(),
+                0)) == IntegerConstants.PRIVACY_MY_CONTACT) {
+            if (Integer.parseInt((String) MoreObjects.firstNonNull(userProfile.getRatingPrivate(), 0))
+                    == IntegerConstants.IS_PRIVATE) {
+                holder.ratingUser.setRating(0);
+            } else {
+                holder.ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
+            }
+
+        } else {
+            holder.ratingUser.setRating(0);
+        }
 
         holder.relativeRowAllContact.setTag(position);
 
@@ -461,6 +484,19 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
     //</editor-fold>
 
+    public void getData() {
+
+        Gson gson = new Gson();
+        //For default value, just to get no errors while getting no value from the SharedPreferences
+        String empty_list = gson.toJson(new ArrayList<ProfileDataOperation>());
+
+        searchArrayList = new ArrayList<>();
+        searchArrayList.clear();
+        searchArrayList = gson.fromJson(Utils.getStringPreference(activity, "search_data", empty_list),
+                new TypeToken<ArrayList<ProfileDataOperation>>() {
+                }.getType());
+    }
+
     // Filter Class
     public void filter(String charText) {
         Pattern numberPat = Pattern.compile("\\d+");
@@ -545,6 +581,144 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         setSearchCount(arrayListUserProfile.size());
         notifyDataSetChanged();
     }
+
+    // TODO : Hardik : Global Search Organisation
+    // Filter Class
+//    public void filter(String charText) {
+//
+//        Pattern numberPat = Pattern.compile("\\d+");
+//        Matcher matcher1 = numberPat.matcher(charText);
+//
+//        charText = charText.toLowerCase(Locale.getDefault());
+//        charText = charText.trim();
+//        arrayListUserProfile.clear();
+//
+//        if (matcher1.find()) {
+//            if (charText.length() == 0) {
+////                arrayListUserProfile.addAll(arraylist);
+//                arrayListUserProfile.addAll(searchArrayList);
+//            } else {
+////                for (int i = 0; i < arraylist.size(); i++) {
+//                for (int i = 0; i < searchArrayList.size(); i++) {
+//                    /*if (arraylist.get(i) instanceof ProfileData) {
+//                        charText = charText.trim();
+//                        ProfileData profileData = (ProfileData) arraylist.get(i);
+//                        if (!StringUtils.isEmpty(profileData.getTempNumber())) {
+//                            String number = profileData.getTempNumber();
+//                            number = number.replace(" ", "").replace("-", "");
+//                            if (number.contains(charText)) {
+//                                arrayListUserProfile.add(profileData);
+//                            }
+//                        }
+//                    }*/
+//
+//                    UserProfile userProfile = new UserProfile();
+//                    userProfile.setPmFirstName(searchArrayList.get(i).getPbNameFirst());
+//                    userProfile.setPmLastName(searchArrayList.get(i).getPbNameLast());
+//                    userProfile.setMobileNumber(Utils.getFormattedNumber(activity, searchArrayList.get(i).getVerifiedMobileNumber()));
+//                    userProfile.setPmRcpId(searchArrayList.get(i).getRcpPmId());
+//                    userProfile.setPmId(searchArrayList.get(i).getRcpPmId());
+//                    userProfile.setPmNosqlMasterId(searchArrayList.get(i).getNoSqlMasterId());
+//                    userProfile.setPmBadge(searchArrayList.get(i).getPmBadge());
+//                    userProfile.setProfileRating(searchArrayList.get(i).getProfileRating());
+//                    userProfile.setPmProfileImage(searchArrayList.get(i).getPbProfilePhoto());
+//                    userProfile.setTotalProfileRateUser(searchArrayList.get(i).getTotalProfileRateUser());
+//                    userProfile.setPmLastSeen(searchArrayList.get(i).getPmLastSeen());
+//                    userProfile.setProfileRatingPrivacy(String.valueOf(searchArrayList.get(i).getProfileRatingPrivacy()));
+//                    userProfile.setRatingPrivate(String.valueOf(searchArrayList.get(i).getRatingPrivate()));
+//
+//                    String name = userProfile.getMobileNumber();
+//
+//                    if (!StringUtils.isEmpty(name)) {
+//                        if (!StringUtils.isEmpty(name)) {
+//                            name = name.replace(" ", "").replace("-", "");
+//                            if (name.toLowerCase(Locale.getDefault()).contains
+//                                    (charText)) {
+//                                arrayListUserProfile.add(userProfile);
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        } else {
+//
+//            if (charText.length() == 0) {
+////                arrayListUserProfile.addAll(arraylist);
+//                arrayListUserProfile.addAll(searchArrayList);
+//            } else {
+////                for (int i = 0; i < arraylist.size(); i++) {
+//                for (int i = 0; i < searchArrayList.size(); i++) {
+////                    if (arraylist.get(i) instanceof UserProfile) {
+////                    if (searchArrayList.get(i) instanceof UserProfile) {
+////                        UserProfile profileData = (UserProfile) arraylist.get(i);
+////                        UserProfile profileData = (UserProfile) searchArrayList.get(i);
+//
+//                    UserProfile userProfile = new UserProfile();
+//                    userProfile.setPmFirstName(searchArrayList.get(i).getPbNameFirst());
+//                    userProfile.setPmLastName(searchArrayList.get(i).getPbNameLast());
+//                    userProfile.setMobileNumber(Utils.getFormattedNumber(activity, searchArrayList.get(i).getVerifiedMobileNumber()));
+//                    userProfile.setPmRcpId(searchArrayList.get(i).getRcpPmId());
+//                    userProfile.setPmId(searchArrayList.get(i).getRcpPmId());
+//                    userProfile.setPmNosqlMasterId(searchArrayList.get(i).getNoSqlMasterId());
+//                    userProfile.setPmBadge(searchArrayList.get(i).getPmBadge());
+//                    userProfile.setProfileRating(searchArrayList.get(i).getProfileRating());
+//                    userProfile.setPmProfileImage(searchArrayList.get(i).getPbProfilePhoto());
+//                    userProfile.setTotalProfileRateUser(searchArrayList.get(i).getTotalProfileRateUser());
+//                    userProfile.setPmLastSeen(searchArrayList.get(i).getPmLastSeen());
+//                    userProfile.setProfileRatingPrivacy(String.valueOf(searchArrayList.get(i).getProfileRatingPrivacy()));
+//                    userProfile.setRatingPrivate(String.valueOf(searchArrayList.get(i).getRatingPrivate()));
+//
+//                    String name = userProfile.getPmFirstName() + " " + userProfile.getPmLastName();
+//
+//                    if (!StringUtils.isEmpty(name)) {
+//                        if (name.toLowerCase(Locale.getDefault()).contains
+//                                (charText)) {
+//                            arrayListUserProfile.add(userProfile);
+//                        } else {
+//
+//                            ArrayList<ProfileDataOperationOrganization> arrayListOrganization =
+//                                    searchArrayList.get(i).getPbOrganization();
+//
+//                            if (!Utils.isArraylistNullOrEmpty(arrayListOrganization)) {
+//
+//                                for (int j = 0; j < arrayListOrganization.size(); j++) {
+//
+//                                    Organization organization = new Organization();
+//
+//                                    organization.setOmOrganizationCompany(arrayListOrganization.get(j).getOrgName());
+//                                    organization.setOmOrganizationDesignation(arrayListOrganization.get(j)
+//                                            .getOrgJobTitle());
+//
+//                                    String orgName = organization.getOmOrganizationCompany();
+//                                    String orgDesignation = organization.getOmOrganizationDesignation();
+//                                    if (!StringUtils.isEmpty(orgName)) {
+//                                        orgName = orgName.replace(" ", "").replace("-", "");
+//                                        if (orgName.toLowerCase(Locale.getDefault()).contains(charText) ||
+//                                                orgDesignation.toLowerCase(Locale.getDefault()).contains(charText)) {
+//                                            arrayListUserProfile.add(userProfile);
+//                                        }
+//                                    }
+//                                }
+//                            }
+////                            if (!StringUtils.isBlank(userProfile.getPmFirstName())
+////                                    && !StringUtils.isBlank(userProfile.getPmLastName())) {
+////                                nameFilter(charText, userProfile);
+////                            }
+//                        }
+//                    }
+////                    }
+//
+////                    if (arraylist.get(i) instanceof ProfileDataOperationOrganization) {
+////                    if (searchArrayList.get(i).getPbOrganizationList() instanceof ProfileDataOperationOrganization) {
+////                        Organization organization = (Organization) arraylist.get(i);
+////                    }
+//                }
+//            }
+//        }
+//        searchChar = charText;
+//        setSearchCount(arrayListUserProfile.size());
+//        notifyDataSetChanged();
+//    }
 
     private void nameFilter(String charText, UserProfile profileData) {
 
