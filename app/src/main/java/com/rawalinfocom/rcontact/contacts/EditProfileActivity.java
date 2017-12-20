@@ -6226,6 +6226,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 event.setEvmIsYearHidden(arrayListEvent.get(j).getIsYearHidden());
                 event.setEvmEventPrivacy(String.valueOf(arrayListEvent.get(j).getEventPublic()));
                 event.setRcProfileMasterPmId(getUserPmId());
+                event.setEvmIsPrivate(arrayListEvent.get(j).getIsPrivate());
                 eventList.add(event);
             }
 

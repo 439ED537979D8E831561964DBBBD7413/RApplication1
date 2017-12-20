@@ -563,10 +563,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 //        }
         if (displayOwnProfile) {
             if (pmId != null) {
+                // <editor-fold desc="Get own profile">
+//                getProfileDetails();
                 ProfileDataOperation profileDataOperation = queryManager.getRcProfileDetail
                         (this, pmId);
                 layoutVisibility();
                 setUpView(profileDataOperation);
+                // </editor-fold>
             }
         }
     }
@@ -5075,6 +5078,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 event.setEvmIsYearHidden(arrayListEvent.get(j).getIsYearHidden());
                 event.setEvmEventPrivacy(String.valueOf(arrayListEvent.get(j).getEventPublic()));
                 event.setRcProfileMasterPmId(getUserPmId());
+                event.setEvmIsPrivate(arrayListEvent.get(j).getIsPrivate());
+
                 eventList.add(event);
             }
 
@@ -5414,8 +5419,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 event.setEvmStartDate(arrayListEvent.get(j).getEventDateTime());
                 event.setEvmEventType(arrayListEvent.get(j).getEventType());
                 event.setEvmIsPrivate(arrayListEvent.get(j).getIsPrivate());
+                event.setEvmEventPrivacy(String.valueOf(arrayListEvent.get(j).getEventPublic()));
                 event.setEvmIsYearHidden(arrayListEvent.get(j).getIsYearHidden());
                 event.setRcProfileMasterPmId(profileDetail.getRcpPmId());
+
                 eventList.add(event);
             }
 
