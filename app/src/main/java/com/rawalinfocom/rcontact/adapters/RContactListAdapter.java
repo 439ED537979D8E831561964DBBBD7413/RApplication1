@@ -523,24 +523,20 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                                 }
                             }
                         }
-
-                        if (arrayListUserProfile.size() <= 0) {
-                            if (organizationArrayList.size() > 0) {
-                                for (int j = 0; j < organizationArrayList.size(); j++) {
-                                    orgName = organizationArrayList.get(j).getOrgName();
-                                    orgDesign = organizationArrayList.get(j).getOrgJobTitle();
-                                    if (!StringUtils.isEmpty(orgName) || !StringUtils.isEmpty(orgDesign)) {
-                                        if (orgName.toLowerCase(Locale.getDefault()).contains
-                                                (charText) || orgDesign.toLowerCase(Locale.getDefault()).contains
-                                                (charText)) {
-                                            if (!arrayListUserProfile.contains(profileData))
-                                                arrayListUserProfile.add(profileData);
-                                        }
+                        if (organizationArrayList.size() > 0) {
+                            for (int j = 0; j < organizationArrayList.size(); j++) {
+                                orgName = organizationArrayList.get(j).getOrgName();
+                                orgDesign = organizationArrayList.get(j).getOrgJobTitle();
+                                if (!StringUtils.isEmpty(orgName) || !StringUtils.isEmpty(orgDesign)) {
+                                    if (orgName.toLowerCase(Locale.getDefault()).contains
+                                            (charText) || orgDesign.toLowerCase(Locale.getDefault()).contains
+                                            (charText)) {
+                                        if (!arrayListUserProfile.contains(profileData))
+                                            arrayListUserProfile.add(profileData);
                                     }
                                 }
                             }
                         }
-
                     }
                 }
             }
