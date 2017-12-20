@@ -740,7 +740,6 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
             smsListAdapter = new SmsListAdapter(SearchActivity.this, smsDataTypeArrayList,
                     recycleViewPbContact);
         }*/
-
         search.addTextChangedListener(new TextWatcher() {
 
             @Override
