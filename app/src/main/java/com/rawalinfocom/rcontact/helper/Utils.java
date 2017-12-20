@@ -1314,7 +1314,7 @@ public class Utils {
                 event.setEvmStartDate(arrayListEvent.get(j).getEventDateTime());
                 event.setEvmEventType(arrayListEvent.get(j).getEventType());
                 event.setEvmEventPrivacy(String.valueOf(arrayListEvent.get(j).getEventPublic()));
-//                event.setRcProfileMasterPmId(profileDetail.getRcpPmId());
+                event.setEvmIsPrivate(arrayListEvent.get(j).getIsPrivate());
                 event.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 eventList.add(event);
             }

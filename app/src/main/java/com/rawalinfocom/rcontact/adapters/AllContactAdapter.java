@@ -400,8 +400,8 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                             } else if (activity instanceof SearchActivity) {
                                 Utils.zoomImageFromThumb(activity, holder.imageProfile, imageUrl, (
                                         (SearchActivity) activity).frameImageEnlarge, (
-                                                (SearchActivity)
-                                        activity).imageEnlarge, ((SearchActivity) activity)
+                                        (SearchActivity)
+                                                activity).imageEnlarge, ((SearchActivity) activity)
                                         .frameContainer);
                             }
                         }
@@ -447,8 +447,8 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                                     rcpImageUrl, ((SearchActivity) activity)
                                                             .frameImageEnlarge, ((SearchActivity)
                                                             activity).imageEnlarge, (
-                                                                    (SearchActivity)
-                                                            activity).frameContainer);
+                                                            (SearchActivity)
+                                                                    activity).frameContainer);
                                         }
                                     }
                                 }
@@ -1116,24 +1116,19 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     if (arraylist.get(i) instanceof ProfileData) {
                         ProfileData profileData = (ProfileData) arraylist.get(i);
 //                        String firstName =  profileData.getTempFirstName() + " ";
-//                        String orgName =  profileData.getOperation().get(i).getPbOrganization().get(i).getOrgName();
-//                        String orgDesign =  profileData.getOperation().get(i).getPbOrganization().get(i).getOrgJobTitle();
+                        if (StringUtils.contains(profileData.getTempNumber(), charText)) {
+                            arrayListUserContact.add(profileData);
+                        } else {
+                            if (!StringUtils.isEmpty(profileData.getName())) {
+                                if (profileData.getName().toLowerCase(Locale.getDefault()).contains
+                                        (charText)) {
+                                    arrayListUserContact.add(profileData);
+                                } else {
 
-                        if (!StringUtils.isEmpty(profileData.getName())) {
-                            if (profileData.getName().toLowerCase(Locale.getDefault()).contains
-                                    (charText)) {
-                                arrayListUserContact.add(profileData);
-                            } else {
-                                if (!StringUtils.isBlank(profileData.getTempFirstName())
-                                        && !StringUtils.isBlank(profileData.getTempLastName())) {
-                                    nameFilter(charText, profileData);
-                                }else{
-                                    /*if(!StringUtils.isBlank(profileData.getOperation().get(i).getPbOrganization().get(i).getOrgName())){
-                                        if(profileData.getOperation().get(i).getPbOrganization().get(i).getOrgName().
-                                                toLowerCase(Locale.getDefault()).contains(charText)){
-                                            arrayListUserContact.add(profileData);
-                                        }
-                                    }*/
+                                    if (!StringUtils.isBlank(profileData.getTempFirstName())
+                                            && !StringUtils.isBlank(profileData.getTempLastName())) {
+                                        nameFilter(charText, profileData);
+                                    }
                                 }
 //                                if(firstName.toLowerCase(Locale.getDefault()).equalsIgnoreCase
 // (charText)

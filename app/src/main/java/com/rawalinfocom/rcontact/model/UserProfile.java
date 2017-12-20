@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * Created by Monal on 08/11/16.
@@ -39,6 +40,9 @@ public class UserProfile implements Serializable {
     private String pmJoiningDate;
     private String profileRatingPrivacy;
     private String ratingPrivate;
+
+    private ArrayList<ProfileDataOperationOrganization> pbOrganization;
+
 
 //    private String pmMiddleName;
 //    private String pmPrefix;
@@ -325,5 +329,13 @@ public class UserProfile implements Serializable {
 
     public void setPmLastSeen(String pmLastSeen) {
         this.pmLastSeen = pmLastSeen;
+    }
+
+    public ArrayList<ProfileDataOperationOrganization> getPbOrganization() {
+        return pbOrganization;
+    }
+
+    public void setPbOrganization(ArrayList<ProfileDataOperationOrganization> pbOrganization) {
+        this.pbOrganization = pbOrganization;
     }
 }

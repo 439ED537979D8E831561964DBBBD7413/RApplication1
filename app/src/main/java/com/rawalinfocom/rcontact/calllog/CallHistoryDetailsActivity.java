@@ -367,7 +367,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         }
 
         if (TextUtils.isEmpty(contactName) &&
-                StringUtils.equalsIgnoreCase(contactName,"[Unknown]")) {
+                StringUtils.equalsIgnoreCase(contactName, "[Unknown]")) {
             rippleInvite.setVisibility(View.GONE);
             linearBasicDetailRating.setVisibility(View.GONE);
         }
@@ -406,7 +406,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
                 if (isCallLogInstance) {
                     if (!TextUtils.isEmpty(contactName)
-                            && !StringUtils.equalsIgnoreCase(contactName,"[Unknown]")) {
+                            && !StringUtils.equalsIgnoreCase(contactName, "[Unknown]")) {
                         fetchAllCallLogHistory(contactName);
                     } else if (!TextUtils.isEmpty(profileContactNumber)) {
                         fetchAllCallLogHistory(profileContactNumber);
@@ -418,14 +418,14 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
                 } else {
                     if (!TextUtils.isEmpty(contactName)
-                            && !StringUtils.equalsIgnoreCase(contactName,"[Unknown]")) {
+                            && !StringUtils.equalsIgnoreCase(contactName, "[Unknown]")) {
                         fetchAllCallLogHistory(contactName);
                     } else {
                         if (!StringUtils.isEmpty(historyNumber)) {
                             fetchAllCallLogHistory(historyNumber);
                         } else {
                             if (!TextUtils.isEmpty(contactName)
-                                    && !StringUtils.equalsIgnoreCase(contactName,"[Unknown]")) {
+                                    && !StringUtils.equalsIgnoreCase(contactName, "[Unknown]")) {
                                 fetchAllCallLogHistory(contactName);
                             } else {
                                 if (!TextUtils.isEmpty(profileContactNumber)) {
@@ -1877,15 +1877,13 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                         String orgPublicLink = BuildConfig.ORANISATION_PUBLIC_LINK +
                                 tempOrganization.get(0).getOrgUrlSlug();
                         if (!StringUtils.isEmpty(orgPublicLink)) {
-                            String url = orgPublicLink;
                             Intent i = new Intent(Intent.ACTION_VIEW);
-                            i.setData(Uri.parse(url));
+                            i.setData(Uri.parse(orgPublicLink));
                             startActivity(i);
                         }
                     }
                 }
             });
-
 
             textViewAllOrganization.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -2146,7 +2144,13 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
             tempEmail.addAll(arrayListEmail);
             tempEmail.addAll(arrayListPhoneBookEmail);
             ProfileDetailAdapter emailDetailAdapter = new ProfileDetailAdapter(this, tempEmail,
-                    AppConstants.EMAIL, displayOwnProfile, pmId);
+                    AppConstants.EMAIL, displayOwnProfile, pmId,
+                    new ProfileDetailAdapter.OnClickListener() {
+                        @Override
+                        public void onClick(String number) {
+
+                        }
+                    });
         } else {
         }
         //</editor-fold>
@@ -2361,7 +2365,13 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
             tempImAccount.addAll(arrayListImAccount);
             tempImAccount.addAll(arrayListPhoneBookImAccount);
             ProfileDetailAdapter imAccountDetailAdapter = new ProfileDetailAdapter(this,
-                    tempImAccount, AppConstants.IM_ACCOUNT, displayOwnProfile, pmId);
+                    tempImAccount, AppConstants.IM_ACCOUNT, displayOwnProfile, pmId,
+                    new ProfileDetailAdapter.OnClickListener() {
+                        @Override
+                        public void onClick(String number) {
+
+                        }
+                    });
         } else {
         }
         //</editor-fold>

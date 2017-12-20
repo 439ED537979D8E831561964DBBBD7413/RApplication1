@@ -3826,8 +3826,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             organization.setOrgIndustryType(arrayListOrganization.get(i).getOmOrganizationType());
 
             if (StringUtils.length(arrayListOrganization.get(i).getOmIsVerified()) > 0) {
-                if(!StringUtils.isEmpty(arrayListOrganization.get(i)
-                        .getOmIsVerified())){
+                if (!StringUtils.isEmpty(arrayListOrganization.get(i)
+                        .getOmIsVerified())) {
                     organization.setIsVerify(Integer.parseInt(arrayListOrganization.get(i)
                             .getOmIsVerified()));
                 }
@@ -3860,7 +3860,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 //                    .input_designation_name);
 //            inputCompanyName.addTextChangedListener(valueTextWatcher);
 //            setOrganisationTextWatcher(inputDesignationName);
-//            inputDesignationName.addTextChangedListener(valueTextWatcher);
+//            inputDesignationName.addTextChangedListener(valueTextWatcher);} else {
         } else {
             addOrganizationView((arrayListOrganizationObject.size()), null);
         }
@@ -6226,6 +6226,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 event.setEvmIsYearHidden(arrayListEvent.get(j).getIsYearHidden());
                 event.setEvmEventPrivacy(String.valueOf(arrayListEvent.get(j).getEventPublic()));
                 event.setRcProfileMasterPmId(getUserPmId());
+                event.setEvmIsPrivate(arrayListEvent.get(j).getIsPrivate());
                 eventList.add(event);
             }
 

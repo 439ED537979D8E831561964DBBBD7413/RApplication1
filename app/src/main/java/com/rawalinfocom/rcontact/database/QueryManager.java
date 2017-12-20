@@ -555,6 +555,7 @@ public class QueryManager {
         return profileDataOperation;
     }
 
+
     public ArrayList<ProfileDataOperationOrganization> getOrganisationDetails(Context context, String rcpId){
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
 

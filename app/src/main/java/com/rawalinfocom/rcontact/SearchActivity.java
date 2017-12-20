@@ -50,6 +50,7 @@ import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookCallLogs;
 import com.rawalinfocom.rcontact.database.PhoneBookSMSLogs;
+import com.rawalinfocom.rcontact.database.QueryManager;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
@@ -58,10 +59,13 @@ import com.rawalinfocom.rcontact.helper.MaterialListDialog;
 import com.rawalinfocom.rcontact.helper.RecyclerItemClickListener;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.helper.instagram.util.StringUtil;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.CallLogType;
 import com.rawalinfocom.rcontact.model.GlobalSearchType;
 import com.rawalinfocom.rcontact.model.ProfileData;
+import com.rawalinfocom.rcontact.model.ProfileDataOperation;
+import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
 import com.rawalinfocom.rcontact.model.ProfileMobileMapping;
 import com.rawalinfocom.rcontact.model.SmsDataType;
 import com.rawalinfocom.rcontact.model.UserProfile;
@@ -78,6 +82,7 @@ import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import twitter4j.User;
 
 public class SearchActivity extends BaseActivity implements WsResponseListener, RippleView
         .OnRippleCompleteListener {
@@ -584,10 +589,23 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                 (getDatabaseHandler());
 
         arrayListDisplayProfile = tableProfileMobileMapping.getRContactList(getUserPmId());
+        QueryManager queryManager = new QueryManager(getDatabaseHandler());
+//        ArrayList<ProfileDataOperation> allRcpProfileDetails = queryManager.getAllRcpProfileDetails(SearchActivity.this);
+        ArrayList<UserProfile> userDataList = new ArrayList<>();
+        for (int i = 0; i < arrayListDisplayProfile.size(); i++) {
+            String rcpId = arrayListDisplayProfile.get(i).getPmId();
+            UserProfile userProfile = arrayListDisplayProfile.get(i);
+            if (!StringUtils.isBlank(rcpId)) {
+                ArrayList<ProfileDataOperationOrganization> orgList =
+                        queryManager.getOrganisationDetails(SearchActivity.this, rcpId);
+                userProfile.setPbOrganization(orgList);
+            }
+            userDataList.add(userProfile);
+        }
 
         arrayListRContact = new ArrayList<>();
-        if (arrayListDisplayProfile.size() > 0) {
-            arrayListRContact.addAll(arrayListDisplayProfile);
+        if (userDataList.size() > 0) {
+            arrayListRContact.addAll(userDataList);
         }
 
         arrayListRCPNumber = new ArrayList<>();
