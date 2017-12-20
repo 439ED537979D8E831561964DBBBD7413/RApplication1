@@ -1224,7 +1224,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                             (ProfileDetailActivity
                                                     .this, rawId, menuType, isFavourite == 1,
                                                     isFromFavourite,
-                                                    isCallLogRcpUser, pbRating);
+                                                    isCallLogRcpUser);
 
                                     optionMenu.showDialog();
                                 }
@@ -1233,12 +1233,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         } else {
                             OptionMenuDialog optionMenu = new OptionMenuDialog(ProfileDetailActivity
                                     .this, rawId, menuType, isFavourite == 1, isFromFavourite,
-                                    isCallLogRcpUser, pbRating);
+                                    isCallLogRcpUser);
 
                             optionMenu.showDialog();
                         }
-
-
                     }
                 }
                 break;
@@ -1438,7 +1436,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         tableProfileMaster.updateUserProfileRating(pmId, responseRating
                                 .getProfileRating(), responseRating.getTotalProfileRateUser());
 
-                        ratingUser.setRating(Float.parseFloat(responseRating.getProfileRating()));
+                        if (pbRating.size() > 0) {
+                            ratingUser.setRating(0);
+                        } else {
+                            ratingUser.setRating(Float.parseFloat(responseRating.getProfileRating()));
+                        }
                         textUserRating.setText(responseRating.getTotalProfileRateUser());
                     }
                 } else {
@@ -2842,14 +2844,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 } else {
 
                     buttonPrivacyRating.setVisibility(View.GONE);
+                    linearBasicDetailRating.setEnabled(true);
 
                     textUserRating.setText(profileDetail.getTotalProfileRateUser());
 
                     if ((MoreObjects.firstNonNull(profileDetail.getProfileRatingPrivacy(), 0)) ==
                             IntegerConstants
                                     .PRIVACY_EVERYONE) {
-
-                        linearBasicDetailRating.setEnabled(true);
 
                         ratingUser.setRating(Float.parseFloat(profileDetail.getProfileRating()));
                         buttonRequestRating.setVisibility(View.GONE);
@@ -2861,7 +2862,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         if ((MoreObjects.firstNonNull(profileDetail.getRatingPrivate(), 0)) ==
                                 IntegerConstants
                                         .IS_PRIVATE) {
-                            linearBasicDetailRating.setEnabled(false);
 
                             ratingUser.setRating(0);
                             buttonRequestRating.setVisibility(View.VISIBLE);
@@ -2876,16 +2876,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             });
                         } else {
 
-                            linearBasicDetailRating.setEnabled(true);
-
                             ratingUser.setRating(Float.parseFloat(profileDetail.getProfileRating
                                     ()));
                             buttonRequestRating.setVisibility(View.GONE);
                         }
 
                     } else {
-
-                        linearBasicDetailRating.setEnabled(false);
 
                         ratingUser.setRating(0);
 //                        ratingUser.setEnabled(false);
