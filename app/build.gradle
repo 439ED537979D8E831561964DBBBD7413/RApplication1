@@ -53,19 +53,20 @@ android {
             keyAlias "rcontacts"
             keyPassword "rcontacts"
         }
+
     }
 
     buildTypes {
         release {
 //            zipAlign true
             signingConfig signingConfigs.release
-
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
 //            zipAlign true
             minifyEnabled false
+
         }
     }
 
@@ -75,17 +76,24 @@ android {
             getProps('./config/qa.props').each { p ->
                 buildConfigField 'String', p.key, p.value
             }
+            manifestPlaceholders = [ FABRIC_APP_ID:"06e70479d2ac89bbcd0f513bced81e424d0d41f7"]
         }
         staging {
             //packageName "com.rawalinfocom.rcontact"
             getProps('./config/staging.props').each { p ->
                 buildConfigField 'String', p.key, p.value
             }
+
+            manifestPlaceholders = [ FABRIC_APP_ID:"06e70479d2ac89bbcd0f513bced81e424d0d41f7"]
+
         }
         production {
             getProps('./config/production.props').each { p ->
                 buildConfigField 'String', p.key, p.value
             }
+
+            manifestPlaceholders = [ FABRIC_APP_ID:"06e70479d2ac89bbcd0f513bced81e424d0d41f7"]
+
         }
         /*local {
             getProps('./config/local.props').each { p ->
@@ -107,8 +115,8 @@ android {
             jni.srcDirs = ["jniLibs"]
         }
     }
-    android{
-        useLibrary  'org.apache.http.legacy'
+    android {
+        useLibrary 'org.apache.http.legacy'
     }
 }
 
