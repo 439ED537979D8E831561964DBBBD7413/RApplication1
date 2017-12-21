@@ -901,6 +901,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         organization.setOrgName(data.getStringExtra("organizationName"));
                         organization.setOrgIndustryType(data.getStringExtra("organizationType"));
                         organization.setOrgLogo(data.getStringExtra("logo"));
+                        organization.setOrgUrlSlug(data.getStringExtra("urlSlug"));
                         organization.setOrgFromDate("");
                         organization.setOrgToDate("");
                         organization.setOrgJobTitle("");
@@ -921,6 +922,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         organization.setOrgName(data.getStringExtra("organizationName"));
                         organization.setOrgIndustryType(data.getStringExtra("organizationType"));
                         organization.setOrgLogo(data.getStringExtra("logo"));
+                        organization.setOrgUrlSlug(data.getStringExtra("urlSlug"));
                         organization.setOrgFromDate(operationOrganization.getOrgFromDate());
                         organization.setOrgToDate(operationOrganization.getOrgToDate());
                         organization.setOrgJobTitle(operationOrganization.getOrgJobTitle());
@@ -1231,8 +1233,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                 String[] temp = user.fullName.split("\\ ");
                 if (temp.length > 1) {
-                    imAccount.setIMAccountFirstName(temp[1]);
-                    imAccount.setIMAccountLastName(temp[0]);
+                    imAccount.setIMAccountFirstName(temp[0]);
+                    imAccount.setIMAccountLastName(temp[1]);
                 } else {
                     imAccount.setIMAccountFirstName(user.fullName);
                     imAccount.setIMAccountLastName("");
@@ -1376,8 +1378,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                     String[] temp = user.getName().split("\\ ");
                     if (temp.length > 1) {
-                        imAccount.setIMAccountFirstName(temp[1]);
-                        imAccount.setIMAccountLastName(temp[0]);
+                        imAccount.setIMAccountFirstName(temp[0]);
+                        imAccount.setIMAccountLastName(temp[1]);
                     } else {
                         imAccount.setIMAccountFirstName(user.getName());
                         imAccount.setIMAccountLastName("");
@@ -3295,6 +3297,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 organization.setOrgJobTitle(editable.toString());
                 organization.setOrgId(operationOrganization.getOrgId());
                 organization.setOrgEntId(operationOrganization.getOrgEntId());
+                organization.setOrgUrlSlug(operationOrganization.getOrgUrlSlug());
                 organization.setIsVerify(operationOrganization.getIsVerify());
                 organization.setIsCurrent(operationOrganization.getIsCurrent());
 
@@ -3815,6 +3818,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     ());
             organization.setOrgId(arrayListOrganization.get(i).getOmRecordIndexId());
             organization.setOrgEntId(arrayListOrganization.get(i).getOmEnterpriseOrgId());
+            organization.setOrgUrlSlug(arrayListOrganization.get(i).getOrgUrlSlug());
             organization.setOrgLogo(arrayListOrganization.get(i).getOmOrganizationLogo());
 //            organization.setOrgRcpType(arrayListOrganization.get(i).getOmOrganizationLogo());
             organization.setIsCurrent(Integer.parseInt(arrayListOrganization.get(i)
@@ -3822,8 +3826,11 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             organization.setOrgIndustryType(arrayListOrganization.get(i).getOmOrganizationType());
 
             if (StringUtils.length(arrayListOrganization.get(i).getOmIsVerified()) > 0) {
-                organization.setIsVerify(Integer.parseInt(arrayListOrganization.get(i)
-                        .getOmIsVerified()));
+                if (!StringUtils.isEmpty(arrayListOrganization.get(i)
+                        .getOmIsVerified())) {
+                    organization.setIsVerify(Integer.parseInt(arrayListOrganization.get(i)
+                            .getOmIsVerified()));
+                }
             } else {
                 organization.setIsVerify(0);
             }
@@ -3853,7 +3860,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 //                    .input_designation_name);
 //            inputCompanyName.addTextChangedListener(valueTextWatcher);
 //            setOrganisationTextWatcher(inputDesignationName);
-//            inputDesignationName.addTextChangedListener(valueTextWatcher);
+//            inputDesignationName.addTextChangedListener(valueTextWatcher);} else {
         } else {
             addOrganizationView((arrayListOrganizationObject.size()), null);
         }
@@ -4101,6 +4108,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             TextView textIsVerified = linearOrganization.findViewById(R.id.text_is_verified);
             TextView textOrgName = linearOrganization.findViewById(R.id.text_org_name);
             TextView textOrgType = linearOrganization.findViewById(R.id.text_org_type);
+            TextView textOrgUrlSlug = linearOrganization.findViewById(R.id.text_org_url);
 
             EditText inputFromDate = linearOrganization.findViewById(R.id.input_from_date);
             EditText inputToDate = linearOrganization.findViewById(R.id.input_to_date);
@@ -4116,6 +4124,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 organization.setOrgName(textOrgName.getText().toString().trim());
                 organization.setOrgJobTitle(inputDesignationName.getText().toString().trim());
                 organization.setOrgEntId(textEnterpriseOrgId.getText().toString().trim());
+                organization.setOrgUrlSlug(textOrgUrlSlug.getText().toString().trim());
                 organization.setOrgLogo(textOrgLogo.getText().toString().trim());
 
                 if (StringUtils.length(textIsVerified.getText().toString()) > 0) {
@@ -4720,6 +4729,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         TextView textIsVerified = view.findViewById(R.id.text_is_verified);
         final TextView textOrgName = view.findViewById(R.id.text_org_name);
         TextView textOrgType = view.findViewById(R.id.text_org_type);
+        TextView textOrgUrlSlug = view.findViewById(R.id.text_org_url);
 
         final EditText inputFromDate = view.findViewById(R.id.input_from_date);
         final EditText inputToDate = view.findViewById(R.id.input_to_date);
@@ -4778,6 +4788,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             relativeRowEditProfile.setTag(organization.getOrgId());
             textOrgName.setText(organization.getOrgName());
             textOrgType.setText(organization.getOrgIndustryType());
+            textOrgUrlSlug.setText(organization.getOrgUrlSlug());
             inputDesignationName.setText(organization.getOrgJobTitle());
             checkboxOrganization.setChecked(organization.getIsCurrent() == 1);
             textOrgLogo.setText(organization.getOrgLogo());
@@ -6065,6 +6076,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                 organization.setOmEnterpriseOrgId(arrayListOrganization.get(i)
                         .getOrgEntId());
+                organization.setOrgUrlSlug(arrayListOrganization.get(i)
+                        .getOrgUrlSlug());
                 organization.setOmIsVerified(String.valueOf(arrayListOrganization.get(i)
                         .getIsVerify()));
                 organization.setRcProfileMasterPmId(profileDetail.getRcpPmId());
@@ -6213,6 +6226,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 event.setEvmIsYearHidden(arrayListEvent.get(j).getIsYearHidden());
                 event.setEvmEventPrivacy(String.valueOf(arrayListEvent.get(j).getEventPublic()));
                 event.setRcProfileMasterPmId(getUserPmId());
+                event.setEvmIsPrivate(arrayListEvent.get(j).getIsPrivate());
                 eventList.add(event);
             }
 

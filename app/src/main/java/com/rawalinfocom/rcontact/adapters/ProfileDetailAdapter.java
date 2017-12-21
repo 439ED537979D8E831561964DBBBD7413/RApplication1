@@ -3,6 +3,7 @@ package com.rawalinfocom.rcontact.adapters;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -14,6 +15,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -66,10 +69,15 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
     private PrivacySettingPopupDialog.DialogCallback listner;
     private boolean isOwnProfile = false;
     private String pmId;
-    private Button buttonRequestAll;
+
+    private OnClickListener onClickListener;
+
+    public interface OnClickListener {
+        void onClick(String NumberEmail);
+    }
 
     public ProfileDetailAdapter(Activity activity, ArrayList<Object> arrayList, int
-            profileDetailType, boolean isOwnProfile, String pmId) {
+            profileDetailType, boolean isOwnProfile, String pmId, OnClickListener onClickListener) {
         this.activity = activity;
         this.profileDetailType = profileDetailType;
         this.arrayList = arrayList;
@@ -77,6 +85,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         colorBlack = ContextCompat.getColor(activity, R.color.colorBlack);
         colorPineGreen = ContextCompat.getColor(activity, R.color.colorAccent);
         this.pmId = pmId;
+        this.onClickListener = onClickListener;
         listner = this;
     }
 
@@ -154,17 +163,17 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
                 if (!number.contains("xx") && !number.contains("XX")) {
 
-                    if (ContextCompat.checkSelfPermission(activity, android.Manifest
-                            .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                        activity.requestPermissions(new String[]{Manifest.permission
-                                .CALL_PHONE}, AppConstants
-                                .MY_PERMISSIONS_REQUEST_PHONE_CALL);
-                        if (activity instanceof ProfileDetailActivity) {
-                            ((ProfileDetailActivity) activity).callNumber = number;
+                    if (isOwnProfile) {
+
+                        if (phoneNumber.getPbRcpType() == IntegerConstants.RCP_TYPE_PRIMARY) {
+                            phoneNumberIntent(number);
+                        } else {
+                            showVerificationDialog(number, "number", activity.getString(R.string.str_verify_number),
+                                    activity.getString(R.string.str_call_number));
                         }
+
                     } else {
-                        if (!number.contains("xx") && !number.contains("XX"))
-                            Utils.callIntent(activity, number);
+                        phoneNumberIntent(number);
                     }
                 }
             }
@@ -190,20 +199,22 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         holder.textMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!number.contains("xx") && !number.contains("XX")) {
-                    if (ContextCompat.checkSelfPermission(activity, android.Manifest
-                            .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                        activity.requestPermissions(new String[]{Manifest.permission
-                                .CALL_PHONE}, AppConstants
-                                .MY_PERMISSIONS_REQUEST_PHONE_CALL);
-                        if (activity instanceof ProfileDetailActivity) {
-                            ((ProfileDetailActivity) activity).callNumber = number;
-                        }
-                    } else {
-                        if (!number.contains("xx") && !number.contains("XX"))
-                            Utils.callIntent(activity, number);
-                    }
-                }
+                holder.imgActionType.performClick();
+
+//                if (!number.contains("xx") && !number.contains("XX")) {
+//                    if (ContextCompat.checkSelfPermission(activity, android.Manifest
+//                            .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+//                        activity.requestPermissions(new String[]{Manifest.permission
+//                                .CALL_PHONE}, AppConstants
+//                                .MY_PERMISSIONS_REQUEST_PHONE_CALL);
+//                        if (activity instanceof ProfileDetailActivity) {
+//                            ((ProfileDetailActivity) activity).callNumber = number;
+//                        }
+//                    } else {
+//                        if (!number.contains("xx") && !number.contains("XX"))
+//                            Utils.callIntent(activity, number);
+//                    }
+//                }
             }
         });
 
@@ -310,6 +321,22 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         }
     }
 
+    private void phoneNumberIntent(String number) {
+
+        if (ContextCompat.checkSelfPermission(activity, android.Manifest
+                .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            activity.requestPermissions(new String[]{Manifest.permission
+                    .CALL_PHONE}, AppConstants
+                    .MY_PERMISSIONS_REQUEST_PHONE_CALL);
+            if (activity instanceof ProfileDetailActivity) {
+                ((ProfileDetailActivity) activity).callNumber = number;
+            }
+        } else {
+            if (!number.contains("xx") && !number.contains("XX"))
+                Utils.callIntent(activity, number);
+        }
+    }
+
     private void displayEmail(final ProfileDetailViewHolder holder, final int position) {
         final ProfileDataOperationEmail email = (ProfileDataOperationEmail) arrayList.get(position);
         String emailId = email.getEmEmailId();
@@ -321,12 +348,26 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             @Override
             public void onClick(View view) {
 
-                String email = holder.textMain.getText().toString();
-                if (!email.startsWith("XX") && !email.startsWith("xx")) {
-                    Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" +
-                            email));
-                    activity.startActivity(Intent.createChooser(emailIntent, activity.getString(R
-                            .string.str_send_email)));
+                String emailAddress = holder.textMain.getText().toString();
+                if (!emailAddress.startsWith("XX") && !emailAddress.startsWith("xx")) {
+
+                    if (isOwnProfile) {
+
+                        if (email.getEmRcpType() == IntegerConstants.RCP_TYPE_PRIMARY) {
+                            emailIntent(emailAddress);
+                        } else {
+                            if (email.getEmRcpType() == IntegerConstants.RCP_TYPE_SECONDARY &&
+                                    !(email.getEmSocialType().equalsIgnoreCase(""))) {
+                                emailIntent(emailAddress);
+                            } else {
+                                showVerificationDialog(emailAddress, "email", activity.getString(R.string.str_verify_email),
+                                        activity.getString(R.string.str_open_email));
+                            }
+                        }
+
+                    } else {
+                        emailIntent(emailAddress);
+                    }
                 }
             }
         });
@@ -334,14 +375,14 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         holder.textMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                String email = holder.textMain.getText().toString();
-                if (!email.startsWith("XX") && !email.startsWith("xx")) {
-                    Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" +
-                            email));
-                    activity.startActivity(Intent.createChooser(emailIntent, activity.getString(R
-                            .string.str_send_email)));
-                }
+                holder.imgActionType.performClick();
+//                String email = holder.textMain.getText().toString();
+//                if (!email.startsWith("XX") && !email.startsWith("xx")) {
+//                    Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" +
+//                            email));
+//                    activity.startActivity(Intent.createChooser(emailIntent, activity.getString(R
+//                            .string.str_send_email)));
+//                }
             }
         });
 
@@ -372,7 +413,9 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 //                            (StringUtils.length(emailId) + 1) + 1)));
 
             holder.textMain.setTextColor(colorPineGreen);
-            holder.imageViewTic.setVisibility(View.VISIBLE);
+//            holder.imageViewTic.setVisibility(View.GONE);
+//            holder.textMain.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+//                    R.drawable.ico_double_tick_green_svg, 0);
             holder.imageViewTic.setColorFilter(colorPineGreen);
 
             if (isOwnProfile)
@@ -389,7 +432,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         } else {
 
             if (isOwnProfile || emRcpType == IntegerConstants.RCP_TYPE_SECONDARY) {
-                if (!email.getEmSocialType().equalsIgnoreCase("")) {
+                if (!(email.getEmSocialType().equalsIgnoreCase(""))) {
 
 //                    holder.textMain.setTypeface(Utils.typefaceIcons(activity));
 //                    String s = Utils.setMultipleTypeface(activity, email.getEmEmailId() + "
@@ -410,10 +453,13 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 //                    holder.textMain.setText(Html.fromHtml(s));
                     holder.textMain.setText(email.getEmEmailId());
                     holder.textMain.setTextColor(colorPineGreen);
+//                    holder.textMain.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+//                            R.drawable.ico_double_tick_svg, 0);
                 } else {
                     holder.imageViewTic.setVisibility(View.GONE);
                     holder.textMain.setText(emailId);
                     holder.textMain.setTextColor(colorPineGreen);
+//                    holder.textMain.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                 }
             } else {
                 holder.textMain.setText(emailId);
@@ -469,6 +515,14 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 }
             });
         }
+    }
+
+    private void emailIntent(String emailAddress) {
+
+        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" +
+                emailAddress));
+        activity.startActivity(Intent.createChooser(emailIntent, activity.getString(R
+                .string.str_send_email)));
     }
 
     private void displayEducation(final ProfileDetailViewHolder holder, final int position) {
@@ -1182,6 +1236,61 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             Toast.makeText(activity, activity.getResources().getString(R.string.msg_no_network),
                     Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void showVerificationDialog(final String NumberEmail, final String type, String msg1, String msg2) {
+
+        final Dialog dialog = new Dialog(activity);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_verify_details);
+        dialog.setCancelable(true);
+
+        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+        layoutParams.copyFrom(dialog.getWindow().getAttributes());
+        layoutParams.width = (int) (activity.getResources().getDisplayMetrics().widthPixels * 0.90);
+        layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+        dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
+
+        TextView textDialogTitle = dialog.findViewById(R.id.text_dialog_title);
+        textDialogTitle.setText(NumberEmail);
+        textDialogTitle.setTypeface(Utils.typefaceSemiBold(activity));
+
+        TextView textVerify = dialog.findViewById(R.id.text_verify);
+        textVerify.setText(msg1);
+        textVerify.setTypeface(Utils.typefaceRegular(activity));
+
+        TextView textAction = dialog.findViewById(R.id.text_action);
+        textAction.setText(msg2);
+        textAction.setTypeface(Utils.typefaceRegular(activity));
+
+        textVerify.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                if (type.equalsIgnoreCase("email")) {
+                    if (onClickListener != null)
+                        onClickListener.onClick(NumberEmail);
+                } else {
+                    if (onClickListener != null)
+                        onClickListener.onClick(NumberEmail);
+                }
+            }
+        });
+
+        textAction.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                if (type.equalsIgnoreCase("email")) {
+                    emailIntent(NumberEmail);
+                } else {
+                    phoneNumberIntent(NumberEmail);
+                }
+            }
+        });
+
+        dialog.show();
     }
 
     private void sendAccessRequest(int toPMId, String carFiledType, String recordIndexId) {

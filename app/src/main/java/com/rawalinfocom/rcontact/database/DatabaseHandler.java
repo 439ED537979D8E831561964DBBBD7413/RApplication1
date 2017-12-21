@@ -173,7 +173,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                         + "COLUMN " + TableProfileMaster.COLUMN_PM_RATING_PRIVACY + " text ");
                 db.execSQL("ALTER TABLE " + TableProfileMaster.TABLE_RC_PROFILE_MASTER + " ADD "
                         + "COLUMN " + TableProfileMaster.COLUMN_PM_RATING_PRIVATE + " text ");
-
+                db.execSQL("ALTER TABLE " + TableOrganizationMaster.TABLE_RC_ORGANIZATION_MASTER
+                        + " ADD COLUMN " + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_URL_SLUG
+                        + " text ");
         }
 
         // create new tables

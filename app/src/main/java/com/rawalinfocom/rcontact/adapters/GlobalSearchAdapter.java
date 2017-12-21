@@ -23,8 +23,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.SearchActivity;
+import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.model.GlobalSearchType;
@@ -158,29 +160,34 @@ public class GlobalSearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             holder.textRatingUserCount.setText("");
         }
 
-        String averageRating = globalSearchType.getAverageRating();
-        if (!StringUtils.isEmpty(averageRating)) {
-            holder.ratingUser.setRating(Float.parseFloat(averageRating));
+        if ((MoreObjects.firstNonNull(globalSearchType.getRatingPrivate(), 0)) == IntegerConstants
+                .IS_PRIVATE) {
+            holder.ratingUser.setRating(0);
         } else {
-            holder.ratingUser.setRating(Float.parseFloat("0"));
+            String averageRating = globalSearchType.getAverageRating();
+            if (!StringUtils.isEmpty(averageRating)) {
+                holder.ratingUser.setRating(Float.parseFloat(averageRating));
+            } else {
+                holder.ratingUser.setRating(Float.parseFloat("0"));
+            }
         }
 
-        if(!StringUtils.isBlank(searchedText)){
-            if(searchedText.matches("[+][0-9]+") || searchedText.matches("\\d+")){
+        if (!StringUtils.isBlank(searchedText)) {
+            if (searchedText.matches("[+][0-9]+") || searchedText.matches("\\d+")) {
                 hightLightSearchedText(holder.textContactNumber.getText().toString(), holder.textContactNumber);
-            }else{
+            } else {
                 if (searchedText.contains(" ")) {
-                    try{
+                    try {
                         String originalStringCloud = holder.textContactFirstname.getText().toString();
-                        searchedText =  searchedText.trim();
+                        searchedText = searchedText.trim();
                         String[] separatedCloud = searchedText.split(" ");
-                        String secondPartCloud ="";
+                        String secondPartCloud = "";
                         String firstPartCloud = "";
-                        if(!StringUtils.isBlank(separatedCloud[0]))
+                        if (!StringUtils.isBlank(separatedCloud[0]))
                             firstPartCloud = separatedCloud[0];
-                        if(searchedText.contains(" ")){
-                            if(separatedCloud[1]!=null && separatedCloud[1].length()>0)
-                                secondPartCloud= separatedCloud[1];
+                        if (searchedText.contains(" ")) {
+                            if (separatedCloud[1] != null && separatedCloud[1].length() > 0)
+                                secondPartCloud = separatedCloud[1];
                         }
 
                         SpannableStringBuilder builderCloud = new SpannableStringBuilder(originalStringCloud);
@@ -208,7 +215,7 @@ public class GlobalSearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                             }
                         }
                         holder.textContactFirstname.setText(builderCloud, TextView.BufferType.SPANNABLE);
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 } else {

@@ -62,7 +62,12 @@ public class TableRCContactRequest {
     public int addRequest(int status, String carId, String carMongodbRecordIndex, int carPmIdFrom, String requestType, String createdAt, String updatedAt
             , String name, String profilePhoto) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        boolean isDelete;
 
+        if (requestType.equalsIgnoreCase("request all")) {
+            isDelete = deleteRequestAllRequest(String.valueOf(carPmIdFrom), requestType);
+            System.out.println("RContacts delete request all --> " + isDelete);
+        }
         ContentValues values = new ContentValues();
         values.put(COLUMN_CAR_STATUS, status);
         if (requestType.equalsIgnoreCase("request all")) {
@@ -87,6 +92,17 @@ public class TableRCContactRequest {
             db.close();
             return -1;
         }
+    }
+
+    private boolean deleteRequestAllRequest(String rcpID, String ppmTag) {
+
+        boolean isDelete;
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+        isDelete = db.delete(TABLE_RC_CONTACT_ACCESS_REQUEST, COLUMN_CARTYPE + " = '" + ppmTag + "' and " +
+                COLUMN_CRM_RC_PROFILE_MASTER_PM_ID + " = '" + rcpID + "'", null) > 0;
+
+        return isDelete;
     }
 
     public ArrayList<PrivacyRequestDataItem> getAllPendingRequest(String from, String to) {
@@ -154,7 +170,7 @@ public class TableRCContactRequest {
         return isDelete;
     }
 
-    public boolean removeRequest(String ppmTag, String carId, int rcpID) {
+    public boolean removeRequest(String ppmTag, String carId, int rcpID, String actionType) {
         boolean isDelete;
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
 
@@ -162,6 +178,8 @@ public class TableRCContactRequest {
 //            String[] whereArgs = new String[]{String.valueOf(carId), String.valueOf(rcpID), ppmTag};
             isDelete = db.delete(TABLE_RC_CONTACT_ACCESS_REQUEST, COLUMN_CAR_CLOUD_REQUEST_ID + " = '" + carId + "' and " +
                     COLUMN_CARTYPE + " = '" + ppmTag + "' and " + COLUMN_CRM_RC_PROFILE_MASTER_PM_ID + " = '" + rcpID + "'", null) > 0;
+            if (actionType.equalsIgnoreCase("accept"))
+                db.delete(TABLE_RC_CONTACT_ACCESS_REQUEST, COLUMN_CRM_RC_PROFILE_MASTER_PM_ID + " = '" + rcpID + "'", null);
         } else {
             isDelete = db.delete(TABLE_RC_CONTACT_ACCESS_REQUEST, COLUMN_CAR_CLOUD_REQUEST_ID + "=" + carId, null) > 0;
         }

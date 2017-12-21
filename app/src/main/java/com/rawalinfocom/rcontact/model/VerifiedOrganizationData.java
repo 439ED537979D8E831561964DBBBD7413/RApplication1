@@ -16,6 +16,7 @@ public class VerifiedOrganizationData implements Serializable {
 
     private String omOrgId;
     private String omOrgName;
+    private String omUrlSlug;
     private String omOrgIsVerify;
     private VerifiedOrganizationDetails omOrgDetails;
 
@@ -50,6 +51,15 @@ public class VerifiedOrganizationData implements Serializable {
 
     public void setOmOrgName(String omOrgName) {
         this.omOrgName = omOrgName;
+    }
+
+    @JsonProperty("om_urlslug")
+    public String getOmUrlSlug() {
+        return omUrlSlug;
+    }
+
+    public void setOmUrlSlug(String omUrlSlug) {
+        this.omUrlSlug = omUrlSlug;
     }
 
     @JsonProperty("om_is_verified")

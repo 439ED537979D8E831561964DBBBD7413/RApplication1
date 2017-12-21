@@ -64,20 +64,17 @@ class OptionMenuDialog {
 
     private PhoneBookContacts phoneBookContacts;
     private RContactApplication rContactApplication;
-    private ArrayList<String> pbRating;
 
     MaterialDialog deleteConfirmationDialog;
 
     //<editor-fold desc="Constructor">
     OptionMenuDialog(final Context context, String rawId, final int menuType, boolean
-            isFavourite, boolean isFromFavourite, boolean isCallLogRcpUser, ArrayList<String>
-                             pbRating) {
+            isFavourite, boolean isFromFavourite, boolean isCallLogRcpUser) {
         this.context = context;
         this.rawId = rawId;
         this.isFavourite = isFavourite;
         this.isFromFavourite = isFromFavourite;
         this.isCallLogRcpUser = isCallLogRcpUser;
-        this.pbRating = pbRating;
 
         rContactApplication = (RContactApplication) context.getApplicationContext();
         phoneBookContacts = new PhoneBookContacts(context);
@@ -110,35 +107,18 @@ class OptionMenuDialog {
 
             case ALL_CONTACT_RCP:
 
-                if (pbRating.size() > 0) {
-                    menus = new String[]{context.getString(R.string.edit), context.getString(R
-                            .string
-                            .str_view_in_phone_book), context.getString(R.string.delete)/*,
-                            context.getString(R.string.call_reminder)*/};
-                } else {
-                    menus = new String[]{context.getString(R.string.edit), context.getString(R
-                            .string
-                            .str_view_in_phone_book),
-                            context.getString(R.string.str_rate_profile), context.getString(R.string
-                            .delete)/*, context.getString(R.string.call_reminder)*/};
-                }
+                menus = new String[]{context.getString(R.string.edit), context.getString(R
+                        .string.str_view_in_phone_book), context.getString(R.string.str_rate_profile)
+                        , context.getString(R.string.delete)/*, context.getString(R.string.call_reminder)*/};
 
                 break;
 
             case R_CONTACT_RCP:
-                if (pbRating.size() > 0) {
-                    menus = new String[]{context.getString(R.string.edit), context.getString(R
-                            .string
-                            .view_in_ac), context.getString(R.string
-                            .delete)
-                            /*, context.getString(R.string.call_reminder)*/};
-                } else {
-                    menus = new String[]{context.getString(R.string.edit), context.getString(R
-                            .string
-                            .view_in_ac),
-                            context.getString(R.string.str_rate_profile), context.getString(R.string
-                            .delete)/*, context.getString(R.string.call_reminder)*/};
-                }
+
+                menus = new String[]{context.getString(R.string.edit), context.getString(R
+                        .string.view_in_ac), context.getString(R.string.str_rate_profile)
+                        , context.getString(R.string.delete)/*, context.getString(R.string.call_reminder)*/};
+
                 break;
         }
 
@@ -292,20 +272,17 @@ class OptionMenuDialog {
 
             // <editor-fold desc="Rate Profile">
             case 2:
-//                Log.i("menuAllContactRcp", textView.getText().toString());
-                if (StringUtils.equalsAnyIgnoreCase(textView.getText().toString(), context
-                        .getString(R.string.delete))) {
-                    showDeleteConfirmationDialog(queryManager, ALL_CONTACT_RCP);
-                } else {
-                    if (context instanceof ProfileDetailActivity) {
-                        ((ProfileDetailActivity) context).onRatingClick();
-                    }
+                if (context instanceof ProfileDetailActivity) {
+                    ((ProfileDetailActivity) context).onRatingClick();
                 }
                 break;
             //</editor-fold>
 
             // <editor-fold desc="Delete">
             case 3:
+
+                showDeleteConfirmationDialog(queryManager, ALL_CONTACT_RCP);
+
                 /*TableProfileMaster tableProfileMaster = new TableProfileMaster(((BaseActivity)
                         context).databaseHandler);
                 String rawIdFromRcpId = tableProfileMaster.getRawIdFromRcpId(Integer.parseInt(
@@ -328,12 +305,12 @@ class OptionMenuDialog {
                         queryManager.deleteRcProfileDetail(((ProfileDetailActivity) context).pmId);
                     }
                 }*/
-                if (StringUtils.equalsAnyIgnoreCase(textView.getText().toString(), context
-                        .getString(R.string.delete))) {
-                    showDeleteConfirmationDialog(queryManager, ALL_CONTACT_RCP);
-                } else {
-                    showCallReminderPopUp();
-                }
+//                if (StringUtils.equalsAnyIgnoreCase(textView.getText().toString(), context
+//                        .getString(R.string.delete))) {
+//                    showDeleteConfirmationDialog(queryManager, ALL_CONTACT_RCP);
+//                } else {
+//                    showCallReminderPopUp();
+//                }
                /* phoneBookContacts.deleteContact(rawId);
                 if (context instanceof ProfileDetailActivity) {
                     ((ProfileDetailActivity) context).onBackPressed();
@@ -409,15 +386,18 @@ class OptionMenuDialog {
             // <editor-fold desc="Rate Profile">
             case 2:
 
-
-                if (StringUtils.equalsAnyIgnoreCase(textView.getText().toString(), context
-                        .getString(R.string.delete))) {
-                    showDeleteConfirmationDialog(queryManager, ALL_CONTACT_RCP);
-                } else {
-                    if (context instanceof ProfileDetailActivity) {
-                        ((ProfileDetailActivity) context).onRatingClick();
-                    }
+                if (context instanceof ProfileDetailActivity) {
+                    ((ProfileDetailActivity) context).onRatingClick();
                 }
+
+//                if (StringUtils.equalsAnyIgnoreCase(textView.getText().toString(), context
+//                        .getString(R.string.delete))) {
+//                    showDeleteConfirmationDialog(queryManager, ALL_CONTACT_RCP);
+//                } else {
+//                    if (context instanceof ProfileDetailActivity) {
+//                        ((ProfileDetailActivity) context).onRatingClick();
+//                    }
+//                }
 
 //                if (pbRating.size() > 0) {
 //                    showDeleteConfirmationDialog(queryManager, R_CONTACT_RCP);
