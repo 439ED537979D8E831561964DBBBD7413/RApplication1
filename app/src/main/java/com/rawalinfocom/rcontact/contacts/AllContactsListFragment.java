@@ -914,7 +914,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         Gson gson = new Gson();
 
         String jsonString = gson.toJson(profileData);
-        Utils.setStringPreference(getActivity(),"search_data",jsonString);
+        Utils.setStringPreference(getActivity(), "search_data", jsonString);
 
         // Basic Profile Data
         TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
@@ -2152,7 +2152,11 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 return;
             }
             backgroundSync(false, null);
-        } else if (arrayListSyncUserContact.size() == 0) {
+        }
+        else if (lastSyncedData < (arrayListSyncUserContact.size() + CONTACT_CHUNK)) {
+            backgroundSync(false, null);
+        }
+        else if (arrayListSyncUserContact.size() == 0) {
             Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts,
                     getActivity().getString(R.string.str_all_contact_sync));
             Utils.setStringPreference(getActivity(), AppConstants
@@ -2211,10 +2215,10 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 if (lastSyncedData <= limit) {
                     ArrayList<ProfileData> subList = new ArrayList<>(arrayListSyncUserContact
                             .subList(lastSyncedData, limit));
-                    uploadContacts(lastSyncedData, Utils.getStringPreference(getActivity(),
+                    uploadContacts(lastSyncedData, Utils.getStringPreference(RContactApplication.getInstance(),
                             AppConstants.PREF_RESPONSE_KEY, ""), subList);
                 } else {
-                    uploadContacts(lastSyncedData, Utils.getStringPreference(getActivity(),
+                    uploadContacts(lastSyncedData, Utils.getStringPreference(RContactApplication.getInstance(),
                             AppConstants.PREF_RESPONSE_KEY, ""), new ArrayList<ProfileData>());
                 }
             }

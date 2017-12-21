@@ -37,9 +37,7 @@ import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
-import com.rawalinfocom.rcontact.model.Organization;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
-import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
 import com.rawalinfocom.rcontact.model.UserProfile;
 
@@ -75,18 +73,21 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private ArrayList<Integer> mSectionPositions;
     private int searchCount;
     private String searchChar;
+    private String userPmId;
 
     //<editor-fold desc="Constructor">
     public RContactListAdapter(Fragment fragment, ArrayList<Object> arrayListUserProfile,
-                               ArrayList<String> arrayListContactHeader) {
+                               ArrayList<String> arrayListContactHeader, String userPmId) {
         this.fragment = fragment;
         this.activity = fragment.getActivity();
         this.arrayListUserProfile = arrayListUserProfile;
         this.arrayListContactHeader = arrayListContactHeader;
+        this.userPmId = userPmId;
     }
 
-    public RContactListAdapter(Activity activity, ArrayList<Object> arrayListUserContact) {
+    public RContactListAdapter(Activity activity, ArrayList<Object> arrayListUserContact, String userPmId) {
         this.activity = activity;
+        this.userPmId = userPmId;
         this.arrayListUserProfile = new ArrayList<>();
         this.arrayListUserProfile.addAll(arrayListUserContact);
         this.arraylist = new ArrayList<>();
@@ -338,20 +339,30 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         holder.textRatingUserCount.setText(userProfile.getTotalProfileRateUser());
 
-        if (Integer.parseInt((String) MoreObjects.firstNonNull(userProfile.getProfileRatingPrivacy()
-                , 0)) == IntegerConstants.PRIVACY_EVERYONE) {
-            holder.ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
-        } else if (Integer.parseInt((String) MoreObjects.firstNonNull(userProfile.getProfileRatingPrivacy(),
-                0)) == IntegerConstants.PRIVACY_MY_CONTACT) {
-            if (Integer.parseInt((String) MoreObjects.firstNonNull(userProfile.getRatingPrivate(), 0))
-                    == IntegerConstants.IS_PRIVATE) {
-                holder.ratingUser.setRating(0);
-            } else {
-                holder.ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
-            }
 
+        if (userProfile.getPmId().equalsIgnoreCase(userPmId)) {
+            holder.ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
         } else {
-            holder.ratingUser.setRating(0);
+
+            if (userProfile.getRatingPrivate() != null && userProfile.getProfileRatingPrivacy() != null) {
+                if (Integer.parseInt((String) MoreObjects.firstNonNull(userProfile.getProfileRatingPrivacy()
+                        , 0)) == IntegerConstants.PRIVACY_EVERYONE) {
+                    holder.ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
+                } else if (Integer.parseInt((String) MoreObjects.firstNonNull(userProfile.getProfileRatingPrivacy(),
+                        0)) == IntegerConstants.PRIVACY_MY_CONTACT) {
+                    if (Integer.parseInt((String) MoreObjects.firstNonNull(userProfile.getRatingPrivate(), 0))
+                            == IntegerConstants.IS_PRIVATE) {
+                        holder.ratingUser.setRating(0);
+                    } else {
+                        holder.ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
+                    }
+
+                } else {
+                    holder.ratingUser.setRating(0);
+                }
+            } else {
+                holder.ratingUser.setRating(0);
+            }
         }
 
         holder.relativeRowAllContact.setTag(position);

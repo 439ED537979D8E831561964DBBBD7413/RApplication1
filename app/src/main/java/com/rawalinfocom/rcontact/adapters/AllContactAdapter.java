@@ -1085,7 +1085,6 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     // Filter Class
     public void filter(String charText) {
         Pattern numberPat = Pattern.compile("\\d+");
-//        Pattern charPat = Pattern.compile("^[^<>{}\\\"/|;:.,~!?@#$%^=&*\\\\]\\\\\\\\()\\\\[¿§«»ω⊙¤°℃℉€¥£¢¡®©0-9_+]*$");
         Matcher matcher1 = numberPat.matcher(charText);
         if (matcher1.find()) {
             arrayListUserContact.clear();
@@ -1109,8 +1108,6 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         } else {
             charText = charText.toLowerCase(Locale.getDefault());
             charText = charText.trim();
-//            Matcher matcher =  charPat.matcher(charText);
-//            System.out.println("RContacts :" + matcher.find());
             arrayListUserContact.clear();
             if (charText.length() == 0) {
                 arrayListUserContact.addAll(arraylist);
@@ -1133,9 +1130,15 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                         nameFilter(charText, profileData);
                                     }
                                 }
+//                                if(firstName.toLowerCase(Locale.getDefault()).equalsIgnoreCase
+// (charText)
+//                                        || !StringUtils.isEmpty(profileData.getTempLastName())
+//                                        && StringUtils.equalsIgnoreCase(profileData
+// .getTempLastName().toLowerCase(Locale.getDefault()),charText)){
+//                                    arrayListUserContact.add(profileData);
+//                                }
                             }
                         }
-
                     }
                 }
             }

@@ -76,13 +76,13 @@ android {
                 buildConfigField 'String', p.key, p.value
             }
             manifestPlaceholders = [ FABRIC_APP_ID:"06e70479d2ac89bbcd0f513bced81e424d0d41f7"]
-
         }
         staging {
             //packageName "com.rawalinfocom.rcontact"
             getProps('./config/staging.props').each { p ->
                 buildConfigField 'String', p.key, p.value
             }
+
             manifestPlaceholders = [ FABRIC_APP_ID:"06e70479d2ac89bbcd0f513bced81e424d0d41f7"]
 
         }
@@ -90,6 +90,7 @@ android {
             getProps('./config/production.props').each { p ->
                 buildConfigField 'String', p.key, p.value
             }
+
             manifestPlaceholders = [ FABRIC_APP_ID:"06e70479d2ac89bbcd0f513bced81e424d0d41f7"]
 
         }
@@ -113,8 +114,8 @@ android {
             jni.srcDirs = ["jniLibs"]
         }
     }
-    android{
-        useLibrary  'org.apache.http.legacy'
+    android {
+        useLibrary 'org.apache.http.legacy'
     }
 }
 

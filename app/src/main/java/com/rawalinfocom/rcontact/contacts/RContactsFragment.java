@@ -289,7 +289,7 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
 
         if (arrayListDisplayProfile.size() > 0) {
             rContactListAdapter = new RContactListAdapter(this, arrayListRContact,
-                    arrayListContactHeaders);
+                    arrayListContactHeaders, getUserPmId());
             recyclerViewContactList.setAdapter(rContactListAdapter);
         }
 
@@ -640,7 +640,7 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
             Gson gson = new Gson();
 
             String jsonString = gson.toJson(profileData);
-            Utils.setStringPreference(getActivity(),"search_data",jsonString);
+            Utils.setStringPreference(getActivity(), "search_data", jsonString);
 
             // Basic Profile Data
             TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
