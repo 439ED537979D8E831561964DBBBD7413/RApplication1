@@ -62,6 +62,7 @@ import com.google.gson.Gson;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.BuildConfig;
 import com.rawalinfocom.rcontact.ContactListingActivity;
+import com.rawalinfocom.rcontact.OtpVerificationActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.CallHistoryListAdapter;
@@ -2985,7 +2986,16 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         new ProfileDetailAdapter.OnClickListener() {
                             @Override
                             public void onClick(String NumberEmail) {
-                                Toast.makeText(rContactApplication, "Verify Number " + NumberEmail, Toast.LENGTH_SHORT).show();
+
+                                Bundle bundle = new Bundle();
+                                bundle.putString(AppConstants.EXTRA_IS_FROM, AppConstants.EXTRA_IS_FROM_VERIFICATION);
+                                bundle.putString(AppConstants.EXTRA_MOBILE_NUMBER, NumberEmail);
+                                bundle.putString(AppConstants.EXTRA_OBJECT_COUNTRY_CODE, "+91");
+                                startActivityIntent(ProfileDetailActivity.this,
+                                        OtpVerificationActivity.class, bundle);
+                                overridePendingTransition(R.anim.enter, R.anim.exit);
+
+//                                Toast.makeText(rContactApplication, "Verify Number " + NumberEmail, Toast.LENGTH_SHORT).show();
                             }
                         });
                 recyclerViewContactNumber.setAdapter(phoneDetailAdapter);

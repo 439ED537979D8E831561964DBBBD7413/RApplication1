@@ -77,27 +77,77 @@
 
     </com.rawalinfocom.rcontact.helper.RippleView>
 
-    <com.rawalinfocom.rcontact.helper.RippleView
-        android:id="@+id/ripple_resend"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/ripple_submit"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        app:rv_alpha="@integer/alpha_ripple"
-        app:rv_color="@color/colorWhite"
-        app:rv_rippleDuration="@integer/duration_ripple">
+        android:orientation="vertical">
 
-        <Button
-            android:id="@+id/button_resend"
+        <TextView
+            android:id="@+id/text_resend_call_msg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/background_rounded_corner"
-            android:text="@string/action_resend"
-            android:textColor="@color/colorWhite"
-            tools:backgroundTint="@color/vividRed" />
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:gravity="center"
+            android:padding="@dimen/padding_5dp"
+            android:visibility="gone"
+            android:textAppearance="?android:textAppearanceSmall"
+            android:textColor="@color/colorVeryDarkGrayishBlue2" />
 
-    </com.rawalinfocom.rcontact.helper.RippleView>
+        <LinearLayout
+            android:id="@+id/linear_resend_call_me"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
+            <com.rawalinfocom.rcontact.helper.RippleView
+                android:id="@+id/ripple_resend"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/activity_half_horizontal_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:layout_weight="1"
+                app:rv_alpha="@integer/alpha_ripple"
+                app:rv_color="@color/colorWhite"
+                app:rv_rippleDuration="@integer/duration_ripple">
+
+                <Button
+                    android:id="@+id/button_resend"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/background_rounded_corner"
+                    android:text="@string/action_resend"
+                    android:textColor="@color/colorWhite"
+                    tools:backgroundTint="@color/vividRed" />
+
+            </com.rawalinfocom.rcontact.helper.RippleView>
+
+            <com.rawalinfocom.rcontact.helper.RippleView
+                android:id="@+id/ripple_call_me"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_half_horizontal_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:layout_weight="1"
+                app:rv_alpha="@integer/alpha_ripple"
+                app:rv_color="@color/colorWhite"
+                app:rv_rippleDuration="@integer/duration_ripple">
+
+                <Button
+                    android:id="@+id/button_call_me"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/background_rounded_corner"
+                    android:text="@string/action_call_me"
+                    android:textColor="@color/colorWhite"
+                    tools:backgroundTint="@color/vividRed" />
+
+            </com.rawalinfocom.rcontact.helper.RippleView>
+
+        </LinearLayout>
+    </LinearLayout>
 </RelativeLayout>

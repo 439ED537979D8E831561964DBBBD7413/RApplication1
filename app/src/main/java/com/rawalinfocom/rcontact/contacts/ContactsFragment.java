@@ -436,11 +436,16 @@ public class ContactsFragment extends BaseFragment {
 
     private void replaceFragment(Fragment fragment, String tag) {
 
-        FragmentManager fm = getChildFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.frame_container_call_tab, fragment, tag);
-        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-        ft.commit();
+        getChildFragmentManager()
+                .beginTransaction()
+                .replace(R.id.frame_container_call_tab, fragment)
+                .commit();
+
+//        FragmentManager fm = getChildFragmentManager();
+//        FragmentTransaction ft = fm.beginTransaction();
+//        ft.replace(R.id.frame_container_call_tab, fragment, tag);
+//        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+//        ft.commit();
     }
 
     private void setupTabLayout() {
@@ -456,7 +461,7 @@ public class ContactsFragment extends BaseFragment {
         tabContact.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                frameContainerCallTab.removeAllViews();
+//                frameContainerCallTab.removeAllViews();
                 currentTabPosition = tab.getPosition();
                 setCurrentTabFragment(tab.getPosition());
             }

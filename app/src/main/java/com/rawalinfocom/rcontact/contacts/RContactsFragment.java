@@ -39,6 +39,7 @@ import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.BuildConfig;
 import com.rawalinfocom.rcontact.MainActivity;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.RContactListAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
@@ -167,6 +168,14 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+//        if (rootView != null) {
+//            ViewGroup parent = (ViewGroup) rootView.getParent();
+//            if (parent != null) {
+//                parent.removeView(rootView);
+//            }
+//        }
+
         if (rootView == null) {
             rootView = inflater.inflate(R.layout.fragment_r_contacts, container, false);
             ButterKnife.bind(this, rootView);
@@ -298,11 +307,15 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
             @Override
             public void onRefresh() {
 
-                // cancel the Visual indication of a refresh
-                swipeRefreshLayout.setRefreshing(true);
-                String fromDate = Utils.getStringPreference(getActivity(), AppConstants
-                        .KEY_API_CALL_TIME_STAMP_RCP, "");
-                RCPContactServiceCall(fromDate, WsConstants.REQ_GET_RCP_CONTACT);
+                if (Utils.getBooleanPreference(RContactApplication.getInstance(), AppConstants.PREF_CONTACT_SYNCED, false)) {
+                    // cancel the Visual indication of a refresh
+                    swipeRefreshLayout.setRefreshing(true);
+                    String fromDate = Utils.getStringPreference(getActivity(), AppConstants
+                            .KEY_API_CALL_TIME_STAMP_RCP, "");
+                    RCPContactServiceCall(fromDate, WsConstants.REQ_GET_RCP_CONTACT);
+                } else {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
             }
         });
     }
@@ -640,7 +653,7 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
             Gson gson = new Gson();
 
             String jsonString = gson.toJson(profileData);
-            Utils.setStringPreference(getActivity(),"search_data",jsonString);
+            Utils.setStringPreference(getActivity(), "search_data", jsonString);
 
             // Basic Profile Data
             TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());

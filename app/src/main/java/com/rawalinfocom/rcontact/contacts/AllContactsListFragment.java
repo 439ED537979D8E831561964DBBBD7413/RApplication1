@@ -138,7 +138,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     public static ArrayList<Object> arrayListPhoneBookContacts;
     //    public static ArrayList<Object> arrayListPhoneBookContactsTemp;
 //    public static ArrayList<ProfileData> arrayListContacts;
-    ArrayList<ProfileData> arrayListSyncUserContact = new ArrayList<>();
+    ArrayList<ProfileData> arrayListSyncUserContact;
     ArrayList<String> arrayListFavouriteContacts;
 
     LongSparseArray<ProfileData> array = new LongSparseArray<>();
@@ -161,6 +161,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     int settingRequestPermission = 0;
     public String callNumber = "";
     private SyncingTask syncingTask;
+    //    private StartSyncingTask startSyncingTask;
     private ArrayList<String> arrayListPBPhoneNumber;
     private ArrayList<String> arrayListPBEmailAddress;
 
@@ -204,28 +205,27 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        phoneBookContacts = new PhoneBookContacts(getActivity());
-        rContactApplication = (RContactApplication) getActivity().getApplicationContext();
-        Utils.setBooleanPreference(getActivity(), AppConstants
+        phoneBookContacts = new PhoneBookContacts(RContactApplication.getInstance());
+        rContactApplication = (RContactApplication) RContactApplication.getInstance().getApplicationContext();
+        Utils.setBooleanPreference(RContactApplication.getInstance(), AppConstants
                 .PREF_RECENT_CALLS_BROADCAST_RECEIVER_MAIN_INSTANCE, true);
-        Utils.setBooleanPreference(getActivity(), AppConstants
+        Utils.setBooleanPreference(RContactApplication.getInstance(), AppConstants
                 .PREF_RECENT_SMS_BROADCAST_RECEIVER_MAIN_INSTANCE, true);
-        Utils.setBooleanPreference(getActivity(), AppConstants
+        Utils.setBooleanPreference(RContactApplication.getInstance(), AppConstants
                 .PREF_RECENT_CALLS_BROADCAST_RECEIVER_CALL_LOG_TAB, false);
 
-        lastSyncedData = Utils.getIntegerPreference(getActivity(), AppConstants
+        lastSyncedData = Utils.getIntegerPreference(RContactApplication.getInstance(), AppConstants
                 .PREF_SYNCED_CONTACTS, 0);
 
     }
 
     @Override
-    public void
-    onResume() {
+    public void onResume() {
         super.onResume();
         if (isFromSettings) {
             isFromSettings = false;
             if (settingRequestPermission == AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS) {
-                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission
+                if (ContextCompat.checkSelfPermission(RContactApplication.getInstance(), Manifest.permission
                         .READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
                     if (!isReload) {
                         init();
@@ -255,9 +255,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
     @Override
     public void onDetach() {
-        if (syncingTask != null) {
-            syncingTask.cancel(true);
-        }
+//        if (syncingTask != null) {
+//            syncingTask.cancel(true);
+//        }
         super.onDetach();
     }
 
@@ -269,6 +269,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        System.out.println("RContacts rootView --> " + (rootView == null));
+
         if (rootView == null) {
             rootView = inflater.inflate(R.layout.fragment_all_contacts, container, false);
             ButterKnife.bind(this, rootView);
@@ -280,13 +283,20 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission
+
+        System.out.println("RContacts isReload --> " + isReload);
+
+        if (ContextCompat.checkSelfPermission(RContactApplication.getInstance(), Manifest.permission
                 .READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.READ_CONTACTS},
                     AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS);
         } else {
             if (!isReload) {
                 init();
+            } else {
+                arrayListSyncUserContact = RContactApplication.getInstance().getArrayListSyncUserContact();
+                if (arrayListSyncUserContact != null && arrayListSyncUserContact.size() > 0)
+                    reStartSync();
             }
         }
 
@@ -295,24 +305,51 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             @Override
             public void onRefresh() {
 
-                swipeRefreshLayout.setRefreshing(true);
-                if (arrayListPhoneBookContacts != null && arrayListPhoneBookContacts.size() > 0)
-                    loadData();
+                if (Utils.getBooleanPreference(RContactApplication.getInstance(), AppConstants.PREF_CONTACT_SYNCED, false)) {
+                    swipeRefreshLayout.setRefreshing(true);
+                    if (arrayListPhoneBookContacts != null && arrayListPhoneBookContacts.size() > 0)
+                        loadData();
+                } else {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
             }
         });
     }
 
     private void loadData() {
+        lastSyncedData = Utils.getIntegerPreference(RContactApplication.getInstance(), AppConstants
+                .PREF_SYNCED_CONTACTS, 0);
         array.clear();
         arrayListPhoneBookContacts = null;
         progressAllContact.setVisibility(View.VISIBLE);
         getLoaderManager().restartLoader(0, null, this);
     }
 
+    private void reStartSync() {
+
+        int percentage = (100 * lastSyncedData) / (arrayListSyncUserContact
+                .size() + CONTACT_CHUNK);
+
+        if (percentage >= 100) {
+            ((ContactsFragment) getParentFragment()).relativeSyncProgress.setVisibility(View.GONE);
+        } else {
+            ((ContactsFragment) getParentFragment()).progressContacts.setProgress(percentage);
+        }
+
+        if (lastSyncedData < (arrayListSyncUserContact.size() + CONTACT_CHUNK)) {
+            if (syncingTask != null && syncingTask.isCancelled()) {
+                return;
+            }
+
+            System.out.println("RContacts reStartSync");
+            backgroundSync(false, null);
+        }
+    }
+
     @Override
     public void onDeliveryResponse(String serviceType, Object data, Exception error) {
         try {
-            if (error == null && getActivity() != null) {
+            if (error == null && RContactApplication.getInstance() != null) {
 
                 //<editor-fold desc="REQ_UPLOAD_CONTACTS">
 
@@ -323,7 +360,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                             (uploadContactResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
                         lastSyncedData = lastSyncedData + CONTACT_CHUNK;
-                        Utils.setIntegerPreference(getActivity(), AppConstants.PREF_SYNCED_CONTACTS,
+                        Utils.setIntegerPreference(RContactApplication.getInstance(), AppConstants.PREF_SYNCED_CONTACTS,
                                 lastSyncedData);
 
                         int percentage = (100 * lastSyncedData) / (arrayListSyncUserContact
@@ -338,7 +375,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         if (lastSyncedData < (arrayListSyncUserContact.size() + CONTACT_CHUNK)) {
                             backgroundSync(true, uploadContactResponse);
                         } else {
-                            Utils.setStringPreference(getActivity(), AppConstants.PREF_RESPONSE_KEY,
+                            Utils.setStringPreference(RContactApplication.getInstance(), AppConstants.PREF_RESPONSE_KEY,
                                     "");
                             if (!Utils.isArraylistNullOrEmpty(uploadContactResponse
                                     .getArrayListUserRcProfile())) {
@@ -357,15 +394,15 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                         .getArrayListMapping());
                             }
 
-                            Utils.setIntegerPreference(getActivity(), AppConstants
+                            Utils.setIntegerPreference(RContactApplication.getInstance(), AppConstants
                                     .PREF_SYNCED_CONTACTS, 0);
 
-                           /* Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts,
-                                    getActivity().getString(R.string.str_all_contact_sync));*/
-                            Utils.setStringPreference(getActivity(), AppConstants
+                           /* Utils.showSuccessSnackBar(RContactApplication.getInstance(), relativeRootAllContacts,
+                                    RContactApplication.getInstance().getString(R.string.str_all_contact_sync));*/
+                            Utils.setStringPreference(RContactApplication.getInstance(), AppConstants
                                     .PREF_CONTACT_LAST_SYNC_TIME, String.valueOf(System
                                     .currentTimeMillis() - 10000));
-                            /*Utils.setBooleanPreference(getActivity(), AppConstants
+                            /*Utils.setBooleanPreference(RContactApplication.getInstance(), AppConstants
                                     .PREF_CONTACT_SYNCED, true);*/
                             getRcpDetail();
                             phoneBookContacts.saveRawIdsToPref();
@@ -374,17 +411,17 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                            /* Intent localBroadcastIntent = new Intent(AppConstants
                                     .ACTION_LOCAL_BROADCAST_CALL_LOG_SYNC);
                             LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
-                                    .getInstance(getActivity());
+                                    .getInstance(RContactApplication.getInstance());
                             myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);*/
                         }
                     } else {
                         if (uploadContactResponse != null) {
                             Log.e("error response", uploadContactResponse.getMessage());
-                            Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts,
+                            Utils.showErrorSnackBar(RContactApplication.getInstance(), relativeRootAllContacts,
                                     uploadContactResponse.getMessage());
                         } else {
                             Log.e("onDeliveryResponse: ", "uploadContactResponse null");
-                            Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts,
+                            Utils.showErrorSnackBar(RContactApplication.getInstance(), relativeRootAllContacts,
                                     getString(R
                                             .string.msg_try_later));
                         }
@@ -400,8 +437,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     if (savePackageResponse != null && StringUtils.equalsIgnoreCase
                             (savePackageResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                        /*Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts,
-                                getActivity().getString(R.string.str_all_contact_sync));*/
+                        /*Utils.showSuccessSnackBar(RContactApplication.getInstance(), relativeRootAllContacts,
+                                RContactApplication.getInstance().getString(R.string.str_all_contact_sync));*/
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -421,22 +458,24 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                             }
                         }, 1200);
 
-                        Utils.setBooleanPreference(getActivity(), AppConstants
+                        RContactApplication.getInstance().setArrayListSyncUserContact(new ArrayList<ProfileData>());
+
+                        Utils.setBooleanPreference(RContactApplication.getInstance(), AppConstants
                                 .PREF_CONTACT_SYNCED, true);
                         Intent localBroadcastIntent = new Intent(AppConstants
                                 .ACTION_LOCAL_BROADCAST_CALL_LOG_SYNC);
                         LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
-                                .getInstance(getActivity());
+                                .getInstance(RContactApplication.getInstance());
                         myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
 
                     } else {
                         if (savePackageResponse != null) {
                             Log.e("error response", savePackageResponse.getMessage());
-                            Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts,
+                            Utils.showErrorSnackBar(RContactApplication.getInstance(), relativeRootAllContacts,
                                     savePackageResponse.getMessage());
                         } else {
                             Log.e("onDeliveryResponse: ", "savePackageResponse null");
-                            Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts,
+                            Utils.showErrorSnackBar(RContactApplication.getInstance(), relativeRootAllContacts,
                                     getString(R.string.msg_try_later));
                         }
                     }
@@ -449,16 +488,16 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     WsResponseObject inviteContactResponse = (WsResponseObject) data;
                     if (inviteContactResponse != null && StringUtils.equalsIgnoreCase
                             (inviteContactResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
-                        Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts,
-                                getActivity().getString(R.string.invitation_sent));
+                        Utils.showSuccessSnackBar(RContactApplication.getInstance(), relativeRootAllContacts,
+                                RContactApplication.getInstance().getString(R.string.invitation_sent));
                     } else {
                         if (inviteContactResponse != null) {
                             Log.e("error response", inviteContactResponse.getMessage());
-                            Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts,
+                            Utils.showErrorSnackBar(RContactApplication.getInstance(), relativeRootAllContacts,
                                     inviteContactResponse.getMessage());
                         } else {
                             Log.e("onDeliveryResponse: ", "uploadContactResponse null");
-                            Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts,
+                            Utils.showErrorSnackBar(RContactApplication.getInstance(), relativeRootAllContacts,
                                     getString(R
                                             .string.msg_try_later));
                         }
@@ -481,7 +520,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 //</editor-fold>
             } else {
                 progressAllContact.setVisibility(View.GONE);
-                Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, "" + (error !=
+                Utils.showErrorSnackBar(RContactApplication.getInstance(), relativeRootAllContacts, "" + (error !=
                         null ?
                         error.getLocalizedMessage() : null));
             }
@@ -502,11 +541,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         .PERMISSION_GRANTED) {
 
                     // Permission Granted
-
                     if (!isReload) {
                         init();
                     }
-
 
                 } else {
                     showPermissionConfirmationDialog(AppConstants
@@ -521,7 +558,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         .PERMISSION_GRANTED) {
                     AppConstants.setIsFirstTime(false);
                     // Permission Granted
-                    Utils.callIntent(getActivity(), callNumber);
+                    Utils.callIntent(RContactApplication.getInstance(), callNumber);
                 } else {
                     // Permission Denied
                     showPermissionConfirmationDialog(AppConstants
@@ -560,7 +597,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
         // Starts the query
         return new CursorLoader(
-                getActivity(),
+                RContactApplication.getInstance(),
                 uri,
                 projection,
                 selection,
@@ -575,7 +612,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             arrayListPhoneBookContacts = new ArrayList<>();
             arrayListFavouriteContacts = new ArrayList<>();
 
-            phoneBookContacts = new PhoneBookContacts(getActivity());
+            phoneBookContacts = new PhoneBookContacts(RContactApplication.getInstance());
             isReload = false;
 
         } else {
@@ -601,7 +638,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     public void onStart() {
         super.onStart();
 
-        if (Utils.getBooleanPreference(getActivity(), AppConstants.PREF_PERCENTAGE_VIEW, true)) {
+        if (Utils.getBooleanPreference(RContactApplication.getInstance(), AppConstants.PREF_PERCENTAGE_VIEW, true)) {
             queryManager = new QueryManager(((BaseActivity) getActivity()).getDatabaseHandler());
             ProfileDataOperation profileDataOperation = queryManager.getRcProfileDetail
                     (getActivity(), ((BaseActivity) getActivity()).getUserPmId());
@@ -645,11 +682,12 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
     private void init() {
 
+        System.out.println("RContacts init initLoader ");
         getLoaderManager().initLoader(0, null, this);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(RContactApplication.getInstance());
         recyclerViewContactList.setLayoutManager(linearLayoutManager);
-        RecyclerItemDecoration decoration = new RecyclerItemDecoration(getActivity(), ContextCompat
-                .getColor(getActivity(), R.color.colorVeryLightGray), 0.7f);
+        RecyclerItemDecoration decoration = new RecyclerItemDecoration(RContactApplication.getInstance(), ContextCompat
+                .getColor(RContactApplication.getInstance(), R.color.colorVeryLightGray), 0.7f);
         recyclerViewContactList.addItemDecoration(decoration);
 
         final SwipeDismissBehavior swipeDismissBehavior = new SwipeDismissBehavior();
@@ -662,7 +700,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             @Override
             public void onDismiss(View view) {
                 clSwipeDismiss.setVisibility(View.GONE);
-                Utils.setBooleanPreference(getActivity(), AppConstants.PREF_PERCENTAGE_VIEW, false);
+                Utils.setBooleanPreference(RContactApplication.getInstance(), AppConstants.PREF_PERCENTAGE_VIEW, false);
             }
 
             @Override
@@ -672,6 +710,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 }*/
             }
         });
+
+        System.out.println("RContacts end init ");
     }
 
 
@@ -692,17 +732,17 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     }
 
     private void startSync() {
-        if (getActivity() == null)
+        if (RContactApplication.getInstance() == null)
             return;
 
-        if (!Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CONTACT_SYNCED, false)) {
+        if (!Utils.getBooleanPreference(RContactApplication.getInstance(), AppConstants.PREF_CONTACT_SYNCED, false)) {
             syncingTask = new SyncingTask();
             syncingTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } else {
             Intent localBroadcastIntent = new Intent(AppConstants
                     .ACTION_LOCAL_BROADCAST_CONTACT_DISPLAYED);
             LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance
-                    (getActivity());
+                    (RContactApplication.getInstance());
             myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
         }
     }
@@ -914,7 +954,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         Gson gson = new Gson();
 
         String jsonString = gson.toJson(profileData);
-        Utils.setStringPreference(getActivity(),"search_data",jsonString);
+        Utils.setStringPreference(RContactApplication.getInstance(), "search_data", jsonString);
 
         // Basic Profile Data
         TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
@@ -1294,7 +1334,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 ProfileDataOperationPhoneNumber phoneNumberOperation = new
                         ProfileDataOperationPhoneNumber();
 
-                arrayListPBPhoneNumber.add(Utils.getFormattedNumber(getActivity(),
+                arrayListPBPhoneNumber.add(Utils.getFormattedNumber(RContactApplication.getInstance(),
                         contactNumberCursor.getString(contactNumberCursor.getColumnIndex
                                 (ContactsContract.CommonDataKinds.Phone.NUMBER))));
 
@@ -1349,7 +1389,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     } else {
                         callNumber = actionNumber;
                     }*/
-                    callNumber = Utils.getFormattedNumber(getActivity(), actionNumber);
+                    callNumber = Utils.getFormattedNumber(RContactApplication.getInstance(), actionNumber);
                     swipeToCall();
                     // showCallConfirmationDialog();
 
@@ -1400,7 +1440,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     float width = height / 3;
 
                     if (dX > 0) {
-                        p.setColor(ContextCompat.getColor(getActivity(), R.color
+                        p.setColor(ContextCompat.getColor(RContactApplication.getInstance(), R.color
                                 .darkModerateLimeGreen));
                         RectF background = new RectF((float) itemView.getLeft(), (float) itemView
                                 .getTop(), dX, (float) itemView.getBottom());
@@ -1412,7 +1452,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                 width, (float) itemView.getBottom() - width);
                         c.drawBitmap(icon, null, icon_dest, p);
                     } else {
-                        p.setColor(ContextCompat.getColor(getActivity(), R.color.brightOrange));
+                        p.setColor(ContextCompat.getColor(RContactApplication.getInstance(), R.color.brightOrange));
                         RectF background = new RectF((float) itemView.getRight() + dX, (float)
                                 itemView.getTop(), (float) itemView.getRight(), (float) itemView
                                 .getBottom());
@@ -1434,14 +1474,14 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     }
 
     private void swipeToCall() {
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest
+        if (ContextCompat.checkSelfPermission(RContactApplication.getInstance(), Manifest
                 .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission
                     .CALL_PHONE}, AppConstants
                     .MY_PERMISSIONS_REQUEST_PHONE_CALL);
         } else {
             AppConstants.setIsFirstTime(false);
-            Utils.callIntent(getActivity(), Utils.getFormattedNumber(getActivity
+            Utils.callIntent(RContactApplication.getInstance(), Utils.getFormattedNumber(getActivity
                     (), callNumber));
         }
     }
@@ -1452,9 +1492,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     ("#00796B"));
             int percentage = 5;
             ArrayList<String> arrayListRemainingFields = new ArrayList<>();
-            if (Utils.hasSharedPreference(getActivity(), AppConstants
+            if (Utils.hasSharedPreference(RContactApplication.getInstance(), AppConstants
                     .PREF_PROFILE_REMAINING_FIELDS)) {
-                arrayListRemainingFields.addAll(Utils.getArrayListPreference(getActivity(),
+                arrayListRemainingFields.addAll(Utils.getArrayListPreference(RContactApplication.getInstance(),
                         AppConstants.PREF_PROFILE_REMAINING_FIELDS));
             }
 
@@ -1648,15 +1688,15 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             }
             //</editor-fold>
 
-            Utils.setArrayListPreference(getActivity(), AppConstants
+            Utils.setArrayListPreference(RContactApplication.getInstance(), AppConstants
                     .PREF_PROFILE_REMAINING_FIELDS, arrayListRemainingFields);
 
             if (percentage < 100) {
 
-                textCompleteProfile.setTypeface(Utils.typefaceSemiBold(getActivity()));
-                textCompleteProfileDescription.setTypeface(Utils.typefaceRegular(getActivity()));
+                textCompleteProfile.setTypeface(Utils.typefaceSemiBold(RContactApplication.getInstance()));
+                textCompleteProfileDescription.setTypeface(Utils.typefaceRegular(RContactApplication.getInstance()));
 
-                /*relativeContent.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color
+                /*relativeContent.setBackgroundColor(ContextCompat.getColor(RContactApplication.getInstance(), R.color
                         .veryVeryLightGray));*/
                 relativeProfilePercentage.setBackgroundColor(Color.parseColor("#EBEBEB"));
 
@@ -1674,7 +1714,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                             (random.nextInt(arrayListRemainingFields.size()))));
                 }
 
-                buttonUpdateNow.setTypeface(Utils.typefaceRegular(getActivity()));
+                buttonUpdateNow.setTypeface(Utils.typefaceRegular(RContactApplication.getInstance()));
 
                 buttonUpdateNow.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -1704,14 +1744,14 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 //
 //                    case R.id.rippleRight:
 //                        callConfirmationDialog.dismissDialog();
-//                        if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest
+//                        if (ContextCompat.checkSelfPermission(RContactApplication.getInstance(), android.Manifest
 //                                .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
 //                            requestPermissions(new String[]{Manifest.permission
 //                                    .CALL_PHONE}, AppConstants
 //                                    .MY_PERMISSIONS_REQUEST_PHONE_CALL);
 //                        } else {
 //                            AppConstants.setIsFirstTime(false);
-//                            Utils.callIntent(getActivity(), Utils.getFormattedNumber(getActivity
+//                            Utils.callIntent(RContactApplication.getInstance(), Utils.getFormattedNumber(getActivity
 //                                    (), callNumber));
 //                        }
 //                        break;
@@ -1720,11 +1760,11 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 //            }
 //        };
 //
-//        callConfirmationDialog = new MaterialDialog(getActivity(), cancelListener);
+//        callConfirmationDialog = new MaterialDialog(RContactApplication.getInstance(), cancelListener);
 //        callConfirmationDialog.setTitleVisibility(View.GONE);
-//        callConfirmationDialog.setLeftButtonText(getActivity().getString(R.string.action_cancel));
-//        callConfirmationDialog.setRightButtonText(getActivity().getString(R.string.action_call));
-//        callConfirmationDialog.setDialogBody(getActivity().getString(R.string.action_call) + " "
+//        callConfirmationDialog.setLeftButtonText(RContactApplication.getInstance().getString(R.string.action_cancel));
+//        callConfirmationDialog.setRightButtonText(RContactApplication.getInstance().getString(R.string.action_call));
+//        callConfirmationDialog.setDialogBody(RContactApplication.getInstance().getString(R.string.action_call) + " "
 //                + callNumber + "?");
 //
 //        callConfirmationDialog.showDialog();
@@ -1755,7 +1795,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         isFromSettings = true;
                         getActivity().finish();
                         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                                Uri.fromParts("package", getActivity().getPackageName(), null));
+                                Uri.fromParts("package", RContactApplication.getInstance().getPackageName(), null));
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                         switch (permissionType) {
@@ -1777,18 +1817,18 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         String message = "";
         switch (permissionType) {
             case AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS:
-                message = getActivity().getString(R.string.contact_read_permission);
+                message = RContactApplication.getInstance().getString(R.string.contact_read_permission);
                 break;
             case AppConstants.MY_PERMISSIONS_REQUEST_PHONE_CALL:
-                message = getActivity().getString(R.string.calling_permission);
+                message = RContactApplication.getInstance().getString(R.string.calling_permission);
                 break;
         }
 
-        permissionConfirmationDialog = new MaterialDialog(getActivity(), cancelListener);
+        permissionConfirmationDialog = new MaterialDialog(RContactApplication.getInstance(), cancelListener);
         permissionConfirmationDialog.setTitleVisibility(View.GONE);
-        permissionConfirmationDialog.setLeftButtonText(getActivity().getString(R.string
+        permissionConfirmationDialog.setLeftButtonText(RContactApplication.getInstance().getString(R.string
                 .action_cancel));
-        permissionConfirmationDialog.setRightButtonText(getActivity().getString(R.string
+        permissionConfirmationDialog.setRightButtonText(RContactApplication.getInstance().getString(R.string
                 .action_ok));
         permissionConfirmationDialog.setDialogBody(message);
 
@@ -1800,6 +1840,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
     private void syncContacts() {
 
+        arrayListSyncUserContact = new ArrayList<>();
         LongSparseArray<ProfileDataOperation> profileDetailSparseArray = new LongSparseArray<>();
 
         //<editor-fold desc="Create Cursor">
@@ -1874,7 +1915,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         if (syncingTask != null && syncingTask.isCancelled()) {
             return;
         }
-        Cursor cursor = getActivity().getContentResolver().query(uri, projection, selection,
+        Cursor cursor = RContactApplication.getInstance().getContentResolver().query(uri, projection, selection,
                 selectionArgs, sortOrder);
         //</editor-fold>
 
@@ -1926,7 +1967,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                     ProfileDataOperationPhoneNumber();
 
 //                            String number = ;
-//                            number = Utils.getFormattedNumber(getActivity(), number);
+//                            number = Utils.getFormattedNumber(RContactApplication.getInstance(), number);
 
                             phoneNumber.setPhoneNumber(cursor.getString(cursor.getColumnIndex
                                     (ContactsContract
@@ -2136,7 +2177,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
             arrayListSyncUserContact.add(profileData);
         }
-        //</editor-fold>
+
+        RContactApplication.getInstance().setArrayListSyncUserContact(arrayListSyncUserContact);
 
         int percentage = (100 * lastSyncedData) / (arrayListSyncUserContact
                 .size() + CONTACT_CHUNK);
@@ -2152,19 +2194,21 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 return;
             }
             backgroundSync(false, null);
+        } else if (lastSyncedData < (arrayListSyncUserContact.size() + CONTACT_CHUNK)) {
+            backgroundSync(true, null);
         } else if (arrayListSyncUserContact.size() == 0) {
-            Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts,
-                    getActivity().getString(R.string.str_all_contact_sync));
-            Utils.setStringPreference(getActivity(), AppConstants
+            Utils.showSuccessSnackBar(RContactApplication.getInstance(), relativeRootAllContacts,
+                    RContactApplication.getInstance().getString(R.string.str_all_contact_sync));
+            Utils.setStringPreference(RContactApplication.getInstance(), AppConstants
                     .PREF_CONTACT_LAST_SYNC_TIME, String.valueOf(System
                     .currentTimeMillis() - 10000));
-            Utils.setBooleanPreference(getActivity(), AppConstants
+            Utils.setBooleanPreference(RContactApplication.getInstance(), AppConstants
                     .PREF_CONTACT_SYNCED, true);
             phoneBookContacts.saveRawIdsToPref();
             Intent localBroadcastIntent = new Intent(AppConstants
                     .ACTION_LOCAL_BROADCAST_CALL_LOG_SYNC);
             LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
-                    .getInstance(getActivity());
+                    .getInstance(RContactApplication.getInstance());
             myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
         }
     }
@@ -2181,7 +2225,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 if (addToDatabase) {
                     if (uploadContactResponse != null) {
                         responseKey = uploadContactResponse.getResponseKey();
-                        Utils.setStringPreference(getActivity(), AppConstants.PREF_RESPONSE_KEY,
+                        Utils.setStringPreference(RContactApplication.getInstance(), AppConstants.PREF_RESPONSE_KEY,
                                 responseKey);
                         if (syncingTask != null && syncingTask.isCancelled()) {
                             return;
@@ -2211,10 +2255,10 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 if (lastSyncedData <= limit) {
                     ArrayList<ProfileData> subList = new ArrayList<>(arrayListSyncUserContact
                             .subList(lastSyncedData, limit));
-                    uploadContacts(lastSyncedData, Utils.getStringPreference(getActivity(),
+                    uploadContacts(lastSyncedData, Utils.getStringPreference(RContactApplication.getInstance(),
                             AppConstants.PREF_RESPONSE_KEY, ""), subList);
                 } else {
-                    uploadContacts(lastSyncedData, Utils.getStringPreference(getActivity(),
+                    uploadContacts(lastSyncedData, Utils.getStringPreference(RContactApplication.getInstance(),
                             AppConstants.PREF_RESPONSE_KEY, ""), new ArrayList<ProfileData>());
                 }
             }
@@ -2245,14 +2289,14 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         uploadContactObject.setResponseKey(responseKey);
         uploadContactObject.setProfileData(arrayListUserContact);
 
-        if (Utils.isNetworkAvailable(getActivity())) {
+        if (Utils.isNetworkAvailable(RContactApplication.getInstance())) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     uploadContactObject, null, WsResponseObject.class, WsConstants
                     .REQ_UPLOAD_CONTACTS + "_" + previouslySyncedData, null, true)
                     .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
                             BuildConfig.WS_ROOT + WsConstants.REQ_UPLOAD_CONTACTS);
         } else {
-            Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, getResources()
+            Utils.showErrorSnackBar(RContactApplication.getInstance(), relativeRootAllContacts, getResources()
                     .getString(R.string.msg_no_network));
         }
     }
@@ -2264,13 +2308,13 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         WsRequestObject savePackageObject = new WsRequestObject();
         savePackageObject.setArrayListPackageData(phoneBookContacts.getContactStorageAccounts());
 
-        if (Utils.isNetworkAvailable(getActivity())) {
+        if (Utils.isNetworkAvailable(RContactApplication.getInstance())) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     savePackageObject, null, WsResponseObject.class, WsConstants
                     .REQ_SAVE_PACKAGE, null, true).executeOnExecutor(AsyncTask
                     .THREAD_POOL_EXECUTOR, BuildConfig.WS_ROOT + WsConstants.REQ_SAVE_PACKAGE);
         } else {
-            Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, getResources()
+            Utils.showErrorSnackBar(RContactApplication.getInstance(), relativeRootAllContacts, getResources()
                     .getString(R.string.msg_no_network));
         }
     }
@@ -2281,7 +2325,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         checkVersionObject.setAppVersion(String.valueOf(BuildConfig.VERSION_CODE));
         checkVersionObject.setAppPlatform("android");
 
-        if (Utils.isNetworkAvailable(getActivity())) {
+        if (Utils.isNetworkAvailable(RContactApplication.getInstance())) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     checkVersionObject, null,
                     WsResponseObject.class, WsConstants.REQ_GET_CHECK_VERSION, null, true)
@@ -2289,7 +2333,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                             WsConstants
                                     .REQ_GET_CHECK_VERSION);
         } else {
-            Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, getResources()
+            Utils.showErrorSnackBar(RContactApplication.getInstance(), relativeRootAllContacts, getResources()
                     .getString(R.string.msg_no_network));
         }
     }
@@ -2300,17 +2344,17 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
         ContextThemeWrapper themedContext;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            themedContext = new ContextThemeWrapper(getActivity(), android.R.style
+            themedContext = new ContextThemeWrapper(RContactApplication.getInstance(), android.R.style
                     .Theme_Holo_Light_Dialog_NoActionBar);
         } else {
-            themedContext = new ContextThemeWrapper(getActivity(), android.R.style
+            themedContext = new ContextThemeWrapper(RContactApplication.getInstance(), android.R.style
                     .Theme_Light_NoTitleBar);
         }
 
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(themedContext);
 
-        alertDialogBuilder.setTitle(getActivity().getString(R.string.youAreNotUpdatedTitle));
-        alertDialogBuilder.setMessage(getActivity().getString(R.string.youAreNotUpdatedMessage));
+        alertDialogBuilder.setTitle(RContactApplication.getInstance().getString(R.string.youAreNotUpdatedTitle));
+        alertDialogBuilder.setMessage(RContactApplication.getInstance().getString(R.string.youAreNotUpdatedMessage));
         alertDialogBuilder.setCancelable(false);
         alertDialogBuilder.setPositiveButton(R.string.update, new DialogInterface.OnClickListener
                 () {
