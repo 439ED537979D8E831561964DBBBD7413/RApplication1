@@ -75,22 +75,25 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private ArrayList<Integer> mSectionPositions;
     private int searchCount;
     private String searchChar;
+    private String ownProfileId;
 
     //<editor-fold desc="Constructor">
     public RContactListAdapter(Fragment fragment, ArrayList<Object> arrayListUserProfile,
-                               ArrayList<String> arrayListContactHeader) {
+                               ArrayList<String> arrayListContactHeader, String ownUserId) {
         this.fragment = fragment;
         this.activity = fragment.getActivity();
         this.arrayListUserProfile = arrayListUserProfile;
         this.arrayListContactHeader = arrayListContactHeader;
+        this.ownProfileId = ownUserId;
     }
 
-    public RContactListAdapter(Activity activity, ArrayList<Object> arrayListUserContact) {
+    public RContactListAdapter(Activity activity, ArrayList<Object> arrayListUserContact, String ownProfileId) {
         this.activity = activity;
         this.arrayListUserProfile = new ArrayList<>();
         this.arrayListUserProfile.addAll(arrayListUserContact);
         this.arraylist = new ArrayList<>();
         this.arraylist.addAll(arrayListUserContact);
+        this.ownProfileId = ownProfileId;
     }
 
     public void updateList(int pos, ArrayList<Object> arrayListUserProfile) {
@@ -338,24 +341,26 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         holder.textRatingUserCount.setText(userProfile.getTotalProfileRateUser());
 
-        if(userProfile.getProfileRatingPrivacy() != null && userProfile.getRatingPrivate() != null){
-            if (Integer.parseInt((String) MoreObjects.firstNonNull(userProfile.getProfileRatingPrivacy()
-                    , 0)) == IntegerConstants.PRIVACY_EVERYONE) {
-                holder.ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
-            } else if (Integer.parseInt((String) MoreObjects.firstNonNull(userProfile.getProfileRatingPrivacy(),
-                    0)) == IntegerConstants.PRIVACY_MY_CONTACT) {
-                if (Integer.parseInt((String) MoreObjects.firstNonNull(userProfile.getRatingPrivate(), 0))
-                        == IntegerConstants.IS_PRIVATE) {
-                    holder.ratingUser.setRating(0);
-                } else {
+        if (!StringUtils.equalsIgnoreCase(ownProfileId,userProfile.getPmId())) {
+            if (userProfile.getProfileRatingPrivacy() != null && userProfile.getRatingPrivate() != null) {
+                if (Integer.parseInt((String) MoreObjects.firstNonNull(userProfile.getProfileRatingPrivacy()
+                        , 0)) == IntegerConstants.PRIVACY_EVERYONE) {
                     holder.ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
-                }
+                } else if (Integer.parseInt((String) MoreObjects.firstNonNull(userProfile.getProfileRatingPrivacy(),
+                        0)) == IntegerConstants.PRIVACY_MY_CONTACT) {
+                    if (Integer.parseInt((String) MoreObjects.firstNonNull(userProfile.getRatingPrivate(), 0))
+                            == IntegerConstants.IS_PRIVATE) {
+                        holder.ratingUser.setRating(0);
+                    } else {
+                        holder.ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
+                    }
 
+                } else {
+                    holder.ratingUser.setRating(0);
+                }
             } else {
                 holder.ratingUser.setRating(0);
             }
-        }else{
-            holder.ratingUser.setRating(0);
         }
 
 
