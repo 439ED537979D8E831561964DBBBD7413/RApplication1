@@ -338,21 +338,26 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         holder.textRatingUserCount.setText(userProfile.getTotalProfileRateUser());
 
-        if (Integer.parseInt((String) MoreObjects.firstNonNull(userProfile.getProfileRatingPrivacy()
-                , 0)) == IntegerConstants.PRIVACY_EVERYONE) {
-            holder.ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
-        } else if (Integer.parseInt((String) MoreObjects.firstNonNull(userProfile.getProfileRatingPrivacy(),
-                0)) == IntegerConstants.PRIVACY_MY_CONTACT) {
-            if (Integer.parseInt((String) MoreObjects.firstNonNull(userProfile.getRatingPrivate(), 0))
-                    == IntegerConstants.IS_PRIVATE) {
-                holder.ratingUser.setRating(0);
-            } else {
+        if(userProfile.getProfileRatingPrivacy() != null && userProfile.getRatingPrivate() != null){
+            if (Integer.parseInt((String) MoreObjects.firstNonNull(userProfile.getProfileRatingPrivacy()
+                    , 0)) == IntegerConstants.PRIVACY_EVERYONE) {
                 holder.ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
-            }
+            } else if (Integer.parseInt((String) MoreObjects.firstNonNull(userProfile.getProfileRatingPrivacy(),
+                    0)) == IntegerConstants.PRIVACY_MY_CONTACT) {
+                if (Integer.parseInt((String) MoreObjects.firstNonNull(userProfile.getRatingPrivate(), 0))
+                        == IntegerConstants.IS_PRIVATE) {
+                    holder.ratingUser.setRating(0);
+                } else {
+                    holder.ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
+                }
 
-        } else {
+            } else {
+                holder.ratingUser.setRating(0);
+            }
+        }else{
             holder.ratingUser.setRating(0);
         }
+
 
         holder.relativeRowAllContact.setTag(position);
 
