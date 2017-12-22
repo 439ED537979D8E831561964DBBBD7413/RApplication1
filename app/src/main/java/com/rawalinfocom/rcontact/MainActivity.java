@@ -637,62 +637,89 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             //<editor-fold desc="REQ_UPLOAD_CONTACTS">
 
             if (serviceType.contains(WsConstants.REQ_UPLOAD_CONTACTS)) {
-                WsResponseObject uploadContactResponse = (WsResponseObject) data;
+                final WsResponseObject uploadContactResponse = (WsResponseObject) data;
                 if (uploadContactResponse != null && StringUtils.equalsIgnoreCase
                         (uploadContactResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
                     if (Utils.getStringPreference(RContactApplication.getInstance(), AppConstants.PREF_SYNC_FIRST_TIME,
                             "").equalsIgnoreCase("first")) {
 
-                        lastSyncedData = lastSyncedData + CONTACT_CHUNK;
-                        Utils.setIntegerPreference(RContactApplication.getInstance(), AppConstants.PREF_SYNCED_CONTACTS,
-                                lastSyncedData);
+                        new Handler().post(new Runnable() {
+                            @Override
+                            public void run() {
 
-                        int percentage = (100 * lastSyncedData) / (arrayListSyncUserContact
-                                .size() + CONTACT_CHUNK);
+                                System.out.println("RContacts in response Handler");
 
-                        /*((ContactsFragment) getParentFragment()).textSyncProgress.setText
-                                (percentage + "% data synced!");*/
-//                        Utils.showSuccessSnackBar(RContactApplication.getInstance(), relativeRootContactsMain,
-//                                String.valueOf(percentage));
-                        progressContacts.setProgressWithAnim(percentage);
+                                String responseKey;
+                                responseKey = uploadContactResponse.getResponseKey();
+                                Utils.setStringPreference(RContactApplication.getInstance(), AppConstants.PREF_RESPONSE_KEY,
+                                        responseKey);
+                                if (syncingTask != null && syncingTask.isCancelled()) {
+                                    return;
+                                }
+                                if (!Utils.isArraylistNullOrEmpty(uploadContactResponse
+                                        .getArrayListUserRcProfile())) {
 
-                        if (lastSyncedData < (arrayListSyncUserContact.size() + CONTACT_CHUNK)) {
-//                            System.out.println("RContacts onDeliveryResponse contactBackgroundSync");
-                            contactBackgroundSync(true, uploadContactResponse);
-                        } else {
-                            Utils.setStringPreference(RContactApplication.getInstance(), AppConstants.PREF_RESPONSE_KEY,
-                                    "");
-                            if (!Utils.isArraylistNullOrEmpty(uploadContactResponse
-                                    .getArrayListUserRcProfile())) {
+                                    /* Store Unique Contacts to ProfileMobileMapping */
+                                    storeToMobileMapping(uploadContactResponse.getArrayListUserRcProfile());
+
+                                    /* Store Unique Emails to ProfileEmailMapping */
+                                    storeToEmailMapping(uploadContactResponse.getArrayListUserRcProfile());
+
+                                    /* Store Profile Details to respective Table */
+                                    storeProfileDataToDb(uploadContactResponse.getArrayListUserRcProfile(),
+                                            uploadContactResponse.getArrayListMapping());
+                                }
+
+                                lastSyncedData = lastSyncedData + CONTACT_CHUNK;
+                                Utils.setIntegerPreference(RContactApplication.getInstance(), AppConstants.PREF_SYNCED_CONTACTS,
+                                        lastSyncedData);
+
+                                int percentage = (100 * lastSyncedData) / (arrayListSyncUserContact
+                                        .size() + CONTACT_CHUNK);
+
+                                progressContacts.setProgressWithAnim(percentage);
+
+                                System.out.println("RContacts in response Handler end");
+
+                                if (lastSyncedData < (arrayListSyncUserContact.size() + CONTACT_CHUNK)) {
+                                    System.out.println("RContacts in response contactBackgroundSync");
+                                    contactBackgroundSync();
+                                } else {
+                                    Utils.setStringPreference(RContactApplication.getInstance(), AppConstants.PREF_RESPONSE_KEY,
+                                            "");
+                                    if (!Utils.isArraylistNullOrEmpty(uploadContactResponse
+                                            .getArrayListUserRcProfile())) {
 
                                 /* Store Unique Contacts to ProfileMobileMapping */
-                                storeToMobileMapping(uploadContactResponse
-                                        .getArrayListUserRcProfile());
+                                        storeToMobileMapping(uploadContactResponse
+                                                .getArrayListUserRcProfile());
 
                                 /* Store Unique Emails to ProfileEmailMapping */
-                                storeToEmailMapping(uploadContactResponse
-                                        .getArrayListUserRcProfile());
+                                        storeToEmailMapping(uploadContactResponse
+                                                .getArrayListUserRcProfile());
 
                                 /* Store Profile Details to respective Table */
-                                storeProfileDataToDb(uploadContactResponse
-                                        .getArrayListUserRcProfile(), uploadContactResponse
-                                        .getArrayListMapping());
-                            }
+                                        storeProfileDataToDb(uploadContactResponse
+                                                .getArrayListUserRcProfile(), uploadContactResponse
+                                                .getArrayListMapping());
+                                    }
 
-                            Utils.setIntegerPreference(RContactApplication.getInstance(), AppConstants
-                                    .PREF_SYNCED_CONTACTS, 0);
+                                    Utils.setIntegerPreference(RContactApplication.getInstance(), AppConstants
+                                            .PREF_SYNCED_CONTACTS, 0);
 
                            /* Utils.showSuccessSnackBar(RContactApplication.getInstance(), relativeRootAllContacts,
                                     RContactApplication.getInstance().getString(R.string.str_all_contact_sync));*/
-                            Utils.setStringPreference(RContactApplication.getInstance(), AppConstants
-                                    .PREF_CONTACT_LAST_SYNC_TIME, String.valueOf(System
-                                    .currentTimeMillis() - 10000));
+                                    Utils.setStringPreference(RContactApplication.getInstance(), AppConstants
+                                            .PREF_CONTACT_LAST_SYNC_TIME, String.valueOf(System
+                                            .currentTimeMillis() - 10000));
 //                            getRcpDetail();
-                            phoneBookContacts.saveRawIdsToPref();
+                                    phoneBookContacts.saveRawIdsToPref();
 
-                            savePackages();
-                        }
+                                    savePackages();
+                                }
+                            }
+                        });
 
                     } else {
 
@@ -4624,7 +4651,12 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             if (syncingTask != null && syncingTask.isCancelled()) {
                 return;
             }
-            contactBackgroundSync(false, null);
+            contactBackgroundSync();
+        } else if (lastSyncedData < arrayListSyncUserContact.size() + CONTACT_CHUNK) {
+            if (syncingTask != null && syncingTask.isCancelled()) {
+                return;
+            }
+            contactBackgroundSync();
         } else if (arrayListSyncUserContact.size() == 0) {
             Utils.showSuccessSnackBar(RContactApplication.getInstance(), relativeRootContactsMain,
                     RContactApplication.getInstance().getString(R.string.str_all_contact_sync));
@@ -4642,40 +4674,13 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         }
     }
 
-    private void contactBackgroundSync(final boolean addToDatabase, final WsResponseObject
-            uploadContactResponse) {
+    private void contactBackgroundSync() {
         if (syncingTask != null && syncingTask.isCancelled()) {
             return;
         }
         Runnable run = new Runnable() {
             @Override
             public void run() {
-                String responseKey;
-                if (addToDatabase) {
-                    if (uploadContactResponse != null) {
-//                        System.out.println("RContacts  contactBackgroundSync uploadContactResponse !null");
-                        responseKey = uploadContactResponse.getResponseKey();
-                        Utils.setStringPreference(RContactApplication.getInstance(), AppConstants.PREF_RESPONSE_KEY,
-                                responseKey);
-                        if (syncingTask != null && syncingTask.isCancelled()) {
-                            return;
-                        }
-                        if (!Utils.isArraylistNullOrEmpty(uploadContactResponse
-                                .getArrayListUserRcProfile())) {
-
-                        /* Store Unique Contacts to ProfileMobileMapping */
-                            storeToMobileMapping(uploadContactResponse.getArrayListUserRcProfile());
-
-                        /* Store Unique Emails to ProfileEmailMapping */
-                            storeToEmailMapping(uploadContactResponse.getArrayListUserRcProfile());
-
-                        /* Store Profile Details to respective Table */
-                            storeProfileDataToDb(uploadContactResponse.getArrayListUserRcProfile(),
-                                    uploadContactResponse.getArrayListMapping());
-
-                        }
-                    }
-                }
 //                System.out.println("RContacts contactBackgroundSync uploadContactResponse null");
                 int limit;
                 if (arrayListSyncUserContact.size() > (lastSyncedData + CONTACT_CHUNK)) {
