@@ -122,6 +122,7 @@ public class AppConstants {
     //<editor-fold desc="Intent Extra">
 
     public static String EXTRA_OBJECT_COUNTRY = "extra_object_country";
+    public static String EXTRA_OBJECT_COUNTRY_CODE = "extra_object_country_code";
     public static String EXTRA_PM_ID = "extra_pm_id";
     public static String EXTRA_CHECK_NUMBER_FAVOURITE = "extra_check_number_favourite";
     public static String EXTRA_PHONE_BOOK_ID = "extra_phone_book_id";
@@ -133,6 +134,7 @@ public class AppConstants {
     public static String EXTRA_LOGIN_TYPE = "extra_login_type";
     public static String EXTRA_IS_FROM = "extra_is_from";
     public static String EXTRA_IS_FROM_FORGOT_PASSWORD = "extra_is_from_forgot_password";
+    public static String EXTRA_IS_FROM_VERIFICATION = "extra_is_from_verification";
     public static String EXTRA_IS_FROM_RE_LOGIN = "extra_is_from_re_login";
     public static String EXTRA_LOCAL_BROADCAST_MESSAGE = "message";
     public static String EXTRA_EXISTING_RELATION_DETAILS = "existing_relation_details";
@@ -256,6 +258,8 @@ public class AppConstants {
     public static String PREF_USER_JOINING_DATE = "pref_user_joining_date";
     public static String PREF_USER_VERIFIED_EMAIL = "pref_user_verified_email";
     public static String PREF_RESPONSE_KEY = "pref_response_key";
+    public static String PREF_SYNC_FIRST_TIME = "pref_sync_first_time";
+    public static String PREF_SYNC_RUNNING = "pref_sync_running";
     public static String PREF_CALL_LOG_RESPONSE_KEY = "pref_call_log_response_key";
 
     public static String KEY_PREFERENCES = "pref_rcontact";

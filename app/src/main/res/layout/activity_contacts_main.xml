@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <android.support.v4.widget.DrawerLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
@@ -19,7 +16,7 @@
         <include
             layout="@layout/app_bar_contacts_main"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
         <android.support.design.widget.NavigationView
             android:id="@+id/nav_view"
@@ -40,9 +37,9 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical">
 
-                    <include layout="@layout/nav_header_contacts_main"/>
+                    <include layout="@layout/nav_header_contacts_main" />
 
-                    <include layout="@layout/nav_menu_item_list"/>
+                    <include layout="@layout/nav_menu_item_list" />
 
                 </LinearLayout>
 
@@ -154,6 +151,7 @@
     </android.support.v4.widget.DrawerLayout>
 
     <FrameLayout
+        android:visibility="gone"
         android:id="@+id/frame_tutorial"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -183,7 +181,7 @@
                     android:contentDescription="@string/str_content_description"
                     android:padding="@dimen/margin_small"
                     android:src="@drawable/ic_action_notification"
-                    android:visibility="invisible"/>
+                    android:visibility="invisible" />
 
                 <ImageView
                     android:id="@+id/image_tutorial_add_contact"
@@ -192,7 +190,7 @@
                     android:contentDescription="@string/str_content_description"
                     android:padding="@dimen/margin_small"
                     android:src="@drawable/ic_add_new_contact"
-                    android:visibility="invisible"/>
+                    android:visibility="invisible" />
 
             </LinearLayout>
 
@@ -204,7 +202,7 @@
                 android:contentDescription="@string/str_content_description"
                 android:padding="@dimen/activity_half_horizontal_margin"
                 android:src="@drawable/ic_action_drawer"
-                android:visibility="invisible"/>
+                android:visibility="invisible" />
 
             <LinearLayout
                 android:id="@+id/linear_tutorial_search"
@@ -226,7 +224,7 @@
                     android:paddingEnd="@dimen/margin_small"
                     android:paddingStart="@dimen/margin_tiny"
                     android:paddingTop="@dimen/margin_small"
-                    android:src="@drawable/ic_search"/>
+                    android:src="@drawable/ic_search" />
 
                 <EditText
                     android:id="@+id/input_search"
@@ -238,7 +236,7 @@
                     android:cursorVisible="false"
                     android:hint="@string/str_search_name"
                     android:paddingBottom="@dimen/margin_small"
-                    android:textColorHint="@color/finestWhite30"/>
+                    android:textColorHint="@color/finestWhite30" />
 
 
             </LinearLayout>
@@ -252,7 +250,7 @@
             android:layout_gravity="bottom|center_horizontal"
             android:padding="@dimen/activity_horizontal_margin"
             android:textColor="@color/dialogButtonTextColor"
-            tools:text="Tap to continue"/>
+            tools:text="Tap to continue" />
 
         <LinearLayout
             android:id="@+id/tutorial_user_profile"
@@ -280,7 +278,7 @@
                     android:layout_height="60dp"
                     android:layout_gravity="center"
                     android:contentDescription="@string/app_name"
-                    android:src="@mipmap/ic_launcher"/>
+                    android:src="@mipmap/ic_launcher" />
 
                 <LinearLayout
                     android:id="@+id/tutorial_user_info"
@@ -300,7 +298,7 @@
                         android:singleLine="true"
                         android:text=""
                         android:textColor="@color/colorAccent"
-                        android:textSize="@dimen/text_size_16sp"/>
+                        android:textSize="@dimen/text_size_16sp" />
 
                     <TextView
                         android:id="@+id/tutorial_number"
@@ -308,7 +306,7 @@
                         android:layout_height="wrap_content"
                         android:text=""
                         android:textColor="@color/colorAccent"
-                        android:textSize="@dimen/text_size_14sp"/>
+                        android:textSize="@dimen/text_size_14sp" />
 
                     <LinearLayout
                         android:id="@+id/tutorial_user_rating"
@@ -323,7 +321,7 @@
                             android:layout_height="wrap_content"
                             android:text=""
                             android:textColor="@color/colorAccent"
-                            android:textSize="@dimen/text_size_14sp"/>
+                            android:textSize="@dimen/text_size_14sp" />
 
                         <ImageView
                             android:layout_width="16dp"
@@ -342,7 +340,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:isIndicator="true"
-                            android:stepSize="1"/>
+                            android:stepSize="1" />
 
                     </LinearLayout>
 
@@ -372,7 +370,7 @@
                 android:id="@+id/image_enlarge"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:contentDescription="@string/str_content_description"/>
+                android:contentDescription="@string/str_content_description" />
 
         </FrameLayout>
 

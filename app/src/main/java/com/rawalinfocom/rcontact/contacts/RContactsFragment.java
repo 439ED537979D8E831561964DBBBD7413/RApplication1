@@ -39,6 +39,7 @@ import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.BuildConfig;
 import com.rawalinfocom.rcontact.MainActivity;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.RContactListAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
@@ -167,6 +168,7 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         if (rootView == null) {
             rootView = inflater.inflate(R.layout.fragment_r_contacts, container, false);
             ButterKnife.bind(this, rootView);
@@ -298,11 +300,15 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
             @Override
             public void onRefresh() {
 
-                // cancel the Visual indication of a refresh
-                swipeRefreshLayout.setRefreshing(true);
-                String fromDate = Utils.getStringPreference(getActivity(), AppConstants
-                        .KEY_API_CALL_TIME_STAMP_RCP, "");
-                RCPContactServiceCall(fromDate, WsConstants.REQ_GET_RCP_CONTACT);
+                if (Utils.getBooleanPreference(RContactApplication.getInstance(), AppConstants.PREF_CONTACT_SYNCED, false)) {
+                    // cancel the Visual indication of a refresh
+                    swipeRefreshLayout.setRefreshing(true);
+                    String fromDate = Utils.getStringPreference(getActivity(), AppConstants
+                            .KEY_API_CALL_TIME_STAMP_RCP, "");
+                    RCPContactServiceCall(fromDate, WsConstants.REQ_GET_RCP_CONTACT);
+                } else {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
             }
         });
     }
@@ -312,8 +318,7 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
         TableProfileMobileMapping tableProfileMobileMapping = new TableProfileMobileMapping
                 (getDatabaseHandler());
 
-        arrayListDisplayProfile = tableProfileMobileMapping.getRContactList(((BaseActivity)
-                getActivity()).getUserPmId());
+        arrayListDisplayProfile = tableProfileMobileMapping.getRContactList();
 
         arrayListRContact = new ArrayList<>();
         if (arrayListDisplayProfile.size() > 0) {
@@ -828,20 +833,21 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
                             if (arrayListOrganization.get(j).getIsVerify() != null)
                                 if (arrayListOrganization.get(j).getIsVerify() == IntegerConstants.RCP_TYPE_PRIMARY) {
                                     organization.setOmOrganizationType(arrayListOrganization.get(j).getOrgIndustryType());
-                                    organization.setOmEnterpriseOrgId(arrayListOrganization.get(j).getOrgEntId());
+//                                    organization.setOmEnterpriseOrgId(arrayListOrganization.get(j).getOrgEntId());
                                     organization.setOmOrganizationLogo(arrayListOrganization.get(j)
                                             .getEomLogoPath() + "/" + arrayListOrganization.get(j).getEomLogoName());
                                 } else {
                                     organization.setOmOrganizationType("");
-                                    organization.setOmEnterpriseOrgId("");
+//                                    organization.setOmEnterpriseOrgId("");
                                     organization.setOmOrganizationLogo("");
                                 }
                             else {
                                 organization.setOmOrganizationType("");
-                                organization.setOmEnterpriseOrgId("");
+//                                organization.setOmEnterpriseOrgId("");
                                 organization.setOmOrganizationLogo("");
                             }
 
+                            organization.setOmEnterpriseOrgId(arrayListOrganization.get(j).getOrgEntId());
                             organization.setOrgUrlSlug(arrayListOrganization.get(j).getOrgUrlSlug());
                             organization.setOmIsVerified(String.valueOf(arrayListOrganization.get(j).getIsVerify()));
                             organization.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());

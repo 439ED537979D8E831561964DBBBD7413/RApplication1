@@ -62,6 +62,7 @@
     <string name="title_verifying_mobile_number"><![CDATA[Sit back & relax! while we verify your Mobile Number]]></string>
     <string name="msg_enter_otp">Enter the 6-digit OTP below in case we fail to detect it automatically</string>
     <string name="action_resend">Resend</string>
+    <string name="action_call_me">Call Me</string>
     <string name="msg_otp_verification_success">OTP Verified Successfully</string>
     <string name="error_otp_verification_fail">OTP doesn\'t match</string>
     <string name="msg_otp_error">Please enter valid OTP</string>

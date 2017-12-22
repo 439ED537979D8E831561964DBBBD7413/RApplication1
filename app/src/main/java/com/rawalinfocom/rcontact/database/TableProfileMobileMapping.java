@@ -387,7 +387,7 @@ public class TableProfileMobileMapping {
     }
 
     // Getting RContact List
-    public ArrayList<UserProfile> getRContactList(String ownRcpId) {
+    public ArrayList<UserProfile> getRContactList() {
         ArrayList<UserProfile> arrayListRContact = new ArrayList<>();
         // Select All Query
 

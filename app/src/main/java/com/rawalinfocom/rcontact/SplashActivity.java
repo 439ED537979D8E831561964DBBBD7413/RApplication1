@@ -129,6 +129,8 @@ public class SplashActivity extends BaseActivity {
             if (Utils.getBooleanPreference(activity, AppConstants
                     .KEY_IS_RESTORE_DONE, false)) {
                 // Redirect to MainActivity
+                Utils.setBooleanPreference(RContactApplication.getInstance(), AppConstants.PREF_SYNC_RUNNING,
+                        true);
                 startActivityIntent(activity, MainActivity.class, null);
                 overridePendingTransition(R.anim.enter, R.anim.exit);
                 finish();

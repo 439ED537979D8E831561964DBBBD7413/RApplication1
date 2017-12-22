@@ -12,6 +12,7 @@ import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.rawalinfocom.rcontact.model.CallLogType;
+import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.SmsDataType;
 import com.rawalinfocom.rcontact.model.SpamDataType;
 
@@ -45,6 +46,7 @@ public class RContactApplication extends Application {
 
     ArrayList<Object> arrayListFavPhoneBookContacts;
     ArrayList<String> arrayListFavContactHeaders;
+    ArrayList<ProfileData> arrayListSyncUserContact;
 
     int favouriteStatus;
 
@@ -74,8 +76,10 @@ public class RContactApplication extends Application {
         RealmConfiguration config = new RealmConfiguration.Builder().name("rcontacts.realm")
                 .schemaVersion(1).build();
         Realm.setDefaultConfiguration(config);*/
+
+//        arrayListSyncUserContact = new ArrayList<>();
+
         arrayListAllPhoneBookContacts = new ArrayList<>();
-//        arrayListAllContactHeaders = new ArrayList<>();
         arrayListFavPhoneBookContacts = new ArrayList<>();
 
 //        arrayListcallLogsHeaders = new ArrayList<>();
@@ -167,13 +171,13 @@ public class RContactApplication extends Application {
         this.favouriteStatus = favouriteStatus;
     }
 
-//    public ArrayList<Object> getArrayListObjectCallLogs() {
-//        return arrayListObjectCallLogs;
-//    }
-//
-//    public void setArrayListObjectCallLogs(ArrayList<Object> arrayListObjectCallLogs) {
-//        this.arrayListObjectCallLogs = arrayListObjectCallLogs;
-//    }
+    public ArrayList<ProfileData> getArrayListSyncUserContact() {
+        return arrayListSyncUserContact;
+    }
+
+    public void setArrayListSyncUserContact(ArrayList<ProfileData> arrayListSyncUserContact) {
+        this.arrayListSyncUserContact = arrayListSyncUserContact;
+    }
 
 //    public ArrayList<String> getArrayListcallLogsHeaders() {
 //        return arrayListcallLogsHeaders;

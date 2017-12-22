@@ -56,14 +56,14 @@ public class ContactsFragment extends BaseFragment {
     TabLayout tabContact;
     @BindView(R.id.relative_root_contacts)
     RelativeLayout relativeRootContacts;
-    @BindView(R.id.image_sync)
-    ImageView imageSync;
-    @BindView(R.id.text_sync_progress)
-    TextView textSyncProgress;
-    @BindView(R.id.relative_sync_progress)
-    RelativeLayout relativeSyncProgress;
-    @BindView(R.id.progress_contacts)
-    AnimateHorizontalProgressBar progressContacts;
+    //    @BindView(R.id.image_sync)
+//    ImageView imageSync;
+//    @BindView(R.id.text_sync_progress)
+//    TextView textSyncProgress;
+//    @BindView(R.id.relative_sync_progress)
+//    RelativeLayout relativeSyncProgress;
+//    @BindView(R.id.progress_contacts)
+//    AnimateHorizontalProgressBar progressContacts;
     @BindView(R.id.include_elevation)
     View includeElevation;
 
@@ -118,7 +118,7 @@ public class ContactsFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
         init();
-        replaceFragment(allContactsFragment, AppConstants.TAG_FRAGMENT_ALL_CONTACTS);
+//        replaceFragment(allContactsFragment, AppConstants.TAG_FRAGMENT_ALL_CONTACTS);
     }
 
     @Override
@@ -148,24 +148,6 @@ public class ContactsFragment extends BaseFragment {
         favoritesFragment = FavoritesFragment.newInstance();
 
         includeElevation.setAlpha(0.5f);
-
-        if (!(Utils.getBooleanPreference(getActivity(), AppConstants
-                .PREF_CONTACT_SYNCED, false))) {
-            relativeSyncProgress.setVisibility(View.VISIBLE);
-            progressContacts.setMax(100);
-
-            Animation sampleFadeAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim
-                    .rotate);
-            imageSync.startAnimation(sampleFadeAnimation);
-
-        /*GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget
-        (imageSync);
-        Glide.with(this).load(R.drawable.image_sync).into(imageViewTarget);*/
-
-            textSyncProgress.setTypeface(Utils.typefaceRegular(getActivity()));
-            textSyncProgress.setText("Contacts Sync in progress!");
-
-        }
 
         bindWidgetsWithAnEvent();
         setupTabLayout();
@@ -438,7 +420,8 @@ public class ContactsFragment extends BaseFragment {
 
         getChildFragmentManager()
                 .beginTransaction()
-                .replace(R.id.frame_container_call_tab, fragment, tag)
+                .replace(R.id.frame_container_call_tab, fragment)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .commit();
 
 //        FragmentManager fm = getChildFragmentManager();
@@ -461,7 +444,8 @@ public class ContactsFragment extends BaseFragment {
         tabContact.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-//                frameContainerCallTab.removeAllViews();
+                System.out.println("RContacts TabLayout getPosition --> " + tab.getPosition());
+                frameContainerCallTab.removeAllViews();
                 currentTabPosition = tab.getPosition();
                 setCurrentTabFragment(tab.getPosition());
             }

@@ -104,12 +104,11 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     //<editor-fold desc="Override Methods">
 
-
     public int getSearchCount() {
         return searchCount;
     }
 
-    public void setSearchCount(int searchCount) {
+    private void setSearchCount(int searchCount) {
         this.searchCount = searchCount;
     }
 
@@ -146,7 +145,7 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 break;
             case FOOTER:
                 ContactFooterViewHolder contactFooterViewHolder = (ContactFooterViewHolder) holder;
-                configureFooterViewHolder(contactFooterViewHolder, position);
+                configureFooterViewHolder(contactFooterViewHolder);
                 break;
         }
     }
@@ -236,8 +235,6 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private void configureRContactViewHolder(final RContactViewHolder holder, int position) {
 
         final UserProfile userProfile = (UserProfile) arrayListUserProfile.get(position);
-
-//        holder.relativeRowAllContact.setTag(position);
 
         String contactDisplayName = userProfile.getPmFirstName() + " " + userProfile
                 .getPmLastName();
@@ -376,7 +373,7 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         .getPmRawId());
                 bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, "-1");
 //                bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, userProfile.getPmRawId());
-                TextView textName = (TextView) view.findViewById(R.id.text_contact_name);
+                TextView textName = view.findViewById(R.id.text_contact_name);
                 bundle.putString(AppConstants.EXTRA_CONTACT_NAME, textName.getText().toString());
                 bundle.putString(AppConstants.EXTRA_PROFILE_IMAGE_URL, userProfile
                         .getPmProfileImage());
@@ -394,14 +391,14 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     intent.putExtras(bundle);
                     fragment.startActivityForResult(intent, AppConstants
                             .REQUEST_CODE_PROFILE_DETAIL);
-                    ((BaseActivity) activity).overridePendingTransition(R.anim.enter, R
+                    activity.overridePendingTransition(R.anim.enter, R
                             .anim.exit);
                 } else {
                     Intent intent = new Intent(activity, ProfileDetailActivity.class);
                     intent.putExtras(bundle);
                     activity.startActivityForResult(intent, AppConstants
                             .REQUEST_CODE_PROFILE_DETAIL);
-                    ((BaseActivity) activity).overridePendingTransition(R.anim.enter, R
+                    activity.overridePendingTransition(R.anim.enter, R
                             .anim.exit);
                 }
 
@@ -409,13 +406,11 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         });
     }
 
-    private void configureFooterViewHolder(ContactFooterViewHolder holder, int position) {
-//        String letter = (String) arrayListUserContact.get(position);
+    private void configureFooterViewHolder(ContactFooterViewHolder holder) {
         if (!(activity instanceof SearchActivity) && !(activity instanceof DialerActivity)) {
-            holder.textTotalContacts.setText(arrayListUserProfile.size() - arrayListContactHeader
-                    .size() + " " + activity.getString(R.string.str_count_contacts));
+            holder.textTotalContacts.setText(String.format(Locale.getDefault(), "%d %s", arrayListUserProfile.size()
+                    - arrayListContactHeader.size(), activity.getString(R.string.str_count_contacts)));
         }
-
     }
 
     //</editor-fold>

@@ -214,6 +214,10 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
                                 .PREF_DISABLE_POPUP, false);
 
                         Utils.storeProfileDataToDb(SetPasswordActivity.this, profileDetail, databaseHandler);
+                        Utils.setStringPreference(RContactApplication.getInstance(), AppConstants.PREF_SYNC_FIRST_TIME,
+                                "first");
+                        Utils.setBooleanPreference(RContactApplication.getInstance(), AppConstants.PREF_SYNC_RUNNING,
+                                true);
 
                         deviceDetail();
                     }
