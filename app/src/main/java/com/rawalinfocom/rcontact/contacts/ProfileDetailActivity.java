@@ -566,8 +566,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             if (pmId != null) {
                 // <editor-fold desc="Get own profile">
 //                getProfileDetails();
-                ProfileDataOperation profileDataOperation = queryManager.getRcProfileDetail
-                        (this, pmId);
+                ProfileDataOperation profileDataOperation = queryManager.getRcProfileDetail(pmId);
                 layoutVisibility();
                 setUpView(profileDataOperation);
                 // </editor-fold>
@@ -2328,8 +2327,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     }
 
     private void getDataFromDB() {
-        ProfileDataOperation profileDataOperation = queryManager.getRcProfileDetail
-                (this, pmId);
+        ProfileDataOperation profileDataOperation = queryManager.getRcProfileDetail(pmId);
         setUpView(profileDataOperation);
     }
 

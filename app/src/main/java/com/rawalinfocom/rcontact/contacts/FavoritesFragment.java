@@ -144,13 +144,6 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
         ButterKnife.bind(this, view);
         return view;*/
 
-//        if (rootView != null) {
-//            ViewGroup parent = (ViewGroup) rootView.getParent();
-//            if (parent != null) {
-//                parent.removeView(rootView);
-//            }
-//        }
-
         if (rootView == null || rContactApplication.getFavouriteStatus() != RContactApplication
                 .FAVOURITE_UNMODIFIED) {
             rootView = inflater.inflate(R.layout.fragment_favorites, container, false);

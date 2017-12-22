@@ -39,16 +39,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
-                    android:singleLine="true"
-                    tools:text="Monal" />
+                    android:singleLine="true" />
 
                 <TextView
                     android:id="@+id/text_cloud_contact_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
-                    android:singleLine="true"
-                    tools:text=" (Monell)" />
+                    android:singleLine="true" />
 
             </LinearLayout>
 

@@ -258,6 +258,8 @@ public class AppConstants {
     public static String PREF_USER_JOINING_DATE = "pref_user_joining_date";
     public static String PREF_USER_VERIFIED_EMAIL = "pref_user_verified_email";
     public static String PREF_RESPONSE_KEY = "pref_response_key";
+    public static String PREF_SYNC_FIRST_TIME = "pref_sync_first_time";
+    public static String PREF_SYNC_RUNNING = "pref_sync_running";
     public static String PREF_CALL_LOG_RESPONSE_KEY = "pref_call_log_response_key";
 
     public static String KEY_PREFERENCES = "pref_rcontact";

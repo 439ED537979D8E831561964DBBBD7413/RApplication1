@@ -583,7 +583,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
         TableProfileMobileMapping tableProfileMobileMapping = new TableProfileMobileMapping
                 (getDatabaseHandler());
 
-        arrayListDisplayProfile = tableProfileMobileMapping.getRContactList(getUserPmId());
+        arrayListDisplayProfile = tableProfileMobileMapping.getRContactList();
 
         arrayListRContact = new ArrayList<>();
         if (arrayListDisplayProfile.size() > 0) {
