@@ -339,14 +339,14 @@ public class Utils {
     //<editor-fold desc="Shared Preferences">
 
     public static void clearData(Context context) {
-        SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
+        SharedPreferences sharedpreferences = RContactApplication.getInstance().getSharedPreferences(AppConstants
                 .KEY_PREFERENCES, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedpreferences.edit();
         editor.clear().commit();
     }
 
     public static void setStringPreference(Context context, String key, @Nullable String value) {
-        SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
+        SharedPreferences sharedpreferences = RContactApplication.getInstance().getSharedPreferences(AppConstants
                 .KEY_PREFERENCES, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedpreferences.edit();
         editor.putString(key, value);
@@ -354,7 +354,7 @@ public class Utils {
     }
 
     public static String getStringPreference(Context context, String key, String defaultValue) {
-        SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
+        SharedPreferences sharedpreferences = RContactApplication.getInstance().getSharedPreferences(AppConstants
                 .KEY_PREFERENCES, Context.MODE_PRIVATE);
         return sharedpreferences.getString(key, defaultValue);
     }
@@ -372,7 +372,7 @@ public class Utils {
     }
 
     public static ArrayList<String> getArrayListPreference(Context context, String key) {
-        SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
+        SharedPreferences sharedpreferences = RContactApplication.getInstance().getSharedPreferences(AppConstants
                 .KEY_PREFERENCES, Context.MODE_PRIVATE);
         Gson gson = new Gson();
         String json = sharedpreferences.getString(key, null);
@@ -382,7 +382,7 @@ public class Utils {
     }
 
     public static void setIntegerPreference(Context context, String key, int value) {
-        SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
+        SharedPreferences sharedpreferences = RContactApplication.getInstance().getSharedPreferences(AppConstants
                 .KEY_PREFERENCES, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedpreferences.edit();
         editor.putInt(key, value);
@@ -391,7 +391,7 @@ public class Utils {
 
 
     public static void setLongPreference(Context context, String key, long value) {
-        SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
+        SharedPreferences sharedpreferences = RContactApplication.getInstance().getSharedPreferences(AppConstants
                 .KEY_PREFERENCES, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedpreferences.edit();
         editor.putLong(key, value);
@@ -399,19 +399,19 @@ public class Utils {
     }
 
     public static Long getLongPreference(Context context, String key, long defaultValue) {
-        SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
+        SharedPreferences sharedpreferences = RContactApplication.getInstance().getSharedPreferences(AppConstants
                 .KEY_PREFERENCES, Context.MODE_PRIVATE);
         return sharedpreferences.getLong(key, defaultValue);
     }
 
     public static int getIntegerPreference(Context context, String key, int defaultValue) {
-        SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
+        SharedPreferences sharedpreferences = RContactApplication.getInstance().getSharedPreferences(AppConstants
                 .KEY_PREFERENCES, Context.MODE_PRIVATE);
         return sharedpreferences.getInt(key, defaultValue);
     }
 
     public static void setBooleanPreference(Context context, String key, boolean value) {
-        SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
+        SharedPreferences sharedpreferences = RContactApplication.getInstance().getSharedPreferences(AppConstants
                 .KEY_PREFERENCES, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedpreferences.edit();
         editor.putBoolean(key, value);
@@ -419,13 +419,13 @@ public class Utils {
     }
 
     public static boolean getBooleanPreference(Context context, String key, boolean defaultValue) {
-        SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
+        SharedPreferences sharedpreferences = RContactApplication.getInstance().getSharedPreferences(AppConstants
                 .KEY_PREFERENCES, Context.MODE_PRIVATE);
         return sharedpreferences.getBoolean(key, defaultValue);
     }
 
     public static void setObjectPreference(Context context, String key, @Nullable Object object) {
-        SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
+        SharedPreferences sharedpreferences = RContactApplication.getInstance().getSharedPreferences(AppConstants
                 .KEY_PREFERENCES, Context.MODE_PRIVATE);
         Gson gson = new Gson();
         SharedPreferences.Editor editor = sharedpreferences.edit();
@@ -436,7 +436,7 @@ public class Utils {
 
     public static Object getObjectPreference(Context context, String key, Class classObject) {
         try {
-            SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
+            SharedPreferences sharedpreferences = RContactApplication.getInstance().getSharedPreferences(AppConstants
                     .KEY_PREFERENCES, Context.MODE_PRIVATE);
             Gson gson = new Gson();
             String json = sharedpreferences.getString(key, "");
@@ -450,7 +450,7 @@ public class Utils {
 
     public static void setHashMapPreference(Context context, String key, @Nullable HashMap
             hashMap) {
-        SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
+        SharedPreferences sharedpreferences = RContactApplication.getInstance().getSharedPreferences(AppConstants
                 .KEY_PREFERENCES, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedpreferences.edit();
         Gson gson = new Gson();
@@ -460,7 +460,7 @@ public class Utils {
     }
 
     public static HashMap<String, String> getHashMapPreference(Context context, String key) {
-        SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
+        SharedPreferences sharedpreferences = RContactApplication.getInstance().getSharedPreferences(AppConstants
                 .KEY_PREFERENCES, Context.MODE_PRIVATE);
         Gson gson = new Gson();
         String json = sharedpreferences.getString(key, null);
@@ -470,7 +470,7 @@ public class Utils {
     }
 
     public static HashMap<String, ArrayList<CallLogType>> getHashMapPreferenceForBlock(Context context, String key) {
-        SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
+        SharedPreferences sharedpreferences = RContactApplication.getInstance().getSharedPreferences(AppConstants
                 .KEY_PREFERENCES, Context.MODE_PRIVATE);
         Gson gson = new Gson();
         String json = sharedpreferences.getString(key, null);
@@ -482,14 +482,14 @@ public class Utils {
     }
 
     public static boolean hasSharedPreference(Context context, String key) {
-        SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
+        SharedPreferences sharedpreferences = RContactApplication.getInstance().getSharedPreferences(AppConstants
                 .KEY_PREFERENCES, Context.MODE_PRIVATE);
         return sharedpreferences.contains(key);
     }
 
 
     public static ArrayList<Object> getArrayListCallLogPreference(Context context, String key) {
-        SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
+        SharedPreferences sharedpreferences = RContactApplication.getInstance().getSharedPreferences(AppConstants
                 .KEY_PREFERENCES, Context.MODE_PRIVATE);
         Gson gson = new Gson();
         String json = sharedpreferences.getString(key, null);
@@ -500,7 +500,7 @@ public class Utils {
 
 
     public static void removePreference(Context context, String key) {
-        SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
+        SharedPreferences sharedpreferences = RContactApplication.getInstance().getSharedPreferences(AppConstants
                 .KEY_PREFERENCES, Context.MODE_PRIVATE);
         sharedpreferences.edit().remove(key).apply();
     }

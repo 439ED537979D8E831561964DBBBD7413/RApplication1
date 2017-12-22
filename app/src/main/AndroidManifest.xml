@@ -73,7 +73,7 @@
             android:value="@string/facebook_app_id" />
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="06e70479d2ac89bbcd0f513bced81e424d0d41f7" />
+            android:value="${FABRIC_APP_ID}" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />

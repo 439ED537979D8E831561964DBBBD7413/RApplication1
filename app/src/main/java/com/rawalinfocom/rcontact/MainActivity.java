@@ -2010,6 +2010,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         tabMain.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
+//                FrameLayout frameLayout =  findViewById(R.id.frame_container_main_tab);
+//                frameLayout.removeAllViews();
                 tabPosition = tab.getPosition();
                 if (AppConstants.isProgressShowing) {
                     showFragmentSwitchAlertDialog();

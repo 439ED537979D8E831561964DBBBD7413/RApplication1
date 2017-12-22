@@ -55,18 +55,14 @@ import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
-import com.rawalinfocom.rcontact.helper.MaterialListDialog;
 import com.rawalinfocom.rcontact.helper.RecyclerItemClickListener;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
-import com.rawalinfocom.rcontact.helper.instagram.util.StringUtil;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.CallLogType;
 import com.rawalinfocom.rcontact.model.GlobalSearchType;
 import com.rawalinfocom.rcontact.model.ProfileData;
-import com.rawalinfocom.rcontact.model.ProfileDataOperation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
-import com.rawalinfocom.rcontact.model.ProfileMobileMapping;
 import com.rawalinfocom.rcontact.model.SmsDataType;
 import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
@@ -75,14 +71,12 @@ import com.rawalinfocom.rcontact.model.WsResponseObject;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import twitter4j.User;
 
 public class SearchActivity extends BaseActivity implements WsResponseListener, RippleView
         .OnRippleCompleteListener {
@@ -747,7 +741,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
         }
 
         if (arrayListRContact != null && arrayListRContact.size() > 0) {
-            rContactListAdapter = new RContactListAdapter(SearchActivity.this, arrayListRContact);
+            rContactListAdapter = new RContactListAdapter(SearchActivity.this, arrayListRContact, getUserPmId());
             // TODO : Hardik : Global Search Organisation
 //            rContactListAdapter.getData();
         }
@@ -755,7 +749,6 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
             smsListAdapter = new SmsListAdapter(SearchActivity.this, smsDataTypeArrayList,
                     recycleViewPbContact);
         }*/
-
         search.addTextChangedListener(new TextWatcher() {
 
             @Override
@@ -792,7 +785,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                                         .size() > 0) {
                                     rContactListAdapter = new RContactListAdapter(SearchActivity
                                             .this,
-                                            arrayListRContact);
+                                            arrayListRContact, getUserPmId());
                                     // TODO : Hardik : Global Search Organisation
 //                                    rContactListAdapter.getData();
                                     rContactListAdapter.filter(text);
@@ -871,7 +864,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                                         .size() > 0) {
                                     rContactListAdapter = new RContactListAdapter(SearchActivity
                                             .this,
-                                            arrayListRContact);
+                                            arrayListRContact, getUserPmId());
                                     // TODO : Hardik : Global Search Organisation
 //                                    rContactListAdapter.getData();
                                     rContactListAdapter.filter(text);
