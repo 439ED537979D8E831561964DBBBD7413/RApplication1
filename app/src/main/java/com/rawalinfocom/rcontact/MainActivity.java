@@ -1603,8 +1603,15 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 if (syncingTask != null && syncingTask.getStatus() == AsyncTask.Status.RUNNING) {
                     System.out.println("RContact contactSyncingTask ---> running");
                 } else {
-                    syncingTask = new SyncingTask();
-                    syncingTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    if (Utils.getBooleanPreference(RContactApplication.getInstance(), AppConstants.PREF_SYNC_RUNNING,
+                            false)) {
+                        System.out.println("RContact contactSyncingTask ---> initialised");
+                        Utils.setBooleanPreference(RContactApplication.getInstance(), AppConstants.PREF_SYNC_RUNNING,
+                                false);
+                        syncingTask = new SyncingTask();
+                        syncingTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+                    }
                 }
             } else if (Utils.isNetworkAvailable(this)
                     && Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)
