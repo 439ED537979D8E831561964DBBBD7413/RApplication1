@@ -33,8 +33,6 @@ public class ProfileData {
     private boolean tempIsRcp;
     private String tempRawId;
     private String name;
-    private String tempOrganisationName;
-    private String tempOrganisationTitle;
 
     private ArrayList<ProfileDataOperationOrganization> pbOrganization;
 
@@ -223,19 +221,4 @@ public class ProfileData {
         this.pbOrganization = pbOrganization;
     }
 
-    public String getTempOrganisationName() {
-        return tempOrganisationName;
-    }
-
-    public void setTempOrganisationName(String tempOrganisationName) {
-        this.tempOrganisationName = tempOrganisationName;
-    }
-
-    public String getTempOrganisationTitle() {
-        return tempOrganisationTitle;
-    }
-
-    public void setTempOrganisationTitle(String tempOrganisationTitle) {
-        this.tempOrganisationTitle = tempOrganisationTitle;
-    }
 }
