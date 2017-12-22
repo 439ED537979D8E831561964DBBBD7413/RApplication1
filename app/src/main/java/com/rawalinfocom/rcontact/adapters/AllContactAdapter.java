@@ -1099,7 +1099,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         if (!StringUtils.isEmpty(profileData.getTempNumber())) {
                             String number = profileData.getTempNumber();
                             number = number.replace(" ", "").replace("-", "")
-                                    .replace("(","").replace(")","");
+                                    .replace("(", "").replace(")", "");
                             if (number.contains(charText)) {
                                 arrayListUserContact.add(profileData);
                             }
@@ -1132,13 +1132,6 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                         nameFilter(charText, profileData);
                                     }
                                 }
-//                                if(firstName.toLowerCase(Locale.getDefault()).equalsIgnoreCase
-// (charText)
-//                                        || !StringUtils.isEmpty(profileData.getTempLastName())
-//                                        && StringUtils.equalsIgnoreCase(profileData
-// .getTempLastName().toLowerCase(Locale.getDefault()),charText)){
-//                                    arrayListUserContact.add(profileData);
-//                                }
                             }
                             ArrayList<ProfileDataOperationOrganization> organizationArrayList =
                                     profileData.getPbOrganization();
