@@ -55,6 +55,7 @@ import com.rawalinfocom.rcontact.helper.RecyclerItemDecoration;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.model.ProfileData;
+import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
 import com.rawalinfocom.rcontact.model.ProfileMobileMapping;
 import com.rawalinfocom.rcontact.model.UserProfile;
 
@@ -1097,7 +1098,8 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         ProfileData profileData = (ProfileData) arraylist.get(i);
                         if (!StringUtils.isEmpty(profileData.getTempNumber())) {
                             String number = profileData.getTempNumber();
-                            number = number.replace(" ", "").replace("-", "");
+                            number = number.replace(" ", "").replace("-", "")
+                                    .replace("(","").replace(")","");
                             if (number.contains(charText)) {
                                 arrayListUserContact.add(profileData);
                             }
@@ -1137,6 +1139,25 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 // .getTempLastName().toLowerCase(Locale.getDefault()),charText)){
 //                                    arrayListUserContact.add(profileData);
 //                                }
+                            }
+                            ArrayList<ProfileDataOperationOrganization> organizationArrayList =
+                                    profileData.getPbOrganization();
+                            String orgName = "";
+                            String orgDesign = "";
+
+                            if (organizationArrayList != null && organizationArrayList.size() > 0) {
+                                for (int j = 0; j < organizationArrayList.size(); j++) {
+                                    orgName = organizationArrayList.get(j).getOrgName();
+                                    orgDesign = organizationArrayList.get(j).getOrgJobTitle();
+                                    if (!StringUtils.isEmpty(orgName) || !StringUtils.isEmpty(orgDesign)) {
+                                        if (orgName.toLowerCase(Locale.getDefault()).contains
+                                                (charText) || orgDesign.toLowerCase(Locale.getDefault()).contains
+                                                (charText)) {
+                                            if (!arrayListUserContact.contains(profileData))
+                                                arrayListUserContact.add(profileData);
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
