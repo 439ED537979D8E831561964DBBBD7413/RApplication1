@@ -1125,6 +1125,12 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                 if (profileData.getName().toLowerCase(Locale.getDefault()).contains
                                         (charText)) {
                                     arrayListUserContact.add(profileData);
+                                } else if(!StringUtils.isEmpty(profileData.getTempOrganisationName())
+                                        || !StringUtils.isEmpty(profileData.getTempOrganisationTitle())) {
+                                    if(profileData.getTempOrganisationName().toLowerCase(Locale.getDefault()).contains(charText)
+                                            || profileData.getTempOrganisationTitle().toLowerCase(Locale.getDefault()).contains(charText)) {
+                                        arrayListUserContact.add(profileData);
+                                    }
                                 } else {
 
                                     if (!StringUtils.isBlank(profileData.getTempFirstName())

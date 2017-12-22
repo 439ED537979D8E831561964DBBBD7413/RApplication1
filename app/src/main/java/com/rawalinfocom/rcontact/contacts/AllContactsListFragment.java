@@ -545,6 +545,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         set.add(ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID);
         set.add(ContactsContract.RawContacts.ACCOUNT_NAME);
         set.add(ContactsContract.RawContacts.ACCOUNT_TYPE);
+        /*set.add(ContactsContract.CommonDataKinds.Organization.DATA);
+        set.add(ContactsContract.CommonDataKinds.Organization.TITLE);*/
 
         Uri uri = ContactsContract.Data.CONTENT_URI;
         String[] projection = set.toArray(new String[0]);
@@ -554,6 +556,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         String[] selectionArgs = {
                 ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
                 ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,
+//                ContactsContract.CommonDataKinds.Organization.CONTENT_ITEM_TYPE,
         };
 
         String sortOrder = "upper(" + ContactsContract.Contacts.DISPLAY_NAME + ") ASC";
@@ -792,6 +795,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         final int display = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone
                 .DISPLAY_NAME);
 
+//        final int orgName = data.getColumnIndex(ContactsContract.CommonDataKinds.Organization.COMPANY);
+//        final int jobTitle = data.getColumnIndex(ContactsContract.CommonDataKinds.Organization.TITLE);
+
 //        ArrayList<String> accounts = new ArrayList<>();
 
         while (data.moveToNext()) {
@@ -834,6 +840,14 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                             profileData.setTempLastName(data.getString(familyName));
 
                         break;
+//                    case ContactsContract.CommonDataKinds.Organization.CONTENT_ITEM_TYPE:
+//                        if (!StringUtils.isEmpty(data.getString(orgName)))
+//                            profileData.setTempOrganisationName(data.getString(orgName));
+//
+//                        if (!StringUtils.isEmpty(data.getString(jobTitle)))
+//                            profileData.setTempOrganisationTitle(data.getString(jobTitle));
+//
+//                        break;
                 }
             } catch (Exception E) {
                 Log.i("AllContacts", "Crash occurred when displaying contacts" + E.toString());
@@ -2152,11 +2166,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 return;
             }
             backgroundSync(false, null);
-        }
-        else if (lastSyncedData < (arrayListSyncUserContact.size() + CONTACT_CHUNK)) {
+        } else if (lastSyncedData < (arrayListSyncUserContact.size() + CONTACT_CHUNK)) {
             backgroundSync(false, null);
-        }
-        else if (arrayListSyncUserContact.size() == 0) {
+        } else if (arrayListSyncUserContact.size() == 0) {
             Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts,
                     getActivity().getString(R.string.str_all_contact_sync));
             Utils.setStringPreference(getActivity(), AppConstants
