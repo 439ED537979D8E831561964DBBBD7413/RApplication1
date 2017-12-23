@@ -4730,6 +4730,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         final TextView textOrgName = view.findViewById(R.id.text_org_name);
         TextView textOrgType = view.findViewById(R.id.text_org_type);
         TextView textOrgUrlSlug = view.findViewById(R.id.text_org_url);
+        LinearLayout linearDesignation = view.findViewById(R.id.linear_designation);
+
+        addOrganizationDesignationView(linearDesignation);
 
         final EditText inputFromDate = view.findViewById(R.id.input_from_date);
         final EditText inputToDate = view.findViewById(R.id.input_to_date);
@@ -4931,6 +4934,68 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         });
 
         linearOrganizationDetails.addView(view);
+    }
+
+    private void addOrganizationDesignationView(final LinearLayout linearDesignation) {
+        final View viewDesignation = LayoutInflater.from(this).inflate(R.layout
+                .list_item_edit_organization_designation, null);
+        final EditText inputDesignationName = viewDesignation.findViewById(R.id
+                .input_designation_name);
+        final EditText inputFromDate = viewDesignation.findViewById(R.id.input_from_date);
+        final EditText inputToDate = viewDesignation.findViewById(R.id.input_to_date);
+        final ImageView imageFromDate = viewDesignation.findViewById(R.id.image_from_date);
+        final ImageView imageToDate = viewDesignation.findViewById(R.id.image_to_date);
+        final ImageView imageAddDesignation = viewDesignation.findViewById(R.id
+                .image_add_designation);
+        final LinearLayout linearOrganizationDesignation = viewDesignation.findViewById(R.id
+                .linear_organization_designation);
+
+        if (linearDesignation.getChildCount() < 1) {
+            imageAddDesignation.setImageResource(R.drawable.ico_add_svg);
+        } else {
+            imageAddDesignation.setImageResource(R.drawable.ic_delete);
+        }
+
+        inputFromDate.setHint(R.string.hint_choose_from_date);
+        inputFromDate.setFocusable(false);
+
+        inputToDate.setHint(R.string.hint_choose_to_date);
+        inputToDate.setFocusable(false);
+
+        imageAddDesignation.setTag(linearDesignation.getChildCount());
+
+        imageAddDesignation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                Toast.makeText(EditProfileActivity.this, "Position: " + imageAddDesignation
+//                        .getTag().toString(), Toast.LENGTH_SHORT).show();
+                if (Integer.parseInt(imageAddDesignation.getTag().toString()) == 0) {
+                    addOrganizationDesignationView(linearDesignation);
+                } else {
+                    /*Toast.makeText(EditProfileActivity.this, "Position: " + imageAddDesignation
+                            .getTag().toString(), Toast.LENGTH_SHORT).show();*/
+                    linearDesignation.removeView(linearOrganizationDesignation);
+                }
+            }
+        });
+
+        imageFromDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isOrganization = true;
+                updateOrganizationText(inputFromDate);
+            }
+        });
+
+        imageToDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isOrganization = true;
+                updateOrganizationText(inputToDate);
+            }
+        });
+
+        linearDesignation.addView(viewDesignation);
     }
 
     private void addEducationView(int position, Object detailObject) {
