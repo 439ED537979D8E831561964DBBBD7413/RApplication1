@@ -417,6 +417,7 @@
     <string name="str_delete_click">Delete clicked</string>
     <string name="str_select_all_click">Select All clicked</string>
     <string name="str_all_contact_sync">All Contacts Synced</string>
+    <string name="contacts_sync_in_progress">Contacts Sync in progress!</string>
     <string name="contact_read_permission">Contact read permission is required of this app. Do you want to try again?</string>
     <string name="calling_permission">Contact read permission is required of this app. Do you want to try again?</string>
 

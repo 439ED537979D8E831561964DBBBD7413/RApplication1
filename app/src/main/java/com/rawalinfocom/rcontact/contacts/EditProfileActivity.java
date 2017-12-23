@@ -493,9 +493,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         arrayListProfile = new ArrayList<>();
 
         FacebookSdk.sdkInitialize(getApplicationContext());
-//        mInstagram = new Instagram(this, AppConstants.CLIENT_ID, AppConstants.CLIENT_SECRET,
-//                AppConstants.REDIRECT_URI);
-//        mInstagramSession = mInstagram.getSession();
 
         twitter = new TwitterFactory().getInstance();
         twitter.setOAuthConsumer(AppConstants.CONSUMER_KEY, AppConstants.CONSUMER_SECRET);

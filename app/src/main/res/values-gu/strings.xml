@@ -416,6 +416,7 @@
     <string name="str_delete_click">Delete clicked</string>
     <string name="str_select_all_click">Select All clicked</string>
     <string name="str_all_contact_sync">સંપર્કો સફળતાપૂર્વક સિંક કરવામાં આવ્યા</string>
+    <string name="contacts_sync_in_progress">સંપર્કો સિન્ક્રોનિઝ ની પ્રક્રિયામાં છે!</string>
     <string name="contact_read_permission">સંપર્કો વાંચવાની પરવાનગી જરૂર છે. શું તમે ફરીથી પ્રયાસ કરવા માંગો છો?</string>
     <string name="calling_permission">કોલ કરવાની પરવાનગી જરૂર છે. શું તમે ફરીથી પ્રયાસ કરવા માંગો છો?</string>
 

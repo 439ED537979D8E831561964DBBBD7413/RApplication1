@@ -3970,15 +3970,16 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 //                            .getIMAccountProtocol());
                     String protocol = profileDetail.getPbIMAccounts().get(i)
                             .getIMAccountProtocol();
-                    if (protocol.contains(getString(R.string.facebook)) || protocol.contains
-                            (getString(R.string.google_plus)) || protocol.contains(getString(R
-                            .string.linked_in))) {
+                    if (protocol.contains(getString(R.string.facebook)) || protocol.contains(getString(R.string.google_plus))
+                            || protocol.contains(getString(R
+                            .string.linked_in)) || protocol.contains(getString(R.string.twitter))
+                            || protocol.contains(getString(R.string.instagram)) || protocol.contains(getString(R.string.pinterest))) {
                         savedImAccount.add(protocol);
                     } else {
                         savedImAccount.add("Other");
                     }
-
                 }
+
                 if (savedImAccount.contains(getString(R.string.facebook))) {
                     percentage += 5;
                     if (arrayListRemainingFields.contains("Facebook Account")) {
@@ -3987,6 +3988,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 } else {
                     arrayListRemainingFields.add("Facebook Account");
                 }
+
                 if (savedImAccount.contains(getString(R.string.google_plus))) {
                     percentage += 5;
                     if (arrayListRemainingFields.contains("Google Plus Account")) {
@@ -3995,6 +3997,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 } else {
                     arrayListRemainingFields.add("Google Plus Account");
                 }
+
                 if (savedImAccount.contains(getString(R.string.linked_in))) {
                     percentage += 5;
                     if (arrayListRemainingFields.contains("Linked In Account")) {
@@ -4003,6 +4006,34 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 } else {
                     arrayListRemainingFields.add("Linked In Account");
                 }
+
+                if (savedImAccount.contains(getString(R.string.instagram))) {
+                    percentage += 5;
+                    if (arrayListRemainingFields.contains("Instagram Account")) {
+                        arrayListRemainingFields.remove("Instagram Account");
+                    }
+                } else {
+                    arrayListRemainingFields.add("Instagram Account");
+                }
+
+                if (savedImAccount.contains(getString(R.string.twitter))) {
+                    percentage += 5;
+                    if (arrayListRemainingFields.contains("Twitter Account")) {
+                        arrayListRemainingFields.remove("Twitter Account");
+                    }
+                } else {
+                    arrayListRemainingFields.add("Twitter Account");
+                }
+
+                if (savedImAccount.contains(getString(R.string.pinterest))) {
+                    percentage += 5;
+                    if (arrayListRemainingFields.contains("Pinterest Account")) {
+                        arrayListRemainingFields.remove("Pinterest Account");
+                    }
+                } else {
+                    arrayListRemainingFields.add("Pinterest Account");
+                }
+
                 if (savedImAccount.contains("Other")) {
                     percentage += 5;
                     if (arrayListRemainingFields.contains(getString(R.string.str_social_contact))) {
@@ -5173,8 +5204,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         userProfile.setPmGender(profileDetail.getPbGender());
         userProfile.setPmBadge(profileDetail.getPmBadge());
         userProfile.setPmLastSeen(profileDetail.getPmLastSeen());
-        userProfile.setProfileRatingPrivacy(String.valueOf(profileDetail.getProfileRatingPrivacy
-                ()));
+        userProfile.setProfileRatingPrivacy(String.valueOf(profileDetail.getProfileRatingPrivacy()));
         userProfile.setRatingPrivate(String.valueOf(profileDetail.getRatingPrivate()));
 
         tableProfileMaster.addProfile(userProfile);

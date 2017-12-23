@@ -672,8 +672,352 @@ public class QueryManager {
         return profileDataOperation;
     }
 
+    public ProfileDataOperation getOwnProfileDetailForPercentage(String rcpId) {
 
-    public ArrayList<ProfileDataOperationOrganization> getOrganisationDetails(Context context, String rcpId){
+        SQLiteDatabase db = null;
+        ProfileDataOperation profileDataOperation = new ProfileDataOperation();
+
+        //<editor-fold desc="Profile Detail">
+        try {
+
+            db = databaseHandler.getWritableDatabase();
+
+            // Select All Query
+            String profileDetailQuery = "SELECT " + TableProfileMaster.COLUMN_PM_GENDER +
+                    "," + TableProfileMaster.COLUMN_PM_PROFILE_IMAGE + " from " +
+                    TableProfileMaster.TABLE_RC_PROFILE_MASTER + " WHERE " +
+                    TableProfileMaster.COLUMN_PM_RCP_ID + " IN (" + rcpId + ")";
+
+            Cursor cursor = db.rawQuery(profileDetailQuery, null);
+
+            // looping through all rows and adding to list
+            if (cursor != null && cursor.getCount() > 0) {
+                if (cursor.moveToFirst()) {
+
+                    profileDataOperation.setRcpPmId(rcpId);
+                    profileDataOperation.setPbGender(StringUtils.defaultString(cursor.getString(cursor
+                            .getColumnIndexOrThrow(TableProfileMaster.COLUMN_PM_GENDER))));
+                    profileDataOperation.setPbProfilePhoto(StringUtils.defaultString(cursor.getString
+                            (cursor.getColumnIndexOrThrow(TableProfileMaster.COLUMN_PM_PROFILE_IMAGE)
+                            )));
+
+                    cursor.close();
+                }
+            }
+
+            db.close();
+
+        } catch (Exception e) {
+            if (db != null) {
+                db.close();
+            }
+        }
+
+        //</editor-fold>
+
+        //<editor-fold desc="EmailId">
+        try {
+
+            db = databaseHandler.getWritableDatabase();
+
+            String emailIdQuery = "SELECT " + TableEmailMaster.COLUMN_EM_SOCIAL_TYPE + "," +
+                    TableEmailMaster.COLUMN_EM_EMAIL_ADDRESS + "," +
+                    TableEmailMaster.COLUMN_EM_IS_VERIFIED + " FROM " + TableEmailMaster
+                    .TABLE_RC_EMAIL_MASTER + " where " + TableEmailMaster
+                    .COLUMN_RC_PROFILE_MASTER_PM_ID + " IN (" + rcpId + ")";
+
+            Cursor emailIdCursor = db.rawQuery(emailIdQuery, null);
+
+            ArrayList<ProfileDataOperationEmail> arrayListEmail = new ArrayList<>();
+
+            // looping through all rows and adding to list
+            if (emailIdCursor != null && emailIdCursor.getCount() > 0) {
+                if (emailIdCursor.moveToFirst()) {
+                    do {
+                        ProfileDataOperationEmail email = new ProfileDataOperationEmail();
+
+                        email.setEmSocialType(StringUtils.defaultString(emailIdCursor.getString
+                                (emailIdCursor
+                                        .getColumnIndexOrThrow(TableEmailMaster
+                                                .COLUMN_EM_SOCIAL_TYPE))));
+                        email.setEmRcpType(Integer.parseInt(emailIdCursor.getString
+                                (emailIdCursor.getColumnIndexOrThrow(TableEmailMaster
+                                        .COLUMN_EM_IS_VERIFIED))));
+                        email.setEmEmailId(StringUtils.defaultString(emailIdCursor.getString
+                                (emailIdCursor.getColumnIndexOrThrow(TableEmailMaster
+                                        .COLUMN_EM_EMAIL_ADDRESS))));
+
+                        arrayListEmail.add(email);
+                    } while (emailIdCursor.moveToNext());
+                    emailIdCursor.close();
+                }
+                profileDataOperation.setPbEmailId(arrayListEmail);
+            }
+
+            db.close();
+
+        } catch (Exception e) {
+            if (db != null) {
+                db.close();
+            }
+        }
+
+        //</editor-fold>
+
+        // <editor-fold desc="Organization">
+        try {
+
+            db = databaseHandler.getWritableDatabase();
+
+            String organizationQuery = "SELECT " + TableOrganizationMaster.COLUMN_OM_ORGANIZATION_COMPANY + "," +
+                    TableOrganizationMaster.COLUMN_OM_ORGANIZATION_TYPE + "," +
+                    TableOrganizationMaster.COLUMN_OM_ORGANIZATION_IS_VERIFIED + " from " +
+                    TableOrganizationMaster.TABLE_RC_ORGANIZATION_MASTER + " WHERE " +
+                    TableOrganizationMaster.COLUMN_RC_PROFILE_MASTER_PM_ID + " = " + rcpId;
+
+            Cursor organizationCursor = db.rawQuery(organizationQuery, null);
+
+            ArrayList<ProfileDataOperationOrganization> arrayListOrganization = new ArrayList<>();
+
+            // looping through all rows and adding to list
+            if (organizationCursor != null && organizationCursor.getCount() > 0) {
+                if (organizationCursor.moveToFirst()) {
+                    do {
+                        ProfileDataOperationOrganization organization = new
+                                ProfileDataOperationOrganization();
+                        organization.setOrgName(StringUtils.defaultString(organizationCursor.getString
+                                (organizationCursor.getColumnIndexOrThrow(TableOrganizationMaster
+                                        .COLUMN_OM_ORGANIZATION_COMPANY))));
+                        organization.setOrgIndustryType(StringUtils.defaultString(organizationCursor
+                                .getString(organizationCursor.getColumnIndexOrThrow
+                                        (TableOrganizationMaster.COLUMN_OM_ORGANIZATION_TYPE))));
+                        if (!StringUtils.isBlank(organizationCursor.getString
+                                (organizationCursor.getColumnIndexOrThrow(TableOrganizationMaster
+                                        .COLUMN_OM_ORGANIZATION_IS_VERIFIED)))) {
+                            organization.setIsVerify(Integer.parseInt(organizationCursor.getString
+                                    (organizationCursor.getColumnIndexOrThrow(TableOrganizationMaster
+                                            .COLUMN_OM_ORGANIZATION_IS_VERIFIED))));
+                        } else {
+                            organization.setIsVerify(0);
+                        }
+
+                        arrayListOrganization.add(organization);
+                    } while (organizationCursor.moveToNext());
+                    organizationCursor.close();
+                }
+                profileDataOperation.setPbOrganization(arrayListOrganization);
+            }
+
+            db.close();
+
+        } catch (Exception e) {
+            if (db != null) {
+                db.close();
+            }
+        }
+
+        //</editor-fold>
+
+        // <editor-fold desc="Event">
+        try {
+
+            db = databaseHandler.getWritableDatabase();
+
+            String eventQuery = "SELECT " + TableEventMaster.COLUMN_EVM_START_DATE + "," +
+                    TableEventMaster.COLUMN_EVM_EVENT_TYPE + " FROM " +
+                    TableEventMaster.TABLE_RC_EVENT_MASTER + " event WHERE " +
+                    TableEventMaster.COLUMN_RC_PROFILE_MASTER_PM_ID + " IN (" + rcpId + ")";
+
+            Cursor eventCursor = db.rawQuery(eventQuery, null);
+
+            ArrayList<ProfileDataOperationEvent> arrayListEvent = new ArrayList<>();
+
+            // looping through all rows and adding to list
+            if (eventCursor != null && eventCursor.getCount() > 0) {
+                if (eventCursor.moveToFirst()) {
+                    do {
+                        ProfileDataOperationEvent event = new ProfileDataOperationEvent();
+                        event.setEventDateTime(StringUtils.defaultString(eventCursor.getString
+                                (eventCursor.getColumnIndexOrThrow(TableEventMaster.COLUMN_EVM_START_DATE))));
+                        event.setEventType(StringUtils.defaultString(eventCursor.getString(eventCursor
+                                .getColumnIndexOrThrow(TableEventMaster.COLUMN_EVM_EVENT_TYPE))));
+                        arrayListEvent.add(event);
+                    } while (eventCursor.moveToNext());
+                    eventCursor.close();
+                }
+                profileDataOperation.setPbEvent(arrayListEvent);
+            }
+
+            db.close();
+
+        } catch (Exception e) {
+            if (db != null) {
+                db.close();
+            }
+        }
+
+        //</editor-fold>
+
+        // <editor-fold desc="Im Account">
+        try {
+
+            db = databaseHandler.getWritableDatabase();
+
+            String imAccountQuery = "SELECT " + TableImMaster.COLUMN_IM_PROTOCOL + "," +
+                    TableImMaster.COLUMN_IM_DETAIL + " FROM " +
+                    TableImMaster.TABLE_RC_IM_MASTER + " im WHERE " +
+                    TableImMaster.COLUMN_RC_PROFILE_MASTER_PM_ID + " IN (" + rcpId + ")";
+
+            Cursor imAccountCursor = db.rawQuery(imAccountQuery, null);
+
+            ArrayList<ProfileDataOperationImAccount> arrayListImAccount = new ArrayList<>();
+
+            // looping through all rows and adding to list
+            if (imAccountCursor != null && imAccountCursor.getCount() > 0) {
+                if (imAccountCursor.moveToFirst()) {
+                    do {
+                        ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
+                        imAccount.setIMAccountProtocol(StringUtils.defaultString(imAccountCursor
+                                .getString(imAccountCursor.getColumnIndexOrThrow(TableImMaster
+                                        .COLUMN_IM_PROTOCOL))));
+                        imAccount.setIMAccountDetails(StringUtils.defaultString(imAccountCursor
+                                .getString(imAccountCursor.getColumnIndexOrThrow(TableImMaster
+                                        .COLUMN_IM_DETAIL))));
+                        arrayListImAccount.add(imAccount);
+                    } while (imAccountCursor.moveToNext());
+                    imAccountCursor.close();
+                }
+                profileDataOperation.setPbIMAccounts(arrayListImAccount);
+            }
+
+            db.close();
+
+        } catch (Exception e) {
+            if (db != null) {
+                db.close();
+            }
+        }
+
+        //</editor-fold>
+
+        // <editor-fold desc="Address">
+        try {
+
+            db = databaseHandler.getWritableDatabase();
+
+            String addressQuery = "SELECT " + TableAddressMaster.COLUMN_AM_FORMATTED_ADDRESS + "," +
+                    TableAddressMaster.COLUMN_AM_ADDRESS_TYPE + " FROM " +
+                    TableAddressMaster.TABLE_RC_ADDRESS_MASTER + " address WHERE " +
+                    TableAddressMaster.COLUMN_RC_PROFILE_MASTER_PM_ID + " IN (" + rcpId + ")";
+
+            Cursor addressCursor = db.rawQuery(addressQuery, null);
+
+            ArrayList<ProfileDataOperationAddress> arrayListAddress = new ArrayList<>();
+
+            // looping through all rows and adding to list
+            if (addressCursor != null && addressCursor.getCount() > 0) {
+                if (addressCursor.moveToFirst()) {
+                    do {
+                        ProfileDataOperationAddress address = new ProfileDataOperationAddress();
+                        address.setFormattedAddress(StringUtils.defaultString(addressCursor.getString
+                                (addressCursor.getColumnIndexOrThrow(TableAddressMaster
+                                        .COLUMN_AM_FORMATTED_ADDRESS))));
+                        address.setAddressType(StringUtils.defaultString(addressCursor.getString
+                                (addressCursor.getColumnIndexOrThrow(TableAddressMaster
+                                        .COLUMN_AM_ADDRESS_TYPE))));
+                        arrayListAddress.add(address);
+                    } while (addressCursor.moveToNext());
+                    addressCursor.close();
+                }
+                profileDataOperation.setPbAddress(arrayListAddress);
+            }
+
+            db.close();
+
+        } catch (Exception e) {
+            if (db != null) {
+                db.close();
+            }
+        }
+
+        //</editor-fold>
+
+        // <editor-fold desc="Aadhar Card">
+        try {
+
+            db = databaseHandler.getWritableDatabase();
+
+            String aadharCardQuery = "SELECT " + TableAadharMaster.COLUMN_AADHAR_NUMBER + "," +
+                    TableAadharMaster.COLUMN_AADHAR_IS_VARIFIED + " FROM " +
+                    TableAadharMaster.TABLE_AADHAR_MASTER + " WHERE " + TableAadharMaster
+                    .COLUMN_RC_PROFILE_MASTER_PM_ID + " IN (" + rcpId + ")";
+
+            Cursor aadharCardCursor = db.rawQuery(aadharCardQuery, null);
+            // looping through all rows and adding to list
+            ProfileDataOperationAadharNumber aadharDetails = new ProfileDataOperationAadharNumber();
+            if (aadharCardCursor != null && aadharCardCursor.getCount() > 0) {
+                if (aadharCardCursor.moveToFirst()) {
+                    aadharDetails.setAadharNumber(aadharCardCursor.getString(aadharCardCursor.
+                            getColumnIndexOrThrow(TableAadharMaster.COLUMN_AADHAR_NUMBER)));
+                    aadharDetails.setAadharIsVerified(aadharCardCursor.getInt(aadharCardCursor.
+                            getColumnIndexOrThrow(TableAadharMaster.COLUMN_AADHAR_IS_VARIFIED)));
+                    aadharCardCursor.close();
+                }
+                profileDataOperation.setPbAadhar(aadharDetails);
+            }
+
+            db.close();
+
+        } catch (Exception e) {
+            if (db != null) {
+                db.close();
+            }
+        }
+
+        //</editor-fold>
+
+        // <editor-fold desc="Website">
+        try {
+
+            db = databaseHandler.getWritableDatabase();
+
+            String websiteQuery = "select " + TableWebsiteMaster.COLUMN_WM_WEBSITE_URL + " FROM " +
+                    TableWebsiteMaster.TABLE_RC_WEBSITE_MASTER + " website WHERE " +
+                    TableWebsiteMaster.COLUMN_RC_PROFILE_MASTER_PM_ID + " IN (" + rcpId + ")";
+
+            Cursor websiteCursor = db.rawQuery(websiteQuery, null);
+
+            ArrayList<ProfileDataOperationWebAddress> arrayListWebsite = new ArrayList<>();
+            // looping through all rows and adding to list
+            if (websiteCursor != null && websiteCursor.getCount() > 0) {
+                if (websiteCursor.moveToFirst()) {
+                    do {
+                        ProfileDataOperationWebAddress webAddress = new ProfileDataOperationWebAddress();
+                        webAddress.setWebAddress(StringUtils.defaultString(websiteCursor.getString
+                                (websiteCursor.getColumnIndexOrThrow(TableWebsiteMaster
+                                        .COLUMN_WM_WEBSITE_URL))));
+                        arrayListWebsite.add(webAddress);
+                    } while (websiteCursor.moveToNext());
+                    websiteCursor.close();
+                }
+                profileDataOperation.setPbWebAddress(arrayListWebsite);
+            }
+
+            db.close();
+
+        } catch (Exception e) {
+            if (db != null) {
+                db.close();
+            }
+        }
+
+        //</editor-fold>
+
+        // return profile data operation
+        return profileDataOperation;
+    }
+
+    public ArrayList<ProfileDataOperationOrganization> getOrganisationDetails(Context context, String rcpId) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
 
         // <editor-fold desc="Organization">

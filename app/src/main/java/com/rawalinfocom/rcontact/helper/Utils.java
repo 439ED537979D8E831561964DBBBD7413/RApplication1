@@ -941,11 +941,11 @@ public class Utils {
                 }
 
                 /* remove special characters from number */
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     return "+" + StringUtils.replaceAll(StringUtils.substring(phoneNumber, 1),
                             "[\\D]", "");
-                }else{
-                    return  "+" + StringUtils.substring(phoneNumber, 1).
+                } else {
+                    return "+" + StringUtils.substring(phoneNumber, 1).
                             replaceAll("[\\D]", "");
                 }
 
@@ -1134,16 +1134,13 @@ public class Utils {
         if (!Utils.isArraylistNullOrEmpty(arrayListPhoneNumber)) {
             for (int i = 0; i < arrayListPhoneNumber.size(); i++) {
                 MobileNumber mobileNumber = new MobileNumber();
-                mobileNumber.setMnmRecordIndexId(arrayListPhoneNumber.get(i)
-                        .getPhoneId());
-                mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(i)
-                        .getPhoneType());
-                mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(i)
-                        .getPhoneNumber());
-                mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber
-                        .get(i).getPhonePublic()));
-                mobileNumber.setMnmIsPrimary(String.valueOf(arrayListPhoneNumber.get(i)
-                        .getPbRcpType()));
+                mobileNumber.setMnmRecordIndexId(arrayListPhoneNumber.get(i).getPhoneId());
+                mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(i).getPhoneType());
+                mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(i).getPhoneNumber());
+                mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber.get(i).getPhonePublic()));
+                mobileNumber.setMnmIsPrimary(String.valueOf(arrayListPhoneNumber.get(i).getPbRcpType()));
+                mobileNumber.setMnmIsPrivate(arrayListPhoneNumber.get(i).getIsPrivate());
+                mobileNumber.setMnmPhonePublic(arrayListPhoneNumber.get(i).getPhonePublic());
                 mobileNumber.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 arrayListMobileNumber.add(mobileNumber);
             }
@@ -1164,7 +1161,8 @@ public class Utils {
                 email.setEmEmailType(arrayListEmailId.get(i).getEmType());
                 email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(i).getEmPublic()));
                 email.setEmIsVerified(String.valueOf(arrayListEmailId.get(i).getEmRcpType()));
-//                email.setEmIsPrimary(String.valueOf(arrayListEmailId.get(i).getEmRcpType()));
+                email.setEmIsPrivate(arrayListEmailId.get(i).getEmIsPrivate());
+
                 if (String.valueOf(arrayListEmailId.get(i).getEmRcpType()).equalsIgnoreCase("1")) {
                     listOfVerifiedEmailIds.add(arrayListEmailId.get(i).getEmEmailId());
                     Utils.setArrayListPreference(activity, AppConstants.PREF_USER_VERIFIED_EMAIL,
@@ -1230,11 +1228,11 @@ public class Utils {
             ArrayList<ProfileDataOperationWebAddress> arrayListWebsite = profileDetail
                     .getPbWebAddress();
             ArrayList<Website> websiteList = new ArrayList<>();
-            for (int j = 0; j < arrayListWebsite.size(); j++) {
+            for (int i = 0; i < arrayListWebsite.size(); i++) {
                 Website website = new Website();
-                website.setWmRecordIndexId(arrayListWebsite.get(j).getWebId());
-                website.setWmWebsiteUrl(arrayListWebsite.get(j).getWebAddress());
-                website.setWmWebsiteType(arrayListWebsite.get(j).getWebType());
+                website.setWmRecordIndexId(arrayListWebsite.get(i).getWebId());
+                website.setWmWebsiteUrl(arrayListWebsite.get(i).getWebAddress());
+                website.setWmWebsiteType(arrayListWebsite.get(i).getWebType());
                 website.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 websiteList.add(website);
             }
@@ -1248,28 +1246,29 @@ public class Utils {
         if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbAddress())) {
             ArrayList<ProfileDataOperationAddress> arrayListAddress = profileDetail.getPbAddress();
             ArrayList<Address> addressList = new ArrayList<>();
-            for (int j = 0; j < arrayListAddress.size(); j++) {
+            for (int i = 0; i < arrayListAddress.size(); i++) {
                 Address address = new Address();
-                address.setAmRecordIndexId(arrayListAddress.get(j).getAddId());
-                address.setAmCity(arrayListAddress.get(j).getCity());
-                address.setAmCityId(arrayListAddress.get(j).getCityId());
-                address.setAmState(arrayListAddress.get(j).getState());
-                address.setAmStateId(arrayListAddress.get(j).getStateId());
-                address.setAmCountry(arrayListAddress.get(j).getCountry());
-                address.setAmCountryId(arrayListAddress.get(j).getCountryId());
-                address.setAmFormattedAddress(arrayListAddress.get(j).getFormattedAddress());
-                address.setAmNeighborhood(arrayListAddress.get(j).getNeighborhood());
-                address.setAmPostCode(arrayListAddress.get(j).getPostCode());
-                address.setAmPoBox(arrayListAddress.get(j).getPoBox());
-                address.setAmStreet(arrayListAddress.get(j).getStreet());
-                address.setAmAddressType(arrayListAddress.get(j).getAddressType());
-                if (arrayListAddress.get(j).getGoogleLatLong() != null && arrayListAddress.get(j)
+                address.setAmRecordIndexId(arrayListAddress.get(i).getAddId());
+                address.setAmCity(arrayListAddress.get(i).getCity());
+                address.setAmCityId(arrayListAddress.get(i).getCityId());
+                address.setAmState(arrayListAddress.get(i).getState());
+                address.setAmStateId(arrayListAddress.get(i).getStateId());
+                address.setAmCountry(arrayListAddress.get(i).getCountry());
+                address.setAmCountryId(arrayListAddress.get(i).getCountryId());
+                address.setAmFormattedAddress(arrayListAddress.get(i).getFormattedAddress());
+                address.setAmNeighborhood(arrayListAddress.get(i).getNeighborhood());
+                address.setAmPostCode(arrayListAddress.get(i).getPostCode());
+                address.setAmPoBox(arrayListAddress.get(i).getPoBox());
+                address.setAmStreet(arrayListAddress.get(i).getStreet());
+                address.setAmAddressType(arrayListAddress.get(i).getAddressType());
+                if (arrayListAddress.get(i).getGoogleLatLong() != null && arrayListAddress.get(i)
                         .getGoogleLatLong().size() == 2) {
-                    address.setAmGoogleLatitude(arrayListAddress.get(j).getGoogleLatLong().get(1));
-                    address.setAmGoogleLongitude(arrayListAddress.get(j).getGoogleLatLong().get(0));
+                    address.setAmGoogleLatitude(arrayListAddress.get(i).getGoogleLatLong().get(1));
+                    address.setAmGoogleLongitude(arrayListAddress.get(i).getGoogleLatLong().get(0));
                 }
-                address.setAmAddressPrivacy(String.valueOf(arrayListAddress.get(j).getAddPublic()));
-                address.setAmGoogleAddress(arrayListAddress.get(j).getGoogleAddress());
+                address.setAmAddressPrivacy(String.valueOf(arrayListAddress.get(i).getAddPublic()));
+                address.setAmIsPrivate(arrayListAddress.get(i).getIsPrivate());
+                address.setAmGoogleAddress(arrayListAddress.get(i).getGoogleAddress());
                 address.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 addressList.add(address);
             }
@@ -1284,17 +1283,17 @@ public class Utils {
             ArrayList<ProfileDataOperationImAccount> arrayListImAccount = profileDetail
                     .getPbIMAccounts();
             ArrayList<ImAccount> imAccountsList = new ArrayList<>();
-            for (int j = 0; j < arrayListImAccount.size(); j++) {
+            for (int i = 0; i < arrayListImAccount.size(); i++) {
                 ImAccount imAccount = new ImAccount();
-                imAccount.setImRecordIndexId(arrayListImAccount.get(j).getIMId());
-                imAccount.setImImProtocol(arrayListImAccount.get(j).getIMAccountProtocol());
-                imAccount.setImImPrivacy(String.valueOf(arrayListImAccount.get(j)
+                imAccount.setImRecordIndexId(arrayListImAccount.get(i).getIMId());
+                imAccount.setImImProtocol(arrayListImAccount.get(i).getIMAccountProtocol());
+                imAccount.setImImPrivacy(String.valueOf(arrayListImAccount.get(i)
                         .getIMAccountPublic()));
-                imAccount.setImImFirstName(arrayListImAccount.get(j).getIMAccountFirstName());
-                imAccount.setImImLastName(arrayListImAccount.get(j).getIMAccountLastName());
-                imAccount.setImImProfileImage(arrayListImAccount.get(j).getIMAccountProfileImage());
-                imAccount.setImImDetail(arrayListImAccount.get(j).getIMAccountDetails());
-//                imAccount.setRcProfileMasterPmId(profileDetail.getRcpPmId());
+                imAccount.setImImFirstName(arrayListImAccount.get(i).getIMAccountFirstName());
+                imAccount.setImImLastName(arrayListImAccount.get(i).getIMAccountLastName());
+                imAccount.setImImProfileImage(arrayListImAccount.get(i).getIMAccountProfileImage());
+                imAccount.setImImDetail(arrayListImAccount.get(i).getIMAccountDetails());
+                imAccount.setImIsPrivate(arrayListImAccount.get(i).getIMAccountIsPrivate());
                 imAccount.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 imAccountsList.add(imAccount);
             }
@@ -1308,13 +1307,13 @@ public class Utils {
         if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEvent())) {
             ArrayList<ProfileDataOperationEvent> arrayListEvent = profileDetail.getPbEvent();
             ArrayList<Event> eventList = new ArrayList<>();
-            for (int j = 0; j < arrayListEvent.size(); j++) {
+            for (int i = 0; i < arrayListEvent.size(); i++) {
                 Event event = new Event();
-                event.setEvmRecordIndexId(arrayListEvent.get(j).getEventId());
-                event.setEvmStartDate(arrayListEvent.get(j).getEventDateTime());
-                event.setEvmEventType(arrayListEvent.get(j).getEventType());
-                event.setEvmEventPrivacy(String.valueOf(arrayListEvent.get(j).getEventPublic()));
-                event.setEvmIsPrivate(arrayListEvent.get(j).getIsPrivate());
+                event.setEvmRecordIndexId(arrayListEvent.get(i).getEventId());
+                event.setEvmStartDate(arrayListEvent.get(i).getEventDateTime());
+                event.setEvmEventType(arrayListEvent.get(i).getEventType());
+                event.setEvmEventPrivacy(String.valueOf(arrayListEvent.get(i).getEventPublic()));
+                event.setEvmIsPrivate(arrayListEvent.get(i).getIsPrivate());
                 event.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 eventList.add(event);
             }
@@ -1338,26 +1337,21 @@ public class Utils {
         if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEducation())) {
             ArrayList<ProfileDataOperationEducation> arrayListEducation = profileDetail.getPbEducation();
             ArrayList<Education> arrayListEdu = new ArrayList<>();
-            for (int j = 0; j < arrayListEducation.size(); j++) {
+            for (int i = 0; i < arrayListEducation.size(); i++) {
 
                 Education education = new Education();
 
-
-                education.setEdmRecordIndexId(arrayListEducation.get(j).getEduId());
-
-                education.setEdmSchoolCollegeName(arrayListEducation.get(j).getEduName());
-                education.setEdmCourse(arrayListEducation.get(j).getEduCourse());
-                education.setEdmEducationFromDate(arrayListEducation.get(j)
+                education.setEdmRecordIndexId(arrayListEducation.get(i).getEduId());
+                education.setEdmSchoolCollegeName(arrayListEducation.get(i).getEduName());
+                education.setEdmCourse(arrayListEducation.get(i).getEduCourse());
+                education.setEdmEducationFromDate(arrayListEducation.get(i)
                         .getEduFromDate());
-                education.setEdmEducationToDate(arrayListEducation.get(j).getEduToDate());
-                education.setEdmEducationIsCurrent(arrayListEducation.get(j).getIsCurrent
-                        ());
-                education.setEdmEducationIsPrivate(arrayListEducation.get(j).getIsPrivate());
-                education.setEdmEducationPrivacy(String.valueOf(arrayListEducation.get(j)
+                education.setEdmEducationToDate(arrayListEducation.get(i).getEduToDate());
+                education.setEdmEducationIsCurrent(arrayListEducation.get(i).getIsCurrent());
+                education.setEdmEducationIsPrivate(arrayListEducation.get(i).getIsPrivate());
+                education.setEdmEducationPrivacy(String.valueOf(arrayListEducation.get(i)
                         .getEduPublic()));
-
                 education.setRcProfileMasterPmId(profileDetail.getRcpPmId());
-
                 arrayListEdu.add(education);
             }
 
