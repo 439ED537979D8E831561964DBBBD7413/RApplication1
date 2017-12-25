@@ -4716,10 +4716,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     @SuppressLint("InflateParams")
     private void addOrganizationView(final int position, Object detailObject) {
         final View view = LayoutInflater.from(this).inflate(R.layout
-                .list_item_my_profile_edit_organization, null);
+                .list_item_edit_organization, null);
         ImageView deleteOrganization = view.findViewById(R.id.deleteOrganization);
         final EditText inputCompanyName = view.findViewById(R.id.input_company_name);
-        final EditText inputDesignationName = view.findViewById(R.id.input_designation_name);
+//        final EditText inputDesignationName = view.findViewById(R.id.input_designation_name);
         final CheckBox checkboxOrganization = view.findViewById(R.id
                 .checkbox_organization);
 
@@ -4729,22 +4729,22 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         TextView textIsVerified = view.findViewById(R.id.text_is_verified);
         final TextView textOrgName = view.findViewById(R.id.text_org_name);
         TextView textOrgType = view.findViewById(R.id.text_org_type);
-        TextView textOrgUrlSlug = view.findViewById(R.id.text_org_url);
         LinearLayout linearDesignation = view.findViewById(R.id.linear_designation);
+        TextView textOrgUrlSlug = view.findViewById(R.id.text_org_url);
 
         addOrganizationDesignationView(linearDesignation);
 
-        final EditText inputFromDate = view.findViewById(R.id.input_from_date);
-        final EditText inputToDate = view.findViewById(R.id.input_to_date);
+//        final EditText inputFromDate = view.findViewById(R.id.input_from_date);
+//        final EditText inputToDate = view.findViewById(R.id.input_to_date);
 
-        inputFromDate.setHint(R.string.hint_choose_from_date);
-        inputFromDate.setFocusable(false);
+//        inputFromDate.setHint(R.string.hint_choose_from_date);
+//        inputFromDate.setFocusable(false);
+//
+//        inputToDate.setHint(R.string.hint_choose_to_date);
+//        inputToDate.setFocusable(false);
 
-        inputToDate.setHint(R.string.hint_choose_to_date);
-        inputToDate.setFocusable(false);
-
-        final ImageView imageFromDate = view.findViewById(R.id.image_from_date);
-        final ImageView imageToDate = view.findViewById(R.id.image_to_date);
+//        final ImageView imageFromDate = view.findViewById(R.id.image_from_date);
+//        final ImageView imageToDate = view.findViewById(R.id.image_to_date);
 
         checkboxOrganization.setTag(linearOrganizationDetails.getChildCount());
 
@@ -4753,21 +4753,21 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
         inputCompanyName.setInputType(InputType.TYPE_CLASS_TEXT | InputType
                 .TYPE_TEXT_FLAG_CAP_WORDS);
-        inputDesignationName.setInputType(InputType.TYPE_CLASS_TEXT | InputType
-                .TYPE_TEXT_FLAG_CAP_WORDS);
+//        inputDesignationName.setInputType(InputType.TYPE_CLASS_TEXT | InputType
+//                .TYPE_TEXT_FLAG_CAP_WORDS);
 
         inputCompanyName.setTypeface(Utils.typefaceRegular(this));
-        inputDesignationName.setTypeface(Utils.typefaceRegular(this));
+//        inputDesignationName.setTypeface(Utils.typefaceRegular(this));
         inputCompanyName.setFocusable(false);
 
-        inputDesignationName.setTag(position);
+//        inputDesignationName.setTag(position);
 //        setOrganisationTextWatcher(inputDesignationName);
-        inputDesignationName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                organisationPosition = (int) view.getTag();
-            }
-        });
+//        inputDesignationName.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                organisationPosition = (int) view.getTag();
+//            }
+//        });
 
         inputCompanyName.setTag(position);
         inputCompanyName.setOnClickListener(new View.OnClickListener() {
@@ -4792,7 +4792,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             textOrgName.setText(organization.getOrgName());
             textOrgType.setText(organization.getOrgIndustryType());
             textOrgUrlSlug.setText(organization.getOrgUrlSlug());
-            inputDesignationName.setText(organization.getOrgJobTitle());
+//            inputDesignationName.setText(organization.getOrgJobTitle());
             checkboxOrganization.setChecked(organization.getIsCurrent() == 1);
             textOrgLogo.setText(organization.getOrgLogo());
             textEnterpriseOrgId.setText(organization.getOrgEntId());
@@ -4829,20 +4829,20 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     .bitmapTransform(new CropCircleTransformation(EditProfileActivity.this))
                     .override(120, 120)
                     .into(imageOrgProfile);
-
-            if (organization.getIsCurrent() == 1) {
-                inputToDate.setEnabled(false);
-                imageToDate.setEnabled(false);
-                inputFromDate.setText(organization.getOrgFromDate());
-            } else {
-                inputFromDate.setText(organization.getOrgFromDate());
-                inputToDate.setText(organization.getOrgToDate());
-            }
+//
+//            if (organization.getIsCurrent() == 1) {
+//                inputToDate.setEnabled(false);
+//                imageToDate.setEnabled(false);
+//                inputFromDate.setText(organization.getOrgFromDate());
+//            } else {
+//                inputFromDate.setText(organization.getOrgFromDate());
+//                inputToDate.setText(organization.getOrgToDate());
+//            }
 
         } else {
             checkboxOrganization.setChecked(true);
-            inputToDate.setEnabled(false);
-            imageToDate.setEnabled(false);
+//            inputToDate.setEnabled(false);
+//            imageToDate.setEnabled(false);
 
             Glide.with(EditProfileActivity.this)
                     .load(R.drawable.default_org)
@@ -4862,17 +4862,17 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                 .checkbox_organization);
                         if (checkbox != null) {
 
-                            inputToDate.setEnabled(false);
-                            imageToDate.setEnabled(false);
-
-                            inputToDate.setText("");
-                            inputToDate.setHint(R.string.hint_choose_to_date);
+//                            inputToDate.setEnabled(false);
+//                            imageToDate.setEnabled(false);
+//
+//                            inputToDate.setText("");
+//                            inputToDate.setHint(R.string.hint_choose_to_date);
                         }
                     }
                 } else {
 
-                    inputToDate.setEnabled(true);
-                    imageToDate.setEnabled(true);
+//                    inputToDate.setEnabled(true);
+//                    imageToDate.setEnabled(true);
                 }
             }
         });
@@ -4901,9 +4901,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     removeAndAddOrganizationView();
                 } else if (linearOrganizationDetails.getChildCount() == 1) {
                     inputCompanyName.getText().clear();
-                    inputDesignationName.getText().clear();
-                    inputFromDate.getText().clear();
-                    inputToDate.getText().clear();
+//                    inputDesignationName.getText().clear();
+//                    inputFromDate.getText().clear();
+//                    inputToDate.getText().clear();
                     textOrgName.setText("");
                     checkboxOrganization.setChecked(true);
                     inputCompanyName.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
@@ -4917,6 +4917,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             }
         });
 
+/*
         imageFromDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -4932,6 +4933,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 updateOrganizationText(inputToDate);
             }
         });
+*/
 
         linearOrganizationDetails.addView(view);
     }
