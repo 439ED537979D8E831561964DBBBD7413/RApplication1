@@ -689,11 +689,11 @@
     <string name="app_language">App Language</string>
     <string name="short_by">Sort contacts by</string>
     <string name="export_format">Export contacts</string>
-    <string name="abc_by_first_name">ABC by First Name</string>
+    <string name="abc_by_first_name">By First Name</string>
     <string name="phone_storage">Phone Storage</string>
     <string name="sd_card">SD Card</string>
     <string name="google_drive">Google drive</string>
-    <string name="abc_by_last_name">ABC by Last Name</string>
+    <string name="abc_by_last_name">By Last Name</string>
     <string name="str_export">export</string>
     <string name="str_short">short</string>
     <string name="str_push_notification">Push Notifications</string>

@@ -151,6 +151,7 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Utils.showProgressDialog(getMainActivity(), getString(R.string.msg_please_wait), false);
 //        if (arrayListRContact == null) {
 //            isReload = false;
 //        } else {
@@ -183,6 +184,7 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
         arrayListContactHeaders = new ArrayList<>();
         phoneBookContacts = new PhoneBookContacts(getActivity());
         tableProfileMobileMapping = new TableProfileMobileMapping(getDatabaseHandler());
+//        System.out.println("RContacts RContactsFragment init dialog");
         init();
 //        }
     }
@@ -310,6 +312,14 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
                 }
             }
         });
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Utils.hideProgressDialog();
+//                System.out.println("RContacts RContactsFragment hide dialog");
+            }
+        }, 1000);
     }
 
     private void getRContactFromDB() {
@@ -447,10 +457,11 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
                             .findFirstCompletelyVisibleItemPosition();
         }
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(getMainActivity()));
-        recyclerView.addItemDecoration(new RecyclerItemDecoration(getMainActivity(), ContextCompat
-                .getColor(getMainActivity(), R.color.colorVeryLightGray), 0.7f));
-        recyclerView.scrollToPosition(scrollPosition);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(RContactApplication.getInstance());
+        recyclerView.setLayoutManager(linearLayoutManager);
+        RecyclerItemDecoration decoration = new RecyclerItemDecoration(RContactApplication.getInstance(), ContextCompat
+                .getColor(RContactApplication.getInstance(), R.color.colorVeryLightGray), 0.7f);
+        recyclerView.addItemDecoration(decoration);
     }
 
     @Override

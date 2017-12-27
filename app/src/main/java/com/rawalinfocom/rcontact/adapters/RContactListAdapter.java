@@ -245,7 +245,6 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             holder.textContactNumber.setText(userProfile.getEmailId());
         }
 
-
         if (!StringUtils.isBlank(searchChar)) {
             Pattern numberPat = Pattern.compile("\\d+");
             Matcher matcher1 = numberPat.matcher(searchChar);
@@ -359,7 +358,6 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 holder.ratingUser.setRating(0);
             }
         }
-
 
         holder.relativeRowAllContact.setTag(position);
 

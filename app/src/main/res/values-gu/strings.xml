@@ -688,11 +688,11 @@
     <string name="app_language">ભાષા</string>
     <string name="short_by">સંપર્કો સૉર્ટ કરવાનો પ્રકાર</string>
     <string name="export_format">સંપર્કો એક્સપોર્ટ કરવાનો પ્રકાર</string>
-    <string name="abc_by_first_name"> ABC દ્વારા પ્રથમ નામ</string>
+    <string name="abc_by_first_name"> દ્વારા પ્રથમ નામ</string>
     <string name="phone_storage">ફોન સ્ટોરેજ</string>
     <string name="sd_card">SD કાર્ડ</string>
     <string name="google_drive">Google Drive</string>
-    <string name="abc_by_last_name"> ABC દ્વારા અંતિમ નામ</string>
+    <string name="abc_by_last_name">દ્વારા અંતિમ નામ</string>
     <string name="str_export">એક્સપોર્ટ</string>
     <string name="str_short">સૉર્ટ</string>
     <string name="str_push_notification">પુશ નોટિફિકેશન</string>

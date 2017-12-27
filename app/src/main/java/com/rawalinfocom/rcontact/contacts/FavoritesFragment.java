@@ -603,6 +603,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
                             (rcpProfileImage);
                 } else {
                     ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempIsRcp(false);
+                    ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpImageURL("");
                 }
                 final int finalI = i;
                 getMainActivity().runOnUiThread(new Runnable() {
@@ -659,9 +660,10 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
         }
 
         if (arrayListUserContact.size() > 0) {
-            for (int i = 0; i < arrayListUserContact.size(); i++) {
-                arrayListPhoneBookContacts.add(arrayListUserContact.get(i));
-            }
+//            for (int i = 0; i < arrayListUserContact.size(); i++) {
+//                arrayListPhoneBookContacts.add(arrayListUserContact.get(i));
+//            }
+            arrayListPhoneBookContacts.addAll(arrayListUserContact);
         }
     }
 

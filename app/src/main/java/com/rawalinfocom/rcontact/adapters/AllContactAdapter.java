@@ -230,16 +230,18 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 String contactDisplayName = null;
                 ProfileData profileData = (ProfileData) arrayListUserContact.get(i);
 
-                if (Utils.getStringPreference(activity, AppConstants.PREF_SHORT_BY_CONTACT, "0")
-                        .equalsIgnoreCase("0")) {
-                    contactDisplayName = StringUtils.defaultIfEmpty(profileData.getName(), "");
-                } else {
+                contactDisplayName = StringUtils.defaultIfEmpty(profileData.getName(), "");
 
-                    String firstName = profileData.getTempFirstName();
-                    String lastName = profileData.getTempLastName();
-
-                    contactDisplayName = StringUtils.defaultIfEmpty(lastName, "");
-                }
+//                if (Utils.getStringPreference(activity, AppConstants.PREF_SHORT_BY_CONTACT, "0")
+//                        .equalsIgnoreCase("0")) {
+//                    contactDisplayName = StringUtils.defaultIfEmpty(profileData.getName(), "");
+//                } else {
+//
+//                    String firstName = profileData.getTempFirstName();
+//                    String lastName = profileData.getTempLastName();
+//
+//                    contactDisplayName = StringUtils.defaultIfEmpty(lastName, "");
+//                }
 
 //                contactDisplayName = StringUtils.defaultIfEmpty(profileData.getName(), "");
                 if (contactDisplayName == null || contactDisplayName.length() == 0) {
@@ -431,11 +433,11 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
             String firstName = profileData.getTempFirstName();
             String lastName = profileData.getTempLastName();
-            if (StringUtils.length(firstName) > 0) {
-                contactDisplayName = contactDisplayName + firstName + " ";
-            }
             if (StringUtils.length(lastName) > 0) {
                 contactDisplayName = contactDisplayName + lastName + " ";
+            }
+            if (StringUtils.length(firstName) > 0) {
+                contactDisplayName = contactDisplayName + firstName + " ";
             }
         }
 

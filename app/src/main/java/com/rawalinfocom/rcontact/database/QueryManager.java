@@ -1612,74 +1612,80 @@ public class QueryManager {
 
 
     private void deleteRcProfileDetail(String rcpId) {
+
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
 
-        //<editor-fold desc="TABLE_PB_PROFILE_EMAIL_MAPPING">
-        db.delete(TableProfileEmailMapping.TABLE_PB_PROFILE_EMAIL_MAPPING,
-                TableProfileEmailMapping.COLUMN_EPM_CLOUD_PM_ID + " = ?", new String[]{rcpId});
-        //</editor-fold>
+        try {
 
-        // <editor-fold desc="TABLE_PB_PROFILE_MOBILE_MAPPING">
-        db.delete(TableProfileMobileMapping.TABLE_PB_PROFILE_MOBILE_MAPPING,
-                TableProfileMobileMapping.COLUMN_MPM_CLOUD_PM_ID + " = ?", new String[]{rcpId});
-        //</editor-fold>
+            //<editor-fold desc="TABLE_PB_PROFILE_EMAIL_MAPPING">
+            db.delete(TableProfileEmailMapping.TABLE_PB_PROFILE_EMAIL_MAPPING,
+                    TableProfileEmailMapping.COLUMN_EPM_CLOUD_PM_ID + " = ?", new String[]{rcpId});
+            //</editor-fold>
 
-        // <editor-fold desc="TABLE_RC_ADDRESS_MASTER">
-        db.delete(TableAddressMaster.TABLE_RC_ADDRESS_MASTER,
-                TableAddressMaster.COLUMN_RC_PROFILE_MASTER_PM_ID + " = ?", new String[]{rcpId});
-        //</editor-fold>
+            // <editor-fold desc="TABLE_PB_PROFILE_MOBILE_MAPPING">
+            db.delete(TableProfileMobileMapping.TABLE_PB_PROFILE_MOBILE_MAPPING,
+                    TableProfileMobileMapping.COLUMN_MPM_CLOUD_PM_ID + " = ?", new String[]{rcpId});
+            //</editor-fold>
 
-        // <editor-fold desc="TABLE_RC_COMMENT_MASTER">
-        db.delete(TableCommentMaster.TABLE_RC_COMMENT_MASTER,
-                TableCommentMaster.COLUMN_CRM_RC_PROFILE_MASTER_PM_ID + " = ?", new
-                        String[]{rcpId});
-        //</editor-fold>
+            // <editor-fold desc="TABLE_RC_ADDRESS_MASTER">
+            db.delete(TableAddressMaster.TABLE_RC_ADDRESS_MASTER,
+                    TableAddressMaster.COLUMN_RC_PROFILE_MASTER_PM_ID + " = ?", new String[]{rcpId});
+            //</editor-fold>
 
-        // <editor-fold desc="TABLE_RC_CONTACT_ACCESS_REQUEST">
-        db.delete(TableRCContactRequest.TABLE_RC_CONTACT_ACCESS_REQUEST,
-                TableRCContactRequest.COLUMN_CRM_RC_PROFILE_MASTER_PM_ID + " = ?", new
-                        String[]{rcpId});
-        //</editor-fold>
+            // <editor-fold desc="TABLE_RC_COMMENT_MASTER">
+            db.delete(TableCommentMaster.TABLE_RC_COMMENT_MASTER,
+                    TableCommentMaster.COLUMN_CRM_RC_PROFILE_MASTER_PM_ID + " = ?", new
+                            String[]{rcpId});
+            //</editor-fold>
 
-        // <editor-fold desc="TABLE_RC_EMAIL_MASTER">
-        db.delete(TableEmailMaster.TABLE_RC_EMAIL_MASTER,
-                TableEmailMaster.COLUMN_RC_PROFILE_MASTER_PM_ID + " = ?", new String[]{rcpId});
-        //</editor-fold>
+            // <editor-fold desc="TABLE_RC_CONTACT_ACCESS_REQUEST">
+            db.delete(TableRCContactRequest.TABLE_RC_CONTACT_ACCESS_REQUEST,
+                    TableRCContactRequest.COLUMN_CRM_RC_PROFILE_MASTER_PM_ID + " = ?", new
+                            String[]{rcpId});
+            //</editor-fold>
 
-        // <editor-fold desc="TABLE_RC_EVENT_MASTER">
-        db.delete(TableEventMaster.TABLE_RC_EVENT_MASTER,
-                TableEventMaster.COLUMN_RC_PROFILE_MASTER_PM_ID + " = ?", new String[]{rcpId});
-        //</editor-fold>
+            // <editor-fold desc="TABLE_RC_EMAIL_MASTER">
+            db.delete(TableEmailMaster.TABLE_RC_EMAIL_MASTER,
+                    TableEmailMaster.COLUMN_RC_PROFILE_MASTER_PM_ID + " = ?", new String[]{rcpId});
+            //</editor-fold>
 
-        // <editor-fold desc="TABLE_RC_IM_MASTER">
-        db.delete(TableImMaster.TABLE_RC_IM_MASTER,
-                TableImMaster.COLUMN_RC_PROFILE_MASTER_PM_ID + " = ?", new String[]{rcpId});
-        //</editor-fold>
+            // <editor-fold desc="TABLE_RC_EVENT_MASTER">
+            db.delete(TableEventMaster.TABLE_RC_EVENT_MASTER,
+                    TableEventMaster.COLUMN_RC_PROFILE_MASTER_PM_ID + " = ?", new String[]{rcpId});
+            //</editor-fold>
 
-        // <editor-fold desc="TABLE_RC_MOBILE_NUMBER_MASTER">
-        db.delete(TableMobileMaster.TABLE_RC_MOBILE_NUMBER_MASTER,
-                TableMobileMaster.COLUMN_RC_PROFILE_MASTER_PM_ID + " = ?", new String[]{rcpId});
-        //</editor-fold>
+            // <editor-fold desc="TABLE_RC_IM_MASTER">
+            db.delete(TableImMaster.TABLE_RC_IM_MASTER,
+                    TableImMaster.COLUMN_RC_PROFILE_MASTER_PM_ID + " = ?", new String[]{rcpId});
+            //</editor-fold>
 
-        // <editor-fold desc="TABLE_RC_ORGANIZATION_MASTER">
-        db.delete(TableOrganizationMaster.TABLE_RC_ORGANIZATION_MASTER,
-                TableOrganizationMaster.COLUMN_RC_PROFILE_MASTER_PM_ID + " = ?", new
-                        String[]{rcpId});
-        //</editor-fold>
+            // <editor-fold desc="TABLE_RC_MOBILE_NUMBER_MASTER">
+            db.delete(TableMobileMaster.TABLE_RC_MOBILE_NUMBER_MASTER,
+                    TableMobileMaster.COLUMN_RC_PROFILE_MASTER_PM_ID + " = ?", new String[]{rcpId});
+            //</editor-fold>
 
-        // <editor-fold desc="TABLE_RC_PROFILE_MASTER">
-        db.delete(TableProfileMaster.TABLE_RC_PROFILE_MASTER,
-                TableProfileMaster.COLUMN_PM_RCP_ID + " = ?", new String[]{rcpId});
-        //</editor-fold>
+            // <editor-fold desc="TABLE_RC_ORGANIZATION_MASTER">
+            db.delete(TableOrganizationMaster.TABLE_RC_ORGANIZATION_MASTER,
+                    TableOrganizationMaster.COLUMN_RC_PROFILE_MASTER_PM_ID + " = ?", new
+                            String[]{rcpId});
+            //</editor-fold>
 
-        // <editor-fold desc="TABLE_RC_WEBSITE_MASTER">
-        db.delete(TableWebsiteMaster.TABLE_RC_WEBSITE_MASTER,
-                TableWebsiteMaster.COLUMN_RC_PROFILE_MASTER_PM_ID + " = ?", new String[]{rcpId});
-        //</editor-fold>
+            // <editor-fold desc="TABLE_RC_PROFILE_MASTER">
+            db.delete(TableProfileMaster.TABLE_RC_PROFILE_MASTER,
+                    TableProfileMaster.COLUMN_PM_RCP_ID + " = ?", new String[]{rcpId});
+            //</editor-fold>
 
+            // <editor-fold desc="TABLE_RC_WEBSITE_MASTER">
+            db.delete(TableWebsiteMaster.TABLE_RC_WEBSITE_MASTER,
+                    TableWebsiteMaster.COLUMN_RC_PROFILE_MASTER_PM_ID + " = ?", new String[]{rcpId});
+            //</editor-fold>
 
-        db.close();
+            db.close();
 
+        } catch (Exception e) {
+            if (db != null && db.isOpen())
+                db.close();
+        }
     }
 
     public void updateRcProfileDetail(Context context, int rcpId, String rawId) {

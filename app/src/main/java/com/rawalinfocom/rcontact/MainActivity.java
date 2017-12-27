@@ -89,6 +89,7 @@ import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
+import com.rawalinfocom.rcontact.helper.instagram.util.StringUtil;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.Address;
 import com.rawalinfocom.rcontact.model.CallLogType;
@@ -217,7 +218,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     private String currentStamp;
     int logsSyncedCount = 0;
     boolean isCompaseIcon = false;
-    int tabPosition = -1;
+    //    int tabPosition = -1;
     private final int CONTACT_CHUNK = 50;
     int lastSyncedData = 0;
     private SyncingTask syncingTask;
@@ -649,8 +650,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
                         System.out.println("RContacts in response insert");
 
-                        String responseKey;
-                        responseKey = uploadContactResponse.getResponseKey();
+                        String responseKey = uploadContactResponse.getResponseKey();
                         Utils.setStringPreference(RContactApplication.getInstance(), AppConstants.PREF_RESPONSE_KEY,
                                 responseKey);
                         if (syncingTask != null && syncingTask.isCancelled()) {
@@ -722,12 +722,38 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
                     } else {
 
+                        System.out.println("RContacts in response insert");
+
+                        String responseKey = uploadContactResponse.getResponseKey();
+                        Utils.setStringPreference(RContactApplication.getInstance(), AppConstants.PREF_RESPONSE_KEY,
+                                responseKey);
+                        if (reSyncContactAsyncTask != null && reSyncContactAsyncTask.isCancelled
+                                ()) {
+                            return;
+                        }
+                        if (!Utils.isArraylistNullOrEmpty(uploadContactResponse
+                                .getArrayListUserRcProfile())) {
+
+                        /* Store Unique Contacts to ProfileMobileMapping */
+                            storeToMobileMapping(uploadContactResponse.getArrayListUserRcProfile());
+
+                        /* Store Unique Emails to ProfileEmailMapping */
+                            storeToEmailMapping(uploadContactResponse.getArrayListUserRcProfile());
+
+                        /* Store Profile Details to respective Table */
+                            storeProfileDataToDb(uploadContactResponse.getArrayListUserRcProfile(),
+                                    uploadContactResponse.getArrayListMapping());
+
+                        }
+
                         lastSyncedData = lastSyncedData + CONTACT_CHUNK;
-                        Utils.setIntegerPreference(MainActivity.this, AppConstants.PREF_SYNCED_CONTACTS,
+                        Utils.setIntegerPreference(RContactApplication.getInstance(), AppConstants.PREF_SYNCED_CONTACTS,
                                 lastSyncedData);
 
+                        System.out.println("RContacts in response insert end");
+
                         if (lastSyncedData < (arrayListReSyncUserContact.size() + CONTACT_CHUNK)) {
-                            backgroundSync(true, uploadContactResponse);
+                            backgroundSync();
                         } else {
 
                             if (!Utils.isArraylistNullOrEmpty(uploadContactResponse
@@ -751,14 +777,23 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                                 removeRemovedDataFromDb(uploadContactResponse
                                         .getArrayListMapping());
                             }
-                            Utils.setIntegerPreference(MainActivity.this, AppConstants
+                            Utils.setIntegerPreference(RContactApplication.getInstance(), AppConstants
                                     .PREF_SYNCED_CONTACTS, 0);
-                        }
+                            Utils.setArrayListPreference(RContactApplication.getInstance(), AppConstants.PREF_CONTACT_ID_SET,
+                                    new ArrayList());
+                            phoneBookContacts.saveRawIdsToPref();
+                            Utils.setBooleanPreference(RContactApplication.getInstance(),
+                                    AppConstants.PREF_SYNC_RUNNING, false);
 
-//                    if (uploadContactResponse.getArrayListMapping().size() > 0) {
-//                        uploadContacts(uploadContactResponse.getResponseKey(), new ArrayList
-//                                <ProfileData>());
-//                    }
+                            new Handler().post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (getFragmentRefreshListener() != null) {
+                                        getFragmentRefreshListener().onRefresh();
+                                    }
+                                }
+                            });
+                        }
 
                         String currentTimeStamp = (StringUtils.split(serviceType, "_"))[1];
                         PhoneBookContacts phoneBookContacts = new PhoneBookContacts(this);
@@ -817,8 +852,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     }, 1200);
 
                     arrayListSyncUserContact.clear();
-                    Utils.setBooleanPreference(RContactApplication.getInstance(), AppConstants.PREF_SYNC_RUNNING,
-                            false);
+                    Utils.setBooleanPreference(RContactApplication.getInstance(),
+                            AppConstants.PREF_SYNC_RUNNING, false);
 
                     Utils.setBooleanPreference(RContactApplication.getInstance(), AppConstants
                             .PREF_CONTACT_SYNCED, true);
@@ -850,7 +885,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 //
 //
 //                    lastSyncedData = lastSyncedData + CONTACT_CHUNK;
-//                    Utils.setIntegerPreference(MainActivity.this, AppConstants.PREF_SYNCED_CONTACTS,
+//                    Utils.setIntegerPreference(RContactApplication.getInstance(), AppConstants.PREF_SYNCED_CONTACTS,
 //                            lastSyncedData);
 //
 //                    if (lastSyncedData < (arrayListReSyncUserContact.size() + CONTACT_CHUNK)) {
@@ -878,7 +913,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 //                            removeRemovedDataFromDb(uploadContactResponse
 //                                    .getArrayListMapping());
 //                        }
-//                        Utils.setIntegerPreference(MainActivity.this, AppConstants
+//                        Utils.setIntegerPreference(RContactApplication.getInstance(), AppConstants
 //                                .PREF_SYNCED_CONTACTS, 0);
 //                    }
 //
@@ -1629,14 +1664,14 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 if (syncingTask != null && syncingTask.getStatus() == AsyncTask.Status.RUNNING) {
                     System.out.println("RContact contactSyncingTask ---> running");
                 } else {
-                    if (Utils.getBooleanPreference(RContactApplication.getInstance(), AppConstants.PREF_SYNC_RUNNING,
-                            false)) {
+                    if (Utils.getBooleanPreference(RContactApplication.getInstance(),
+                            AppConstants.PREF_SYNC_RUNNING, false)) {
 
                         showSyncProgress();
 
                         System.out.println("RContact contactSyncingTask ---> initialised");
-                        Utils.setBooleanPreference(RContactApplication.getInstance(), AppConstants.PREF_SYNC_RUNNING,
-                                false);
+                        Utils.setBooleanPreference(RContactApplication.getInstance(),
+                                AppConstants.PREF_SYNC_RUNNING, false);
                         syncingTask = new SyncingTask();
                         syncingTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
@@ -1653,8 +1688,14 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                         AsyncTask.Status.RUNNING) {
                     System.out.println("RContact reSyncContactAsyncTask ---> running");
                 } else {
-                    reSyncContactAsyncTask = new ReSyncContactAsyncTask();
-                    reSyncContactAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    if (Utils.getBooleanPreference(RContactApplication.getInstance(),
+                            AppConstants.PREF_SYNC_RUNNING, false)) {
+
+                        Utils.setBooleanPreference(RContactApplication.getInstance(),
+                                AppConstants.PREF_SYNC_RUNNING, false);
+                        reSyncContactAsyncTask = new ReSyncContactAsyncTask();
+                        reSyncContactAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    }
                 }
             }
         }
@@ -1903,6 +1944,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                         tableEmailMaster.addArrayEmail(arrayListEmail);
                     }
                     //</editor-fold>
+
 
                     // <editor-fold desc="Education Master">
                     if (!Utils.isArraylistNullOrEmpty(profileData.get(i).getPbEducation())) {
@@ -2255,11 +2297,11 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         tabMain.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                tabPosition = tab.getPosition();
+//                tabPosition = tab.getPosition();
 //                if (AppConstants.isProgressShowing) {
 //                    showFragmentSwitchAlertDialog();
 //                } else {
-                setCurrentTabFragment(tabPosition);
+                setCurrentTabFragment(tab.getPosition());
 //                }
             }
 
@@ -2854,8 +2896,9 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 if (reSyncContactAsyncTask != null && reSyncContactAsyncTask.isCancelled()) {
                     return;
                 }
-                backgroundSync(false, null);
+                backgroundSync();
             } else {
+                Utils.setBooleanPreference(RContactApplication.getInstance(), AppConstants.PREF_SYNC_RUNNING, true);
                 Utils.setIntegerPreference(MainActivity.this, AppConstants.PREF_SYNCED_CONTACTS, 0);
 
                 Utils.setStringPreference(MainActivity.this, AppConstants
@@ -2865,6 +2908,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                         true);
             }
         } else {
+
+            Utils.setBooleanPreference(RContactApplication.getInstance(), AppConstants.PREF_SYNC_RUNNING, true);
 
             Utils.setIntegerPreference(MainActivity.this, AppConstants.PREF_SYNCED_CONTACTS, 0);
 
@@ -2876,40 +2921,39 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
     }
 
-    private void backgroundSync(final boolean addToDatabase, final WsResponseObject
-            uploadContactResponse) {
+    private void backgroundSync() {
         if (reSyncContactAsyncTask != null && reSyncContactAsyncTask.isCancelled()) {
             return;
         }
         Runnable run = new Runnable() {
             @Override
             public void run() {
-                String responseKey;
-                if (addToDatabase) {
-                    if (uploadContactResponse != null) {
-                        responseKey = uploadContactResponse.getResponseKey();
-                        Utils.setStringPreference(MainActivity.this, AppConstants.PREF_RESPONSE_KEY,
-                                responseKey);
-                        if (reSyncContactAsyncTask != null && reSyncContactAsyncTask.isCancelled
-                                ()) {
-                            return;
-                        }
-                        if (!Utils.isArraylistNullOrEmpty(uploadContactResponse
-                                .getArrayListUserRcProfile())) {
-
-                        /* Store Unique Contacts to ProfileMobileMapping */
-                            storeToMobileMapping(uploadContactResponse.getArrayListUserRcProfile());
-
-                        /* Store Unique Emails to ProfileEmailMapping */
-                            storeToEmailMapping(uploadContactResponse.getArrayListUserRcProfile());
-
-                        /* Store Profile Details to respective Table */
-                            storeProfileDataToDb(uploadContactResponse.getArrayListUserRcProfile(),
-                                    uploadContactResponse.getArrayListMapping());
-
-                        }
-                    }
-                }
+//                String responseKey;
+//                if (addToDatabase) {
+//                    if (uploadContactResponse != null) {
+//                        responseKey = uploadContactResponse.getResponseKey();
+//                        Utils.setStringPreference(MainActivity.this, AppConstants.PREF_RESPONSE_KEY,
+//                                responseKey);
+//                        if (reSyncContactAsyncTask != null && reSyncContactAsyncTask.isCancelled
+//                                ()) {
+//                            return;
+//                        }
+//                        if (!Utils.isArraylistNullOrEmpty(uploadContactResponse
+//                                .getArrayListUserRcProfile())) {
+//
+//                        /* Store Unique Contacts to ProfileMobileMapping */
+//                            storeToMobileMapping(uploadContactResponse.getArrayListUserRcProfile());
+//
+//                        /* Store Unique Emails to ProfileEmailMapping */
+//                            storeToEmailMapping(uploadContactResponse.getArrayListUserRcProfile());
+//
+//                        /* Store Profile Details to respective Table */
+//                            storeProfileDataToDb(uploadContactResponse.getArrayListUserRcProfile(),
+//                                    uploadContactResponse.getArrayListMapping());
+//
+//                        }
+//                    }
+//                }
                 int limit;
                 if (arrayListReSyncUserContact.size() > (lastSyncedData + CONTACT_CHUNK)) {
                     limit = lastSyncedData + CONTACT_CHUNK;
@@ -3852,14 +3896,14 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                                 if (syncingTask != null && syncingTask.getStatus() == AsyncTask.Status.RUNNING) {
                                     System.out.println("RContact contactSyncingTask ---> running");
                                 } else {
-                                    if (Utils.getBooleanPreference(RContactApplication.getInstance(), AppConstants.PREF_SYNC_RUNNING,
-                                            false)) {
+                                    if (Utils.getBooleanPreference(RContactApplication.getInstance(),
+                                            AppConstants.PREF_SYNC_RUNNING, false)) {
 
                                         showSyncProgress();
 
                                         System.out.println("RContact contactSyncingTask ---> initialised");
-                                        Utils.setBooleanPreference(RContactApplication.getInstance(), AppConstants.PREF_SYNC_RUNNING,
-                                                false);
+                                        Utils.setBooleanPreference(RContactApplication.getInstance(),
+                                                AppConstants.PREF_SYNC_RUNNING, false);
                                         syncingTask = new SyncingTask();
                                         syncingTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
@@ -3924,9 +3968,16 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                                     System.out.println("RContact reSyncContactAsyncTask ---> " +
                                             "running");
                                 } else {
-                                    reSyncContactAsyncTask = new ReSyncContactAsyncTask();
-                                    reSyncContactAsyncTask.executeOnExecutor(AsyncTask
-                                            .THREAD_POOL_EXECUTOR);
+
+                                    if (Utils.getBooleanPreference(RContactApplication.getInstance(),
+                                            AppConstants.PREF_SYNC_RUNNING, false)) {
+                                        Utils.setBooleanPreference(RContactApplication.getInstance(),
+                                                AppConstants.PREF_SYNC_RUNNING, false);
+
+                                        reSyncContactAsyncTask = new ReSyncContactAsyncTask();
+                                        reSyncContactAsyncTask.executeOnExecutor(AsyncTask
+                                                .THREAD_POOL_EXECUTOR);
+                                    }
                                 }
                             }
                         }
@@ -4059,29 +4110,29 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 //    }
 
     @SuppressWarnings("unused")
-    private String getMessageType(int type) {
-        switch (type) {
-            case Telephony.Sms.MESSAGE_TYPE_DRAFT:
-                return getString(R.string.msg_draft);
-
-            case Telephony.Sms.MESSAGE_TYPE_FAILED:
-                return getString(R.string.msg_failed);
-
-            case Telephony.Sms.MESSAGE_TYPE_INBOX:
-                return getString(R.string.msg_received);
-
-            case Telephony.Sms.MESSAGE_TYPE_OUTBOX:
-                return getString(R.string.msg_outbox);
-
-            case Telephony.Sms.MESSAGE_TYPE_QUEUED:
-                return getString(R.string.msg_queued);
-
-            case Telephony.Sms.MESSAGE_TYPE_SENT:
-                return getString(R.string.msg_sent);
-
-        }
-        return getString(R.string.type_other);
-    }
+//    private String getMessageType(int type) {
+//        switch (type) {
+//            case Telephony.Sms.MESSAGE_TYPE_DRAFT:
+//                return getString(R.string.msg_draft);
+//
+//            case Telephony.Sms.MESSAGE_TYPE_FAILED:
+//                return getString(R.string.msg_failed);
+//
+//            case Telephony.Sms.MESSAGE_TYPE_INBOX:
+//                return getString(R.string.msg_received);
+//
+//            case Telephony.Sms.MESSAGE_TYPE_OUTBOX:
+//                return getString(R.string.msg_outbox);
+//
+//            case Telephony.Sms.MESSAGE_TYPE_QUEUED:
+//                return getString(R.string.msg_queued);
+//
+//            case Telephony.Sms.MESSAGE_TYPE_SENT:
+//                return getString(R.string.msg_sent);
+//
+//        }
+//        return getString(R.string.type_other);
+//    }
 
         /*private BroadcastReceiver localBroadcastReceiverSmsLogSync = new BroadcastReceiver() {
         @Override

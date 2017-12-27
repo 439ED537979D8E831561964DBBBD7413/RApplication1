@@ -71,6 +71,8 @@ import com.rawalinfocom.rcontact.model.WsResponseObject;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -596,6 +598,11 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
         getContactsFromPhoneBook(data);
         data.close();
+
+//        if (Utils.getStringPreference(getMainActivity(), AppConstants.PREF_SHORT_BY_CONTACT, "0")
+//                .equalsIgnoreCase("0"))
+//            Collections.sort(arrayListPhoneBookContacts, new CustomComparator());
+
         setRecyclerViewLayoutManager();
         getRcpDetail();
         initSwipe();
@@ -609,6 +616,22 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         checkVersion();
 
     }
+
+//    public class CustomComparator implements Comparator<Object> {
+//        @Override
+//        public int compare(Object o1, Object o2) {
+//            try {
+//
+//                if (!StringUtils.isBlank(((ProfileData) o2).getTempLastName()))
+//                    return ((ProfileData) o1).getTempLastName().compareTo(((ProfileData) o2).getTempLastName());
+//                else
+//                    return 1;
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//            return 0;
+//        }
+//    }
 
 //    private class DisplayContact extends AsyncTask<Void, Void, Void> {
 //
@@ -747,18 +770,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
 //        }
     }
-
-//    public class CustomComparator implements Comparator<ProfileData> {
-//        @Override
-//        public int compare(ProfileData o1, ProfileData o2) {
-//            try {
-//                return o1.getTempLastName().compareTo(o2.getTempLastName());
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//            return 0;
-//        }
-//    }
 
     private void getRcpDetail() {
         try {
@@ -1627,8 +1638,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     String protocol = profileDetail.getPbIMAccounts().get(i)
                             .getIMAccountProtocol();
                     if (protocol.contains(getString(R.string.facebook)) || protocol.contains(getString(R.string.google_plus))
-                            || protocol.contains(getString(R
-                            .string.linked_in)) || protocol.contains(getString(R.string.twitter))
+                            || protocol.contains(getString(R.string.linked_in)) || protocol.contains(getString(R.string.twitter))
                             || protocol.contains(getString(R.string.instagram)) || protocol.contains(getString(R.string.pinterest))) {
                         savedImAccount.add(protocol);
                     } else {
@@ -1663,41 +1673,24 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     arrayListRemainingFields.add("Linked In Account");
                 }
 
-                if (savedImAccount.contains(getString(R.string.instagram))) {
+                if (savedImAccount.contains(getString(R.string.instagram)) && savedImAccount.contains(getString(R.string.twitter))
+                        && savedImAccount.contains(getString(R.string.pinterest))) {
                     percentage += 5;
-                    if (arrayListRemainingFields.contains("Instagram Account")) {
-                        arrayListRemainingFields.remove("Instagram Account");
-                    }
-                } else {
-                    arrayListRemainingFields.add("Instagram Account");
-                }
-
-                if (savedImAccount.contains(getString(R.string.twitter))) {
-                    percentage += 5;
-                    if (arrayListRemainingFields.contains("Twitter Account")) {
-                        arrayListRemainingFields.remove("Twitter Account");
-                    }
-                } else {
-                    arrayListRemainingFields.add("Twitter Account");
-                }
-
-                if (savedImAccount.contains(getString(R.string.pinterest))) {
-                    percentage += 5;
-                    if (arrayListRemainingFields.contains("Pinterest Account")) {
-                        arrayListRemainingFields.remove("Pinterest Account");
-                    }
-                } else {
-                    arrayListRemainingFields.add("Pinterest Account");
-                }
-
-                if (savedImAccount.contains("Other")) {
-                    percentage += 5;
-                    if (arrayListRemainingFields.contains(getString(R.string.str_social_contact))) {
+                    if (arrayListRemainingFields.add(getString(R.string.str_social_contact))) {
                         arrayListRemainingFields.remove(getString(R.string.str_social_contact));
                     }
                 } else {
                     arrayListRemainingFields.add(getString(R.string.str_social_contact));
                 }
+
+//                if (savedImAccount.contains("Other")) {
+//                    percentage += 5;
+//                    if (arrayListRemainingFields.contains(getString(R.string.str_social_contact))) {
+//                        arrayListRemainingFields.remove(getString(R.string.str_social_contact));
+//                    }
+//                } else {
+//                    arrayListRemainingFields.add(getString(R.string.str_social_contact));
+//                }
 
             } else {
                 arrayListRemainingFields.add(getString(R.string.str_social_contact));
@@ -1756,6 +1749,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 });
 
             } else {
+                arrayListRemainingFields.clear();
+                Utils.setArrayListPreference(RContactApplication.getInstance(), AppConstants.PREF_PROFILE_REMAINING_FIELDS, arrayListRemainingFields);
                 relativeProfilePercentage.setVisibility(View.GONE);
             }
         }

@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -394,19 +395,18 @@ public class ContactsFragment extends BaseFragment {
 
     private void replaceFragment(Fragment fragment, String tag) {
 
-        frameContainerCallTab.removeAllViews();
+//        frameContainerCallTab.removeAllViews();
 
-        getChildFragmentManager()
-                .beginTransaction()
-                .replace(R.id.frame_container_call_tab, fragment, tag)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .commit();
+//        getChildFragmentManager()
+//                .beginTransaction()
+//                .replace(R.id.frame_container_call_tab, fragment, tag)
+//                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+//                .commit();
 
-//        FragmentManager fm = getChildFragmentManager();
-//        FragmentTransaction ft = fm.beginTransaction();
-//        ft.replace(R.id.frame_container_call_tab, fragment, tag);
-//        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-//        ft.commit();
+        FragmentManager fm = getChildFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.frame_container_call_tab, fragment, tag)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit();
     }
 
     private void setupTabLayout() {
@@ -442,13 +442,19 @@ public class ContactsFragment extends BaseFragment {
     private void setCurrentTabFragment(int tabPosition) {
         switch (tabPosition) {
             case ALL_CONTACT_FRAGMENT:
+//                allContactsFragment = new AllContactsListFragment();
                 replaceFragment(allContactsFragment, AppConstants.TAG_FRAGMENT_ALL_CONTACTS);
+//                replaceFragment(new ContactsFragment(), AppConstants.TAG_FRAGMENT_ALL_CONTACTS);
                 break;
             case R_CONTACT_FRAGMENT:
+//                rContactsFragment = new RContactsFragment();
                 replaceFragment(rContactsFragment, AppConstants.TAG_FRAGMENT_R_CONTACTS);
+//                replaceFragment(new RContactsFragment(), AppConstants.TAG_FRAGMENT_R_CONTACTS);
                 break;
             case FAVOURITE_FRAGMENT:
+//                favoritesFragment = new FavoritesFragment();
                 replaceFragment(favoritesFragment, AppConstants.TAG_FRAGMENT_FAVORITES);
+//                replaceFragment(new FavoritesFragment(), AppConstants.TAG_FRAGMENT_FAVORITES);
                 break;
         }
     }
