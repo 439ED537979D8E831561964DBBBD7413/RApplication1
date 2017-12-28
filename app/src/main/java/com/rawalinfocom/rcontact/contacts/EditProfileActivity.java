@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -419,6 +420,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     private ArrayList<Object> arrayListEventObject;
     private ArrayList<Object> arrayListOrganizationObject;
     private ArrayList<ProfileDataOperationOrganization> arrayListTempOrganization;
+    ArrayList<ProfileDataOperationOrganization> arrayListDesignation;
     private ArrayList<Object> arrayListEducationObject;
     DatePickerDialog.OnDateSetListener dataPicker;
     EditText editTextEvent;
@@ -484,6 +486,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     .com/photos/87452/flowers-background-butterflies-beautiful-87452.jpeg";
     @BindView(R.id.btn_share)
     Button btnShare;*/
+    boolean addNewOrganization;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -894,47 +897,64 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             if (data != null) {
                 if (data.getStringExtra("isBack").equalsIgnoreCase("0")) {
                     //If everything went Ok, change to another activity.
-
-                    ProfileDataOperationOrganization organization = new
-                            ProfileDataOperationOrganization();
-                    if (organisationPosition == (arrayListOrganizationObject.size())) {
-                        organization.setOrgName(data.getStringExtra("organizationName"));
-                        organization.setOrgIndustryType(data.getStringExtra("organizationType"));
-                        organization.setOrgLogo(data.getStringExtra("logo"));
-                        organization.setOrgUrlSlug(data.getStringExtra("urlSlug"));
-                        organization.setOrgFromDate("");
-                        organization.setOrgToDate("");
-                        organization.setOrgJobTitle("");
-                        organization.setOrgId("");
-                        organization.setIsVerify(data.getIntExtra("isVerify", 0));
-                        organization.setOrgEntId(data.getStringExtra("orgId"));
-                        organization.setIsCurrent(1);
-
-                        arrayListOrganizationObject.add(organization);
-                        arrayListTempOrganization.add(organization);
-
-                    } else {
-
-                        ProfileDataOperationOrganization operationOrganization =
-                                (ProfileDataOperationOrganization)
-                                        arrayListOrganizationObject.get(organisationPosition);
-
-                        organization.setOrgName(data.getStringExtra("organizationName"));
-                        organization.setOrgIndustryType(data.getStringExtra("organizationType"));
-                        organization.setOrgLogo(data.getStringExtra("logo"));
-                        organization.setOrgUrlSlug(data.getStringExtra("urlSlug"));
-                        organization.setOrgFromDate(operationOrganization.getOrgFromDate());
-                        organization.setOrgToDate(operationOrganization.getOrgToDate());
-                        organization.setOrgJobTitle(operationOrganization.getOrgJobTitle());
-                        organization.setOrgId(operationOrganization.getOrgId());
-                        organization.setOrgEntId(data.getStringExtra("orgId"));
-                        organization.setIsVerify(data.getIntExtra("isVerify", 0));
-                        organization.setIsCurrent(operationOrganization.getIsCurrent());
-
-                        arrayListOrganizationObject.set(organisationPosition, organization);
-                        arrayListTempOrganization.add(organization);
+                    boolean isOrgPresent = false;
+                    for(int i=0 ; i< arrayListOrganizationObject.size(); i++){
+                        ProfileDataOperationOrganization org = (ProfileDataOperationOrganization) arrayListOrganizationObject.get(i);
+                        if(org != null)
+                        {
+                            String orgName =  org.getOrgName();
+                            if(!StringUtils.equalsIgnoreCase(orgName,data.getStringExtra("organizationName"))){
+                                isOrgPresent = false;
+                            }else{
+                                isOrgPresent = true;
+                                break;
+                            }
+                        }
                     }
 
+                    if(isOrgPresent){
+                        Toast.makeText(this, "Organisation already exist. Please select another organisation", Toast.LENGTH_SHORT).show();
+                    }else{
+                        ProfileDataOperationOrganization organization = new
+                                ProfileDataOperationOrganization();
+                        if (organisationPosition == (arrayListOrganizationObject.size())) {
+                            organization.setOrgName(data.getStringExtra("organizationName"));
+                            organization.setOrgIndustryType(data.getStringExtra("organizationType"));
+                            organization.setOrgLogo(data.getStringExtra("logo"));
+                            organization.setOrgUrlSlug(data.getStringExtra("urlSlug"));
+                            organization.setOrgFromDate("");
+                            organization.setOrgToDate("");
+                            organization.setOrgJobTitle("");
+                            organization.setOrgId("");
+                            organization.setIsVerify(data.getIntExtra("isVerify", 0));
+                            organization.setOrgEntId(data.getStringExtra("orgId"));
+                            organization.setIsCurrent(1);
+
+                            arrayListOrganizationObject.add(organization);
+                            arrayListTempOrganization.add(organization);
+
+                        } else {
+
+                            ProfileDataOperationOrganization operationOrganization =
+                                    (ProfileDataOperationOrganization)
+                                            arrayListOrganizationObject.get(organisationPosition);
+
+                            organization.setOrgName(data.getStringExtra("organizationName"));
+                            organization.setOrgIndustryType(data.getStringExtra("organizationType"));
+                            organization.setOrgLogo(data.getStringExtra("logo"));
+                            organization.setOrgUrlSlug(data.getStringExtra("urlSlug"));
+                            organization.setOrgFromDate(operationOrganization.getOrgFromDate());
+                            organization.setOrgToDate(operationOrganization.getOrgToDate());
+                            organization.setOrgJobTitle(operationOrganization.getOrgJobTitle());
+                            organization.setOrgId(operationOrganization.getOrgId());
+                            organization.setOrgEntId(data.getStringExtra("orgId"));
+                            organization.setIsVerify(data.getIntExtra("isVerify", 0));
+                            organization.setIsCurrent(operationOrganization.getIsCurrent());
+
+                            arrayListOrganizationObject.set(organisationPosition, organization);
+                            arrayListTempOrganization.add(organization);
+                        }
+                    }
                     removeAndAddOrganizationView();
 
                 } else {
@@ -4051,6 +4071,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         if (toAdd) {
             isUpdated = true;
 //            addOrganizationDetailsToList();
+            addNewOrganization = true;
             addOrganizationView((arrayListOrganizationObject.size()), null);
         }
     }
@@ -4156,6 +4177,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         }
     }
 
+
     private void checkBeforeSocialViewAdd(String imAccountProtocol) {
         boolean toAdd = false;
         for (int i = 0; i < linearSocialContactDetails.getChildCount(); i++) {
@@ -4196,8 +4218,96 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     private void removeAndAddOrganizationView() {
 
         linearOrganizationDetails.removeAllViews();
+
         for (int i = 0; i < arrayListOrganizationObject.size(); i++) {
             addOrganizationView(i, arrayListOrganizationObject.get(i));
+        }
+    }
+
+    private void removeAndAddDesignationView(LinearLayout linearLayoutDesignation) {
+//        linearLayoutDesignation.removeAllViews();
+        for (int i = 0; i < arrayListDesignation.size(); i++) {
+            addOrganizationDesignationView(linearLayoutDesignation, i, arrayListDesignation.get(i));
+        }
+
+    }
+
+    private void addDesignationList(LinearLayout linearLayoutDesination, int childPosition, boolean isCurrent) {
+//        int currentPosition =  childPosition;
+        arrayListDesignation.clear();
+        for (int i = 0; i < linearLayoutDesination.getChildCount(); i++) {
+            ProfileDataOperationOrganization organization = new ProfileDataOperationOrganization();
+            View viewDesignation = linearLayoutDesination.getChildAt(i);
+            final EditText inputDesignationName = viewDesignation.findViewById(R.id
+                    .input_designation_name);
+            final EditText inputFromDate = viewDesignation.findViewById(R.id.input_from_date);
+            final EditText inputToDate = viewDesignation.findViewById(R.id.input_to_date);
+            final ImageView imageFromDate = viewDesignation.findViewById(R.id.image_from_date);
+            final ImageView imageToDate = viewDesignation.findViewById(R.id.image_to_date);
+            final ImageView imageAddDesignation = viewDesignation.findViewById(R.id
+                    .image_add_designation);
+            final LinearLayout linearOrganizationDesignation = viewDesignation.findViewById(R.id
+                    .linear_organization_designation);
+
+            /*if (linearLayoutDesination.getChildCount() < 1) {
+                imageAddDesignation.setImageResource(R.drawable.ico_add_svg);
+            } else {
+                if (inputDesignationName.getText().toString() != null) {
+                    imageAddDesignation.setImageResource(R.drawable.ic_delete);
+                } else {
+                    imageAddDesignation.setImageResource(R.drawable.ico_add_svg);
+                }
+            }*/
+
+            /*if(linearLayoutDesination.getChildCount()<1){
+                imageAddDesignation.setImageResource(R.drawable.ico_add_svg);
+            }else{
+                imageAddDesignation.setImageResource(R.drawable.ico_add_svg);
+            }*/
+
+            inputDesignationName.setInputType(InputType.TYPE_CLASS_TEXT | InputType
+                    .TYPE_TEXT_FLAG_CAP_WORDS);
+
+            inputDesignationName.setTypeface(Utils.typefaceRegular(this));
+
+            inputFromDate.setHint(R.string.hint_choose_from_date);
+            inputFromDate.setFocusable(false);
+
+            inputToDate.setHint(R.string.hint_choose_to_date);
+            inputToDate.setFocusable(false);
+
+            if (!StringUtils.isEmpty(inputDesignationName.getText().toString())) {
+                inputDesignationName.setText(inputDesignationName.getText().toString());
+                organization.setOrgJobTitle(inputDesignationName.getText().toString().trim());
+            } else {
+                organization.setOrgJobTitle("");
+            }
+
+            if (!StringUtils.isEmpty(inputFromDate.getText().toString())) {
+                inputFromDate.setText(inputFromDate.getText().toString());
+                organization.setOrgFromDate(inputFromDate.getText().toString().trim());
+            } else {
+                organization.setOrgFromDate("");
+            }
+
+            if (!StringUtils.isEmpty(inputToDate.getText().toString())) {
+                inputToDate.setText(inputToDate.getText().toString());
+                organization.setOrgToDate(inputToDate.getText().toString().trim());
+            } else {
+                organization.setOrgToDate("");
+            }
+
+            if (!isCurrent) {
+                imageToDate.setEnabled(false);
+                inputToDate.setEnabled(false);
+                organization.setIsCurrent(1);
+            } else {
+                imageToDate.setEnabled(true);
+                inputToDate.setEnabled(true);
+                organization.setIsCurrent(0);
+            }
+
+            arrayListDesignation.add(organization);
         }
     }
 
@@ -4732,7 +4842,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         LinearLayout linearDesignation = view.findViewById(R.id.linear_designation);
         TextView textOrgUrlSlug = view.findViewById(R.id.text_org_url);
 
-        addOrganizationDesignationView(linearDesignation);
+        linearDesignation.setTag(position);
+        arrayListDesignation = new ArrayList<>();
+        addOrganizationDesignationView(linearDesignation, position, detailObject);
 
 //        final EditText inputFromDate = view.findViewById(R.id.input_from_date);
 //        final EditText inputToDate = view.findViewById(R.id.input_to_date);
@@ -4938,7 +5050,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         linearOrganizationDetails.addView(view);
     }
 
-    private void addOrganizationDesignationView(final LinearLayout linearDesignation) {
+    private void addOrganizationDesignationView(final LinearLayout linearDesignation, final int position, final Object detailObject) {
         final View viewDesignation = LayoutInflater.from(this).inflate(R.layout
                 .list_item_edit_organization_designation, null);
         final EditText inputDesignationName = viewDesignation.findViewById(R.id
@@ -4952,11 +5064,30 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         final LinearLayout linearOrganizationDesignation = viewDesignation.findViewById(R.id
                 .linear_organization_designation);
 
+        final boolean isCurrent = false;
+        if (detailObject != null) {
+            ProfileDataOperationOrganization organization1 = (ProfileDataOperationOrganization)
+                    detailObject;
+
+            if (organization1.getIsCurrent() != null && organization1.getIsCurrent() > 0) {
+                if (organization1.getIsCurrent() == 1) {
+                    AppConstants.setCurrent(false);
+                } else {
+                    AppConstants.setCurrent(true);
+                }
+            }
+        }
+
         if (linearDesignation.getChildCount() < 1) {
             imageAddDesignation.setImageResource(R.drawable.ico_add_svg);
         } else {
             imageAddDesignation.setImageResource(R.drawable.ic_delete);
         }
+
+        inputDesignationName.setInputType(InputType.TYPE_CLASS_TEXT | InputType
+                .TYPE_TEXT_FLAG_CAP_WORDS);
+
+        inputDesignationName.setTypeface(Utils.typefaceRegular(this));
 
         inputFromDate.setHint(R.string.hint_choose_from_date);
         inputFromDate.setFocusable(false);
@@ -4964,15 +5095,26 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         inputToDate.setHint(R.string.hint_choose_to_date);
         inputToDate.setFocusable(false);
 
+
         imageAddDesignation.setTag(linearDesignation.getChildCount());
 
         imageAddDesignation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 //                Toast.makeText(EditProfileActivity.this, "Position: " + imageAddDesignation
-//                        .getTag().toString(), Toast.LENGTH_SHORT).show();
+//                        .getTag().toString(), Toast.LENGTH_SHORT).show(
                 if (Integer.parseInt(imageAddDesignation.getTag().toString()) == 0) {
-                    addOrganizationDesignationView(linearDesignation);
+//                    addOrganizationDesignationView(linearDesignation,linearDesignation.getChildCount(),null);
+                    addDesignationList(linearDesignation, linearDesignation.getChildCount(), AppConstants.isCurrent());
+                    if (!StringUtils.isEmpty(inputDesignationName.getText().toString()))
+                        inputDesignationName.setText("");
+                    if (!StringUtils.isEmpty(inputFromDate.getText().toString()))
+                        inputFromDate.setText("");
+                    if (!StringUtils.isEmpty(inputToDate.getText().toString()))
+                        inputToDate.setText("");
+                    removeAndAddDesignationView(linearDesignation);
+//                    addOrganizationDesignationView(linearDesignation, linearDesignation.getChildCount(), null);
+
                 } else {
                     /*Toast.makeText(EditProfileActivity.this, "Position: " + imageAddDesignation
                             .getTag().toString(), Toast.LENGTH_SHORT).show();*/
@@ -4980,6 +5122,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 }
             }
         });
+
 
         imageFromDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -4997,7 +5140,43 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             }
         });
 
+
+        // set designation details
+        if (detailObject != null) {
+            ProfileDataOperationOrganization organization = (ProfileDataOperationOrganization)
+                    detailObject;
+            String designationName = organization.getOrgJobTitle();
+            String fromDate = organization.getOrgFromDate();
+            String toDate = organization.getOrgToDate();
+
+            inputDesignationName.setTag(position);
+            if (!StringUtils.isEmpty(designationName)) {
+                inputDesignationName.setText(designationName);
+            }
+
+            if (!StringUtils.isEmpty(fromDate)) {
+                inputFromDate.setText(fromDate);
+            }
+
+            if (!StringUtils.isEmpty(toDate)) {
+                inputToDate.setText(toDate);
+            }
+
+            if (organization.getIsCurrent() != null) {
+                if (organization.getIsCurrent() == 1) {
+                    imageToDate.setEnabled(false);
+                    inputToDate.setEnabled(false);
+                } else {
+                    imageToDate.setEnabled(true);
+                    inputToDate.setEnabled(true);
+                }
+            }
+
+//            arrayListDesignation.add(0,organization);
+        }
+
         linearDesignation.addView(viewDesignation);
+
     }
 
     private void addEducationView(int position, Object detailObject) {

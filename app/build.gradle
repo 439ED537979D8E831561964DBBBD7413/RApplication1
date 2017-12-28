@@ -75,7 +75,7 @@ android {
             getProps('./config/qa.props').each { p ->
                 buildConfigField 'String', p.key, p.value
             }
-            manifestPlaceholders = [ FABRIC_APP_ID:"06e70479d2ac89bbcd0f513bced81e424d0d41f7"]
+            manifestPlaceholders = [ FABRIC_APP_ID:""]
         }
         staging {
             //packageName "com.rawalinfocom.rcontact"
@@ -83,7 +83,7 @@ android {
                 buildConfigField 'String', p.key, p.value
             }
 
-            manifestPlaceholders = [ FABRIC_APP_ID:"06e70479d2ac89bbcd0f513bced81e424d0d41f7"]
+            manifestPlaceholders = [ FABRIC_APP_ID:""]
 
         }
         production {
@@ -94,11 +94,12 @@ android {
             manifestPlaceholders = [ FABRIC_APP_ID:"06e70479d2ac89bbcd0f513bced81e424d0d41f7"]
 
         }
-        /*local {
+        local {
             getProps('./config/local.props').each { p ->
                 buildConfigField 'String', p.key, p.value
             }
-        }*/
+            manifestPlaceholders = [ FABRIC_APP_ID:""]
+        }
     }
 
     lintOptions {

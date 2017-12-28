@@ -429,6 +429,14 @@ public class AppConstants {
     public static final int NOTIFICATION_TYPE_RELATION_REQUEST = 7;
     public static final int NOTIFICATION_TYPE_RELATION_ACCEPT = 8;
 
+    static boolean isCurrent;
 
+    public static boolean isCurrent() {
+        return isCurrent;
+    }
+
+    public static void setCurrent(boolean current) {
+        isCurrent = current;
+    }
     //</editor-fold>
 }
