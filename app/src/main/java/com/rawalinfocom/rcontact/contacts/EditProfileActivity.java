@@ -898,23 +898,22 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 if (data.getStringExtra("isBack").equalsIgnoreCase("0")) {
                     //If everything went Ok, change to another activity.
                     boolean isOrgPresent = false;
-                    for(int i=0 ; i< arrayListOrganizationObject.size(); i++){
+                    for (int i = 0; i < arrayListOrganizationObject.size(); i++) {
                         ProfileDataOperationOrganization org = (ProfileDataOperationOrganization) arrayListOrganizationObject.get(i);
-                        if(org != null)
-                        {
-                            String orgName =  org.getOrgName();
-                            if(!StringUtils.equalsIgnoreCase(orgName,data.getStringExtra("organizationName"))){
+                        if (org != null) {
+                            String orgName = org.getOrgName();
+                            if (!StringUtils.equalsIgnoreCase(orgName, data.getStringExtra("organizationName"))) {
                                 isOrgPresent = false;
-                            }else{
+                            } else {
                                 isOrgPresent = true;
                                 break;
                             }
                         }
                     }
 
-                    if(isOrgPresent){
+                    if (isOrgPresent) {
                         Toast.makeText(this, "Organisation already exist. Please select another organisation", Toast.LENGTH_SHORT).show();
-                    }else{
+                    } else {
                         ProfileDataOperationOrganization organization = new
                                 ProfileDataOperationOrganization();
                         if (organisationPosition == (arrayListOrganizationObject.size())) {
@@ -4226,10 +4225,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
     private void removeAndAddDesignationView(LinearLayout linearLayoutDesignation) {
 //        linearLayoutDesignation.removeAllViews();
+//        ArrayList<ProfileDataOperationOrganization> listToPass =  new ArrayList<>();
         for (int i = 0; i < arrayListDesignation.size(); i++) {
             addOrganizationDesignationView(linearLayoutDesignation, i, arrayListDesignation.get(i));
         }
-
     }
 
     private void addDesignationList(LinearLayout linearLayoutDesination, int childPosition, boolean isCurrent) {
@@ -5068,7 +5067,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         if (detailObject != null) {
             ProfileDataOperationOrganization organization1 = (ProfileDataOperationOrganization)
                     detailObject;
-
             if (organization1.getIsCurrent() != null && organization1.getIsCurrent() > 0) {
                 if (organization1.getIsCurrent() == 1) {
                     AppConstants.setCurrent(false);
@@ -5112,6 +5110,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         inputFromDate.setText("");
                     if (!StringUtils.isEmpty(inputToDate.getText().toString()))
                         inputToDate.setText("");
+
                     removeAndAddDesignationView(linearDesignation);
 //                    addOrganizationDesignationView(linearDesignation, linearDesignation.getChildCount(), null);
 
@@ -5139,7 +5138,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 updateOrganizationText(inputToDate);
             }
         });
-
 
         // set designation details
         if (detailObject != null) {
