@@ -156,6 +156,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -4223,17 +4224,27 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         }
     }
 
-    private void removeAndAddDesignationView(LinearLayout linearLayoutDesignation) {
-//        linearLayoutDesignation.removeAllViews();
-//        ArrayList<ProfileDataOperationOrganization> listToPass =  new ArrayList<>();
+    private void addDesignationView(LinearLayout linearLayoutDesignation) {
+        ArrayList<String> desigNameList = new ArrayList<>();
         for (int i = 0; i < arrayListDesignation.size(); i++) {
-            addOrganizationDesignationView(linearLayoutDesignation, i, arrayListDesignation.get(i));
+            String jobTitle =  arrayListDesignation.get(i).getOrgJobTitle();
+            if(!desigNameList.contains(jobTitle)){
+                desigNameList.add(jobTitle);
+            }else {
+                arrayListDesignation.remove(i);
+                linearLayoutDesignation.removeViewAt(i);
+            }
+        }
+
+        for (int j=0 ; j<arrayListDesignation.size(); j++){
+            addOrganizationDesignationView(linearLayoutDesignation, j, arrayListDesignation.get(j));
         }
     }
 
     private void addDesignationList(LinearLayout linearLayoutDesination, int childPosition, boolean isCurrent) {
 //        int currentPosition =  childPosition;
         arrayListDesignation.clear();
+//        ArrayList<ProfileDataOperationOrganization> designationList = new ArrayList<>();
         for (int i = 0; i < linearLayoutDesination.getChildCount(); i++) {
             ProfileDataOperationOrganization organization = new ProfileDataOperationOrganization();
             View viewDesignation = linearLayoutDesination.getChildAt(i);
@@ -4248,22 +4259,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             final LinearLayout linearOrganizationDesignation = viewDesignation.findViewById(R.id
                     .linear_organization_designation);
 
-            /*if (linearLayoutDesination.getChildCount() < 1) {
-                imageAddDesignation.setImageResource(R.drawable.ico_add_svg);
-            } else {
-                if (inputDesignationName.getText().toString() != null) {
-                    imageAddDesignation.setImageResource(R.drawable.ic_delete);
-                } else {
-                    imageAddDesignation.setImageResource(R.drawable.ico_add_svg);
-                }
-            }*/
-
-            /*if(linearLayoutDesination.getChildCount()<1){
-                imageAddDesignation.setImageResource(R.drawable.ico_add_svg);
-            }else{
-                imageAddDesignation.setImageResource(R.drawable.ico_add_svg);
-            }*/
-
             inputDesignationName.setInputType(InputType.TYPE_CLASS_TEXT | InputType
                     .TYPE_TEXT_FLAG_CAP_WORDS);
 
@@ -4276,21 +4271,21 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             inputToDate.setFocusable(false);
 
             if (!StringUtils.isEmpty(inputDesignationName.getText().toString())) {
-                inputDesignationName.setText(inputDesignationName.getText().toString());
+//                inputDesignationName.setText(inputDesignationName.getText().toString());
                 organization.setOrgJobTitle(inputDesignationName.getText().toString().trim());
             } else {
                 organization.setOrgJobTitle("");
             }
 
             if (!StringUtils.isEmpty(inputFromDate.getText().toString())) {
-                inputFromDate.setText(inputFromDate.getText().toString());
+//                inputFromDate.setText(inputFromDate.getText().toString());
                 organization.setOrgFromDate(inputFromDate.getText().toString().trim());
             } else {
                 organization.setOrgFromDate("");
             }
 
             if (!StringUtils.isEmpty(inputToDate.getText().toString())) {
-                inputToDate.setText(inputToDate.getText().toString());
+//                inputToDate.setText(inputToDate.getText().toString());
                 organization.setOrgToDate(inputToDate.getText().toString().trim());
             } else {
                 organization.setOrgToDate("");
@@ -4305,8 +4300,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 inputToDate.setEnabled(true);
                 organization.setIsCurrent(0);
             }
-
-            arrayListDesignation.add(organization);
+            if (!arrayListDesignation.contains(organization))
+                arrayListDesignation.add(organization);
         }
     }
 
@@ -5111,7 +5106,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     if (!StringUtils.isEmpty(inputToDate.getText().toString()))
                         inputToDate.setText("");
 
-                    removeAndAddDesignationView(linearDesignation);
+                    addDesignationView(linearDesignation);
 //                    addOrganizationDesignationView(linearDesignation, linearDesignation.getChildCount(), null);
 
                 } else {
@@ -5170,9 +5165,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 }
             }
 
-//            arrayListDesignation.add(0,organization);
         }
-
         linearDesignation.addView(viewDesignation);
 
     }
