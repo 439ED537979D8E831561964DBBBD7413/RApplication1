@@ -57,13 +57,13 @@ android {
             keyAlias "rcontacts"
             keyPassword "rcontacts"
         }
+
     }
 
     buildTypes {
         release {
 //            zipAlign true
             signingConfig signingConfigs.release
-
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -91,7 +91,6 @@ android {
 
         }
         production {
-            applicationId = yourApplicationId
             getProps('./config/production.props').each { p ->
                 buildConfigField 'String', p.key, p.value
             }
