@@ -174,8 +174,8 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
                                         .LAUNCH_MAIN_ACTIVITY);
 
                         Long date_firstLaunch = System.currentTimeMillis();
-                        Utils.setLongPreference(this,AppConstants.PREF_RATE_APP_DATE, date_firstLaunch);
-                        
+                        Utils.setLongPreference(this, AppConstants.PREF_RATE_APP_DATE, date_firstLaunch);
+
                         ProfileDataOperation profileDetail = setPasswordResponse.getProfileDetail();
                         Utils.setObjectPreference(this, AppConstants
                                 .PREF_REGS_USER_OBJECT, profileDetail);
@@ -255,6 +255,8 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
                     Utils.setBooleanPreference(this, AppConstants.KEY_IS_RESTORE_DONE, true);
 
                     Utils.setBooleanPreference(this, AppConstants.PREF_IS_LOGIN, true);
+                    Utils.setContactArrayListPreference(RContactApplication.getInstance(), AppConstants.PREF_ALL_CONTACT,
+                            new ArrayList());
 
                     // Redirect to MainActivity
                     Intent intent = new Intent(this, MainActivity.class);

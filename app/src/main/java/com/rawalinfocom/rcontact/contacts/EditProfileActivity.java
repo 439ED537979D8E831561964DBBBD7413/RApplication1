@@ -5969,7 +5969,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         userProfile.setPmLastSeen(profileDetail.getPmLastSeen());
         userProfile.setProfileRatingPrivacy(String.valueOf(profileDetail.getProfileRatingPrivacy
                 ()));
-        userProfile.setRatingPrivate(String.valueOf(profileDetail.getRatingPrivate()));
+        userProfile.setRatingPrivate(MoreObjects.firstNonNull(profileDetail.getRatingPrivate(), 0));
 
         tableProfileMaster.updateUserProfile(userProfile);
         //</editor-fold>

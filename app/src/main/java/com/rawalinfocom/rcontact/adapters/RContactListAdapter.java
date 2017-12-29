@@ -337,15 +337,14 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         holder.textRatingUserCount.setText(userProfile.getTotalProfileRateUser());
 
-        if (!StringUtils.equalsIgnoreCase(ownProfileId,userProfile.getPmId())) {
-            if (userProfile.getProfileRatingPrivacy() != null && userProfile.getRatingPrivate() != null) {
+        if (!StringUtils.equalsIgnoreCase(ownProfileId, userProfile.getPmId())) {
+            if (!StringUtils.isBlank(userProfile.getProfileRatingPrivacy())) {
                 if (Integer.parseInt((String) MoreObjects.firstNonNull(userProfile.getProfileRatingPrivacy()
                         , 0)) == IntegerConstants.PRIVACY_EVERYONE) {
                     holder.ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
                 } else if (Integer.parseInt((String) MoreObjects.firstNonNull(userProfile.getProfileRatingPrivacy(),
                         0)) == IntegerConstants.PRIVACY_MY_CONTACT) {
-                    if (Integer.parseInt((String) MoreObjects.firstNonNull(userProfile.getRatingPrivate(), 0))
-                            == IntegerConstants.IS_PRIVATE) {
+                    if (MoreObjects.firstNonNull(userProfile.getRatingPrivate(), 0) == IntegerConstants.IS_PRIVATE) {
                         holder.ratingUser.setRating(0);
                     } else {
                         holder.ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));

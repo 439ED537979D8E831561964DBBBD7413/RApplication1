@@ -29,6 +29,8 @@ import com.rawalinfocom.rcontact.model.WsResponseObject;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
+
 public class SplashActivity extends BaseActivity {
 
     // Splash screen timer
@@ -131,6 +133,8 @@ public class SplashActivity extends BaseActivity {
                 // Redirect to MainActivity
                 Utils.setBooleanPreference(RContactApplication.getInstance(), AppConstants.PREF_SYNC_RUNNING,
                         true);
+                Utils.setContactArrayListPreference(RContactApplication.getInstance(), AppConstants.PREF_ALL_CONTACT,
+                        new ArrayList());
                 startActivityIntent(activity, MainActivity.class, null);
                 overridePendingTransition(R.anim.enter, R.anim.exit);
                 finish();

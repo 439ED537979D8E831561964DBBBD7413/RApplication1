@@ -49,7 +49,6 @@
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:layout_gravity="center_horizontal"
-            android:layout_weight="1"
             android:background="@drawable/circle_gray"
             android:clickable="true"
             android:contentDescription="@string/app_name"

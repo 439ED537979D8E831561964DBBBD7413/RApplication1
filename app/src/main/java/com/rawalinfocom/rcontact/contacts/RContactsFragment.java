@@ -33,6 +33,7 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.common.base.MoreObjects;
 import com.google.gson.Gson;
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.BuildConfig;
@@ -151,7 +152,7 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Utils.showProgressDialog(getMainActivity(), getString(R.string.msg_please_wait), false);
+//        Utils.showProgressDialog(getMainActivity(), getString(R.string.msg_please_wait), false);
 //        if (arrayListRContact == null) {
 //            isReload = false;
 //        } else {
@@ -672,7 +673,7 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
                 userProfile.setTotalProfileRateUser(profileData.get(i).getTotalProfileRateUser());
                 userProfile.setPmLastSeen(profileData.get(i).getPmLastSeen());
                 userProfile.setProfileRatingPrivacy(String.valueOf(profileData.get(i).getProfileRatingPrivacy()));
-                userProfile.setRatingPrivate(String.valueOf(profileData.get(i).getRatingPrivate()));
+                userProfile.setRatingPrivate(MoreObjects.firstNonNull(profileData.get(i).getRatingPrivate(), 0));
 
                 if (mapLocalRcpId.containsKey(profileData.get(i).getRcpPmId())) {
                     userProfile.setPmRawId(mapLocalRcpId.get(profileData.get(i).getRcpPmId()));

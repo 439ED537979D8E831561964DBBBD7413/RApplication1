@@ -203,11 +203,10 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
                         .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
                     Utils.showSuccessSnackBar(OtpVerificationActivity.this,
                             relativeRootOtpVerification, otpDetailResponse.getMessage());
-
-                    if (isFrom.equalsIgnoreCase(AppConstants.EXTRA_IS_FROM_VERIFICATION)) {
-                        linearResendCallMe.setVisibility(View.GONE);
-                        resendTimer();
-                    }
+//                    if (isFrom.equalsIgnoreCase(AppConstants.EXTRA_IS_FROM_VERIFICATION)) {
+//                        linearResendCallMe.setVisibility(View.GONE);
+//                        resendTimer();
+//                    }
                 } else {
                     if (otpDetailResponse != null) {
                         Log.e("error response", otpDetailResponse.getMessage());
@@ -357,29 +356,29 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
             }
         });
 
-        linearResendCallMe.setVisibility(View.GONE);
-        resendTimer();
+//        linearResendCallMe.setVisibility(View.GONE);
+//        resendTimer();
     }
 
     //</editor-fold>
 
-    private void resendTimer() {
-
-        textResendCallMsg.setVisibility(View.VISIBLE);
-
-        countDownTimer = new CountDownTimer(30000, 1000) {
-
-            public void onTick(long millisUntilFinished) {
-                textResendCallMsg.setText(String.format(Locale.getDefault(),
-                        "Resend OTP or Call Me after 00:%d sec", millisUntilFinished / 1000));
-            }
-
-            public void onFinish() {
-                textResendCallMsg.setVisibility(View.GONE);
-                linearResendCallMe.setVisibility(View.VISIBLE);
-            }
-        }.start();
-    }
+//    private void resendTimer() {
+//
+//        textResendCallMsg.setVisibility(View.VISIBLE);
+//
+//        countDownTimer = new CountDownTimer(30000, 1000) {
+//
+//            public void onTick(long millisUntilFinished) {
+//                textResendCallMsg.setText(String.format(Locale.getDefault(),
+//                        "Resend OTP or Call Me after 00:%d sec", millisUntilFinished / 1000));
+//            }
+//
+//            public void onFinish() {
+//                textResendCallMsg.setVisibility(View.GONE);
+//                linearResendCallMe.setVisibility(View.VISIBLE);
+//            }
+//        }.start();
+//    }
 
     //<editor-fold desc="Web Service Call">
 

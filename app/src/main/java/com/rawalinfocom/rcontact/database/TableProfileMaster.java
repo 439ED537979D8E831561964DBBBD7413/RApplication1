@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.model.UserProfile;
 
 import org.apache.commons.lang3.StringUtils;
@@ -290,8 +291,8 @@ public class TableProfileMaster {
                         (COLUMN_PM_LAST_SEEN)));
                 userProfile.setProfileRatingPrivacy(cursor.getString(cursor.getColumnIndex
                         (COLUMN_PM_RATING_PRIVACY)));
-                userProfile.setRatingPrivate(cursor.getString(cursor.getColumnIndex
-                        (COLUMN_PM_RATING_PRIVATE)));
+                userProfile.setRatingPrivate(MoreObjects.firstNonNull(cursor.getInt(cursor.getColumnIndex
+                        (COLUMN_PM_RATING_PRIVATE)), 0));
 
                 cursor.close();
             }
@@ -351,8 +352,8 @@ public class TableProfileMaster {
                         (COLUMN_PM_LAST_SEEN)));
                 userProfile.setProfileRatingPrivacy(cursor.getString(cursor.getColumnIndex
                         (COLUMN_PM_RATING_PRIVACY)));
-                userProfile.setRatingPrivate(cursor.getString(cursor.getColumnIndex
-                        (COLUMN_PM_RATING_PRIVATE)));
+                userProfile.setRatingPrivate(MoreObjects.firstNonNull(cursor.getInt(cursor.getColumnIndex
+                        (COLUMN_PM_RATING_PRIVATE)), 0));
 
                 cursor.close();
             }

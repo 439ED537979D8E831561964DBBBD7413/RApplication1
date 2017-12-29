@@ -339,6 +339,7 @@ public class AppConstants {
     public static String PREF_PROFILE_REMAINING_FIELDS = "pref_profile_remaining_fields";
     public static String PREF_DONTSHOWAGAIN_POPUP = "pref_dontshowagain_popup";
     public static String PREF_RATE_APP_DATE = "pref_rate_app_date";
+    public static String PREF_ALL_CONTACT = "pref_all_contact";
     public static String PREF_SHOW_WALK_THROUGH = "pref_show_walk_through";
 
     public static String[] arrayPrefKeys = {PREF_SELECTED_COUNTRY_OBJECT, PREF_DEVICE_TOKEN_ID,

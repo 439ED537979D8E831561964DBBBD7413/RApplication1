@@ -105,11 +105,11 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     //<editor-fold desc="Constructor">
 
-    public AllContactAdapter(Fragment fragment, ArrayList<Object> arrayListUserContact,
+    public AllContactAdapter(Activity activity, ArrayList<Object> arrayListUserContact,
                              ArrayList<String> arrayListContactHeader) {
-        this.activity = fragment.getActivity();
-        this.fragment = fragment;
-        this.arrayListUserContact = arrayListUserContact;
+        this.activity = activity;
+        this.arrayListUserContact = new ArrayList<>();
+        this.arrayListUserContact.addAll(arrayListUserContact);
         this.arrayListContactHeader = arrayListContactHeader;
 
         arrayListExpandedPositions = new ArrayList<>();
@@ -273,7 +273,10 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public int getPositionForSection(int sectionIndex) {
-        return mSectionPositions.get(sectionIndex);
+        if (mSectionPositions.size() > 0)
+            return mSectionPositions.get(sectionIndex);
+        else
+            return 0;
     }
 
     @Override

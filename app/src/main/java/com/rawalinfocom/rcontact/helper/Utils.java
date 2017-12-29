@@ -65,6 +65,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.common.base.MoreObjects;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.rawalinfocom.rcontact.BuildConfig;
@@ -381,6 +382,29 @@ public class Utils {
         }.getType();
         return gson.fromJson(json, type);
     }
+
+    public static void setContactArrayListPreference(Context context, String key, @Nullable ArrayList
+            arrayList) {
+        SharedPreferences sharedpreferences = RContactApplication.getInstance()
+                .getSharedPreferences(AppConstants
+                        .KEY_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(arrayList);
+        editor.putString(key, json);
+        editor.apply();
+    }
+
+    public static ArrayList<Object> getContactArrayListPreference(Context context, String key) {
+        SharedPreferences sharedpreferences = RContactApplication.getInstance().getSharedPreferences(AppConstants
+                .KEY_PREFERENCES, Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = sharedpreferences.getString(key, null);
+        Type type = new TypeToken<ArrayList>() {
+        }.getType();
+        return gson.fromJson(json, type);
+    }
+
 
     public static void setIntegerPreference(Context context, String key, int value) {
         SharedPreferences sharedpreferences = RContactApplication.getInstance().getSharedPreferences(AppConstants
@@ -1121,7 +1145,7 @@ public class Utils {
         userProfile.setPmBadge(profileDetail.getPmBadge());
         userProfile.setPmLastSeen(profileDetail.getPmLastSeen());
         userProfile.setProfileRatingPrivacy(String.valueOf(profileDetail.getProfileRatingPrivacy()));
-        userProfile.setRatingPrivate(String.valueOf(profileDetail.getRatingPrivate()));
+        userProfile.setRatingPrivate(MoreObjects.firstNonNull(profileDetail.getRatingPrivate(), 0));
 
         tableProfileMaster.addProfile(userProfile);
         //</editor-fold>

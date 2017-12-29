@@ -92,9 +92,9 @@
             android:layout_marginTop="@dimen/activity_horizontal_margin"
             android:gravity="center"
             android:padding="@dimen/padding_5dp"
-            android:visibility="gone"
             android:textAppearance="?android:textAppearanceSmall"
-            android:textColor="@color/colorVeryDarkGrayishBlue2" />
+            android:textColor="@color/colorVeryDarkGrayishBlue2"
+            android:visibility="gone" />
 
         <LinearLayout
             android:id="@+id/linear_resend_call_me"
@@ -106,8 +106,8 @@
                 android:id="@+id/ripple_resend"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_half_horizontal_margin"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
                 android:layout_weight="1"
                 app:rv_alpha="@integer/alpha_ripple"
@@ -129,10 +129,11 @@
                 android:id="@+id/ripple_call_me"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_half_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                android:layout_marginStart="@dimen/activity_half_horizontal_margin"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
                 android:layout_weight="1"
+                android:visibility="gone"
                 app:rv_alpha="@integer/alpha_ripple"
                 app:rv_color="@color/colorWhite"
                 app:rv_rippleDuration="@integer/duration_ripple">

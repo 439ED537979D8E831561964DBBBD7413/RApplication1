@@ -607,6 +607,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         getRcpDetail();
         initSwipe();
 
+        Utils.setContactArrayListPreference(RContactApplication.getInstance(), AppConstants.PREF_ALL_CONTACT,
+                arrayListPhoneBookContacts);
+
         textTotalContacts.setVisibility(View.GONE);
         progressAllContact.setVisibility(View.GONE);
 
@@ -708,12 +711,24 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     private void init() {
 
 //        System.out.println("RContacts init initLoader ");
-        getLoaderManager().initLoader(0, null, this);
+
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(RContactApplication.getInstance());
         recyclerViewContactList.setLayoutManager(linearLayoutManager);
         RecyclerItemDecoration decoration = new RecyclerItemDecoration(RContactApplication.getInstance(), ContextCompat
                 .getColor(RContactApplication.getInstance(), R.color.colorVeryLightGray), 0.7f);
         recyclerViewContactList.addItemDecoration(decoration);
+
+//        if (Utils.getArrayListPreference(RContactApplication.getInstance(), AppConstants.PREF_ALL_CONTACT).size() > 0) {
+////            arrayListPhoneBookContacts = new ArrayList<>();
+////            arrayListPhoneBookContacts = Utils.getContactArrayListPreference(RContactApplication.getInstance(), AppConstants.PREF_ALL_CONTACT);
+//            if (allContactListAdapter != null) {
+//                allContactListAdapter.notifyDataSetChanged();
+//                initSwipe();
+//            } else
+//                getLoaderManager().initLoader(0, null, this);
+//        } else {
+        getLoaderManager().initLoader(0, null, this);
+//        }
 
         final SwipeDismissBehavior swipeDismissBehavior = new SwipeDismissBehavior();
         swipeDismissBehavior.setSwipeDirection(SwipeDismissBehavior.SWIPE_DIRECTION_START_TO_END);
@@ -744,7 +759,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
      */
     public void setRecyclerViewLayoutManager() {
 
-        allContactListAdapter = new AllContactAdapter(this, arrayListPhoneBookContacts, null);
+        allContactListAdapter = new AllContactAdapter(getMainActivity(), arrayListPhoneBookContacts, null);
         recyclerViewContactList.setAdapter(allContactListAdapter);
         RContactApplication.getInstance().setArrayListAllPhoneBookContacts(arrayListPhoneBookContacts);
     }
@@ -773,8 +788,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
     private void getRcpDetail() {
         try {
-            TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler
-                    ());
+            TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
             ArrayList<String> arrayListIds = tableProfileMaster.getAllRawIds();
             for (int i = 0; i < arrayListPhoneBookContacts.size(); i++) {
                 if (arrayListPhoneBookContacts.get(i) instanceof ProfileData) {
@@ -798,8 +812,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                             }
                         } else if (userProfiles.size() == 1) {
                             name = new StringBuilder(userProfiles.get(0).getPmFirstName() + " " +
-                                    userProfiles.get
-                                            (0).getPmLastName());
+                                    userProfiles.get(0).getPmLastName());
                             rcpID = userProfiles.get(0).getPmRcpId();
                             rcpProfileImage = userProfiles.get(0).getPmProfileImage();
                         }

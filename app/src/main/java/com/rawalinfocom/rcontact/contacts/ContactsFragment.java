@@ -395,18 +395,22 @@ public class ContactsFragment extends BaseFragment {
 
     private void replaceFragment(Fragment fragment, String tag) {
 
-//        frameContainerCallTab.removeAllViews();
+        frameContainerCallTab.removeAllViews();
 
-//        getChildFragmentManager()
-//                .beginTransaction()
-//                .replace(R.id.frame_container_call_tab, fragment, tag)
-//                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-//                .commit();
+        if (tag.equalsIgnoreCase(AppConstants.TAG_FRAGMENT_R_CONTACTS)) {
+            Utils.showProgressDialog(getMainActivity(), getString(R.string.msg_please_wait), false);
+        }
 
-        FragmentManager fm = getChildFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.frame_container_call_tab, fragment, tag)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit();
+        getChildFragmentManager()
+                .beginTransaction()
+                .replace(R.id.frame_container_call_tab, fragment, tag)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .commit();
+
+//        FragmentManager fm = getChildFragmentManager();
+//        FragmentTransaction ft = fm.beginTransaction();
+//        ft.replace(R.id.frame_container_call_tab, fragment, tag)
+//                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit();
     }
 
     private void setupTabLayout() {

@@ -2851,19 +2851,16 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     textUserRating.setText(profileDetail.getTotalProfileRateUser());
 
                     if ((MoreObjects.firstNonNull(profileDetail.getProfileRatingPrivacy(), 0)) ==
-                            IntegerConstants
-                                    .PRIVACY_EVERYONE) {
+                            IntegerConstants.PRIVACY_EVERYONE) {
 
                         ratingUser.setRating(Float.parseFloat(profileDetail.getProfileRating()));
                         buttonRequestRating.setVisibility(View.GONE);
 
                     } else if ((MoreObjects.firstNonNull(profileDetail.getProfileRatingPrivacy(),
-                            0)) == IntegerConstants
-                            .PRIVACY_MY_CONTACT) {
+                            0)) == IntegerConstants.PRIVACY_MY_CONTACT) {
 
                         if ((MoreObjects.firstNonNull(profileDetail.getRatingPrivate(), 0)) ==
-                                IntegerConstants
-                                        .IS_PRIVATE) {
+                                IntegerConstants.IS_PRIVATE) {
 
                             ratingUser.setRating(0);
                             buttonRequestRating.setVisibility(View.VISIBLE);
@@ -2878,8 +2875,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             });
                         } else {
 
-                            ratingUser.setRating(Float.parseFloat(profileDetail.getProfileRating
-                                    ()));
+                            ratingUser.setRating(Float.parseFloat(profileDetail.getProfileRating()));
                             buttonRequestRating.setVisibility(View.GONE);
                         }
 
@@ -5207,7 +5203,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         userProfile.setPmBadge(profileDetail.getPmBadge());
         userProfile.setPmLastSeen(profileDetail.getPmLastSeen());
         userProfile.setProfileRatingPrivacy(String.valueOf(profileDetail.getProfileRatingPrivacy()));
-        userProfile.setRatingPrivate(String.valueOf(profileDetail.getRatingPrivate()));
+        userProfile.setRatingPrivate(MoreObjects.firstNonNull(profileDetail.getRatingPrivate(), 0));
 
         tableProfileMaster.addProfile(userProfile);
         //</editor-fold>

@@ -63,6 +63,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import butterknife.BindView;
@@ -315,6 +316,8 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
                             .valueOf(System.currentTimeMillis()));
                     Utils.setBooleanPreference(this, AppConstants.KEY_IS_FIRST_TIME, true);
                     Utils.setBooleanPreference(this, AppConstants.PREF_IS_LOGIN, true);
+                    Utils.setContactArrayListPreference(RContactApplication.getInstance(), AppConstants.PREF_ALL_CONTACT,
+                            new ArrayList());
 
                     if (Utils.getBooleanPreference(this, AppConstants.KEY_IS_RESTORE_DONE, false)) {
                         // Redirect to MainActivity

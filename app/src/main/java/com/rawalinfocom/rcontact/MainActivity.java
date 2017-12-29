@@ -94,6 +94,7 @@ import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.Address;
 import com.rawalinfocom.rcontact.model.CallLogType;
 import com.rawalinfocom.rcontact.model.Comment;
+import com.rawalinfocom.rcontact.model.ContactPackage;
 import com.rawalinfocom.rcontact.model.ContactRequestResponseDataItem;
 import com.rawalinfocom.rcontact.model.Education;
 import com.rawalinfocom.rcontact.model.Email;
@@ -556,6 +557,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     }
                 }
             }
+            //</editor-fold>
 
             // <editor-fold desc="REQ_GET_CONTACT_REQUEST">
             if (serviceType.contains(WsConstants.REQ_GET_CONTACT_REQUEST)) {
@@ -576,6 +578,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     }
                 }
             }
+            //</editor-fold>
 
             // <editor-fold desc="REQ_GET_RATING_DETAILS">
             if (serviceType.contains(WsConstants.REQ_GET_RATING_DETAILS)) {
@@ -597,6 +600,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     }
                 }
             }
+            //</editor-fold>
 
             // <editor-fold desc="REQ_GET_COMMENT_DETAILS">
             if (serviceType.contains(WsConstants.REQ_GET_COMMENT_DETAILS)) {
@@ -617,6 +621,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     }
                 }
             }
+            //</editor-fold>
 
             // <editor-fold desc="REQ_ADD_PROFILE_VISIT">
             if (serviceType.contains(WsConstants.REQ_ADD_PROFILE_VISIT)) {
@@ -1826,7 +1831,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 userProfile.setTotalProfileRateUser(profileData.get(i).getTotalProfileRateUser());
                 userProfile.setPmLastSeen(profileData.get(i).getPmLastSeen());
                 userProfile.setProfileRatingPrivacy(String.valueOf(profileData.get(i).getProfileRatingPrivacy()));
-                userProfile.setRatingPrivate(String.valueOf(profileData.get(i).getRatingPrivate()));
+                userProfile.setRatingPrivate(MoreObjects.firstNonNull(profileData.get(i).getRatingPrivate(), 0));
 
                 if (mapLocalRcpId.containsKey(profileData.get(i).getRcpPmId())) {
                     userProfile.setPmRawId(mapLocalRcpId.get(profileData.get(i).getRcpPmId()));
@@ -1944,7 +1949,6 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                         tableEmailMaster.addArrayEmail(arrayListEmail);
                     }
                     //</editor-fold>
-
 
                     // <editor-fold desc="Education Master">
                     if (!Utils.isArraylistNullOrEmpty(profileData.get(i).getPbEducation())) {
@@ -2834,8 +2838,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
         Cursor cursor = phoneBookContacts.getUpdatedRawId(lastStamp);
 
-        if (Utils.getArrayListPreference(this, AppConstants.PREF_CONTACT_ID_SET) == null)
-            return;
+//        if (Utils.getArrayListPreference(this, AppConstants.PREF_CONTACT_ID_SET) == null)
+//            return;
 
         Set<String> updatedContactIds = new HashSet<>();
         while (cursor.moveToNext()) {
@@ -2846,8 +2850,9 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         cursor.close();
 
         Set<String> arrayListOldContactIds = new HashSet<>();
-        arrayListOldContactIds.addAll(Utils.getArrayListPreference(this, AppConstants
-                .PREF_CONTACT_ID_SET));
+        if (!(Utils.getArrayListPreference(this, AppConstants.PREF_CONTACT_ID_SET) == null))
+            arrayListOldContactIds.addAll(Utils.getArrayListPreference(this, AppConstants
+                    .PREF_CONTACT_ID_SET));
 
         Cursor contactNameCursor = phoneBookContacts.getAllContactRawId();
 
@@ -2909,16 +2914,22 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             }
         } else {
 
-            Utils.setBooleanPreference(RContactApplication.getInstance(), AppConstants.PREF_SYNC_RUNNING, true);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
 
-            Utils.setIntegerPreference(MainActivity.this, AppConstants.PREF_SYNCED_CONTACTS, 0);
-
-            Utils.setStringPreference(MainActivity.this, AppConstants
-                    .PREF_CONTACT_LAST_SYNC_TIME, String.valueOf(System.currentTimeMillis() -
-                    10000));
-            Utils.setBooleanPreference(MainActivity.this, AppConstants.PREF_CONTACT_SYNCED, true);
+                    try{
+                        Utils.setBooleanPreference(RContactApplication.getInstance(), AppConstants.PREF_SYNC_RUNNING, true);
+                        Utils.setIntegerPreference(RContactApplication.getInstance(), AppConstants.PREF_SYNCED_CONTACTS, 0);
+//                        Utils.setStringPreference(RContactApplication.getInstance(), AppConstants.PREF_CONTACT_LAST_SYNC_TIME,
+//                                String.valueOf(System.currentTimeMillis() - 10000));
+                        Utils.setBooleanPreference(RContactApplication.getInstance(), AppConstants.PREF_CONTACT_SYNCED, true);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            });
         }
-
     }
 
     private void backgroundSync() {
@@ -4764,8 +4775,22 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
 //        Log.i("savePackages", phoneBookContacts.getContactStorageAccounts().toString());
 
+        ArrayList<ContactPackage> contactPackages = phoneBookContacts.getContactStorageAccounts();
+
         WsRequestObject savePackageObject = new WsRequestObject();
-        savePackageObject.setArrayListPackageData(phoneBookContacts.getContactStorageAccounts());
+        if (contactPackages.size() > 0)
+            savePackageObject.setArrayListPackageData(phoneBookContacts.getContactStorageAccounts());
+        else {
+
+            ArrayList<ContactPackage> packages = new ArrayList<ContactPackage>();
+
+            ContactPackage contactPackage = new ContactPackage();
+            contactPackage.setBrand("WhatsApp");
+            contactPackage.setContactPackage("com.whatsapp");
+            packages.add(contactPackage);
+
+            savePackageObject.setArrayListPackageData(packages);
+        }
 
         if (Utils.isNetworkAvailable(RContactApplication.getInstance())) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
