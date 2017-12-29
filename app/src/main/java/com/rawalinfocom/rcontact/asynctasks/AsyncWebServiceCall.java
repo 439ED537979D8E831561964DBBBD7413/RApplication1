@@ -8,6 +8,7 @@ import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 
+import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
@@ -49,7 +50,7 @@ public class AsyncWebServiceCall extends AsyncTask<String, Void, Object> {
         this.activity = activity;
         this.requestObject = requestObject;
         if (requestObject != null && StringUtils.isEmpty(requestObject.getDeviceId())) {
-            this.requestObject.setDeviceId(Settings.Secure.getString(activity.getContentResolver
+            this.requestObject.setDeviceId(Settings.Secure.getString(RContactApplication.getInstance().getContentResolver
                     (), Settings.Secure.ANDROID_ID));
         }
         this.serviceType = serviceType;
@@ -71,7 +72,7 @@ public class AsyncWebServiceCall extends AsyncTask<String, Void, Object> {
         this.activity = fragment.getActivity();
         this.requestObject = requestObject;
         if (requestObject != null && StringUtils.isEmpty(requestObject.getDeviceId())) {
-            this.requestObject.setDeviceId(Settings.Secure.getString(activity.getContentResolver
+            this.requestObject.setDeviceId(Settings.Secure.getString(RContactApplication.getInstance().getContentResolver
                     (), Settings.Secure.ANDROID_ID));
         }
         this.serviceType = serviceType;
@@ -93,7 +94,7 @@ public class AsyncWebServiceCall extends AsyncTask<String, Void, Object> {
         this.context = context;
         this.requestObject = requestObject;
         if (requestObject != null && StringUtils.isEmpty(requestObject.getDeviceId())) {
-            this.requestObject.setDeviceId(Settings.Secure.getString(context.getContentResolver()
+            this.requestObject.setDeviceId(Settings.Secure.getString(RContactApplication.getInstance().getContentResolver()
                     , Settings.Secure.ANDROID_ID));
         }
         this.serviceType = serviceType;

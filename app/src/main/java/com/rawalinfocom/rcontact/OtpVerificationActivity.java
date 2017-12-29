@@ -1,6 +1,5 @@
 package com.rawalinfocom.rcontact;
 
-import android.*;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
@@ -11,11 +10,15 @@ import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -37,6 +40,8 @@ import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -66,13 +71,22 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
     RippleView rippleResend;
     @BindView(R.id.relative_root_otp_verification)
     RelativeLayout relativeRootOtpVerification;
+    @BindView(R.id.text_resend_call_msg)
+    TextView textResendCallMsg;
+    @BindView(R.id.button_call_me)
+    Button buttonCallMe;
+    @BindView(R.id.ripple_call_me)
+    RippleView rippleCallMe;
+    @BindView(R.id.linear_resend_call_me)
+    LinearLayout linearResendCallMe;
 
-    private String[] requiredPermissions = {android.Manifest.permission.READ_SMS, Manifest
+    private String[] requiredPermissions = {Manifest.permission.READ_SMS, Manifest
             .permission.RECEIVE_SMS};
 
-    String mobileNumber;
+    String mobileNumber, selectedCountryCode;
     Country selectedCountry;
     private String isFrom = "";
+    private CountDownTimer countDownTimer;
 
     Intent otpServiceIntent;
     BroadcastReceiver receiver;
@@ -103,26 +117,32 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
 
-        mobileNumber = Utils.getStringPreference(OtpVerificationActivity.this, AppConstants
-                .PREF_REGS_MOBILE_NUMBER, "");
-        selectedCountry = (Country) Utils.getObjectPreference(OtpVerificationActivity.this,
-                AppConstants.PREF_SELECTED_COUNTRY_OBJECT, Country.class);
+        if (bundle != null) {
+            isFrom = bundle.getString(AppConstants.EXTRA_IS_FROM, "");
+        }
+
+        if (isFrom.equalsIgnoreCase(AppConstants.EXTRA_IS_FROM_FORGOT_PASSWORD) ||
+                isFrom.equalsIgnoreCase(AppConstants.EXTRA_IS_FROM_VERIFICATION)) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                checkPermissionToExecute(requiredPermissions, AppConstants.READ_SMS);
+            }
+        }
+
+        if (isFrom.equalsIgnoreCase(AppConstants.EXTRA_IS_FROM_VERIFICATION)) {
+            mobileNumber = bundle.getString(AppConstants.EXTRA_MOBILE_NUMBER, "");
+            selectedCountryCode = bundle.getString(AppConstants.EXTRA_OBJECT_COUNTRY_CODE, "");
+        } else {
+            mobileNumber = Utils.getStringPreference(OtpVerificationActivity.this, AppConstants
+                    .PREF_REGS_MOBILE_NUMBER, "");
+            selectedCountry = (Country) Utils.getObjectPreference(OtpVerificationActivity.this,
+                    AppConstants.PREF_SELECTED_COUNTRY_OBJECT, Country.class);
+        }
 
         if (selectedCountry == null) {
             selectedCountry = new Country();
         }
 
         init();
-
-        if (bundle != null) {
-            isFrom = bundle.getString(AppConstants.EXTRA_IS_FROM, "");
-        }
-
-        if (isFrom.equalsIgnoreCase(AppConstants.EXTRA_IS_FROM_FORGOT_PASSWORD)) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                checkPermissionToExecute(requiredPermissions, AppConstants.READ_SMS);
-            }
-        }
     }
 
     @TargetApi(Build.VERSION_CODES.M)
@@ -165,6 +185,9 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
                 inputOtp.setText("");
                 sendOtp();
                 break;
+
+            case R.id.ripple_call_me:
+                break;
         }
     }
 
@@ -180,6 +203,10 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
                         .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
                     Utils.showSuccessSnackBar(OtpVerificationActivity.this,
                             relativeRootOtpVerification, otpDetailResponse.getMessage());
+//                    if (isFrom.equalsIgnoreCase(AppConstants.EXTRA_IS_FROM_VERIFICATION)) {
+//                        linearResendCallMe.setVisibility(View.GONE);
+//                        resendTimer();
+//                    }
                 } else {
                     if (otpDetailResponse != null) {
                         Log.e("error response", otpDetailResponse.getMessage());
@@ -227,7 +254,10 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
                         startActivity(intent);
                         overridePendingTransition(R.anim.enter, R.anim.exit);
                         finish();
-
+                    } else if (isFrom.equalsIgnoreCase(AppConstants.EXTRA_IS_FROM_VERIFICATION)) {
+                        if (countDownTimer != null)
+                            countDownTimer.cancel();
+                        finish();
                     } else {
 
                         // set launch screen as OtpVerificationActivity
@@ -283,8 +313,10 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
         textVerifyNumber.setTypeface(Utils.typefaceBold(this));
         textEnterOtp.setTypeface(Utils.typefaceRegular(this));
         inputOtp.setTypeface(Utils.typefaceRegular(this));
+        textResendCallMsg.setTypeface(Utils.typefaceRegular(this));
         buttonSubmit.setTypeface(Utils.typefaceRegular(this));
         buttonResend.setTypeface(Utils.typefaceRegular(this));
+        buttonCallMe.setTypeface(Utils.typefaceRegular(this));
 
         Utils.setRoundedCornerBackground(buttonSubmit, ContextCompat.getColor
                 (OtpVerificationActivity.this, R.color.colorAccent), 5, 0, ContextCompat
@@ -294,19 +326,70 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
                 (OtpVerificationActivity.this, R.color.vividRed), 5, 0, ContextCompat
                 .getColor(OtpVerificationActivity.this, R.color.vividRed));
 
+        Utils.setRoundedCornerBackground(buttonCallMe, ContextCompat.getColor
+                (OtpVerificationActivity.this, R.color.vividRed), 5, 0, ContextCompat
+                .getColor(OtpVerificationActivity.this, R.color.vividRed));
+
         rippleActionBack.setOnRippleCompleteListener(this);
         rippleResend.setOnRippleCompleteListener(this);
+        rippleCallMe.setOnRippleCompleteListener(this);
         rippleSubmit.setOnRippleCompleteListener(this);
+
+        buttonSubmit.setEnabled(false);
+        inputOtp.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                if (charSequence.toString().length() > 5) {
+                    buttonSubmit.setEnabled(true);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+//        linearResendCallMe.setVisibility(View.GONE);
+//        resendTimer();
     }
 
     //</editor-fold>
+
+//    private void resendTimer() {
+//
+//        textResendCallMsg.setVisibility(View.VISIBLE);
+//
+//        countDownTimer = new CountDownTimer(30000, 1000) {
+//
+//            public void onTick(long millisUntilFinished) {
+//                textResendCallMsg.setText(String.format(Locale.getDefault(),
+//                        "Resend OTP or Call Me after 00:%d sec", millisUntilFinished / 1000));
+//            }
+//
+//            public void onFinish() {
+//                textResendCallMsg.setVisibility(View.GONE);
+//                linearResendCallMe.setVisibility(View.VISIBLE);
+//            }
+//        }.start();
+//    }
 
     //<editor-fold desc="Web Service Call">
 
     private void sendOtp() {
 
         WsRequestObject otpObject = new WsRequestObject();
-        otpObject.setCountryCode(selectedCountry.getCountryCodeNumber());
+
+        if (isFrom.equalsIgnoreCase(AppConstants.EXTRA_IS_FROM_VERIFICATION))
+            otpObject.setCountryCode(selectedCountryCode);
+        else
+            otpObject.setCountryCode(selectedCountry.getCountryCodeNumber());
         otpObject.setMobileNumber(mobileNumber.replace("+91", ""));
 //        otpObject.setDeviceId(getDeviceId());
         if (isFrom.equals(AppConstants.EXTRA_IS_FROM_FORGOT_PASSWORD))

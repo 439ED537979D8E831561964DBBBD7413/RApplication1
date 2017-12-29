@@ -61,6 +61,7 @@
     <string name="title_verifying_mobile_number"><![CDATA[ હવે બેસો અને આરામ કરો! અમે તમારો મોબાઇલ નંબર ચકાસીએ છીએ.]]></string>
     <string name="msg_enter_otp">જો અમે SMS શોધવામાં નિષ્ફળ જઈએ તો 6 અંક OTP નીચે દાખલ કરો</string>
     <string name="action_resend">ફરી મોકલો</string>
+    <string name="action_call_me">Call Me</string>
     <string name="msg_otp_verification_success">OTP સફળતાપૂર્વક ચકાસવામાં આવ્યું</string>
     <string name="error_otp_verification_fail">OTP મેળ ખાતો નથી</string>
     <string name="msg_otp_error">કૃપા કરી એક માન્ય OTP દાખલ કરો</string>
@@ -415,6 +416,7 @@
     <string name="str_delete_click">Delete clicked</string>
     <string name="str_select_all_click">Select All clicked</string>
     <string name="str_all_contact_sync">સંપર્કો સફળતાપૂર્વક સિંક કરવામાં આવ્યા</string>
+    <string name="contacts_sync_in_progress">સંપર્કો સિન્ક્રોનિઝ ની પ્રક્રિયામાં છે!</string>
     <string name="contact_read_permission">સંપર્કો વાંચવાની પરવાનગી જરૂર છે. શું તમે ફરીથી પ્રયાસ કરવા માંગો છો?</string>
     <string name="calling_permission">કોલ કરવાની પરવાનગી જરૂર છે. શું તમે ફરીથી પ્રયાસ કરવા માંગો છો?</string>
 
@@ -686,11 +688,11 @@
     <string name="app_language">ભાષા</string>
     <string name="short_by">સંપર્કો સૉર્ટ કરવાનો પ્રકાર</string>
     <string name="export_format">સંપર્કો એક્સપોર્ટ કરવાનો પ્રકાર</string>
-    <string name="abc_by_first_name"> ABC દ્વારા પ્રથમ નામ</string>
+    <string name="abc_by_first_name"> દ્વારા પ્રથમ નામ</string>
     <string name="phone_storage">ફોન સ્ટોરેજ</string>
     <string name="sd_card">SD કાર્ડ</string>
     <string name="google_drive">Google Drive</string>
-    <string name="abc_by_last_name"> ABC દ્વારા અંતિમ નામ</string>
+    <string name="abc_by_last_name">દ્વારા અંતિમ નામ</string>
     <string name="str_export">એક્સપોર્ટ</string>
     <string name="str_short">સૉર્ટ</string>
     <string name="str_push_notification">પુશ નોટિફિકેશન</string>

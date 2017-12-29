@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.model.ProfileMobileMapping;
@@ -387,7 +388,7 @@ public class TableProfileMobileMapping {
     }
 
     // Getting RContact List
-    public ArrayList<UserProfile> getRContactList(String ownRcpId) {
+    public ArrayList<UserProfile> getRContactList() {
         ArrayList<UserProfile> arrayListRContact = new ArrayList<>();
         // Select All Query
 
@@ -432,8 +433,8 @@ public class TableProfileMobileMapping {
                             (TableProfileMaster.COLUMN_PM_RAW_ID)));
                     userProfile.setProfileRating(cursor.getString(cursor.getColumnIndex
                             (TableProfileMaster.COLUMN_PM_PROFILE_RATING)));
-                    userProfile.setRatingPrivate(cursor.getString(cursor.getColumnIndex
-                            (TableProfileMaster.COLUMN_PM_RATING_PRIVATE)));
+                    userProfile.setRatingPrivate(MoreObjects.firstNonNull(cursor.getInt
+                            (cursor.getColumnIndex(COLUMN_PM_RATING_PRIVATE)), 0));
                     userProfile.setProfileRatingPrivacy(cursor.getString(cursor.getColumnIndex
                             (TableProfileMaster.COLUMN_PM_RATING_PRIVACY)));
                     userProfile.setTotalProfileRateUser(cursor.getString(cursor.getColumnIndex

@@ -571,8 +571,6 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                 }
             }
         }));
-
-
     }
 
     private void populateData() {
@@ -582,7 +580,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
         TableProfileMobileMapping tableProfileMobileMapping = new TableProfileMobileMapping
                 (getDatabaseHandler());
 
-        arrayListDisplayProfile = tableProfileMobileMapping.getRContactList(getUserPmId());
+        arrayListDisplayProfile = tableProfileMobileMapping.getRContactList();
         QueryManager queryManager = new QueryManager(getDatabaseHandler());
 //        ArrayList<ProfileDataOperation> allRcpProfileDetails = queryManager.getAllRcpProfileDetails(SearchActivity.this);
         ArrayList<UserProfile> userDataList = new ArrayList<>();
@@ -596,6 +594,21 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
             }
             userDataList.add(userProfile);
         }
+
+        ArrayList<ProfileData> profileDataArrayList =  new ArrayList<>();
+        for (int i = 0; i < objectArrayListContact.size(); i++) {
+            ProfileData profileData = (ProfileData) objectArrayListContact.get(i);
+            String rcpId =  profileData.getTempRcpId();
+            if(!StringUtils.isEmpty(rcpId)){
+                ArrayList<ProfileDataOperationOrganization> organizationArrayList =
+                        queryManager.getOrganisationDetails(SearchActivity.this,rcpId);
+                profileData.setPbOrganization(organizationArrayList);
+            }
+            profileDataArrayList.add(profileData);
+        }
+
+        objectArrayListContact = new ArrayList<>();
+        objectArrayListContact.addAll(profileDataArrayList);
 
         arrayListRContact = new ArrayList<>();
         if (userDataList.size() > 0) {

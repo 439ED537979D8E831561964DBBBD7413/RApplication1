@@ -33,12 +33,12 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.common.base.MoreObjects;
 import com.google.gson.Gson;
-import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.BuildConfig;
-import com.rawalinfocom.rcontact.MainActivity;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.RContactListAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
@@ -58,7 +58,6 @@ import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
 import com.rawalinfocom.rcontact.database.TableWebsiteMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
-import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.ProgressWheel;
 import com.rawalinfocom.rcontact.helper.RecyclerItemDecoration;
 import com.rawalinfocom.rcontact.helper.Utils;
@@ -128,23 +127,24 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
     RContactListAdapter rContactListAdapter;
     private PhoneBookContacts phoneBookContacts;
 
-    MaterialDialog callConfirmationDialog, permissionConfirmationDialog;
+    //    MaterialDialog callConfirmationDialog, permissionConfirmationDialog;
+    private TableProfileMobileMapping tableProfileMobileMapping;
 
     private View rootView;
-    private boolean isReload = false;
+    //    private boolean isReload = false;
     private String callNumber;
     private ArrayList<String> arrayListPBPhoneNumber;
     private ArrayList<String> arrayListPBEmailAddress;
 
     //<editor-fold desc="Constructors">
 
-    public RContactsFragment() {
-        // Required empty public constructor
-    }
+//    public RContactsFragment() {
+    // // Required empty public constructor
+//    }
 
-    public static RContactsFragment newInstance() {
-        return new RContactsFragment();
-    }
+//    public static RContactsFragment newInstance() {
+//        return new RContactsFragment();
+//    }
 
     //</editor-fold>
 
@@ -152,6 +152,7 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        Utils.showProgressDialog(getMainActivity(), getString(R.string.msg_please_wait), false);
 //        if (arrayListRContact == null) {
 //            isReload = false;
 //        } else {
@@ -165,8 +166,9 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         if (rootView == null) {
             rootView = inflater.inflate(R.layout.fragment_r_contacts, container, false);
             ButterKnife.bind(this, rootView);
@@ -177,11 +179,13 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 //        if (!isReload) {
         arrayListContactHeaders = new ArrayList<>();
         phoneBookContacts = new PhoneBookContacts(getActivity());
+        tableProfileMobileMapping = new TableProfileMobileMapping(getDatabaseHandler());
+//        System.out.println("RContacts RContactsFragment init dialog");
         init();
 //        }
     }
@@ -199,14 +203,14 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
 
     private void registerLocalBroadCast() {
         // rating update broadcast receiver register
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver
+        LocalBroadcastManager.getInstance(getMainActivity()).registerReceiver
                 (localBroadcastReceiverRatingUpdate,
                         new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_RATING_UPDATE));
     }
 
     private void unregisterLocalBroadCast() {
         //  rating update broadcast receiver unregister
-        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver
+        LocalBroadcastManager.getInstance(getMainActivity()).unregisterReceiver
                 (localBroadcastReceiverRatingUpdate);
     }
 
@@ -224,7 +228,7 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
                     Utils.callIntent(getActivity(), callNumber);
                 } else {
                     // Permission Denied
-                    Utils.showErrorSnackBar(getActivity(), relativeRootRcontacts, getString(R.string.error_call_permission));
+                    Utils.showErrorSnackBar(getMainActivity(), relativeRootRcontacts, getString(R.string.error_call_permission));
                 }
             }
             break;
@@ -298,22 +302,30 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
             @Override
             public void onRefresh() {
 
-                // cancel the Visual indication of a refresh
-                swipeRefreshLayout.setRefreshing(true);
-                String fromDate = Utils.getStringPreference(getActivity(), AppConstants
-                        .KEY_API_CALL_TIME_STAMP_RCP, "");
-                RCPContactServiceCall(fromDate, WsConstants.REQ_GET_RCP_CONTACT);
+                if (Utils.getBooleanPreference(RContactApplication.getInstance(), AppConstants.PREF_CONTACT_SYNCED, false)) {
+                    // cancel the Visual indication of a refresh
+                    swipeRefreshLayout.setRefreshing(true);
+                    String fromDate = Utils.getStringPreference(getActivity(), AppConstants
+                            .KEY_API_CALL_TIME_STAMP_RCP, "");
+                    RCPContactServiceCall(fromDate, WsConstants.REQ_GET_RCP_CONTACT);
+                } else {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
             }
         });
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Utils.hideProgressDialog();
+//                System.out.println("RContacts RContactsFragment hide dialog");
+            }
+        }, 1000);
     }
 
     private void getRContactFromDB() {
 
-        TableProfileMobileMapping tableProfileMobileMapping = new TableProfileMobileMapping
-                (getDatabaseHandler());
-
-        arrayListDisplayProfile = tableProfileMobileMapping.getRContactList(((BaseActivity)
-                getActivity()).getUserPmId());
+        arrayListDisplayProfile = tableProfileMobileMapping.getRContactList();
 
         arrayListRContact = new ArrayList<>();
         if (arrayListDisplayProfile.size() > 0) {
@@ -333,7 +345,7 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                int position = viewHolder.getAdapterPosition();
+//                int position = viewHolder.getAdapterPosition();
                 callNumber = StringUtils.defaultString(((RContactListAdapter
                         .RContactViewHolder) viewHolder).textContactNumber.getText()
                         .toString());
@@ -387,7 +399,7 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
                     float width = height / 3;
 
                     if (dX > 0) {
-                        p.setColor(ContextCompat.getColor(getActivity(), R.color
+                        p.setColor(ContextCompat.getColor(getMainActivity(), R.color
                                 .darkModerateLimeGreen));
                         RectF background = new RectF((float) itemView.getLeft(), (float) itemView
                                 .getTop(), dX, (float) itemView.getBottom());
@@ -399,7 +411,7 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
                                 width, (float) itemView.getBottom() - width);
                         c.drawBitmap(icon, null, icon_dest, p);
                     } else {
-                        p.setColor(ContextCompat.getColor(getActivity(), R.color.brightOrange));
+                        p.setColor(ContextCompat.getColor(getMainActivity(), R.color.brightOrange));
                         RectF background = new RectF((float) itemView.getRight() + dX, (float)
                                 itemView.getTop(), (float) itemView.getRight(), (float) itemView
                                 .getBottom());
@@ -421,7 +433,7 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
     }
 
     private void swipeToCall() {
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest
+        if (ContextCompat.checkSelfPermission(getMainActivity(), Manifest
                 .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission
                     .CALL_PHONE}, AppConstants
@@ -446,13 +458,11 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
                             .findFirstCompletelyVisibleItemPosition();
         }
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(RContactApplication.getInstance());
         recyclerView.setLayoutManager(linearLayoutManager);
-        RecyclerItemDecoration decoration = new RecyclerItemDecoration(getActivity(), ContextCompat
-                .getColor(getActivity(), R.color.colorVeryLightGray), 0.7f);
+        RecyclerItemDecoration decoration = new RecyclerItemDecoration(RContactApplication.getInstance(), ContextCompat
+                .getColor(RContactApplication.getInstance(), R.color.colorVeryLightGray), 0.7f);
         recyclerView.addItemDecoration(decoration);
-        recyclerView.scrollToPosition(scrollPosition);
     }
 
     @Override
@@ -515,7 +525,7 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
                     }
 
                     if (!StringUtils.isEmpty(getRCPContactUpdateResponse.getTimestamp())) {
-                        Utils.setStringPreference(getActivity(), AppConstants.KEY_API_CALL_TIME_STAMP_RCP,
+                        Utils.setStringPreference(RContactApplication.getInstance(), AppConstants.KEY_API_CALL_TIME_STAMP_RCP,
                                 getRCPContactUpdateResponse.getTimestamp());
                     }
 
@@ -541,7 +551,9 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
                 }
             } else {
                 Utils.hideProgressDialog();
-                Log.e("error", error.toString());
+                if (error != null) {
+                    Log.e("error", error.getMessage());
+                }
             }
 
         }
@@ -661,7 +673,7 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
                 userProfile.setTotalProfileRateUser(profileData.get(i).getTotalProfileRateUser());
                 userProfile.setPmLastSeen(profileData.get(i).getPmLastSeen());
                 userProfile.setProfileRatingPrivacy(String.valueOf(profileData.get(i).getProfileRatingPrivacy()));
-                userProfile.setRatingPrivate(String.valueOf(profileData.get(i).getRatingPrivate()));
+                userProfile.setRatingPrivate(MoreObjects.firstNonNull(profileData.get(i).getRatingPrivate(), 0));
 
                 if (mapLocalRcpId.containsKey(profileData.get(i).getRcpPmId())) {
                     userProfile.setPmRawId(mapLocalRcpId.get(profileData.get(i).getRcpPmId()));
@@ -828,20 +840,21 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
                             if (arrayListOrganization.get(j).getIsVerify() != null)
                                 if (arrayListOrganization.get(j).getIsVerify() == IntegerConstants.RCP_TYPE_PRIMARY) {
                                     organization.setOmOrganizationType(arrayListOrganization.get(j).getOrgIndustryType());
-                                    organization.setOmEnterpriseOrgId(arrayListOrganization.get(j).getOrgEntId());
+//                                    organization.setOmEnterpriseOrgId(arrayListOrganization.get(j).getOrgEntId());
                                     organization.setOmOrganizationLogo(arrayListOrganization.get(j)
                                             .getEomLogoPath() + "/" + arrayListOrganization.get(j).getEomLogoName());
                                 } else {
                                     organization.setOmOrganizationType("");
-                                    organization.setOmEnterpriseOrgId("");
+//                                    organization.setOmEnterpriseOrgId("");
                                     organization.setOmOrganizationLogo("");
                                 }
                             else {
                                 organization.setOmOrganizationType("");
-                                organization.setOmEnterpriseOrgId("");
+//                                organization.setOmEnterpriseOrgId("");
                                 organization.setOmOrganizationLogo("");
                             }
 
+                            organization.setOmEnterpriseOrgId(arrayListOrganization.get(j).getOrgEntId());
                             organization.setOrgUrlSlug(arrayListOrganization.get(j).getOrgUrlSlug());
                             organization.setOmIsVerified(String.valueOf(arrayListOrganization.get(j).getIsVerify()));
                             organization.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
@@ -1040,11 +1053,6 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
 
         if (contactNumberCursor != null && contactNumberCursor.getCount() > 0) {
             while (contactNumberCursor.moveToNext()) {
-
-                ProfileDataOperationPhoneNumber phoneNumber = new
-                        ProfileDataOperationPhoneNumber();
-                ProfileDataOperationPhoneNumber phoneNumberOperation = new
-                        ProfileDataOperationPhoneNumber();
 
                 arrayListPBPhoneNumber.add(Utils.getFormattedNumber(getActivity(),
                         contactNumberCursor.getString(contactNumberCursor.getColumnIndex

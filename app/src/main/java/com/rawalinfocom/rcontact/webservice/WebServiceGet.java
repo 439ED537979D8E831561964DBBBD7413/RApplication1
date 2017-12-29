@@ -1,11 +1,15 @@
 package com.rawalinfocom.rcontact.webservice;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.util.Log;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.ReLoginEnterPasswordActivity;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.helper.Utils;
 
@@ -82,10 +86,28 @@ public class WebServiceGet {
                 inputStream = new BufferedInputStream(urlConnection.getInputStream());
                 String responseString = convertInputStreamToString(inputStream);
                 response = getMapper().readValue(responseString, responseType);
+            } else if (statusCode == HttpsURLConnection.HTTP_UNAUTHORIZED) {
+                response = null;
+
+                Utils.setIntegerPreference(activity, AppConstants.PREF_LAUNCH_SCREEN_INT,
+                        IntegerConstants
+                                .LAUNCH_RE_LOGIN_PASSWORD);
+                Utils.setBooleanPreference(activity, AppConstants.PREF_TEMP_LOGOUT, true);
+                Utils.setBooleanPreference(activity, AppConstants.PREF_IS_LOGIN, false);
+
+                // Redirect to MobileNumberRegistrationActivity
+                Intent intent = new Intent(activity, ReLoginEnterPasswordActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                intent.putExtra(AppConstants.EXTRA_IS_FROM, AppConstants.EXTRA_IS_FROM_RE_LOGIN);
+                activity.startActivity(intent);
+                activity.overridePendingTransition(R.anim.enter, R.anim.exit);
+                activity.finish();
+
             } else {
                 response = null;
             }
-
 
         } catch (Exception e) {
             System.out.println("Status code: " + Integer.toString(statusCode)

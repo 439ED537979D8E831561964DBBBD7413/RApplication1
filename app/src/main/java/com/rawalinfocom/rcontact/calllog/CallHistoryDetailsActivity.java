@@ -1280,8 +1280,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
             } else {
 //                TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
                 QueryManager queryManager = new QueryManager(databaseHandler);
-                ProfileDataOperation profileDataOperation = queryManager.getRcProfileDetail
-                        (this, pmId);
+                ProfileDataOperation profileDataOperation = queryManager.getRcProfileDetail(pmId);
                 setUpView(profileDataOperation);
             }
         } else {

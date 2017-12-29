@@ -123,6 +123,30 @@ public class TableEducationMaster {
         db.close(); // Closing database connection
     }
 
+    // Adding array Org
+//    public void addUpdateArrayEducation(ProfileDataOperationEducation education, String rcpPmId) {
+//        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+//
+////        ContentValues values = new ContentValues();
+////        for (int i = 0; i < arrayListEducation.size(); i++) {
+//        ContentValues values = new ContentValues();
+//        values.put(COLUMN_EDM_ID, education.getEduId());
+//        values.put(COLUMN_EDM_RECORD_INDEX_ID, education.getEduId());
+//        values.put(COLUMN_EDM_SCHOOL_COLLEGE_NAME, education.getEduName());
+//        values.put(COLUMN_EDM_COURSE, education.getEduCourse());
+//        values.put(COLUMN_EDM_EDUCATION_FROM_DATE, education.getEduFromDate());
+//        values.put(COLUMN_EDM_EDUCATION_TO_DATE, education.getEduToDate());
+//        values.put(COLUMN_EDM_EDUCATION_IS_CURRENT, education.getIsCurrent());
+//        values.put(COLUMN_EDM_EDUCATION_IS_PRIVATE, education.getIsPrivate());
+//        values.put(COLUMN_EDM_EDUCATION_PRIVACY, String.valueOf(education.getEduPublic()));
+//        values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, rcpPmId);
+//
+//        // Inserting Row
+//        db.insert(TABLE_RC_EDUCATION_MASTER, null, values);
+////        }
+//        db.close(); // Closing database connection
+//    }
+
     // Adding or Updating array Org
 //    public void addUpdateArrayEducation(ArrayList<Education> arrayListEducation, String RcpPmId) {
 //        SQLiteDatabase db = databaseHandler.getWritableDatabase();

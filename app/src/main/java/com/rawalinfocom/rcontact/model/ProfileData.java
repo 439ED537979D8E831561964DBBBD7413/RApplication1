@@ -34,6 +34,7 @@ public class ProfileData {
     private String tempRawId;
     private String name;
 
+    private ArrayList<ProfileDataOperationOrganization> pbOrganization;
 
     @JsonProperty("pb_local_phonebook_id")
     public String getLocalPhoneBookId() {
@@ -211,4 +212,13 @@ public class ProfileData {
     public void setTempRcpImageURL(String tempRcpImageURL) {
         this.tempRcpImageURL = tempRcpImageURL;
     }
+
+    public ArrayList<ProfileDataOperationOrganization> getPbOrganization() {
+        return pbOrganization;
+    }
+
+    public void setPbOrganization(ArrayList<ProfileDataOperationOrganization> pbOrganization) {
+        this.pbOrganization = pbOrganization;
+    }
+
 }

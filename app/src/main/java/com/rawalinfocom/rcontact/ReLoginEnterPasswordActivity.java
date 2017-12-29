@@ -62,6 +62,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import butterknife.BindView;
@@ -264,6 +265,7 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
             }
             //</editor-fold>
 
+            //<editor-fold desc="REQ_CHECK_LOGIN">
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_CHECK_LOGIN)) {
                 WsResponseObject enterPassWordResponse = (WsResponseObject) data;
 
@@ -320,7 +322,9 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
                     }
                 }
             }
+            //</editor-fold>
 
+            //<editor-fold desc="REQ_STORE_DEVICE_DETAILS">
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_STORE_DEVICE_DETAILS)) {
                 WsResponseObject enterPassWordResponse = (WsResponseObject) data;
                 Utils.hideProgressDialog();
@@ -332,6 +336,8 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
                     Utils.setBooleanPreference(this, AppConstants.KEY_IS_RESTORE_DONE, true);
                     Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME, String
                             .valueOf(System.currentTimeMillis()));
+                    Utils.setContactArrayListPreference(RContactApplication.getInstance(), AppConstants.PREF_ALL_CONTACT,
+                            new ArrayList());
 
                     Intent intent = new Intent(this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -391,6 +397,7 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
                     }
                 }
             }
+            //</editor-fold>
 
             //<editor-fold desc="REQ_REGISTER_WITH_SOCIAL_MEDIA">
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_LOGIN_WITH_SOCIAL_MEDIA)) {
@@ -426,6 +433,7 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
                     }
                 }
             }
+            //</editor-fold>
 
         } else {
 //            AppUtils.hideProgressDialog();
@@ -442,7 +450,7 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
                         .LAUNCH_MAIN_ACTIVITY);
 
         Long date_firstLaunch = System.currentTimeMillis();
-        Utils.setLongPreference(this,AppConstants.PREF_RATE_APP_DATE, date_firstLaunch);
+        Utils.setLongPreference(this, AppConstants.PREF_RATE_APP_DATE, date_firstLaunch);
 
         Utils.setObjectPreference(this, AppConstants
                 .PREF_REGS_USER_OBJECT, profileDetail);
