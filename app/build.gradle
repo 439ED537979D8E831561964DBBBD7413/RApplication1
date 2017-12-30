@@ -29,9 +29,9 @@ def final yourApplicationId = 'com.rawalinfocom.rcontact'
 
 android {
     compileSdkVersion 27
-    buildToolsVersion '26.0.2'
-//    compileSdkVersion 26
 //    buildToolsVersion '26.0.2'
+//    compileSdkVersion 26
+    buildToolsVersion '26.0.2'
     flavorDimensions 'default'
     defaultConfig {
         minSdkVersion 19
@@ -123,9 +123,10 @@ android {
     }
 }
 
-final SUPPORT_LIBRARY_VERSION = '27.0.2'
-//final SUPPORT_LIBRARY_VERSION = '26.0.1'
-final PLAY_SERVICES_VERSION = '11.6.2'
+//final SUPPORT_LIBRARY_VERSION = '27.0.2'
+final SUPPORT_LIBRARY_VERSION = '26.0.1'
+final PLAY_SERVICES_VERSION = '11.0.4'
+//final PLAY_SERVICES_VERSION = '11.6.2'
 final JACKSON_CORE_VERSION = '2.8.3'
 final BUTTER_KNIFE_VERSION = '8.8.1'
 
@@ -173,7 +174,7 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:3.8.0'
     compile 'org.apache.commons:commons-lang3:3.6'
     compile 'com.facebook.android:facebook-android-sdk:4.25.0'
-    compile 'com.android.support:multidex:1.0.2'
+    compile 'com.android.support:multidex:1.0.1'
     compile 'com.flipkart.zjsonpatch:zjsonpatch:0.3.0'
     compile 'me.leolin:ShortcutBadger:1.1.16@aar'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'

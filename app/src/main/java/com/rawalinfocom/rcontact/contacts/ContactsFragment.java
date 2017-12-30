@@ -395,11 +395,11 @@ public class ContactsFragment extends BaseFragment {
 
     private void replaceFragment(Fragment fragment, String tag) {
 
-        frameContainerCallTab.removeAllViews();
-
-        if (tag.equalsIgnoreCase(AppConstants.TAG_FRAGMENT_R_CONTACTS)) {
-            Utils.showProgressDialog(getMainActivity(), getString(R.string.msg_please_wait), false);
-        }
+//        frameContainerCallTab.removeAllViews();
+//
+//        if (tag.equalsIgnoreCase(AppConstants.TAG_FRAGMENT_R_CONTACTS)) {
+//            Utils.showProgressDialog(getMainActivity(), getString(R.string.msg_please_wait), false);
+//        }
 
         getChildFragmentManager()
                 .beginTransaction()
@@ -426,7 +426,7 @@ public class ContactsFragment extends BaseFragment {
         tabContact.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                frameContainerCallTab.removeAllViews();
+//                frameContainerCallTab.removeAllViews();
                 currentTabPosition = tab.getPosition();
                 setCurrentTabFragment(tab.getPosition());
             }
