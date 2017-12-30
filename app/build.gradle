@@ -73,11 +73,9 @@ android {
         }
     }
 
-//    flavorDimensions "dev", "prod"
     productFlavors {
         qa {
 //            applicationId = yourApplicationId + ".qa"
-//            dimension "dev"
             getProps('./config/qa.props').each { p ->
                 buildConfigField 'String', p.key, p.value
             }
@@ -85,7 +83,6 @@ android {
         }
         staging {
 //            applicationId = yourApplicationId + ".staging"
-//            dimension "dev"
             getProps('./config/staging.props').each { p ->
                 buildConfigField 'String', p.key, p.value
             }
@@ -94,7 +91,6 @@ android {
 
         }
         production {
-//            dimension "prod"
             getProps('./config/production.props').each { p ->
                 buildConfigField 'String', p.key, p.value
             }
