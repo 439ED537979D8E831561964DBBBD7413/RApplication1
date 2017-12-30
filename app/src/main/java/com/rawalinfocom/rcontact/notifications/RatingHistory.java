@@ -328,7 +328,7 @@ public class RatingHistory extends BaseActivity implements RippleView
     }
 
     private String getDate(int dayToAddorSub) {
-        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd", Locale.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         Date date = new Date();
         date.setTime(date.getTime() + dayToAddorSub * 24 * 60 * 60 * 1000);
         return sdf.format(date);

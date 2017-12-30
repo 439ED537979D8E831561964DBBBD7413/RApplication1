@@ -108,7 +108,7 @@ public class TableRCContactRequest {
     public ArrayList<PrivacyRequestDataItem> getAllPendingRequest(String from, String to) {
         ArrayList<PrivacyRequestDataItem> arrayList = new ArrayList<>();
         String selectQuery = "SELECT  * FROM " + TABLE_RC_CONTACT_ACCESS_REQUEST +
-                " WHERE " + COLUMN_CAR_STATUS + "=" + AppConstants.COMMENT_STATUS_RECEIVED + " and strftime('%m-%d'," +
+                " WHERE " + COLUMN_CAR_STATUS + "=" + AppConstants.COMMENT_STATUS_RECEIVED + " and strftime('%Y-%m-%d'," +
                 COLUMN_CAR_UPDATED_AT + ") between '" + from + "' and '" + to + "' order by " + COLUMN_CAR_UPDATED_AT + " desc";
 
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
@@ -137,7 +137,7 @@ public class TableRCContactRequest {
     public ArrayList<PrivacyRequestDataItem> getAllResponseReceived(String from, String to) {
         ArrayList<PrivacyRequestDataItem> arrayList = new ArrayList<>();
         String selectQuery = "SELECT  * FROM " + TABLE_RC_CONTACT_ACCESS_REQUEST +
-                " WHERE " + COLUMN_CAR_STATUS + "=" + AppConstants.COMMENT_STATUS_SENT + " and strftime('%m-%d'," +
+                " WHERE " + COLUMN_CAR_STATUS + "=" + AppConstants.COMMENT_STATUS_SENT + " and strftime('%Y-%m-%d'," +
                 COLUMN_CAR_UPDATED_AT + ") between '" + from + "' and '" + to + "' order by " + COLUMN_CAR_UPDATED_AT + " desc";
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);

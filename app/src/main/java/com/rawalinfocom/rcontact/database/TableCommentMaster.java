@@ -136,7 +136,7 @@ public class TableCommentMaster {
 
         String selectQuery = "SELECT  * FROM " + TABLE_RC_COMMENT_MASTER +
                 " WHERE " + "crm_status=" + AppConstants.COMMENT_STATUS_RECEIVED + " and strftime" +
-                "('%m-%d'," + COLUMN_CRM_CREATED_AT +
+                "('%Y-%m-%d'," + COLUMN_CRM_CREATED_AT +
                 ") between '" + fromDate + "' and '" + toDate + "' order by " +
                 COLUMN_CRM_CREATED_AT + " desc";
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
@@ -189,13 +189,12 @@ public class TableCommentMaster {
         return isUpdated;
     }
 
-
     public ArrayList<Comment> getAllReplyReceived(String fromDate, String toDate) {
         ArrayList<Comment> arrayListReplyReceived = new ArrayList<>();
         String selectQuery = "SELECT  * FROM " + TABLE_RC_COMMENT_MASTER +
                 " WHERE " + COLUMN_CRM_STATUS + "=" + AppConstants.COMMENT_STATUS_SENT + " and "
                 + COLUMN_CRM_TYPE + "!='Rating' and "
-                + COLUMN_CRM_REPLY + "!=''" + " and strftime('%m-%d'," +
+                + COLUMN_CRM_REPLY + "!=''" + " and strftime('%Y-%m-%d'," +
                 COLUMN_CRM_REPLIED_AT + ") between '" + fromDate + "' and '" + toDate + "' order " +
                 "by " + COLUMN_CRM_REPLIED_AT + " desc";
 
@@ -239,7 +238,7 @@ public class TableCommentMaster {
         String selectQuery = "SELECT  * FROM " + TABLE_RC_COMMENT_MASTER +
                 " WHERE " + COLUMN_CRM_STATUS + "=" + AppConstants.COMMENT_STATUS_SENT + " and "
                 + COLUMN_CRM_TYPE + "='Rating' and "
-                + COLUMN_CRM_REPLY + "!=''" + " and strftime('%m-%d'," +
+                + COLUMN_CRM_REPLY + "!=''" + " and strftime('%Y-%m-%d'," +
                 COLUMN_CRM_REPLIED_AT + ") between '" + fromDate + "' and '" + toDate + "' order " +
                 "by " + COLUMN_CRM_REPLIED_AT + " desc";
 
@@ -283,7 +282,7 @@ public class TableCommentMaster {
         String selectQuery = "SELECT  * FROM " + TABLE_RC_COMMENT_MASTER +
                 " WHERE " + COLUMN_CRM_STATUS + "=" + AppConstants.COMMENT_STATUS_SENT + " and "
                 + COLUMN_CRM_TYPE + "='Rating' "
-                + " and strftime('%m-%d'," +
+                + " and strftime('%Y-%m-%d'," +
                 COLUMN_CRM_CREATED_AT + ") between '" + fromDate + "' and '" + toDate + "' order " +
                 "by " + COLUMN_CRM_CREATED_AT + " desc";
 
@@ -326,7 +325,7 @@ public class TableCommentMaster {
         String selectQuery = "SELECT  * FROM " + TABLE_RC_COMMENT_MASTER +
                 " WHERE " + COLUMN_CRM_STATUS + "=" + AppConstants.COMMENT_STATUS_RECEIVED + " " +
                 "and " + COLUMN_CRM_TYPE + "='Rating' "
-                + " and strftime('%m-%d'," +
+                + " and strftime('%Y-%m-%d'," +
                 COLUMN_CRM_CREATED_AT + ") between '" + from + "' and '" + to + "' order by " +
                 COLUMN_CRM_CREATED_AT + " desc";
 
