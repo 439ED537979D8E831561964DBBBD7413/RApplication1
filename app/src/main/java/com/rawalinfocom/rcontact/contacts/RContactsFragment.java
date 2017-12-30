@@ -314,13 +314,13 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
             }
         });
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Utils.hideProgressDialog();
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                Utils.hideProgressDialog();
 //                System.out.println("RContacts RContactsFragment hide dialog");
-            }
-        }, 1000);
+//            }
+//        }, 1000);
     }
 
     private void getRContactFromDB() {
