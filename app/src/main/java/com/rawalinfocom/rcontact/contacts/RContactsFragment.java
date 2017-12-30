@@ -450,19 +450,23 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
      */
     public void setRecyclerViewLayoutManager(RecyclerView recyclerView) {
         int scrollPosition = 0;
+        RecyclerItemDecoration decoration = new RecyclerItemDecoration(RContactApplication.getInstance(), ContextCompat
+                .getColor(RContactApplication.getInstance(), R.color.colorVeryLightGray), 0.7f);
 
         // If a layout manager has already been set, get current scroll position.
         if (recyclerView.getLayoutManager() != null) {
             scrollPosition =
                     ((LinearLayoutManager) recyclerView.getLayoutManager())
                             .findFirstCompletelyVisibleItemPosition();
-        }
+            recyclerView.scrollToPosition(scrollPosition);
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(RContactApplication.getInstance());
-        recyclerView.setLayoutManager(linearLayoutManager);
-        RecyclerItemDecoration decoration = new RecyclerItemDecoration(RContactApplication.getInstance(), ContextCompat
-                .getColor(RContactApplication.getInstance(), R.color.colorVeryLightGray), 0.7f);
-        recyclerView.addItemDecoration(decoration);
+        } else {
+
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(RContactApplication.getInstance());
+            recyclerView.setLayoutManager(linearLayoutManager);
+            recyclerView.removeItemDecoration(decoration);
+            recyclerView.addItemDecoration(decoration);
+        }
     }
 
     @Override

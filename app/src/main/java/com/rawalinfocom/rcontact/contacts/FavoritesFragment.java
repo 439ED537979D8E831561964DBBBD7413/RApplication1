@@ -674,7 +674,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
 
             /*allContactListAdapter = new AllContactListAdapter(this,
                     arrayListPhoneBookContacts, arrayListContactHeaders);*/
-            allContactListAdapter = new AllContactAdapter(getMainActivity(), arrayListPhoneBookContacts,
+            allContactListAdapter = new AllContactAdapter(this, arrayListPhoneBookContacts,
                     arrayListContactHeaders);
             recyclerViewContactList.setAdapter(allContactListAdapter);
 

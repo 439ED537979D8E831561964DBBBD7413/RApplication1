@@ -713,22 +713,23 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 //        System.out.println("RContacts init initLoader ");
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(RContactApplication.getInstance());
-        recyclerViewContactList.setLayoutManager(linearLayoutManager);
         RecyclerItemDecoration decoration = new RecyclerItemDecoration(RContactApplication.getInstance(), ContextCompat
                 .getColor(RContactApplication.getInstance(), R.color.colorVeryLightGray), 0.7f);
-        recyclerViewContactList.addItemDecoration(decoration);
+        if (recyclerViewContactList.getLayoutManager() == null) {
+            recyclerViewContactList.setLayoutManager(linearLayoutManager);
+            recyclerViewContactList.removeItemDecoration(decoration);
+            recyclerViewContactList.addItemDecoration(decoration);
+        }
 
-//        if (Utils.getArrayListPreference(RContactApplication.getInstance(), AppConstants.PREF_ALL_CONTACT).size() > 0) {
-////            arrayListPhoneBookContacts = new ArrayList<>();
-////            arrayListPhoneBookContacts = Utils.getContactArrayListPreference(RContactApplication.getInstance(), AppConstants.PREF_ALL_CONTACT);
-//            if (allContactListAdapter != null) {
-//                allContactListAdapter.notifyDataSetChanged();
-//                initSwipe();
-//            } else
-//                getLoaderManager().initLoader(0, null, this);
-//        } else {
-        getLoaderManager().initLoader(0, null, this);
-//        }
+        if (Utils.getArrayListPreference(RContactApplication.getInstance(), AppConstants.PREF_ALL_CONTACT).size() > 0) {
+            if (allContactListAdapter != null) {
+                allContactListAdapter.notifyDataSetChanged();
+                initSwipe();
+            } else
+                getLoaderManager().initLoader(0, null, this);
+        } else {
+            getLoaderManager().initLoader(0, null, this);
+        }
 
         final SwipeDismissBehavior swipeDismissBehavior = new SwipeDismissBehavior();
         swipeDismissBehavior.setSwipeDirection(SwipeDismissBehavior.SWIPE_DIRECTION_START_TO_END);
@@ -759,7 +760,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
      */
     public void setRecyclerViewLayoutManager() {
 
-        allContactListAdapter = new AllContactAdapter(getMainActivity(), arrayListPhoneBookContacts, null);
+        allContactListAdapter = new AllContactAdapter(this, arrayListPhoneBookContacts, null);
         recyclerViewContactList.setAdapter(allContactListAdapter);
         RContactApplication.getInstance().setArrayListAllPhoneBookContacts(arrayListPhoneBookContacts);
     }
