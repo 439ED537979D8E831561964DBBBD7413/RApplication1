@@ -2914,21 +2914,11 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             }
         } else {
 
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-
-                    try{
-                        Utils.setBooleanPreference(RContactApplication.getInstance(), AppConstants.PREF_SYNC_RUNNING, true);
-                        Utils.setIntegerPreference(RContactApplication.getInstance(), AppConstants.PREF_SYNCED_CONTACTS, 0);
-//                        Utils.setStringPreference(RContactApplication.getInstance(), AppConstants.PREF_CONTACT_LAST_SYNC_TIME,
-//                                String.valueOf(System.currentTimeMillis() - 10000));
-                        Utils.setBooleanPreference(RContactApplication.getInstance(), AppConstants.PREF_CONTACT_SYNCED, true);
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-                }
-            });
+            Utils.setBooleanPreference(RContactApplication.getInstance(), AppConstants.PREF_SYNC_RUNNING, true);
+            Utils.setIntegerPreference(RContactApplication.getInstance(), AppConstants.PREF_SYNCED_CONTACTS, 0);
+            Utils.setStringPreference(RContactApplication.getInstance(), AppConstants.PREF_CONTACT_LAST_SYNC_TIME,
+                    String.valueOf(System.currentTimeMillis() - 10000));
+            Utils.setBooleanPreference(RContactApplication.getInstance(), AppConstants.PREF_CONTACT_SYNCED, true);
         }
     }
 
