@@ -189,6 +189,10 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
 
             }*/
         }
+        
+        if (arrayListPhoneBookContacts.size() > 0) {
+            getRcpDetail();
+        }
     }
 
     @Override
@@ -569,51 +573,57 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
     }
 
     private void getRcpDetail() {
-        TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
-        ArrayList<String> arrayListIds = tableProfileMaster.getAllRawIds();
-        for (int i = 0; i < arrayListPhoneBookContacts.size(); i++) {
-            if (arrayListPhoneBookContacts.get(i) instanceof ProfileData) {
-                if (arrayListIds.contains(((ProfileData) arrayListPhoneBookContacts.get
-                        (i)).getRawContactId())) {
-                    ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempIsRcp(true);
-                    ArrayList<UserProfile> userProfiles = new ArrayList<>();
-                    userProfiles.addAll(tableProfileMaster.getProfileDetailsFromRawId((
-                            (ProfileData) arrayListPhoneBookContacts.get(i)).getRawContactId()));
-                    String name = "0";
-                    String rcpID = "0";
-                    String rcpProfileImage = "";
-                    if (userProfiles.size() > 1) {
-                        for (int j = 0; j < userProfiles.size();
-                             j++) {
-                            if (name.equalsIgnoreCase("0")) {
-                                name = userProfiles.get(j).getPmRcpId();
-                            } else {
-                                name = String.format("%s,%s", name, userProfiles.get(j).getPmRcpId());
+        try {
+            TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
+            ArrayList<String> arrayListIds = tableProfileMaster.getAllRawIds();
+            for (int i = 0; i < arrayListPhoneBookContacts.size(); i++) {
+                if (arrayListPhoneBookContacts.get(i) instanceof ProfileData) {
+                    if (arrayListIds.contains(((ProfileData) arrayListPhoneBookContacts.get
+                            (i)).getRawContactId())) {
+                        ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempIsRcp(true);
+                        ArrayList<UserProfile> userProfiles = new ArrayList<>();
+                        userProfiles.addAll(tableProfileMaster.getProfileDetailsFromRawId((
+                                (ProfileData) arrayListPhoneBookContacts.get(i)).getRawContactId()));
+                        String name = "0";
+                        String rcpID = "0";
+                        String rcpProfileImage = "";
+                        if (userProfiles.size() > 1) {
+                            for (int j = 0; j < userProfiles.size();
+                                 j++) {
+                                if (name.equalsIgnoreCase("0")) {
+                                    name = userProfiles.get(j).getPmRcpId();
+                                } else {
+                                    name = String.format("%s,%s", name, userProfiles.get(j).getPmRcpId());
+                                }
                             }
+                        } else if (userProfiles.size() == 1) {
+                            name = userProfiles.get(0).getPmFirstName() + " " + userProfiles.get(0)
+                                    .getPmLastName();
+                            rcpID = userProfiles.get(0).getPmRcpId();
+                            rcpProfileImage = userProfiles.get(0).getPmProfileImage();
                         }
-                    } else if (userProfiles.size() == 1) {
-                        name = userProfiles.get(0).getPmFirstName() + " " + userProfiles.get(0)
-                                .getPmLastName();
-                        rcpID = userProfiles.get(0).getPmRcpId();
-                        rcpProfileImage = userProfiles.get(0).getPmProfileImage();
+                        ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpName(name);
+                        ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpId(rcpID);
+                        ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpImageURL
+                                (rcpProfileImage);
+                    } else {
+                        ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempIsRcp(false);
+                        ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpImageURL("");
                     }
-                    ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpName(name);
-                    ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpId(rcpID);
-                    ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpImageURL
-                            (rcpProfileImage);
-                } else {
-                    ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempIsRcp(false);
-                    ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpImageURL("");
-                }
-                final int finalI = i;
-                getMainActivity().runOnUiThread(new Runnable() {
+                    final int finalI = i;
+                    getMainActivity().runOnUiThread(new Runnable() {
 
-                    @Override
-                    public void run() {
-                        allContactListAdapter.notifyItemChanged(finalI);
-                    }
-                });
+                        @Override
+                        public void run() {
+
+                            if (allContactListAdapter != null)
+                                allContactListAdapter.notifyItemChanged(finalI);
+                        }
+                    });
+                }
             }
+        } catch (Exception ignore) {
+
         }
     }
 
