@@ -105,9 +105,10 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     //<editor-fold desc="Constructor">
 
-    public AllContactAdapter(Activity activity, ArrayList<Object> arrayListUserContact,
+    public AllContactAdapter(Fragment fragment, ArrayList<Object> arrayListUserContact,
                              ArrayList<String> arrayListContactHeader) {
-        this.activity = activity;
+        this.fragment = fragment;
+        this.activity = fragment.getActivity();
         this.arrayListUserContact = new ArrayList<>();
         this.arrayListUserContact.addAll(arrayListUserContact);
         this.arrayListContactHeader = arrayListContactHeader;

@@ -3415,8 +3415,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     linearAadharCard.setVisibility(View.VISIBLE);
                     aadharDetails = profileDetail.getPbAadhar();
 
+                    buttonPrivacy.setVisibility(View.GONE);
+
                     if (displayOwnProfile) {
                         buttonRequest.setVisibility(View.GONE);
+                        buttonPrivacy.setVisibility(View.VISIBLE);
                         if (aadharDetails.getAadharPublic() != 3) {
                             if (aadharDetails.getAadharPublic() == 1) {
                                 buttonPrivacy.setImageResource(R.drawable.ico_privacy_public);

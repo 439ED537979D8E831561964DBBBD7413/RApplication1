@@ -759,7 +759,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
      */
     public void setRecyclerViewLayoutManager() {
 
-        allContactListAdapter = new AllContactAdapter(getMainActivity(), arrayListPhoneBookContacts, null);
+        allContactListAdapter = new AllContactAdapter(this, arrayListPhoneBookContacts, null);
         recyclerViewContactList.setAdapter(allContactListAdapter);
         RContactApplication.getInstance().setArrayListAllPhoneBookContacts(arrayListPhoneBookContacts);
     }
