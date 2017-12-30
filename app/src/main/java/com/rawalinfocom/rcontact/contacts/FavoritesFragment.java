@@ -189,6 +189,10 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
 
             }*/
         }
+        
+        if (arrayListPhoneBookContacts.size() > 0) {
+            getRcpDetail();
+        }
     }
 
     @Override
