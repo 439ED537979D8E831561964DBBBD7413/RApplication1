@@ -286,6 +286,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     private void loadData() {
 //        lastSyncedData = Utils.getIntegerPreference(RContactApplication.getInstance(), AppConstants
 //                .PREF_SYNCED_CONTACTS, 0);
+        Utils.setBooleanPreference(RContactApplication.getInstance(), AppConstants.PREF_SYNC_RUNNING, true);
         array.clear();
         arrayListPhoneBookContacts = null;
         progressAllContact.setVisibility(View.VISIBLE);

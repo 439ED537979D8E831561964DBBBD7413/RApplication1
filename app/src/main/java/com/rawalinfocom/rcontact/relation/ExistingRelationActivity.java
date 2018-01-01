@@ -80,6 +80,7 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
 
     private Activity activity;
     private ExistingRelationListAdapter listAdapter;
+    private LinearLayoutManager layoutManager;
     //    private TableRelationMappingMaster tableRelationMappingMaster;
     //    private Integer pmId;
     private ArrayList<RelationRecommendationType> existingRelationList;
@@ -127,6 +128,8 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
 
         textNoRelation.setVisibility(View.GONE);
         recycleViewRelation.setVisibility(View.VISIBLE);
+        layoutManager = new LinearLayoutManager(this);
+        recycleViewRelation.setLayoutManager(layoutManager);
 
         if (Utils.isNetworkAvailable(this)) {
             getAllExistingRelation();
@@ -168,6 +171,15 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
 
                 if (listAdapter != null)
                     listAdapter.getFilter().filter("");
+            }
+        });
+
+        // Adding ScrollListener to getting whether we're on First Item position or not
+        recycleViewRelation.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                swipeRefreshLayout.setEnabled(layoutManager.findFirstCompletelyVisibleItemPosition() == 0); // 0 is for first item position
             }
         });
 
@@ -551,7 +563,6 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
                             showAllRelations(position, name);
                         }
                     });
-            recycleViewRelation.setLayoutManager(new LinearLayoutManager(this));
             recycleViewRelation.setAdapter(listAdapter);
 
         } else {

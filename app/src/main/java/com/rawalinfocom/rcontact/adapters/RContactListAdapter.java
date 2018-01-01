@@ -356,6 +356,8 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             } else {
                 holder.ratingUser.setRating(0);
             }
+        } else {
+            holder.ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
         }
 
         holder.relativeRowAllContact.setTag(position);

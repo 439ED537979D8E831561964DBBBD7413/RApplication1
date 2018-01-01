@@ -84,6 +84,7 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
 
     private RelationRecommendationListAdapter listAdapter;
     private ArrayList<RelationRecommendationType> recommendationRelationList;
+    private LinearLayoutManager layoutManager;
     private String type = "";
 
     @Override
@@ -241,7 +242,8 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
 
     private void init() {
 
-        recycleViewRelation.setLayoutManager(new LinearLayoutManager(this));
+        layoutManager = new LinearLayoutManager(this);
+        recycleViewRelation.setLayoutManager(layoutManager);
 
         textNoRelation.setVisibility(View.GONE);
         recycleViewRelation.setVisibility(View.VISIBLE);
@@ -253,6 +255,15 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
         } else {
             setVisibility(getString(R.string.msg_no_network), View.VISIBLE, View.GONE);
         }
+
+        // Adding ScrollListener to getting whether we're on First Item position or not
+        recycleViewRelation.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                swipeRefreshLayout.setEnabled(layoutManager.findFirstCompletelyVisibleItemPosition() == 0); // 0 is for first item position
+            }
+        });
 
         // implement setOnRefreshListener event on SwipeRefreshLayout
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {

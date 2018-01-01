@@ -787,8 +787,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                             Utils.setArrayListPreference(RContactApplication.getInstance(), AppConstants.PREF_CONTACT_ID_SET,
                                     new ArrayList());
                             phoneBookContacts.saveRawIdsToPref();
-                            Utils.setBooleanPreference(RContactApplication.getInstance(),
-                                    AppConstants.PREF_SYNC_RUNNING, false);
+                            Utils.setBooleanPreference(RContactApplication.getInstance(), AppConstants.PREF_SYNC_RUNNING, true);
 
                             new Handler().post(new Runnable() {
                                 @Override
@@ -857,8 +856,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     }, 1200);
 
                     arrayListSyncUserContact.clear();
-                    Utils.setBooleanPreference(RContactApplication.getInstance(),
-                            AppConstants.PREF_SYNC_RUNNING, false);
+                    Utils.setBooleanPreference(RContactApplication.getInstance(), AppConstants.PREF_SYNC_RUNNING, true);
 
                     Utils.setBooleanPreference(RContactApplication.getInstance(), AppConstants
                             .PREF_CONTACT_SYNCED, true);

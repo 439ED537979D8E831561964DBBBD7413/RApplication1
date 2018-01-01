@@ -544,7 +544,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 fetchAllCallLogHistory(historyNumber);
 
             }*/
-            new GetRCPNameAndProfileImage().execute();
             if (isFromReceiver) {
                 isFromReceiver = false;
                 Utils.setBooleanPreference(ProfileDetailActivity.this, AppConstants
@@ -1886,6 +1885,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     private void layoutVisibility() {
         if (profileActivityCallInstance) {
+            new GetRCPNameAndProfileImage().execute();
 //            new GetRCPNameAndProfileImage().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
             if (buttonViewOldRecords != null) {
@@ -2863,7 +2863,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 IntegerConstants.IS_PRIVATE) {
 
                             ratingUser.setRating(0);
-                            buttonRequestRating.setVisibility(View.VISIBLE);
+                            if (!profileActivityCallInstance)
+                                buttonRequestRating.setVisibility(View.VISIBLE);
                             pbRating.add("1");
 
                             buttonRequestRating.setOnClickListener(new View.OnClickListener() {
@@ -2883,7 +2884,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                         ratingUser.setRating(0);
 //                        ratingUser.setEnabled(false);
-                        buttonRequestRating.setVisibility(View.VISIBLE);
+                        if (!profileActivityCallInstance)
+                            buttonRequestRating.setVisibility(View.VISIBLE);
                         pbRating.add("1");
 
                         buttonRequestRating.setOnClickListener(new View.OnClickListener() {
