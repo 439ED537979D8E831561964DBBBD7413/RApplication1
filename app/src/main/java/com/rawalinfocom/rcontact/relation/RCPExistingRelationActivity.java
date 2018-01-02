@@ -578,7 +578,8 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
                                 getRcRelationMasterId()));
                         individualRelationType.setRelationName(businessRecommendation.get(j).getRmParticular());
                         individualRelationType.setOrganizationName(businessRecommendation.get(j).getOrgName());
-                        individualRelationType.setIsOrgVerified(businessRecommendation.get(j).getOmIsVerified());
+                        individualRelationType.setIsOrgVerified(MoreObjects.firstNonNull
+                                (businessRecommendation.get(j).getOmIsVerified(), 0));
                         individualRelationType.setFamilyName("");
                         individualRelationType.setOrganizationId(String.valueOf(businessRecommendation.get(j).getRcOrgId()));
                         individualRelationType.setIsFriendRelation(false);

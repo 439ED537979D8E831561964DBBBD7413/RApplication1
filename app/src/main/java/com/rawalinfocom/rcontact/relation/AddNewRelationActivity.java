@@ -25,6 +25,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.BuildConfig;
 import com.rawalinfocom.rcontact.R;
@@ -703,7 +704,8 @@ public class AddNewRelationActivity extends BaseActivity implements WsResponseLi
                         relationType.setRelationId(String.valueOf(businessRelation.get(j).getRcRelationMasterId()));
                         relationType.setRelationName(businessRelation.get(j).getRmParticular());
                         relationType.setOrganizationName(businessRelation.get(j).getOrgName());
-                        relationType.setIsOrgVerified(businessRelation.get(j).getOmIsVerified());
+                        relationType.setIsOrgVerified(MoreObjects.firstNonNull(businessRelation
+                                .get(j).getOmIsVerified(), 0));
                         relationType.setOrganizationId(String.valueOf(businessRelation.get(j).getRcOrgId()));
 //                        relationType.setIsVerify("1");
                         relationType.setIsInUse("1");
