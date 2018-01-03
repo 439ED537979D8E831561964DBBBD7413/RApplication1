@@ -641,4 +641,10 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
             notificationManager.cancelAll();
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
 }

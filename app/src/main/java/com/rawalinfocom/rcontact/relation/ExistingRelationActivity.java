@@ -287,6 +287,9 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
             case R.id.image_add_new:
 
                 if (Utils.isNetworkAvailable(activity)) {
+
+                    listAdapter = null;
+
                     Intent intent = new Intent(activity, AddNewRelationActivity.class);
                     intent.putExtra(AppConstants.EXTRA_IS_FROM, "own");
                     startActivity(intent);
@@ -569,6 +572,18 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
             recycleViewRelation.setAdapter(listAdapter);
 
         } else {
+            existingRelationList.clear();
+            listAdapter = new ExistingRelationListAdapter(activity, existingRelationList,
+                    new ExistingRelationListAdapter.OnClickListener() {
+                        @Override
+                        public void onClick(int position) {
+                        }
+
+                        @Override
+                        public void onDeleteClick(int position, String name, String pmId) {
+                        }
+                    });
+            recycleViewRelation.setAdapter(listAdapter);
             setVisibility(getString(R.string.str_no_relation_found), View.VISIBLE, View.GONE);
         }
     }
