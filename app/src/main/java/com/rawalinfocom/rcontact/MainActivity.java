@@ -1678,6 +1678,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                         syncingTask = new SyncingTask();
                         syncingTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
+                    } else {
+                        System.out.println("RContact contactSyncingTask ---> running");
                     }
                 }
             } else if (Utils.isNetworkAvailable(this)
@@ -1698,6 +1700,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                                 AppConstants.PREF_SYNC_RUNNING, false);
                         reSyncContactAsyncTask = new ReSyncContactAsyncTask();
                         reSyncContactAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    }else {
+                        System.out.println("RContact reSyncContactAsyncTask ---> running");
                     }
                 }
             }
@@ -3906,6 +3910,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                                         syncingTask = new SyncingTask();
                                         syncingTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
+                                    } else {
+                                        System.out.println("RContact contactSyncingTask ---> running");
                                     }
                                 }
                             }
@@ -3976,6 +3982,9 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                                         reSyncContactAsyncTask = new ReSyncContactAsyncTask();
                                         reSyncContactAsyncTask.executeOnExecutor(AsyncTask
                                                 .THREAD_POOL_EXECUTOR);
+                                    } else {
+                                        System.out.println("RContact reSyncContactAsyncTask ---> " +
+                                                "running");
                                     }
                                 }
                             }
