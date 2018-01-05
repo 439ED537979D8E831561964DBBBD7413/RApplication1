@@ -725,6 +725,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             if (allContactListAdapter != null) {
                 allContactListAdapter.notifyDataSetChanged();
                 initSwipe();
+                checkVersion();
             } else
                 getLoaderManager().initLoader(0, null, this);
         } else {
