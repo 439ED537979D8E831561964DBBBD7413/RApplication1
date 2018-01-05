@@ -417,7 +417,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 //                            (StringUtils.length(emailId) + 1) + 1)));
 
             holder.textMain.setTextColor(colorPineGreen);
-//            holder.imageViewTic.setVisibility(View.GONE);
+            holder.imageViewTic.setVisibility(View.VISIBLE);
 //            holder.textMain.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 //                    R.drawable.ico_double_tick_green_svg, 0);
             holder.imageViewTic.setColorFilter(colorPineGreen);
