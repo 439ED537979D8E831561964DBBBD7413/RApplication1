@@ -699,7 +699,7 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
                 if (String.valueOf(dataItem.getCarPmIdFrom()).equals(Utils.getStringPreference(getActivity(), AppConstants
                         .PREF_USER_PM_ID, "0"))
                         && dataItem.getCarAccessPermissionStatus() == 1) {
-                    tableRCContactRequest.addRequest(AppConstants
+                    tableRCContactRequest.addRequestFromService(AppConstants
                                     .COMMENT_STATUS_SENT,
                             String.valueOf(dataItem.getCarId()),
                             dataItem.getCarMongodbRecordIndex(),

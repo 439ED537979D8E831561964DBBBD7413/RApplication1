@@ -368,7 +368,7 @@ public class NotificationFCMService extends FirebaseMessagingService {
                         if (m.get("car_pm_id_from").equals(Utils.getStringPreference(this,
                                 AppConstants.PREF_USER_PM_ID, "0"))
                                 && m.get("car_access_permission_status").equals("1")) {
-                            int requestId = tableRCContactRequest1.addRequest(AppConstants
+                            int requestId = tableRCContactRequest1.addRequestFromService(AppConstants
                                             .COMMENT_STATUS_SENT,
                                     m.get("car_id"),
                                     m.get("car_mongodb_record_index"),

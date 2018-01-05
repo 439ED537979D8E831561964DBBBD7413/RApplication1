@@ -241,18 +241,19 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                     (StringUtils.length(number) + 1), (
                             (StringUtils.length(number) + 1) + 1)));
             holder.textMain.setTextColor(colorPineGreen);
-            if (isOwnProfile)
-                holder.llPrivacy.setVisibility(View.GONE);
-            else {
-                holder.llPrivacy.setVisibility(View.GONE);
-                if ((MoreObjects.firstNonNull(phoneNumber.getIsPrivate(), 0)) == IntegerConstants
-                        .IS_PRIVATE) {
-//                    holder.imageView2.setVisibility(View.GONE);
-                    holder.buttonRequest.setVisibility(View.VISIBLE);
-                    holder.imgActionType.setVisibility(View.GONE);
-                    holder.imgActionWhatsapp.setVisibility(View.GONE);
-                }
-            }
+            holder.llPrivacy.setVisibility(View.GONE);
+//            if (isOwnProfile)
+//                holder.llPrivacy.setVisibility(View.GONE);
+//            else {
+//                holder.llPrivacy.setVisibility(View.GONE);
+//                if ((MoreObjects.firstNonNull(phoneNumber.getIsPrivate(), 0)) == IntegerConstants
+//                        .IS_PRIVATE) {
+////                    holder.imageView2.setVisibility(View.GONE);
+//                    holder.buttonRequest.setVisibility(View.VISIBLE);
+//                    holder.imgActionType.setVisibility(View.GONE);
+//                    holder.imgActionWhatsapp.setVisibility(View.GONE);
+//                }
+//            }
         } else if (pbRcpType == IntegerConstants.RCP_TYPE_SECONDARY) {
             holder.textMain.setText(number);
             holder.textMain.setTextColor(colorPineGreen);
@@ -594,8 +595,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             holder.llPrivacy.setVisibility(View.VISIBLE);
         } else {
             holder.llPrivacy.setVisibility(View.GONE);
-            if ((MoreObjects.firstNonNull(education.getEduPublic(), 3)) == IntegerConstants
-                    .PRIVACY_PRIVATE && education.getEduName().startsWith("XXXX")) {
+            if (education.getEduName().startsWith("XXXX")) {
                 holder.buttonRequest.setVisibility(View.VISIBLE);
                 holder.imgActionType.setVisibility(View.GONE);
                 holder.textSub.setVisibility(View.GONE);
