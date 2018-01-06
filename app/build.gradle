@@ -51,7 +51,6 @@ android {
             println certfilepath
 //            certfilepath = "$System.env.certfilepath"
 //            storeFile file('/Users/admin/Desktop/apk/rcontacts.jks')
-//            storeFile file(certfilepath)
             storeFile file(certfilepath)
             storePassword "rcontacts"
             keyAlias "rcontacts"

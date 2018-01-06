@@ -290,8 +290,9 @@ public class NotificationFCMService extends FirebaseMessagingService {
                         comment.setEvmRecordIndexId(m.get("event_record_index_id"));
                         int eventId = tableCommentMaster.addComment(comment);
                         if (eventId != -1) {
-                            notificationStateData.setCreatedAt(m.get("created_date"));
-                            notificationStateData.setUpdatedAt(m.get("updated_at"));
+                            notificationStateData.setCreatedAt(Utils.getLocalTimeFromUTCTime(m.get
+                                    ("created_date")));
+                            notificationStateData.setUpdatedAt(Utils.getLocalTimeFromUTCTime(m.get("updated_at")));
                             notificationStateData.setNotificationType(AppConstants
                                     .NOTIFICATION_TYPE_TIMELINE);
 //                            notificationStateData.setNotificationMasterId(m.get("id"));
