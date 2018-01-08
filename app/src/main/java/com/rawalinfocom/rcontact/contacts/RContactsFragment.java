@@ -186,13 +186,13 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
         phoneBookContacts = new PhoneBookContacts(getActivity());
         tableProfileMobileMapping = new TableProfileMobileMapping(getDatabaseHandler());
 //        System.out.println("RContacts RContactsFragment init dialog");
-        init();
 //        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        init();
     }
 
     @Override
@@ -248,11 +248,11 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    if (ratingUpdate) {
-                        getRContactFromDB();
-                        int pos = intent.getIntExtra(AppConstants.EXTRA_RCONTACT_POSITION, 0);
-                        rContactListAdapter.updateList(pos, arrayListRContact);
-                    }
+//                    if (ratingUpdate) {
+//                        getRContactFromDB();
+//                        int pos = intent.getIntExtra(AppConstants.EXTRA_RCONTACT_POSITION, 0);
+//                        rContactListAdapter.updateList(pos, arrayListRContact);
+//                    }
                 }
             }, 100);
         }
@@ -478,7 +478,7 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
     private void RCPContactServiceCall(String timestamp, String url) {
 
         WsRequestObject deviceDetailObject = new WsRequestObject();
-        deviceDetailObject.setTimeStamp(timestamp);
+        deviceDetailObject.setTimeStamp("");
 
         if (Utils.isNetworkAvailable(getActivity())) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), deviceDetailObject, null,
@@ -495,6 +495,10 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
         if (error == null) {
             // <editor-fold desc="REQ_GET_RCP_CONTACT">
             if (serviceType.contains(WsConstants.REQ_GET_RCP_CONTACT)) {
+
+                if (swipeRefreshLayout != null)
+                    swipeRefreshLayout.setRefreshing(false);
+
                 WsResponseObject getRCPContactUpdateResponse = (WsResponseObject) data;
                 if (getRCPContactUpdateResponse != null && StringUtils.equalsIgnoreCase
                         (getRCPContactUpdateResponse.getStatus(), WsConstants
@@ -533,8 +537,6 @@ public class RContactsFragment extends BaseFragment implements WsResponseListene
                                 getRCPContactUpdateResponse.getTimestamp());
                     }
 
-                    if (swipeRefreshLayout != null)
-                        swipeRefreshLayout.setRefreshing(false);
                     Utils.hideProgressDialog();
 
                     getRContactFromDB();

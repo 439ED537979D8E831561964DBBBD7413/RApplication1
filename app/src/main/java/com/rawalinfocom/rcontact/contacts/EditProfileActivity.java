@@ -4218,35 +4218,57 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         }
     }
 
-    private void addDesignationView(LinearLayout linearLayoutDesignation) {
-        ArrayList<String> desigNameList = new ArrayList<>();
-        for (int i = 0; i < arrayListDesignation.size(); i++) {
-            String jobTitle =  arrayListDesignation.get(i).getOrgJobTitle();
-            if(!desigNameList.contains(jobTitle)){
-                desigNameList.add(jobTitle);
-            }else {
-                arrayListDesignation.remove(i);
-                linearLayoutDesignation.removeViewAt(i);
+    private void checkBeforeDesignationViewAdd(LinearLayout linearLayoutDesignation) {
+
+        boolean toAdd = false;
+        for (int i = 0; i < linearLayoutDesignation.getChildCount(); i++) {
+            View linearView = linearLayoutDesignation.getChildAt(i);
+
+            final EditText inputDesignationName = linearView.findViewById(R.id.input_designation_name);
+            final EditText inputFromDate = linearView.findViewById(R.id.input_from_date);
+
+            if (StringUtils.length(StringUtils.trimToEmpty(inputDesignationName.getText().toString())) < 1 ||
+                    StringUtils.length(StringUtils.trimToEmpty(inputFromDate.getText().toString())) < 1) {
+                toAdd = false;
+                break;
+            } else {
+                toAdd = true;
             }
         }
-
-        for (int j=0 ; j<arrayListDesignation.size(); j++){
-            addOrganizationDesignationView(linearLayoutDesignation, j, arrayListDesignation.get(j));
+        if (toAdd) {
+            isUpdated = true;
+            addOrganizationDesignationView(linearLayoutDesignation, arrayListDesignation.size(), null);
         }
     }
 
-    private void addDesignationList(LinearLayout linearLayoutDesination, int childPosition, boolean isCurrent) {
+//    private void addDesignationView(LinearLayout linearLayoutDesignation) {
+//        ArrayList<String> desigNameList = new ArrayList<>();
+//        for (int i = 0; i < arrayListDesignation.size(); i++) {
+//            String jobTitle = arrayListDesignation.get(i).getOrgJobTitle();
+//            if (!desigNameList.contains(jobTitle)) {
+//                desigNameList.add(jobTitle);
+//            } else {
+//                arrayListDesignation.remove(i);
+//                linearLayoutDesignation.removeViewAt(i);
+//            }
+//        }
+//
+//        for (int j = 0; j < arrayListDesignation.size(); j++) {
+//            addOrganizationDesignationView(linearLayoutDesignation, j, arrayListDesignation.get(j));
+//        }
+//    }
+
+    private void addDesignationList(LinearLayout linearLayoutDesignation, boolean isCurrent) {
 //        int currentPosition =  childPosition;
         arrayListDesignation.clear();
 //        ArrayList<ProfileDataOperationOrganization> designationList = new ArrayList<>();
-        for (int i = 0; i < linearLayoutDesination.getChildCount(); i++) {
+        for (int i = 0; i < linearLayoutDesignation.getChildCount(); i++) {
             ProfileDataOperationOrganization organization = new ProfileDataOperationOrganization();
-            View viewDesignation = linearLayoutDesination.getChildAt(i);
+            View viewDesignation = linearLayoutDesignation.getChildAt(i);
             final EditText inputDesignationName = viewDesignation.findViewById(R.id
                     .input_designation_name);
             final EditText inputFromDate = viewDesignation.findViewById(R.id.input_from_date);
             final EditText inputToDate = viewDesignation.findViewById(R.id.input_to_date);
-            final ImageView imageFromDate = viewDesignation.findViewById(R.id.image_from_date);
             final ImageView imageToDate = viewDesignation.findViewById(R.id.image_to_date);
             final ImageView imageAddDesignation = viewDesignation.findViewById(R.id
                     .image_add_designation);
@@ -4827,12 +4849,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         TextView textIsVerified = view.findViewById(R.id.text_is_verified);
         final TextView textOrgName = view.findViewById(R.id.text_org_name);
         TextView textOrgType = view.findViewById(R.id.text_org_type);
-        LinearLayout linearDesignation = view.findViewById(R.id.linear_designation);
+        LinearLayout linearOrganizationDesignation = view.findViewById(R.id.linear_organization_designation);
         TextView textOrgUrlSlug = view.findViewById(R.id.text_org_url);
 
-        linearDesignation.setTag(position);
+        linearOrganizationDesignation.setTag(position);
         arrayListDesignation = new ArrayList<>();
-        addOrganizationDesignationView(linearDesignation, position, detailObject);
+        addOrganizationDesignationView(linearOrganizationDesignation, position, detailObject);
 
 //        final EditText inputFromDate = view.findViewById(R.id.input_from_date);
 //        final EditText inputToDate = view.findViewById(R.id.input_to_date);
@@ -5038,7 +5060,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         linearOrganizationDetails.addView(view);
     }
 
-    private void addOrganizationDesignationView(final LinearLayout linearDesignation, final int position, final Object detailObject) {
+    private void addOrganizationDesignationView(final LinearLayout linearOrganizationDesignation,
+                                                final int position, final Object detailObject) {
         final View viewDesignation = LayoutInflater.from(this).inflate(R.layout
                 .list_item_edit_organization_designation, null);
         final EditText inputDesignationName = viewDesignation.findViewById(R.id
@@ -5049,8 +5072,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         final ImageView imageToDate = viewDesignation.findViewById(R.id.image_to_date);
         final ImageView imageAddDesignation = viewDesignation.findViewById(R.id
                 .image_add_designation);
-        final LinearLayout linearOrganizationDesignation = viewDesignation.findViewById(R.id
-                .linear_organization_designation);
+        final LinearLayout linearDesignation = viewDesignation.findViewById(R.id
+                .linear_designation);
 
         final boolean isCurrent = false;
         if (detailObject != null) {
@@ -5065,7 +5088,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             }
         }
 
-        if (linearDesignation.getChildCount() < 1) {
+        if (linearOrganizationDesignation.getChildCount() < 1) {
             imageAddDesignation.setImageResource(R.drawable.ico_add_svg);
         } else {
             imageAddDesignation.setImageResource(R.drawable.ic_delete);
@@ -5082,35 +5105,30 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         inputToDate.setHint(R.string.hint_choose_to_date);
         inputToDate.setFocusable(false);
 
-
-        imageAddDesignation.setTag(linearDesignation.getChildCount());
-
+        imageAddDesignation.setTag(linearOrganizationDesignation.getChildCount());
         imageAddDesignation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Toast.makeText(EditProfileActivity.this, "Position: " + imageAddDesignation
-//                        .getTag().toString(), Toast.LENGTH_SHORT).show(
-                if (Integer.parseInt(imageAddDesignation.getTag().toString()) == 0) {
-//                    addOrganizationDesignationView(linearDesignation,linearDesignation.getChildCount(),null);
-                    addDesignationList(linearDesignation, linearDesignation.getChildCount(), AppConstants.isCurrent());
-                    if (!StringUtils.isEmpty(inputDesignationName.getText().toString()))
-                        inputDesignationName.setText("");
-                    if (!StringUtils.isEmpty(inputFromDate.getText().toString()))
-                        inputFromDate.setText("");
-                    if (!StringUtils.isEmpty(inputToDate.getText().toString()))
-                        inputToDate.setText("");
 
-                    addDesignationView(linearDesignation);
-//                    addOrganizationDesignationView(linearDesignation, linearDesignation.getChildCount(), null);
+                int count = (int) view.getTag();
+
+                if (count == 0) {
+                    addDesignationList(linearOrganizationDesignation, AppConstants.isCurrent());
+                    checkBeforeDesignationViewAdd(linearOrganizationDesignation);
+//                    if (!StringUtils.isEmpty(inputDesignationName.getText().toString()))
+//                        inputDesignationName.setText("");
+//                    if (!StringUtils.isEmpty(inputFromDate.getText().toString()))
+//                        inputFromDate.setText("");
+//                    if (!StringUtils.isEmpty(inputToDate.getText().toString()))
+//                        inputToDate.setText("");
 
                 } else {
-                    /*Toast.makeText(EditProfileActivity.this, "Position: " + imageAddDesignation
-                            .getTag().toString(), Toast.LENGTH_SHORT).show();*/
-                    linearDesignation.removeView(linearOrganizationDesignation);
+                    System.out.println("RContact delete pos --> " + linearOrganizationDesignation.getChildAt(position));
+                    System.out.println("RContact delete count --> " + count);
+                    linearOrganizationDesignation.removeView(linearDesignation);
                 }
             }
         });
-
 
         imageFromDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -5160,8 +5178,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             }
 
         }
-        linearDesignation.addView(viewDesignation);
-
+        linearOrganizationDesignation.addView(viewDesignation);
     }
 
     private void addEducationView(int position, Object detailObject) {

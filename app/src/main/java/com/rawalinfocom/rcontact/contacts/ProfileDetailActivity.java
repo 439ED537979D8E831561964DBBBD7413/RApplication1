@@ -2258,7 +2258,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             }
                             getDataFromDB();
                         }
-                    }, 4000);
+                    }, 6000);
 
                 } else {
                     getDataFromDB();
