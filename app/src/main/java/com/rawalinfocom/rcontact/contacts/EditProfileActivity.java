@@ -171,7 +171,7 @@ import twitter4j.auth.RequestToken;
 public class EditProfileActivity extends BaseActivity implements WsResponseListener, RippleView
         .OnRippleCompleteListener, GoogleApiClient.OnConnectionFailedListener {
 
-    public static final int MEDIA_TYPE_IMAGE = 1;
+    //    public static final int MEDIA_TYPE_IMAGE = 1;
     private static final int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 100;
     private static final int GALLERY_IMAGE_REQUEST_CODE = 500;
     private static final String IMAGE_DIRECTORY_NAME = "RContactImages";
@@ -376,12 +376,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     LinearLayout linearEducationButtons;
 
     ArrayAdapter<String> spinnerPhoneAdapter, spinnerEmailAdapter, spinnerAddressAdapter,
-            spinnerCountryAdapter, spinnerWebsiteAdapter, spinnerEventAdapter;
+    /*spinnerCountryAdapter,*/ spinnerWebsiteAdapter, spinnerEventAdapter;
 
     ArrayList<ProfileDataOperation> arrayListProfile;
     boolean isStorageFromSettings = false, isCameraFromSettings = false;
 
-    Bitmap selectedBitmap = null;
+    //    Bitmap selectedBitmap = null;
     @BindView(R.id.text_label_aadhar_number)
     TextView textLabelAadharNumber;
     @BindView(R.id.image_aadhar_expand)
@@ -406,7 +406,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     @BindView(R.id.frame_tutorial)
     FrameLayout frameTutorial;
 
-    private File mFileTemp;
+    //    private File mFileTemp;
     private Uri fileUri;
 
     int clickedPosition = -1;
@@ -465,11 +465,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     // Twitter
     private twitter4j.Twitter twitter;
     private RequestToken requestToken = null;
-    private AccessToken accessToken;
 
     private String oauth_url, oauth_verifier;
     private Dialog auth_dialog;
-    private WebView web;
     private ProgressDialog progress;
     // End
 
@@ -497,9 +495,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         arrayListProfile = new ArrayList<>();
 
         FacebookSdk.sdkInitialize(getApplicationContext());
-//        mInstagram = new Instagram(this, AppConstants.CLIENT_ID, AppConstants.CLIENT_SECRET,
-//                AppConstants.REDIRECT_URI);
-//        mInstagramSession = mInstagram.getSession();
 
         twitter = new TwitterFactory().getInstance();
         twitter.setOAuthConsumer(AppConstants.CONSUMER_KEY, AppConstants.CONSUMER_SECRET);
@@ -534,71 +529,70 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         }
     }
 
-    private void displayWalkThrough() {
-
-        FrameLayout.LayoutParams layoutParamsFrame = new FrameLayout.LayoutParams(FrameLayout
-                .LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-
-        final LinearLayout linearDescription = new LinearLayout(this);
-        linearDescription.setLayoutParams(layoutParamsFrame);
-        linearDescription.setOrientation(LinearLayout.VERTICAL);
-
-        final LinearLayout.LayoutParams descriptionLayoutParam = new LinearLayout.LayoutParams
-                (LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        descriptionLayoutParam.leftMargin = (int) getResources().getDimension(R.dimen
-                .activity_horizontal_margin);
-        descriptionLayoutParam.rightMargin = (int) getResources().getDimension(R.dimen
-                .activity_horizontal_margin);
-
-        final LinearLayout.LayoutParams headerLayoutParam = new LinearLayout.LayoutParams
-                (LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        headerLayoutParam.leftMargin = (int) getResources().getDimension(R.dimen
-                .activity_horizontal_margin);
-        headerLayoutParam.rightMargin = (int) getResources().getDimension(R.dimen
-                .activity_horizontal_margin);
-
-        /*new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                descriptionLayoutParam.topMargin = includeToolbar.getHeight() + (int)
-                        getResources().getDimension(R.dimen.nav_header_height);
-            }
-        }, 2000);*/
-
-        descriptionLayoutParam.topMargin = (int) (Utils.getDeviceHeight(EditProfileActivity.this)
-                / 2.5);
-
-        textTapContinue.setText("TAP ANYWHERE AND GET STARTED");
-
-        TextView textHeader = new TextView(this);
-        textHeader.setTextColor(ContextCompat.getColor(this, R.color.colorWhite));
-        textHeader.setTypeface(Utils.typefaceBold(this));
-        textHeader.setLayoutParams(descriptionLayoutParam);
-        textHeader.setTextSize(18);
-        textHeader.setPaintFlags(textHeader.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-        textHeader.setText("Edit Profile");
-        linearDescription.addView(textHeader);
-
-        TextView textDescription = new TextView(this);
-        textDescription.setTextColor(ContextCompat.getColor(this, R.color.colorWhite));
-        textDescription.setTypeface(Utils.typefaceRegular(this));
-        textDescription.setLayoutParams(headerLayoutParam);
-        textDescription.setTextSize(14);
-        textDescription.setText("Now fill in your info and\nhave an attractive profile!");
-        linearDescription.addView(textDescription);
-
-        frameTutorial.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                frameTutorial.setVisibility(View.GONE);
-                Utils.setBooleanPreference(EditProfileActivity.this, AppConstants
-                        .PREF_SHOW_WALK_THROUGH, false);
-            }
-        });
-
-        frameTutorial.addView(linearDescription);
-    }
-
+//    private void displayWalkThrough() {
+//
+//        FrameLayout.LayoutParams layoutParamsFrame = new FrameLayout.LayoutParams(FrameLayout
+//                .LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+//
+//        final LinearLayout linearDescription = new LinearLayout(this);
+//        linearDescription.setLayoutParams(layoutParamsFrame);
+//        linearDescription.setOrientation(LinearLayout.VERTICAL);
+//
+//        final LinearLayout.LayoutParams descriptionLayoutParam = new LinearLayout.LayoutParams
+//                (LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+//        descriptionLayoutParam.leftMargin = (int) getResources().getDimension(R.dimen
+//                .activity_horizontal_margin);
+//        descriptionLayoutParam.rightMargin = (int) getResources().getDimension(R.dimen
+//                .activity_horizontal_margin);
+//
+//        final LinearLayout.LayoutParams headerLayoutParam = new LinearLayout.LayoutParams
+//                (LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+//        headerLayoutParam.leftMargin = (int) getResources().getDimension(R.dimen
+//                .activity_horizontal_margin);
+//        headerLayoutParam.rightMargin = (int) getResources().getDimension(R.dimen
+//                .activity_horizontal_margin);
+//
+//        /*new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                descriptionLayoutParam.topMargin = includeToolbar.getHeight() + (int)
+//                        getResources().getDimension(R.dimen.nav_header_height);
+//            }
+//        }, 2000);*/
+//
+//        descriptionLayoutParam.topMargin = (int) (Utils.getDeviceHeight(EditProfileActivity.this)
+//                / 2.5);
+//
+//        textTapContinue.setText("TAP ANYWHERE AND GET STARTED");
+//
+//        TextView textHeader = new TextView(this);
+//        textHeader.setTextColor(ContextCompat.getColor(this, R.color.colorWhite));
+//        textHeader.setTypeface(Utils.typefaceBold(this));
+//        textHeader.setLayoutParams(descriptionLayoutParam);
+//        textHeader.setTextSize(18);
+//        textHeader.setPaintFlags(textHeader.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+//        textHeader.setText("Edit Profile");
+//        linearDescription.addView(textHeader);
+//
+//        TextView textDescription = new TextView(this);
+//        textDescription.setTextColor(ContextCompat.getColor(this, R.color.colorWhite));
+//        textDescription.setTypeface(Utils.typefaceRegular(this));
+//        textDescription.setLayoutParams(headerLayoutParam);
+//        textDescription.setTextSize(14);
+//        textDescription.setText("Now fill in your info and\nhave an attractive profile!");
+//        linearDescription.addView(textDescription);
+//
+//        frameTutorial.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                frameTutorial.setVisibility(View.GONE);
+//                Utils.setBooleanPreference(EditProfileActivity.this, AppConstants
+//                        .PREF_SHOW_WALK_THROUGH, false);
+//            }
+//        });
+//
+//        frameTutorial.addView(linearDescription);
+//    }
 
     /*private void onShareClick() {
 
@@ -1316,7 +1310,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 auth_dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
                 auth_dialog.setContentView(R.layout.auth_dialog);
-                web = (WebView) auth_dialog.findViewById(R.id.webView);
+                WebView web = (WebView) auth_dialog.findViewById(R.id.webView);
                 web.getSettings().setJavaScriptEnabled(true);
                 web.loadUrl(oauth_url);
                 web.setWebViewClient(new WebViewClient() {
@@ -1374,7 +1368,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         protected Boolean doInBackground(String... args) {
 
             try {
-                accessToken = twitter.getOAuthAccessToken(requestToken, oauth_verifier);
+                AccessToken accessToken = twitter.getOAuthAccessToken(requestToken, oauth_verifier);
                 user = twitter.showUser(accessToken.getUserId());
             } catch (twitter4j.TwitterException e) {
                 e.printStackTrace();
@@ -4358,9 +4352,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     if (position == 0) {
                         inputValue.setText(Utils.setMultipleTypeface(EditProfileActivity.this,
                                 phoneNumber.getPhoneNumber() + " " + getString(R.string
-                                        .im_icon_verify), 0, (StringUtils.length(phoneNumber
-                                        .getPhoneNumber()) + 1), ((StringUtils.length(phoneNumber
-                                        .getPhoneNumber()) + 1) + 1)));
+                                        .im_icon_verify), 0,
+                                (StringUtils.length(phoneNumber.getPhoneNumber()) + 1),
+                                ((StringUtils.length(phoneNumber.getPhoneNumber()) + 1) + 1)));
                     } else {
                         inputValue.setText(phoneNumber.getPhoneNumber());
                     }
@@ -6212,7 +6206,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         userProfile.setPmLastSeen(profileDetail.getPmLastSeen());
         userProfile.setProfileRatingPrivacy(String.valueOf(profileDetail.getProfileRatingPrivacy
                 ()));
-        userProfile.setRatingPrivate(String.valueOf(profileDetail.getRatingPrivate()));
+        userProfile.setRatingPrivate(MoreObjects.firstNonNull(profileDetail.getRatingPrivate(), 0));
 
         tableProfileMaster.updateUserProfile(userProfile);
         //</editor-fold>

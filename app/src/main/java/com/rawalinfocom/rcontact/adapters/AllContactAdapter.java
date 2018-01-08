@@ -109,7 +109,8 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                              ArrayList<String> arrayListContactHeader) {
         this.activity = fragment.getActivity();
         this.fragment = fragment;
-        this.arrayListUserContact = arrayListUserContact;
+        this.arrayListUserContact = new ArrayList<>();
+        this.arrayListUserContact.addAll(arrayListUserContact);
         this.arrayListContactHeader = arrayListContactHeader;
 
         arrayListExpandedPositions = new ArrayList<>();
@@ -218,16 +219,11 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public Object[] getSections() {
-        //return arrayListContactHeader.toArray(new String[arrayListContactHeader.size()]);
         List<String> sections = new ArrayList<>();
         mSectionPositions = new ArrayList<>();
         int startPosition = 0;
         if (fragment != null) {
-            /*if (fragment instanceof AllContactsListFragment) {
-                startPosition = 2;
-            } else {*/
             startPosition = 0;
-//            }
         }
 
         for (int i = startPosition, size = arrayListUserContact.size(); i < size; i++) {
@@ -235,16 +231,18 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 String contactDisplayName = null;
                 ProfileData profileData = (ProfileData) arrayListUserContact.get(i);
 
-                if (Utils.getStringPreference(activity, AppConstants.PREF_SHORT_BY_CONTACT, "0")
-                        .equalsIgnoreCase("0")) {
-                    contactDisplayName = StringUtils.defaultIfEmpty(profileData.getName(), "");
-                } else {
+                contactDisplayName = StringUtils.defaultIfEmpty(profileData.getName(), "");
 
-                    String firstName = profileData.getTempFirstName();
-                    String lastName = profileData.getTempLastName();
-
-                    contactDisplayName = StringUtils.defaultIfEmpty(lastName, "");
-                }
+//                if (Utils.getStringPreference(activity, AppConstants.PREF_SHORT_BY_CONTACT, "0")
+//                        .equalsIgnoreCase("0")) {
+//                    contactDisplayName = StringUtils.defaultIfEmpty(profileData.getName(), "");
+//                } else {
+//
+//                    String firstName = profileData.getTempFirstName();
+//                    String lastName = profileData.getTempLastName();
+//
+//                    contactDisplayName = StringUtils.defaultIfEmpty(lastName, "");
+//                }
 
 //                contactDisplayName = StringUtils.defaultIfEmpty(profileData.getName(), "");
                 if (contactDisplayName == null || contactDisplayName.length() == 0) {
@@ -276,7 +274,10 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public int getPositionForSection(int sectionIndex) {
-        return mSectionPositions.get(sectionIndex);
+        if (mSectionPositions.size() > 0)
+            return mSectionPositions.get(sectionIndex);
+        else
+            return 0;
     }
 
     @Override
@@ -322,146 +323,100 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         final ProfileData profileData = (ProfileData) arrayListUserContact.get(position);
         final String thumbnailUrl = profileData.getProfileUrl();
 
-        Glide.with(activity)
-                .load(profileData.getTempRcpImageURL())
-                .placeholder(R.drawable.home_screen_profile)
-                .error(R.drawable.home_screen_profile)
-                .bitmapTransform(new CropCircleTransformation(activity))
-                .override(300, 300)
-                .into(holder.imageProfile);
-
-        holder.imageProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (StringUtils.length(profileData.getTempRcpImageURL()) > 0) {
-                    if (activity instanceof MainActivity) {
-                        Utils.zoomImageFromThumb(activity, holder.imageProfile, profileData
-                                .getTempRcpImageURL(), ((MainActivity) activity)
-                                .frameImageEnlarge, ((MainActivity) activity).imageEnlarge, (
-                                (MainActivity) activity).frameContainer);
-                    } else if (activity instanceof SearchActivity) {
-                        Utils.zoomImageFromThumb(activity, holder.imageProfile, profileData
-                                .getTempRcpImageURL(), ((SearchActivity) activity)
-                                .frameImageEnlarge, ((SearchActivity) activity).imageEnlarge, (
-                                (SearchActivity) activity).frameContainer);
-                    }
-
-                }
-            }
-        });
-
-
         if (StringUtils.length(thumbnailUrl) > 0) {
-            Glide.with(activity)
-                    .load(thumbnailUrl)
-                    .placeholder(R.drawable.home_screen_profile)
-                    .error(R.drawable.home_screen_profile)
-                    .bitmapTransform(new CropCircleTransformation(activity))
-                    .override(300, 300)
-                    .into(holder.imageProfile);
-            holder.imageProfile.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (StringUtils.length(thumbnailUrl) > 0) {
-                        if (activity instanceof MainActivity) {
-                            Utils.zoomImageFromThumb(activity, holder.imageProfile, thumbnailUrl, (
-                                    (MainActivity) activity).frameImageEnlarge, ((MainActivity)
-                                    activity).imageEnlarge, ((MainActivity) activity)
-                                    .frameContainer);
-                        } else if (activity instanceof SearchActivity) {
-                            Utils.zoomImageFromThumb(activity, holder.imageProfile, thumbnailUrl, (
-                                    (SearchActivity) activity).frameImageEnlarge, ((SearchActivity)
-                                    activity).imageEnlarge, ((SearchActivity) activity)
-                                    .frameContainer);
-                        }
-                    }
-                }
-            });
+
+            if (!StringUtils.isBlank(profileData.getTempRcpImageURL())) {
+                showRCPImage(profileData.getTempRcpImageURL(), holder.imageProfile);
+            } else {
+                showRCPImage(thumbnailUrl, holder.imageProfile);
+            }
 
         } else {
-            final String imageUrl = getPhotoUrlFromNumber(Utils.getFormattedNumber(activity,
-                    profileData.getTempNumber()));
-            if (!StringUtils.isEmpty(imageUrl)) {
-                Glide.with(activity)
-                        .load(imageUrl)
-                        .placeholder(R.drawable.home_screen_profile)
-                        .error(R.drawable.home_screen_profile)
-                        .bitmapTransform(new CropCircleTransformation(activity))
-                        .override(300, 300)
-                        .into(holder.imageProfile);
-                holder.imageProfile.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (StringUtils.length(imageUrl) > 0) {
-                            if (activity instanceof MainActivity) {
-                                Utils.zoomImageFromThumb(activity, holder.imageProfile, imageUrl, (
-                                        (MainActivity) activity).frameImageEnlarge, ((MainActivity)
-                                        activity).imageEnlarge, ((MainActivity) activity)
-                                        .frameContainer);
-                            } else if (activity instanceof SearchActivity) {
-                                Utils.zoomImageFromThumb(activity, holder.imageProfile, imageUrl, (
-                                        (SearchActivity) activity).frameImageEnlarge, (
-                                        (SearchActivity)
-                                                activity).imageEnlarge, ((SearchActivity) activity)
-                                        .frameContainer);
-                            }
-                        }
-                    }
-                });
-            } else {
+            showRCPImage(profileData.getTempRcpImageURL(), holder.imageProfile);
 
-                TableProfileMaster tableProfileMaster = new TableProfileMaster(((BaseActivity)
-                        activity).getDatabaseHandler());
-                TableProfileMobileMapping tableProfileMobileMapping = new
-                        TableProfileMobileMapping(((BaseActivity) activity).getDatabaseHandler());
-                ProfileMobileMapping profileMobileMapping =
-                        tableProfileMobileMapping
-                                .getCloudPmIdFromProfileMappingFromNumber(Utils
-                                        .getFormattedNumber(activity, profileData.getTempNumber()));
-                if (profileMobileMapping != null) {
-                    String cloudPmId = profileMobileMapping.getMpmCloudPmId();
-                    if (!StringUtils.isEmpty(cloudPmId)) {
-                        UserProfile userProfile = tableProfileMaster
-                                .getRCPProfileFromPmId(Integer.parseInt(cloudPmId));
-                        final String rcpImageUrl = userProfile.getPmProfileImage();
-
-                        if (!StringUtils.isEmpty(rcpImageUrl)) {
-                            Glide.with(activity)
-                                    .load(rcpImageUrl)
-                                    .placeholder(R.drawable.home_screen_profile)
-                                    .error(R.drawable.home_screen_profile)
-                                    .bitmapTransform(new CropCircleTransformation(activity))
-                                    .override(300, 300)
-                                    .into(holder.imageProfile);
-                            holder.imageProfile.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    if (StringUtils.length(rcpImageUrl) > 0) {
-                                        if (activity instanceof MainActivity) {
-                                            Utils.zoomImageFromThumb(activity, holder.imageProfile,
-                                                    rcpImageUrl, ((MainActivity) activity)
-                                                            .frameImageEnlarge, ((MainActivity)
-                                                            activity).imageEnlarge, ((MainActivity)
-                                                            activity).frameContainer);
-                                        } else if (activity instanceof SearchActivity) {
-                                            Utils.zoomImageFromThumb(activity, holder.imageProfile,
-                                                    rcpImageUrl, ((SearchActivity) activity)
-                                                            .frameImageEnlarge, ((SearchActivity)
-                                                            activity).imageEnlarge, (
-                                                            (SearchActivity)
-                                                                    activity).frameContainer);
-                                        }
-                                    }
-                                }
-                            });
-                        } else {
-                            holder.imageProfile.setImageResource(R.drawable.home_screen_profile);
-                        }
-                    }
-                } else {
-                    holder.imageProfile.setImageResource(R.drawable.home_screen_profile);
-                }
-            }
+//            final String imageUrl = getPhotoUrlFromNumber(Utils.getFormattedNumber(activity,
+//                    profileData.getTempNumber()));
+//            if (!StringUtils.isEmpty(imageUrl)) {
+//                Glide.with(activity)
+//                        .load(imageUrl)
+//                        .placeholder(R.drawable.home_screen_profile)
+//                        .error(R.drawable.home_screen_profile)
+//                        .bitmapTransform(new CropCircleTransformation(activity))
+//                        .override(300, 300)
+//                        .into(holder.imageProfile);
+//                holder.imageProfile.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        if (StringUtils.length(imageUrl) > 0) {
+//                            if (activity instanceof MainActivity) {
+//                                Utils.zoomImageFromThumb(activity, holder.imageProfile, imageUrl, (
+//                                        (MainActivity) activity).frameImageEnlarge, ((MainActivity)
+//                                        activity).imageEnlarge, ((MainActivity) activity)
+//                                        .frameContainer);
+//                            } else if (activity instanceof SearchActivity) {
+//                                Utils.zoomImageFromThumb(activity, holder.imageProfile, imageUrl, (
+//                                        (SearchActivity) activity).frameImageEnlarge, (
+//                                        (SearchActivity)
+//                                                activity).imageEnlarge, ((SearchActivity) activity)
+//                                        .frameContainer);
+//                            }
+//                        }
+//                    }
+//                });
+//            } else {
+//
+//                TableProfileMaster tableProfileMaster = new TableProfileMaster(((BaseActivity)
+//                        activity).getDatabaseHandler());
+//                TableProfileMobileMapping tableProfileMobileMapping = new
+//                        TableProfileMobileMapping(((BaseActivity) activity).getDatabaseHandler());
+//                ProfileMobileMapping profileMobileMapping =
+//                        tableProfileMobileMapping
+//                                .getCloudPmIdFromProfileMappingFromNumber(Utils
+//                                        .getFormattedNumber(activity, profileData.getTempNumber()));
+//                if (profileMobileMapping != null) {
+//                    String cloudPmId = profileMobileMapping.getMpmCloudPmId();
+//                    if (!StringUtils.isEmpty(cloudPmId)) {
+//                        UserProfile userProfile = tableProfileMaster
+//                                .getRCPProfileFromPmId(Integer.parseInt(cloudPmId));
+//                        final String rcpImageUrl = userProfile.getPmProfileImage();
+//
+//                        if (!StringUtils.isEmpty(rcpImageUrl)) {
+//                            Glide.with(activity)
+//                                    .load(rcpImageUrl)
+//                                    .placeholder(R.drawable.home_screen_profile)
+//                                    .error(R.drawable.home_screen_profile)
+//                                    .bitmapTransform(new CropCircleTransformation(activity))
+//                                    .override(300, 300)
+//                                    .into(holder.imageProfile);
+//                            holder.imageProfile.setOnClickListener(new View.OnClickListener() {
+//                                @Override
+//                                public void onClick(View v) {
+//                                    if (StringUtils.length(rcpImageUrl) > 0) {
+//                                        if (activity instanceof MainActivity) {
+//                                            Utils.zoomImageFromThumb(activity, holder.imageProfile,
+//                                                    rcpImageUrl, ((MainActivity) activity)
+//                                                            .frameImageEnlarge, ((MainActivity)
+//                                                            activity).imageEnlarge, ((MainActivity)
+//                                                            activity).frameContainer);
+//                                        } else if (activity instanceof SearchActivity) {
+//                                            Utils.zoomImageFromThumb(activity, holder.imageProfile,
+//                                                    rcpImageUrl, ((SearchActivity) activity)
+//                                                            .frameImageEnlarge, ((SearchActivity)
+//                                                            activity).imageEnlarge, (
+//                                                            (SearchActivity)
+//                                                                    activity).frameContainer);
+//                                        }
+//                                    }
+//                                }
+//                            });
+//                        } else {
+//                            holder.imageProfile.setImageResource(R.drawable.home_screen_profile);
+//                        }
+//                    }
+//                } else {
+//                    holder.imageProfile.setImageResource(R.drawable.home_screen_profile);
+//                }
+//            }
         }
 
         holder.textContactName.setTag(position);
@@ -482,61 +437,49 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
             String firstName = profileData.getTempFirstName();
             String lastName = profileData.getTempLastName();
-            if (StringUtils.length(firstName) > 0) {
-                contactDisplayName = contactDisplayName + firstName + " ";
-            }
             if (StringUtils.length(lastName) > 0) {
                 contactDisplayName = contactDisplayName + lastName + " ";
+            }
+            if (StringUtils.length(firstName) > 0) {
+                contactDisplayName = contactDisplayName + firstName + " ";
             }
         }
 
         holder.textContactName.setText(contactDisplayName.length() > 0 ? contactDisplayName :
                 activity.getString(R.string.unknown));
 
+        holder.textCloudContactName.setVisibility(View.VISIBLE);
         if (profileData.getTempIsRcp()) {
-            holder.textCloudContactName.setVisibility(View.VISIBLE);
             if (contactDisplayName.equalsIgnoreCase(profileData.getTempRcpName())) {
-                holder.textCloudContactName.setVisibility(View.GONE);
                 holder.textCloudContactName.setText("");
                 showPineGreen = true;
             } else {
-                holder.textCloudContactName.setVisibility(View.VISIBLE);
                 if (!StringUtils.isEmpty(profileData.getTempRcpName())) {
-                    holder.textCloudContactName.setText(" (" + profileData.getTempRcpName() + ")");
+                    holder.textCloudContactName.setText(String.format(" (%s)", profileData.getTempRcpName()));
                     showPineGreen = false;
                 }
             }
-
 
             holder.relativeRowAllContact.setTag(profileData.getTempRcpId());
 
             if (StringUtils.contains(profileData.getTempRcpName(), ",")) {
                 holder.relativeRowAllContact.setTag(profileData.getTempRcpName());
-                holder.textCloudContactName.setText(" (" + String.valueOf(StringUtils.countMatches
-                        (profileData.getTempRcpName(), ",") + 1) + " RC)");
+                holder.textCloudContactName.setText(String.format(" (%s RC)", String.valueOf(StringUtils.countMatches
+                        (profileData.getTempRcpName(), ",") + 1)));
             }
 
         } else {
             showPineGreen = false;
             holder.relativeRowAllContact.setTag("-1");
-            holder.textCloudContactName.setVisibility(View.GONE);
             holder.textCloudContactName.setText("");
         }
 
-        /*if (fragment instanceof AllContactsListFragment && position == 1) {
-            holder.textContactName.setTextColor(colorPineGreen);
-            holder.textContactNumber.setTextColor(colorPineGreen);
-            holder.textCloudContactName.setVisibility(View.GONE);
-            holder.textCloudContactName.setText("");
-        } else {*/
-        if (showPineGreen) {
-            holder.textContactName.setTextColor(colorPineGreen);
-        } else {
-            holder.textContactName.setTextColor(colorBlack);
-        }
+//        if (showPineGreen) {
+        holder.textContactName.setTextColor(showPineGreen ? colorPineGreen : colorBlack);
+//        } else {
+//            holder.textContactName.setTextColor(colorBlack);
+//    }
         holder.textContactNumber.setTextColor(colorBlack);
-        holder.textCloudContactName.setVisibility(View.VISIBLE);
-//        }
 
         holder.textContactNumber.setText(Utils.getFormattedNumber(activity, profileData
                 .getTempNumber()));
@@ -759,7 +702,37 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         });
 
         //</editor-fold>
+    }
 
+    private void showRCPImage(final String imageProfileUrl, final ImageView imageProfile) {
+
+        Glide.with(activity)
+                .load(imageProfileUrl)
+                .placeholder(R.drawable.home_screen_profile)
+                .error(R.drawable.home_screen_profile)
+                .bitmapTransform(new CropCircleTransformation(activity))
+                .override(300, 300)
+                .into(imageProfile);
+
+        imageProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (StringUtils.length(imageProfileUrl) > 0) {
+                    if (activity instanceof MainActivity) {
+                        Utils.zoomImageFromThumb(activity, imageProfile, imageProfileUrl,
+                                ((MainActivity) activity).frameImageEnlarge,
+                                ((MainActivity) activity).imageEnlarge,
+                                ((MainActivity) activity).frameContainer);
+                    } else if (activity instanceof SearchActivity) {
+                        Utils.zoomImageFromThumb(activity, imageProfile, imageProfileUrl,
+                                ((SearchActivity) activity).frameImageEnlarge,
+                                ((SearchActivity) activity).imageEnlarge,
+                                ((SearchActivity) activity).frameContainer);
+                    }
+
+                }
+            }
+        });
     }
 
     private void hightLightSearchedText(String originalText, TextView textView, boolean
@@ -983,9 +956,9 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 //
 //    }
 
-    //</editor-fold>
+//</editor-fold>
 
-    //<editor-fold desc="View Holders">
+//<editor-fold desc="View Holders">
 
     public class AllContactViewHolder extends RecyclerView.ViewHolder {
 

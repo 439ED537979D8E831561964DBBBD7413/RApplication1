@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.BuildConfig;
 import com.rawalinfocom.rcontact.R;
@@ -80,6 +81,7 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
 
     private Activity activity;
     private ExistingRelationListAdapter listAdapter;
+    private LinearLayoutManager layoutManager;
     //    private TableRelationMappingMaster tableRelationMappingMaster;
     //    private Integer pmId;
     private ArrayList<RelationRecommendationType> existingRelationList;
@@ -127,6 +129,8 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
 
         textNoRelation.setVisibility(View.GONE);
         recycleViewRelation.setVisibility(View.VISIBLE);
+        layoutManager = new LinearLayoutManager(this);
+        recycleViewRelation.setLayoutManager(layoutManager);
 
         if (Utils.isNetworkAvailable(this)) {
             getAllExistingRelation();
@@ -171,13 +175,23 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
             }
         });
 
+        // Adding ScrollListener to getting whether we're on First Item position or not
+        recycleViewRelation.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                swipeRefreshLayout.setRefreshing(false);
+                swipeRefreshLayout.setEnabled(layoutManager.findFirstCompletelyVisibleItemPosition() == 0); // 0 is for first item position
+            }
+        });
+
         // implement setOnRefreshListener event on SwipeRefreshLayout
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
 
-                swipeRefreshLayout.setRefreshing(true);
                 if (Utils.isNetworkAvailable(ExistingRelationActivity.this)) {
+                    swipeRefreshLayout.setRefreshing(true);
                     getAllExistingRelation();
                 } else {
                     swipeRefreshLayout.setRefreshing(false);
@@ -273,6 +287,9 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
             case R.id.image_add_new:
 
                 if (Utils.isNetworkAvailable(activity)) {
+
+                    listAdapter = null;
+
                     Intent intent = new Intent(activity, AddNewRelationActivity.class);
                     intent.putExtra(AppConstants.EXTRA_IS_FROM, "own");
                     startActivity(intent);
@@ -446,7 +463,8 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
                             getRcRelationMasterId()));
                     individualRelationType.setRelationName(businessRecommendation.get(j).getRmParticular());
                     individualRelationType.setOrganizationName(businessRecommendation.get(j).getOrgName());
-                    individualRelationType.setIsOrgVerified(businessRecommendation.get(j).getOmIsVerified());
+                    individualRelationType.setIsOrgVerified(MoreObjects.firstNonNull
+                            (businessRecommendation.get(j).getOmIsVerified(), 0));
                     individualRelationType.setFamilyName("");
                     individualRelationType.setOrganizationId(String.valueOf(businessRecommendation.get(j).getRcOrgId()));
                     individualRelationType.setIsFriendRelation(false);
@@ -551,10 +569,21 @@ public class ExistingRelationActivity extends BaseActivity implements WsResponse
                             showAllRelations(position, name);
                         }
                     });
-            recycleViewRelation.setLayoutManager(new LinearLayoutManager(this));
             recycleViewRelation.setAdapter(listAdapter);
 
         } else {
+            existingRelationList.clear();
+            listAdapter = new ExistingRelationListAdapter(activity, existingRelationList,
+                    new ExistingRelationListAdapter.OnClickListener() {
+                        @Override
+                        public void onClick(int position) {
+                        }
+
+                        @Override
+                        public void onDeleteClick(int position, String name, String pmId) {
+                        }
+                    });
+            recycleViewRelation.setAdapter(listAdapter);
             setVisibility(getString(R.string.str_no_relation_found), View.VISIBLE, View.GONE);
         }
     }

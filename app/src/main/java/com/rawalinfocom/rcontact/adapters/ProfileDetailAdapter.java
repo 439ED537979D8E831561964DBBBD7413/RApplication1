@@ -165,12 +165,14 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
                     if (isOwnProfile) {
 
-                        if (phoneNumber.getPbRcpType() == IntegerConstants.RCP_TYPE_PRIMARY) {
-                            phoneNumberIntent(number);
-                        } else {
-                            showVerificationDialog(number, "number", activity.getString(R.string.str_verify_number),
-                                    activity.getString(R.string.str_call_number));
-                        }
+                        phoneNumberIntent(number);
+
+//                        if (phoneNumber.getPbRcpType() == IntegerConstants.RCP_TYPE_PRIMARY) {
+//                            phoneNumberIntent(number);
+//                        } else {
+//                            showVerificationDialog(number, "number", activity.getString(R.string.str_verify_number),
+//                                    activity.getString(R.string.str_call_number));
+//                        }
 
                     } else {
                         phoneNumberIntent(number);
@@ -239,18 +241,19 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                     (StringUtils.length(number) + 1), (
                             (StringUtils.length(number) + 1) + 1)));
             holder.textMain.setTextColor(colorPineGreen);
-            if (isOwnProfile)
-                holder.llPrivacy.setVisibility(View.GONE);
-            else {
-                holder.llPrivacy.setVisibility(View.GONE);
-                if ((MoreObjects.firstNonNull(phoneNumber.getIsPrivate(), 0)) == IntegerConstants
-                        .IS_PRIVATE) {
-//                    holder.imageView2.setVisibility(View.GONE);
-                    holder.buttonRequest.setVisibility(View.VISIBLE);
-                    holder.imgActionType.setVisibility(View.GONE);
-                    holder.imgActionWhatsapp.setVisibility(View.GONE);
-                }
-            }
+            holder.llPrivacy.setVisibility(View.GONE);
+//            if (isOwnProfile)
+//                holder.llPrivacy.setVisibility(View.GONE);
+//            else {
+//                holder.llPrivacy.setVisibility(View.GONE);
+//                if ((MoreObjects.firstNonNull(phoneNumber.getIsPrivate(), 0)) == IntegerConstants
+//                        .IS_PRIVATE) {
+////                    holder.imageView2.setVisibility(View.GONE);
+//                    holder.buttonRequest.setVisibility(View.VISIBLE);
+//                    holder.imgActionType.setVisibility(View.GONE);
+//                    holder.imgActionWhatsapp.setVisibility(View.GONE);
+//                }
+//            }
         } else if (pbRcpType == IntegerConstants.RCP_TYPE_SECONDARY) {
             holder.textMain.setText(number);
             holder.textMain.setTextColor(colorPineGreen);
@@ -353,17 +356,19 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
                     if (isOwnProfile) {
 
-                        if (email.getEmRcpType() == IntegerConstants.RCP_TYPE_PRIMARY) {
-                            emailIntent(emailAddress);
-                        } else {
-                            if (email.getEmRcpType() == IntegerConstants.RCP_TYPE_SECONDARY &&
-                                    !(email.getEmSocialType().equalsIgnoreCase(""))) {
-                                emailIntent(emailAddress);
-                            } else {
-                                showVerificationDialog(emailAddress, "email", activity.getString(R.string.str_verify_email),
-                                        activity.getString(R.string.str_open_email));
-                            }
-                        }
+                        emailIntent(emailAddress);
+
+//                        if (email.getEmRcpType() == IntegerConstants.RCP_TYPE_PRIMARY) {
+//                            emailIntent(emailAddress);
+//                        } else {
+//                            if (email.getEmRcpType() == IntegerConstants.RCP_TYPE_SECONDARY &&
+//                                    !(email.getEmSocialType().equalsIgnoreCase(""))) {
+//                                emailIntent(emailAddress);
+//                            } else {
+//                                showVerificationDialog(emailAddress, "email", activity.getString(R.string.str_verify_email),
+//                                        activity.getString(R.string.str_open_email));
+//                            }
+//                        }
 
                     } else {
                         emailIntent(emailAddress);
@@ -413,7 +418,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 //                            (StringUtils.length(emailId) + 1) + 1)));
 
             holder.textMain.setTextColor(colorPineGreen);
-//            holder.imageViewTic.setVisibility(View.GONE);
+            holder.imageViewTic.setVisibility(View.VISIBLE);
 //            holder.textMain.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 //                    R.drawable.ico_double_tick_green_svg, 0);
             holder.imageViewTic.setColorFilter(colorPineGreen);
@@ -590,8 +595,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             holder.llPrivacy.setVisibility(View.VISIBLE);
         } else {
             holder.llPrivacy.setVisibility(View.GONE);
-            if ((MoreObjects.firstNonNull(education.getEduPublic(), 3)) == IntegerConstants
-                    .PRIVACY_PRIVATE && education.getEduName().startsWith("XXXX")) {
+            if (education.getEduName().startsWith("XXXX")) {
                 holder.buttonRequest.setVisibility(View.VISIBLE);
                 holder.imgActionType.setVisibility(View.GONE);
                 holder.textSub.setVisibility(View.GONE);
@@ -1306,7 +1310,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                     requestObj, null, WsResponseObject.class, WsConstants
                     .REQ_PROFILE_PRIVACY_REQUEST, activity.getResources().getString(R.string
                     .msg_please_wait), true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                    BuildConfig.WS_ROOT + WsConstants.REQ_PROFILE_PRIVACY_REQUEST);
+                    BuildConfig.WS_ROOT_V2 + WsConstants.REQ_PROFILE_PRIVACY_REQUEST);
         } else {
             //show no net
             Toast.makeText(activity, activity.getResources().getString(R.string.msg_no_network),

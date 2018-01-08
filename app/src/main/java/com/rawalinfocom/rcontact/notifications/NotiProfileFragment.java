@@ -1,6 +1,9 @@
 package com.rawalinfocom.rcontact.notifications;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -102,7 +105,7 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout swipeRefreshLayout;
 
-    private String ppmTag, carID,actionType;
+    private String ppmTag, carID, actionType;
     private int rcpID;
 
     @Override
@@ -459,7 +462,7 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
         notiProfileAdapter = new NotiProfileAdapter(this, listAllRequest,
                 new NotiProfileAdapter.OnClickListener() {
                     @Override
-                    public void onClick(String type, String carId, int rcpId,String action) {
+                    public void onClick(String type, String carId, int rcpId, String action) {
                         ppmTag = type;
                         carID = carId;
                         rcpID = rcpId;
@@ -531,7 +534,7 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
     }
 
     private String getDate(int dayToAddorSub) {
-        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd", Locale.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         Date date = new Date();
         date.setTime(date.getTime() + dayToAddorSub * 24 * 60 * 60 * 1000);
         return sdf.format(date);
@@ -613,7 +616,7 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
 //                                MoreObjects.firstNonNull(item.getCarAccessPermissionStatus(), 0)
 //                                        == 2) {
 //                            boolean deleted = tableRCContactRequest.removeRequest(item.getCarId());
-                        boolean deleted = tableRCContactRequest.removeRequest(ppmTag, carID, rcpID,actionType);
+                        boolean deleted = tableRCContactRequest.removeRequest(ppmTag, carID, rcpID, actionType);
                         if (deleted) {
                             refreshAllList();
                         }
@@ -696,7 +699,7 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
                 if (String.valueOf(dataItem.getCarPmIdFrom()).equals(Utils.getStringPreference(getActivity(), AppConstants
                         .PREF_USER_PM_ID, "0"))
                         && dataItem.getCarAccessPermissionStatus() == 1) {
-                    tableRCContactRequest.addRequest(AppConstants
+                    tableRCContactRequest.addRequestFromService(AppConstants
                                     .COMMENT_STATUS_SENT,
                             String.valueOf(dataItem.getCarId()),
                             dataItem.getCarMongodbRecordIndex(),
@@ -811,6 +814,18 @@ public class NotiProfileFragment extends BaseNotificationFragment implements WsR
             swipeRefreshLayout.setRefreshing(false);
         }
     }
+
+    private BroadcastReceiver localBroadCastReceiverUpdateCount = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            try {
+                refreshAllList();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+    };
 
 //    private String updatePrivacySetting(String ppmTag, String cloudMongoId) {
 //        switch (ppmTag) {

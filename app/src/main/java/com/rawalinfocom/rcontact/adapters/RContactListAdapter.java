@@ -104,12 +104,11 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     //<editor-fold desc="Override Methods">
 
-
     public int getSearchCount() {
         return searchCount;
     }
 
-    public void setSearchCount(int searchCount) {
+    private void setSearchCount(int searchCount) {
         this.searchCount = searchCount;
     }
 
@@ -146,7 +145,7 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 break;
             case FOOTER:
                 ContactFooterViewHolder contactFooterViewHolder = (ContactFooterViewHolder) holder;
-                configureFooterViewHolder(contactFooterViewHolder, position);
+                configureFooterViewHolder(contactFooterViewHolder);
                 break;
         }
     }
@@ -237,8 +236,6 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         final UserProfile userProfile = (UserProfile) arrayListUserProfile.get(position);
 
-//        holder.relativeRowAllContact.setTag(position);
-
         String contactDisplayName = userProfile.getPmFirstName() + " " + userProfile
                 .getPmLastName();
         holder.textContactName.setText(contactDisplayName);
@@ -247,7 +244,6 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         } else if (StringUtils.length(userProfile.getEmailId()) > 0) {
             holder.textContactNumber.setText(userProfile.getEmailId());
         }
-
 
         if (!StringUtils.isBlank(searchChar)) {
             Pattern numberPat = Pattern.compile("\\d+");
@@ -341,15 +337,14 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         holder.textRatingUserCount.setText(userProfile.getTotalProfileRateUser());
 
-        if (!StringUtils.equalsIgnoreCase(ownProfileId,userProfile.getPmId())) {
-            if (userProfile.getProfileRatingPrivacy() != null && userProfile.getRatingPrivate() != null) {
+        if (!StringUtils.equalsIgnoreCase(ownProfileId, userProfile.getPmId())) {
+            if (!StringUtils.isBlank(userProfile.getProfileRatingPrivacy())) {
                 if (Integer.parseInt((String) MoreObjects.firstNonNull(userProfile.getProfileRatingPrivacy()
                         , 0)) == IntegerConstants.PRIVACY_EVERYONE) {
                     holder.ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
                 } else if (Integer.parseInt((String) MoreObjects.firstNonNull(userProfile.getProfileRatingPrivacy(),
                         0)) == IntegerConstants.PRIVACY_MY_CONTACT) {
-                    if (Integer.parseInt((String) MoreObjects.firstNonNull(userProfile.getRatingPrivate(), 0))
-                            == IntegerConstants.IS_PRIVATE) {
+                    if (MoreObjects.firstNonNull(userProfile.getRatingPrivate(), 0) == IntegerConstants.IS_PRIVATE) {
                         holder.ratingUser.setRating(0);
                     } else {
                         holder.ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
@@ -361,8 +356,9 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             } else {
                 holder.ratingUser.setRating(0);
             }
+        } else {
+            holder.ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
         }
-
 
         holder.relativeRowAllContact.setTag(position);
 
@@ -376,7 +372,7 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         .getPmRawId());
                 bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, "-1");
 //                bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, userProfile.getPmRawId());
-                TextView textName = (TextView) view.findViewById(R.id.text_contact_name);
+                TextView textName = view.findViewById(R.id.text_contact_name);
                 bundle.putString(AppConstants.EXTRA_CONTACT_NAME, textName.getText().toString());
                 bundle.putString(AppConstants.EXTRA_PROFILE_IMAGE_URL, userProfile
                         .getPmProfileImage());
@@ -394,14 +390,14 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     intent.putExtras(bundle);
                     fragment.startActivityForResult(intent, AppConstants
                             .REQUEST_CODE_PROFILE_DETAIL);
-                    ((BaseActivity) activity).overridePendingTransition(R.anim.enter, R
+                    activity.overridePendingTransition(R.anim.enter, R
                             .anim.exit);
                 } else {
                     Intent intent = new Intent(activity, ProfileDetailActivity.class);
                     intent.putExtras(bundle);
                     activity.startActivityForResult(intent, AppConstants
                             .REQUEST_CODE_PROFILE_DETAIL);
-                    ((BaseActivity) activity).overridePendingTransition(R.anim.enter, R
+                    activity.overridePendingTransition(R.anim.enter, R
                             .anim.exit);
                 }
 
@@ -409,13 +405,11 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         });
     }
 
-    private void configureFooterViewHolder(ContactFooterViewHolder holder, int position) {
-//        String letter = (String) arrayListUserContact.get(position);
+    private void configureFooterViewHolder(ContactFooterViewHolder holder) {
         if (!(activity instanceof SearchActivity) && !(activity instanceof DialerActivity)) {
-            holder.textTotalContacts.setText(arrayListUserProfile.size() - arrayListContactHeader
-                    .size() + " " + activity.getString(R.string.str_count_contacts));
+            holder.textTotalContacts.setText(String.format(Locale.getDefault(), "%d %s", arrayListUserProfile.size()
+                    - arrayListContactHeader.size(), activity.getString(R.string.str_count_contacts)));
         }
-
     }
 
     //</editor-fold>

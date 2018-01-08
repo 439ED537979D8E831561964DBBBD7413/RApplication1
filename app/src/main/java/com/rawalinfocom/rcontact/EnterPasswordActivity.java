@@ -63,6 +63,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import butterknife.BindView;
@@ -269,12 +270,16 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
                     ProfileDataOperation profileDetail = enterPassWordResponse.getProfileDetail();
 
                     Long date_firstLaunch = System.currentTimeMillis();
-                    Utils.setLongPreference(this,AppConstants.PREF_RATE_APP_DATE, date_firstLaunch);
+                    Utils.setLongPreference(this, AppConstants.PREF_RATE_APP_DATE, date_firstLaunch);
 
                     setProfileData(profileDetail);
                     Utils.storeProfileDataToDb(EnterPasswordActivity.this, profileDetail, databaseHandler);
 
                     Utils.setStringPreference(this, AppConstants.EXTRA_LOGIN_TYPE, "password");
+                    Utils.setStringPreference(RContactApplication.getInstance(), AppConstants.PREF_SYNC_FIRST_TIME,
+                            "first");
+                    Utils.setBooleanPreference(RContactApplication.getInstance(), AppConstants.PREF_SYNC_RUNNING,
+                            true);
 
                     deviceDetail();
 
@@ -311,6 +316,8 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
                             .valueOf(System.currentTimeMillis()));
                     Utils.setBooleanPreference(this, AppConstants.KEY_IS_FIRST_TIME, true);
                     Utils.setBooleanPreference(this, AppConstants.PREF_IS_LOGIN, true);
+                    Utils.setContactArrayListPreference(RContactApplication.getInstance(), AppConstants.PREF_ALL_CONTACT,
+                            new ArrayList());
 
                     if (Utils.getBooleanPreference(this, AppConstants.KEY_IS_RESTORE_DONE, false)) {
                         // Redirect to MainActivity
@@ -367,6 +374,10 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
                     Utils.storeProfileDataToDb(this, profileDetail, databaseHandler);
 
                     Utils.setStringPreference(this, AppConstants.EXTRA_LOGIN_TYPE, "social");
+                    Utils.setStringPreference(RContactApplication.getInstance(), AppConstants.PREF_SYNC_FIRST_TIME,
+                            "first");
+                    Utils.setBooleanPreference(RContactApplication.getInstance(), AppConstants.PREF_SYNC_RUNNING,
+                            true);
 
                     deviceDetail();
 

@@ -194,7 +194,7 @@ public class DialerActivity extends BaseActivity {
     TextView textWxyz;
     @BindView(R.id.text_plus)
     TextView textPlus;
-//    @BindView(R.id.image_sim_preference)
+    //    @BindView(R.id.image_sim_preference)
 //    ImageView imageSimPreference;
     private String[] requiredPermissions = {Manifest.permission.READ_CALL_LOG};
     MaterialDialog permissionConfirmationDialog;
@@ -257,10 +257,10 @@ public class DialerActivity extends BaseActivity {
                     editTextNumber.setTextSize(getResources().getDimension(R.dimen.text_size_14sp));
                 } else if (s.length() < 11) {
                     editTextNumber.setTextSize(getResources().getDimension(R.dimen.text_size_25sp));
-                    if (allContactAdapter == null) {
-                        allContactAdapter = new AllContactAdapter(DialerActivity.this,
-                                objectArrayListContact);
-                    }
+//                    if (allContactAdapter == null) {
+                    allContactAdapter = new AllContactAdapter(DialerActivity.this,
+                            objectArrayListContact);
+//                    }
                 }
 
                 String number = s.toString();
@@ -711,16 +711,16 @@ public class DialerActivity extends BaseActivity {
                             boolean isDualSim = telephonyInfo.isDualSIM();
 //                            if (!isDualSim) {
 //                                imageSimPreference.setVisibility(View.GONE);
-                                String simSerialNumber = telephonyInfo.simSerialNumber;
-                                if (!StringUtils.isEmpty(simSerialNumber)) {
-                                    numberToCall = Utils.getFormattedNumber(DialerActivity.this,
-                                            numberToCall);
-                                    Utils.callIntent(DialerActivity.this, numberToCall);
+                            String simSerialNumber = telephonyInfo.simSerialNumber;
+                            if (!StringUtils.isEmpty(simSerialNumber)) {
+                                numberToCall = Utils.getFormattedNumber(DialerActivity.this,
+                                        numberToCall);
+                                Utils.callIntent(DialerActivity.this, numberToCall);
 //                                showCallConfirmationDialog(numberToCall);
-                                } else {
-                                    Toast.makeText(DialerActivity.this, getString(R.string.str_no_sim),
-                                            Toast.LENGTH_SHORT).show();
-                                }
+                            } else {
+                                Toast.makeText(DialerActivity.this, getString(R.string.str_no_sim),
+                                        Toast.LENGTH_SHORT).show();
+                            }
                             /*} else {
                                 String callFromSim =  Utils.getStringPreference(DialerActivity.this,
                                         AppConstants.EXTRA_DIALER_SIM_PREFERENCE,"-1");

@@ -191,6 +191,12 @@ public class SettingsActivity extends BaseActivity implements RippleView
 
                     AppConstants.isFromSettingActivity = false;
 
+                    if (!Utils.getBooleanPreference(RContactApplication.getInstance(), AppConstants
+                            .PREF_CONTACT_SYNCED, false)) {
+                        Utils.setBooleanPreference(RContactApplication.getInstance(), AppConstants.PREF_SYNC_RUNNING,
+                                true);
+                    }
+
                     Intent intent = new Intent(activity, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);

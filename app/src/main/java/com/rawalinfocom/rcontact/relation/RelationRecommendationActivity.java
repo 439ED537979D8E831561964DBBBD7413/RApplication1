@@ -21,6 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.BuildConfig;
 import com.rawalinfocom.rcontact.R;
@@ -84,6 +85,7 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
 
     private RelationRecommendationListAdapter listAdapter;
     private ArrayList<RelationRecommendationType> recommendationRelationList;
+    private LinearLayoutManager layoutManager;
     private String type = "";
 
     @Override
@@ -241,7 +243,8 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
 
     private void init() {
 
-        recycleViewRelation.setLayoutManager(new LinearLayoutManager(this));
+        layoutManager = new LinearLayoutManager(this);
+        recycleViewRelation.setLayoutManager(layoutManager);
 
         textNoRelation.setVisibility(View.GONE);
         recycleViewRelation.setVisibility(View.VISIBLE);
@@ -254,13 +257,23 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
             setVisibility(getString(R.string.msg_no_network), View.VISIBLE, View.GONE);
         }
 
+        // Adding ScrollListener to getting whether we're on First Item position or not
+        recycleViewRelation.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                swipeRefreshLayout.setRefreshing(false);
+                swipeRefreshLayout.setEnabled(layoutManager.findFirstCompletelyVisibleItemPosition() == 0); // 0 is for first item position
+            }
+        });
+
         // implement setOnRefreshListener event on SwipeRefreshLayout
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
 
-                swipeRefreshLayout.setRefreshing(true);
                 if (Utils.isNetworkAvailable(RelationRecommendationActivity.this)) {
+                    swipeRefreshLayout.setRefreshing(true);
                     getRelationRecommendation();
                 } else {
                     swipeRefreshLayout.setRefreshing(false);
@@ -315,7 +328,8 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
                             getRcRelationMasterId()));
                     individualRelationType.setRelationName(businessRecommendation.get(j).getRmParticular());
                     individualRelationType.setOrganizationName(businessRecommendation.get(j).getOrgName());
-                    individualRelationType.setIsOrgVerified(businessRecommendation.get(j).getOmIsVerified());
+                    individualRelationType.setIsOrgVerified(MoreObjects.firstNonNull
+                            (businessRecommendation.get(j).getOmIsVerified(), 0));
                     individualRelationType.setFamilyName("");
                     individualRelationType.setOrganizationId(String.valueOf(businessRecommendation.get(j).getRcOrgId()));
                     individualRelationType.setIsFriendRelation(false);
@@ -626,5 +640,11 @@ public class RelationRecommendationActivity extends BaseActivity implements WsRe
         if (notificationManager != null) {
             notificationManager.cancelAll();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 }

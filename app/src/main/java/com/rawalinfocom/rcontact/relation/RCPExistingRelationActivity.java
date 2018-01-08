@@ -472,8 +472,7 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
                 ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
             } else if (Integer.parseInt((String) MoreObjects.firstNonNull(userProfile.getProfileRatingPrivacy(),
                     0)) == IntegerConstants.PRIVACY_MY_CONTACT) {
-                if (Integer.parseInt((String) MoreObjects.firstNonNull(userProfile.getRatingPrivate(), 0))
-                        == IntegerConstants.IS_PRIVATE) {
+                if (MoreObjects.firstNonNull(userProfile.getRatingPrivate(), 0) == IntegerConstants.IS_PRIVATE) {
                     ratingUser.setRating(0);
                 } else {
                     ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
@@ -579,7 +578,8 @@ public class RCPExistingRelationActivity extends BaseActivity implements WsRespo
                                 getRcRelationMasterId()));
                         individualRelationType.setRelationName(businessRecommendation.get(j).getRmParticular());
                         individualRelationType.setOrganizationName(businessRecommendation.get(j).getOrgName());
-                        individualRelationType.setIsOrgVerified(businessRecommendation.get(j).getOmIsVerified());
+                        individualRelationType.setIsOrgVerified(MoreObjects.firstNonNull
+                                (businessRecommendation.get(j).getOmIsVerified(), 0));
                         individualRelationType.setFamilyName("");
                         individualRelationType.setOrganizationId(String.valueOf(businessRecommendation.get(j).getRcOrgId()));
                         individualRelationType.setIsFriendRelation(false);

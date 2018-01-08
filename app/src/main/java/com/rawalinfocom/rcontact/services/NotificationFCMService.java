@@ -290,8 +290,9 @@ public class NotificationFCMService extends FirebaseMessagingService {
                         comment.setEvmRecordIndexId(m.get("event_record_index_id"));
                         int eventId = tableCommentMaster.addComment(comment);
                         if (eventId != -1) {
-                            notificationStateData.setCreatedAt(m.get("created_date"));
-                            notificationStateData.setUpdatedAt(m.get("updated_at"));
+                            notificationStateData.setCreatedAt(Utils.getLocalTimeFromUTCTime(m.get
+                                    ("created_date")));
+                            notificationStateData.setUpdatedAt(Utils.getLocalTimeFromUTCTime(m.get("updated_at")));
                             notificationStateData.setNotificationType(AppConstants
                                     .NOTIFICATION_TYPE_TIMELINE);
 //                            notificationStateData.setNotificationMasterId(m.get("id"));
@@ -368,7 +369,7 @@ public class NotificationFCMService extends FirebaseMessagingService {
                         if (m.get("car_pm_id_from").equals(Utils.getStringPreference(this,
                                 AppConstants.PREF_USER_PM_ID, "0"))
                                 && m.get("car_access_permission_status").equals("1")) {
-                            int requestId = tableRCContactRequest1.addRequest(AppConstants
+                            int requestId = tableRCContactRequest1.addRequestFromService(AppConstants
                                             .COMMENT_STATUS_SENT,
                                     m.get("car_id"),
                                     m.get("car_mongodb_record_index"),

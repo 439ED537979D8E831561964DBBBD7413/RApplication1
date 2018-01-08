@@ -88,8 +88,9 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
 
     private View rootView;
     private boolean isReload = false;
-    RContactApplication rContactApplication;
-    MaterialDialog callConfirmationDialog, permissionConfirmationDialog;
+    //    RContactApplication rContactApplication;
+    MaterialDialog permissionConfirmationDialog;
+    //    MaterialDialog callConfirmationDialog, permissionConfirmationDialog;
     public String callNumber = "";
 
     boolean isFromSettings = false;
@@ -97,13 +98,13 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
 
     //<editor-fold desc="Constructors">
 
-    public FavoritesFragment() {
-        // Required empty public constructor
-    }
+//    public FavoritesFragment() {
+//        // Required empty public constructor
+//    }
 
-    public static FavoritesFragment newInstance() {
-        return new FavoritesFragment();
-    }
+//    public static FavoritesFragment newInstance() {
+//        return new FavoritesFragment();
+//    }
 
     //</editor-fold>
 
@@ -112,13 +113,13 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        rContactApplication = (RContactApplication) getActivity().getApplicationContext();
+//        rContactApplication = (RContactApplication) getActivity().getApplicationContext();
         if (arrayListPhoneBookContacts == null) {
             arrayListContactHeaders = new ArrayList<>();
             arrayListPhoneBookContacts = new ArrayList<>();
         } else {
-            if (rContactApplication.getFavouriteStatus() == RContactApplication.FAVOURITE_REMOVED
-                    || rContactApplication.getFavouriteStatus() == RContactApplication
+            if (RContactApplication.getInstance().getFavouriteStatus() == RContactApplication.FAVOURITE_REMOVED
+                    || RContactApplication.getInstance().getFavouriteStatus() == RContactApplication
                     .FAVOURITE_ADDED) {
                 arrayListContactHeaders = new ArrayList<>();
                 arrayListPhoneBookContacts = new ArrayList<>();
@@ -137,13 +138,14 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
        /* // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_favorites, container, false);
         ButterKnife.bind(this, view);
         return view;*/
-        if (rootView == null || rContactApplication.getFavouriteStatus() != RContactApplication
+
+        if (rootView == null || RContactApplication.getInstance().getFavouriteStatus() != RContactApplication
                 .FAVOURITE_UNMODIFIED) {
             rootView = inflater.inflate(R.layout.fragment_favorites, container, false);
             ButterKnife.bind(this, rootView);
@@ -155,7 +157,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
     @Override
     public void onResume() {
         super.onResume();
-        if (allContactListAdapter != null && rContactApplication.getFavouriteStatus() ==
+        if (allContactListAdapter != null && RContactApplication.getInstance().getFavouriteStatus() ==
                 RContactApplication.FAVOURITE_REMOVED) {
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -166,7 +168,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
                         allContactListAdapter.notifyItemRemoved(allContactListAdapter
                                 .getListClickedPosition());
                         allContactListAdapter.notifyDataSetChanged();
-                        rContactApplication.setFavouriteStatus(RContactApplication
+                        RContactApplication.getInstance().setFavouriteStatus(RContactApplication
                                 .FAVOURITE_UNMODIFIED);
                     }
                 }
@@ -175,7 +177,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
         if (isFromSettings) {
             isFromSettings = false;
             if (settingRequestPermission == AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS) {
-                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission
+                if (ContextCompat.checkSelfPermission(getMainActivity(), Manifest.permission
                         .READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
                     if (!isReload) {
                         init();
@@ -187,12 +189,16 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
 
             }*/
         }
+        
+        if (arrayListPhoneBookContacts.size() > 0) {
+            getRcpDetail();
+        }
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (!isReload || rContactApplication.getFavouriteStatus() != RContactApplication
+        if (!isReload || RContactApplication.getInstance().getFavouriteStatus() != RContactApplication
                 .FAVOURITE_UNMODIFIED) {
 //        if (!isReload || rContactApplication.isFavouriteModified()) {
             init();
@@ -245,7 +251,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
 //        String sortOrder = ContactsContract.Contacts.SORT_KEY_PRIMARY + " ASC";
         String sortOrder = "upper(" + ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + ") ASC";
         return new CursorLoader(
-                getActivity(),
+                getMainActivity(),
                 uri,
                 projection,
                 selection,
@@ -261,7 +267,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
 //        data.close();
 
 //        rContactApplication.setFavouriteModified(false);
-        rContactApplication.setFavouriteStatus(RContactApplication.FAVOURITE_UNMODIFIED);
+        RContactApplication.getInstance().setFavouriteStatus(RContactApplication.FAVOURITE_UNMODIFIED);
 
         populateRecyclerView();
         initSwipe();
@@ -331,7 +337,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
             //</editor-fold>
 
         } else {
-            Utils.showErrorSnackBar(getActivity(), relativeRootFavourite, "" + (error != null ?
+            Utils.showErrorSnackBar(getMainActivity(), relativeRootFavourite, "" + (error != null ?
                     error.getLocalizedMessage() : null));
         }
     }
@@ -354,7 +360,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
                     // Permission Denied
                    /* showPermissionConfirmationDialog(AppConstants
                             .MY_PERMISSIONS_REQUEST_PHONE_CALL);*/
-                    Utils.showErrorSnackBar(getActivity(), relativeRootFavourite, getString(R.string.error_call_permission));
+                    Utils.showErrorSnackBar(getMainActivity(), relativeRootFavourite, getString(R.string.error_call_permission));
                 }
             }
             break;
@@ -400,16 +406,16 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         recyclerViewContactList.setLayoutManager(linearLayoutManager);
-        RecyclerItemDecoration decoration = new RecyclerItemDecoration(getActivity(), ContextCompat
-                .getColor(getActivity(), R.color.colorVeryLightGray), 0.7f);
+        RecyclerItemDecoration decoration = new RecyclerItemDecoration(getMainActivity(), ContextCompat
+                .getColor(getMainActivity(), R.color.colorVeryLightGray), 0.7f);
         recyclerViewContactList.addItemDecoration(decoration);
 
 //        initSwipe();
 
         progressFavoriteContact.setVisibility(View.GONE);
-        if (rContactApplication.getArrayListFavPhoneBookContacts() != null) {
+        if (RContactApplication.getInstance().getArrayListFavPhoneBookContacts() != null) {
             relativeRootFavourite.setVisibility(View.VISIBLE);
-            if (rContactApplication.getArrayListFavPhoneBookContacts().size() <= 0) {
+            if (RContactApplication.getInstance().getArrayListFavPhoneBookContacts().size() <= 0) {
                 if (getLoaderManager().getLoader(0) == null) {
                     getLoaderManager().initLoader(0, null, this);
                 } else {
@@ -417,8 +423,8 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
                 }
 //            getLoaderManager().initLoader(0, null, this);
             } else {
-                arrayListPhoneBookContacts = rContactApplication.getArrayListFavPhoneBookContacts();
-                arrayListContactHeaders = rContactApplication.getArrayListFavContactHeaders();
+                arrayListPhoneBookContacts = RContactApplication.getInstance().getArrayListFavPhoneBookContacts();
+                arrayListContactHeaders = RContactApplication.getInstance().getArrayListFavContactHeaders();
                 populateRecyclerView();
             }
         } else {
@@ -441,7 +447,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                int position = viewHolder.getAdapterPosition();
+//                int position = viewHolder.getAdapterPosition();
                 String actionNumber = StringUtils.defaultString(((AllContactAdapter
                         .AllContactViewHolder) viewHolder).textContactNumber.getText()
                         .toString());
@@ -502,7 +508,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
                     float width = height / 3;
 
                     if (dX > 0) {
-                        p.setColor(ContextCompat.getColor(getActivity(), R.color
+                        p.setColor(ContextCompat.getColor(getMainActivity(), R.color
                                 .darkModerateLimeGreen));
                         RectF background = new RectF((float) itemView.getLeft(), (float) itemView
                                 .getTop(), dX, (float) itemView.getBottom());
@@ -514,7 +520,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
                                 width, (float) itemView.getBottom() - width);
                         c.drawBitmap(icon, null, icon_dest, p);
                     } else {
-                        p.setColor(ContextCompat.getColor(getActivity(), R.color.brightOrange));
+                        p.setColor(ContextCompat.getColor(getMainActivity(), R.color.brightOrange));
                         RectF background = new RectF((float) itemView.getRight() + dX, (float)
                                 itemView.getTop(), (float) itemView.getRight(), (float) itemView
                                 .getBottom());
@@ -554,7 +560,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
     }
 
     private void swipeToCall() {
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest
+        if (ContextCompat.checkSelfPermission(getMainActivity(), Manifest
                 .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission
                     .CALL_PHONE}, AppConstants
@@ -567,50 +573,57 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
     }
 
     private void getRcpDetail() {
-        TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
-        ArrayList<String> arrayListIds = tableProfileMaster.getAllRawIds();
-        for (int i = 0; i < arrayListPhoneBookContacts.size(); i++) {
-            if (arrayListPhoneBookContacts.get(i) instanceof ProfileData) {
-                if (arrayListIds.contains(((ProfileData) arrayListPhoneBookContacts.get
-                        (i)).getRawContactId())) {
-                    ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempIsRcp(true);
-                    ArrayList<UserProfile> userProfiles = new ArrayList<>();
-                    userProfiles.addAll(tableProfileMaster.getProfileDetailsFromRawId((
-                            (ProfileData) arrayListPhoneBookContacts.get(i)).getRawContactId()));
-                    String name = "0";
-                    String rcpID = "0";
-                    String rcpProfileImage = "";
-                    if (userProfiles.size() > 1) {
-                        for (int j = 0; j < userProfiles.size();
-                             j++) {
-                            if (name.equalsIgnoreCase("0")) {
-                                name = userProfiles.get(j).getPmRcpId();
-                            } else {
-                                name = name + "," + userProfiles.get(j).getPmRcpId();
+        try {
+            TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
+            ArrayList<String> arrayListIds = tableProfileMaster.getAllRawIds();
+            for (int i = 0; i < arrayListPhoneBookContacts.size(); i++) {
+                if (arrayListPhoneBookContacts.get(i) instanceof ProfileData) {
+                    if (arrayListIds.contains(((ProfileData) arrayListPhoneBookContacts.get
+                            (i)).getRawContactId())) {
+                        ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempIsRcp(true);
+                        ArrayList<UserProfile> userProfiles = new ArrayList<>();
+                        userProfiles.addAll(tableProfileMaster.getProfileDetailsFromRawId((
+                                (ProfileData) arrayListPhoneBookContacts.get(i)).getRawContactId()));
+                        String name = "0";
+                        String rcpID = "0";
+                        String rcpProfileImage = "";
+                        if (userProfiles.size() > 1) {
+                            for (int j = 0; j < userProfiles.size();
+                                 j++) {
+                                if (name.equalsIgnoreCase("0")) {
+                                    name = userProfiles.get(j).getPmRcpId();
+                                } else {
+                                    name = String.format("%s,%s", name, userProfiles.get(j).getPmRcpId());
+                                }
                             }
+                        } else if (userProfiles.size() == 1) {
+                            name = userProfiles.get(0).getPmFirstName() + " " + userProfiles.get(0)
+                                    .getPmLastName();
+                            rcpID = userProfiles.get(0).getPmRcpId();
+                            rcpProfileImage = userProfiles.get(0).getPmProfileImage();
                         }
-                    } else if (userProfiles.size() == 1) {
-                        name = userProfiles.get(0).getPmFirstName() + " " + userProfiles.get(0)
-                                .getPmLastName();
-                        rcpID = userProfiles.get(0).getPmRcpId();
-                        rcpProfileImage = userProfiles.get(0).getPmProfileImage();
+                        ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpName(name);
+                        ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpId(rcpID);
+                        ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpImageURL
+                                (rcpProfileImage);
+                    } else {
+                        ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempIsRcp(false);
+                        ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpImageURL("");
                     }
-                    ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpName(name);
-                    ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpId(rcpID);
-                    ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpImageURL
-                            (rcpProfileImage);
-                } else {
-                    ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempIsRcp(false);
-                }
-                final int finalI = i;
-                getActivity().runOnUiThread(new Runnable() {
+                    final int finalI = i;
+                    getMainActivity().runOnUiThread(new Runnable() {
 
-                    @Override
-                    public void run() {
-                        allContactListAdapter.notifyItemChanged(finalI);
-                    }
-                });
+                        @Override
+                        public void run() {
+
+                            if (allContactListAdapter != null)
+                                allContactListAdapter.notifyItemChanged(finalI);
+                        }
+                    });
+                }
             }
+        } catch (Exception ignore) {
+
         }
     }
 
@@ -657,9 +670,10 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
         }
 
         if (arrayListUserContact.size() > 0) {
-            for (int i = 0; i < arrayListUserContact.size(); i++) {
-                arrayListPhoneBookContacts.add(arrayListUserContact.get(i));
-            }
+//            for (int i = 0; i < arrayListUserContact.size(); i++) {
+//                arrayListPhoneBookContacts.add(arrayListUserContact.get(i));
+//            }
+            arrayListPhoneBookContacts.addAll(arrayListUserContact);
         }
     }
 
@@ -728,79 +742,79 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
         return allContactListAdapter;
     }*/
 
-    public AllContactAdapter getAllContactListAdapter() {
-        return allContactListAdapter;
-    }
-
-    public ArrayList<Object> getArrayListPhoneBookContacts() {
-        return arrayListPhoneBookContacts;
-    }
-
-    public RecyclerView getRecyclerViewContactList() {
-        return recyclerViewContactList;
-    }
-
-    private void showPermissionConfirmationDialog(final int permissionType) {
-
-        RippleView.OnRippleCompleteListener cancelListener = new RippleView
-                .OnRippleCompleteListener() {
-
-            @Override
-            public void onComplete(RippleView rippleView) {
-                switch (rippleView.getId()) {
-                    case R.id.rippleLeft:
-                        permissionConfirmationDialog.dismissDialog();
-                        switch (permissionType) {
-                            case AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS:
-                                getActivity().finish();
-                                break;
-                            case AppConstants.MY_PERMISSIONS_REQUEST_PHONE_CALL:
-                                break;
-                        }
-                        break;
-
-                    case R.id.rippleRight:
-                        permissionConfirmationDialog.dismissDialog();
-                        isFromSettings = true;
-                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                                Uri.fromParts("package", getActivity().getPackageName(), null));
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                        switch (permissionType) {
-                            case AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS:
-                                settingRequestPermission = AppConstants
-                                        .MY_PERMISSIONS_REQUEST_READ_CONTACTS;
-                                break;
-                            case AppConstants.MY_PERMISSIONS_REQUEST_PHONE_CALL:
-                                settingRequestPermission = AppConstants
-                                        .MY_PERMISSIONS_REQUEST_PHONE_CALL;
-                                break;
-                        }
-                        getActivity().overridePendingTransition(R.anim.enter, R.anim.exit);
-                        break;
-                }
-            }
-        };
-
-        String message = "";
-        switch (permissionType) {
-            case AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS:
-                message = getString(R.string.contact_read_permission);
-                break;
-            case AppConstants.MY_PERMISSIONS_REQUEST_PHONE_CALL:
-                message = getString(R.string.calling_permission);
-                break;
-        }
-
-        permissionConfirmationDialog = new MaterialDialog(getActivity(), cancelListener);
-        permissionConfirmationDialog.setTitleVisibility(View.GONE);
-        permissionConfirmationDialog.setLeftButtonText(getString(R.string.action_cancel));
-        permissionConfirmationDialog.setRightButtonText(getString(R.string.action_ok));
-        permissionConfirmationDialog.setDialogBody(message);
-
-        permissionConfirmationDialog.showDialog();
-
-    }
+//    public AllContactAdapter getAllContactListAdapter() {
+//        return allContactListAdapter;
+//    }
+//
+//    public ArrayList<Object> getArrayListPhoneBookContacts() {
+//        return arrayListPhoneBookContacts;
+//    }
+//
+//    public RecyclerView getRecyclerViewContactList() {
+//        return recyclerViewContactList;
+//    }
+//
+//    private void showPermissionConfirmationDialog(final int permissionType) {
+//
+//        RippleView.OnRippleCompleteListener cancelListener = new RippleView
+//                .OnRippleCompleteListener() {
+//
+//            @Override
+//            public void onComplete(RippleView rippleView) {
+//                switch (rippleView.getId()) {
+//                    case R.id.rippleLeft:
+//                        permissionConfirmationDialog.dismissDialog();
+//                        switch (permissionType) {
+//                            case AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS:
+//                                getMainActivity().finish();
+//                                break;
+//                            case AppConstants.MY_PERMISSIONS_REQUEST_PHONE_CALL:
+//                                break;
+//                        }
+//                        break;
+//
+//                    case R.id.rippleRight:
+//                        permissionConfirmationDialog.dismissDialog();
+//                        isFromSettings = true;
+//                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+//                                Uri.fromParts("package", getMainActivity().getPackageName(), null));
+//                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                        startActivity(intent);
+//                        switch (permissionType) {
+//                            case AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS:
+//                                settingRequestPermission = AppConstants
+//                                        .MY_PERMISSIONS_REQUEST_READ_CONTACTS;
+//                                break;
+//                            case AppConstants.MY_PERMISSIONS_REQUEST_PHONE_CALL:
+//                                settingRequestPermission = AppConstants
+//                                        .MY_PERMISSIONS_REQUEST_PHONE_CALL;
+//                                break;
+//                        }
+//                        getMainActivity().overridePendingTransition(R.anim.enter, R.anim.exit);
+//                        break;
+//                }
+//            }
+//        };
+//
+//        String message = "";
+//        switch (permissionType) {
+//            case AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS:
+//                message = getString(R.string.contact_read_permission);
+//                break;
+//            case AppConstants.MY_PERMISSIONS_REQUEST_PHONE_CALL:
+//                message = getString(R.string.calling_permission);
+//                break;
+//        }
+//
+//        permissionConfirmationDialog = new MaterialDialog(getMainActivity(), cancelListener);
+//        permissionConfirmationDialog.setTitleVisibility(View.GONE);
+//        permissionConfirmationDialog.setLeftButtonText(getString(R.string.action_cancel));
+//        permissionConfirmationDialog.setRightButtonText(getString(R.string.action_ok));
+//        permissionConfirmationDialog.setDialogBody(message);
+//
+//        permissionConfirmationDialog.showDialog();
+//
+//    }
 
     @Override
     public void onDestroyView() {

@@ -39,7 +39,7 @@ public class UserProfile implements Serializable {
     private String totalProfileRateUser;
     private String pmJoiningDate;
     private String profileRatingPrivacy;
-    private String ratingPrivate;
+    private Integer ratingPrivate;
 
     private ArrayList<ProfileDataOperationOrganization> pbOrganization;
 
@@ -154,11 +154,11 @@ public class UserProfile implements Serializable {
         this.profileRatingPrivacy = profileRatingPrivacy;
     }
 
-    public String getRatingPrivate() {
-        return StringUtils.defaultString(ratingPrivate, "0");
+    public Integer getRatingPrivate() {
+        return ratingPrivate;
     }
 
-    public void setRatingPrivate(String ratingPrivate) {
+    public void setRatingPrivate(Integer ratingPrivate) {
         this.ratingPrivate = ratingPrivate;
     }
 

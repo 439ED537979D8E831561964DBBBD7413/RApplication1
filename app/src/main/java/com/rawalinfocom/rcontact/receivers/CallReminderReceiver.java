@@ -53,6 +53,7 @@ public class CallReminderReceiver extends BroadcastReceiver {
     Context mContext;
     String numberToCall;
     Dialog reminderDialog;
+
     @Override
     public void onReceive(Context context, Intent intent) {
         PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
@@ -62,15 +63,15 @@ public class CallReminderReceiver extends BroadcastReceiver {
 
         String number = intent.getStringExtra(AppConstants.EXTRA_CALL_REMINDER_NUMBER);
         Long time = intent.getLongExtra(AppConstants.EXTRA_CALL_REMINDER_TIME, 0);
-        numberToCall =  number;
+        numberToCall = number;
         Date date1 = new Date(time);
         String setTime = new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(date1);
-        String name = getNameFromNumber(number);
-        if(StringUtils.isEmpty(name))
-            name =  number;
+        String name = Utils.getNameFromNumber(number);
+        if (StringUtils.isEmpty(name))
+            name = number;
 
-        showNotification(name,setTime);
-        initializeReminderDialog(name,setTime);
+        showNotification(name, setTime);
+        initializeReminderDialog(name, setTime);
         wl.release();
 
     }
@@ -92,7 +93,7 @@ public class CallReminderReceiver extends BroadcastReceiver {
                 .setContentTitle("Call Reminder")
                 .setContentText("You need to call " + name + " at " + time)
                 .setSmallIcon(R.drawable.ic_notification_flat)
-                .setVibrate(new long[]{0,200,0})
+                .setVibrate(new long[]{0, 200, 0})
 //                .setContentIntent(pIntent)
                 .setAutoCancel(true).build();
 //                .addAction(R.drawable.ico_call_svg, "Call", pIntent).build();
@@ -174,36 +175,36 @@ public class CallReminderReceiver extends BroadcastReceiver {
         textViewTime.setText(time);
         textName.setText(name);
 
-        if(mContext != null )
+        if (mContext != null)
             reminderDialog.show();
     }
 
 
     private void showCallReminderPopUp() {
         ArrayList<String> arrayListCallReminderOption;
-        String number =  numberToCall;
+        String number = numberToCall;
         TableCallReminder tableCallReminder = new TableCallReminder(new DatabaseHandler(mContext));
-        if(number.contains("("))
-            number = number.replace("(","");
-        if(number.contains(")"))
-            number = number.replace(")","");
-        if(number.contains("-"))
-            number =  number.replace("-","");
-        if(number.contains(" "))
-            number =  number.replace(" ","");
+        if (number.contains("("))
+            number = number.replace("(", "");
+        if (number.contains(")"))
+            number = number.replace(")", "");
+        if (number.contains("-"))
+            number = number.replace("-", "");
+        if (number.contains(" "))
+            number = number.replace(" ", "");
 
         number = number.trim();
-        String formattedNumber =  Utils.getFormattedNumber(mContext,number);
-        String time =  tableCallReminder.getReminderTimeFromNumber(formattedNumber);
+        String formattedNumber = Utils.getFormattedNumber(mContext, number);
+        String time = tableCallReminder.getReminderTimeFromNumber(formattedNumber);
         Long callReminderTime = 0L;
-        if(!StringUtils.isEmpty(time))
-            callReminderTime =  Long.parseLong(time);
+        if (!StringUtils.isEmpty(time))
+            callReminderTime = Long.parseLong(time);
 
         if (callReminderTime > 0) {
             Date date1 = new Date(callReminderTime);
             String setTime = new SimpleDateFormat("dd/MM/yy, hh:mm a", Locale.getDefault()).format(date1);
             arrayListCallReminderOption = new ArrayList<>(Arrays.asList(mContext.getString(R.string.min15),
-                    mContext.getString(R.string.hour1), mContext.getString(R.string.hour2), mContext.getString(R.string.hour6),setTime + "     Edit"));
+                    mContext.getString(R.string.hour1), mContext.getString(R.string.hour2), mContext.getString(R.string.hour6), setTime + "     Edit"));
             MaterialListDialog materialListDialog = new MaterialListDialog(mContext, arrayListCallReminderOption,
                     formattedNumber, 0, "", "", "");
             materialListDialog.setDialogTitle(mContext.getString(R.string.call_reminder));
@@ -219,33 +220,5 @@ public class CallReminderReceiver extends BroadcastReceiver {
             reminderDialog.dismiss();
             materialListDialog.showDialog();
         }
-    }
-    private String getNameFromNumber(String phoneNumber) {
-        String contactName = "";
-        try {
-
-            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri
-                    .encode(phoneNumber));
-
-            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME,
-                    ContactsContract.PhoneLookup.LOOKUP_KEY};
-            Cursor cursor = mContext.getContentResolver().query(uri, projection, null, null,
-                    null);
-
-            if (cursor != null) {
-                while (cursor.moveToNext()) {
-                    contactName = cursor.getString(cursor.getColumnIndexOrThrow
-                            (ContactsContract.PhoneLookup.DISPLAY_NAME));
-                }
-                cursor.close();
-            } else {
-                if (!cursor.isClosed())
-                    cursor.close();
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return contactName;
     }
 }

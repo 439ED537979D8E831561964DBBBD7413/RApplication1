@@ -571,8 +571,6 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                 }
             }
         }));
-
-
     }
 
     private void populateData() {
@@ -582,7 +580,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
         TableProfileMobileMapping tableProfileMobileMapping = new TableProfileMobileMapping
                 (getDatabaseHandler());
 
-        arrayListDisplayProfile = tableProfileMobileMapping.getRContactList(getUserPmId());
+        arrayListDisplayProfile = tableProfileMobileMapping.getRContactList();
         QueryManager queryManager = new QueryManager(getDatabaseHandler());
 //        ArrayList<ProfileDataOperation> allRcpProfileDetails = queryManager.getAllRcpProfileDetails(SearchActivity.this);
         ArrayList<UserProfile> userDataList = new ArrayList<>();

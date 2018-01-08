@@ -62,6 +62,7 @@
     <string name="title_verifying_mobile_number"><![CDATA[Sit back & relax! while we verify your Mobile Number]]></string>
     <string name="msg_enter_otp">Enter the 6-digit OTP below in case we fail to detect it automatically</string>
     <string name="action_resend">Resend</string>
+    <string name="action_call_me">Call Me</string>
     <string name="msg_otp_verification_success">OTP Verified Successfully</string>
     <string name="error_otp_verification_fail">OTP doesn\'t match</string>
     <string name="msg_otp_error">Please enter valid OTP</string>
@@ -416,6 +417,7 @@
     <string name="str_delete_click">Delete clicked</string>
     <string name="str_select_all_click">Select All clicked</string>
     <string name="str_all_contact_sync">All Contacts Synced</string>
+    <string name="contacts_sync_in_progress">Contacts Sync in progress!</string>
     <string name="contact_read_permission">Contact read permission is required of this app. Do you want to try again?</string>
     <string name="calling_permission">Contact read permission is required of this app. Do you want to try again?</string>
 
@@ -687,11 +689,11 @@
     <string name="app_language">App Language</string>
     <string name="short_by">Sort contacts by</string>
     <string name="export_format">Export contacts</string>
-    <string name="abc_by_first_name">ABC by First Name</string>
+    <string name="abc_by_first_name">By First Name</string>
     <string name="phone_storage">Phone Storage</string>
     <string name="sd_card">SD Card</string>
     <string name="google_drive">Google drive</string>
-    <string name="abc_by_last_name">ABC by Last Name</string>
+    <string name="abc_by_last_name">By Last Name</string>
     <string name="str_export">export</string>
     <string name="str_short">short</string>
     <string name="str_push_notification">Push Notifications</string>

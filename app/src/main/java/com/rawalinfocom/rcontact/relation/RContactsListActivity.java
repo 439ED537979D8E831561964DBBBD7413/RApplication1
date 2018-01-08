@@ -120,6 +120,12 @@ public class RContactsListActivity extends BaseActivity implements View.OnClickL
         TableProfileMobileMapping tableProfileMobileMapping = new TableProfileMobileMapping
                 (getDatabaseHandler());
 
-        arrayListRContact = tableProfileMobileMapping.getRContactList(getUserPmId());
+        arrayListRContact = tableProfileMobileMapping.getRContactList();
+
+        for (int i = 0; i < arrayListRContact.size(); i++) {
+            if (arrayListRContact.get(i).getPmId().equalsIgnoreCase(getUserPmId())) {
+                arrayListRContact.remove(i);
+            }
+        }
     }
 }

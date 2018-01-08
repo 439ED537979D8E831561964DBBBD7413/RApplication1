@@ -64,19 +64,19 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
 //        holder.textEventCommentTime.setText(Utils.formatDateTime(item.getCommentTime(), "dd-MM hh:mm a"));
 
         String notiTime =  item.getEventDate();
-        String date =  Utils.formatDateTime(notiTime,"yyyy-MM-dd");
+        String date =  Utils.formatDateTime(notiTime,"MM-dd");
         Calendar c = Calendar.getInstance();
-        SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat s = new SimpleDateFormat("MM-dd");
         String current = s.format(c.getTime());
 
         Calendar c1 = Calendar.getInstance();
         c1.add(Calendar.DATE, 1);
-        SimpleDateFormat s1 = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat s1 = new SimpleDateFormat("MM-dd");
         String tomorrowDate =  s1.format(c1.getTime());
 
         Calendar c2 = Calendar.getInstance();
         c2.add(Calendar.DATE, -1);
-        SimpleDateFormat s2 = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat s2 = new SimpleDateFormat("MM-dd");
         String yesDate =  s2.format(c2.getTime());
 
         if(StringUtils.equalsIgnoreCase(current,date)){

@@ -52,7 +52,8 @@ import butterknife.ButterKnife;
  * Created by Monal on 22/12/16.
  */
 
-public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfileDetailAdapter
+public class
+PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfileDetailAdapter
         .ProfileDetailViewHolder> {
 
     private Activity activity;
@@ -140,23 +141,7 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
             @TargetApi(Build.VERSION_CODES.M)
             @Override
             public void onClick(View view) {
-                if (!holder.textMain.getText().toString().contains("xx") && !holder.textMain
-                        .getText().toString().contains("XX")) {
-
-                    if (ContextCompat.checkSelfPermission(activity, android.Manifest
-                            .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                        activity.requestPermissions(new String[]{Manifest.permission
-                                .CALL_PHONE}, AppConstants
-                                .MY_PERMISSIONS_REQUEST_PHONE_CALL);
-                        if (activity instanceof PublicProfileDetailActivity) {
-                            ((PublicProfileDetailActivity) activity).callNumber = number;
-                        }
-                    } else {
-                        if (!holder.textMain.getText().toString().contains("xx") && !holder
-                                .textMain.getText().toString().contains("XX"))
-                            Utils.callIntent(activity, number);
-                    }
-                }
+                holder.textMain.performClick();
             }
         });
 
@@ -182,18 +167,19 @@ public class PublicProfileDetailAdapter extends RecyclerView.Adapter<PublicProfi
             public void onClick(View view) {
                 if (!holder.textMain.getText().toString().contains("xx") && !holder.textMain
                         .getText().toString().contains("XX")) {
+
                     if (ContextCompat.checkSelfPermission(activity, android.Manifest
                             .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                         activity.requestPermissions(new String[]{Manifest.permission
                                 .CALL_PHONE}, AppConstants
                                 .MY_PERMISSIONS_REQUEST_PHONE_CALL);
                         if (activity instanceof PublicProfileDetailActivity) {
-                            ((PublicProfileDetailActivity) activity).callNumber = number;
+                            Utils.callIntent(activity, holder.textMain.getText().toString());
                         }
                     } else {
                         if (!holder.textMain.getText().toString().contains("xx") && !holder
                                 .textMain.getText().toString().contains("XX"))
-                            Utils.callIntent(activity, number);
+                            Utils.callIntent(activity, holder.textMain.getText().toString());
                     }
                 }
             }

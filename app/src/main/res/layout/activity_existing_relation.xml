@@ -64,26 +64,26 @@
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
         android:background="#EBEBEC">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
             android:orientation="vertical"
             android:padding="2dp">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycle_view_relation"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:visibility="visible" />
 
             <TextView
                 android:id="@+id/text_no_relation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
                 android:contentDescription="@string/app_name"
                 android:drawablePadding="@dimen/padding_15dp"
                 android:drawableTop="@drawable/ico_relation_1_svg"
@@ -92,7 +92,7 @@
                 android:textSize="@dimen/text_size_22sp"
                 android:visibility="gone" />
 
-        </LinearLayout>
+        </RelativeLayout>
     </android.support.v4.widget.SwipeRefreshLayout>
 
 </LinearLayout>

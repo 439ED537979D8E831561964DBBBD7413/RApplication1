@@ -258,17 +258,17 @@ public class EventsActivity extends BaseActivity implements RippleView
         String currentUserPmId = Utils.getStringPreference(this, AppConstants.PREF_USER_PM_ID, "0");
         int currentPmID = Integer.parseInt(currentUserPmId);
 
-//        ArrayList<Event> eventsAll = tableEventMaster.getAllEventsBetWeenExceptCurrentUser(yesterDay, day7th, currentPmID);
-        ArrayList<Event> eventsToday = tableEventMaster.getAllEventsBetWeenExceptCurrentUser(today, today, currentPmID);
-        ArrayList<Event> eventsRecent = tableEventMaster.getAllEventsBetWeenExceptCurrentUser(yesterDay, yesterDay, currentPmID);
-        ArrayList<Event> eventsUpcoming7 = tableEventMaster.getAllEventsBetWeenExceptCurrentUser(tomorrow, day7th, currentPmID);
-        ArrayList<Event> newEventList = new ArrayList<>();
+        ArrayList<Event> eventsAll = tableEventMaster.getAllEventsBetWeenExceptCurrentUser(yesterDay, day7th, currentPmID);
+//        ArrayList<Event> eventsToday = tableEventMaster.getAllEventsBetWeenExceptCurrentUser(today, today, currentPmID);
+//        ArrayList<Event> eventsRecent = tableEventMaster.getAllEventsBetWeenExceptCurrentUser(yesterDay, yesterDay, currentPmID);
+//        ArrayList<Event> eventsUpcoming7 = tableEventMaster.getAllEventsBetWeenExceptCurrentUser(tomorrow, day7th, currentPmID);
+//        ArrayList<Event> newEventList = new ArrayList<>();
 
-        newEventList.addAll(eventsToday);
-        newEventList.addAll(eventsRecent);
-        newEventList.addAll(eventsUpcoming7);
+//        newEventList.addAll(eventsToday);
+//        newEventList.addAll(eventsRecent);
+//        newEventList.addAll(eventsUpcoming7);
 
-        listAllEvent = createEventList(newEventList, 0);
+        listAllEvent = createEventList(eventsAll, 0);
 //        listTodayEvent = createEventList(eventsToday, 0);
 //        listRecentEvent = createEventList(eventsRecent, 1);
 //        listUpcomingEvent = createEventList(eventsUpcoming7, 2);
@@ -341,7 +341,7 @@ public class EventsActivity extends BaseActivity implements RippleView
             String eventName = e.getEvmEventType();
             int eventType = -1;
             TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
-            if (Integer.parseInt(e.getEvmEventPrivacy()) != IntegerConstants.IS_PRIVATE && e.getRcProfileMasterPmId() != null && e.getRcProfileMasterPmId().length() > 0) {
+            if (!(eventName.startsWith("XXX")) && e.getRcProfileMasterPmId() != null && e.getRcProfileMasterPmId().length() > 0) {
                 int pmId = Integer.parseInt(e.getRcProfileMasterPmId());
 
                 UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(pmId);
